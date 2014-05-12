@@ -4,9 +4,8 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
 : Fl_Widget(x, y, w, h, label)
 {
   group = g;
-  bitmap = new Bitmap(w, h);
-  bitmap->clear(0xff000000);
-  image = new Fl_RGB_Image((unsigned char *)bitmap->data, w, h, 4, 0);
+  image = 0;
+  bitmap = 0;
   resize(group->x() + x, group->y() + y, w, h);
 }
 
