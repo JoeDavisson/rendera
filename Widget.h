@@ -17,7 +17,7 @@ public:
   Fl_Group *group;
   Fl_PNG_Image *png_image;
   Fl_RGB_Image *image;
-  int *image_data;
+  Bitmap *bitmap;
 protected:
   virtual void draw();
   int use_png;

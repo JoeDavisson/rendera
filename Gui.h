@@ -24,7 +24,7 @@ public:
   Fl_Group *left_bottom;
   Fl_Group *right;
   Fl_Group *bottom;
-  Fl_Group *view;
+  Fl_Group *middle;
 
   // top left
   Widget *logo;
@@ -61,6 +61,14 @@ public:
   Widget *mirror;
   Widget *origin;
   Widget *constrain;
+
+  // view
+  View *view;
+
+  // bitmaps
+  Bitmap *bitmap_brush;
+  Bitmap *bitmap_palette;
+  Bitmap *bitmap_view;
 };
 
 #endif

@@ -15,6 +15,8 @@
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Tooltip.H>
 
+#include "Bitmap.h"
+#include "View.h"
 #include "Widget.h"
 #include "Button.h"
 #include "Field.h"

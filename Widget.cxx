@@ -23,11 +23,8 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, int s
   stepx = sx;
   stepy = sy;
   group = g;
-  image_data = new int[w * h];
-  int i;
-  for(i = 0; i < w * h; i++)
-    image_data[i] = 0xffffffff;
-  image = new Fl_RGB_Image((unsigned char *)image_data, w, h, 4, 0);
+  bitmap = new Bitmap(w, h);
+  image = new Fl_RGB_Image((unsigned char *)bitmap->data, w, h, 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
 }

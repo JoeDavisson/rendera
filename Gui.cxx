@@ -72,6 +72,7 @@ Gui::Gui()
   left_top->box(FL_UP_FRAME);
   y1 = 8;
   brush = new Widget(left_top, 8, y1, 96, 96, "Brush Preview", 0, 0);
+  brush->bitmap->clear(0xffffffff);
   y1 += 96 + 8;
   size = new Widget(left_top, 8, y1, 96, 24, "Size", "data/size.png", 8, 24);
   y1 += 24 + 8;
@@ -99,7 +100,8 @@ Gui::Gui()
   right = new Fl_Group(window->w() - 112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
   right->box(FL_UP_FRAME);
   y1 = 8;
-  palette = new Widget(right, 8, y1, 96, 96, "Palette", 16, 16);
+  palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 16, 16);
+  palette->bitmap->clear(0xffffffff);
   y1 += 96 + 8;
   trans = new Widget(right, 8, y1, 96, 24, "Transparency", "data/transparency.png", 8, 24);
   y1 += 24 + 8;
@@ -107,11 +109,12 @@ Gui::Gui()
   right->resizable(0);
   right->end();
 
-  // view
-  view = new Fl_Group(112, top_right->h() + menubar->h(), window->w() - 224, window->h() - (menubar->h() + top_right->h() + bottom->h()));
-  view->box(FL_UP_FRAME);
-  view->resizable(0);
-  view->end();
+  // middle
+  middle = new Fl_Group(112, top_right->h() + menubar->h(), window->w() - 224, window->h() - (menubar->h() + top_right->h() + bottom->h()));
+  middle->box(FL_FLAT_BOX);
+  view = new View(middle, 0, 0, middle->w(), middle->h(), "View");
+  middle->resizable(view);
+  middle->end();
 
   // container for top panels
   group_top = new Fl_Group(0, menubar->h(), window->w() - top_left->w(), 40);
