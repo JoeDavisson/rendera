@@ -57,6 +57,7 @@ int Widget::handle(int event)
         y1 = 0;
 
       var = x1 + (w() / stepx) * y1;
+      do_callback();
       redraw();
       break;
   }
