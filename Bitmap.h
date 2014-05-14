@@ -10,7 +10,7 @@ public:
   virtual ~Bitmap();
 
   int w, h;
-  int cx, cy, cw, ch;
+  int cl, cr, ct, cb, cw, ch;
   int *data;
   int *row;
 
@@ -21,7 +21,8 @@ public:
   void setpixel_wrap_clone(int, int, int ,int);
   int getpixel(int, int);
   void clip(int *, int *, int *, int *);
-  void set_clip_rect(int, int, int, int);
+  void set_clip(int, int, int, int);
+  void blit(Bitmap *, int, int, int, int, int, int);
 };
 
 #endif
