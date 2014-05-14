@@ -16,6 +16,13 @@ public:
   void clear(int);
   void setpixel(int, int, int);
   int getpixel(int, int);
+  void line(int, int, int, int, int);
+  void oval(int, int, int, int, int);
+  void ovalfill(int, int, int, int, int);
+  void rect(int, int, int, int, int);
+  void rectfill(int, int, int, int, int);
+  void hline(int, int, int, int);
+  void vline(int, int, int, int);
 };
 
 #endif
