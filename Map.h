@@ -16,8 +16,6 @@ public:
   void clear(int);
   void setpixel(int, int, int);
   int getpixel(int, int);
-  void draw_brush(Map *, int);
-
 };
 
 #endif

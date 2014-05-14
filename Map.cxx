@@ -1,11 +1,11 @@
 #include "rendera.h"
 
-static inline int is_edge(Map *brush, int x, int y)
+static inline int is_edge(Map *map, int x, int y)
 {
-  if((brush->getpixel(x - 1, y) == 0xff) &&
-     (brush->getpixel(x + 1, y) == 0xff) &&
-     (brush->getpixel(x, y - 1) == 0xff) &&
-     (brush->getpixel(x, y + 1) == 0xff))
+  if((map->getpixel(x - 1, y) == 0xff) &&
+     (map->getpixel(x + 1, y) == 0xff) &&
+     (map->getpixel(x, y - 1) == 0xff) &&
+     (map->getpixel(x, y + 1) == 0xff))
   {
     return 0;
   }
@@ -62,19 +62,5 @@ int Map::getpixel(int x, int y)
     return 0;
 
   return data[row[y] + x];
-}
-
-void Map::draw_brush(Map *brush, int color)
-{
-  int x, y;
-
-  for(y = 0; y < brush->h; y++)
-  {
-    for(x = 0; x < brush->w; x++)
-    {
-      if(is_edge(brush, x, y))
-        setpixel(x, y, color);
-    }
-  }
 }
 
