@@ -85,6 +85,17 @@ void Widget::draw()
 
   offsetx *= stepx;
 
+  fl_push_clip(x() + offsetx, y() + offsety, stepx, stepy);
+
+  if(use_png)
+    png_image->draw(x() + offsetx, y() + offsety, stepx, stepy,
+                    offsetx + 1, offsety + 1);
+  else
+    image->draw(x() + offsetx, y() + offsety, stepx, stepy,
+                offsetx + 1, offsety + 1);
+
+  fl_pop_clip();
+
   fl_draw_box(FL_UP_FRAME, x() + offsetx, y() + offsety, stepx, stepy, FL_BLACK);
 }
 
