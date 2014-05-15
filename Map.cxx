@@ -81,14 +81,17 @@ void Map::line(int x1, int y1, int x2, int y2, int c)
     dy <<= 1;
     e = dy - dx;
     dx <<= 1;
+
     while(x1 != x2)
     {
       setpixel(x1, y1, c);
+
       if(e >= 0)
       {
         y1 += iny;
         e -= dx;
       }
+
       e += dy;
       x1 += inx;
     }
@@ -102,11 +105,13 @@ void Map::line(int x1, int y1, int x2, int y2, int c)
     while(y1 != y2)
     {
       setpixel(x1, y1, c);
+
       if(e >= 0)
       {
         x1 += inx;
         e -= dy;
       }
+
       e += dx;
       y1 += iny;
     }
@@ -114,7 +119,6 @@ void Map::line(int x1, int y1, int x2, int y2, int c)
 
   setpixel(x1, y1, c);
 }
-
 
 void Map::oval(int x1, int y1, int x2, int y2, int c)
 {
@@ -144,11 +148,13 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
     setpixel(x1 + ex, y1 + ey, c);
     return;
   }
+
   if(h <= 0 && w >= 0)
   {
     hline(x1, y1, x2, c);
     return;
   }
+
   x1 += a;
   y1 += b;
 
@@ -223,7 +229,6 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
     SWAP(x1, x2);
   if(y1 > y2)
     SWAP(y1, y2);
-
 
   ex = (w & 1);
   ey = (h & 1);
@@ -347,7 +352,6 @@ void Map::rectfill(int x1, int y1, int x2, int y2, int c)
   for(; y1 <= y2; y1++)
     hline(x1, y1, x2, c);
 }
-
 
 void Map::hline(int x1, int y, int x2, int c)
 {
