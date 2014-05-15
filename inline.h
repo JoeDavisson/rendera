@@ -9,6 +9,36 @@ static inline int rnd32(void)
   return seed;
 }
 
+static inline int makecol(const int r, const int g, const int b)
+{
+  return b | g << 8 | r << 16;
+}
+
+static inline int makecola(const int r, const int g, const int b, const int a)
+{
+  return b | g << 8 | r << 16 | a << 24;
+}
+
+static inline int geta(const int c)
+{
+  return (c >> 24) & 255;
+}
+
+static inline int getr(const int c)
+{
+  return (c >> 16) & 255;
+}
+
+static inline int getg(const int c)
+{
+  return (c >> 8) & 255;
+}
+
+static inline int getb(const int c)
+{
+  return c & 255;
+}
+
 static inline int getv(const int c)
 {
   return (getr(c) + getg(c) + getb(c)) / 3;
