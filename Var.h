@@ -11,7 +11,6 @@ public:
 
   int deltax, deltay;
   int clonex, cloney;
-  int strokex1, strokex2, strokey1, strokey2;
   int wrap;
   int mirror;
 };

@@ -26,6 +26,7 @@
 #include "Bitmap.h"
 #include "Var.h"
 #include "Blend.h"
+#include "Stroke.h"
 #include "Bmp.h"
 #include "Map.h"
 #include "View.h"
@@ -38,6 +39,7 @@ extern Gui *gui;
 extern Var *var;
 extern Bmp *bmp;
 extern Blend *blend;
+extern Stroke *stroke;
 
 #endif
 

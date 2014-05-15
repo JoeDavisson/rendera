@@ -93,8 +93,8 @@ void Bitmap::setpixel_clone(int x, int y, int c2, int t)
       break;
   }
 
-  if(x1 >= var->strokex1 && x1 < var->strokex2 && y1 >= var->strokey1)
-    c2 = bmp->clone->getpixel(x1 - var->strokex1, y1 - var->strokey1);
+  if(x1 >= stroke->x1 && x1 < stroke->x2 && y1 >= stroke->y1 && y1 < stroke->y2)
+    c2 = bmp->clone->getpixel(x1 - stroke->x1, y1 - stroke->y1);
   else
     c2 = bmp->main->getpixel(x1, y1);
 
@@ -140,8 +140,8 @@ void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
       break;
   }
 
-  if(x1 >= var->strokex1 && x1 < var->strokex2 && y1 >= var->strokey1)
-    c2 = bmp->clone->getpixel(x1 - var->strokex1, y1 - var->strokey1);
+  if(x1 >= stroke->x1 && x1 < stroke->x2 && y1 >= stroke->y1 && y1 < stroke->y2)
+    c2 = bmp->clone->getpixel(x1 - stroke->x1, y1 - stroke->y1);
   else
     c2 = bmp->clone->getpixel(x1, y1);
 

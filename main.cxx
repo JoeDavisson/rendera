@@ -7,6 +7,7 @@ Gui *gui;
 Var *var;
 Bmp *bmp;
 Blend *blend;
+Stroke *stroke;
 
 static void check_palette(Fl_Widget *widget, void *var)
 {
