@@ -1,16 +1,12 @@
 #ifndef RENDERA_H
 #define RENDERA_H
 
-#define makecol(r, g, b)   ((b) | ((g) << 8) | ((r) << 16))
-#define getb(c)            ((c) & 0xFF)
-#define getg(c)            (((c) >> 8) & 0xFF)
-#define getr(c)            (((c) >> 16) & 0xFF)
-
 #define MIN(x, y)          (((x) < (y)) ? (x) : (y))
 #define MAX(x, y)          (((x) > (y)) ? (x) : (y))
 #define MID(a, b, c)       (MAX(a, MIN(b, c)))
 #define SWAP(a, b)         { int c = (a); (a) = (b); (b) = c; }
 #define SIGN(a)            (((a) > 0) ? 1 : -1)
+#define ABS(a)             (((a) > 0) ? (a) : -(a))
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
