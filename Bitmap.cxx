@@ -279,10 +279,10 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
   double bx = (double)sw / dw;
   double by = (double)sh / dh;
 
-  dw -= overx;
-  dh -= overy;
-  if(dw < 1 || dh < 1)
-    return;
+//  dw -= overx;
+//  dh -= overy;
+//  if(dw < 1 || dh < 1)
+//    return;
 
   if(dx < dest->cl)
   {
@@ -324,21 +324,18 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
 
   int x, y;
 
-  int dy1 = dy;
   for(y = 0; y < dh; y++)
   {
-    int sy1 = sy + y * by;
-    if(sy1 >= h)
+    int yy = sy + y * by;
+    if(yy >= h)
       break;
-    int dx1 = dx + dest->row[dy1];
     for(x = 0; x < dw; x++)
     {
-      int sx1 = sx + x * bx;
-      if(sx1 >= w)
+      int xx = sx + x * bx;
+      if(xx >= w)
         break;
-      dest->data[dx1++] = data[row[sy1] + sx1];
+      dest->data[dest->row[dy + y] + dx + x] = data[row[yy] + xx];
     }
-    dy1++;
   }
 }
 

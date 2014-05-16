@@ -17,7 +17,9 @@ public:
   Fl_RGB_Image *image;
   Bitmap *backbuf;
   int ox, oy;
+  int last_ox, last_oy;
   int zoom;
+  int moving;
 protected:
   virtual void draw();
 };
