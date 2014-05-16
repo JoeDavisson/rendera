@@ -11,6 +11,7 @@ public:
 
   virtual int handle(int);
   virtual void resize(int, int, int, int);
+
   Fl_Group *group;
   Fl_RGB_Image *image;
   Bitmap *bitmap;

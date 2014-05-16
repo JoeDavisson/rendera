@@ -41,7 +41,7 @@ void Bitmap::setpixel_solid(int x, int y, int c2, int t)
 
   int c1 = data[row[y] + x];
 
-  data[row[y] + x] = (*blend->mode)(c1, c2, t);
+  data[row[y] + x] = blend->current(c1, c2, t);
 }
 
 void Bitmap::setpixel_wrap(int x, int y, int c2, int t)
@@ -57,7 +57,7 @@ void Bitmap::setpixel_wrap(int x, int y, int c2, int t)
 
   int c1 = data[row[y] + x];
 
-  data[row[y] + x] = (*blend->mode)(c1, c2, t);
+  data[row[y] + x] = blend->current(c1, c2, t);
 }
 
 void Bitmap::setpixel_clone(int x, int y, int c2, int t)
@@ -98,7 +98,7 @@ void Bitmap::setpixel_clone(int x, int y, int c2, int t)
   else
     c2 = bmp->main->getpixel(x1, y1);
 
-  data[row[y] + x] = (*blend->mode)(c1, c2, t);
+  data[row[y] + x] = blend->current(c1, c2, t);
 }
 
 void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
@@ -145,7 +145,7 @@ void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
   else
     c2 = bmp->clone->getpixel(x1, y1);
 
-  data[row[y] + x] = (*blend->mode)(c1, c2, t);
+  data[row[y] + x] = blend->current(c1, c2, t);
 }
 
 int Bitmap::getpixel(int x, int y)
@@ -191,9 +191,9 @@ void Bitmap::clip(int *x1, int *y1, int *x2, int *y2)
 void Bitmap::set_clip(int x, int y, int w, int h)
 {
   cl = x;
-  ct = y;
   cr = w - 1;
-  ch = h - 1;
+  ct = y;
+  cb = h - 1;
   cw = w;
   ch = h;
 }
@@ -202,8 +202,7 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 {
   int x, y;
 
-   if((sx >= w) || (sy >= h) ||
-   (dx >= dest->cr) || (dy >= dest->cb))
+   if((sx >= w) || (sy >= h) || (dx >= dest->cr) || (dy >= dest->cb))
      return;
 
    // clip src left

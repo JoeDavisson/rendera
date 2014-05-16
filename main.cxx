@@ -3,11 +3,11 @@
 
 using namespace std;
 
-Gui *gui;
 Var *var;
 Bmp *bmp;
 Blend *blend;
 Stroke *stroke;
+Gui *gui;
 
 static void check_palette(Fl_Widget *widget, void *var)
 {
@@ -17,10 +17,11 @@ static void check_palette(Fl_Widget *widget, void *var)
 
 int main(int argc, char **argv)
 {
-  gui = new Gui();
   var = new Var();
   bmp = new Bmp();
   blend = new Blend();
+  stroke = new Stroke();
+  gui = new Gui();
 
   gui->palette->callback((Fl_Callback *)check_palette, &gui->palette->var);
 

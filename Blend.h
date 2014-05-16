@@ -9,6 +9,7 @@ public:
   Blend();
   virtual ~Blend();
 
+  int current(int, int, int);
   int invert(int, int, int);
   int trans(int, int, int);
   int add(int, int, int);
@@ -18,7 +19,7 @@ public:
   void hsv_to_rgb(int, int, int, int *, int *, int *);
   void rgb_to_hsv(int, int, int, int *, int *, int *);
 
-  int (*mode)(int, int, int);
+  int current_blend;
 };
 
 #endif

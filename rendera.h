@@ -23,10 +23,10 @@
 #include <FL/Fl_Tooltip.H>
 
 #include "inline.h"
-#include "Bitmap.h"
 #include "Var.h"
 #include "Blend.h"
 #include "Stroke.h"
+#include "Bitmap.h"
 #include "Bmp.h"
 #include "Map.h"
 #include "View.h"
@@ -35,11 +35,11 @@
 #include "Field.h"
 #include "Gui.h"
 
-extern Gui *gui;
 extern Var *var;
 extern Bmp *bmp;
 extern Blend *blend;
 extern Stroke *stroke;
+extern Gui *gui;
 
 #endif
 

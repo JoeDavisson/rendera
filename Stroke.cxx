@@ -1,3 +1,5 @@
+#include "rendera.h"
+
 Stroke::Stroke()
 {
 }
