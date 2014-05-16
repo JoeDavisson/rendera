@@ -2,7 +2,7 @@
 
 Bmp::Bmp()
 {
-  main = new Bitmap(800, 600);
+  main = new Bitmap(256, 256);
   main->clear(makecol(255, 255, 255));
 }
 

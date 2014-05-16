@@ -11,10 +11,13 @@ public:
 
   virtual int handle(int);
   virtual void resize(int, int, int, int);
+  void refresh();
 
   Fl_Group *group;
   Fl_RGB_Image *image;
-  Bitmap *bitmap;
+  Bitmap *backbuf;
+  int ox, oy;
+  int zoom;
 protected:
   virtual void draw();
 };

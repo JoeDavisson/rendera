@@ -202,72 +202,143 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 {
   int x, y;
 
-   if((sx >= w) || (sy >= h) || (dx >= dest->cr) || (dy >= dest->cb))
-     return;
+  if((sx >= w) || (sy >= h) || (dx >= dest->cr) || (dy >= dest->cb))
+    return;
 
-   // clip src left
-   if(sx < 0)
-   {
-     ww += sx;
-     dx -= sx;
-     sx = 0;
-   }
+  // clip src left
+  if(sx < 0)
+  {
+    ww += sx;
+    dx -= sx;
+    sx = 0;
+  }
 
-   // clip src top
-   if(sy < 0)
-   {
-     hh += sy;
-     dy -= sy;
-     sy = 0;
-   }
+  // clip src top
+  if(sy < 0)
+  {
+    hh += sy;
+    dy -= sy;
+    sy = 0;
+  }
 
-   // clip src right
-   if((sx + ww) > w)
-     ww = w - sx;
+  // clip src right
+  if((sx + ww) > w)
+    ww = w - sx;
 
-   // clip src bottom
-   if((sy + hh) > h)
-     hh = h - sy;
+  // clip src bottom
+  if((sy + hh) > h)
+    hh = h - sy;
 
-   // clip dest left
-   if(dx < dest->cl)
-   {
-     dx -= dest->cl;
-     ww += dx;
-     sx -= dx;
-     dx = dest->cl;
-   }
+  // clip dest left
+  if(dx < dest->cl)
+  {
+    dx -= dest->cl;
+    ww += dx;
+    sx -= dx;
+    dx = dest->cl;
+  }
 
-   // clip dest top
-   if(dy < dest->ct)
-   {
-     dy -= dest->ct;
-     hh += dy;
-     sy -= dy;
-     dy = dest->ct;
-   }
+  // clip dest top
+  if(dy < dest->ct)
+  {
+    dy -= dest->ct;
+    hh += dy;
+    sy -= dy;
+    dy = dest->ct;
+  }
 
-   // clip dest right
-   if((dx + ww - 1) > dest->cr)
-     ww = dest->cr - dx;
+  // clip dest right
+  if((dx + ww - 1) > dest->cr)
+    ww = dest->cr - dx;
 
-   // clip dest bottom
-   if((dy + hh - 1) > dest->cb)
-     hh = dest->cb - dy;
+  // clip dest bottom
+  if((dy + hh - 1) > dest->cb)
+    hh = dest->cb - dy;
 
-   if(ww < 1 || hh < 1)
-     return;
+  if(ww < 1 || hh < 1)
+    return;
 
-   int sy1 = sy;
-   int dy1 = dy;
-   for(y = 0; y < hh; y++)
-   {
-     int sx1 = sx + row[sy1];
-     int dx1 = dx + dest->row[dy1];
-     for(x = 0; x < ww; x++, sx1++, dx1++)
-       dest->data[dx1] = data[sx1];
-     sy1++;
-     dy1++;
-   }
- }
+  int sy1 = sy;
+  int dy1 = dy;
+  for(y = 0; y < hh; y++)
+  {
+    int sx1 = sx + row[sy1];
+    int dx1 = dx + dest->row[dy1];
+    for(x = 0; x < ww; x++, sx1++, dx1++)
+      dest->data[dx1] = data[sx1];
+    sy1++;
+    dy1++;
+  }
+}
+
+void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
+                           int dx, int dy, int dw, int dh, int overx, int overy)
+{
+  double ax = (double)dw / sw;
+  double ay = (double)dh / sh;
+  double bx = (double)sw / dw;
+  double by = (double)sh / dh;
+
+  dw -= overx;
+  dh -= overy;
+  if(dw < 1 || dh < 1)
+    return;
+
+  if(dx < dest->cl)
+  {
+    int d = dest->cl - dx;
+    dx = dest->cl;
+    dw -= d;
+    sx += d * ax;
+    sw -= d * ax;
+  }
+
+  if(dx + dw > dest->cr)
+  {
+    int d = dx + dw - dest->cr;
+    dw -= d;
+    sw -= d * ax;
+  }
+
+  if(dy < dest->ct)
+  {
+    int d = dest->ct - dy;
+    dy = dest->ct;
+    dh -= d;
+    sy += d * ay;
+    sh -= d * ay;
+  }
+
+  if(dy + dh > dest->cb)
+  {
+    int d = dy + dh - dest->cb;
+    dh -= d;
+    sh -= d * ay;
+  }
+
+  if(sw < 1 || sh < 1)
+    return;
+
+  if(dw < 1 || dh < 1)
+    return;
+
+  int x, y;
+
+  int dy1 = dy;
+  for(y = 0; y < dh; y++)
+  {
+    int sy1 = sy + y * by;
+    if(sy1 >= h)
+      break;
+    int dx1 = dx + dest->row[dy1];
+    for(x = 0; x < dw; x++)
+    {
+      int sx1 = sx + x * bx;
+      if(sx1 >= w)
+        break;
+      dest->data[dx1++] = data[row[sy1] + sx1];
+    }
+    dy1++;
+  }
+}
 
