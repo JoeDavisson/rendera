@@ -401,10 +401,10 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
       *s++ = data[row[y1] + x1];
       x++;
     }
-    while(x < dw);
+    while(x <= dw);
     y++;
   }
-  while(y < dh);
+  while(y <= dh);
 }
 
 

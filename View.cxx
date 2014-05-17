@@ -59,7 +59,6 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          //bmp->main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
           bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
           draw_main();
           return 1;
@@ -77,7 +76,6 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          //bmp->main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
           bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
           draw_main();
           return 1;
@@ -150,8 +148,9 @@ void View::draw_move()
 {
   backbuf->clear(makecol(0, 0, 0));
   bmp->preview->blit(backbuf, 0, 0, px, py, bmp->preview->w, bmp->preview->h);
-//  bmp->preview->blit(backbuf, bx - px, by - py, bx, by, bw, bh);
-  backbuf->rect(bx, by, bx + bw - 1, by + bh - 1, makecol(0, 0, 0), 0);
+  // bmp->preview->blit(backbuf, bx - px, by - py, bx, by, bw, bh);
+  backbuf->rect(bx, by, bx + bw, by + bh, makecol(0, 0, 0), 0);
+  backbuf->rect(bx + 1, by + 1, bx + bw - 1, by + bh - 1, makecol(255, 255, 255), 0);
   redraw();
 }
 
@@ -179,11 +178,11 @@ void View::draw_main()
   int overx = dw - w();
   int overy = dh - h();
 
-  if(zoom < 2)
-  {
-    overx = 0;
-    overy = 0;
-  }
+  // if(zoom < 2)
+  // {
+  //   overx = 0;
+  //   overy = 0;
+  // }
 
   backbuf->clear(makecol(0, 255, 0));
   temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
@@ -232,19 +231,15 @@ void View::begin_move()
   bx = ox * ((double)pw / bmp->main->w) + px;
   by = oy * ((double)ph / bmp->main->h) + py;
 
-//  pos.x = bx + bw / 2;
-//  pos.y = by + bh / 2;
+  // pos.x = bx + bw / 2;
+  // pos.y = by + bh / 2;
+  // warp mouse here... (unsupported in fltk)
 
-//  ClientToScreen(mainHwnd, &pos);
-//  SetCursorPos(pos.x, pos.y);
   redraw();
 }
 
 void View::move()
 {
-//  bw = w() * ((pw / zoom) / bmp->main->w);
-//  bh = bw * winaspect;
-
   bx = mousex - (bw >> 1);
   by = mousey - (bh >> 1);
 
