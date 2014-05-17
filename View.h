@@ -11,15 +11,22 @@ public:
 
   virtual int handle(int);
   virtual void resize(int, int, int, int);
-  void refresh();
+  void draw_move();
+  void draw_main();
+  void begin_move();
+  void move();
 
   Fl_Group *group;
   Fl_RGB_Image *image;
   Bitmap *backbuf;
+  int mousex, mousey;
+  int imgx, imgy;
   int ox, oy;
-  int last_ox, last_oy;
   int zoom;
   int moving;
+  int px, py, pw, ph;
+  int bx, by, bw, bh;
+  double aspect, winaspect;
 protected:
   virtual void draw();
 };

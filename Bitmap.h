@@ -15,6 +15,8 @@ public:
   int *row;
 
   void clear(int);
+  void hline(int, int, int, int, int);
+  void rect(int, int, int, int, int, int);
   void setpixel_solid(int, int, int ,int);
   void setpixel_wrap(int, int, int ,int);
   void setpixel_clone(int, int, int ,int);

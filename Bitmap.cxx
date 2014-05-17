@@ -34,6 +34,52 @@ void Bitmap::clear(int c)
     data[i] = c;
 }
 
+void Bitmap::hline(int x1, int y, int x2, int c, int t)
+{
+  clip(&x1, &y, &x2, &y);
+
+  if(x1 > x2)
+    return;
+
+  int *x = &data[row[y] + x2];
+  int *z = &data[row[y] + x1];
+
+  do
+  {
+    *x = blend->current(*x, c, t);
+    x--;
+  }
+  while(x >= z);
+}
+
+void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
+{
+  clip(&x1, &y1, &x2, &y2);
+
+  if(x1 > x2)
+    SWAP(x1, x2);
+  if(y1 > y2)
+    SWAP(y1, y2);
+
+  int *y = &data[row[y2] + x2];
+  int *z = &data[row[y1] + x1];
+  int d = x2 - x1;
+  int e = w - d;
+
+  hline(x1 + 1, y2, x2 - 1, c, t);
+
+  do
+  {
+    *y = blend->current(*y, c, t);
+    y -= d;
+    *y = blend->current(*y, c, t);
+    y -= e;
+  }
+  while(y > z);
+
+  hline(x1 + 1, y1, x2 - 1, c, t);
+}
+
 void Bitmap::setpixel_solid(int x, int y, int c2, int t)
 {
   if(x < cl || x > cr || y < ct || y > cb)
@@ -272,48 +318,49 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 }
 
 void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
-                           int dx, int dy, int dw, int dh, int overx, int overy)
+                                         int dx, int dy, int dw, int dh,
+                                         int overx, int overy)
 {
-  double ax = (double)dw / sw;
-  double ay = (double)dh / sh;
-  double bx = (double)sw / dw;
-  double by = (double)sh / dh;
+  const int ax = ((double)dw / sw) * 256;
+  const int ay = ((double)dh / sh) * 256;
+  const int bx = ((double)sw / dw) * 256;
+  const int by = ((double)sh / dh) * 256;
 
-//  dw -= overx;
-//  dh -= overy;
-//  if(dw < 1 || dh < 1)
-//    return;
+  dw -= overx;
+  dh -= overy;
+  if(dw < 1 || dh < 1)
+    return;
 
   if(dx < dest->cl)
   {
-    int d = dest->cl - dx;
+    const int d = dest->cl - dx;
     dx = dest->cl;
     dw -= d;
-    sx += d * ax;
-    sw -= d * ax;
+    sx += (d * ax) >> 8;
+    sw -= (d * ax) >> 8;
   }
 
   if(dx + dw > dest->cr)
   {
-    int d = dx + dw - dest->cr;
+    const int d = dx + dw - dest->cr;
     dw -= d;
-    sw -= d * ax;
+    sw -= (d * ax) >> 8;
   }
 
   if(dy < dest->ct)
   {
-    int d = dest->ct - dy;
+    const int d = dest->ct - dy;
     dy = dest->ct;
     dh -= d;
-    sy += d * ay;
-    sh -= d * ay;
+    sy += (d * ay) >> 8;
+    sh -= (d * ay) >> 8;
   }
 
   if(dy + dh > dest->cb)
   {
-    int d = dy + dh - dest->cb;
+    const int d = dy + dh - dest->cb;
     dh -= d;
-    sh -= d * ay;
+    sh -= (d * ay) >> 8;
   }
 
   if(sw < 1 || sh < 1)
@@ -322,20 +369,22 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
   if(dw < 1 || dh < 1)
     return;
 
-  int x, y;
-
-  for(y = 0; y < dh; y++)
+  int y = 0;
+  do
   {
-    int yy = sy + y * by;
-    if(yy >= h)
-      break;
-    for(x = 0; x < dw; x++)
+    const int y1 = sy + ((y * by) >> 8);
+    int x = 0;
+    int *s = &dest->data[dest->row[dy + y]];
+    do
     {
-      int xx = sx + x * bx;
-      if(xx >= w)
-        break;
-      dest->data[dest->row[dy + y] + dx + x] = data[row[yy] + xx];
+      const int x1 = sx + ((x * bx) >> 8);
+      *s++ = data[row[y1] + x1];
+      x++;
     }
+    while(x < dw);
+    y++;
   }
+  while(y < dh);
 }
+
 

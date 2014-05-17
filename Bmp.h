@@ -10,6 +10,7 @@ public:
   virtual ~Bmp();
 
   Bitmap *main;
+  Bitmap *preview;
   Bitmap *clone;
 };
 
