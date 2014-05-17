@@ -39,8 +39,8 @@ View::~View()
 
 int View::handle(int event)
 {
-  mousex = Fl::event_x() - x() - 1;
-  mousey = Fl::event_y() - y() - 2;
+  mousex = Fl::event_x() - x();
+  mousey = Fl::event_y() - y();
   if(mousex < 0)
     mousex = 0;
   if(mousex >  w() - 1)
