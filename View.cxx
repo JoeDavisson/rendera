@@ -97,15 +97,38 @@ int View::handle(int event)
       moving = 0;
       if(Fl::event_dy() >= 0)
       {
+        int oldzoom = zoom;
         zoom /= 2;
         if(zoom < 1)
+        {
           zoom = 1;
+        }
+        else
+        {
+          ox -= mousex / oldzoom;
+          oy -= mousey / oldzoom;
+          if(ox < 0)
+            ox = 0;
+          if(oy < 0)
+            oy = 0;
+        }
       }
       else
       {
         zoom *= 2;
-        if(zoom > 8)
-          zoom = 8;
+        if(zoom > 16)
+        {
+          zoom = 16;
+        }
+        else
+        {
+          ox += mousex / zoom;
+          oy += mousey / zoom;
+          if(ox > bmp->main->w - w() / zoom - 1)
+            ox = bmp->main->w - w() / zoom - 1;
+          if(oy > bmp->main->h - h() / zoom - 1)
+            oy = bmp->main->h - h() / zoom - 1;
+        }
       }
       draw_main();
       return 1;
