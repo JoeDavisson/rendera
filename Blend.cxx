@@ -60,7 +60,7 @@ int Blend::sub(int c1, int c2, int t)
   int r = getr(c2);
   int g = getg(c2);
   int b = getb(c2);
-  int h, s, v;
+  int h = 0, s = 0, v = 0;
 
   rgb_to_hsv(r, g, b, &h, &s, &v);
   h += 768;

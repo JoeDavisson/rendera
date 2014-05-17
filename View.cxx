@@ -226,8 +226,6 @@ void View::move()
     bw = 1;
   if(bh < 1)
     bh = 1;
-
-  redraw();
 }
 
 void View::draw()

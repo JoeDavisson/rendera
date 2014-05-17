@@ -17,6 +17,8 @@ static void check_palette(Fl_Widget *widget, void *var)
 
 int main(int argc, char **argv)
 {
+  Fl::visual(FL_DOUBLE | FL_INDEX);
+
   var = new Var();
   bmp = new Bmp();
   blend = new Blend();
