@@ -21,6 +21,14 @@ int View::handle(int event)
 {
   mousex = Fl::event_x() - x() - 1;
   mousey = Fl::event_y() - y() - 2;
+  if(mousex < 0)
+    mousex = 0;
+  if(mousex >  w() - 1)
+    mousex = w() - 1;
+  if(mousey < 0)
+    mousey = 0;
+  if(mousey >  h() - 1)
+    mousey = h() - 1;
   imgx = mousex / zoom + ox;
   imgy = mousey / zoom + oy;
   int button = Fl::event_button();
@@ -67,7 +75,6 @@ int View::handle(int event)
       return 1;
     case FL_MOUSEWHEEL:
       moving = 0;
-      double oldzoom = zoom;
       if(Fl::event_dy() >= 0)
       {
         zoom /= 2;
