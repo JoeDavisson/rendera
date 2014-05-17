@@ -348,6 +348,7 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
 
   dw -= overx;
   dh -= overy;
+
   if(dw < 1 || dh < 1)
     return;
 
@@ -406,5 +407,4 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
   }
   while(y <= dh);
 }
-
 

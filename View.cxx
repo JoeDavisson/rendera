@@ -51,6 +51,7 @@ int View::handle(int event)
     mousey = h() - 1;
   imgx = mousex / zoom + ox;
   imgy = mousey / zoom + oy;
+
   int button = Fl::event_button();
 
   switch(event)
@@ -114,9 +115,9 @@ int View::handle(int event)
       else
       {
         zoom *= 2;
-        if(zoom > 16)
+        if(zoom > 32)
         {
-          zoom = 16;
+          zoom = 32;
         }
         else
         {
@@ -161,8 +162,6 @@ void View::draw_main()
 
   int sw = ww / zoom;
   int sh = hh / zoom;
-  sw += 2;
-  sh += 2;
 
   if(sw > bmp->main->w)
     sw = bmp->main->w;
@@ -177,12 +176,6 @@ void View::draw_main()
 
   int overx = dw - w();
   int overy = dh - h();
-
-  // if(zoom < 2)
-  // {
-  //   overx = 0;
-  //   overy = 0;
-  // }
 
   backbuf->clear(makecol(0, 255, 0));
   temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
