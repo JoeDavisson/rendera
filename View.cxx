@@ -148,8 +148,8 @@ void View::draw_move()
   backbuf->clear(makecol(0, 0, 0));
   bmp->preview->blit(backbuf, 0, 0, px, py, bmp->preview->w, bmp->preview->h);
   // bmp->preview->blit(backbuf, bx - px, by - py, bx, by, bw, bh);
-  backbuf->rect(bx, by, bx + bw, by + bh, makecol(0, 0, 0), 0);
-  backbuf->rect(bx + 1, by + 1, bx + bw - 1, by + bh - 1, makecol(255, 255, 255), 0);
+  backbuf->rect(bx, by, bx + bw - 1, by + bh - 1, makecol(0, 0, 0), 0);
+  backbuf->rect(bx + 1, by + 1, bx + bw - 2, by + bh - 2, makecol(255, 255, 255), 0);
   redraw();
 }
 
@@ -157,6 +157,8 @@ void View::draw_main()
 {
   int sw = w() / zoom;
   int sh = h() / zoom;
+  sw += 2;
+  sh += 2;
 
   if(sw > bmp->main->w - ox)
     sw = bmp->main->w - ox;
@@ -171,6 +173,12 @@ void View::draw_main()
 
   int overx = dw - w();
   int overy = dh - h();
+
+  if(zoom < 2)
+  {
+    overx = 0;
+    overy = 0;
+  }
 
   backbuf->clear(makecol(0, 64, 0));
   temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
@@ -202,6 +210,7 @@ void View::begin_move()
 
   delete bmp->preview;
   bmp->preview = new Bitmap(pw, ph);
+  bmp->preview->clear(makecol(0, 0, 0));
 
   bmp->main->point_stretch(bmp->preview,
                   0, 0,
