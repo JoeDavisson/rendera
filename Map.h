@@ -31,7 +31,7 @@ public:
 
   int w, h;
   unsigned char *data;
-  unsigned char *row;
+  unsigned char **row;
 
   void clear(int);
   void setpixel(int, int, int);

@@ -23,17 +23,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Var *var;
 Bmp *bmp;
+Brush *brush;
 Blend *blend;
 Stroke *stroke;
 Gui *gui;
-
-/*
-static void check_palette(Fl_Widget *widget, void *var)
-{
-  gui->palette->bitmap->clear(*(int *)var * 12345 | 0xff000000);
-  gui->palette->redraw();
-}
-*/
 
 int main(int argc, char **argv)
 {
@@ -44,8 +37,6 @@ int main(int argc, char **argv)
   blend = new Blend();
   stroke = new Stroke();
   gui = new Gui();
-
-//  gui->palette->callback((Fl_Callback *)check_palette, &gui->palette->var);
 
   return Fl::run();
 }

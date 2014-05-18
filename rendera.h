@@ -50,10 +50,11 @@ using namespace std;
 #include "inline.h"
 #include "Var.h"
 #include "Blend.h"
-#include "Stroke.h"
 #include "Bitmap.h"
-#include "Bmp.h"
 #include "Map.h"
+#include "Bmp.h"
+#include "Brush.h"
+#include "Stroke.h"
 #include "View.h"
 #include "Widget.h"
 #include "Button.h"
@@ -65,6 +66,7 @@ using namespace std;
 
 extern Var *var;
 extern Bmp *bmp;
+extern Brush *brush;
 extern Blend *blend;
 extern Stroke *stroke;
 extern Gui *gui;

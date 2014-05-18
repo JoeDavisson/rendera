@@ -18,32 +18,16 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef STROKE_H
-#define STROKE_H
-
 #include "rendera.h"
 
-class Stroke
+Brush::Brush()
 {
-public:
-  Stroke();
-  virtual ~Stroke();
+  // current brush
+  current = new Map(96, 96);
+  size = 1;
+}
 
-  void make_blitrect(int, int, int, int);
-  void freehand();
-  void filledarea();
-  void line();
-  void polygon();
-  void rect();
-  void rectfill();
-  void oval();
-  void ovalfill();
-
-  int current;
-  int x1, y1, x2, y2;
-  Map *backbuf;
-  int blitx, blity, blitw, blith;
-};
-
-#endif
+Brush::~Brush()
+{
+}
 

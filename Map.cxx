@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-static inline int is_edge(Map *map, int x, int y)
+static int is_edge(Map *map, int x, int y)
 {
   if((map->getpixel(x - 1, y) == 0xff) &&
      (map->getpixel(x + 1, y) == 0xff) &&
@@ -44,14 +44,14 @@ Map::Map(int width, int height)
   if(height < 1)
     height = 1;
 
-  data = new unsigned char[width * height];
-  row = new unsigned char[height];
+  data = new unsigned char [width * height];
+  row = new unsigned char *[height];
 
   w = width;
   h = height;
 
   for(i = 0; i < height; i++)
-    row[i] = width * i;
+    row[i] = &data[width * i];
 }
 
 Map::~Map()
@@ -73,7 +73,7 @@ void Map::setpixel(int x, int y, int c)
   if(x < 0 || x >= w || y < 0 || y >= h)
     return;
 
-  data[row[y] + x] = c & 0xff;
+  *(row[y] + x) = c & 0xff;
 }
 
 int Map::getpixel(int x, int y)
@@ -81,7 +81,7 @@ int Map::getpixel(int x, int y)
   if(x < 0 || x >= w || y < 0 || y >= h)
     return 0;
 
-  return data[row[y] + x];
+  return *(row[y] + x);
 }
 
 void Map::line(int x1, int y1, int x2, int y2, int c)
@@ -326,9 +326,6 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
 
 void Map::rect(int x1, int y1, int x2, int y2, int c)
 {
-  unsigned char *y, *z;
-  int d, e;
-
   if(x1 > x2)
     SWAP(x1, x2);
   if(y1 > y2)
@@ -343,10 +340,10 @@ void Map::rect(int x1, int y1, int x2, int y2, int c)
   if(y2 > h - 1)
     y2 = h - 1;
 
-  y = &data[row[y2] + x2];
-  z = &data[row[y1] + x1];
-  d = x2 - x1;
-  e = w - d;
+  unsigned char *y = row[y2] + x2;
+  unsigned char *z = row[y1] + x1;
+  int d = x2 - x1;
+  int e = w - d;
 
   hline(x1, y2, x2, c);
 
@@ -388,8 +385,8 @@ void Map::hline(int x1, int y, int x2, int c)
   if(y > h - 1)
     return;
 
-  unsigned char *x = &data[row[y] + x2];
-  unsigned char *z = &data[row[y] + x1];
+  unsigned char *x = row[y] + x2;
+  unsigned char *z = row[y] + x1;
 
   do
   {
@@ -406,7 +403,7 @@ void Map::vline(int y1, int x, int y2, int c)
   if(y2 > h - 1)
     y2 = h - 1;
 
-  unsigned char *y = &data[row[y2] + x];
+  unsigned char *y = row[y2] + x;
 
   do
   {
