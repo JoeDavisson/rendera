@@ -18,8 +18,6 @@ void check_zoom_out(Button *button, void *var)
 
 void check_zoom_fit(ToggleButton *button, void *var)
 {
-//  int *v = (int *)var;
-//  *v = 1 - *v;
   gui->view->zoom_fit(*(int *)var);
 }
 
@@ -28,6 +26,12 @@ void check_zoom_one(Button *button, void *var)
   gui->zoom_fit->var = 0;
   gui->zoom_fit->redraw();
   gui->view->zoom_one();
+}
+
+void check_display(Widget *widget, void *var)
+{
+  gui->view->smooth = *(int *)var;
+  gui->view->draw_main();
 }
 
 void check_grid(ToggleButton *button, void *var)

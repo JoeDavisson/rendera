@@ -506,7 +506,6 @@ void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
       {
         rb += (((*c[i] & 0xFF00FF) * f[i]) >> 8) & 0xFF00FF;
         g += (((*c[i] & 0xFF00) * f[i]) >> 8) & 0xFF00;
-        i++;
       }
 
       *d++ = rb | g | 0xFF000000;

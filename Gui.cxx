@@ -71,6 +71,7 @@ Gui::Gui()
   new Separator(top_right, x1, 2, 2, 36, "");
   x1 += 8;
   display = new Widget(top_right, x1, 8, 48, 24, "Display Mode", "data/display.png", 24, 24);
+  display->callback((Fl_Callback *)check_display, &display->var);
   x1 += 48;
   x1 += 6;
   new Separator(top_right, x1, 2, 2, 36, "");

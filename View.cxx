@@ -50,7 +50,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   oy = 0;
   zoom = 1;
   fit = 0;
-  display_mode = 0;
+  smooth = 0;
   moving = 0;
   grid = 0;
   gridx = 8;
@@ -180,8 +180,10 @@ void View::draw_main()
   }
 
   backbuf->clear(makecol(0, 0, 0));
-//  temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
-  temp->integer_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
+  if(smooth)
+    temp->integer_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
+  else
+    temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
 
   if(grid)
     draw_grid();
