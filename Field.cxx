@@ -30,7 +30,7 @@ Field::Field(Fl_Group *g, int x, int y, int w, int h, const char *text)
   labelsize(8);
   textsize(12);
   label(text);
-  when(FL_WHEN_CHANGED);
+  when(FL_WHEN_ENTER_KEY);
   resize(group->x() + x, group->y() + y, w, h);
 //  tooltip(label);
 }

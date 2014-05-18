@@ -39,8 +39,8 @@ void check_grid(ToggleButton *button, void *var)
 void check_gridx(Field *field, void *var)
 {
   int num = atoi(field->value());
-  if(num < 4)
-    num = 4;
+  if(num < 1)
+    num = 1;
   if(num > 256)
     num = 256;
   char s[8];
@@ -53,8 +53,8 @@ void check_gridx(Field *field, void *var)
 void check_gridy(Field *field, void *var)
 {
   int num = atoi(field->value());
-  if(num < 4)
-    num = 4;
+  if(num < 1)
+    num = 1;
   if(num > 256)
     num = 256;
   char s[8];
