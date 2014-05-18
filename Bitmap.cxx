@@ -402,3 +402,71 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
   }
 }
 
+void Bitmap::stretch_line(Bitmap *dest,
+                          int x1, int x2, int y1, int y2, int yr, int yw)
+{
+  int dx, dy, e, d, dx2;
+  int sx, sy;
+  int p, q;
+
+  dx = ABS(x2 - x1);
+  dy = ABS(y2 - y1);
+  sx = SIGN(x2 - x1);
+  sy = SIGN(y2 - y1);
+  dy <<= 1;
+  e = dy - dx;
+  dx2 = dx << 1;
+
+  p = dest->row[yw] + x1;
+  q = row[yr] + y1;
+  for(d = 0; d <= dx; d++)
+  {
+    dest->data[p] = data[q];
+    while(e >= 0)
+    {
+      q += sy;
+      e -= dx2;
+    }
+    p += sx;
+    e += dy;
+  }
+}
+
+void Bitmap::fast_stretch(Bitmap *dest,
+                          int xs1, int ys1, int xs2, int ys2,
+                          int xd1, int yd1, int xd2, int yd2)
+{
+  xs2 += xs1;
+  xs2--;
+  ys2 += ys1;
+  ys2--;
+  xd2 += xd1;
+  xd2--;
+  yd2 += yd1;
+  yd2--;
+
+  int dx, dy, e, d, dx2;
+  int sx, sy;
+
+  dx = ABS(yd2 - yd1);
+  dy = ABS(ys2 - ys1);
+  sx = SIGN(yd2 - yd1);
+  sy = SIGN(ys2 - ys1);
+  dy <<= 1;
+  e = dy - dx;
+  dx2 = dx << 1;
+
+  for(d = 0; d <= dx; d++)
+  {
+    stretch_line(dest, xd1, xd2, xs1, xs2, ys1, yd1);
+    while(e >= 0)
+    {
+      ys1 += sy;
+      e -= dx2;
+
+    }
+    yd1 += sx;
+    e += dy;
+  }
+}
+

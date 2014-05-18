@@ -210,12 +210,9 @@ void View::begin_move()
 
   delete bmp->preview;
   bmp->preview = new Bitmap(pw, ph);
-  bmp->preview->clear(makecol(0, 0, 0));
-
-  bmp->main->point_stretch(bmp->preview,
-                  0, 0,
-                  bmp->main->w, bmp->main->h,
-                  0, 0, bmp->preview->w, bmp->preview->h, 0, 0);
+  bmp->main->fast_stretch(bmp->preview,
+                          0, 0, bmp->main->w, bmp->main->h,
+                          0, 0, pw, ph);
 
   px = (ww - pw) >> 1;
   py = (hh - ph) >> 1;
@@ -272,7 +269,6 @@ void View::move()
 
 void View::draw()
 {
-//  image->draw(x(), y());
   image->draw(x(), y(), w(), h(), 0, 0);
 }
 
