@@ -30,3 +30,36 @@ void check_zoom_one(Button *button, void *var)
   gui->view->zoom_one();
 }
 
+void check_grid(ToggleButton *button, void *var)
+{
+  gui->view->grid = *(int *)var;
+  gui->view->draw_main();
+}
+
+void check_gridx(Field *field, void *var)
+{
+  int num = atoi(field->value());
+  if(num < 4)
+    num = 4;
+  if(num > 256)
+    num = 256;
+  char s[8];
+  snprintf(s, sizeof(s), "%d", num);
+  field->value(s);
+  gui->view->gridx = num;
+  gui->view->draw_main();
+}
+
+void check_gridy(Field *field, void *var)
+{
+  int num = atoi(field->value());
+  if(num < 4)
+    num = 4;
+  if(num > 256)
+    num = 256;
+  char s[8];
+  snprintf(s, sizeof(s), "%d", num);
+  field->value(s);
+  gui->view->gridy = num;
+  gui->view->draw_main();
+}

@@ -33,6 +33,7 @@ public:
   virtual void resize(int, int, int, int);
   void draw_move();
   void draw_main();
+  void draw_grid();
   void begin_move();
   void move();
   void zoom_in(int, int);
@@ -49,6 +50,7 @@ public:
   float zoom;
   int fit;
   int moving;
+  int grid, gridx, gridy;
   int px, py, pw, ph;
   int bx, by, bw, bh;
   float aspect, winaspect;

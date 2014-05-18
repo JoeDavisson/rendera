@@ -23,11 +23,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-class Field : public Fl_Input
+class Field : public Fl_Int_Input
 {
 public:
   Field(Fl_Group *, int, int, int, int, const char *);
   virtual ~Field();
+
+  int var;
 
   Fl_Group *group;
 };

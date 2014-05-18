@@ -76,10 +76,15 @@ Gui::Gui()
   new Separator(top_right, x1, 2, 2, 36, "");
   x1 += 8;
   grid = new ToggleButton(top_right, x1, 8, 24, 24, "Show Grid", "data/grid.png");
+  grid->callback((Fl_Callback *)check_grid, &grid->var);
   x1 += 24 + 28 + 8;
   gridx = new Field(top_right, x1, 8, 32, 24, "Grid X:");
+  gridx->callback((Fl_Callback *)check_gridx, &gridx->var);
+  gridx->value("8");
   x1 += 32 + 28 + 8;
   gridy = new Field(top_right, x1, 8, 32, 24, "Grid Y:");
+  gridy->callback((Fl_Callback *)check_gridy, &gridy->var);
+  gridy->value("8");
   top_right->resizable(0);
   top_right->end();
 

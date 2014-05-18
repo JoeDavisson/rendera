@@ -89,7 +89,7 @@ static inline int blend_fast_ex(const int c1, const int c2, const int t)
     (((((c1 & 0xFF00FF) - (c2 & 0xFF00FF)) * t) >> 8) + c2) & 0xFF00FF;
   const int g = (((((c1 & 0xFF00) - (c2 & 0xFF00)) * t) >> 8) + c2) & 0xFF00;
 
-  return rb | g;
+  return rb | g | 0xFF000000;
 }
 
 #endif

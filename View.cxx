@@ -20,6 +20,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+static inline void grid_setpixel(const Bitmap *bmp, const int x, const int y,
+                                 const int c, const int t)
+{
+  if(x < 0 || y < 0 || x >= bmp->w || y >= bmp->h)
+    return;
+  bmp->data[bmp->row[y] + x] = blend_fast_ex(bmp->data[bmp->row[y] + x], c, t);
+}
+
+static inline void grid_hline(Bitmap *bmp, int x1, int y, int x2, const int c,
+                              const int t)
+{
+  int x;
+
+  if(x1 < 0)
+    x1 = 0;
+  if(y < 0)
+    y = 0;
+
+  for(x = x1; x <= x2; x++)
+    bmp->data[bmp->row[y] + x] = blend_fast_ex(bmp->data[bmp->row[y] + x], c, t);
+}
+
 View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
 : Fl_Widget(x, y, w, h, label)
 {
@@ -29,6 +51,9 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   zoom = 1;
   fit = 0;
   moving = 0;
+  grid = 0;
+  gridx = 8;
+  gridy = 8;
   backbuf = new Bitmap(Fl::w(), Fl::h());
   image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
@@ -155,7 +180,59 @@ void View::draw_main()
 
   backbuf->clear(makecol(0, 0, 0));
   temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
+
+  if(grid)
+    draw_grid();
+
   redraw();
+}
+
+void View::draw_grid()
+{
+  int x1, y1, x2, y2, d, i;
+  int offx = 0, offy = 0;
+
+  if((zoom < 2) && ((gridx <= zoom) || (gridy <= zoom)))
+    return;
+
+  x2 = w() - 1;
+  y2 = h() - 1;
+
+  d = 252 - zoom * 16;
+  if(d < 192)
+    d = 192;
+
+  int zx = zoom * gridx;
+  int zy = zoom * gridy;
+//  int qx = (overscroll % gridx) * zoom;
+//  int qy = (overscroll % gridy) * zoom;
+  int qx = 0;
+  int qy = 0;
+
+  y1 = 0 - zy + (offy * zoom) + qy - (int)(oy * zoom) % zy;
+
+  do
+  {
+    x1 = 0 - zx + (offx * zoom) + qx - (int)(ox * zoom) % zx;
+    grid_hline(backbuf, x1, y1, x2, makecol(255, 255, 255), d);
+    grid_hline(backbuf, x1, y1 + zy - 1, x2, makecol(0, 0, 0), d);
+    i = 0;
+    do
+    {
+      x1 = 0 - zx + (offx * zoom) + qx - (int)(ox * zoom) % zx;
+      do
+      {
+        grid_setpixel(backbuf, x1, y1, makecol(255, 255, 255), d);
+        grid_setpixel(backbuf, x1 + zx - 1, y1, makecol(0, 0, 0), d);
+        x1 += zx;
+      }
+      while(x1 <= x2);
+      y1++;
+      i++;
+    }
+    while(i < zy);
+  }
+  while(y1 <= y2);
 }
 
 void View::begin_move()

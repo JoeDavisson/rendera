@@ -41,11 +41,11 @@ using namespace std;
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Input.H>
+#include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Tooltip.H>
 
-// for printf, remove eventually
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "inline.h"
 #include "Var.h"
