@@ -59,6 +59,7 @@ using namespace std;
 #include "Button.h"
 #include "ToggleButton.h"
 #include "Field.h"
+#include "Separator.h"
 #include "check.h"
 #include "Gui.h"
 

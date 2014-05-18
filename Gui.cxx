@@ -66,14 +66,20 @@ Gui::Gui()
   x1 += 24 + 8;
   zoom_out = new Button(top_right, x1, 8, 24, 24, "Zoom Out", "data/zoom_out.png");
   zoom_out->callback((Fl_Callback *)check_zoom_out, &zoom_out->var);
-  x1 += 24 + 8;
+  x1 += 24;
+  x1 += 6;
+  new Separator(top_right, x1, 2, 2, 36, "");
+  x1 += 8;
   display = new Widget(top_right, x1, 8, 72, 24, "Display Mode", "data/display.png", 24, 24);
-  x1 += 72 + 8;
+  x1 += 72;
+  x1 += 6;
+  new Separator(top_right, x1, 2, 2, 36, "");
+  x1 += 8;
   grid = new ToggleButton(top_right, x1, 8, 24, 24, "Show Grid", "data/grid.png");
-  x1 += 24 + 32 + 8;
-  gridx = new Field(top_right, x1, 8, 32, 24, "Grid X");
-  x1 += 32 + 32 + 8;
-  gridy = new Field(top_right, x1, 8, 32, 24, "Grid Y");
+  x1 += 24 + 28 + 8;
+  gridx = new Field(top_right, x1, 8, 32, 24, "Grid X:");
+  x1 += 32 + 28 + 8;
+  gridy = new Field(top_right, x1, 8, 32, 24, "Grid Y:");
   top_right->resizable(0);
   top_right->end();
 
