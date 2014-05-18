@@ -50,7 +50,7 @@ public:
   Widget *logo;
 
   //top right
-  Button *zoom_fit;
+  ToggleButton *zoom_fit;
   Button *zoom_one;
   Button *zoom_in;
   Button *zoom_out;
@@ -76,8 +76,8 @@ public:
   Widget *blend;
 
   // bottom
-  Widget *wrap;
-  Widget *clone;
+  ToggleButton *wrap;
+  ToggleButton *clone;
   Widget *mirror;
   Widget *origin;
   Widget *constrain;

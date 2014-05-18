@@ -18,16 +18,18 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef BUTTON_H
-#define BUTTON_H
+#ifndef TOGGLE_BUTTON_H
+#define TOGGLE_BUTTON_H
 
 #include "rendera.h"
 
-class Button : public Fl_Button
+class ToggleButton : public Fl_Button
 {
 public:
-  Button(Fl_Group *, int, int, int, int, const char *, const char *);
-  virtual ~Button();
+  ToggleButton(Fl_Group *, int, int, int, int, const char *, const char *);
+  virtual ~ToggleButton();
+
+  virtual int handle(int);
 
   int var;
   Fl_Group *group;

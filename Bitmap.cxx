@@ -339,10 +339,10 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
                                          int dx, int dy, int dw, int dh,
                                          int overx, int overy)
 {
-  const int ax = ((double)dw / sw) * 256;
-  const int ay = ((double)dh / sh) * 256;
-  const int bx = ((double)sw / dw) * 256;
-  const int by = ((double)sh / dh) * 256;
+  const int ax = ((float)dw / sw) * 256;
+  const int ay = ((float)dh / sh) * 256;
+  const int bx = ((float)sw / dw) * 256;
+  const int by = ((float)sh / dh) * 256;
 
   dw -= overx;
   dh -= overy;

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 Button::Button(Fl_Group *g, int x, int y, int w, int h, const char *label, const char *filename)
 : Fl_Button(x, y, w, h, label)
 {
+  var = 0;
   group = g;
   image = new Fl_PNG_Image(filename);
   resize(group->x() + x, group->y() + y, w, h);

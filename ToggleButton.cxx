@@ -18,23 +18,46 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef BUTTON_H
-#define BUTTON_H
-
 #include "rendera.h"
 
-class Button : public Fl_Button
+ToggleButton::ToggleButton(Fl_Group *g, int x, int y, int w, int h, const char *label, const char *filename)
+: Fl_Button(x, y, w, h, label)
 {
-public:
-  Button(Fl_Group *, int, int, int, int, const char *, const char *);
-  virtual ~Button();
+  var = 0;
+  group = g;
+  image = new Fl_PNG_Image(filename);
+  resize(group->x() + x, group->y() + y, w, h);
+  tooltip(label);
+}
 
-  int var;
-  Fl_Group *group;
-  Fl_PNG_Image *image;
-protected:
-  virtual void draw();
-};
+ToggleButton::~ToggleButton()
+{
+}
 
-#endif
+int ToggleButton::handle(int event)
+{
+  switch(event)
+  {
+    case FL_PUSH:
+      switch(Fl::event_button())
+      {
+        case 1:
+          var = 1 - var;
+          do_callback();
+          redraw();
+          return 1;
+      }
+  }
+
+  return 0;
+}
+
+void ToggleButton::draw()
+{
+  if(var)
+    image->draw(x() + 1, y() + 1);
+  else
+    image->draw(x(), y());
+  fl_draw_box(var ? FL_DOWN_FRAME : FL_UP_FRAME, x(), y(), w(), h(), FL_BLACK);
+}
 

@@ -57,7 +57,9 @@ using namespace std;
 #include "View.h"
 #include "Widget.h"
 #include "Button.h"
+#include "ToggleButton.h"
 #include "Field.h"
+#include "check.h"
 #include "Gui.h"
 
 extern Var *var;

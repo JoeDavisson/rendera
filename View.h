@@ -35,6 +35,10 @@ public:
   void draw_main();
   void begin_move();
   void move();
+  void zoom_in(int, int);
+  void zoom_out(int, int);
+  void zoom_fit(int);
+  void zoom_one();
 
   Fl_Group *group;
   Fl_RGB_Image *image;
@@ -42,11 +46,12 @@ public:
   int mousex, mousey;
   int imgx, imgy;
   int ox, oy;
-  int zoom;
+  float zoom;
+  int fit;
   int moving;
   int px, py, pw, ph;
   int bx, by, bw, bh;
-  double aspect, winaspect;
+  float aspect, winaspect;
 protected:
   virtual void draw();
 };

@@ -27,6 +27,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   ox = 0;
   oy = 0;
   zoom = 1;
+  fit = 0;
   moving = 0;
   backbuf = new Bitmap(Fl::w(), Fl::h());
   image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
@@ -98,40 +99,12 @@ int View::handle(int event)
       moving = 0;
       if(Fl::event_dy() >= 0)
       {
-        int oldzoom = zoom;
-        zoom /= 2;
-        if(zoom < 1)
-        {
-          zoom = 1;
-        }
-        else
-        {
-          ox -= mousex / oldzoom;
-          oy -= mousey / oldzoom;
-          if(ox < 0)
-            ox = 0;
-          if(oy < 0)
-            oy = 0;
-        }
+          zoom_out(mousex, mousey);
       }
       else
       {
-        zoom *= 2;
-        if(zoom > 32)
-        {
-          zoom = 32;
-        }
-        else
-        {
-          ox += mousex / zoom;
-          oy += mousey / zoom;
-          if(ox > bmp->main->w - w() / zoom)
-            ox = bmp->main->w - w() / zoom;
-          if(oy > bmp->main->h - h() / zoom)
-            oy = bmp->main->h - h() / zoom;
-        }
+          zoom_in(mousex, mousey);
       }
-      draw_main();
       return 1;
   }
   return 0;
@@ -180,9 +153,8 @@ void View::draw_main()
     overy = 0;
   }
 
-  backbuf->clear(makecol(0, 64, 0));
+  backbuf->clear(makecol(0, 0, 0));
   temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
-
   redraw();
 }
 
@@ -193,8 +165,8 @@ void View::begin_move()
   int ww = w();
   int hh = h();
 
-  winaspect = (double)hh / ww;
-  aspect = (double)bmp->main->h / bmp->main->w;
+  winaspect = (float)hh / ww;
+  aspect = (float)bmp->main->h / bmp->main->w;
 
   pw = ww;
   ph = hh;
@@ -219,11 +191,11 @@ void View::begin_move()
   px += dx;
   py += dy;
 
-  bw = ww * (((double)pw / zoom) / bmp->main->w);
+  bw = ww * (((float)pw / zoom) / bmp->main->w);
   bh = bw * winaspect;
 
-  bx = ox * ((double)pw / bmp->main->w) + px;
-  by = oy * ((double)ph / bmp->main->h) + py;
+  bx = ox * ((float)pw / bmp->main->w) + px;
+  by = oy * ((float)ph / bmp->main->h) + py;
 
   // pos.x = bx + bw / 2;
   // pos.y = by + bh / 2;
@@ -246,8 +218,8 @@ void View::move()
   if(by > py + ph - bh - 1)
     by = py + ph - bh - 1;
 
-  ox = (bx - px) / ((double)pw / (bmp->main->w));
-  oy = (by - py) / ((double)ph / (bmp->main->h));
+  ox = (bx - px) / ((float)pw / (bmp->main->w));
+  oy = (by - py) / ((float)ph / (bmp->main->h));
 
   if(bw > pw)
   {
@@ -265,6 +237,87 @@ void View::move()
     bw = 1;
   if(bh < 1)
     bh = 1;
+}
+
+void View::zoom_in(int x, int y)
+{
+  if(fit)
+    return;
+
+  zoom *= 2;
+  if(zoom > 32)
+  {
+    zoom = 32;
+  }
+  else
+  {
+    ox += x / zoom;
+    oy += y / zoom;
+    if(ox > bmp->main->w - w() / zoom)
+      ox = bmp->main->w - w() / zoom;
+    if(oy > bmp->main->h - h() / zoom)
+      oy = bmp->main->h - h() / zoom;
+  }
+  draw_main();
+}
+
+void View::zoom_out(int x, int y)
+{
+  if(fit)
+    return;
+
+  int oldzoom = zoom;
+  zoom /= 2;
+  if(zoom < 1)
+  {
+    zoom = 1;
+  }
+  else
+  {
+    ox -= x / oldzoom;
+    oy -= y / oldzoom;
+    if(ox < 0)
+      ox = 0;
+    if(oy < 0)
+      oy = 0;
+  }
+  draw_main();
+}
+
+void View::zoom_fit(int fitting)
+{
+  if(!fitting)
+  {
+    fit = 0;
+    zoom = 1;
+    ox = 0;
+    oy = 0;
+    draw_main();
+    return;
+  }
+
+  winaspect = (float)h() / w();
+  aspect = (float)bmp->main->h / bmp->main->w;
+
+  if(aspect < winaspect)
+    zoom = ((float)w() / bmp->main->w);
+  else
+    zoom = ((float)h() / bmp->main->h);
+
+  ox = 0;
+  oy = 0;
+
+  fit = 1;
+  draw_main();
+}
+
+void View::zoom_one()
+{
+  fit = 0;
+  zoom = 1;
+  ox = 0;
+  oy = 0;
+  draw_main();
 }
 
 void View::draw()
