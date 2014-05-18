@@ -32,7 +32,7 @@ public:
   int w, h;
   int cl, cr, ct, cb, cw, ch;
   int *data;
-  int *row;
+  int **row;
 
   void clear(int);
   void hline(int, int, int, int, int);

@@ -27,8 +27,8 @@ Bitmap::Bitmap(int width, int height)
   if(height < 1)
     height = 1;
 
-  data = new int[width * height];
-  row = new int[height];
+  data = new int [width * height];
+  row = new int *[height];
 
   w = width;
   h = height;
@@ -38,7 +38,7 @@ Bitmap::Bitmap(int width, int height)
   int i;
 
   for(i = 0; i < height; i++)
-    row[i] = width * i;
+    row[i] = &data[width * i];
 }
 
 Bitmap::~Bitmap()
@@ -70,8 +70,13 @@ void Bitmap::hline(int x1, int y, int x2, int c, int t)
 
   int x;
 
+  int *p = row[y] + x1;
+
   for(x = x1; x <= x2; x++)
-    data[row[y] + x] = blend->current(data[row[y] + x], c, t);
+  {
+    *p = blend->current(*p, c, t);
+    p++;
+  }
 }
 
 void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
@@ -101,8 +106,8 @@ void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
 
   for(y = y1 + 1; y < y2; y++)
   {
-    data[row[y] + x1] = blend->current(data[row[y] + x1], c, t);
-    data[row[y] + x2] = blend->current(data[row[y] + x2], c, t);
+    *(row[y] + x1) = blend->current(*(row[y] + x1), c, t);
+    *(row[y] + x2) = blend->current(*(row[y] + x2), c, t);
   }
 }
 
@@ -111,9 +116,9 @@ void Bitmap::setpixel_solid(int x, int y, int c2, int t)
   if(x < cl || x > cr || y < ct || y > cb)
     return;
 
-  int c1 = data[row[y] + x];
+  int *c1 = row[y] + x;
 
-  data[row[y] + x] = blend->current(c1, c2, t);
+  *c1 = blend->current(*c1, c2, t);
 }
 
 void Bitmap::setpixel_wrap(int x, int y, int c2, int t)
@@ -127,9 +132,9 @@ void Bitmap::setpixel_wrap(int x, int y, int c2, int t)
   while(y > cb)
     y -= ch;
 
-  int c1 = data[row[y] + x];
+  int *c1 = row[y] + x;
 
-  data[row[y] + x] = blend->current(c1, c2, t);
+  *c1 = blend->current(*c1, c2, t);
 }
 
 void Bitmap::setpixel_clone(int x, int y, int c2, int t)
@@ -137,7 +142,7 @@ void Bitmap::setpixel_clone(int x, int y, int c2, int t)
   if(x < cl || x > cr || y < ct || y > cb)
     return;
 
-  int c1 = getpixel(x, y);
+  int *c1 = row[y] + x;
 
   int x1 = x - var->deltax;
   int y1 = y - var->deltay;
@@ -170,7 +175,7 @@ void Bitmap::setpixel_clone(int x, int y, int c2, int t)
   else
     c2 = bmp->main->getpixel(x1, y1);
 
-  data[row[y] + x] = blend->current(c1, c2, t);
+  *c1 = blend->current(*c1, c2, t);
 }
 
 void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
@@ -184,7 +189,7 @@ void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
   while(y > cb)
     y -= ch;
 
-  int c1 = data[row[y] + x];
+  int *c1 = row[y] + x;
 
   int x1 = x - var->deltax;
   int y1 = y - var->deltay;
@@ -217,7 +222,7 @@ void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
   else
     c2 = bmp->clone->getpixel(x1, y1);
 
-  data[row[y] + x] = blend->current(c1, c2, t);
+  *c1 = blend->current(*c1, c2, t);
 }
 
 int Bitmap::getpixel(int x, int y)
@@ -245,7 +250,7 @@ int Bitmap::getpixel(int x, int y)
       y = cb;
   }
 
-  return data[row[y] + x];
+  return *(row[y] + x);
 }
 
 void Bitmap::clip(int *x1, int *y1, int *x2, int *y2)
@@ -326,10 +331,10 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
   int dy1 = dy;
   for(y = 0; y < hh; y++)
   {
-    int sx1 = sx + row[sy1];
-    int dx1 = dx + dest->row[dy1];
+    int *sx1 = sx + row[sy1];
+    int *dx1 = dx + dest->row[dy1];
     for(x = 0; x < ww; x++, sx1++, dx1++)
-      dest->data[dx1] = data[sx1];
+     *dx1 = *sx1;
     sy1++;
     dy1++;
   }
@@ -393,11 +398,11 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
   for(y = 0; y < dh; y++)
   {
     const int y1 = sy + ((y * by) >> 8);
-    int *s = &dest->data[dest->row[dy + y]];
+    int *s = dest->row[dy + y];
     for(x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 8);
-      *s++ = data[row[y1] + x1];
+      *s++ = *(row[y1] + x1);
     }
   }
 }
@@ -466,10 +471,10 @@ void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
     int v2 = (v1 < (sh - 1) ? v1 + 1 : v1);
 
     int *c[4];
-    c[0] = c[1] = &data[row[sy + v1] + sx];
-    c[2] = c[3] = &data[row[sy + v2] + sx];
+    c[0] = c[1] = row[sy + v1] + sx;
+    c[2] = c[3] = row[sy + v2] + sx;
 
-    int *d = &dest->data[dest->row[dy + y] + dx];
+    int *d = dest->row[dy + y] + dx;
 
     int x;
     for(x = 0; x < dw; x++)
@@ -523,7 +528,7 @@ void Bitmap::stretch_line(Bitmap *dest, int x1, int x2, int y1, int y2,
 {
   int dx, dy, e, d, dx2;
   int sx, sy;
-  int p, q;
+  int *p, *q;
 
   dx = ABS(x2 - x1);
   dy = ABS(y2 - y1);
@@ -537,7 +542,7 @@ void Bitmap::stretch_line(Bitmap *dest, int x1, int x2, int y1, int y2,
   q = row[yr] + y1;
   for(d = 0; d <= dx; d++)
   {
-    dest->data[p] = data[q];
+    *p = *q;
     while(e >= 0)
     {
       q += sy;

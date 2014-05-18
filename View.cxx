@@ -25,7 +25,9 @@ static inline void grid_setpixel(const Bitmap *bmp, const int x, const int y,
 {
   if(x < 0 || y < 0 || x >= bmp->w || y >= bmp->h)
     return;
-  bmp->data[bmp->row[y] + x] = blend_fast_ex(bmp->data[bmp->row[y] + x], c, t);
+
+  int *p = bmp->row[y] + x;
+  *p = blend_fast_ex(*p, c, t);
 }
 
 static inline void grid_hline(Bitmap *bmp, int x1, int y, int x2, const int c,
@@ -38,8 +40,13 @@ static inline void grid_hline(Bitmap *bmp, int x1, int y, int x2, const int c,
   if(y < 0)
     y = 0;
 
+  int *p = bmp->row[y] + x1;
+
   for(x = x1; x <= x2; x++)
-    bmp->data[bmp->row[y] + x] = blend_fast_ex(bmp->data[bmp->row[y] + x], c, t);
+  {
+    *p = blend_fast_ex(*p, c, t);
+    p++;
+  }
 }
 
 View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
