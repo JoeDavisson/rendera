@@ -69,9 +69,11 @@ Gui::Gui()
   x1 += 24 + 8;
   display = new Widget(top_right, x1, 8, 72, 24, "Display Mode", "data/display.png", 24, 24);
   x1 += 72 + 8;
-  gridx = new Field(top_right, x1, 8, 48, 24, "Grid X");
-  x1 += 48 + 8;
-  gridy = new Field(top_right, x1, 8, 48, 24, "Grid Y");
+  grid = new ToggleButton(top_right, x1, 8, 24, 24, "Show Grid", "data/grid.png");
+  x1 += 24 + 32 + 8;
+  gridx = new Field(top_right, x1, 8, 32, 24, "Grid X");
+  x1 += 32 + 32 + 8;
+  gridy = new Field(top_right, x1, 8, 32, 24, "Grid Y");
   top_right->resizable(0);
   top_right->end();
 
@@ -92,9 +94,12 @@ Gui::Gui()
   bottom->end();
 
   // left top
-  left_top = new Fl_Group(0, top_right->h() + menubar->h(), 112, 264);
+  left_top = new Fl_Group(0, top_right->h() + menubar->h(), 112, 264 + 12);
+  left_top->label("Brush");
+  left_top->labelsize(12);
+  left_top->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   left_top->box(FL_UP_FRAME);
-  y1 = 8;
+  y1 = 20;
   brush = new Widget(left_top, 8, y1, 96, 96, "Brush Preview", 0, 0);
   brush->bitmap->clear(0xffffffff);
   y1 += 96 + 8;
@@ -110,8 +115,11 @@ Gui::Gui()
 
   // left bottom
   left_bottom = new Fl_Group(0, top_right->h() + menubar->h() + left_top->h(), 112, window->h() - (menubar->h() + top_right->h() + left_top->h()));
+  left_bottom->label("Tools");
+  left_bottom->labelsize(12);
+  left_bottom->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   left_bottom->box(FL_UP_FRAME);
-  y1 = 8;
+  y1 = 20;
   offset = new Button(left_bottom, 8, y1, 96, 24, "Offset", "data/offset.png");
   y1 += 24 + 8;
   getcolor = new Button(left_bottom, 8, y1, 96, 24, "Get Color", "data/getcolor.png");
@@ -122,8 +130,11 @@ Gui::Gui()
 
   // right
   right = new Fl_Group(window->w() - 112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  right->label("Colors");
+  right->labelsize(12);
+  right->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   right->box(FL_UP_FRAME);
-  y1 = 8;
+  y1 = 20;
   palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 16, 16);
   palette->callback((Fl_Callback *)check_palette, &palette->var);
   palette->bitmap->clear(0xffffffff);

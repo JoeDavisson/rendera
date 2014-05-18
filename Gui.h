@@ -55,6 +55,7 @@ public:
   Button *zoom_in;
   Button *zoom_out;
   Widget *display;
+  ToggleButton *grid;
   Field *gridx;
   Field *gridy;
 
