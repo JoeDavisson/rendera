@@ -24,12 +24,12 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
 : Fl_Widget(x, y, w, h, label)
 {
   group = g;
-  image = 0;
-  backbuf = 0;
   ox = 0;
   oy = 0;
   zoom = 1;
   moving = 0;
+  backbuf = new Bitmap(Fl::w(), Fl::h());
+  image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
 }
 
@@ -60,8 +60,8 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          bmp->main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
-//          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
+//          bmp->main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
+          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
           draw_main();
           return 1;
         case 2:
@@ -78,8 +78,8 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          bmp->main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
-//          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
+//          bmp->main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
+          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
           draw_main();
           return 1;
         case 2:
@@ -140,10 +140,6 @@ int View::handle(int event)
 void View::resize(int x, int y, int w, int h)
 {
   Fl_Widget::resize(x, y, w, h);
-  delete image;
-  delete backbuf;
-  backbuf = new Bitmap(w, h);
-  image = new Fl_RGB_Image((unsigned char *)backbuf->data, w, h, 4, 0);
   draw_main();
 }
 
@@ -176,12 +172,8 @@ void View::draw_main()
   int overx = dw - w();
   int overy = dh - h();
 
-printf("%d %d %d %d\n", sw, sh, dw, dh);
-
   backbuf->clear(makecol(0, 64, 0));
   temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
-  backbuf->rect(0, 0, dw - 1, dh - 1, makecol(255, 255, 0), 0);
-  backbuf->rect(1, 1, dw - 2, dh - 2, makecol(255, 255, 0), 0);
 
   redraw();
 }
@@ -271,6 +263,7 @@ void View::move()
 
 void View::draw()
 {
-  image->draw(x(), y());
+//  image->draw(x(), y());
+  image->draw(x(), y(), w(), h(), 0, 0);
 }
 

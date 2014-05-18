@@ -22,20 +22,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Bitmap::Bitmap(int width, int height)
 {
-  int i;
-
   if(width < 1)
     width = 1;
   if(height < 1)
     height = 1;
 
   data = new int[width * height];
-  row = new int [height];
+  row = new int[height];
 
   w = width;
   h = height;
 
-  set_clip(0, 0, w, h);
+  set_clip(0, 0, w - 1, h - 1);
+
+  int i;
 
   for(i = 0; i < height; i++)
     row[i] = width * i;
@@ -56,48 +56,54 @@ void Bitmap::clear(int c)
 
 void Bitmap::hline(int x1, int y, int x2, int c, int t)
 {
-  clip(&x1, &y, &x2, &y);
-
   if(x1 > x2)
+    SWAP(x1, x2);
+
+  if(y < ct || y > cb)
+    return;
+  if(x1 > cr)
+    return;
+  if(x2 < cl)
     return;
 
-  int *x = &data[row[y] + x2];
-  int *z = &data[row[y] + x1];
+  clip(&x1, &y, &x2, &y);
 
-  do
-  {
-    *x = blend->current(*x, c, t);
-    x--;
-  }
-  while(x >= z);
+  int x;
+
+  for(x = x1; x <= x2; x++)
+    data[row[y] + x] = blend->current(data[row[y] + x], c, t);
 }
 
 void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
 {
-  clip(&x1, &y1, &x2, &y2);
-
   if(x1 > x2)
     SWAP(x1, x2);
   if(y1 > y2)
     SWAP(y1, y2);
 
-  int *y = &data[row[y2] + x2];
-  int *z = &data[row[y1] + x1];
-  int d = x2 - x1;
-  int e = w - d;
+  if(x1 > cr)
+    return;
+  if(x2 < cl)
+    return;
+  if(y1 > cb)
+    return;
+  if(y2 < ct)
+    return;
 
-  hline(x1 + 1, y2, x2 - 1, c, t);
+  clip(&x1, &y1, &x2, &y2);
 
-  do
+  hline(x1, y1, x2, c, t);
+  hline(x1, y2, x2, c, t);
+  if(y1 == y2)
+    return;
+
+  int x, y;
+
+  for(y = y1 + 1; y < y2; y++)
   {
-    *y = blend->current(*y, c, t);
-    y -= d;
-    *y = blend->current(*y, c, t);
-    y -= e;
+    data[row[y] + x1] = blend->current(data[row[y] + x1], c, t);
+    data[row[y] + x2] = blend->current(data[row[y] + x2], c, t);
   }
-  while(y > z);
-
-  hline(x1 + 1, y1, x2 - 1, c, t);
 }
 
 void Bitmap::setpixel_solid(int x, int y, int c2, int t)
@@ -246,20 +252,20 @@ void Bitmap::clip(int *x1, int *y1, int *x2, int *y2)
 {
   if(*x1 < cl)
     *x1 = cl;
-  if(*x2 > cr)
-    *x2 = cr;
   if(*y1 < ct)
     *y1 = ct;
+  if(*x2 > cr)
+    *x2 = cr;
   if(*y2 > cb)
     *y2 = cb;
 }
 
-void Bitmap::set_clip(int x, int y, int w, int h)
+void Bitmap::set_clip(int x1, int y1, int x2, int y2)
 {
-  cl = x;
-  cr = w - 1;
-  ct = y;
-  cb = h - 1;
+  cl = x1;
+  ct = y1;
+  cr = x2;
+  cb = y2;
   cw = w;
   ch = h;
 }
@@ -271,7 +277,6 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
   if((sx >= w) || (sy >= h) || (dx >= dest->cr) || (dy >= dest->cb))
     return;
 
-  // clip src left
   if(sx < 0)
   {
     ww += sx;
@@ -279,7 +284,6 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
     sx = 0;
   }
 
-  // clip src top
   if(sy < 0)
   {
     hh += sy;
@@ -287,15 +291,12 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
     sy = 0;
   }
 
-  // clip src right
   if((sx + ww) > w)
     ww = w - sx;
 
-  // clip src bottom
   if((sy + hh) > h)
     hh = h - sy;
 
-  // clip dest left
   if(dx < dest->cl)
   {
     dx -= dest->cl;
@@ -304,7 +305,6 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
     dx = dest->cl;
   }
 
-  // clip dest top
   if(dy < dest->ct)
   {
     dy -= dest->ct;
@@ -313,11 +313,9 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
     dy = dest->ct;
   }
 
-  // clip dest right
   if((dx + ww - 1) > dest->cr)
     ww = dest->cr - dx;
 
-  // clip dest bottom
   if((dy + hh - 1) > dest->cb)
     hh = dest->cb - dy;
 
@@ -346,11 +344,8 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
   const int bx = ((double)sw / dw) * 256;
   const int by = ((double)sh / dh) * 256;
 
-//  dw -= overx;
-//  dh -= overy;
-
-  if(dw < 1 || dh < 1)
-    return;
+  dw -= overx;
+  dh -= overy;
 
   if(dx < dest->cl)
   {
@@ -384,31 +379,26 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
     sh -= (d * ay) >> 8;
   }
 
+  dw -= (dw - ((sw * ax) >> 8));
+  dh -= (dh - ((sh * ay) >> 8));
+
   if(sw < 1 || sh < 1)
     return;
 
   if(dw < 1 || dh < 1)
     return;
 
-  int y = 0;
-  do
+  int x, y;
+
+  for(y = 0; y < dh; y++)
   {
     const int y1 = sy + ((y * by) >> 8);
-    if(y1 >= h)
-      break;
-    int x = 0;
     int *s = &dest->data[dest->row[dy + y]];
-    do
+    for(x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 8);
-      if(x1 >= w)
-        break;
       *s++ = data[row[y1] + x1];
-      x++;
     }
-    while(x <= dw);
-    y++;
   }
-  while(y <= dh);
 }
 

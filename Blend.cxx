@@ -31,13 +31,13 @@ Blend::~Blend()
 
 int Blend::current(int c1, int c2, int t)
 {
-  switch(current_blend)
-  {
-    case 0:
+//  switch(current_blend)
+//  {
+//    case 0:
       return trans(c1, c2, t);
-  }
+//  }
 
-  return 0;
+//  return 0;
 }
 
 int Blend::invert(int c1, int c2, int t)
