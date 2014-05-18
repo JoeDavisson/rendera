@@ -70,8 +70,8 @@ Gui::Gui()
   x1 += 6;
   new Separator(top_right, x1, 2, 2, 36, "");
   x1 += 8;
-  display = new Widget(top_right, x1, 8, 72, 24, "Display Mode", "data/display.png", 24, 24);
-  x1 += 72;
+  display = new Widget(top_right, x1, 8, 48, 24, "Display Mode", "data/display.png", 24, 24);
+  x1 += 48;
   x1 += 6;
   new Separator(top_right, x1, 2, 2, 36, "");
   x1 += 8;

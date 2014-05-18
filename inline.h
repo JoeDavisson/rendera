@@ -31,12 +31,12 @@ static inline int rnd32(void)
 
 static inline int makecol(const int r, const int g, const int b)
 {
-  return b | g << 8 | r << 16 | 0xff000000;
+  return r | g << 8 | b << 16 | 0xff000000;
 }
 
 static inline int makecola(const int r, const int g, const int b, const int a)
 {
-  return b | g << 8 | r << 16 | a << 24;
+  return r | g << 8 | b << 16 | a << 24;
 }
 
 static inline int geta(const int c)
@@ -46,7 +46,7 @@ static inline int geta(const int c)
 
 static inline int getr(const int c)
 {
-  return (c >> 16) & 255;
+  return c & 255;
 }
 
 static inline int getg(const int c)
@@ -56,7 +56,7 @@ static inline int getg(const int c)
 
 static inline int getb(const int c)
 {
-  return c & 255;
+  return (c >> 16) & 255;
 }
 
 static inline int getv(const int c)

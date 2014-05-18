@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 Bmp::Bmp()
 {
   main = new Bitmap(1000, 1000);
-  main->clear(makecol(192, 128, 64));
+  main->clear(makecol(192, 96, 64));
   preview = new Bitmap(8, 8);
 }
 

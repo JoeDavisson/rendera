@@ -50,6 +50,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   oy = 0;
   zoom = 1;
   fit = 0;
+  display_mode = 0;
   moving = 0;
   grid = 0;
   gridx = 8;
@@ -87,7 +88,7 @@ int View::handle(int event)
       {
         case 1:
 //          bmp->main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
-          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
+          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, gui->palette->var * 12345 | 0xFF000000, 0);
           draw_main();
           return 1;
         case 2:
@@ -105,7 +106,7 @@ int View::handle(int event)
       {
         case 1:
 //          bmp->main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
-          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
+          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, gui->palette->var * 12345 | 0xFF000000, 0);
           draw_main();
           return 1;
         case 2:
@@ -179,7 +180,8 @@ void View::draw_main()
   }
 
   backbuf->clear(makecol(0, 0, 0));
-  temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
+//  temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
+  temp->integer_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
 
   if(grid)
     draw_grid();

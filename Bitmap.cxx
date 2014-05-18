@@ -402,8 +402,125 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
   }
 }
 
-void Bitmap::stretch_line(Bitmap *dest,
-                          int x1, int x2, int y1, int y2, int yr, int yw)
+void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
+                                           int dx, int dy, int dw, int dh,
+                                           int overx, int overy)
+{
+  const int ax = ((float)dw / sw) * 256;
+  const int ay = ((float)dh / sh) * 256;
+  const int bx = ((float)sw / dw) * 256;
+  const int by = ((float)sh / dh) * 256;
+
+  dw -= overx;
+  dh -= overy;
+
+  if(dx < dest->cl)
+  {
+    const int d = dest->cl - dx;
+    dx = dest->cl;
+    dw -= d;
+    sx += (d * ax) >> 8;
+    sw -= (d * ax) >> 8;
+  }
+
+  if(dx + dw > dest->cr)
+  {
+    const int d = dx + dw - dest->cr;
+    dw -= d;
+    sw -= (d * ax) >> 8;
+  }
+
+  if(dy < dest->ct)
+  {
+    const int d = dest->ct - dy;
+    dy = dest->ct;
+    dh -= d;
+    sy += (d * ay) >> 8;
+    sh -= (d * ay) >> 8;
+  }
+
+  if(dy + dh > dest->cb)
+  {
+    const int d = dy + dh - dest->cb;
+    dh -= d;
+    sh -= (d * ay) >> 8;
+  }
+
+  dw -= (dw - ((sw * ax) >> 8));
+  dh -= (dh - ((sh * ay) >> 8));
+
+  if(sw < 1 || sh < 1)
+    return;
+
+  if(dw < 1 || dh < 1)
+    return;
+
+  int y;
+  for(y = 0; y < dh; y++)
+  {
+    int vv = (y * by);
+    int v1 = vv >> 8;
+    int v = ((vv - (v1 << 8)) << 4) >> 8;
+    if(sy + v1 >= h - 1)
+      break;
+    int v2 = (v1 < (sh - 1) ? v1 + 1 : v1);
+
+    int *c[4];
+    c[0] = c[1] = &data[row[sy + v1] + sx];
+    c[2] = c[3] = &data[row[sy + v2] + sx];
+
+    int *d = &dest->data[dest->row[dy + y] + dx];
+
+    int x;
+    for(x = 0; x < dw; x++)
+    {
+      int uu = (x * bx);
+      int u1 = uu >> 8;
+      int u = ((uu - (u1 << 8)) << 4) >> 8;
+      if(sx + u1 >= w - 1)
+        break;
+      int u2 = (u1 < (sw - 1) ? u1 + 1 : u1);
+
+      c[0] += u1;
+      c[1] += u2;
+      c[2] += u1;
+      c[3] += u2;
+
+      int f[4];
+
+      int u16 = 16 - u;
+      int v16 = 16 - v;
+
+      int a = (u16 | (u << 8)) * (v16 | (v16 << 8));
+      int b = (u16 | (u << 8)) * (v | (v << 8));
+
+      f[0] = (a & 0x00000FFF);
+      f[1] = (a & 0x0FFF0000) >> 16;
+      f[2] = (b & 0x00000FFF);
+      f[3] = (b & 0x0FFF0000) >> 16;
+
+      int rb = 0;
+      int g = 0;
+      int i;
+      for(i = 0; i < 4; i++)
+      {
+        rb += (((*c[i] & 0xFF00FF) * f[i]) >> 8) & 0xFF00FF;
+        g += (((*c[i] & 0xFF00) * f[i]) >> 8) & 0xFF00;
+        i++;
+      }
+
+      *d++ = rb | g | 0xFF000000;
+
+      c[0] -= u1;
+      c[1] -= u2;
+      c[2] -= u1;
+      c[3] -= u2;
+    }
+  }
+}
+
+void Bitmap::stretch_line(Bitmap *dest, int x1, int x2, int y1, int y2,
+                                        int yr, int yw)
 {
   int dx, dy, e, d, dx2;
   int sx, sy;
