@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef RENDERA_H
 #define RENDERA_H
 
+using namespace std;
+
 #define MIN(x, y)          (((x) < (y)) ? (x) : (y))
 #define MAX(x, y)          (((x) > (y)) ? (x) : (y))
 #define MID(a, b, c)       (MAX(a, MIN(b, c)))
@@ -41,6 +43,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Tooltip.H>
+
+// for printf, remove eventually
+#include <stdio.h>
 
 #include "inline.h"
 #include "Var.h"

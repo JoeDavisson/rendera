@@ -60,7 +60,8 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
+          bmp->main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
+//          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
           draw_main();
           return 1;
         case 2:
@@ -77,7 +78,8 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
+          bmp->main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
+//          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
           draw_main();
           return 1;
         case 2:
@@ -123,10 +125,10 @@ int View::handle(int event)
         {
           ox += mousex / zoom;
           oy += mousey / zoom;
-          if(ox > bmp->main->w - w() / zoom - 1)
-            ox = bmp->main->w - w() / zoom - 1;
-          if(oy > bmp->main->h - h() / zoom - 1)
-            oy = bmp->main->h - h() / zoom - 1;
+          if(ox > bmp->main->w - w() / zoom)
+            ox = bmp->main->w - w() / zoom;
+          if(oy > bmp->main->h - h() / zoom)
+            oy = bmp->main->h - h() / zoom;
         }
       }
       draw_main();
@@ -137,12 +139,12 @@ int View::handle(int event)
 
 void View::resize(int x, int y, int w, int h)
 {
+  Fl_Widget::resize(x, y, w, h);
   delete image;
   delete backbuf;
   backbuf = new Bitmap(w, h);
   image = new Fl_RGB_Image((unsigned char *)backbuf->data, w, h, 4, 0);
   draw_main();
-  Fl_Widget::resize(x, y, w, h);
 }
 
 void View::draw_move()
@@ -157,16 +159,13 @@ void View::draw_move()
 
 void View::draw_main()
 {
-  int ww = w();
-  int hh = h();
+  int sw = w() / zoom;
+  int sh = h() / zoom;
 
-  int sw = ww / zoom;
-  int sh = hh / zoom;
-
-  if(sw > bmp->main->w)
-    sw = bmp->main->w;
-  if(sh > bmp->main->h)
-    sh = bmp->main->h;
+  if(sw > bmp->main->w - ox)
+    sw = bmp->main->w - ox;
+  if(sh > bmp->main->h - oy)
+    sh = bmp->main->h - oy;
 
   Bitmap *temp = new Bitmap(sw, sh);
   bmp->main->blit(temp, ox, oy, 0, 0, sw, sh);
@@ -177,8 +176,12 @@ void View::draw_main()
   int overx = dw - w();
   int overy = dh - h();
 
-  backbuf->clear(makecol(0, 255, 0));
+printf("%d %d %d %d\n", sw, sh, dw, dh);
+
+  backbuf->clear(makecol(0, 64, 0));
   temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
+  backbuf->rect(0, 0, dw - 1, dh - 1, makecol(255, 255, 0), 0);
+  backbuf->rect(1, 1, dw - 2, dh - 2, makecol(255, 255, 0), 0);
 
   redraw();
 }
@@ -228,7 +231,7 @@ void View::begin_move()
   // pos.y = by + bh / 2;
   // warp mouse here... (unsupported in fltk)
 
-  redraw();
+//  redraw();
 }
 
 void View::move()

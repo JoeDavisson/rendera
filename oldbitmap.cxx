@@ -43,8 +43,8 @@ Bitmap::Bitmap(int width, int height)
 
 Bitmap::~Bitmap()
 {
-  delete[] row;
-  delete[] data;
+  delete row;
+  delete data;
 }
 
 void Bitmap::clear(int c)
@@ -346,8 +346,8 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
   const int bx = ((double)sw / dw) * 256;
   const int by = ((double)sh / dh) * 256;
 
-//  dw -= overx;
-//  dh -= overy;
+  dw -= overx;
+  dh -= overy;
 
   if(dw < 1 || dh < 1)
     return;

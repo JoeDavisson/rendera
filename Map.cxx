@@ -56,8 +56,8 @@ Map::Map(int width, int height)
 
 Map::~Map()
 {
-  delete row;
-  delete data;
+  delete[] row;
+  delete[] data;
 }
 
 void Map::clear(int c)
