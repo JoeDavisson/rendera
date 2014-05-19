@@ -22,45 +22,50 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Stroke::Stroke()
 {
+  current = 0;
 }
 
 Stroke::~Stroke()
 {
 }
 
-void Stroke::freehand()
+int Stroke::freehand()
 {
+  return 0;
 }
 
-void end_freehand()
+int Stroke::region()
 {
+  return 0;
 }
 
-void Stroke::filledarea()
+int Stroke::line()
 {
+  return 0;
 }
 
-void Stroke::line()
+int Stroke::polygon()
 {
+  return 0;
 }
 
-void Stroke::polygon()
+int Stroke::rect()
 {
+  return 0;
 }
 
-void Stroke::rect()
+int Stroke::rectfill()
 {
+  return 0;
 }
 
-void Stroke::rectfill()
+int Stroke::oval()
 {
+  return 0;
 }
 
-void Stroke::oval()
+int Stroke::ovalfill()
 {
-}
-
-void Stroke::ovalfill()
-{
+  return 0;
 }
 

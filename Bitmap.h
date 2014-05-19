@@ -39,9 +39,10 @@ public:
   void rect(int, int, int, int, int, int);
   void setpixel_solid(int, int, int ,int);
   void setpixel_wrap(int, int, int ,int);
-  void setpixel_clone(int, int, int ,int);
-  void setpixel_wrap_clone(int, int, int ,int);
+  void setpixel_clone(Clone *clone, int, int, int ,int);
+  void setpixel_wrap_clone(Clone *clone, int, int, int ,int);
   int getpixel(int, int);
+  int getpixel_wrap(int, int);
   void clip(int *, int *, int *, int *);
   void set_clip(int, int, int, int);
   void blit(Bitmap *, int, int, int, int, int, int);

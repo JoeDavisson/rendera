@@ -48,12 +48,11 @@ using namespace std;
 #include <stdlib.h>
 
 #include "inline.h"
-#include "Var.h"
 #include "Blend.h"
+#include "Clone.h"
 #include "Bitmap.h"
 #include "Map.h"
 #include "Bmp.h"
-#include "Brush.h"
 #include "Stroke.h"
 #include "View.h"
 #include "Widget.h"
@@ -64,11 +63,10 @@ using namespace std;
 #include "check.h"
 #include "Gui.h"
 
-extern Var *var;
 extern Bmp *bmp;
-extern Brush *brush;
 extern Blend *blend;
 extern Stroke *stroke;
+extern Map *map;
 extern Gui *gui;
 
 #endif

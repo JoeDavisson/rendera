@@ -137,48 +137,45 @@ void Bitmap::setpixel_wrap(int x, int y, int c2, int t)
   *c1 = blend->current(*c1, c2, t);
 }
 
-void Bitmap::setpixel_clone(int x, int y, int c2, int t)
+void Bitmap::setpixel_clone(Clone *clone, int x, int y, int c2, int t)
 {
   if(x < cl || x > cr || y < ct || y > cb)
     return;
 
   int *c1 = row[y] + x;
 
-  int x1 = x - var->deltax;
-  int y1 = y - var->deltay;
+  int x1 = x - clone->dx;
+  int y1 = y - clone->dy;
 
   int w1 = w - 1;
   int h1 = h - 1;
 
-  switch(var->mirror)
+  switch(clone->mirror)
   {
     case 0:
       x1 = x1;
       y1 = y1;
       break;
     case 1:
-      x1 = (w1 - x1) - (w1 - var->clonex * 2);
+      x1 = (w1 - x1) - (w1 - clone->x * 2);
       y1 = y1;
       break;
     case 2:
       x1 = x1;
-      y1 = (h1 - y1) - (h1 - var->cloney * 2);
+      y1 = (h1 - y1) - (h1 - clone->y * 2);
       break;
     case 3:
-      x1 = (w1 - x1) - (w1 - var->clonex * 2);
-      y1 = (h1 - y1) - (h1 - var->cloney * 2);
+      x1 = (w1 - x1) - (w1 - clone->x * 2);
+      y1 = (h1 - y1) - (h1 - clone->y * 2);
       break;
   }
 
-  if(x1 >= stroke->x1 && x1 < stroke->x2 && y1 >= stroke->y1 && y1 < stroke->y2)
-    c2 = bmp->clone->getpixel(x1 - stroke->x1, y1 - stroke->y1);
-  else
-    c2 = bmp->main->getpixel(x1, y1);
+  c2 = bmp->main->getpixel(x1, y1);
 
   *c1 = blend->current(*c1, c2, t);
 }
 
-void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
+void Bitmap::setpixel_wrap_clone(Clone *clone, int x, int y, int c2, int t)
 {
   while(x < cl)
     x += cw;
@@ -191,64 +188,61 @@ void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
 
   int *c1 = row[y] + x;
 
-  int x1 = x - var->deltax;
-  int y1 = y - var->deltay;
+  int x1 = x - clone->dx;
+  int y1 = y - clone->dy;
 
   int w1 = w - 1;
   int h1 = h - 1;
 
-  switch(var->mirror)
+  switch(clone->mirror)
   {
     case 0:
       x1 = x1;
       y1 = y1;
       break;
     case 1:
-      x1 = (w1 - x1) - (w1 - var->clonex * 2);
+      x1 = (w1 - x1) - (w1 - clone->x * 2);
       y1 = y1;
       break;
     case 2:
       x1 = x1;
-      y1 = (h1 - y1) - (h1 - var->cloney * 2);
+      y1 = (h1 - y1) - (h1 - clone->y * 2);
       break;
     case 3:
-      x1 = (w1 - x1) - (w1 - var->clonex * 2);
-      y1 = (h1 - y1) - (h1 - var->cloney * 2);
+      x1 = (w1 - x1) - (w1 - clone->x * 2);
+      y1 = (h1 - y1) - (h1 - clone->y * 2);
       break;
   }
 
-  if(x1 >= stroke->x1 && x1 < stroke->x2 && y1 >= stroke->y1 && y1 < stroke->y2)
-    c2 = bmp->clone->getpixel(x1 - stroke->x1, y1 - stroke->y1);
-  else
-    c2 = bmp->clone->getpixel(x1, y1);
+  c2 = bmp->main->getpixel(x1, y1);
 
   *c1 = blend->current(*c1, c2, t);
 }
 
 int Bitmap::getpixel(int x, int y)
 {
-  if(var->wrap)
-  {
-    while(x < cl)
-      x += cw;
-    while(x > cr)
-      x -= cw;
-    while(y < ct)
-      y += ch;
-    while(y > cb)
-      y -= ch;
-  }
-  else
-  {
-    if(x < cl)
-      x = cl;
-    if(x > cr)
-      x = cr;
-    if(y < ct)
-      y = ct;
-    if(y > cb)
-      y = cb;
-  }
+  if(x < cl)
+    x = cl;
+  if(x > cr)
+    x = cr;
+  if(y < ct)
+    y = ct;
+  if(y > cb)
+    y = cb;
+
+  return *(row[y] + x);
+}
+
+int Bitmap::getpixel_wrap(int x, int y)
+{
+  while(x < cl)
+    x += cw;
+  while(x > cr)
+    x -= cw;
+  while(y < ct)
+  y += ch;
+  while(y > cb)
+    y -= ch;
 
   return *(row[y] + x);
 }

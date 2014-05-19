@@ -21,21 +21,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "rendera.h"
 #include <iostream>
 
-Var *var;
 Bmp *bmp;
-Brush *brush;
 Blend *blend;
 Stroke *stroke;
+Map *map;
 Gui *gui;
 
 int main(int argc, char **argv)
 {
   Fl::visual(FL_DOUBLE | FL_INDEX);
 
-  var = new Var();
   bmp = new Bmp();
   blend = new Blend();
   stroke = new Stroke();
+  map = new Map(Fl::w(), Fl::h());
   gui = new Gui();
 
   return Fl::run();

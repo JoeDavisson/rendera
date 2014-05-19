@@ -18,28 +18,20 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef STROKE_H
-#define STROKE_H
+#ifndef CLONE_H
+#define CLONE_H
 
 #include "rendera.h"
 
-class Stroke
+class Clone
 {
 public:
-  Stroke();
-  virtual ~Stroke();
+  Clone();
+  virtual ~Clone();
 
-  int freehand();
-  int region();
-  int line();
-  int polygon();
-  int rect();
-  int rectfill();
-  int oval();
-  int ovalfill();
-
-  int x1, y1, x2, y2;
-  int current;
+  int x, y;
+  int dx, dy;
+  int mirror;
 };
 
 #endif

@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+/*
 static int is_edge(Map *map, int x, int y)
 {
   if((map->getpixel(x - 1, y) == 0xff) &&
@@ -34,6 +35,7 @@ static int is_edge(Map *map, int x, int y)
     return 1;
   }
 }
+*/
 
 Map::Map(int width, int height)
 {
