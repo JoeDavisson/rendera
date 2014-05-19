@@ -461,30 +461,31 @@ void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
     return;
 
   int y;
+
   for(y = 0; y < dh; y++)
   {
-    int vv = (y * by);
-    int v1 = vv >> 8;
-    int v = ((vv - (v1 << 8)) << 4) >> 8;
+    const int vv = (y * by);
+    const int v1 = vv >> 8;
+    const int v = ((vv - (v1 << 8)) << 4) >> 8;
     if(sy + v1 >= h - 1)
       break;
-    int v2 = (v1 < (sh - 1) ? v1 + 1 : v1);
+    const int v2 = (v1 < (sh - 1) ? v1 + 1 : v1);
 
     int *c[4];
     c[0] = c[1] = row[sy + v1] + sx;
     c[2] = c[3] = row[sy + v2] + sx;
 
     int *d = dest->row[dy + y] + dx;
-
     int x;
+
     for(x = 0; x < dw; x++)
     {
-      int uu = (x * bx);
-      int u1 = uu >> 8;
-      int u = ((uu - (u1 << 8)) << 4) >> 8;
+      const int uu = (x * bx);
+      const int u1 = uu >> 8;
+      const int u = ((uu - (u1 << 8)) << 4) >> 8;
       if(sx + u1 >= w - 1)
         break;
-      int u2 = (u1 < (sw - 1) ? u1 + 1 : u1);
+      const int u2 = (u1 < (sw - 1) ? u1 + 1 : u1);
 
       c[0] += u1;
       c[1] += u2;
@@ -493,8 +494,8 @@ void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
 
       int f[4];
 
-      int u16 = 16 - u;
-      int v16 = 16 - v;
+      const int u16 = 16 - u;
+      const int v16 = 16 - v;
 
       int a = (u16 | (u << 8)) * (v16 | (v16 << 8));
       int b = (u16 | (u << 8)) * (v | (v << 8));
@@ -507,6 +508,7 @@ void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
       int rb = 0;
       int g = 0;
       int i;
+
       for(i = 0; i < 4; i++)
       {
         rb += (((*c[i] & 0xFF00FF) * f[i]) >> 8) & 0xFF00FF;
@@ -520,36 +522,6 @@ void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
       c[2] -= u1;
       c[3] -= u2;
     }
-  }
-}
-
-void Bitmap::stretch_line(Bitmap *dest, int x1, int x2, int y1, int y2,
-                                        int yr, int yw)
-{
-  int dx, dy, e, d, dx2;
-  int sx, sy;
-  int *p, *q;
-
-  dx = ABS(x2 - x1);
-  dy = ABS(y2 - y1);
-  sx = SIGN(x2 - x1);
-  sy = SIGN(y2 - y1);
-  dy <<= 1;
-  e = dy - dx;
-  dx2 = dx << 1;
-
-  p = dest->row[yw] + x1;
-  q = row[yr] + y1;
-  for(d = 0; d <= dx; d++)
-  {
-    *p = *q;
-    while(e >= 0)
-    {
-      q += sy;
-      e -= dx2;
-    }
-    p += sx;
-    e += dy;
   }
 }
 
@@ -579,13 +551,41 @@ void Bitmap::fast_stretch(Bitmap *dest,
 
   for(d = 0; d <= dx; d++)
   {
-    stretch_line(dest, xd1, xd2, xs1, xs2, ys1, yd1);
+    int dx_1, dy_1, e_1, d_1, dx2_1;
+    int sx_1, sy_1;
+    int *p, *q;
+
+    dx_1 = ABS(xd2 - xd1);
+    dy_1 = ABS(ys2 - ys1);
+    sx_1 = SIGN(xd2 - xd1);
+    sy_1 = SIGN(ys2 - ys1);
+    dy_1 <<= 1;
+    e_1 = dy_1 - dx_1;
+    dx2_1 = dx_1 << 1;
+
+    p = dest->row[yd1] + xd1;
+    q = row[ys1] + xs1;
+
+    for(d_1 = 0; d_1 <= dx_1; d_1++)
+    {
+      *p = *q;
+
+      while(e_1 >= 0)
+      {
+        q += sy_1;
+        e_1 -= dx2_1;
+      }
+
+      p += sx_1;
+      e_1 += dy_1;
+    }
+
     while(e >= 0)
     {
       ys1 += sy;
       e -= dx2;
-
     }
+
     yd1 += sx;
     e += dy;
   }
