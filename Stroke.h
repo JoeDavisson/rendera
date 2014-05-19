@@ -29,7 +29,6 @@ public:
   Stroke();
   virtual ~Stroke();
 
-  void make_blitrect(int, int, int, int);
   void freehand();
   void filledarea();
   void line();
@@ -39,10 +38,7 @@ public:
   void oval();
   void ovalfill();
 
-  int current;
   int x1, y1, x2, y2;
-  Map *backbuf;
-  int blitx, blity, blitw, blith;
 };
 
 #endif
