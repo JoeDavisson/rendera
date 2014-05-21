@@ -94,8 +94,8 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-//          bmp->main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
-          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, gui->palette->var * 12345 | 0xFF000000, 0);
+//          Bmp::main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
+          Bmp::main->rect(imgx, imgy, imgx + 4, imgy + 4, gui->palette->var * 12345 | 0xFF000000, 0);
           draw_main();
           return 1;
         case 2:
@@ -112,8 +112,8 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-//          bmp->main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
-          bmp->main->rect(imgx, imgy, imgx + 4, imgy + 4, gui->palette->var * 12345 | 0xFF000000, 0);
+//          Bmp::main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
+          Bmp::main->rect(imgx, imgy, imgx + 4, imgy + 4, gui->palette->var * 12345 | 0xFF000000, 0);
           draw_main();
           return 1;
         case 2:
@@ -152,8 +152,8 @@ void View::resize(int x, int y, int w, int h)
 void View::draw_move()
 {
   backbuf->clear(makecol(0, 0, 0));
-  bmp->preview->blit(backbuf, 0, 0, px, py, bmp->preview->w, bmp->preview->h);
-  // bmp->preview->blit(backbuf, bx - px, by - py, bx, by, bw, bh);
+  Bmp::preview->blit(backbuf, 0, 0, px, py, Bmp::preview->w, Bmp::preview->h);
+  // Bmp::preview->blit(backbuf, bx - px, by - py, bx, by, bw, bh);
   backbuf->rect(bx, by, bx + bw - 1, by + bh - 1, makecol(0, 0, 0), 0);
   backbuf->rect(bx + 1, by + 1, bx + bw - 2, by + bh - 2, makecol(255, 255, 255), 0);
   redraw();
@@ -166,13 +166,13 @@ void View::draw_main()
   sw += 2;
   sh += 2;
 
-  if(sw > bmp->main->w - ox)
-    sw = bmp->main->w - ox;
-  if(sh > bmp->main->h - oy)
-    sh = bmp->main->h - oy;
+  if(sw > Bmp::main->w - ox)
+    sw = Bmp::main->w - ox;
+  if(sh > Bmp::main->h - oy)
+    sh = Bmp::main->h - oy;
 
   Bitmap *temp = new Bitmap(sw, sh);
-  bmp->main->blit(temp, ox, oy, 0, 0, sw, sh);
+  Bmp::main->blit(temp, ox, oy, 0, 0, sw, sh);
 
   int dw = sw * zoom;
   int dh = sh * zoom;
@@ -254,7 +254,7 @@ void View::begin_move()
   int hh = h();
 
   winaspect = (float)hh / ww;
-  aspect = (float)bmp->main->h / bmp->main->w;
+  aspect = (float)Bmp::main->h / Bmp::main->w;
 
   pw = ww;
   ph = hh;
@@ -268,10 +268,10 @@ void View::begin_move()
   if(ph > hh)
     ph = hh;
 
-  delete bmp->preview;
-  bmp->preview = new Bitmap(pw, ph);
-  bmp->main->fast_stretch(bmp->preview,
-                          0, 0, bmp->main->w, bmp->main->h,
+  delete Bmp::preview;
+  Bmp::preview = new Bitmap(pw, ph);
+  Bmp::main->fast_stretch(Bmp::preview,
+                          0, 0, Bmp::main->w, Bmp::main->h,
                           0, 0, pw, ph);
 
   px = (ww - pw) >> 1;
@@ -279,11 +279,11 @@ void View::begin_move()
   px += dx;
   py += dy;
 
-  bw = ww * (((float)pw / zoom) / bmp->main->w);
+  bw = ww * (((float)pw / zoom) / Bmp::main->w);
   bh = bw * winaspect;
 
-  bx = ox * ((float)pw / bmp->main->w) + px;
-  by = oy * ((float)ph / bmp->main->h) + py;
+  bx = ox * ((float)pw / Bmp::main->w) + px;
+  by = oy * ((float)ph / Bmp::main->h) + py;
 
   // pos.x = bx + bw / 2;
   // pos.y = by + bh / 2;
@@ -306,8 +306,8 @@ void View::move()
   if(by > py + ph - bh - 1)
     by = py + ph - bh - 1;
 
-  ox = (bx - px) / ((float)pw / (bmp->main->w));
-  oy = (by - py) / ((float)ph / (bmp->main->h));
+  ox = (bx - px) / ((float)pw / (Bmp::main->w));
+  oy = (by - py) / ((float)ph / (Bmp::main->h));
 
   if(bw > pw)
   {
@@ -341,10 +341,10 @@ void View::zoom_in(int x, int y)
   {
     ox += x / zoom;
     oy += y / zoom;
-    if(ox > bmp->main->w - w() / zoom)
-      ox = bmp->main->w - w() / zoom;
-    if(oy > bmp->main->h - h() / zoom)
-      oy = bmp->main->h - h() / zoom;
+    if(ox > Bmp::main->w - w() / zoom)
+      ox = Bmp::main->w - w() / zoom;
+    if(oy > Bmp::main->h - h() / zoom)
+      oy = Bmp::main->h - h() / zoom;
   }
   draw_main();
 }
@@ -385,12 +385,12 @@ void View::zoom_fit(int fitting)
   }
 
   winaspect = (float)h() / w();
-  aspect = (float)bmp->main->h / bmp->main->w;
+  aspect = (float)Bmp::main->h / Bmp::main->w;
 
   if(aspect < winaspect)
-    zoom = ((float)w() / bmp->main->w);
+    zoom = ((float)w() / Bmp::main->w);
   else
-    zoom = ((float)h() / bmp->main->h);
+    zoom = ((float)h() / Bmp::main->h);
 
   ox = 0;
   oy = 0;

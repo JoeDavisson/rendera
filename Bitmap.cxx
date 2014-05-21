@@ -74,7 +74,7 @@ void Bitmap::hline(int x1, int y, int x2, int c, int t)
 
   for(x = x1; x <= x2; x++)
   {
-    *p = blend->current(*p, c, t);
+    *p = Blend::current(*p, c, t);
     p++;
   }
 }
@@ -106,8 +106,8 @@ void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
 
   for(y = y1 + 1; y < y2; y++)
   {
-    *(row[y] + x1) = blend->current(*(row[y] + x1), c, t);
-    *(row[y] + x2) = blend->current(*(row[y] + x2), c, t);
+    *(row[y] + x1) = Blend::current(*(row[y] + x1), c, t);
+    *(row[y] + x2) = Blend::current(*(row[y] + x2), c, t);
   }
 }
 
@@ -118,7 +118,7 @@ void Bitmap::setpixel_solid(int x, int y, int c2, int t)
 
   int *c1 = row[y] + x;
 
-  *c1 = blend->current(*c1, c2, t);
+  *c1 = Blend::current(*c1, c2, t);
 }
 
 void Bitmap::setpixel_wrap(int x, int y, int c2, int t)
@@ -134,7 +134,7 @@ void Bitmap::setpixel_wrap(int x, int y, int c2, int t)
 
   int *c1 = row[y] + x;
 
-  *c1 = blend->current(*c1, c2, t);
+  *c1 = Blend::current(*c1, c2, t);
 }
 
 void Bitmap::setpixel_clone(Clone *clone, int x, int y, int c2, int t)
@@ -170,9 +170,9 @@ void Bitmap::setpixel_clone(Clone *clone, int x, int y, int c2, int t)
       break;
   }
 
-  c2 = bmp->main->getpixel(x1, y1);
+  c2 = getpixel(x1, y1);
 
-  *c1 = blend->current(*c1, c2, t);
+  *c1 = Blend::current(*c1, c2, t);
 }
 
 void Bitmap::setpixel_wrap_clone(Clone *clone, int x, int y, int c2, int t)
@@ -214,9 +214,9 @@ void Bitmap::setpixel_wrap_clone(Clone *clone, int x, int y, int c2, int t)
       break;
   }
 
-  c2 = bmp->main->getpixel(x1, y1);
+  c2 = getpixel(x1, y1);
 
-  *c1 = blend->current(*c1, c2, t);
+  *c1 = Blend::current(*c1, c2, t);
 }
 
 int Bitmap::getpixel(int x, int y)

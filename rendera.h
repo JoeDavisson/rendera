@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef RENDERA_H
 #define RENDERA_H
 
-using namespace std;
-
 #define MIN(x, y)          (((x) < (y)) ? (x) : (y))
 #define MAX(x, y)          (((x) > (y)) ? (x) : (y))
 #define MID(a, b, c)       (MAX(a, MIN(b, c)))
@@ -63,10 +61,6 @@ using namespace std;
 #include "check.h"
 #include "Gui.h"
 
-extern Bmp *bmp;
-extern Blend *blend;
-extern Stroke *stroke;
-extern Map *map;
 extern Gui *gui;
 
 #endif

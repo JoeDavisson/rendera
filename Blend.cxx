@@ -20,24 +20,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+int (*Blend::current)(int, int, int) = &trans;
+
 Blend::Blend()
 {
-  current_blend = 0;
 }
 
 Blend::~Blend()
 {
-}
-
-int Blend::current(int c1, int c2, int t)
-{
-//  switch(current_blend)
-//  {
-//    case 0:
-      return trans(c1, c2, t);
-//  }
-
-//  return 0;
 }
 
 int Blend::invert(int c1, int c2, int t)
@@ -103,7 +93,7 @@ int Blend::sub(int c1, int c2, int t)
 
 int Blend::colorize(int c1, int c2, int t)
 {
-  int c3 = blend->trans(c1, c2, t);
+  int c3 = trans(c1, c2, t);
 
   return force_lum(c3, getl(c1));
 }

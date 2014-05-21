@@ -29,9 +29,8 @@ public:
   Bmp();
   virtual ~Bmp();
 
-  Bitmap *main;
-  Bitmap *preview;
-  Bitmap *clone;
+  static Bitmap *main;
+  static Bitmap *preview;
 };
 
 #endif

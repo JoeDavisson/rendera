@@ -19,22 +19,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include "rendera.h"
-#include <iostream>
 
-Bmp *bmp;
-Blend *blend;
-Stroke *stroke;
-Map *map;
 Gui *gui;
 
 int main(int argc, char **argv)
 {
   Fl::visual(FL_DOUBLE | FL_INDEX);
 
-  bmp = new Bmp();
-  blend = new Blend();
-  stroke = new Stroke();
-  map = new Map(Fl::w(), Fl::h());
+  Bmp::main = new Bitmap(512, 512);
+  Bmp::main->clear(makecol(255, 255, 255));
+  Bmp::preview = new Bitmap(8, 8);
+
   gui = new Gui();
 
   return Fl::run();

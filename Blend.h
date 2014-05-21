@@ -29,17 +29,17 @@ public:
   Blend();
   virtual ~Blend();
 
-  int current(int, int, int);
-  int invert(int, int, int);
-  int trans(int, int, int);
-  int add(int, int, int);
-  int sub(int, int, int);
-  int colorize(int, int, int);
-  int force_lum(int, int);
-  void hsv_to_rgb(int, int, int, int *, int *, int *);
-  void rgb_to_hsv(int, int, int, int *, int *, int *);
+  static int invert(int, int, int);
+  static int trans(int, int, int);
+  static int add(int, int, int);
+  static int sub(int, int, int);
+  static int colorize(int, int, int);
+  static int force_lum(int, int);
+  static void hsv_to_rgb(int, int, int, int *, int *, int *);
+  static void rgb_to_hsv(int, int, int, int *, int *, int *);
 
-  int current_blend;
+  // pointer to current blender
+  static int (*current)(int, int, int);
 };
 
 #endif
