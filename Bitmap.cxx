@@ -585,3 +585,42 @@ void Bitmap::fast_stretch(Bitmap *dest,
   }
 }
 
+// render quad
+void Bitmap::quad(int *x, int *y, int c, int t)
+{
+  if(y[0] > y[1])
+  {
+    SWAP(x[0], x[1]);
+    SWAP(y[0], y[1]);
+  }
+
+  if(y[2] > y[3])
+  {
+    SWAP(x[2], x[3]);
+    SWAP(y[2], y[3]);
+  }
+
+  if(y[0] > y[2])
+  {
+    SWAP(x[0], x[2]);
+    SWAP(y[0], y[2]);
+  }
+
+  if(y[1] > y[3])
+  {
+    SWAP(x[1], x[3]);
+    SWAP(y[1], y[3]);
+  }
+
+  if(y[1] > y[2])
+  {
+    SWAP(x[1], x[2]);
+    SWAP(y[1], y[2]);
+  }
+
+  setpixel_solid(x[0], y[0], c, t);
+  setpixel_solid(x[1], y[1], c, t);
+  setpixel_solid(x[2], y[2], c, t);
+  setpixel_solid(x[3], y[3], c, t);
+}
+

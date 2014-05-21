@@ -50,6 +50,7 @@ public:
   void integer_stretch(Bitmap *, int, int, int, int, int, int, int, int, int, int);
   void stretch_line(Bitmap *, int, int, int, int, int, int);
   void fast_stretch(Bitmap *, int, int, int, int, int, int, int, int);
+  void quad(int *, int *, int, int);
 };
 
 #endif
