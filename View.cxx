@@ -94,8 +94,7 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-//          Bmp::main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
-          Bmp::main->rect(imgx, imgy, imgx + 4, imgy + 4, gui->palette->var * 12345 | 0xFF000000, 0);
+          Bmp::main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
           draw_main();
           return 1;
         case 2:
@@ -112,8 +111,7 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-//          Bmp::main->setpixel_solid(imgx, imgy, makecol(0, 0, 0), 0);
-          Bmp::main->rect(imgx, imgy, imgx + 4, imgy + 4, gui->palette->var * 12345 | 0xFF000000, 0);
+          Bmp::main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
           draw_main();
           return 1;
         case 2:

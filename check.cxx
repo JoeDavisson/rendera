@@ -1,5 +1,7 @@
 #include "rendera.h"
 
+extern Gui *gui;
+
 void check_palette(Widget *widget, void *var)
 {
   widget->bitmap->clear(*(int *)var * 12345 | 0xff000000);
