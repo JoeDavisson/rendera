@@ -550,9 +550,9 @@ void Bitmap::fast_stretch(Bitmap *dest,
     int *p, *q;
 
     dx_1 = ABS(xd2 - xd1);
-    dy_1 = ABS(ys2 - ys1);
+    dy_1 = ABS(xs2 - xs1);
     sx_1 = SIGN(xd2 - xd1);
-    sy_1 = SIGN(ys2 - ys1);
+    sy_1 = SIGN(xs2 - xs1);
     dy_1 <<= 1;
     e_1 = dy_1 - dx_1;
     dx2_1 = dx_1 << 1;
