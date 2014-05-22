@@ -585,42 +585,141 @@ void Bitmap::fast_stretch(Bitmap *dest,
   }
 }
 
-// render quad
-void Bitmap::quad(int *x, int *y, int c, int t)
+static inline void store_line(int *xbuf, int *count, int x1, int y1, int x2, int y2)
 {
-  if(y[0] > y[1])
+  int dx = x2 - x1;
+  int dy = y2 - y1;
+
+  int inx = dx > 0 ? 1 : -1;
+  int iny = dy > 0 ? 1 : -1;
+
+  int e;
+
+  dx = ABS(dx);
+  dy = ABS(dy);
+
+    if(dx >= dy)
   {
-    SWAP(x[0], x[1]);
-    SWAP(y[0], y[1]);
+    dy <<= 1;
+    e = dy - dx;
+    dx <<= 1;
+
+    while(x1 != x2)
+    {
+      xbuf[*count++] = x1;
+
+      if(e >= 0)
+      {
+        y1 += iny;
+        e -= dx;
+      }
+
+      e += dy;
+      x1 += inx;
+    }
+  }
+  else
+  {
+    dx <<= 1;
+    e = dx - dy;
+    dy <<= 1;
+
+    while(y1 != y2)
+    {
+      xbuf[*count++] = x1;
+
+      if(e >= 0)
+      {
+        x1 += inx;
+        e -= dy;
+      }
+
+      e += dx;
+      y1 += iny;
+    }
   }
 
-  if(y[2] > y[3])
+  xbuf[*count++] = x1;
+}
+
+// test render quad
+void Bitmap::quad(int *px, int *py, int c, int t)
+{
+  int *left_buf = new int[65536 * 2];
+  int *right_buf = new int[65536 * 2];
+
+  // sort vertically
+  if(py[0] > py[1])
   {
-    SWAP(x[2], x[3]);
-    SWAP(y[2], y[3]);
+    SWAP(px[0], px[1]);
+    SWAP(py[0], py[1]);
   }
 
-  if(y[0] > y[2])
+  if(py[2] > py[3])
   {
-    SWAP(x[0], x[2]);
-    SWAP(y[0], y[2]);
+    SWAP(px[2], px[3]);
+    SWAP(py[2], py[3]);
   }
 
-  if(y[1] > y[3])
+  if(py[0] > py[2])
   {
-    SWAP(x[1], x[3]);
-    SWAP(y[1], y[3]);
+    SWAP(px[0], px[2]);
+    SWAP(py[0], py[2]);
   }
 
-  if(y[1] > y[2])
+  if(py[1] > py[3])
   {
-    SWAP(x[1], x[2]);
-    SWAP(y[1], y[2]);
+    SWAP(px[1], px[3]);
+    SWAP(py[1], py[3]);
   }
 
-  setpixel_solid(x[0], y[0], c, t);
-  setpixel_solid(x[1], y[1], c, t);
-  setpixel_solid(x[2], y[2], c, t);
-  setpixel_solid(x[3], y[3], c, t);
+  if(py[1] > py[2])
+  {
+    SWAP(px[1], px[2]);
+    SWAP(py[1], py[2]);
+  }
+
+  // figure out which inner point is left/right
+  int left = 0;
+  int right = 0;
+
+  if(px[1] < px[2])
+  {
+    left = 1;
+    right = 2;
+  }
+  else
+  {
+    left = 2;
+    right = 1;
+  }
+
+  // store left points
+  int count = 0;
+  store_line(left_buf, &count, px[0], py[0], px[left], py[left]);
+  store_line(left_buf, &count, px[left], py[left], px[3], py[3]);
+
+  // store right points
+  count = 0;
+  store_line(right_buf, &count, px[0], py[0], px[right], py[right]);
+  store_line(right_buf, &count, px[right], py[right], px[3], py[3]);
+
+  // render quad
+  int i = 0;
+  int y;
+
+  for(y = py[0]; y <= py[3]; y++)
+  {
+    hline(left_buf[i], y, right_buf[i], c, t);
+    i++;
+  }
+
+  setpixel_solid(px[0], py[0], makecol(0, 255, 0), t);
+  setpixel_solid(px[1], py[1], makecol(0, 255, 0), t);
+  setpixel_solid(px[2], py[2], makecol(0, 255, 0), t);
+  setpixel_solid(px[3], py[3], makecol(0, 255, 0), t);
+
+  delete[] left_buf;
+  delete[] right_buf;
 }
 
