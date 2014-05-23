@@ -31,6 +31,7 @@ public:
 
   static Bitmap *main;
   static Bitmap *preview;
+  static Map *map;
 };
 
 #endif

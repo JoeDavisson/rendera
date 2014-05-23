@@ -43,6 +43,7 @@ public:
   void rectfill(int, int, int, int, int);
   void hline(int, int, int, int);
   void vline(int, int, int, int);
+  void quad(int *, int *, int);
 };
 
 #endif

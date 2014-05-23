@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Bitmap *Bmp::main;
 Bitmap *Bmp::preview;
+Map *Bmp::map;
 
 Bmp::Bmp()
 {

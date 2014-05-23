@@ -62,6 +62,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   grid = 0;
   gridx = 8;
   gridy = 8;
+  stroke = new Stroke();
   backbuf = new Bitmap(Fl::w(), Fl::h());
   image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
@@ -94,8 +95,10 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          Bmp::main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
+          stroke->begin(Bmp::map, imgx, imgy, 8, 0);
           draw_main();
+          stroke->preview(backbuf, Bmp::map, zoom, ox, oy);
+          redraw();
           return 1;
         case 2:
           if(moving == 0)
@@ -111,8 +114,10 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          Bmp::main->rect(imgx, imgy, imgx + 4, imgy + 4, makecol(0, 0, 0), 0);
+          stroke->draw(Bmp::map, imgx, imgy, 8, 0);
           draw_main();
+          stroke->preview(backbuf, Bmp::map, zoom, ox, oy);
+          redraw();
           return 1;
         case 2:
           if(moving == 1)
@@ -123,8 +128,10 @@ int View::handle(int event)
           }
       } 
     case FL_RELEASE:
+      stroke->end(Bmp::map, imgx, imgy, 8, 0);
       moving = 0;
       draw_main();
+      redraw();
       return 1;
     case FL_MOUSEWHEEL:
       moving = 0;
@@ -145,6 +152,7 @@ void View::resize(int x, int y, int w, int h)
 {
   Fl_Widget::resize(x, y, w, h);
   draw_main();
+  redraw();
 }
 
 void View::draw_move()
@@ -192,8 +200,6 @@ void View::draw_main()
 
   if(grid)
     draw_grid();
-
-  redraw();
 }
 
 void View::draw_grid()
@@ -368,6 +374,7 @@ void View::zoom_out(int x, int y)
       oy = 0;
   }
   draw_main();
+  redraw();
 }
 
 void View::zoom_fit(int fitting)
@@ -379,6 +386,7 @@ void View::zoom_fit(int fitting)
     ox = 0;
     oy = 0;
     draw_main();
+    redraw();
     return;
   }
 
@@ -395,6 +403,7 @@ void View::zoom_fit(int fitting)
 
   fit = 1;
   draw_main();
+  redraw();
 }
 
 void View::zoom_one()
@@ -404,10 +413,23 @@ void View::zoom_one()
   ox = 0;
   oy = 0;
   draw_main();
+  redraw();
 }
 
 void View::draw()
 {
-  image->draw(x(), y(), w(), h(), 0, 0);
+  if(stroke->active)
+  {
+    int x1 = mousex - 6 * zoom;
+    int y1 = mousey - 6 * zoom;
+    int s = 12 * zoom;
+    fl_push_clip(x() + x1, y() + y1, s, s);
+    image->draw(x() + x1, y() + y1, s, s, x1, y1);
+    fl_pop_clip();
+  }
+  else
+  {
+    image->draw(x(), y(), w(), h(), 0, 0);
+  }
 }
 

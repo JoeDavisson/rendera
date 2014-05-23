@@ -55,6 +55,7 @@ public:
   int px, py, pw, ph;
   int bx, by, bw, bh;
   float aspect, winaspect;
+  Stroke *stroke;
 protected:
   virtual void draw();
 };

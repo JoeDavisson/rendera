@@ -29,17 +29,22 @@ public:
   Stroke();
   virtual ~Stroke();
 
-  int freehand();
-  int region();
-  int line();
-  int polygon();
-  int rect();
-  int rectfill();
-  int oval();
-  int ovalfill();
+  void begin(Map *map, int, int, int, int);
+  void draw(Map *map, int, int, int, int);
+  void end(Map *map, int, int, int, int);
+  void preview(Bitmap *, Map *,int, int, int);
+
+  void freehand();
+  void region();
+  void line();
+  void polygon();
+  void rect();
+  void rectfill();
+  void oval();
+  void ovalfill();
 
   int x1, y1, x2, y2;
-  int current;
+  int active;
 };
 
 #endif
