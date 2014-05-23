@@ -38,6 +38,9 @@ public:
   void hline(int, int, int, int, int);
   void rect(int, int, int, int, int, int);
   void rectfill(int, int, int, int, int, int);
+  void xor_hline(int, int, int);
+  void xor_rect(int, int, int, int);
+  void xor_rectfill(int, int, int, int);
   void setpixel_solid(int, int, int ,int);
   void setpixel_wrap(int, int, int ,int);
   void setpixel_clone(Clone *clone, int, int, int ,int);

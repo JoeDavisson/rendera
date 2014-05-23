@@ -35,7 +35,8 @@ public:
   void begin(Map *map, int, int, int, int, int, float, int);
   void draw(Map *map, int, int, int, int, int, float, int);
   void end(Map *map, int, int, int, int, int, float, int);
-  void preview(Bitmap *, Map *,int, int, float);
+  void preview(Map *, Bitmap *,int, int, float);
+  void apply(Map *);
 
   void freehand();
   void region();
@@ -51,6 +52,7 @@ public:
   int beginx, beginy;
   int lastx, lasty;
   int active;
+  Map *map;
 };
 
 #endif

@@ -102,15 +102,15 @@ int View::handle(int event)
         case 1:
           stroke->begin(Bmp::map, imgx, imgy, ox, oy, 16, zoom, 0);
           draw_main();
-          stroke->preview(backbuf, Bmp::map, ox, oy, zoom);
+          redraw();
+          stroke->preview(Bmp::map, backbuf, ox, oy, zoom);
           redraw();
           return 1;
         case 2:
           if(moving == 0)
           {
-            moving = 1;
             begin_move();
-            draw_move();
+            moving = 1;
             return 1;
           }
           return 0;
@@ -121,14 +121,13 @@ int View::handle(int event)
         case 1:
           stroke->draw(Bmp::map, imgx, imgy, ox, oy, 16, zoom, 0);
           draw_main();
-          stroke->preview(backbuf, Bmp::map, ox, oy, zoom);
+          stroke->preview(Bmp::map, backbuf, ox, oy, zoom);
           redraw();
           return 1;
         case 2:
           if(moving == 1)
           {
             move();
-            draw_move();
             return 1;
           }
       } 
@@ -157,17 +156,8 @@ void View::resize(int x, int y, int w, int h)
   Fl_Widget::resize(x, y, w, h);
   if(fit)
     zoom_fit(1);
+  fl_overlay_clear();
   draw_main();
-  redraw();
-}
-
-void View::draw_move()
-{
-  backbuf->clear(makecol(0, 0, 0));
-  Bmp::preview->blit(backbuf, 0, 0, px, py, Bmp::preview->w, Bmp::preview->h);
-  // Bmp::preview->blit(backbuf, bx - px, by - py, bx, by, bw, bh);
-  backbuf->rect(bx, by, bx + bw - 1, by + bh - 1, makecol(0, 0, 0), 0);
-  backbuf->rect(bx + 1, by + 1, bx + bw - 2, by + bh - 2, makecol(255, 255, 255), 0);
   redraw();
 }
 
@@ -279,12 +269,11 @@ void View::begin_move()
   if(ph > hh)
     ph = hh;
 
-  delete Bmp::preview;
-  Bmp::preview = new Bitmap(pw, ph);
-  Bmp::main->fast_stretch(Bmp::preview,
-                          0, 0, Bmp::main->w, Bmp::main->h,
-                          0, 0, pw, ph);
-
+//  delete Bmp::preview;
+//  Bmp::preview = new Bitmap(pw, ph);
+//  Bmp::main->fast_stretch(Bmp::preview,
+//                          0, 0, Bmp::main->w, Bmp::main->h,
+//                          0, 0, pw, ph);
   px = (ww - pw) >> 1;
   py = (hh - ph) >> 1;
   px += dx;
@@ -299,6 +288,13 @@ void View::begin_move()
   // pos.x = bx + bw / 2;
   // pos.y = by + bh / 2;
   // warp mouse here... (unsupported in fltk)
+
+  backbuf->clear(makecol(0, 0, 0));
+  Bmp::main->fast_stretch(backbuf,
+                          0, 0, Bmp::main->w, Bmp::main->h,
+                          px, py, pw, ph);
+  redraw();
+  Fl::flush();
 }
 
 void View::move()
@@ -334,6 +330,8 @@ void View::move()
     bw = 1;
   if(bh < 1)
     bh = 1;
+
+  redraw();
 }
 
 void View::zoom_in(int x, int y)
@@ -452,6 +450,13 @@ void View::draw()
 
     fl_push_clip(x() + blitx, y() + blity, blitw, blith);
     image->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
+    fl_pop_clip();
+  }
+  else if(moving)
+  {
+    fl_push_clip(x(), y(), w(), h());
+    fl_overlay_clear();
+    fl_overlay_rect(x() + bx, y() + by, bw, bh);
     fl_pop_clip();
   }
   else

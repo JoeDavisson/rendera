@@ -47,6 +47,15 @@ static void rotate_point(float cx, float cy, float angle, int *x, int *y)
   *y = ynew;
 }
 
+Stroke::Stroke()
+{
+  active = 0;
+}
+
+Stroke::~Stroke()
+{
+}
+
 void Stroke::clip()
 {
   if(x1 < 0)
@@ -104,15 +113,6 @@ void Stroke::make_blitrect(int x1, int y1, int x2, int y2, int ox, int oy, int s
     blith = 1;
 }
 
-Stroke::Stroke()
-{
-  active = 0;
-}
-
-Stroke::~Stroke()
-{
-}
-
 void Stroke::begin(Map *map, int x, int y, int ox, int oy, int size, float zoom, int type)
 {
   int r = size / 2;
@@ -152,7 +152,8 @@ void Stroke::draw(Map *map, int x, int y, int ox, int oy, int size, float zoom, 
   switch(type)
   {
     case 0:
-      float angle = atan2f(y - lasty, x - lastx);
+//      float angle = atan2f(y - lasty, x - lastx);
+      float angle = atan2f(lasty - y, lastx - x);
 
       xbuf[0] = x;
       ybuf[0] = y - r;
@@ -189,10 +190,11 @@ void Stroke::draw(Map *map, int x, int y, int ox, int oy, int size, float zoom, 
 
 void Stroke::end(Map *map, int xx, int yy, int ox, int oy, int size, float zoom, int type)
 {
+  apply(map);
   active = 0;
 }
 
-void Stroke::preview(Bitmap *backbuf, Map *map, int ox, int oy, float zoom)
+void Stroke::preview(Map *map, Bitmap *backbuf, int ox, int oy, float zoom)
 {
   int x, y;
 
@@ -209,9 +211,23 @@ void Stroke::preview(Bitmap *backbuf, Map *map, int ox, int oy, float zoom)
       {
         int xx1 = x * zoom;
         int xx2 = xx1 + zoom - 1;
-        backbuf->rectfill(xx1 - ox * zoom, yy1 - oy * zoom, xx2 - ox * zoom, yy2 - oy * zoom, makecol(0, 0, 0), 192);
+        backbuf->xor_rectfill(xx1 - ox * zoom, yy1 - oy * zoom, xx2 - ox * zoom, yy2 - oy * zoom);
       }
       p++;
+    }
+  }
+}
+
+void Stroke::apply(Map *map)
+{
+  int x, y;
+
+  for(y = y1; y <= y2; y++)
+  {
+    for(x = x1; x <= x2; x++)
+    {
+      if(map->getpixel(x, y) > 0)
+        Bmp::main->setpixel_solid(x, y, makecol(0, 0, 0), 192);
     }
   }
 }

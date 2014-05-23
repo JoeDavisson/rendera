@@ -118,8 +118,94 @@ void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c, int t)
   if(y1 > y2)
     SWAP(y1, y2);
 
+  if(x1 > cr)
+    return;
+  if(x2 < cl)
+    return;
+  if(y1 > cb)
+    return;
+  if(y2 < ct)
+    return;
+
   for(; y1 <= y2; y1++)
     hline(x1, y1, x2, c, t);
+}
+
+void Bitmap::xor_hline(int x1, int y, int x2)
+{
+  if(x1 > x2)
+    SWAP(x1, x2);
+
+  if(y < ct || y > cb)
+    return;
+  if(x1 > cr)
+    return;
+  if(x2 < cl)
+    return;
+
+  clip(&x1, &y, &x2, &y);
+
+  int x;
+
+  int *p = row[y] + x1;
+
+  for(x = x1; x <= x2; x++)
+  {
+    *p ^= 0x00FFFFFF;
+    p++;
+  }
+}
+
+void Bitmap::xor_rect(int x1, int y1, int x2, int y2)
+{
+  if(x1 > x2)
+    SWAP(x1, x2);
+  if(y1 > y2)
+    SWAP(y1, y2);
+
+  if(x1 > cr)
+    return;
+  if(x2 < cl)
+    return;
+  if(y1 > cb)
+    return;
+  if(y2 < ct)
+    return;
+
+  clip(&x1, &y1, &x2, &y2);
+
+  xor_hline(x1, y1, x2);
+  xor_hline(x1, y2, x2);
+  if(y1 == y2)
+    return;
+
+  int x, y;
+
+  for(y = y1 + 1; y < y2; y++)
+  {
+    *(row[y] + x1) ^= 0x00FFFFFF;
+    *(row[y] + x2) ^= 0x00FFFFFF;
+  }
+}
+
+void Bitmap::xor_rectfill(int x1, int y1, int x2, int y2)
+{
+  if(x1 > x2)
+    SWAP(x1, x2);
+  if(y1 > y2)
+    SWAP(y1, y2);
+
+  if(x1 > cr)
+    return;
+  if(x2 < cl)
+    return;
+  if(y1 > cb)
+    return;
+  if(y2 < ct)
+    return;
+
+  for(; y1 <= y2; y1++)
+    xor_hline(x1, y1, x2);
 }
 
 void Bitmap::setpixel_solid(int x, int y, int c2, int t)
