@@ -29,9 +29,12 @@ public:
   Stroke();
   virtual ~Stroke();
 
-  void begin(Map *map, int, int, int, int);
-  void draw(Map *map, int, int, int, int);
-  void end(Map *map, int, int, int, int);
+  void clip();
+  void make_blitrect(int, int, int, int, int, int, int, int);
+
+  void begin(Map *map, int, int, int, int, int, int, int);
+  void draw(Map *map, int, int, int, int, int, int, int);
+  void end(Map *map, int, int, int, int, int, int, int);
   void preview(Bitmap *, Map *,int, int, int);
 
   void freehand();
@@ -44,6 +47,9 @@ public:
   void ovalfill();
 
   int x1, y1, x2, y2;
+  int blitx, blity, blitw, blith;
+  int beginx, beginy;
+  int lastx, lasty;
   int active;
 };
 

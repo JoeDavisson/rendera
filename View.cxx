@@ -95,9 +95,9 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          stroke->begin(Bmp::map, imgx, imgy, 8, 0);
+          stroke->begin(Bmp::map, imgx, imgy, ox, oy, 8, zoom, 0);
           draw_main();
-          stroke->preview(backbuf, Bmp::map, zoom, ox, oy);
+          stroke->preview(backbuf, Bmp::map, ox, oy, zoom);
           redraw();
           return 1;
         case 2:
@@ -114,9 +114,9 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          stroke->draw(Bmp::map, imgx, imgy, 8, 0);
+          stroke->draw(Bmp::map, imgx, imgy, ox, oy, 8, zoom, 0);
           draw_main();
-          stroke->preview(backbuf, Bmp::map, zoom, ox, oy);
+          stroke->preview(backbuf, Bmp::map, ox, oy, zoom);
           redraw();
           return 1;
         case 2:
@@ -128,13 +128,12 @@ int View::handle(int event)
           }
       } 
     case FL_RELEASE:
-      stroke->end(Bmp::map, imgx, imgy, 8, 0);
+      stroke->end(Bmp::map, imgx, imgy, ox, oy, 8, zoom, 0);
       moving = 0;
       draw_main();
       redraw();
       return 1;
     case FL_MOUSEWHEEL:
-      moving = 0;
       if(Fl::event_dy() >= 0)
       {
           zoom_out(mousex, mousey);
@@ -351,6 +350,7 @@ void View::zoom_in(int x, int y)
       oy = Bmp::main->h - h() / zoom;
   }
   draw_main();
+  redraw();
 }
 
 void View::zoom_out(int x, int y)
@@ -420,11 +420,24 @@ void View::draw()
 {
   if(stroke->active)
   {
-    int x1 = mousex - 6 * zoom;
-    int y1 = mousey - 6 * zoom;
-    int s = 12 * zoom;
-    fl_push_clip(x() + x1, y() + y1, s, s);
-    image->draw(x() + x1, y() + y1, s, s, x1, y1);
+    int blitx = stroke->blitx;
+    int blity = stroke->blity;
+    int blitw = stroke->blitw;
+    int blith = stroke->blith;
+
+    if(blitx < 0)
+      blitx = 0;
+    if(blity < 0)
+      blity = 0;
+    if(blitx + blitw > w())
+      blitw = w() - blitx;
+    if(blity + blith > h())
+      blith = h() - blity;
+    if(blitw < 1 || blith < 1)
+      return;
+
+    fl_push_clip(x() + blitx, y() + blity, blitw, blith);
+    image->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
     fl_pop_clip();
   }
   else

@@ -378,7 +378,7 @@ void Map::hline(int x1, int y, int x2, int c)
     x1 = 0;
   if(x1 > w - 1)
     return;
-  if(x2 >  w - 1)
+  if(x2 > w - 1)
     x2 = w - 1;
   if(x2 < 0)
     return;
@@ -509,8 +509,10 @@ void Map::quad(int *px, int *py, int c)
     SWAP(py[1], py[2]);
   }
 
-  int *left_buf = new int[py[3] - py[0]];
-  int *right_buf = new int[py[3] - py[0]];
+//  int *left_buf = new int[(py[3] - py[0]) + 8];
+//  int *right_buf = new int[(py[3] - py[0]) + 8];
+  int *left_buf = new int[65536];
+  int *right_buf = new int[65536];
 
   // figure out which inner point is left/right
   int left = 1;
@@ -538,7 +540,7 @@ void Map::quad(int *px, int *py, int c)
 
   for(y = py[0]; y <= py[3]; y++)
   {
-    hline(left_buf[i], py[0] + y, right_buf[i], c);
+    hline(left_buf[i], y, right_buf[i], c);
     i++;
   }
 
