@@ -30,12 +30,12 @@ public:
   virtual ~Stroke();
 
   void clip();
-  void make_blitrect(int, int, int, int, int, int, int, int);
+  void make_blitrect(int, int, int, int, int, int, int, float);
 
-  void begin(Map *map, int, int, int, int, int, int, int);
-  void draw(Map *map, int, int, int, int, int, int, int);
-  void end(Map *map, int, int, int, int, int, int, int);
-  void preview(Bitmap *, Map *,int, int, int);
+  void begin(Map *map, int, int, int, int, int, float, int);
+  void draw(Map *map, int, int, int, int, int, float, int);
+  void end(Map *map, int, int, int, int, int, float, int);
+  void preview(Bitmap *, Map *,int, int, float);
 
   void freehand();
   void region();

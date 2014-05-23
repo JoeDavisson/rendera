@@ -67,7 +67,7 @@ void Stroke::clip()
     y2 = Bmp::main->h - 1;
 }
 
-void Stroke::make_blitrect(int x1, int y1, int x2, int y2, int ox, int oy, int size, int zoom)
+void Stroke::make_blitrect(int x1, int y1, int x2, int y2, int ox, int oy, int size, float zoom)
 {
   int r = (size + 1) / 2 + 1;
 
@@ -113,7 +113,7 @@ Stroke::~Stroke()
 {
 }
 
-void Stroke::begin(Map *map, int x, int y, int ox, int oy, int size, int zoom, int type)
+void Stroke::begin(Map *map, int x, int y, int ox, int oy, int size, float zoom, int type)
 {
   int r = size / 2;
   int inc = size & 1;
@@ -141,7 +141,7 @@ void Stroke::begin(Map *map, int x, int y, int ox, int oy, int size, int zoom, i
   active = 1;
 }
 
-void Stroke::draw(Map *map, int x, int y, int ox, int oy, int size, int zoom, int type)
+void Stroke::draw(Map *map, int x, int y, int ox, int oy, int size, float zoom, int type)
 {
   int r = size / 2;
   int inc = size & 1;
@@ -187,12 +187,12 @@ void Stroke::draw(Map *map, int x, int y, int ox, int oy, int size, int zoom, in
   lasty = y;
 }
 
-void Stroke::end(Map *map, int xx, int yy, int ox, int oy, int size, int zoom, int type)
+void Stroke::end(Map *map, int xx, int yy, int ox, int oy, int size, float zoom, int type)
 {
   active = 0;
 }
 
-void Stroke::preview(Bitmap *backbuf, Map *map, int ox, int oy, int zoom)
+void Stroke::preview(Bitmap *backbuf, Map *map, int ox, int oy, float zoom)
 {
   int x, y;
 

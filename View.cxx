@@ -64,7 +64,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   gridy = 8;
   stroke = new Stroke();
   backbuf = new Bitmap(Fl::w(), Fl::h());
-  image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
+  image = new Fl_RGB_Image((const unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
 }
 
@@ -87,7 +87,12 @@ int View::handle(int event)
   imgx = mousex / zoom + ox;
   imgy = mousey / zoom + oy;
 
-  int button = Fl::event_button();
+  //int button = Fl::event_button();
+  // do is this way to prevent multiple button presses
+  int button1 = Fl::event_button1() ? 1 : 0;
+  int button2 = Fl::event_button2() ? 2 : 0;
+  int button3 = Fl::event_button3() ? 4 : 0;
+  int button = button1 | button2 | button3;
 
   switch(event)
   {
@@ -95,7 +100,7 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          stroke->begin(Bmp::map, imgx, imgy, ox, oy, 8, zoom, 0);
+          stroke->begin(Bmp::map, imgx, imgy, ox, oy, 16, zoom, 0);
           draw_main();
           stroke->preview(backbuf, Bmp::map, ox, oy, zoom);
           redraw();
@@ -114,7 +119,7 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          stroke->draw(Bmp::map, imgx, imgy, ox, oy, 8, zoom, 0);
+          stroke->draw(Bmp::map, imgx, imgy, ox, oy, 16, zoom, 0);
           draw_main();
           stroke->preview(backbuf, Bmp::map, ox, oy, zoom);
           redraw();
@@ -150,6 +155,8 @@ int View::handle(int event)
 void View::resize(int x, int y, int w, int h)
 {
   Fl_Widget::resize(x, y, w, h);
+  if(fit)
+    zoom_fit(1);
   draw_main();
   redraw();
 }
@@ -176,7 +183,7 @@ void View::draw_main()
   if(sh > Bmp::main->h - oy)
     sh = Bmp::main->h - oy;
 
-  Bitmap *temp = new Bitmap(sw, sh);
+  Bitmap *temp = new Bitmap(sw + 1, sh + 1);
   Bmp::main->blit(temp, ox, oy, 0, 0, sw, sh);
 
   int dw = sw * zoom;
@@ -192,6 +199,7 @@ void View::draw_main()
   }
 
   backbuf->clear(makecol(0, 0, 0));
+
   if(smooth)
     temp->integer_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
   else
@@ -291,8 +299,6 @@ void View::begin_move()
   // pos.x = bx + bw / 2;
   // pos.y = by + bh / 2;
   // warp mouse here... (unsupported in fltk)
-
-//  redraw();
 }
 
 void View::move()
@@ -348,6 +354,10 @@ void View::zoom_in(int x, int y)
       ox = Bmp::main->w - w() / zoom;
     if(oy > Bmp::main->h - h() / zoom)
       oy = Bmp::main->h - h() / zoom;
+    if(ox < 0)
+      ox = 0;
+    if(oy < 0)
+      oy = 0;
   }
   draw_main();
   redraw();
@@ -368,6 +378,10 @@ void View::zoom_out(int x, int y)
   {
     ox -= x / oldzoom;
     oy -= y / oldzoom;
+    if(ox > Bmp::main->w - w() / zoom)
+      ox = Bmp::main->w - w() / zoom;
+    if(oy > Bmp::main->h - h() / zoom)
+      oy = Bmp::main->h - h() / zoom;
     if(ox < 0)
       ox = 0;
     if(oy < 0)
@@ -442,7 +456,9 @@ void View::draw()
   }
   else
   {
+    fl_push_clip(x(), y(), w(), h());
     image->draw(x(), y(), w(), h(), 0, 0);
+    fl_pop_clip();
   }
 }
 
