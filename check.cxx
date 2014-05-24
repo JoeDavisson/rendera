@@ -69,10 +69,16 @@ void check_gridy(Field *field, void *var)
   gui->view->draw_main(1);
 }
 
-void check_size(Widget *field, void *var)
+void check_size(Widget *widget, void *var)
 {
   int size = brush_sizes[*(int *)var];
 
-  gui->view->brush->make(size);
+  Brush *brush = gui->view->brush;
+  brush->make(size);
+  gui->brush->bitmap->clear(makecol(255, 255, 255));
+  int i;
+  for(i = 0; i < brush->solid_count; i++)
+    gui->brush->bitmap->setpixel_solid(48 + brush->solidx[i], 48 + brush->solidy[i], makecol(0, 0, 0), 0);
+  gui->brush->redraw();
 }
 

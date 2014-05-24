@@ -31,8 +31,10 @@ public:
 
   void make(int);
 
-  int *xbuf, *ybuf;
-  int count;
+  int *solidx, *solidy;
+  int *hollowx, *hollowy;
+  int solid_count;
+  int hollow_count;
   int size;
 };
 

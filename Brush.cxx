@@ -22,9 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Brush::Brush(int s)
 {
-  xbuf = new int[96 * 96];
-  ybuf = new int[96 * 96];
-  count = 0;
+  solidx = new int[96 * 96];
+  solidy = new int[96 * 96];
+  hollowx = new int[96 * 96];
+  hollowy = new int[96 * 96];
+  solid_count = 0;
+  hollow_count = 0;
   size = s;
   make(s);
 }
@@ -48,11 +51,25 @@ void Brush::make(int s)
   int x2 = 48 + r + inc;
   int y2 = 48 + r + inc;
 
-  count = 0;
+  solid_count = 0;
+  hollow_count = 0;
 
   Map *map = new Map(96, 96);
   map->clear(0);
   map->ovalfill(x1, y1, x2, y2, 255);
+
+  for(y = 0; y < 96; y++)
+  {
+    for(x = 0; x < 96; x++)
+    {
+      if(map->getpixel(x, y))
+      {
+        solidx[solid_count] = x - 48;
+        solidy[solid_count] = y - 48;
+        solid_count++;
+      }
+    }
+  }
 
   if(size > 4)
     map->ovalfill(x1 + 2, y1 + 2, x2 - 2, y2 - 2, 0);
@@ -63,9 +80,9 @@ void Brush::make(int s)
     {
       if(map->getpixel(x, y))
       {
-        xbuf[count] = x - 48;
-        ybuf[count] = y - 48;
-        count++;
+        hollowx[hollow_count] = x - 48;
+        hollowy[hollow_count] = y - 48;
+        hollow_count++;
       }
     }
   }

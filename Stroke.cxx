@@ -139,8 +139,6 @@ void Stroke::draw(Brush *brush, Map *map, int x, int y, int ox, int oy, float zo
 {
   int r = brush->size / 2;
   int inc = brush->size & 1;
-  int xbuf[4];
-  int ybuf[4];
   int i;
 
   switch(type)
@@ -152,10 +150,10 @@ void Stroke::draw(Brush *brush, Map *map, int x, int y, int ox, int oy, float zo
         break;
       }
 
-      for(i = 0; i < brush->count; i++)
+      for(i = 0; i < brush->hollow_count; i++)
       {
-        map->line(x + brush->xbuf[i], y + brush->ybuf[i],
-                  lastx + brush->xbuf[i], lasty + brush->ybuf[i], 255);
+        map->line(x + brush->hollowx[i], y + brush->hollowy[i],
+                  lastx + brush->hollowx[i], lasty + brush->hollowy[i], 255);
       }
 
       break;

@@ -108,6 +108,7 @@ Gui::Gui()
   y1 = 20;
   brush = new Widget(left_top, 8, y1, 96, 96, "Brush Preview", 0, 0);
   brush->bitmap->clear(makecol(255, 255, 255));
+  brush->bitmap->setpixel_solid(48, 48, makecol(0, 0, 0), 0);
   y1 += 96 + 8;
   size = new Widget(left_top, 8, y1, 96, 24, "Size", "data/size.png", 8, 24);
   size->callback((Fl_Callback *)check_size, &size->var);
