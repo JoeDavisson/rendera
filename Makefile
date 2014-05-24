@@ -1,5 +1,6 @@
 CXX = g++
-CFLAGS = -O2 -Wall -Wno-unused -fmax-errors=5
+#CFLAGS = -O2 -Wall -Wno-unused -fmax-errors=5
+CFLAGS = -g -O0 -Wall -Wno-unused -fmax-errors=5
 LIBS = -lm -lfltk -lfltk_images
 OBJS = Blend.o Bmp.o Clone.o Bitmap.o Map.o Brush.o Stroke.o View.o Widget.o Button.o ToggleButton.o Field.o Separator.o Gui.o check.o main.o
 

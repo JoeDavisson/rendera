@@ -65,7 +65,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   stroke = new Stroke();
   brush = new Brush(1);
   backbuf = new Bitmap(Fl::w(), Fl::h());
-  image = new Fl_RGB_Image((const unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
+  image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
 }
 
@@ -77,16 +77,6 @@ int View::handle(int event)
 {
   mousex = Fl::event_x() - x();
   mousey = Fl::event_y() - y();
-/*
-  if(mousex < 0)
-    mousex = 0;
-  if(mousex >  w() - 1)
-    mousex = w() - 1;
-  if(mousey < 0)
-    mousey = 0;
-  if(mousey >  h() - 1)
-    mousey = h() - 1;
-*/
   imgx = mousex / zoom + ox;
   imgy = mousey / zoom + oy;
 
@@ -195,6 +185,8 @@ void View::draw_main(int refresh)
   else
     temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
 
+  delete temp;
+
   if(grid)
     draw_grid();
 
@@ -272,11 +264,6 @@ void View::begin_move()
   if(ph > hh)
     ph = hh;
 
-//  delete Bmp::preview;
-//  Bmp::preview = new Bitmap(pw, ph);
-//  Bmp::main->fast_stretch(Bmp::preview,
-//                          0, 0, Bmp::main->w, Bmp::main->h,
-//                          0, 0, pw, ph);
   px = (ww - pw) >> 1;
   py = (hh - ph) >> 1;
   px += dx;
@@ -293,9 +280,10 @@ void View::begin_move()
   // warp mouse here... (unsupported in fltk)
 
   backbuf->clear(makecol(0, 0, 0));
-  Bmp::main->fast_stretch(backbuf,
-                          0, 0, Bmp::main->w, Bmp::main->h,
+  Bmp::main->fast_stretch(backbuf, 0, 0, Bmp::main->w, Bmp::main->h,
                           px, py, pw, ph);
+
+  // need to force repaint here or the navigator won't have a border
   redraw();
   Fl::flush();
 }
@@ -441,10 +429,10 @@ void View::draw()
       blitx = 0;
     if(blity < 0)
       blity = 0;
-    if(blitx + blitw > w())
-      blitw = w() - blitx;
-    if(blity + blith > h())
-      blith = h() - blity;
+    if(blitx + blitw > w() - 1)
+      blitw = w() - 1 - blitx;
+    if(blity + blith > h() - 1)
+      blith = h() - 1 - blity;
     if(blitw < 1 || blith < 1)
       return;
 
