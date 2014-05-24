@@ -12,6 +12,7 @@ void check_grid(ToggleButton *, void *);
 void check_gridx(Field *, void *);
 void check_gridy(Field *, void *);
 void check_size(Widget *, void *);
+void check_stroke(Widget *, void *);
 
 #endif
 

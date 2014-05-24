@@ -103,7 +103,7 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          stroke->begin(brush, Bmp::map, imgx, imgy, ox, oy, zoom, 0);
+          stroke->begin(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
           draw_main(1);
           stroke->preview(Bmp::map, backbuf, ox, oy, zoom);
           redraw();
@@ -121,7 +121,7 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          stroke->draw(brush, Bmp::map, imgx, imgy, ox, oy, zoom, 0);
+          stroke->draw(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
           draw_main(0);
           stroke->preview(Bmp::map, backbuf, ox, oy, zoom);
           redraw();
@@ -134,7 +134,7 @@ int View::handle(int event)
           }
       } 
     case FL_RELEASE:
-      stroke->end(brush, Bmp::map, imgx, imgy, ox, oy, zoom, 0);
+      stroke->end(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
       moving = 0;
       draw_main(1);
       return 1;

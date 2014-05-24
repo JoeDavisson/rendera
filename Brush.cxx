@@ -71,7 +71,7 @@ void Brush::make(int s)
     }
   }
 
-  if(size > 4)
+  if(size > 8)
     map->ovalfill(x1 + 2, y1 + 2, x2 - 2, y2 - 2, 0);
 
   for(y = 0; y < 96; y++)

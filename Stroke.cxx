@@ -37,6 +37,7 @@ static inline int is_edge(Map *map, int x, int y)
 
 Stroke::Stroke()
 {
+  type = 0;
   active = 0;
 }
 
@@ -101,63 +102,68 @@ void Stroke::make_blitrect(int x1, int y1, int x2, int y2, int ox, int oy, int s
     blith = 1;
 }
 
-void Stroke::begin(Brush *brush, Map *map, int x, int y, int ox, int oy, float zoom, int type)
+void Stroke::draw_brush(Brush *brush, Map *map, int x, int y, int c)
+{
+  int i;
+
+  for(i = 0; i < brush->solid_count; i++)
+  {
+    map->setpixel(x + brush->solidx[i], y + brush->solidy[i], c);
+  }
+}
+
+void Stroke::draw_brush_line(Brush *brush, Map *map, int x1, int y1, int x2, int y2, int c)
+{
+  int i;
+
+  draw_brush(brush, map, x1, y1, c);
+  draw_brush(brush, map, x2, y2, c);
+
+  for(i = 0; i < brush->hollow_count; i++)
+  {
+    map->line(x1 + brush->hollowx[i], y1 + brush->hollowy[i],
+              x2 + brush->hollowx[i], y2 + brush->hollowy[i], c);
+  }
+}
+
+void Stroke::begin(Brush *brush, Map *map, int x, int y, int ox, int oy, float zoom)
 {
   int r = brush->size / 2;
   int inc = brush->size & 1;
+  int i;
 
-  map->clear(0);
-
-  switch(type)
-  {
-    case 0:
-      if(brush->size == 1)
-      {
-        map->setpixel(x, y, 255);
-        break;
-      }
-
-      map->ovalfill(x - r, y - r, x + r + inc, y + r + inc, 255);
-      break;
-  }
+  lastx = x;
+  lasty = y;
+  beginx = x;
+  beginy = y;
 
   x1 = x - (r + 1);
   y1 = y - (r + 1);
   x2 = x + (r + 1);
   y2 = y + (r + 1);
 
-  lastx = x;
-  lasty = y;
-  beginx = x;
-  beginy = y;
-  make_blitrect(x, y, beginx, beginy, ox, oy, brush->size, zoom);
-
-  active = 1;
-}
-
-void Stroke::draw(Brush *brush, Map *map, int x, int y, int ox, int oy, float zoom, int type)
-{
-  int r = brush->size / 2;
-  int inc = brush->size & 1;
-  int i;
+  map->clear(0);
 
   switch(type)
   {
     case 0:
-      if(brush->size == 1)
-      {
-        map->line(x, y, lastx, lasty, 255);
-        break;
-      }
-
-      for(i = 0; i < brush->hollow_count; i++)
-      {
-        map->line(x + brush->hollowx[i], y + brush->hollowy[i],
-                  lastx + brush->hollowx[i], lasty + brush->hollowy[i], 255);
-      }
-
+      draw_brush(brush, map, x, y, 255);
+      make_blitrect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
+      break;
+    case 1:
+      draw_brush(brush, map, x, y, 255);
+      make_blitrect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
       break;
   }
+
+  active = 1;
+}
+
+void Stroke::draw(Brush *brush, Map *map, int x, int y, int ox, int oy, float zoom)
+{
+  int r = brush->size / 2;
+  int inc = brush->size & 1;
+  int i;
 
   if(x - r - 1 < x1)
     x1 = x - r - 1;
@@ -168,12 +174,24 @@ void Stroke::draw(Brush *brush, Map *map, int x, int y, int ox, int oy, float zo
   if(y + r + 1 > y2)
     y2 = y + r + 1;
 
-  make_blitrect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
+  switch(type)
+  {
+    case 0:
+      draw_brush_line(brush, map, x, y, lastx, lasty, 255);
+      make_blitrect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
+      break;
+    case 1:
+      draw_brush_line(brush, map, lastx, lasty, beginx, beginy, 0);
+      draw_brush_line(brush, map, x, y, beginx, beginy, 255);
+      make_blitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
+      break;
+  }
+
   lastx = x;
   lasty = y;
 }
 
-void Stroke::end(Brush *brush, Map *map, int xx, int yy, int ox, int oy, float zoom, int type)
+void Stroke::end(Brush *brush, Map *map, int xx, int yy, int ox, int oy, float zoom)
 {
   apply(map);
   active = 0;
@@ -215,37 +233,5 @@ void Stroke::apply(Map *map)
         Bmp::main->setpixel_solid(x, y, makecol(0, 255, 0), 192);
     }
   }
-}
-
-void Stroke::freehand()
-{
-}
-
-void Stroke::region()
-{
-}
-
-void Stroke::line()
-{
-}
-
-void Stroke::polygon()
-{
-}
-
-void Stroke::rect()
-{
-}
-
-void Stroke::rectfill()
-{
-}
-
-void Stroke::oval()
-{
-}
-
-void Stroke::ovalfill()
-{
 }
 

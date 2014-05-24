@@ -31,27 +31,21 @@ public:
 
   void clip();
   void make_blitrect(int, int, int, int, int, int, int, float);
+  void draw_brush(Brush *, Map *, int, int, int);
+  void draw_brush_line(Brush *, Map *, int, int, int, int, int);
 
-  void begin(Brush *, Map *, int, int, int, int, float, int);
-  void draw(Brush *, Map *, int, int, int, int, float, int);
-  void end(Brush *, Map *, int, int, int, int, float, int);
+  void begin(Brush *, Map *, int, int, int, int, float);
+  void draw(Brush *, Map *, int, int, int, int, float);
+  void end(Brush *, Map *, int, int, int, int, float);
   void preview(Map *, Bitmap *,int, int, float);
   void apply(Map *);
-
-  void freehand();
-  void region();
-  void line();
-  void polygon();
-  void rect();
-  void rectfill();
-  void oval();
-  void ovalfill();
 
   int x1, y1, x2, y2;
   int blitx, blity, blitw, blith;
   int beginx, beginy;
   int lastx, lasty;
   int active;
+  int type;
   Map *map;
 };
 

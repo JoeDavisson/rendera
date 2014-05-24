@@ -82,3 +82,8 @@ void check_size(Widget *widget, void *var)
   gui->brush->redraw();
 }
 
+void check_stroke(Widget *widget, void *var)
+{
+  gui->view->stroke->type = *(int *)var;
+}
+
