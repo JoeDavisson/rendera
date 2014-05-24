@@ -32,9 +32,9 @@ public:
   void clip();
   void make_blitrect(int, int, int, int, int, int, int, float);
 
-  void begin(Map *map, int, int, int, int, int, float, int);
-  void draw(Map *map, int, int, int, int, int, float, int);
-  void end(Map *map, int, int, int, int, int, float, int);
+  void begin(Brush *, Map *, int, int, int, int, float, int);
+  void draw(Brush *, Map *, int, int, int, int, float, int);
+  void end(Brush *, Map *, int, int, int, int, float, int);
   void preview(Map *, Bitmap *,int, int, float);
   void apply(Map *);
 

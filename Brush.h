@@ -26,10 +26,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Brush
 {
 public:
-  Brush();
+  Brush(int);
   virtual ~Brush();
 
-  Map *current;
+  void make(int);
+
+  int *xbuf, *ybuf;
+  int count;
   int size;
 };
 

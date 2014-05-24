@@ -20,15 +20,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-static int testx[4] = { 20, 10, 40, 30 };
-static int testy[4] = { 10, 20, 30, 40 };
-
 static inline int is_edge(Map *map, int x, int y)
 {
-  if((map->getpixel(x - 1, y) == 0xff) &&
-     (map->getpixel(x + 1, y) == 0xff) &&
-     (map->getpixel(x, y - 1) == 0xff) &&
-     (map->getpixel(x, y + 1) == 0xff))
+  if((map->getpixel(x - 1, y)) &&
+     (map->getpixel(x + 1, y)) &&
+     (map->getpixel(x, y - 1)) &&
+     (map->getpixel(x, y + 1)))
   {
     return 0;
   }
@@ -36,15 +33,6 @@ static inline int is_edge(Map *map, int x, int y)
   {
     return 1;
   }
-}
-
-static void rotate_point(float cx, float cy, float angle, int *x, int *y)
-{
-  int xnew = ((*x - cx) * cosf(angle) - (*y - cy) * sinf(angle)) + cx;
-  int ynew = ((*x - cx) * sinf(angle) + (*y - cy) * cosf(angle)) + cy;
-
-  *x = xnew;
-  *y = ynew;
 }
 
 Stroke::Stroke()
@@ -113,18 +101,24 @@ void Stroke::make_blitrect(int x1, int y1, int x2, int y2, int ox, int oy, int s
     blith = 1;
 }
 
-void Stroke::begin(Map *map, int x, int y, int ox, int oy, int size, float zoom, int type)
+void Stroke::begin(Brush *brush, Map *map, int x, int y, int ox, int oy, float zoom, int type)
 {
-  int r = size / 2;
-  int inc = size & 1;
+  int r = brush->size / 2;
+  int inc = brush->size & 1;
 
   map->clear(0);
 
   switch(type)
   {
     case 0:
+      if(brush->size == 1)
+      {
+        map->setpixel(x, y, 255);
+        break;
+      }
+
       map->ovalfill(x - r, y - r, x + r + inc, y + r + inc, 255);
-    break;
+      break;
   }
 
   x1 = x - (r + 1);
@@ -136,15 +130,15 @@ void Stroke::begin(Map *map, int x, int y, int ox, int oy, int size, float zoom,
   lasty = y;
   beginx = x;
   beginy = y;
-  make_blitrect(x, y, beginx, beginy, ox, oy, size, zoom);
+  make_blitrect(x, y, beginx, beginy, ox, oy, brush->size, zoom);
 
   active = 1;
 }
 
-void Stroke::draw(Map *map, int x, int y, int ox, int oy, int size, float zoom, int type)
+void Stroke::draw(Brush *brush, Map *map, int x, int y, int ox, int oy, float zoom, int type)
 {
-  int r = size / 2;
-  int inc = size & 1;
+  int r = brush->size / 2;
+  int inc = brush->size & 1;
   int xbuf[4];
   int ybuf[4];
   int i;
@@ -152,43 +146,36 @@ void Stroke::draw(Map *map, int x, int y, int ox, int oy, int size, float zoom, 
   switch(type)
   {
     case 0:
-//      float angle = atan2f(y - lasty, x - lastx);
-      float angle = atan2f(lasty - y, lastx - x);
+      if(brush->size == 1)
+      {
+        map->line(x, y, lastx, lasty, 255);
+        break;
+      }
 
-      xbuf[0] = x;
-      ybuf[0] = y - r;
-      xbuf[1] = x;
-      ybuf[1] = y + r + inc;
-      xbuf[2] = lastx;
-      ybuf[2] = lasty - r;
-      xbuf[3] = lastx;
-      ybuf[3] = lasty + r + inc;
+      for(i = 0; i < brush->count; i++)
+      {
+        map->line(x + brush->xbuf[i], y + brush->ybuf[i],
+                  lastx + brush->xbuf[i], lasty + brush->ybuf[i], 255);
+      }
 
-      rotate_point(x, y, angle, &xbuf[0], &ybuf[0]);
-      rotate_point(x, y, angle, &xbuf[1], &ybuf[1]);
-      rotate_point(lastx, lasty, angle, &xbuf[2], &ybuf[2]);
-      rotate_point(lastx, lasty, angle, &xbuf[3], &ybuf[3]);
-
-      map->quad(xbuf, ybuf, 255);
-      map->ovalfill(x - r, y - r, x + r + inc, y + r + inc, 255);
-    break;
+      break;
   }
 
-  if(x - r < x1)
-    x1 = x - r;
-  if(y - r < y1)
-    y1 = y - r;
-  if(x + r > x2)
-    x2 = x + r;
-  if(y + r > y2)
-    y2 = y + r;
+  if(x - r - 1 < x1)
+    x1 = x - r - 1;
+  if(y - r - 1 < y1)
+    y1 = y - r - 1;
+  if(x + r + 1 > x2)
+    x2 = x + r + 1;
+  if(y + r + 1 > y2)
+    y2 = y + r + 1;
 
-  make_blitrect(x, y, lastx, lasty, ox, oy, size, zoom);
+  make_blitrect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
   lastx = x;
   lasty = y;
 }
 
-void Stroke::end(Map *map, int xx, int yy, int ox, int oy, int size, float zoom, int type)
+void Stroke::end(Brush *brush, Map *map, int xx, int yy, int ox, int oy, float zoom, int type)
 {
   apply(map);
   active = 0;
@@ -227,7 +214,7 @@ void Stroke::apply(Map *map)
     for(x = x1; x <= x2; x++)
     {
       if(map->getpixel(x, y) > 0)
-        Bmp::main->setpixel_solid(x, y, makecol(0, 0, 0), 192);
+        Bmp::main->setpixel_solid(x, y, makecol(0, 255, 0), 192);
     }
   }
 }

@@ -33,6 +33,7 @@ public:
   unsigned char *data;
   unsigned char **row;
 
+  int is_edge(int, int);
   void clear(int);
   void setpixel(int, int, int);
   int getpixel(int, int);

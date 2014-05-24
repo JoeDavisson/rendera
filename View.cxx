@@ -63,6 +63,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   gridx = 8;
   gridy = 8;
   stroke = new Stroke();
+  brush = new Brush(1);
   backbuf = new Bitmap(Fl::w(), Fl::h());
   image = new Fl_RGB_Image((const unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
@@ -76,6 +77,7 @@ int View::handle(int event)
 {
   mousex = Fl::event_x() - x();
   mousey = Fl::event_y() - y();
+/*
   if(mousex < 0)
     mousex = 0;
   if(mousex >  w() - 1)
@@ -84,6 +86,7 @@ int View::handle(int event)
     mousey = 0;
   if(mousey >  h() - 1)
     mousey = h() - 1;
+*/
   imgx = mousex / zoom + ox;
   imgy = mousey / zoom + oy;
 
@@ -100,9 +103,8 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          stroke->begin(Bmp::map, imgx, imgy, ox, oy, 16, zoom, 0);
-          draw_main();
-          redraw();
+          stroke->begin(brush, Bmp::map, imgx, imgy, ox, oy, zoom, 0);
+          draw_main(1);
           stroke->preview(Bmp::map, backbuf, ox, oy, zoom);
           redraw();
           return 1;
@@ -119,8 +121,8 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          stroke->draw(Bmp::map, imgx, imgy, ox, oy, 16, zoom, 0);
-          draw_main();
+          stroke->draw(brush, Bmp::map, imgx, imgy, ox, oy, zoom, 0);
+          draw_main(0);
           stroke->preview(Bmp::map, backbuf, ox, oy, zoom);
           redraw();
           return 1;
@@ -132,19 +134,18 @@ int View::handle(int event)
           }
       } 
     case FL_RELEASE:
-      stroke->end(Bmp::map, imgx, imgy, ox, oy, 8, zoom, 0);
+      stroke->end(brush, Bmp::map, imgx, imgy, ox, oy, zoom, 0);
       moving = 0;
-      draw_main();
-      redraw();
+      draw_main(1);
       return 1;
     case FL_MOUSEWHEEL:
       if(Fl::event_dy() >= 0)
       {
-          zoom_out(mousex, mousey);
+        zoom_out(mousex, mousey);
       }
       else
       {
-          zoom_in(mousex, mousey);
+        zoom_in(mousex, mousey);
       }
       return 1;
   }
@@ -157,11 +158,10 @@ void View::resize(int x, int y, int w, int h)
   if(fit)
     zoom_fit(1);
   fl_overlay_clear();
-  draw_main();
-  redraw();
+  draw_main(1);
 }
 
-void View::draw_main()
+void View::draw_main(int refresh)
 {
   int sw = w() / zoom;
   int sh = h() / zoom;
@@ -197,6 +197,9 @@ void View::draw_main()
 
   if(grid)
     draw_grid();
+
+  if(refresh)
+    redraw();
 }
 
 void View::draw_grid()
@@ -210,7 +213,7 @@ void View::draw_grid()
   x2 = w() - 1;
   y2 = h() - 1;
 
-  d = 252 - zoom * 16;
+  d = 224 - zoom;
   if(d < 192)
     d = 192;
 
@@ -357,8 +360,8 @@ void View::zoom_in(int x, int y)
     if(oy < 0)
       oy = 0;
   }
-  draw_main();
-  redraw();
+
+  draw_main(1);
 }
 
 void View::zoom_out(int x, int y)
@@ -385,8 +388,8 @@ void View::zoom_out(int x, int y)
     if(oy < 0)
       oy = 0;
   }
-  draw_main();
-  redraw();
+
+  draw_main(1);
 }
 
 void View::zoom_fit(int fitting)
@@ -397,8 +400,7 @@ void View::zoom_fit(int fitting)
     zoom = 1;
     ox = 0;
     oy = 0;
-    draw_main();
-    redraw();
+    draw_main(1);
     return;
   }
 
@@ -414,8 +416,7 @@ void View::zoom_fit(int fitting)
   oy = 0;
 
   fit = 1;
-  draw_main();
-  redraw();
+  draw_main(1);
 }
 
 void View::zoom_one()
@@ -424,8 +425,7 @@ void View::zoom_one()
   zoom = 1;
   ox = 0;
   oy = 0;
-  draw_main();
-  redraw();
+  draw_main(1);
 }
 
 void View::draw()

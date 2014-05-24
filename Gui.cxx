@@ -70,12 +70,6 @@ Gui::Gui()
   x1 += 6;
   new Separator(top_right, x1, 2, 2, 36, "");
   x1 += 8;
-  display = new Widget(top_right, x1, 8, 48, 24, "Display Mode", "data/display.png", 24, 24);
-  display->callback((Fl_Callback *)check_display, &display->var);
-  x1 += 48;
-  x1 += 6;
-  new Separator(top_right, x1, 2, 2, 36, "");
-  x1 += 8;
   grid = new ToggleButton(top_right, x1, 8, 24, 24, "Show Grid", "data/grid.png");
   grid->callback((Fl_Callback *)check_grid, &grid->var);
   x1 += 24 + 28 + 8;
@@ -113,9 +107,10 @@ Gui::Gui()
   left_top->box(FL_UP_FRAME);
   y1 = 20;
   brush = new Widget(left_top, 8, y1, 96, 96, "Brush Preview", 0, 0);
-  brush->bitmap->clear(0xffffffff);
+  brush->bitmap->clear(makecol(255, 255, 255));
   y1 += 96 + 8;
   size = new Widget(left_top, 8, y1, 96, 24, "Size", "data/size.png", 8, 24);
+  size->callback((Fl_Callback *)check_size, &size->var);
   y1 += 24 + 8;
   stroke = new Widget(left_top, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24);
   y1 += 48 + 8;
@@ -149,7 +144,7 @@ Gui::Gui()
   y1 = 20;
   palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 16, 16);
   palette->callback((Fl_Callback *)check_palette, &palette->var);
-  palette->bitmap->clear(0xffffffff);
+  palette->bitmap->clear(makecol(255, 255, 255));
   y1 += 96 + 8;
   trans = new Widget(right, 8, y1, 96, 24, "Transparency", "data/transparency.png", 8, 24);
   y1 += 24 + 8;

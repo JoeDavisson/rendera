@@ -20,23 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-/*
-static int is_edge(Map *map, int x, int y)
-{
-  if((map->getpixel(x - 1, y) == 0xff) &&
-     (map->getpixel(x + 1, y) == 0xff) &&
-     (map->getpixel(x, y - 1) == 0xff) &&
-     (map->getpixel(x, y + 1) == 0xff))
-  {
-    return 0;
-  }
-  else
-  {
-    return 1;
-  }
-}
-*/
-
 Map::Map(int width, int height)
 {
   int i;
@@ -60,6 +43,21 @@ Map::~Map()
 {
   delete[] row;
   delete[] data;
+}
+
+int Map::is_edge(int x, int y)
+{
+  if((getpixel(x - 1, y)) &&
+     (getpixel(x + 1, y)) &&
+     (getpixel(x, y - 1)) &&
+     (getpixel(x, y + 1)))
+  {
+    return 0;
+  }
+  else
+  {
+    return 1;
+  }
 }
 
 void Map::clear(int c)
@@ -509,11 +507,6 @@ void Map::quad(int *px, int *py, int c)
     SWAP(py[1], py[2]);
   }
 
-//  int *left_buf = new int[(py[3] - py[0]) + 8];
-//  int *right_buf = new int[(py[3] - py[0]) + 8];
-  int *left_buf = new int[65536];
-  int *right_buf = new int[65536];
-
   // figure out which inner point is left/right
   int left = 1;
   int right = 2;
@@ -523,6 +516,9 @@ void Map::quad(int *px, int *py, int c)
     left = 2;
     right = 1;
   }
+
+  int *left_buf = new int[(py[3] - py[0]) + 8];
+  int *right_buf = new int[(py[3] - py[0]) + 8];
 
   // store left points
   int count = 0;

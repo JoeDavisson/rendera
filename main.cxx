@@ -27,7 +27,9 @@ int main(int argc, char **argv)
   Fl::visual(FL_RGB | FL_DOUBLE | FL_INDEX);
 
   Bmp::main = new Bitmap(2048, 2048);
-  Bmp::main->clear(makecol(255, 255, 255));
+  Bmp::main->clear(makecol(0, 0, 0));
+  Bmp::main->set_clip(32, 32, Bmp::main->w - 32 - 1, Bmp::main->h - 32 - 1);
+  Bmp::main->rectfill(32, 32, Bmp::main->w - 32 - 1, Bmp::main->h - 32 - 1, makecol(255, 255, 255), 0);
   Bmp::preview = new Bitmap(8, 8);
   Bmp::map = new Map(Bmp::main->w, Bmp::main->h);
 

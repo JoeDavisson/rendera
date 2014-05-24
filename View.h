@@ -32,7 +32,7 @@ public:
   virtual int handle(int);
   virtual void resize(int, int, int, int);
   void draw_move();
-  void draw_main();
+  void draw_main(int);
   void draw_grid();
   void begin_move();
   void move();
@@ -56,6 +56,7 @@ public:
   int bx, by, bw, bh;
   float aspect, winaspect;
   Stroke *stroke;
+  Brush *brush;
 protected:
   virtual void draw();
 };
