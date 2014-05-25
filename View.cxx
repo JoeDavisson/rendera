@@ -86,14 +86,44 @@ int View::handle(int event)
   int button2 = Fl::event_button2() ? 2 : 0;
   int button3 = Fl::event_button3() ? 4 : 0;
   int button = button1 | button2 | button3;
+  int dclick = Fl::event_clicks() ? 1 : 0;
 
   switch(event)
   {
+    case FL_ENTER:
+      return 1;
+    case FL_MOVE:
+      if(stroke->active && stroke->type == 3)
+      {
+        stroke->polyline(Bmp::map, imgx, imgy, ox, oy, zoom);
+        draw_main(0);
+        stroke->preview(Bmp::map, backbuf, ox, oy, zoom);
+        redraw();
+        return 1;
+      }
+      return 0;
     case FL_PUSH:
       switch(button)
       {
         case 1:
-          stroke->begin(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
+          if(stroke->active && stroke->type == 3)
+          {
+            if(dclick)
+            {
+              stroke->end(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
+              moving = 0;
+              draw_main(1);
+              return 1;
+            }
+            else
+            {
+              stroke->draw(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
+            }
+          }
+          else
+          {
+            stroke->begin(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
+          }
           draw_main(1);
           stroke->preview(Bmp::map, backbuf, ox, oy, zoom);
           redraw();
@@ -111,20 +141,28 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          stroke->draw(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
-          draw_main(0);
-          stroke->preview(Bmp::map, backbuf, ox, oy, zoom);
-          redraw();
-          return 1;
+          if(stroke->type != 3)
+          {
+            stroke->draw(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
+            draw_main(0);
+            stroke->preview(Bmp::map, backbuf, ox, oy, zoom);
+            redraw();
+            return 1;
+          }
+          return 0;
         case 2:
           if(moving == 1)
           {
             move();
             return 1;
           }
+          return 0;
       } 
     case FL_RELEASE:
-      stroke->end(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
+      if(stroke->active && stroke->type != 3)
+      {
+        stroke->end(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
+      }
       moving = 0;
       draw_main(1);
       return 1;
@@ -148,7 +186,7 @@ void View::resize(int x, int y, int w, int h)
   if(fit)
     zoom_fit(1);
   fl_overlay_clear();
-  draw_main(1);
+  draw_main(0);
 }
 
 void View::draw_main(int refresh)

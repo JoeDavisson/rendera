@@ -33,10 +33,13 @@ public:
   void make_blitrect(int, int, int, int, int, int, int, float);
   void draw_brush(Brush *, Map *, int, int, int);
   void draw_brush_line(Brush *, Map *, int, int, int, int, int);
+  void draw_brush_rect(Brush *, Map *, int, int, int, int, int);
+  void draw_brush_oval(Brush *, Map *, int, int, int, int, int);
 
   void begin(Brush *, Map *, int, int, int, int, float);
   void draw(Brush *, Map *, int, int, int, int, float);
   void end(Brush *, Map *, int, int, int, int, float);
+  void polyline(Map *, int, int, int, int, float);
   void preview(Map *, Bitmap *,int, int, float);
   void apply(Map *);
 
@@ -44,8 +47,12 @@ public:
   int blitx, blity, blitw, blith;
   int beginx, beginy;
   int lastx, lasty;
+  int oldx, oldy;
   int active;
   int type;
+  int *polycachex;
+  int *polycachey;
+  int polycount;
   Map *map;
 };
 

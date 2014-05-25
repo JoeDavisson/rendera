@@ -24,7 +24,7 @@ Gui *gui;
 
 int main(int argc, char **argv)
 {
-  Fl::visual(FL_RGB | FL_DOUBLE | FL_INDEX);
+  Fl::visual(FL_DOUBLE | FL_RGB);
 
   Bmp::main = new Bitmap(1024 + 64, 1024 + 64);
   Bmp::main->clear(makecol(0, 0, 0));

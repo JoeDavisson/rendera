@@ -544,3 +544,48 @@ void Map::quad(int *px, int *py, int c)
   delete[] right_buf;
 }
 
+static inline int isleft(const int *x1, const int *y1, const int *x2,
+                         const int *y2, const int *x3, const int *y3)
+{
+  return ((*x2 - *x1) * (*y3 - *y1) - (*x3 - *x1) * (*y2 - *y1));
+
+}
+
+void Map::polyfill(int *polycachex, int *polycachey, int polycount, int x1, int y1, int x2, int y2, int c)
+{
+  int x, y, i;
+
+  for(y = y1; y < y2; y++)
+  {
+    unsigned char *p = row[y] + x1;
+    for(x = x1; x < x2; x++)
+    {
+      int inside = 0;
+      int *px1 = &polycachex[0];
+      int *py1 = &polycachey[0];
+      int *px2 = &polycachex[1];
+      int *py2 = &polycachey[1];
+      for(i = 0; i < polycount - 1; i++)
+      {
+        if(*py1 <= y)
+        {
+          if((*py2 > y) && (isleft(px1, py1, px2, py2, &x, &y) > 0))
+            inside++;
+        }
+        else
+        {
+          if((*py2 <= y) && (isleft(px1, py1, px2, py2, &x, &y) < 0))
+            inside++;
+        }
+        px1++;
+        py1++;
+        px2++;
+        py2++;
+      }
+      if(inside & 1)
+        *p = c;
+      p++;
+    }
+  }
+}
+
