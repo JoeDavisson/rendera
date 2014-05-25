@@ -72,9 +72,10 @@ void check_gridy(Field *field, void *var)
 void check_size(Widget *widget, void *var)
 {
   int size = brush_sizes[*(int *)var];
+  int shape = gui->shape->var;
 
   Brush *brush = gui->view->brush;
-  brush->make(size);
+  brush->make(shape, size);
   gui->brush->bitmap->clear(makecol(255, 255, 255));
   int i;
   for(i = 0; i < brush->solid_count; i++)
@@ -85,5 +86,10 @@ void check_size(Widget *widget, void *var)
 void check_stroke(Widget *widget, void *var)
 {
   gui->view->stroke->type = *(int *)var;
+}
+
+void check_edge(Widget *widget, void *var)
+{
+  gui->view->brush->edge = *(int *)var;
 }
 

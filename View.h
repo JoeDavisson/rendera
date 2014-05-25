@@ -40,6 +40,7 @@ public:
   void zoom_out(int, int);
   void zoom_fit(int);
   void zoom_one();
+  void update_rendering();
 
   Fl_Group *group;
   Fl_RGB_Image *image;

@@ -35,11 +35,38 @@ static inline int is_edge(Map *map, int x, int y)
   }
 }
 
+static inline float fdist(const int x1, const int y1, const int x2, const int y2)
+{
+  const int dx = (x1 - x2);
+  const int dy = (y1 - y2);
+  return dx * dx + dy * dy;
+}
+
+static inline int sdist(const int x1, const int y1, const int x2, const int y2, const int t, const int edge, const int trans)
+{
+  float d = sqrtf(fdist(x1, y1, x2, y2));
+
+  float j = (float)(3 << edge);
+  float s = (float)(255 - t) / (j / 2 + 1);
+
+  if(s < 1.0f)
+    s = 1.0f;
+
+  float temp = 255.0f;
+  temp -= (s * d);
+  if(temp < trans)
+    temp = trans;
+
+  return (int)temp;
+}
+
 Stroke::Stroke()
 {
   polycachex = new int[65536];
   polycachey = new int[65536];
-  polycount++;
+  edgecachex = new int[0x100000];
+  edgecachey = new int[0x100000];
+  polycount = 0;
   type = 0;
   active = 0;
 }
@@ -48,6 +75,8 @@ Stroke::~Stroke()
 {
   delete[] polycachex;
   delete[] polycachey;
+  delete[] edgecachex;
+  delete[] edgecachey;
 }
 
 void Stroke::clip()
@@ -201,7 +230,6 @@ void Stroke::draw(Brush *brush, Map *map, int x, int y, int ox, int oy, float zo
     case 1:
     case 3:
       map->line(x, y, lastx, lasty, 255);
-//      make_blitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       make_blitrect(x, y, lastx, lasty, ox, oy, 1, zoom);
       polycachex[polycount] = x;
       polycachey[polycount] = y;
@@ -247,6 +275,7 @@ void Stroke::end(Brush *brush, Map *map, int xx, int yy, int ox, int oy, float z
 {
   switch(type)
   {
+    case 1:
     case 3:
       polycachex[polycount] = beginx;
       polycachey[polycount] = beginy;
@@ -257,8 +286,6 @@ void Stroke::end(Brush *brush, Map *map, int xx, int yy, int ox, int oy, float z
     default:
       break;
   }
-  apply(map);
-  active = 0;
 }
 
 void Stroke::polyline(Map *map, int x, int y, int ox, int oy, float zoom)
@@ -281,7 +308,6 @@ void Stroke::polyline(Map *map, int x, int y, int ox, int oy, float zoom)
   map->line(oldx, oldy, x, y, 255);
 
   make_blitrect(x1, y1, x2, y2, ox, oy, 1, zoom);
-//  make_blitrect(x1, y1, x2, y2, ox, oy, 1, zoom);
 
   lastx = x;
   lasty = y;
@@ -311,17 +337,95 @@ void Stroke::preview(Map *map, Bitmap *backbuf, int ox, int oy, float zoom)
   }
 }
 
-void Stroke::apply(Map *map)
+void Stroke::render(Map *map, int edge)
 {
   int x, y;
+
+  if(edge == 0)
+  {
+    for(y = y1; y <= y2; y++)
+    {
+      for(x = x1; x <= x2; x++)
+      {
+        if(map->getpixel(x, y))
+          Bmp::main->setpixel_solid(x, y, makecol(0, 0, 0), 0);
+      }
+    }
+    active = 0;
+    return;
+  }
+
+  render_count = 0;
 
   for(y = y1; y <= y2; y++)
   {
     for(x = x1; x <= x2; x++)
     {
-      if(map->getpixel(x, y) > 0)
-        Bmp::main->setpixel_solid(x, y, makecol(0, 255, 0), 192);
+      if(map->getpixel(x, y) && is_edge(map, x, y))
+      {
+        edgecachex[render_count] = x;
+        edgecachey[render_count] = y;
+        render_count++;
+        render_count &= 0xFFFFF;
+      }
     }
   }
+
+  rendery = y1;
+}
+
+int Stroke::render_callback(Map *map, int edge, int ox, int oy, float zoom)
+{
+  if(render_count < 2)
+  {
+    active = 0;
+    return 0;
+  }
+
+  int x, y;
+  int endy = rendery + 32;
+  if(endy > y2)
+    endy = y2;
+
+  for(y = rendery; y < endy; y++)
+  {
+    unsigned char *p = map->row[y] + x1;
+    for(x = x1; x <= x2; x++)
+    {
+      if(*p == 0)
+      {
+        p++;
+        continue;
+      }
+
+      int *cx = &edgecachex[0];
+      int *cy = &edgecachey[0];
+      float temp1 = fdist(x, y, *cx++, *cy++);
+      int z = 0;
+      int i;
+      for(i = 1; i < render_count; i++)
+      {
+        float temp2 = fdist(x, y, *cx++, *cy++);
+        if(temp2 < temp1)
+        {
+          z = i;
+          temp1 = temp2;
+        }
+      }
+      Bmp::main->setpixel_solid(x, y, makecol(0, 0 ,0), sdist(x, y, edgecachex[z], edgecachey[z], 0, edge, 0));
+      p++;
+    }
+  }
+
+  make_blitrect(x1, rendery, x2, endy, ox, oy, 1, zoom);
+
+  rendery += 32;
+  if(rendery > y2)
+  {
+    active = 0;
+    return 0;
+  }
+
+  return 1;
 }
 

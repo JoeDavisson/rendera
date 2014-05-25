@@ -63,7 +63,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   gridx = 8;
   gridy = 8;
   stroke = new Stroke();
-  brush = new Brush(1);
+  brush = new Brush();
   backbuf = new Bitmap(Fl::w(), Fl::h());
   image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
@@ -111,6 +111,12 @@ int View::handle(int event)
             if(dclick)
             {
               stroke->end(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
+              stroke->render(Bmp::map, brush->edge);
+              while(stroke->render_callback(Bmp::map, brush->edge, ox, oy, zoom))
+              {
+                draw_main(1);
+                Fl::flush();
+              }
               moving = 0;
               draw_main(1);
               return 1;
@@ -162,6 +168,12 @@ int View::handle(int event)
       if(stroke->active && stroke->type != 3)
       {
         stroke->end(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
+        stroke->render(Bmp::map, brush->edge);
+        while(stroke->render_callback(Bmp::map, brush->edge, ox, oy, zoom))
+        {
+          draw_main(1);
+          Fl::flush();
+        }
       }
       moving = 0;
       draw_main(1);

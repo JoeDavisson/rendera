@@ -117,8 +117,11 @@ Gui::Gui()
   stroke->callback((Fl_Callback *)check_stroke, &stroke->var);
   y1 += 48 + 8;
   shape = new Widget(left_top, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24);
+  // use same callback as size here
+  shape->callback((Fl_Callback *)check_size, &size->var);
   y1 += 24 + 8;
   edge = new Widget(left_top, 8, y1, 96, 24, "Soft Edge", "data/edge.png", 8, 24);
+  edge->callback((Fl_Callback *)check_edge, &edge->var);
   left_top->resizable(0);
   left_top->end();
 

@@ -26,16 +26,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Brush
 {
 public:
-  Brush(int);
+  Brush();
   virtual ~Brush();
 
-  void make(int);
+  void make(int, int);
 
   int *solidx, *solidy;
   int *hollowx, *hollowy;
   int solid_count;
   int hollow_count;
   int size;
+  int shape;
+  int edge;
 };
 
 #endif

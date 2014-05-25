@@ -41,7 +41,8 @@ public:
   void end(Brush *, Map *, int, int, int, int, float);
   void polyline(Map *, int, int, int, int, float);
   void preview(Map *, Bitmap *,int, int, float);
-  void apply(Map *);
+  void render(Map *, int);
+  int render_callback(Map *, int, int, int, float);
 
   int x1, y1, x2, y2;
   int blitx, blity, blitw, blith;
@@ -52,7 +53,10 @@ public:
   int type;
   int *polycachex;
   int *polycachey;
+  int *edgecachex;
+  int *edgecachey;
   int polycount;
+  int rendery, render_count;
   Map *map;
 };
 

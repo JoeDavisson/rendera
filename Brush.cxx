@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-Brush::Brush(int s)
+Brush::Brush()
 {
   solidx = new int[96 * 96];
   solidy = new int[96 * 96];
@@ -28,15 +28,17 @@ Brush::Brush(int s)
   hollowy = new int[96 * 96];
   solid_count = 0;
   hollow_count = 0;
-  size = s;
-  make(s);
+  size = 1;
+  shape = 0;
+  edge = 0;
+  make(shape, size);
 }
 
 Brush::~Brush()
 {
 }
 
-void Brush::make(int s)
+void Brush::make(int shape, int s)
 {
   size = s;
   int x, y;
@@ -56,7 +58,24 @@ void Brush::make(int s)
 
   Map *map = new Map(96, 96);
   map->clear(0);
-  map->ovalfill(x1, y1, x2, y2, 255);
+
+  switch(shape)
+  {
+    case 0:
+      map->ovalfill(x1, y1, x2, y2, 255);
+      break;
+    case 1:
+      map->rectfill(x1, y1, x2, y2, 255);
+      break;
+    case 2:
+      map->hline(x1, 48, x2, 255);
+      break;
+    case 3:
+      map->vline(y1, 48, y2, 255);
+      break;
+    default:
+      break;
+  }
 
   for(y = 0; y < 96; y++)
   {
@@ -72,7 +91,19 @@ void Brush::make(int s)
   }
 
   if(size > 8)
-    map->ovalfill(x1 + 2, y1 + 2, x2 - 2, y2 - 2, 0);
+  {
+    switch(shape)
+    {
+      case 0:
+        map->ovalfill(x1 + 2, y1 + 2, x2 - 2, y2 - 2, 0);
+        break;
+      case 1:
+        map->rectfill(x1 + 2, y1 + 2, x2 - 2, y2 - 2, 0);
+        break;
+      default:
+        break;
+    }
+  }
 
   for(y = 0; y < 96; y++)
   {
