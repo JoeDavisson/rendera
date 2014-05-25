@@ -64,6 +64,7 @@ public:
   Widget *stroke;
   Widget *shape;
   Widget *edge;
+  Widget *antialias;
 
   // left bottom
   Button *offset;

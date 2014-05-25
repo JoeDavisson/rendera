@@ -100,7 +100,7 @@ Gui::Gui()
   bottom->end();
 
   // left top
-  left_top = new Fl_Group(0, top_right->h() + menubar->h(), 112, 264 + 12);
+  left_top = new Fl_Group(0, top_right->h() + menubar->h(), 112, 264 + 68);
   left_top->label("Brush");
   left_top->labelsize(12);
   left_top->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
@@ -122,6 +122,10 @@ Gui::Gui()
   y1 += 24 + 8;
   edge = new Widget(left_top, 8, y1, 96, 24, "Soft Edge", "data/edge.png", 8, 24);
   edge->callback((Fl_Callback *)check_edge, &edge->var);
+  y1 += 24 + 8;
+  antialias = new Widget(left_top, 8, y1, 96, 48, "Antialiasing", "data/antialias.png", 48, 48);
+  y1 += 48 + 8;
+  antialias->callback((Fl_Callback *)check_antialias, &antialias->var);
   left_top->resizable(0);
   left_top->end();
 

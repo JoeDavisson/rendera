@@ -14,6 +14,7 @@ void check_gridy(Field *, void *);
 void check_size(Widget *, void *);
 void check_stroke(Widget *, void *);
 void check_edge(Widget *, void *);
+void check_antialias(Widget *, void *);
 
 #endif
 

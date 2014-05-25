@@ -47,10 +47,10 @@ Map::~Map()
 
 int Map::is_edge(int x, int y)
 {
-  if((getpixel(x - 1, y)) &&
-     (getpixel(x + 1, y)) &&
-     (getpixel(x, y - 1)) &&
-     (getpixel(x, y + 1)))
+  if(getpixel(x - 1, y) &&
+     getpixel(x + 1, y) &&
+     getpixel(x, y - 1) &&
+     getpixel(x, y + 1))
   {
     return 0;
   }
@@ -81,7 +81,7 @@ int Map::getpixel(int x, int y)
   if(x < 0 || x >= w || y < 0 || y >= h)
     return 0;
 
-  return *(row[y] + x);
+  return *(row[y] + x) & 0xff;
 }
 
 void Map::line(int x1, int y1, int x2, int y2, int c)

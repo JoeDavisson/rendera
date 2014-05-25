@@ -31,6 +31,7 @@ Brush::Brush()
   size = 1;
   shape = 0;
   edge = 0;
+  antialias = 0;
   make(shape, size);
 }
 

@@ -93,3 +93,8 @@ void check_edge(Widget *widget, void *var)
   gui->view->brush->edge = *(int *)var;
 }
 
+void check_antialias(Widget *widget, void *var)
+{
+  gui->view->brush->antialias = *(int *)var;
+}
+

@@ -38,6 +38,7 @@ public:
   int size;
   int shape;
   int edge;
+  int antialias;
 };
 
 #endif

@@ -20,12 +20,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-static inline int is_edge(Map *map, int x, int y)
+static inline int is_edge(Map *map, const int x, const int y)
 {
-  if((map->getpixel(x - 1, y)) &&
-     (map->getpixel(x + 1, y)) &&
-     (map->getpixel(x, y - 1)) &&
-     (map->getpixel(x, y + 1)))
+  if(map->getpixel(x - 1, y) &&
+     map->getpixel(x + 1, y) &&
+     map->getpixel(x, y - 1) &&
+     map->getpixel(x, y + 1))
   {
     return 0;
   }
@@ -58,6 +58,39 @@ static inline int sdist(const int x1, const int y1, const int x2, const int y2, 
     temp = trans;
 
   return (int)temp;
+}
+
+static inline void shrink_block(unsigned char *s0, unsigned char *s1,
+                                unsigned char *s2, unsigned char *s3)
+{
+  int z = (*s0 << 0) + (*s1 << 1) + (*s2 << 2) + (*s3 << 3);
+
+  switch (z)
+  {
+    case 0:
+    case 15:
+      return;
+    case 7:
+      *s1 = 0;
+      *s2 = 0;
+      return;
+    case 11:
+      *s0 = 0;
+      *s3 = 0;
+      return;
+    case 13:
+      *s0 = 0;
+      *s3 = 0;
+      return;
+    case 14:
+      *s1 = 0;
+      *s2 = 0;
+      return;
+  }
+  *s0 = 0;
+  *s1 = 0;
+  *s2 = 0;
+  *s3 = 0;
 }
 
 Stroke::Stroke()
@@ -337,12 +370,11 @@ void Stroke::preview(Map *map, Bitmap *backbuf, int ox, int oy, float zoom)
   }
 }
 
-void Stroke::render(Map *map, int edge)
+void Stroke::render(Map *map, int edge, int antialias)
 {
-  int x, y;
-
   if(edge == 0)
   {
+    int x, y;
     for(y = y1; y <= y2; y++)
     {
       for(x = x1; x <= x2; x++)
@@ -355,6 +387,35 @@ void Stroke::render(Map *map, int edge)
     active = 0;
     return;
   }
+
+  if(antialias)
+    render_antialias(map, edge);
+  else
+    render_normal(map, edge);
+}
+
+void Stroke::render_normal(Map *map, int edge)
+{
+  // remove
+  int trans = 0;
+
+  soft_trans = 255.0f;
+  float j = (float)(3 << edge);
+  soft_step = (float)(255 - trans) / (j / 2 + 1);
+
+  if(soft_step < 1.0f)
+    soft_step = 1.0f;
+
+  render_pos = 0;
+  render_end = j;
+}
+
+void Stroke::render_antialias(Map *map, int edge)
+{
+  int x, y;
+
+  if(edge == 0)
+    return;
 
   render_count = 0;
 
@@ -372,10 +433,104 @@ void Stroke::render(Map *map, int edge)
     }
   }
 
-  rendery = y1;
+  render_pos = y1;
 }
 
-int Stroke::render_callback(Map *map, int edge, int ox, int oy, float zoom)
+int Stroke::render_callback(Map *map, int edge, int antialias, int ox, int oy, float zoom)
+{
+  if(edge == 0)
+    return 0;
+
+  if(antialias)
+    return render_callback_antialias(map, edge, ox, oy, zoom);
+  else
+    return render_callback_normal(map, edge, ox, oy, zoom);
+}
+
+int Stroke::render_callback_normal(Map *map, int edge, int ox, int oy, float zoom)
+{
+  // remove
+  int trans = 0;
+
+  int x, y;
+
+  int found = 0;
+  int i;
+  int end = render_pos + 64;
+  if(end > render_end)
+    end = render_end;
+
+  for(i = render_pos; i < end; i++)
+  {
+    for(y = y1 + (i & 1); y < y2; y += 2)
+    {
+      for(x = x1 + (i & 1); x < x2; x += 2)
+      {
+        unsigned char *s0 = map->row[y] + x;
+        unsigned char *s1 = map->row[y] + x + 1;
+        unsigned char *s2 = map->row[y + 1] + x;
+        unsigned char *s3 = map->row[y + 1] + x + 1;
+
+        *s0 &= 1;
+        *s1 &= 1;
+        *s2 &= 1;
+        *s3 &= 1;
+
+        if(*s0 | *s1 | *s2 | *s3)
+          found = 1;
+
+        unsigned char d0 = *s0;
+        unsigned char d1 = *s1;
+        unsigned char d2 = *s2;
+        unsigned char d3 = *s3;
+
+        shrink_block(s0, s1, s2, s3);
+
+        if(!*s0 && d0)
+          Bmp::main->setpixel_solid(x, y, makecol(0, 0, 0), soft_trans);
+        if(!*s1 && d1)
+          Bmp::main->setpixel_solid(x + 1, y, makecol(0, 0, 0), soft_trans);
+        if(!*s2 && d2)
+          Bmp::main->setpixel_solid(x, y + 1, makecol(0, 0, 0), soft_trans);
+        if(!*s3 && d3)
+          Bmp::main->setpixel_solid(x + 1, y + 1, makecol(0, 0, 0), soft_trans);
+      }
+    }
+
+    if(found == 0)
+      break;
+
+    soft_trans -= soft_step;
+    if(soft_trans < trans)
+    {
+      soft_trans = trans;
+      for(y = y1; y <= y2; y++)
+      {
+        for(x = x1; x <= x2; x++)
+        {
+          int c = map->getpixel(x, y);
+          if(c)
+            Bmp::main->setpixel_solid(x, y, makecol(0, 0, 0), soft_trans);
+        }
+      }
+      active = 0;
+      return 0;
+    }
+  }
+
+  render_pos += 64;
+
+  if(found == 0 || render_pos >= render_end)
+  {
+    active = 0;
+    return 0;
+  }
+
+  make_blitrect(x1, y1, x2, y2, ox, oy, 1, zoom);
+  return 1;
+}
+
+int Stroke::render_callback_antialias(Map *map, int edge, int ox, int oy, float zoom)
 {
   if(render_count < 2)
   {
@@ -384,11 +539,11 @@ int Stroke::render_callback(Map *map, int edge, int ox, int oy, float zoom)
   }
 
   int x, y;
-  int endy = rendery + 64;
-  if(endy > y2)
-    endy = y2;
+  render_end = render_pos + 64;
+  if(render_end > y2)
+    render_end = y2;
 
-  for(y = rendery; y < endy; y++)
+  for(y = render_pos; y < render_end; y++)
   {
     unsigned char *p = map->row[y] + x1;
     for(x = x1; x <= x2; x++)
@@ -413,15 +568,16 @@ int Stroke::render_callback(Map *map, int edge, int ox, int oy, float zoom)
           temp1 = temp2;
         }
       }
-      Bmp::main->setpixel_solid(x, y, makecol(0, 0 ,0), sdist(x, y, edgecachex[z], edgecachey[z], 0, edge, 0));
+      Bmp::main->setpixel_solid(x, y, makecol(0, 0 ,0),
+        sdist(x, y, edgecachex[z], edgecachey[z], 0, edge, 0));
       p++;
     }
   }
 
-  make_blitrect(x1, rendery, x2, endy, ox, oy, 1, zoom);
+  make_blitrect(x1, render_pos, x2, render_end, ox, oy, 1, zoom);
 
-  rendery += 64;
-  if(rendery > y2)
+  render_pos += 64;
+  if(render_pos > y2)
   {
     active = 0;
     return 0;

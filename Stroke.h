@@ -41,8 +41,12 @@ public:
   void end(Brush *, Map *, int, int, int, int, float);
   void polyline(Map *, int, int, int, int, float);
   void preview(Map *, Bitmap *,int, int, float);
-  void render(Map *, int);
-  int render_callback(Map *, int, int, int, float);
+  void render(Map *, int, int);
+  void render_normal(Map *, int);
+  void render_antialias(Map *, int);
+  int render_callback(Map *, int, int, int, int, float);
+  int render_callback_normal(Map *, int, int, int, float);
+  int render_callback_antialias(Map *, int, int, int, float);
 
   int x1, y1, x2, y2;
   int blitx, blity, blitw, blith;
@@ -56,7 +60,8 @@ public:
   int *edgecachex;
   int *edgecachey;
   int polycount;
-  int rendery, render_count;
+  int render_pos, render_end, render_count;
+  float soft_trans, soft_step;
   Map *map;
 };
 
