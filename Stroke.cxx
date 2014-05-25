@@ -347,8 +347,9 @@ void Stroke::render(Map *map, int edge)
     {
       for(x = x1; x <= x2; x++)
       {
-        if(map->getpixel(x, y))
-          Bmp::main->setpixel_solid(x, y, makecol(0, 0, 0), 0);
+        int c = map->getpixel(x, y);
+        if(c)
+          Bmp::main->setpixel_solid(x, y, makecol(0, 0, 0), 255 - c);
       }
     }
     active = 0;
@@ -383,7 +384,7 @@ int Stroke::render_callback(Map *map, int edge, int ox, int oy, float zoom)
   }
 
   int x, y;
-  int endy = rendery + 32;
+  int endy = rendery + 64;
   if(endy > y2)
     endy = y2;
 
@@ -419,7 +420,7 @@ int Stroke::render_callback(Map *map, int edge, int ox, int oy, float zoom)
 
   make_blitrect(x1, rendery, x2, endy, ox, oy, 1, zoom);
 
-  rendery += 32;
+  rendery += 64;
   if(rendery > y2)
   {
     active = 0;
