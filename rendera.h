@@ -55,6 +55,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.h"
 #include "View.h"
 #include "Widget.h"
+#include "Palette.h"
 #include "Button.h"
 #include "ToggleButton.h"
 #include "Field.h"

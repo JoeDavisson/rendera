@@ -9,8 +9,38 @@ static int brush_sizes[16] = {
 
 void check_palette(Widget *widget, void *var)
 {
-  widget->bitmap->clear(*(int *)var * 12345 | 0xff000000);
-  widget->redraw();
+  Palette *palette = Palette::main;
+  int pos = *(int *)var;
+
+  if(pos > palette->max - 1)
+  {
+    pos = palette->max - 1;
+    widget->var = palette->max - 1;
+  }
+
+  int stepx = widget->stepx;
+  int stepy = widget->stepy;
+  int divx = 96 / stepx;
+  int divy = 96 / stepy;
+
+  int x = pos % divx;
+  int y = pos / divy;
+
+  int c = widget->bitmap->getpixel(x * stepx, y * stepy);
+
+  int r = getr(c);
+  int g = getg(c);
+  int b = getb(c);
+
+  int h, s, v;
+
+  Blend::rgb_to_hsv(r, g, b, &h, &s, &v);
+
+  gui->hue->var = h / 16;
+  gui->sat->var = s / 2.684f;
+  gui->val->var = v / 2.684f;
+
+  gui->hue->do_callback();
 }
 
 void check_zoom_in(Button *button, void *var)

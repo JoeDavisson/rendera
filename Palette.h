@@ -18,28 +18,25 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#ifndef PALETTE_H
+#define PALETTE_H
+
 #include "rendera.h"
 
-Gui *gui;
-
-int main(int argc, char **argv)
+class Palette
 {
-  Fl::visual(FL_DOUBLE | FL_RGB);
+public:
+  Palette();
+  virtual ~Palette();
 
-  Bitmap::main = new Bitmap(1024 + 64, 1024 + 64);
-  Bitmap::main->clear(makecol(0, 0, 0));
-  Bitmap::main->set_clip(32, 32, Bitmap::main->w - 32 - 1, Bitmap::main->h - 32 - 1);
-  Bitmap::main->rectfill(32, 32, Bitmap::main->w - 32 - 1, Bitmap::main->h - 32 - 1, makecol(255, 255, 255), 0);
-  Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
-  Brush::main = new Brush();
-  Palette::main = new Palette();
+  void draw(Widget *);
+  void set_default();
 
-  gui = new Gui();
+  int *data;
+  int max;
 
-  // initialize some things
-  gui->hue->do_callback();
-  Palette::main->draw(gui->palette);
+  static Palette *main;
+};
 
-  return Fl::run();
-}
+#endif
 
