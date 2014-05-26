@@ -22,12 +22,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 int (*Blend::current)(int, int, int) = &trans;
 
-Blend::Blend()
+void Blend::set(int mode)
 {
-}
-
-Blend::~Blend()
-{
+  switch(mode)
+  {
+    case 0:
+      current = trans;
+      break;
+    case 1:
+      current = sub;
+      break;
+    case 2:
+      current = add;
+      break;
+    case 3:
+      current = colorize;
+      break;
+  }
 }
 
 int Blend::invert(int c1, int c2, int t)

@@ -26,9 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Blend
 {
 public:
-  Blend();
-  virtual ~Blend();
-
+  static void set(int);
   static int invert(int, int, int);
   static int trans(int, int, int);
   static int add(int, int, int);

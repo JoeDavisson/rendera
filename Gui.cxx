@@ -46,14 +46,14 @@ Gui::Gui()
 
   // top_left
   top_left = new Fl_Group(0, menubar->h(), 112, 40);
-  top_left->box(FL_UP_FRAME);
+  top_left->box(FL_UP_BOX);
   logo = new Widget(top_left, 8, 8, 96, 24, "", "data/logo.png", 0, 0);
   top_left->resizable(0);
   top_left->end();
 
   // top right
   top_right = new Fl_Group(top_left->w(), menubar->h(), window->w() - top_left->w(), 40);
-  top_right->box(FL_UP_FRAME);
+  top_right->box(FL_UP_BOX);
   x1 = 8;
   zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24, "Fit", "data/zoom_fit.png");
   zoom_fit->callback((Fl_Callback *)check_zoom_fit, &zoom_fit->var);
@@ -85,7 +85,7 @@ Gui::Gui()
 
   // bottom
   bottom = new Fl_Group(112, window->h() - 40, window->w() - 224, 40);
-  bottom->box(FL_UP_FRAME);
+  bottom->box(FL_UP_BOX);
   x1 = 8;
   wrap = new ToggleButton(bottom, x1, 8, 24, 24, "Wrap", "data/wrap.png");
   x1 += 24 + 8;
@@ -104,7 +104,7 @@ Gui::Gui()
   left_top->label("Brush");
   left_top->labelsize(12);
   left_top->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  left_top->box(FL_UP_FRAME);
+  left_top->box(FL_UP_BOX);
   y1 = 20;
   brush = new Widget(left_top, 8, y1, 96, 96, "Brush Preview", 0, 0);
   brush->bitmap->clear(makecol(255, 255, 255));
@@ -134,7 +134,7 @@ Gui::Gui()
   left_bottom->label("Tools");
   left_bottom->labelsize(12);
   left_bottom->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  left_bottom->box(FL_UP_FRAME);
+  left_bottom->box(FL_UP_BOX);
   y1 = 20;
   offset = new Button(left_bottom, 8, y1, 96, 24, "Offset", "data/offset.png");
   y1 += 24 + 8;
@@ -149,15 +149,26 @@ Gui::Gui()
   right->label("Colors");
   right->labelsize(12);
   right->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  right->box(FL_UP_FRAME);
+  right->box(FL_UP_BOX);
   y1 = 20;
-  palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 16, 16);
+  palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 6, 6);
   palette->callback((Fl_Callback *)check_palette, &palette->var);
   palette->bitmap->clear(makecol(255, 255, 255));
   y1 += 96 + 8;
-  trans = new Widget(right, 8, y1, 96, 24, "Transparency", "data/transparency.png", 8, 24);
+  hue = new Widget(right, 8, y1, 96, 24, "Hue", 1, 24);
+  hue->callback((Fl_Callback *)check_color, &hue->var);
+  y1 += 24 + 8;
+  sat = new Widget(right, 8, y1, 96, 24, "Saturation", 1, 24);
+  sat->callback((Fl_Callback *)check_color, &sat->var);
+  y1 += 24 + 8;
+  val = new Widget(right, 8, y1, 96, 24, "Value", 1, 24);
+  val->callback((Fl_Callback *)check_color, &val->var);
+  y1 += 24 + 8;
+  trans = new Widget(right, 8, y1, 96, 24, "Transparency", "data/transparency.png", 1, 24);
+  trans->callback((Fl_Callback *)check_color, &trans->var);
   y1 += 24 + 8;
   blend = new Widget(right, 8, y1, 96, 24, "Blending Mode", "data/blend.png", 24, 24);
+  blend->callback((Fl_Callback *)check_color, &blend->var);
   right->resizable(0);
   right->end();
 
@@ -189,7 +200,6 @@ Gui::Gui()
   Fl_Tooltip::enable(1);
   Fl_Tooltip::color(fl_rgb_color(192, 224, 248));
   Fl_Tooltip::textcolor(FL_BLACK);
-
 }
 
 Gui::~Gui()

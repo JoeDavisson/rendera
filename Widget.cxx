@@ -32,6 +32,8 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, const
   png_image = new Fl_PNG_Image(filename);
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
+  do_callback();
+  redraw();
 }
 
 // user-defined image

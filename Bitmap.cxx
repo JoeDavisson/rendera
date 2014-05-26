@@ -81,6 +81,24 @@ void Bitmap::hline(int x1, int y, int x2, int c, int t)
   }
 }
 
+void Bitmap::vline(int y1, int x, int y2, int c, int t)
+{
+  if(y1 < 0)
+    y1 = 0;
+  if(y2 > h - 1)
+    y2 = h - 1;
+
+  int *y = row[y2] + x;
+
+  do
+  {
+    *y = Blend::current(*y, c, t);
+    y -= w;
+    y2--;
+  }
+  while(y2 >= y1);
+}
+
 void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
 {
   if(x1 > x2)

@@ -99,3 +99,32 @@ void check_smooth(Widget *widget, void *var)
   Brush::main->smooth = *(int *)var;
 }
 
+void check_color(Widget *widget, void *var)
+{
+  int h = gui->hue->var * 16;
+  int s = gui->sat->var * 2.65625f;
+  int v = gui->val->var * 2.65625f;
+
+  int r, g, b;
+
+  Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
+  Brush::main->color = makecol(r, g, b);
+  Brush::main->trans = gui->trans->var;
+  Blend::set(gui->blend->var);
+
+  int i;
+  for(i = 0; i < 96; i++)
+  {
+    Blend::hsv_to_rgb(i * 16, 255, 255, &r, &g, &b);
+    gui->hue->bitmap->vline(0, i, 23, makecol(r, g, b), 0);
+    Blend::hsv_to_rgb(h, i * 2.65625f, v, &r, &g, &b);
+    gui->sat->bitmap->vline(0, i, 23, makecol(r, g, b), 0);
+    Blend::hsv_to_rgb(h, s, i * 2.65625f, &r, &g, &b);
+    gui->val->bitmap->vline(0, i, 23, makecol(r, g, b), 0);
+  }
+
+  gui->hue->redraw();
+  gui->sat->redraw();
+  gui->val->redraw();
+}
+

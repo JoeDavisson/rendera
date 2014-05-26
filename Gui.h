@@ -73,6 +73,9 @@ public:
 
   // right
   Widget *palette;
+  Widget *hue;
+  Widget *sat;
+  Widget *val;
   Widget *trans;
   Widget *blend;
 

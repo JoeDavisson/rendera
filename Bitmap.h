@@ -36,6 +36,7 @@ public:
 
   void clear(int);
   void hline(int, int, int, int, int);
+  void vline(int, int, int, int, int);
   void rect(int, int, int, int, int, int);
   void rectfill(int, int, int, int, int, int);
   void xor_hline(int, int, int);

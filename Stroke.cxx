@@ -410,7 +410,7 @@ void Stroke::render()
       {
         int c = map->getpixel(x, y);
         if(c)
-          Bitmap::main->setpixel_solid(x, y, brush->color, 255 - c);
+          Bitmap::main->setpixel_solid(x, y, brush->color, brush->trans);
       }
     }
     active = 0;
