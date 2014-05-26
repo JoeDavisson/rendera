@@ -151,10 +151,10 @@ Gui::Gui()
   right->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   right->box(FL_UP_BOX);
   y1 = 20;
-  palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 6, 6);
+  palette = new Widget(right, 8, y1, 96, 192, "Color Palette", 6, 6);
   palette->callback((Fl_Callback *)check_palette, &palette->var);
   palette->bitmap->clear(makecol(255, 255, 255));
-  y1 += 96 + 8;
+  y1 += 192 + 8;
   hue = new Widget(right, 8, y1, 96, 24, "Hue", 1, 24);
   hue->callback((Fl_Callback *)check_color, &hue->var);
   y1 += 24 + 8;

@@ -12,19 +12,30 @@ void check_palette(Widget *widget, void *var)
   Palette *palette = Palette::main;
   int pos = *(int *)var;
 
-  if(pos > palette->max - 1)
-  {
-    pos = palette->max - 1;
-    widget->var = palette->max - 1;
-  }
-
   int stepx = widget->stepx;
   int stepy = widget->stepy;
   int divx = 96 / stepx;
   int divy = 96 / stepy;
 
   int x = pos % divx;
-  int y = pos / divy;
+  int y = pos / divx;
+
+  if(y > (palette->max - 1) / divx)
+  {
+    y = (palette->max - 1) / divx;
+    pos = x + divx * y;
+    x = pos % divx;
+    y = pos / divx;
+    widget->var = pos;
+  }
+
+  if(pos > palette->max - 1)
+  {
+    pos = palette->max - 1;
+    x = pos % divx;
+    y = pos / divx;
+    widget->var = pos;
+  }
 
   int c = widget->bitmap->getpixel(x * stepx, y * stepy);
 
