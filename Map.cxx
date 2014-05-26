@@ -47,21 +47,6 @@ Map::~Map()
   delete[] data;
 }
 
-int Map::is_edge(int x, int y)
-{
-  if(getpixel(x - 1, y) &&
-     getpixel(x + 1, y) &&
-     getpixel(x, y - 1) &&
-     getpixel(x, y + 1))
-  {
-    return 0;
-  }
-  else
-  {
-    return 1;
-  }
-}
-
 void Map::clear(int c)
 {
   int i;
