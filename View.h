@@ -50,7 +50,6 @@ public:
   int ox, oy;
   float zoom;
   int fit;
-  int smooth;
   int moving;
   int grid, gridx, gridy;
   int px, py, pw, ph;
