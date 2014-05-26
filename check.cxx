@@ -71,14 +71,15 @@ void check_gridy(Field *field, void *var)
 
 void check_size(Widget *widget, void *var)
 {
+  Brush *brush = Brush::main;
+
   int size = brush_sizes[*(int *)var];
   int shape = gui->shape->var;
 
-  Brush *brush = gui->view->brush;
   brush->make(shape, size);
   gui->brush->bitmap->clear(makecol(255, 255, 255));
   int i;
-  for(i = 0; i < brush->solid_count; i++)
+  for(i = 0; i < Brush::main->solid_count; i++)
     gui->brush->bitmap->setpixel_solid(48 + brush->solidx[i], 48 + brush->solidy[i], makecol(0, 0, 0), 0);
   gui->brush->redraw();
 }
@@ -90,11 +91,11 @@ void check_stroke(Widget *widget, void *var)
 
 void check_edge(Widget *widget, void *var)
 {
-  gui->view->brush->edge = *(int *)var;
+  Brush::main->edge = *(int *)var;
 }
 
 void check_smooth(Widget *widget, void *var)
 {
-  gui->view->brush->smooth = *(int *)var;
+  Brush::main->smooth = *(int *)var;
 }
 

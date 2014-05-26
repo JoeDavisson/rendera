@@ -46,6 +46,8 @@ public:
   void vline(int, int, int, int);
   void quad(int *, int *, int);
   void polyfill(int *, int *, int, int, int, int, int, int);
+
+  static Map *main;
 };
 
 #endif

@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+Bitmap *Bitmap::main;
+
 Bitmap::Bitmap(int width, int height)
 {
   if(width < 1)

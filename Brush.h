@@ -41,6 +41,8 @@ public:
   int smooth;
   int color;
   int trans;
+
+  static Brush *main;
 };
 
 #endif

@@ -63,7 +63,6 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   gridx = 8;
   gridy = 8;
   stroke = new Stroke();
-  brush = new Brush();
   backbuf = new Bitmap(Fl::w(), Fl::h());
   image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
@@ -95,9 +94,9 @@ int View::handle(int event)
     case FL_MOVE:
       if(stroke->active && stroke->type == 3)
       {
-        stroke->polyline(Bmp::map, imgx, imgy, ox, oy, zoom);
+        stroke->polyline(imgx, imgy, ox, oy, zoom);
         draw_main(0);
-        stroke->preview(Bmp::map, backbuf, ox, oy, zoom);
+        stroke->preview(backbuf, ox, oy, zoom);
         redraw();
         return 1;
       }
@@ -110,9 +109,9 @@ int View::handle(int event)
           {
             if(dclick)
             {
-              stroke->end(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
-              stroke->render(brush, Bmp::map);
-              while(stroke->render_callback(brush, Bmp::map, ox, oy, zoom))
+              stroke->end(imgx, imgy, ox, oy, zoom);
+              stroke->render();
+              while(stroke->render_callback(ox, oy, zoom))
               {
                 draw_main(1);
                 Fl::flush();
@@ -123,15 +122,15 @@ int View::handle(int event)
             }
             else
             {
-              stroke->draw(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
+              stroke->draw(imgx, imgy, ox, oy, zoom);
             }
           }
           else
           {
-            stroke->begin(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
+            stroke->begin(imgx, imgy, ox, oy, zoom);
           }
           draw_main(1);
-          stroke->preview(Bmp::map, backbuf, ox, oy, zoom);
+          stroke->preview(backbuf, ox, oy, zoom);
           redraw();
           return 1;
         case 2:
@@ -149,9 +148,9 @@ int View::handle(int event)
         case 1:
           if(stroke->type != 3)
           {
-            stroke->draw(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
+            stroke->draw(imgx, imgy, ox, oy, zoom);
             draw_main(0);
-            stroke->preview(Bmp::map, backbuf, ox, oy, zoom);
+            stroke->preview(backbuf, ox, oy, zoom);
             redraw();
             return 1;
           }
@@ -167,9 +166,9 @@ int View::handle(int event)
     case FL_RELEASE:
       if(stroke->active && stroke->type != 3)
       {
-        stroke->end(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
-        stroke->render(brush, Bmp::map);
-        while(stroke->render_callback(brush, Bmp::map, ox, oy, zoom))
+        stroke->end(imgx, imgy, ox, oy, zoom);
+        stroke->render();
+        while(stroke->render_callback(ox, oy, zoom))
         {
           draw_main(1);
           Fl::flush();
@@ -208,13 +207,13 @@ void View::draw_main(int refresh)
   sw += 2;
   sh += 2;
 
-  if(sw > Bmp::main->w - ox)
-    sw = Bmp::main->w - ox;
-  if(sh > Bmp::main->h - oy)
-    sh = Bmp::main->h - oy;
+  if(sw > Bitmap::main->w - ox)
+    sw = Bitmap::main->w - ox;
+  if(sh > Bitmap::main->h - oy)
+    sh = Bitmap::main->h - oy;
 
   Bitmap *temp = new Bitmap(sw + 1, sh + 1);
-  Bmp::main->blit(temp, ox, oy, 0, 0, sw, sh);
+  Bitmap::main->blit(temp, ox, oy, 0, 0, sw, sh);
 
   int dw = sw * zoom;
   int dh = sh * zoom;
@@ -300,7 +299,7 @@ void View::begin_move()
   int hh = h();
 
   winaspect = (float)hh / ww;
-  aspect = (float)Bmp::main->h / Bmp::main->w;
+  aspect = (float)Bitmap::main->h / Bitmap::main->w;
 
   pw = ww;
   ph = hh;
@@ -319,18 +318,18 @@ void View::begin_move()
   px += dx;
   py += dy;
 
-  bw = ww * (((float)pw / zoom) / Bmp::main->w);
+  bw = ww * (((float)pw / zoom) / Bitmap::main->w);
   bh = bw * winaspect;
 
-  bx = ox * ((float)pw / Bmp::main->w) + px;
-  by = oy * ((float)ph / Bmp::main->h) + py;
+  bx = ox * ((float)pw / Bitmap::main->w) + px;
+  by = oy * ((float)ph / Bitmap::main->h) + py;
 
   // pos.x = bx + bw / 2;
   // pos.y = by + bh / 2;
   // warp mouse here... (unsupported in fltk)
 
   backbuf->clear(makecol(0, 0, 0));
-  Bmp::main->fast_stretch(backbuf, 0, 0, Bmp::main->w, Bmp::main->h,
+  Bitmap::main->fast_stretch(backbuf, 0, 0, Bitmap::main->w, Bitmap::main->h,
                           px, py, pw, ph);
 
   // need to force repaint here or the navigator won't have a border
@@ -352,8 +351,8 @@ void View::move()
   if(by > py + ph - bh - 1)
     by = py + ph - bh - 1;
 
-  ox = (bx - px) / ((float)pw / (Bmp::main->w));
-  oy = (by - py) / ((float)ph / (Bmp::main->h));
+  ox = (bx - px) / ((float)pw / (Bitmap::main->w));
+  oy = (by - py) / ((float)ph / (Bitmap::main->h));
 
   if(bw > pw)
   {
@@ -389,10 +388,10 @@ void View::zoom_in(int x, int y)
   {
     ox += x / zoom;
     oy += y / zoom;
-    if(ox > Bmp::main->w - w() / zoom)
-      ox = Bmp::main->w - w() / zoom;
-    if(oy > Bmp::main->h - h() / zoom)
-      oy = Bmp::main->h - h() / zoom;
+    if(ox > Bitmap::main->w - w() / zoom)
+      ox = Bitmap::main->w - w() / zoom;
+    if(oy > Bitmap::main->h - h() / zoom)
+      oy = Bitmap::main->h - h() / zoom;
     if(ox < 0)
       ox = 0;
     if(oy < 0)
@@ -417,10 +416,10 @@ void View::zoom_out(int x, int y)
   {
     ox -= x / oldzoom;
     oy -= y / oldzoom;
-    if(ox > Bmp::main->w - w() / zoom)
-      ox = Bmp::main->w - w() / zoom;
-    if(oy > Bmp::main->h - h() / zoom)
-      oy = Bmp::main->h - h() / zoom;
+    if(ox > Bitmap::main->w - w() / zoom)
+      ox = Bitmap::main->w - w() / zoom;
+    if(oy > Bitmap::main->h - h() / zoom)
+      oy = Bitmap::main->h - h() / zoom;
     if(ox < 0)
       ox = 0;
     if(oy < 0)
@@ -443,12 +442,12 @@ void View::zoom_fit(int fitting)
   }
 
   winaspect = (float)h() / w();
-  aspect = (float)Bmp::main->h / Bmp::main->w;
+  aspect = (float)Bitmap::main->h / Bitmap::main->w;
 
   if(aspect < winaspect)
-    zoom = ((float)w() / Bmp::main->w);
+    zoom = ((float)w() / Bitmap::main->w);
   else
-    zoom = ((float)h() / Bmp::main->h);
+    zoom = ((float)h() / Bitmap::main->h);
 
   ox = 0;
   oy = 0;

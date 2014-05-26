@@ -57,7 +57,6 @@ public:
   int bx, by, bw, bh;
   float aspect, winaspect;
   Stroke *stroke;
-  Brush *brush;
 protected:
   virtual void draw();
 };

@@ -26,11 +26,12 @@ int main(int argc, char **argv)
 {
   Fl::visual(FL_DOUBLE | FL_RGB);
 
-  Bmp::main = new Bitmap(1024 + 64, 1024 + 64);
-  Bmp::main->clear(makecol(0, 0, 0));
-  Bmp::main->set_clip(32, 32, Bmp::main->w - 32 - 1, Bmp::main->h - 32 - 1);
-  Bmp::main->rectfill(32, 32, Bmp::main->w - 32 - 1, Bmp::main->h - 32 - 1, makecol(255, 255, 255), 0);
-  Bmp::map = new Map(Bmp::main->w, Bmp::main->h);
+  Bitmap::main = new Bitmap(1024 + 64, 1024 + 64);
+  Bitmap::main->clear(makecol(0, 0, 0));
+  Bitmap::main->set_clip(32, 32, Bitmap::main->w - 32 - 1, Bitmap::main->h - 32 - 1);
+  Bitmap::main->rectfill(32, 32, Bitmap::main->w - 32 - 1, Bitmap::main->h - 32 - 1, makecol(255, 255, 255), 0);
+  Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
+  Brush::main = new Brush();
 
   gui = new Gui();
 
