@@ -109,12 +109,14 @@ int View::handle(int event)
             if(dclick)
             {
               stroke->end(imgx, imgy, ox, oy, zoom);
+              Blend::set(Brush::main->blend);
               stroke->render();
               while(stroke->render_callback(ox, oy, zoom))
               {
                 draw_main(1);
                 Fl::flush();
               }
+              Blend::set(0);
               moving = 0;
               draw_main(1);
               return 1;
@@ -166,12 +168,14 @@ int View::handle(int event)
       if(stroke->active && stroke->type != 3)
       {
         stroke->end(imgx, imgy, ox, oy, zoom);
+        Blend::set(Brush::main->blend);
         stroke->render();
         while(stroke->render_callback(ox, oy, zoom))
         {
           draw_main(1);
           Fl::flush();
         }
+        Blend::set(0);
       }
       moving = 0;
       draw_main(1);

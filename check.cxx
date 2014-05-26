@@ -110,7 +110,7 @@ void check_color(Widget *widget, void *var)
   Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
   Brush::main->color = makecol(r, g, b);
   Brush::main->trans = gui->trans->var * 2.685f;
-  Blend::set(gui->blend->var);
+  Brush::main->blend = gui->blend->var;
 
   int i;
   for(i = 0; i < 96; i++)
