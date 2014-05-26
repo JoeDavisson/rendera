@@ -35,6 +35,9 @@ int main(int argc, char **argv)
 
   gui = new Gui();
 
+  // initialize some things
+  gui->hue->handle(FL_PUSH);
+
   return Fl::run();
 }
 
