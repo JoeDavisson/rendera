@@ -31,7 +31,9 @@ Brush::Brush()
   size = 1;
   shape = 0;
   edge = 0;
-  antialias = 0;
+  smooth = 0;
+  color = makecol(255, 0, 0);
+  trans = 0;
   make(shape, size);
 }
 

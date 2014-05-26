@@ -41,12 +41,12 @@ public:
   void end(Brush *, Map *, int, int, int, int, float);
   void polyline(Map *, int, int, int, int, float);
   void preview(Map *, Bitmap *,int, int, float);
-  void render(Map *, int, int);
-  void render_normal(Map *, int);
-  void render_antialias(Map *, int);
-  int render_callback(Map *, int, int, int, int, float);
-  int render_callback_normal(Map *, int, int, int, float);
-  int render_callback_antialias(Map *, int, int, int, float);
+  void render(Brush *, Map *);
+  void render_normal(Brush *, Map *);
+  void render_smooth(Brush *, Map *);
+  int render_callback(Brush *, Map *, int, int, float);
+  int render_callback_normal(Brush *, Map *, int, int, float);
+  int render_callback_smooth(Brush *, Map *, int, int, float);
 
   int x1, y1, x2, y2;
   int blitx, blity, blitw, blith;

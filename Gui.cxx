@@ -123,9 +123,9 @@ Gui::Gui()
   edge = new Widget(left_top, 8, y1, 96, 24, "Soft Edge", "data/edge.png", 8, 24);
   edge->callback((Fl_Callback *)check_edge, &edge->var);
   y1 += 24 + 8;
-  antialias = new Widget(left_top, 8, y1, 96, 48, "Antialiasing", "data/antialias.png", 48, 48);
+  smooth = new Widget(left_top, 8, y1, 96, 48, "Smoothing", "data/smooth.png", 48, 48);
   y1 += 48 + 8;
-  antialias->callback((Fl_Callback *)check_antialias, &antialias->var);
+  smooth->callback((Fl_Callback *)check_smooth, &smooth->var);
   left_top->resizable(0);
   left_top->end();
 

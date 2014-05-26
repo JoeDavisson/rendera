@@ -42,12 +42,12 @@ static inline float fdist(const int x1, const int y1, const int x2, const int y2
   return dx * dx + dy * dy;
 }
 
-static inline int sdist(const int x1, const int y1, const int x2, const int y2, const int t, const int edge, const int trans)
+static inline int sdist(const int x1, const int y1, const int x2, const int y2, const int edge, const int trans)
 {
   float d = sqrtf(fdist(x1, y1, x2, y2));
 
   float j = (float)(3 << edge);
-  float s = (float)(255 - t) / (j / 2 + 1);
+  float s = (float)(255 - trans) / (j / 2 + 1);
 
   if(s < 1.0f)
     s = 1.0f;
@@ -65,7 +65,7 @@ static inline void shrink_block(unsigned char *s0, unsigned char *s1,
 {
   int z = (*s0 << 0) + (*s1 << 1) + (*s2 << 2) + (*s3 << 3);
 
-  switch (z)
+  switch(z)
   {
     case 0:
     case 15:
@@ -87,6 +87,7 @@ static inline void shrink_block(unsigned char *s0, unsigned char *s1,
       *s2 = 0;
       return;
   }
+
   *s0 = 0;
   *s1 = 0;
   *s2 = 0;
@@ -370,9 +371,9 @@ void Stroke::preview(Map *map, Bitmap *backbuf, int ox, int oy, float zoom)
   }
 }
 
-void Stroke::render(Map *map, int edge, int antialias)
+void Stroke::render(Brush *brush, Map *map)
 {
-  if(edge == 0)
+  if(brush->edge == 0)
   {
     int x, y;
     for(y = y1; y <= y2; y++)
@@ -381,27 +382,24 @@ void Stroke::render(Map *map, int edge, int antialias)
       {
         int c = map->getpixel(x, y);
         if(c)
-          Bmp::main->setpixel_solid(x, y, makecol(0, 0, 0), 255 - c);
+          Bmp::main->setpixel_solid(x, y, brush->color, 255 - c);
       }
     }
     active = 0;
     return;
   }
 
-  if(antialias)
-    render_antialias(map, edge);
+  if(brush->smooth)
+    render_smooth(brush, map);
   else
-    render_normal(map, edge);
+    render_normal(brush, map);
 }
 
-void Stroke::render_normal(Map *map, int edge)
+void Stroke::render_normal(Brush *brush, Map *map)
 {
-  // remove
-  int trans = 0;
-
   soft_trans = 255.0f;
-  float j = (float)(3 << edge);
-  soft_step = (float)(255 - trans) / (j / 2 + 1);
+  float j = (float)(3 << brush->edge);
+  soft_step = (float)(255 - brush->trans) / (j / 2 + 1);
 
   if(soft_step < 1.0f)
     soft_step = 1.0f;
@@ -410,11 +408,11 @@ void Stroke::render_normal(Map *map, int edge)
   render_end = j;
 }
 
-void Stroke::render_antialias(Map *map, int edge)
+void Stroke::render_smooth(Brush *brush, Map *map)
 {
   int x, y;
 
-  if(edge == 0)
+  if(brush->edge == 0)
     return;
 
   render_count = 0;
@@ -436,22 +434,19 @@ void Stroke::render_antialias(Map *map, int edge)
   render_pos = y1;
 }
 
-int Stroke::render_callback(Map *map, int edge, int antialias, int ox, int oy, float zoom)
+int Stroke::render_callback(Brush *brush, Map *map, int ox, int oy, float zoom)
 {
-  if(edge == 0)
+  if(brush->edge == 0)
     return 0;
 
-  if(antialias)
-    return render_callback_antialias(map, edge, ox, oy, zoom);
+  if(brush->smooth)
+    return render_callback_smooth(brush, map, ox, oy, zoom);
   else
-    return render_callback_normal(map, edge, ox, oy, zoom);
+    return render_callback_normal(brush, map, ox, oy, zoom);
 }
 
-int Stroke::render_callback_normal(Map *map, int edge, int ox, int oy, float zoom)
+int Stroke::render_callback_normal(Brush *brush, Map *map, int ox, int oy, float zoom)
 {
-  // remove
-  int trans = 0;
-
   int x, y;
 
   int found = 0;
@@ -487,13 +482,13 @@ int Stroke::render_callback_normal(Map *map, int edge, int ox, int oy, float zoo
         shrink_block(s0, s1, s2, s3);
 
         if(!*s0 && d0)
-          Bmp::main->setpixel_solid(x, y, makecol(0, 0, 0), soft_trans);
+          Bmp::main->setpixel_solid(x, y, brush->color, soft_trans);
         if(!*s1 && d1)
-          Bmp::main->setpixel_solid(x + 1, y, makecol(0, 0, 0), soft_trans);
+          Bmp::main->setpixel_solid(x + 1, y, brush->color, soft_trans);
         if(!*s2 && d2)
-          Bmp::main->setpixel_solid(x, y + 1, makecol(0, 0, 0), soft_trans);
+          Bmp::main->setpixel_solid(x, y + 1, brush->color, soft_trans);
         if(!*s3 && d3)
-          Bmp::main->setpixel_solid(x + 1, y + 1, makecol(0, 0, 0), soft_trans);
+          Bmp::main->setpixel_solid(x + 1, y + 1, brush->color, soft_trans);
       }
     }
 
@@ -501,16 +496,16 @@ int Stroke::render_callback_normal(Map *map, int edge, int ox, int oy, float zoo
       break;
 
     soft_trans -= soft_step;
-    if(soft_trans < trans)
+    if(soft_trans < brush->trans)
     {
-      soft_trans = trans;
+      soft_trans = brush->trans;
       for(y = y1; y <= y2; y++)
       {
         for(x = x1; x <= x2; x++)
         {
           int c = map->getpixel(x, y);
           if(c)
-            Bmp::main->setpixel_solid(x, y, makecol(0, 0, 0), soft_trans);
+            Bmp::main->setpixel_solid(x, y, brush->color, soft_trans);
         }
       }
       active = 0;
@@ -530,7 +525,7 @@ int Stroke::render_callback_normal(Map *map, int edge, int ox, int oy, float zoo
   return 1;
 }
 
-int Stroke::render_callback_antialias(Map *map, int edge, int ox, int oy, float zoom)
+int Stroke::render_callback_smooth(Brush *brush, Map *map, int ox, int oy, float zoom)
 {
   if(render_count < 2)
   {
@@ -559,17 +554,19 @@ int Stroke::render_callback_antialias(Map *map, int edge, int ox, int oy, float 
       float temp1 = fdist(x, y, *cx++, *cy++);
       int z = 0;
       int i;
+
       for(i = 1; i < render_count; i++)
       {
         float temp2 = fdist(x, y, *cx++, *cy++);
+
         if(temp2 < temp1)
         {
           z = i;
           temp1 = temp2;
         }
       }
-      Bmp::main->setpixel_solid(x, y, makecol(0, 0 ,0),
-        sdist(x, y, edgecachex[z], edgecachey[z], 0, edge, 0));
+      Bmp::main->setpixel_solid(x, y, brush->color,
+        sdist(x, y, edgecachex[z], edgecachey[z], brush->edge, brush->trans));
       p++;
     }
   }

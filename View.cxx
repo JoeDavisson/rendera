@@ -111,8 +111,8 @@ int View::handle(int event)
             if(dclick)
             {
               stroke->end(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
-              stroke->render(Bmp::map, brush->edge, brush->antialias);
-              while(stroke->render_callback(Bmp::map, brush->edge, brush->antialias, ox, oy, zoom))
+              stroke->render(brush, Bmp::map);
+              while(stroke->render_callback(brush, Bmp::map, ox, oy, zoom))
               {
                 draw_main(1);
                 Fl::flush();
@@ -168,8 +168,8 @@ int View::handle(int event)
       if(stroke->active && stroke->type != 3)
       {
         stroke->end(brush, Bmp::map, imgx, imgy, ox, oy, zoom);
-        stroke->render(Bmp::map, brush->edge, brush->antialias);
-        while(stroke->render_callback(Bmp::map, brush->edge, brush->antialias, ox, oy, zoom))
+        stroke->render(brush, Bmp::map);
+        while(stroke->render_callback(brush, Bmp::map, ox, oy, zoom))
         {
           draw_main(1);
           Fl::flush();

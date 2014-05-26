@@ -38,7 +38,9 @@ public:
   int size;
   int shape;
   int edge;
-  int antialias;
+  int smooth;
+  int color;
+  int trans;
 };
 
 #endif
