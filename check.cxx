@@ -47,7 +47,10 @@ void check_palette(Widget *widget, void *var)
 
   Blend::rgb_to_hsv(r, g, b, &h, &s, &v);
 
-  gui->hue->var = h / 16;
+  float angle = ((3.14159 * 2) / 1536) * h;
+  int mx = 48 + 40 * cosf(angle);
+  int my = 48 + 40 * sinf(angle);
+  gui->hue->var = mx + 96 * my;
   gui->sat->var = s / 2.684f;
   gui->val->var = v / 2.684f;
 
