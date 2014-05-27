@@ -25,6 +25,7 @@ Gui *gui;
 int main(int argc, char **argv)
 {
   Fl::visual(FL_DOUBLE | FL_RGB);
+  Fl::background(192, 192, 192);
 
   Bitmap::main = new Bitmap(1024 + 64, 1024 + 64);
   Bitmap::main->clear(makecol(0, 0, 0));
@@ -37,6 +38,9 @@ int main(int argc, char **argv)
   gui = new Gui();
 
   // initialize some things
+  gui->hue->var = 95 + 96 * 48;
+  gui->sat->var = 95;
+  gui->val->var = 95;
   gui->hue->do_callback();
   Palette::main->draw(gui->palette);
 

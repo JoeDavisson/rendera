@@ -37,8 +37,11 @@ public:
   void clear(int);
   void hline(int, int, int, int, int);
   void vline(int, int, int, int, int);
+  void line(int, int, int, int, int, int);
   void rect(int, int, int, int, int, int);
   void rectfill(int, int, int, int, int, int);
+  void quad(int *, int *, int, int);
+  void xor_line(int, int, int, int);
   void xor_hline(int, int, int);
   void xor_rect(int, int, int, int);
   void xor_rectfill(int, int, int, int);
@@ -55,7 +58,6 @@ public:
   void integer_stretch(Bitmap *, int, int, int, int, int, int, int, int, int, int);
   void stretch_line(Bitmap *, int, int, int, int, int, int);
   void fast_stretch(Bitmap *, int, int, int, int, int, int, int, int);
-  void quad(int *, int *, int, int);
 
   static Bitmap *main;
 };

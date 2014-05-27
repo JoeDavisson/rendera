@@ -81,6 +81,16 @@ void Palette::draw(Widget *widget)
 
   widget->bitmap->clear(makecol(0, 0, 0));
 
+  for(y = 0; y < 192; y += stepy)
+  {
+    for(x = 0; x < 96; x += stepx)
+    {
+      widget->bitmap->rect(x, y, x + stepx, y + stepy, makecol(160, 160, 160), 0);
+      widget->bitmap->line(x, y, x + stepx - 1, y + stepy - 1, makecol(160, 160, 160), 0);
+      widget->bitmap->line(95 - x, y, 95 - (x + stepx - 1), y + stepy - 1, makecol(160, 160, 160), 0);
+    }
+  }
+/*
   for(y = 0; y < 192; y++)
   {
     for(x = 0; x < 96; x++)
@@ -91,6 +101,7 @@ void Palette::draw(Widget *widget)
       }
     }
   }
+*/
 
   int i = 0;
   for(y = 0; y < divy; y++)

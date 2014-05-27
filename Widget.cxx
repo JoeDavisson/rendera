@@ -95,7 +95,7 @@ void Widget::draw()
     
   fl_draw_box(FL_DOWN_FRAME, x(), y(), w(), h(), FL_BLACK);
 
-  if(stepx == 0 || stepy == 0)
+  if(stepx <= 1 && stepy <= 1)
     return;
 
   int offsety = (var / (w() / stepx)) * stepy;

@@ -155,9 +155,9 @@ Gui::Gui()
   palette->callback((Fl_Callback *)check_palette, &palette->var);
   palette->bitmap->clear(makecol(255, 255, 255));
   y1 += 192 + 8;
-  hue = new Widget(right, 8, y1, 96, 24, "Hue", 1, 24);
+  hue = new Widget(right, 8, y1, 96, 96, "Hue", 1, 1);
   hue->callback((Fl_Callback *)check_color, &hue->var);
-  y1 += 24 + 8;
+  y1 += 96 + 8;
   sat = new Widget(right, 8, y1, 96, 24, "Saturation", 1, 24);
   sat->callback((Fl_Callback *)check_color, &sat->var);
   y1 += 24 + 8;

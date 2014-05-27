@@ -99,6 +99,62 @@ void Bitmap::vline(int y1, int x, int y2, int c, int t)
   while(y2 >= y1);
 }
 
+void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
+{
+  int dx, dy, inx, iny, e;
+
+  dx = x2 - x1;
+  dy = y2 - y1;
+  inx = dx > 0 ? 1 : -1;
+  iny = dy > 0 ? 1 : -1;
+
+  dx = ABS(dx);
+  dy = ABS(dy);
+
+  if(dx >= dy)
+  {
+    dy <<= 1;
+    e = dy - dx;
+    dx <<= 1;
+
+    while(x1 != x2)
+    {
+      setpixel_solid(x1, y1, c, t);
+
+      if(e >= 0)
+      {
+        y1 += iny;
+        e -= dx;
+      }
+
+      e += dy;
+      x1 += inx;
+    }
+  }
+  else
+  {
+    dx <<= 1;
+    e = dx - dy;
+    dy <<= 1;
+
+    while(y1 != y2)
+    {
+      setpixel_solid(x1, y1, c, t);
+
+      if(e >= 0)
+      {
+        x1 += inx;
+        e -= dy;
+      }
+
+      e += dx;
+      y1 += iny;
+    }
+  }
+
+  setpixel_solid(x1, y1, c, t);
+}
+
 void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
 {
   if(x1 > x2)
@@ -149,6 +205,192 @@ void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c, int t)
 
   for(; y1 <= y2; y1++)
     hline(x1, y1, x2, c, t);
+}
+
+// helper for quad
+static void store_line(int *xbuf, int *count, int x1, int y1, int x2, int y2)
+{
+  int dx = x2 - x1;
+  int dy = y2 - y1;
+
+  int inx = dx > 0 ? 1 : -1;
+  int iny = dy > 0 ? 1 : -1;
+
+  int e;
+
+  dx = ABS(dx);
+  dy = ABS(dy);
+
+  if(dx >= dy)
+  {
+    dy <<= 1;
+    e = dy - dx;
+    dx <<= 1;
+
+    while(x1 != x2)
+    {
+      xbuf[(*count)] = x1;
+
+      if(e >= 0)
+      {
+        y1 += iny;
+        (*count)++;
+        e -= dx;
+      }
+
+      e += dy;
+      x1 += inx;
+    }
+  }
+  else
+  {
+    dx <<= 1;
+    e = dx - dy;
+    dy <<= 1;
+
+    while(y1 != y2)
+    {
+      xbuf[(*count)] = x1;
+
+      if(e >= 0)
+      {
+        x1 += inx;
+        e -= dy;
+      }
+
+      e += dx;
+      y1 += iny;
+      (*count)++;
+    }
+  }
+
+  xbuf[(*count)++] = x1;
+}
+
+void Bitmap::quad(int *px, int *py, int c, int t)
+{
+  // sort vertically
+  if(py[0] > py[1])
+  {
+    SWAP(px[0], px[1]);
+    SWAP(py[0], py[1]);
+  }
+
+  if(py[2] > py[3])
+  {
+    SWAP(px[2], px[3]);
+    SWAP(py[2], py[3]);
+  }
+
+  if(py[0] > py[2])
+  {
+    SWAP(px[0], px[2]);
+    SWAP(py[0], py[2]);
+  }
+
+  if(py[1] > py[3])
+  {
+    SWAP(px[1], px[3]);
+    SWAP(py[1], py[3]);
+  }
+
+  if(py[1] > py[2])
+  {
+    SWAP(px[1], px[2]);
+    SWAP(py[1], py[2]);
+  }
+
+  // figure out which inner point is left/right
+  int left = 1;
+  int right = 2;
+
+  if(px[1] > px[2])
+  {
+    left = 2;
+    right = 1;
+  }
+
+  int *left_buf = new int[(py[3] - py[0]) + 8];
+  int *right_buf = new int[(py[3] - py[0]) + 8];
+
+  // store left points
+  int count = 0;
+  store_line(left_buf, &count, px[0], py[0], px[left], py[left]);
+  store_line(left_buf, &count, px[left], py[left], px[3], py[3]);
+
+  // store right points
+  count = 0;
+  store_line(right_buf, &count, px[0], py[0], px[right], py[right]);
+  store_line(right_buf, &count, px[right], py[right], px[3], py[3]);
+
+  // render
+  int i = 0;
+  int y;
+
+  for(y = py[0]; y <= py[3]; y++)
+  {
+    hline(left_buf[i], y, right_buf[i], c, t);
+    i++;
+  }
+
+  delete[] left_buf;
+  delete[] right_buf;
+}
+
+void Bitmap::xor_line(int x1, int y1, int x2, int y2)
+{
+  int dx, dy, inx, iny, e;
+
+  dx = x2 - x1;
+  dy = y2 - y1;
+  inx = dx > 0 ? 1 : -1;
+  iny = dy > 0 ? 1 : -1;
+
+  dx = ABS(dx);
+  dy = ABS(dy);
+
+  if(dx >= dy)
+  {
+    dy <<= 1;
+    e = dy - dx;
+    dx <<= 1;
+
+    while(x1 != x2)
+    {
+      *(row[y1] + x1) ^= 0x00FFFFFF;
+
+      if(e >= 0)
+      {
+        y1 += iny;
+        e -= dx;
+      }
+
+      e += dy;
+      x1 += inx;
+    }
+  }
+  else
+  {
+    dx <<= 1;
+    e = dx - dy;
+    dy <<= 1;
+
+    while(y1 != y2)
+    {
+      *(row[y1] + x1) ^= 0x00FFFFFF;
+
+      if(e >= 0)
+      {
+        x1 += inx;
+        e -= dy;
+      }
+
+      e += dx;
+      y1 += iny;
+    }
+  }
+
+  *(row[y1] + x1) ^= 0x00FFFFFF;
 }
 
 void Bitmap::xor_hline(int x1, int y, int x2)

@@ -142,6 +142,66 @@ void check_smooth(Widget *widget, void *var)
 
 void check_color(Widget *widget, void *var)
 {
+  int pos = gui->hue->var;
+  int mx = pos % 96;
+  int my = pos / 96;
+
+  float mouse_angle = atan2f(my - 48, mx - 48);
+  int h = ((int)(mouse_angle * 244.46f) + 1536) % 1536;
+  int s = gui->sat->var * 2.684f;
+  int v = gui->val->var * 2.684f;
+
+  int r, g, b;
+
+  Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
+  Brush::main->color = makecol(r, g, b);
+  Brush::main->trans = gui->trans->var * 2.685f;
+  Brush::main->blend = gui->blend->var;
+
+  int i;
+  int lastx1 = 48 + 40;
+  int lasty1 = 48;
+  int lastx2 = 48 + 20;
+  int lasty2 = 48;
+  int px[4];
+  int py[4];
+
+  gui->hue->bitmap->clear((Fl::get_color(FL_BACKGROUND_COLOR) >> 8) | 0xFF000000);
+
+  for(i = 1; i < 1536; i++)
+  {
+    float angle = ((3.14159 * 2) / 1536) * i;
+    int x1 = 48 + 40 * cosf(angle);
+    int y1 = 48 + 40 * sinf(angle);
+    int x2 = 48 + 20 * cosf(angle);
+    int y2 = 48 + 20 * sinf(angle);
+    Blend::hsv_to_rgb(i, 255, 255, &r, &g, &b);
+    gui->hue->bitmap->line(x1, y1, x2, y2, makecol(r, g, b), 0);
+    gui->hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makecol(r, g, b), 0);
+  }
+
+  int x1 = 48 + 40 * cosf(mouse_angle);
+  int y1 = 48 + 40 * sinf(mouse_angle);
+  int x2 = 48 + 20 * cosf(mouse_angle);
+  int y2 = 48 + 20 * sinf(mouse_angle);
+  gui->hue->bitmap->xor_line(x1, y1, x2, y2);
+
+  for(i = 0; i < 96; i++)
+  {
+    Blend::hsv_to_rgb(h, i * 2.685f, v, &r, &g, &b);
+    gui->sat->bitmap->vline(0, i, 23, makecol(r, g, b), 0);
+    Blend::hsv_to_rgb(h, s, i * 2.685f, &r, &g, &b);
+    gui->val->bitmap->vline(0, i, 23, makecol(r, g, b), 0);
+  }
+
+  gui->hue->redraw();
+  gui->sat->redraw();
+  gui->val->redraw();
+}
+
+/*
+void check_color(Widget *widget, void *var)
+{
   int h = gui->hue->var * 16;
   int s = gui->sat->var * 2.684f;
   int v = gui->val->var * 2.684f;
@@ -168,4 +228,5 @@ void check_color(Widget *widget, void *var)
   gui->sat->redraw();
   gui->val->redraw();
 }
+*/
 
