@@ -42,28 +42,48 @@ static inline float fdist(const int x1, const int y1, const int x2, const int y2
   return dx * dx + dy * dy;
 }
 
+static inline int isqrt(int i)
+{
+  int count = 0;
+  int j = 1 << 30;
+
+  while(j > i)
+    j >>= 2;
+
+  while(j != 0)
+  {
+    if(i >= count + j)
+    {
+      i -= count + j;
+      count += j << 1;
+    }
+    j >>= 2;
+    count >>= 1;
+  }
+
+  return count;
+}
+
 static inline int sdist(const int x1, const int y1, const int x2, const int y2, const int edge, const int trans)
 {
-  float d = sqrtf(fdist(x1, y1, x2, y2));
+  int d = isqrt(fdist(x1, y1, x2, y2));
+  int s = ((255 - trans) << 8) / (((3 << edge) >> 1) + 1);
 
-  float j = (float)(3 << edge);
-  float s = (float)(255 - trans) / (j / 2 + 1);
+  if(s < 255)
+    s = 255;
 
-  if(s < 1.0f)
-    s = 1.0f;
-
-  float temp = 255.0f;
-  temp -= (s * d);
+  int temp = 255;
+  temp -= (s * d) >> 8;
   if(temp < trans)
     temp = trans;
 
-  return (int)temp;
+  return temp;
 }
 
 static inline void shrink_block(unsigned char *s0, unsigned char *s1,
                                 unsigned char *s2, unsigned char *s3)
 {
-  int z = (*s0 << 0) + (*s1 << 1) + (*s2 << 2) + (*s3 << 3);
+  const int z = (*s0 << 0) + (*s1 << 1) + (*s2 << 2) + (*s3 << 3);
 
   switch(z)
   {
@@ -577,13 +597,16 @@ int Stroke::render_callback_smooth(int ox, int oy, float zoom)
   }
 
   int x, y;
+
   render_end = render_pos + 64;
+
   if(render_end > y2)
     render_end = y2;
 
   for(y = render_pos; y < render_end; y++)
   {
     unsigned char *p = map->row[y] + x1;
+
     for(x = x1; x <= x2; x++)
     {
       if(*p == 0)
@@ -600,7 +623,7 @@ int Stroke::render_callback_smooth(int ox, int oy, float zoom)
 
       for(i = 1; i < render_count; i++)
       {
-        float temp2 = fdist(x, y, *cx++, *cy++);
+        const float temp2 = fdist(x, y, *cx++, *cy++);
 
         if(temp2 < temp1)
         {
@@ -608,8 +631,10 @@ int Stroke::render_callback_smooth(int ox, int oy, float zoom)
           temp1 = temp2;
         }
       }
+
       Bitmap::main->setpixel_solid(x, y, brush->color,
         sdist(x, y, edgecachex[z], edgecachey[z], brush->edge, brush->trans));
+
       p++;
     }
   }
