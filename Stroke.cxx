@@ -39,6 +39,7 @@ static inline float fdist(const int x1, const int y1, const int x2, const int y2
 {
   const int dx = (x1 - x2);
   const int dy = (y1 - y2);
+
   return dx * dx + dy * dy;
 }
 
@@ -57,6 +58,7 @@ static inline int isqrt(int i)
       i -= count + j;
       count += j << 1;
     }
+
     j >>= 2;
     count >>= 1;
   }
