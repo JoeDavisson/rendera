@@ -90,18 +90,6 @@ void Palette::draw(Widget *widget)
       widget->bitmap->line(95 - x, y, 95 - (x + stepx - 1), y + stepy - 1, makecol(160, 160, 160), 0);
     }
   }
-/*
-  for(y = 0; y < 192; y++)
-  {
-    for(x = 0; x < 96; x++)
-    {
-      if((x & 1) ^ (y & 1))
-      {
-        widget->bitmap->setpixel_solid(x, y, makecol(255, 255, 255), 0);
-      }
-    }
-  }
-*/
 
   int i = 0;
   for(y = 0; y < divy; y++)
