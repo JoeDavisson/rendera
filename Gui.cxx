@@ -41,6 +41,9 @@ Gui::Gui()
 
   // window
   window = new Fl_Double_Window(800, 600, "Rendera");
+  
+  //group_main = new Fl_Group(0, 0, window->w(), window->h());
+
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
   menubar->menu(menuitems);
 
@@ -193,6 +196,9 @@ Gui::Gui()
   group_left->resizable(left_bottom);
   group_left->end();
 
+  //group_main->resizable(view);
+  //group_main->end();
+
   window->size_range(640, 480, 0, 0, 0, 0, 0);
   window->resizable(view);
   window->end();
@@ -200,6 +206,7 @@ Gui::Gui()
   Fl_Tooltip::enable(1);
   Fl_Tooltip::color(fl_rgb_color(192, 224, 248));
   Fl_Tooltip::textcolor(FL_BLACK);
+
 }
 
 Gui::~Gui()

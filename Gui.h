@@ -31,6 +31,7 @@ public:
 
   // window
   Fl_Double_Window *window;
+  //Fl_Group *group_main;
   Fl_Menu_Bar *menubar;
 
   // containers

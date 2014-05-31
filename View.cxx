@@ -199,7 +199,7 @@ void View::resize(int x, int y, int w, int h)
   Fl_Widget::resize(x, y, w, h);
   if(fit)
     zoom_fit(1);
-  fl_overlay_clear();
+//  fl_overlay_clear();
   draw_main(0);
 }
 
@@ -492,8 +492,8 @@ void View::draw()
   else if(moving)
   {
     fl_push_clip(x(), y(), w(), h());
-    fl_overlay_clear();
-    fl_overlay_rect(x() + bx, y() + by, bw, bh);
+//    fl_overlay_clear();
+//    fl_overlay_rect(x() + bx, y() + by, bw, bh);
     fl_pop_clip();
   }
   else
