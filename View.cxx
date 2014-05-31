@@ -491,10 +491,8 @@ void View::draw()
   }
   else if(moving)
   {
-    fl_push_clip(x(), y(), w(), h());
-//    fl_overlay_clear();
-//    fl_overlay_rect(x() + bx, y() + by, bw, bh);
-    fl_pop_clip();
+    fl_overlay_clear();
+    fl_overlay_rect(x() + bx, y() + by, bw, bh);
   }
   else
   {
