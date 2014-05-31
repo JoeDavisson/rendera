@@ -103,6 +103,9 @@ int View::handle(int event)
     case FL_PUSH:
       switch(button)
       {
+        window()->make_current();
+        fl_overlay_clear();
+
         case 1:
           if(stroke->active && stroke->type == 3)
           {
@@ -144,6 +147,9 @@ int View::handle(int event)
           return 0;
       } 
     case FL_DRAG:
+      window()->make_current();
+      fl_overlay_clear();
+
       switch(button)
       {
         case 1:
@@ -165,6 +171,9 @@ int View::handle(int event)
           return 0;
       } 
     case FL_RELEASE:
+      window()->make_current();
+      fl_overlay_clear();
+
       if(stroke->active && stroke->type != 3)
       {
         stroke->end(imgx, imgy, ox, oy, zoom);
@@ -199,7 +208,6 @@ void View::resize(int x, int y, int w, int h)
   Fl_Widget::resize(x, y, w, h);
   if(fit)
     zoom_fit(1);
-//  fl_overlay_clear();
   draw_main(0);
 }
 
@@ -371,7 +379,9 @@ void View::move()
   if(bh < 1)
     bh = 1;
 
-  redraw();
+  window()->make_current();
+  fl_overlay_rect(x() + bx, y() + by, bw, bh);
+//  redraw();
 }
 
 void View::zoom_in(int x, int y)
@@ -488,11 +498,6 @@ void View::draw()
     fl_push_clip(x() + blitx, y() + blity, blitw, blith);
     image->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
     fl_pop_clip();
-  }
-  else if(moving)
-  {
-    fl_overlay_clear();
-    fl_overlay_rect(x() + bx, y() + by, bw, bh);
   }
   else
   {

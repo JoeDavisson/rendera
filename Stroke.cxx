@@ -625,7 +625,12 @@ int Stroke::render_callback_smooth(int ox, int oy, float zoom)
 
       for(i = 1; i < render_count; i++)
       {
-        const float temp2 = fdist(x, y, *cx++, *cy++);
+        const int dx = (x - *cx++);
+        const int dy = (y - *cy++);
+
+        const int temp2 = dx * dx + dy * dy;
+
+//        const float temp2 = fdist(x, y, *cx++, *cy++);
 
         if(temp2 < temp1)
         {
@@ -633,7 +638,6 @@ int Stroke::render_callback_smooth(int ox, int oy, float zoom)
           temp1 = temp2;
         }
       }
-
       Bitmap::main->setpixel_solid(x, y, brush->color,
         sdist(x, y, edgecachex[z], edgecachey[z], brush->edge, brush->trans));
 
