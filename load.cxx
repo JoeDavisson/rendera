@@ -2,12 +2,13 @@
 
 void load(Fl_Widget *, void *)
 {
-  Fl_File_Chooser *chooser = new Fl_File_Chooser(".", "Legacy Bitmap Files (*.bmp)", Fl_File_Chooser::SINGLE, "Load Image");
-  chooser->show();
-  while(chooser->shown())
+  Fl_File_Chooser *fc = new Fl_File_Chooser(".", "JPEG Image (*.jpg)", Fl_File_Chooser::SINGLE, "Load Image");
+  fc->show();
+  while(fc->shown())
   {
     Fl::wait();
   }
-  delete chooser;
+  const char *fn = fc->value();
+  puts(fn);
 }
 
