@@ -4,7 +4,7 @@ CFLAGS = -O3 -march=native -ffast-math -fomit-frame-pointer -Wall -Wno-unused -f
 #valgrind
 #CFLAGS = -g -O0 -Wall -Wno-unused -fmax-errors=5
 
-LIBS = -lm -lfltk -lfltk_images
+LIBS = -lm -lfltk -lfltk_images -ljpeg
 # static link
 #LIBS = -lm -Wl,-Bsymbolic-functions /usr/lib/x86_64-linux-gnu/libfltk_images.a -lpng -lz /usr/lib/x86_64-linux-gnu/libfltk.a -lXext -lXft -lfontconfig -lfontconfig -lXinerama -ldl -lm -lX11
 
