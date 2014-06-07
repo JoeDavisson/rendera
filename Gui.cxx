@@ -24,6 +24,8 @@ Fl_Menu_Item menuitems[] =
 {
   { "&File", 0, 0, 0, FL_SUBMENU },
     { "&New", 0, 0, 0 },
+    { "&Load", 0, (Fl_Callback *)load },
+    { "&Save", 0, 0, 0 },
     { 0 },
   { "&Edit", 0, 0, 0, FL_SUBMENU },
     { "&Copy", 0, 0, 0 },
