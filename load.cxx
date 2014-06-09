@@ -2,25 +2,24 @@
 #include <jpeglib.h>
 #include <setjmp.h>
 
-Fl_Shared_Image *preview = 0;
 int *preview_data = 0;
 
 void load(Fl_Widget *, void *)
 {
-  Fl_File_Chooser *fc = new Fl_File_Chooser(".", "JPEG Image (*.jpg)", Fl_File_Chooser::SINGLE, "Load Image");
-  Fl_Shared_Image::add_handler(preview_jpg);
+  Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
+  fc->title("Load Image");
+  fc->filter("JPEG Image\t*.{jpg,jpeg}");
+  fc->options(Fl_Native_File_Chooser::PREVIEW);
+  fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
   fc->show();
 
-  while(fc->visible())
-  {
-    Fl::wait();
-  }
-
-  const char *fn = fc->value();
+  const char *fn = fc->filename();
   load_jpg(fn);
 
   delete Map::main;
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
+
+  delete fc;
 }
 
 struct my_error_mgr
@@ -40,8 +39,11 @@ static void jpg_exit(j_common_ptr cinfo)
 
 Fl_Image *preview_jpg(const char *fn, unsigned char *header, int len)
 {
-puts("got here");
-puts(fn);
+  // check header
+  unsigned char jpeg_header[2] = { 0xff, 0xd8 };
+  if(memcmp(header, jpeg_header, 2) != 0)
+    return 0;
+
   struct jpeg_decompress_struct cinfo;
   struct my_error_mgr jerr;
   JSAMPARRAY linebuf;
@@ -63,8 +65,8 @@ puts(fn);
 
   jpeg_create_decompress(&cinfo);
   jpeg_stdio_src(&cinfo, in);
-  (void)jpeg_read_header(&cinfo, TRUE);
-  (void)jpeg_start_decompress(&cinfo);
+  jpeg_read_header(&cinfo, TRUE);
+  jpeg_start_decompress(&cinfo);
   row_stride = cinfo.output_width * cinfo.output_components;
   linebuf = (*cinfo.mem->alloc_sarray)
     ((j_common_ptr)&cinfo, JPOOL_IMAGE, row_stride, 1);
@@ -74,16 +76,19 @@ puts(fn);
   int w = row_stride / bytes;
   int h = cinfo.output_height;
 
+  if(w < 1 || h < 1)
+    return 0;
+
   delete[] preview_data;
   preview_data = new int[w * h];
   Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)preview_data, w, h, 4, 0);
 
   int x;
+  int i;
   int *p = &preview_data[0];
-printf("%d\n", image->count());
   while(cinfo.output_scanline < cinfo.output_height)
   {
-    (void)jpeg_read_scanlines(&cinfo, linebuf, 1);
+    jpeg_read_scanlines(&cinfo, linebuf, 1);
     if(bytes == 3)
     {
       for(x = 0; x < row_stride; x += 3)
@@ -95,7 +100,7 @@ printf("%d\n", image->count());
     }
     else
     {
-      for(x = 0; x < row_stride; x++)
+      for(x = 0; x < row_stride; x += 1)
       {
         *p = makecol((linebuf[0][x] & 0xFF),
                      (linebuf[0][x] & 0xFF), (linebuf[0][x]) & 0xFF);
@@ -104,7 +109,7 @@ printf("%d\n", image->count());
     }
   }
 
-  (void)jpeg_finish_decompress(&cinfo);
+  jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
   fclose(in);
 
@@ -134,8 +139,8 @@ void load_jpg(const char *fn)
 
   jpeg_create_decompress(&cinfo);
   jpeg_stdio_src(&cinfo, in);
-  (void)jpeg_read_header(&cinfo, TRUE);
-  (void)jpeg_start_decompress(&cinfo);
+  jpeg_read_header(&cinfo, TRUE);
+  jpeg_start_decompress(&cinfo);
   row_stride = cinfo.output_width * cinfo.output_components;
   linebuf = (*cinfo.mem->alloc_sarray)
     ((j_common_ptr)&cinfo, JPOOL_IMAGE, row_stride, 1);
@@ -158,7 +163,7 @@ void load_jpg(const char *fn)
   int *p = Bitmap::main->row[32] + 32;
   while(cinfo.output_scanline < cinfo.output_height)
   {
-    (void)jpeg_read_scanlines(&cinfo, linebuf, 1);
+    jpeg_read_scanlines(&cinfo, linebuf, 1);
     if(bytes == 3)
     {
       for(x = 0; x < row_stride; x += 3)
@@ -180,7 +185,7 @@ void load_jpg(const char *fn)
     p += 64;
   }
 
-  (void)jpeg_finish_decompress(&cinfo);
+  jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
   fclose(in);
 }

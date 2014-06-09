@@ -26,6 +26,8 @@ int main(int argc, char **argv)
 {
   Fl::visual(FL_DOUBLE | FL_RGB);
   Fl::background(192, 192, 192);
+  Fl_Shared_Image::add_handler(preview_jpg);
+//  Fl_File_Icon::load_system_icons();
 
   Bitmap::main = new Bitmap(1024 + 64, 1024 + 64);
   Bitmap::main->clear(makecol(0, 0, 0));

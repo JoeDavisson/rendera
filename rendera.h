@@ -42,7 +42,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Tooltip.H>
-#include <FL/Fl_File_Chooser.H>
+#include <FL/Fl_Native_File_Chooser.H>
+//#include <FL/Fl_File_Chooser.H>
 
 #include <stdio.h>
 #include <stdlib.h>
