@@ -10,12 +10,28 @@ void load(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
   fc->title("Load Image");
-  fc->filter("JPEG Image\t*.{jpg,jpeg}\nBitmap Image\t*.bmp");
+  fc->filter("JPEG Image\t*.{jpg,jpeg}\nBitmap Image\t*.bmp\nTarga Image\t*.tga");
   fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
   fc->show();
 
   const char *fn = fc->filename();
+
+  // get file extension
+  char ext[16];
+  char *p = (char *)fn + strlen(fn) - 1;
+  while(p >= fn)
+  {
+    if(*p == '.')
+    {
+      strcpy(ext, p);
+      break;
+    }
+
+    p--;
+  }
+puts(ext);
+  
   FILE *in = fl_fopen(fn, "rb");
   if(!in)
     return;
@@ -33,6 +49,8 @@ void load(Fl_Widget *, void *)
     load_jpg(fn);
   else if(memcmp(header, "BM", 2) == 0)
     load_bmp(fn);
+  else if(strcasecmp(ext, ".tga") == 0)
+    load_tga(fn);
   else
     return;
 
@@ -88,6 +106,24 @@ typedef struct
   uint32_t biClrImportant;
 }
 BITMAPINFOHEADER;
+
+#pragma pack(1)
+typedef struct
+{
+  uint8_t id_length;
+  uint8_t color_map_type;
+  uint8_t data_type;
+  uint16_t color_map_origin;
+  uint16_t color_map_length;
+  uint8_t color_map_depth;
+  uint16_t x;
+  uint16_t y;
+  uint16_t w;
+  uint16_t ht;
+  uint8_t bpp;
+  uint8_t descriptor;
+}
+TARGA_HEADER;
 
 Fl_Image *preview_jpg(const char *fn, unsigned char *header, int len)
 {
@@ -249,16 +285,12 @@ void load_jpg(const char *fn)
 
 void load_bmp(const char *fn)
 {
-puts("got here");
   FILE *in = fl_fopen(fn, "rb");
   if(!in)
     return;
 
   BITMAPFILEHEADER bh;
   BITMAPINFOHEADER bm;
-//printf("%d\n", (int)sizeof(BITMAPFILEHEADER));
-//printf("%d\n", (int)sizeof(BITMAPINFOHEADER));
-//return;
 
   if(fread(&bh, sizeof(BITMAPFILEHEADER), 1, in) != 1)
   {
@@ -274,38 +306,12 @@ puts("info problem");
     return;
   }
 
-  printf("%u\n", bm.biSize);
-  printf("%u\n", bm.biWidth);
-  printf("%u\n", bm.biHeight);
-  printf("%u\n", bm.biPlanes);
-  printf("%u\n", bm.biBitCount);
-  printf("%u\n", bm.biCompression);
-  printf("%u\n", bm.biSizeImage);
-  printf("%u\n", bm.biXPelsPerMeter);
-  printf("%u\n", bm.biYPelsPerMeter);
-  printf("%u\n", bm.biClrUsed);
-  printf("%u\n", bm.biClrImportant);
-
   int w = bm.biWidth;
   int h = bm.biHeight;
   int bits = bm.biBitCount;
 
   if(bits != 24)
   {
-puts("bits problem");
-/*
-  uint32_t biSize;
-  uint32_t biWidth;
-  uint32_t biHeight;
-  uint16_t biPlanes;
-  uint16_t biBitCount;
-  uint32_t biCompression;
-  uint32_t biSizeImage;
-  uint32_t biXPelsPerMeter;
-  uint32_t biYPelsPerMeter;
-  uint32_t biClrUsed;
-  uint32_t biClrImportant;
-*/
     fclose(in);
     return;
   }
@@ -366,6 +372,58 @@ puts("bits problem");
   }
 
   delete[] linebuf;
+  fclose(in);
+}
+
+/*
+#pragma pack(1)
+typedef struct
+{
+  uint8_t id_length;
+  uint8_t color_map_type;
+  uint8_t data_type;
+  uint16_t color_map_origin;
+  uint16_t color_map_length;
+  uint8_t color_map_depth;
+  uint16_t x;
+  uint16_t y;
+  uint16_t w;
+  uint16_t ht;
+  uint8_t bpp;
+  uint8_t descriptor;
+}
+TARGA_HEADER;
+*/
+void load_tga(const char *fn)
+{
+puts("load targa");
+  FILE *in = fl_fopen(fn, "rb");
+  if(!in)
+    return;
+
+  TARGA_HEADER header;
+
+  if(fread(&header, sizeof(TARGA_HEADER), 1, in) != 1)
+  {
+puts("header problem");
+    fclose(in);
+    return;
+  }
+
+  if(header.data_type != 2)
+  {
+    puts("data type must be 2");
+    fclose(in);
+    return;
+  }
+
+  if(header.bpp != 24)
+  {
+    puts("only 24 bits supported");
+    fclose(in);
+    return;
+  }
+
   fclose(in);
 }
 
