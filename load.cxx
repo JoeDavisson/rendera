@@ -30,7 +30,6 @@ void load(Fl_Widget *, void *)
 
     p--;
   }
-puts(ext);
   
   FILE *in = fl_fopen(fn, "rb");
   if(!in)
@@ -119,7 +118,7 @@ typedef struct
   uint16_t x;
   uint16_t y;
   uint16_t w;
-  uint16_t ht;
+  uint16_t h;
   uint8_t bpp;
   uint8_t descriptor;
 }
@@ -257,8 +256,9 @@ void load_jpg(const char *fn)
       jpeg_read_scanlines(&cinfo, linebuf, 1);
       for(x = 0; x < row_stride; x += 3)
       {
-        *p++ = makecol((linebuf[0][x] & 0xFF),
-                     (linebuf[0][x + 1] & 0xFF), (linebuf[0][x + 2]) & 0xFF);
+        *p++ = makecol(linebuf[0][x] & 0xFF,
+                       linebuf[0][x + 1] & 0xFF,
+                       linebuf[0][x + 2] & 0xFF);
       }
 
       p += 64;
@@ -270,8 +270,9 @@ void load_jpg(const char *fn)
     {
       for(x = 0; x < row_stride; x += 1)
       {
-        *p++ = makecol((linebuf[0][x] & 0xFF),
-                     (linebuf[0][x] & 0xFF), (linebuf[0][x]) & 0xFF);
+        *p++ = makecol(linebuf[0][x] & 0xFF,
+                       linebuf[0][x] & 0xFF,
+                       linebuf[0][x] & 0xFF);
       }
 
       p += 64;
@@ -364,8 +365,9 @@ puts("info problem");
       {
         int x1 = negx ? w - 1 - x : x;
         x1 += 32;
-        *(Bitmap::main->row[y1] + x1) = makecol((linebuf[xx + 2] & 0xFF),
-                     (linebuf[xx + 1] & 0xFF), (linebuf[xx + 0]) & 0xFF);
+        *(Bitmap::main->row[y1] + x1) = makecol(linebuf[xx + 2] & 0xFF,
+                                                linebuf[xx + 1] & 0xFF,
+                                                linebuf[xx + 0] & 0xFF);
         xx += mul;
       }
     }
@@ -388,7 +390,7 @@ typedef struct
   uint16_t x;
   uint16_t y;
   uint16_t w;
-  uint16_t ht;
+  uint16_t h;
   uint8_t bpp;
   uint8_t descriptor;
 }
@@ -424,6 +426,64 @@ puts("header problem");
     return;
   }
 
+  // skip additional header info if it exists
+  if(header.id_length > 0)
+    fseek(in, header.id_length, SEEK_CUR);
+  if(header.color_map_type > 0)
+    fseek(in, header.color_map_length, SEEK_CUR);
+
+  int w = header.w;
+  int h = header.h;
+
+printf("%d, %d\n", w, h);
+
+  int aw = w + 64;
+  int ah = h + 64;
+
+  delete Bitmap::main;
+  Bitmap::main = new Bitmap(aw, ah);
+  Bitmap::main->clear(makecol(0, 0, 0));
+  Bitmap::main->set_clip(32, 32, aw - 32 - 1, ah - 32 - 1);
+
+  unsigned char *linebuf = new unsigned char[w * 3];
+
+  int x, y;
+
+  int negx = 1;
+  int negy = 1;
+
+  if(header.descriptor & (1 << 4))
+    negx = 0;
+  if(header.descriptor & (1 << 5))
+    negy = 0;
+
+  int xstart = 0;
+  int xend = w - 1;
+  int ystart = 0;
+  int yend = h - 1;
+
+  if(negx)
+    SWAP(xstart, xend);
+  if(negy)
+    SWAP(ystart, yend);
+
+  for(y = ystart; y != yend; y += negy ? -1 : 1)
+  {
+    if(fread(linebuf, w * 3, 1, in) != 1)
+    {
+      fclose(in);
+      return;
+    }
+    for(x = xstart; x != xend; x += negx ? -1 : 1)
+    {
+      *(Bitmap::main->row[y + 32] + x + 32) =
+                     makecol((linebuf[x * 3 + 2] & 0xFF),
+                             (linebuf[x * 3 + 1] & 0xFF),
+                             (linebuf[x * 3 + 0] & 0xFF));
+    }
+  }
+
+  delete[] linebuf;
   fclose(in);
 }
 
