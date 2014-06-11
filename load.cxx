@@ -6,6 +6,42 @@ extern Gui *gui;
 
 int *preview_data = 0;
 
+static uint8_t parse_uint8(unsigned char *&buffer)
+{
+  uint8_t num = buffer[0];
+
+  buffer += 1;
+  return num;
+}
+
+static uint16_t parse_uint16(unsigned char *&buffer)
+{
+  uint16_t num;
+
+  #if BYTE_ORDER == BIG_ENDIAN
+    num = buffer[1] | buffer[0] << 8;
+  #else
+    num = buffer[0] | buffer[1] << 8;
+  #endif
+
+  buffer += 2;
+  return num;
+}
+
+static uint32_t parse_uint32(unsigned char *&buffer)
+{
+  uint32_t num;
+
+  #if BYTE_ORDER == BIG_ENDIAN
+    num = buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24;
+  #else
+    num = buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24;
+  #endif
+
+  buffer += 4;
+  return num;
+}
+
 void load(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
@@ -126,9 +162,6 @@ TARGA_HEADER;
 
 Fl_Image *preview_jpg(const char *fn, unsigned char *header, int len)
 {
-  // check file type
-//  unsigned char jpeg_header[2] = { 0xff, 0xd8 };
-//  if(memcmp(header, jpeg_header, 2) != 0)
   if(memcmp(header, (const unsigned char[2]){ 0xff, 0xd8 }, 2) != 0)
     return 0;
 
@@ -293,19 +326,39 @@ void load_bmp(const char *fn)
   BITMAPFILEHEADER bh;
   BITMAPINFOHEADER bm;
 
-  if(fread(&bh, sizeof(BITMAPFILEHEADER), 1, in) != 1)
+  unsigned char buffer[64];
+
+  if(fread(buffer, sizeof(BITMAPFILEHEADER), 1, in) != 1)
   {
-puts("header problem");
     fclose(in);
     return;
   }
 
-  if(fread(&bm, sizeof(BITMAPINFOHEADER), 1, in) != 1)
+  unsigned char *p = buffer;
+  bh.bfType = parse_uint16(p);
+  bh.bfSize = parse_uint32(p);
+  bh.bfReserved1 = parse_uint16(p);
+  bh.bfReserved2 = parse_uint16(p);
+  bh.bfOffBits = parse_uint32(p);
+
+  if(fread(buffer, sizeof(BITMAPINFOHEADER), 1, in) != 1)
   {
-puts("info problem");
     fclose(in);
     return;
   }
+
+  p = buffer;
+  bm.biSize = parse_uint32(p);
+  bm.biWidth = parse_uint32(p);
+  bm.biHeight = parse_uint32(p);
+  bm.biPlanes = parse_uint16(p);
+  bm.biBitCount = parse_uint16(p);
+  bm.biCompression = parse_uint32(p);
+  bm.biSizeImage = parse_uint32(p);
+  bm.biXPelsPerMeter = parse_uint32(p);
+  bm.biYPelsPerMeter = parse_uint32(p);
+  bm.biClrUsed = parse_uint32(p);
+  bm.biClrImportant = parse_uint32(p);
 
   int w = bm.biWidth;
   int h = bm.biHeight;
@@ -377,51 +430,44 @@ puts("info problem");
   fclose(in);
 }
 
-/*
-#pragma pack(1)
-typedef struct
-{
-  uint8_t id_length;
-  uint8_t color_map_type;
-  uint8_t data_type;
-  uint16_t color_map_origin;
-  uint16_t color_map_length;
-  uint8_t color_map_depth;
-  uint16_t x;
-  uint16_t y;
-  uint16_t w;
-  uint16_t h;
-  uint8_t bpp;
-  uint8_t descriptor;
-}
-TARGA_HEADER;
-*/
 void load_tga(const char *fn)
 {
-puts("load targa");
   FILE *in = fl_fopen(fn, "rb");
   if(!in)
     return;
 
   TARGA_HEADER header;
 
-  if(fread(&header, sizeof(TARGA_HEADER), 1, in) != 1)
+  unsigned char buffer[64];
+
+  if(fread(buffer, sizeof(TARGA_HEADER), 1, in) != 1)
   {
-puts("header problem");
     fclose(in);
     return;
   }
 
+  unsigned char *p = buffer;
+  header.id_length = parse_uint8(p);
+  header.color_map_type = parse_uint8(p);
+  header.data_type = parse_uint8(p);
+  header.color_map_origin = parse_uint16(p);
+  header.color_map_length = parse_uint16(p);
+  header.color_map_depth = parse_uint8(p);
+  header.x = parse_uint16(p);
+  header.y = parse_uint16(p);
+  header.w = parse_uint16(p);
+  header.h = parse_uint16(p);
+  header.bpp = parse_uint8(p);
+  header.descriptor = parse_uint8(p);
+
   if(header.data_type != 2)
   {
-    puts("data type must be 2");
     fclose(in);
     return;
   }
 
   if(header.bpp != 24)
   {
-    puts("only 24 bits supported");
     fclose(in);
     return;
   }
@@ -434,8 +480,6 @@ puts("header problem");
 
   int w = header.w;
   int h = header.h;
-
-printf("%d, %d\n", w, h);
 
   int aw = w + 64;
   int ah = h + 64;

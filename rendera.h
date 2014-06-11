@@ -21,12 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef RENDERA_H
 #define RENDERA_H
 
-#define MIN(x, y)          (((x) < (y)) ? (x) : (y))
-#define MAX(x, y)          (((x) > (y)) ? (x) : (y))
-#define MID(a, b, c)       (MAX(a, MIN(b, c)))
-#define SWAP(a, b)         { int c = (a); (a) = (b); (b) = c; }
-#define SIGN(a)            (((a) > 0) ? 1 : -1)
-#define ABS(a)             (((a) > 0) ? (a) : -(a))
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <math.h>
+#include <endian.h>
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
@@ -45,11 +44,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Native_File_Chooser.H>
 //#include <FL/Fl_File_Chooser.H>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <math.h>
-
 #include "inline.h"
 #include "Blend.h"
 #include "Clone.h"
@@ -67,6 +61,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "check.h"
 #include "load.h"
 #include "Gui.h"
+
+// macros here
+#define MIN(x, y)          (((x) < (y)) ? (x) : (y))
+#define MAX(x, y)          (((x) > (y)) ? (x) : (y))
+#define MID(a, b, c)       (MAX(a, MIN(b, c)))
+#define SWAP(a, b)         { int c = (a); (a) = (b); (b) = c; }
+#define SIGN(a)            (((a) > 0) ? 1 : -1)
+#define ABS(a)             (((a) > 0) ? (a) : -(a))
 
 #endif
 
