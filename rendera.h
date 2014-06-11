@@ -61,6 +61,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Separator.h"
 #include "check.h"
 #include "load.h"
+#include "save.h"
 #include "Gui.h"
 
 // macros here
