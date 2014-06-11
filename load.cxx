@@ -46,7 +46,7 @@ void load(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
   fc->title("Load Image");
-  fc->filter("JPEG Image\t*.{jpg,jpeg}\nBitmap Image\t*.bmp\nTarga Image\t*.tga");
+  fc->filter("JPEG Image\t*.{jpg,jpeg}\nPNG Image\t*.png\nBitmap Image\t*.bmp\nTarga Image\t*.tga");
   fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
   fc->show();
@@ -71,8 +71,8 @@ void load(Fl_Widget *, void *)
   if(!in)
     return;
 
-  unsigned char header[2];
-  if(fread(&header, 2, 1, in) != 1)
+  unsigned char header[8];
+  if(fread(&header, 1, 8, in) != 8)
   {
     fclose(in);
     return;
@@ -82,6 +82,9 @@ void load(Fl_Widget *, void *)
 
   if(memcmp(header, (const unsigned char[2]){ 0xff, 0xd8 }, 2) == 0)
     load_jpg(fn);
+//  else if(memcmp(header, (const unsigned char[8]){ 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a }, 8) == 0)
+  else if(png_check_sig(header, 8))
+    load_png(fn);
   else if(memcmp(header, "BM", 2) == 0)
     load_bmp(fn);
   else if(strcasecmp(ext, ".tga") == 0)
@@ -328,7 +331,7 @@ void load_bmp(const char *fn)
 
   unsigned char buffer[64];
 
-  if(fread(buffer, sizeof(BITMAPFILEHEADER), 1, in) != 1)
+  if(fread(buffer, 1, sizeof(BITMAPFILEHEADER), in) != (unsigned)sizeof(BITMAPFILEHEADER))
   {
     fclose(in);
     return;
@@ -341,7 +344,7 @@ void load_bmp(const char *fn)
   bh.bfReserved2 = parse_uint16(p);
   bh.bfOffBits = parse_uint32(p);
 
-  if(fread(buffer, sizeof(BITMAPINFOHEADER), 1, in) != 1)
+  if(fread(buffer, 1, sizeof(BITMAPINFOHEADER), in) != (unsigned)sizeof(BITMAPINFOHEADER))
   {
     fclose(in);
     return;
@@ -406,7 +409,7 @@ void load_bmp(const char *fn)
     int y1 = negy ? h - 1 - y : y;
     y1 += 32;
 
-    if(fread(linebuf, w * mul + pad, 1, in) != 1)
+    if(fread(linebuf, 1, w * mul + pad, in) != (unsigned)(w * mul + pad))
     {
       fclose(in);
       return;
@@ -440,7 +443,7 @@ void load_tga(const char *fn)
 
   unsigned char buffer[64];
 
-  if(fread(buffer, sizeof(TARGA_HEADER), 1, in) != 1)
+  if(fread(buffer, 1, sizeof(TARGA_HEADER), in) != (unsigned)sizeof(TARGA_HEADER))
   {
     fclose(in);
     return;
@@ -513,7 +516,7 @@ void load_tga(const char *fn)
 
   for(y = ystart; y != yend; y += negy ? -1 : 1)
   {
-    if(fread(linebuf, w * 3, 1, in) != 1)
+    if(fread(linebuf, 1, w * 3, in) != (unsigned)(w * 3))
     {
       fclose(in);
       return;
@@ -525,6 +528,95 @@ void load_tga(const char *fn)
                              (linebuf[x * 3 + 1] & 0xFF),
                              (linebuf[x * 3 + 0] & 0xFF));
     }
+  }
+
+  delete[] linebuf;
+  fclose(in);
+}
+
+void load_png(const char *fn)
+{
+  FILE *in = fl_fopen(fn, "rb");
+  if(!in)
+    return;
+
+  unsigned char header[64];
+
+  if(fread(header, 1, 8, in) != 8)
+  {
+    fclose(in);
+    return;
+  }
+
+  if(png_check_sig(header, 8) == 0)
+  {
+    fclose(in);
+    return;
+  }
+
+  png_structp png_ptr;
+  png_infop info_ptr;
+
+  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+  if(!png_ptr)
+  {
+    fclose(in);
+    return;
+  }
+
+  info_ptr = png_create_info_struct(png_ptr);
+  if(!info_ptr)
+  {
+    fclose(in);
+    return;
+  }
+
+  if(setjmp(png_jmpbuf(png_ptr)))
+  {
+    fclose(in);
+    return;
+  }
+
+  png_init_io(png_ptr, in);
+  png_set_sig_bytes(png_ptr, 8);
+  png_read_info(png_ptr, info_ptr);
+
+  int w = png_get_image_width(png_ptr, info_ptr);
+  int h = png_get_image_height(png_ptr, info_ptr);
+  png_byte color_type = png_get_color_type(png_ptr, info_ptr);
+  png_byte bpp = png_get_bit_depth(png_ptr, info_ptr);
+
+  int passes = png_set_interlace_handling(png_ptr);
+
+  png_read_update_info(png_ptr, info_ptr);
+
+  png_bytep linebuf = new png_byte[png_get_rowbytes(png_ptr, info_ptr)];
+
+  int x, y;
+
+  int aw = w + 64;
+  int ah = h + 64;
+
+  delete Bitmap::main;
+  Bitmap::main = new Bitmap(aw, ah);
+  Bitmap::main->clear(makecol(0, 0, 0));
+  Bitmap::main->set_clip(32, 32, aw - 32 - 1, ah - 32 - 1);
+
+  int *p = Bitmap::main->row[32] + 32;
+
+  for(y = 0; y < h; y++)
+  {
+    png_read_row(png_ptr, linebuf, (png_bytep)0); 
+
+    int xx = 0;
+    for(x = 0; x < w; x++)
+    {
+      *p++ = makecol(linebuf[xx + 0] & 0xFF,
+                     linebuf[xx + 1] & 0xFF,
+                     linebuf[xx + 2] & 0xFF);
+      xx += 3;
+    }
+    p += 64;
   }
 
   delete[] linebuf;

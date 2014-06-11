@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <stdint.h>
 #include <math.h>
 #include <endian.h>
+#include <png.h>
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
