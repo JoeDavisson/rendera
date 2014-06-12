@@ -37,7 +37,7 @@ void save(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
   fc->title("Save Image");
-  fc->filter("JPEG Image\t*.{jpg,jpeg}\nPNG Image\t*.png\nBitmap Image\t*.bmp\nTarga Image\t*.tga");
+  fc->filter("JPEG Image\t*.{jpg,jpeg}\nPNG Image\t*.png\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
   //fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc->show();
@@ -67,6 +67,7 @@ void save(Fl_Widget *, void *)
 }
 
 // jpeg structures
+/*
 struct my_error_mgr
 {
   struct jpeg_error_mgr pub;
@@ -81,67 +82,6 @@ static void jpg_exit(j_common_ptr cinfo)
   (*cinfo->err->output_message)(cinfo);
   longjmp(myerr->setjmp_buffer, 1);
 }
-
-// bmp structures
-#pragma pack(1)
-typedef struct
-{
-  uint16_t bfType;
-  uint32_t bfSize;
-  uint16_t bfReserved1;
-  uint16_t bfReserved2;
-  uint32_t bfOffBits;
-}
-BITMAPFILEHEADER;
-
-#pragma pack(1)
-typedef struct
-{
-  uint32_t biSize;
-  uint32_t biWidth;
-  uint32_t biHeight;
-  uint16_t biPlanes;
-  uint16_t biBitCount;
-  uint32_t biCompression;
-  uint32_t biSizeImage;
-  uint32_t biXPelsPerMeter;
-  uint32_t biYPelsPerMeter;
-  uint32_t biClrUsed;
-  uint32_t biClrImportant;
-}
-BITMAPINFOHEADER;
-
-#pragma pack(1)
-typedef struct
-{
-  uint8_t id_length;
-  uint8_t color_map_type;
-  uint8_t data_type;
-  uint16_t color_map_origin;
-  uint16_t color_map_length;
-  uint8_t color_map_depth;
-  uint16_t x;
-  uint16_t y;
-  uint16_t w;
-  uint16_t h;
-  uint8_t bpp;
-  uint8_t descriptor;
-}
-TARGA_HEADER;
-
-/*
-  uint8_t id_length;
-  uint8_t color_map_type;
-  uint8_t data_type;
-  uint16_t color_map_origin;
-  uint16_t color_map_length;
-  uint8_t color_map_depth;
-  uint16_t x;
-  uint16_t y;
-  uint16_t w;
-  uint16_t h;
-  uint8_t bpp;
-  uint8_t descriptor;
 */
 
 void save_tga(const char *fn)

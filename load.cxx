@@ -46,7 +46,7 @@ void load(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
   fc->title("Load Image");
-  fc->filter("JPEG Image\t*.{jpg,jpeg}\nPNG Image\t*.png\nBitmap Image\t*.bmp\nTarga Image\t*.tga");
+  fc->filter("JPEG Image\t*.{jpg,jpeg}\nPNG Image\t*.png\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
   fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
   fc->show();
@@ -82,7 +82,6 @@ void load(Fl_Widget *, void *)
 
   if(memcmp(header, (const unsigned char[2]){ 0xff, 0xd8 }, 2) == 0)
     load_jpg(fn);
-//  else if(memcmp(header, (const unsigned char[8]){ 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a }, 8) == 0)
   else if(png_check_sig(header, 8))
     load_png(fn);
   else if(memcmp(header, "BM", 2) == 0)
