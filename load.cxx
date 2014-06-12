@@ -6,7 +6,7 @@ extern Gui *gui;
 
 int *preview_data = 0;
 
-static uint8_t parse_uint8(unsigned char *&buffer)
+static inline uint8_t parse_uint8(unsigned char *&buffer)
 {
   uint8_t num = buffer[0];
 
@@ -14,7 +14,7 @@ static uint8_t parse_uint8(unsigned char *&buffer)
   return num;
 }
 
-static uint16_t parse_uint16(unsigned char *&buffer)
+static inline uint16_t parse_uint16(unsigned char *&buffer)
 {
   uint16_t num;
 
@@ -28,7 +28,7 @@ static uint16_t parse_uint16(unsigned char *&buffer)
   return num;
 }
 
-static uint32_t parse_uint32(unsigned char *&buffer)
+static inline uint32_t parse_uint32(unsigned char *&buffer)
 {
   uint32_t num;
 

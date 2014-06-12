@@ -2,12 +2,12 @@
 #include <jpeglib.h>
 #include <setjmp.h>
 
-static void write_uint8(uint8_t num, FILE *out)
+static inline void write_uint8(uint8_t num, FILE *out)
 {
   fputc(num, out);
 }
 
-static void write_uint16(uint16_t num, FILE *out)
+static inline void write_uint16(uint16_t num, FILE *out)
 {
   #if BYTE_ORDER == BIG_ENDIAN
   fputc((num >> 8) & 0xff, out);
@@ -18,7 +18,7 @@ static void write_uint16(uint16_t num, FILE *out)
   #endif
 }
 
-static void write_uint32(uint32_t num, FILE *out)
+static inline void write_uint32(uint32_t num, FILE *out)
 {
   #if BYTE_ORDER == BIG_ENDIAN
   fputc((num >> 24) & 0xff, out);
