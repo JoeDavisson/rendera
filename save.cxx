@@ -58,7 +58,9 @@ void save(Fl_Widget *, void *)
     p--;
   }
   
-  if(strcasecmp(ext, ".tga") == 0)
+  if(strcasecmp(ext, ".bmp") == 0)
+    save_bmp(fn);
+  else if(strcasecmp(ext, ".tga") == 0)
     save_tga(fn);
   else
     return;
@@ -83,6 +85,65 @@ static void jpg_exit(j_common_ptr cinfo)
   longjmp(myerr->setjmp_buffer, 1);
 }
 */
+
+void save_bmp(const char *fn)
+{
+  FILE *out = fl_fopen(fn, "wb");
+  if(!out)
+    return;
+
+  Bitmap *bmp = Bitmap::main;
+  int w = bmp->w - 64;
+  int h = bmp->h - 64;
+  int pad = w % 4;
+
+  // BITMAPFILEHEADER
+  write_uint8('B', out);
+  write_uint8('M', out);
+  write_uint32(14 + 40 + ((w + pad) * h) * 3, out);
+  write_uint16(0, out);
+  write_uint16(0, out);
+  write_uint32(14 + 40, out);
+
+  // BITMAPINFOHEADER
+  write_uint32(40, out);
+  write_uint32(w, out);
+  write_uint32(-h, out);
+  write_uint16(1, out);
+  write_uint16(24, out);
+  write_uint32(0, out);
+  write_uint32(0, out);
+  write_uint32(300 * 39.370079 + .5, out);
+  write_uint32(300 * 39.370079 + .5, out);
+  write_uint32(0, out);
+  write_uint32(0, out);
+
+  int *p = bmp->row[32] + 32;
+  unsigned char *linebuf = new unsigned char[w * 3 + pad];
+
+  int x, y;
+
+  for(y = 0; y < h; y++)
+  {
+    int xx = 0;
+    for(x = 0; x < w; x++)
+    {
+      linebuf[xx + 0] = (*p >> 16) & 0xff;
+      linebuf[xx + 1] = (*p >> 8) & 0xff;
+      linebuf[xx + 2] = *p & 0xff;
+      p++;
+      xx += 3;
+    }
+    for(x = 0; x < pad; x++)
+      linebuf[xx++] = 0;
+    p += 64;
+
+    fwrite(linebuf, 1, w * 3, out);
+  }
+
+  delete[] linebuf;
+  fclose(out);
+}
 
 void save_tga(const char *fn)
 {

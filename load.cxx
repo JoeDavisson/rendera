@@ -284,6 +284,7 @@ void load_jpg(const char *fn)
 
   int x;
   int *p = Bitmap::main->row[32] + 32;
+
   if(bytes == 3)
   {
     while(cinfo.output_scanline < cinfo.output_height)
@@ -449,6 +450,7 @@ void load_tga(const char *fn)
   }
 
   unsigned char *p = buffer;
+
   header.id_length = parse_uint8(p);
   header.color_map_type = parse_uint8(p);
   header.data_type = parse_uint8(p);
@@ -582,6 +584,7 @@ void load_png(const char *fn)
 
   int w = png_get_image_width(png_ptr, info_ptr);
   int h = png_get_image_height(png_ptr, info_ptr);
+
   png_byte color_type = png_get_color_type(png_ptr, info_ptr);
   png_byte bpp = png_get_bit_depth(png_ptr, info_ptr);
 
@@ -606,7 +609,6 @@ void load_png(const char *fn)
   for(y = 0; y < h; y++)
   {
     png_read_row(png_ptr, linebuf, (png_bytep)0); 
-
     int xx = 0;
     for(x = 0; x < w; x++)
     {
