@@ -17,5 +17,8 @@ void check_edge(Widget *, void *);
 void check_smooth(Widget *, void *);
 void check_color(Widget *, void *);
 
+void show_about();
+void hide_about();
+
 #endif
 

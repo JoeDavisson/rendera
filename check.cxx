@@ -1,5 +1,6 @@
 #include "rendera.h"
 
+extern Dialog *dialog;
 extern Gui *gui;
 
 static int brush_sizes[16] = {
@@ -202,34 +203,15 @@ void check_color(Widget *widget, void *var)
   gui->val->redraw();
 }
 
-/*
-void check_color(Widget *widget, void *var)
+
+// dialogs
+void show_about()
 {
-  int h = gui->hue->var * 16;
-  int s = gui->sat->var * 2.684f;
-  int v = gui->val->var * 2.684f;
-
-  int r, g, b;
-
-  Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
-  Brush::main->color = makecol(r, g, b);
-  Brush::main->trans = gui->trans->var * 2.685f;
-  Brush::main->blend = gui->blend->var;
-
-  int i;
-  for(i = 0; i < 96; i++)
-  {
-    Blend::hsv_to_rgb(i * 16, 255, 255, &r, &g, &b);
-    gui->hue->bitmap->vline(0, i, 23, makecol(r, g, b), 0);
-    Blend::hsv_to_rgb(h, i * 2.685f, v, &r, &g, &b);
-    gui->sat->bitmap->vline(0, i, 23, makecol(r, g, b), 0);
-    Blend::hsv_to_rgb(h, s, i * 2.685f, &r, &g, &b);
-    gui->val->bitmap->vline(0, i, 23, makecol(r, g, b), 0);
-  }
-
-  gui->hue->redraw();
-  gui->sat->redraw();
-  gui->val->redraw();
+  dialog->about->show();
 }
-*/
+
+void hide_about()
+{
+  dialog->about->hide();
+}
 

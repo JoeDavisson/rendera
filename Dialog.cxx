@@ -22,6 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Dialog::Dialog()
 {
+  about = new Fl_Double_Window(336, 112, "About");
+  Widget *logo = new Widget(about, 8, 8, 320, 64, "Logo", "data/logo_large.png", 0, 0);
+  Fl_Button *ok = new Fl_Button(336 / 2 - 32, 80, 64, 24, "OK");
+  ok->callback((Fl_Callback *)hide_about);
+  about->set_modal();
+  about->end(); 
 }
 
 Dialog::~Dialog()

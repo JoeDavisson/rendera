@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+extern Dialog *dialog;
+
 Fl_Menu_Item menuitems[] =
 {
   { "&File", 0, 0, 0, FL_SUBMENU },
@@ -32,7 +34,7 @@ Fl_Menu_Item menuitems[] =
     { "&Paste", 0, 0, 0 },
     { 0 },
   { "&Help", 0, 0, 0, FL_SUBMENU },
-    { "&About", 0, 0, 0 },
+    { "&About", 0, (Fl_Callback *)show_about, 0 },
     { 0 },
   { 0 }
 };

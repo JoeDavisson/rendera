@@ -28,6 +28,14 @@ class Dialog
 public:
   Dialog();
   virtual ~Dialog();
+
+  Fl_Double_Window *new_image;
+  Fl_Double_Window *save_bmp;
+  Fl_Double_Window *save_tga;
+  Fl_Double_Window *save_jpg;
+  Fl_Double_Window *save_png;
+  Fl_Double_Window *filter;
+  Fl_Double_Window *about;
 };
 
 #endif

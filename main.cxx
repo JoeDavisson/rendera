@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+Dialog *dialog;
 Gui *gui;
 
 int main(int argc, char **argv)
@@ -37,6 +38,8 @@ int main(int argc, char **argv)
   Brush::main = new Brush();
   Palette::main = new Palette();
 
+  dialog = new Dialog();
+
   gui = new Gui();
 
   // initialize some things
@@ -45,10 +48,6 @@ int main(int argc, char **argv)
   gui->val->var = 95;
   gui->hue->do_callback();
   Palette::main->draw(gui->palette);
-
-  //Fl_File_Chooser *load_dialog = new Fl_File_Chooser(".", "Image Files (*.{bmp,gif,jpg,png})", 0, "Load Image");
-
-  //load_dialog->show();
 
   return Fl::run();
 }
