@@ -69,12 +69,16 @@ void load(Fl_Widget *, void *)
   
   FILE *in = fl_fopen(fn, "rb");
   if(!in)
+  {
+    delete fc;
     return;
+  }
 
   unsigned char header[8];
   if(fread(&header, 1, 8, in) != 8)
   {
     fclose(in);
+    delete fc;
     return;
   }
 
@@ -89,12 +93,15 @@ void load(Fl_Widget *, void *)
   else if(strcasecmp(ext, ".tga") == 0)
     load_tga(fn);
   else
+  {
+    delete fc;
     return;
+  }
+
+  delete fc;
 
   delete Map::main;
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
-
-  delete fc;
 
   gui->view->draw_main(1);
 }

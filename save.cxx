@@ -63,7 +63,10 @@ void save(Fl_Widget *, void *)
   else if(strcasecmp(ext, ".tga") == 0)
     save_tga(fn);
   else
+  {
+    delete fc;
     return;
+  }
 
   delete fc;
 }
