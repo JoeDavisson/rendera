@@ -41,6 +41,8 @@ Dialog::Dialog()
   new_image_ok->callback((Fl_Callback *)hide_new_image);
   new_image_cancel = new Fl_Button(200 - 64 - 8 - 64 - 8, 96, 64, 24, "Cancel");
   new_image_cancel->callback((Fl_Callback *)cancel_new_image);
+  new_image->set_modal();
+  new_image->end(); 
 }
 
 Dialog::~Dialog()

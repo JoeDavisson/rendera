@@ -229,19 +229,29 @@ void hide_new_image()
 {
   char s[8];
 
-  dialog->new_image->hide();
-
   int w = atoi(dialog->new_image_width->value());
+  int h = atoi(dialog->new_image_height->value());
+
   if(w < 1)
     w = 1;
-  if(w > 65536)
-    w = 65536;
-
-  int h = atoi(dialog->new_image_height->value());
   if(h < 1)
     h = 1;
-  if(h > 65536)
-    h = 65536;
+
+  if(w > 10000)
+  {
+    snprintf(s, sizeof(s), "%d", 10000);
+    dialog->new_image_width->value(s);
+    return;
+  }
+
+  if(h > 10000)
+  {
+    snprintf(s, sizeof(s), "%d", 10000);
+    dialog->new_image_height->value(s);
+    return;
+  }
+
+  dialog->new_image->hide();
 
   w += 64;
   h += 64;
@@ -255,6 +265,9 @@ void hide_new_image()
   delete Map::main;
   Map::main = new Map(w, h);
 
+  gui->view->ox = 0;
+  gui->view->oy = 0;
+  gui->view->zoom = 1;
   gui->view->draw_main(1);
 }
 
