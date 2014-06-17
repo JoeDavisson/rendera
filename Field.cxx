@@ -27,7 +27,7 @@ Field::Field(Fl_Group *g, int x, int y, int w, int h, const char *text)
   var = 0;
 //  type(FL_INT_INPUT);
   maximum_size(3);
-  labelsize(8);
+  labelsize(12);
   textsize(12);
   label(text);
   when(FL_WHEN_ENTER_KEY);

@@ -19,6 +19,9 @@ void check_color(Widget *, void *);
 
 void show_about();
 void hide_about();
+void show_new_image();
+void hide_new_image();
+void cancel_new_image();
 
 #endif
 

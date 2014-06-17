@@ -215,3 +215,51 @@ void hide_about()
   dialog->about->hide();
 }
 
+void show_new_image()
+{
+  char s[8];
+  snprintf(s, sizeof(s), "%d", Bitmap::main->w - 64);
+  dialog->new_image_width->value(s);
+  snprintf(s, sizeof(s), "%d", Bitmap::main->h - 64);
+  dialog->new_image_height->value(s);
+  dialog->new_image->show();
+}
+
+void hide_new_image()
+{
+  char s[8];
+
+  dialog->new_image->hide();
+
+  int w = atoi(dialog->new_image_width->value());
+  if(w < 1)
+    w = 1;
+  if(w > 65536)
+    w = 65536;
+
+  int h = atoi(dialog->new_image_height->value());
+  if(h < 1)
+    h = 1;
+  if(h > 65536)
+    h = 65536;
+
+  w += 64;
+  h += 64;
+
+  delete Bitmap::main;
+  Bitmap::main = new Bitmap(w, h);
+  Bitmap::main->clear(makecol(0, 0, 0));
+  Bitmap::main->set_clip(32, 32, w - 32 - 1, h - 32 - 1);
+  Bitmap::main->rectfill(32, 32, w - 32 - 1, h - 32 - 1, makecol(255, 255, 255), 0);
+
+  delete Map::main;
+  Map::main = new Map(w, h);
+
+  gui->view->draw_main(1);
+}
+
+void cancel_new_image()
+{
+  dialog->new_image->hide();
+}
+

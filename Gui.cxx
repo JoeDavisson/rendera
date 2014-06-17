@@ -25,9 +25,9 @@ extern Dialog *dialog;
 Fl_Menu_Item menuitems[] =
 {
   { "&File", 0, 0, 0, FL_SUBMENU },
-    { "&New", 0, 0, 0 },
-    { "&Load", 0, (Fl_Callback *)load },
-    { "&Save", 0, (Fl_Callback *)save },
+    { "&New", 0, (Fl_Callback *)show_new_image, 0 },
+    { "&Load", 0, (Fl_Callback *)load, 0 },
+    { "&Save", 0, (Fl_Callback *)save, 0 },
     { 0 },
   { "&Edit", 0, 0, 0, FL_SUBMENU },
     { "&Copy", 0, 0, 0 },
@@ -79,11 +79,11 @@ Gui::Gui()
   x1 += 8;
   grid = new ToggleButton(top_right, x1, 8, 24, 24, "Show Grid", "data/grid.png");
   grid->callback((Fl_Callback *)check_grid, &grid->var);
-  x1 += 24 + 28 + 8;
+  x1 += 24 + 48 + 8;
   gridx = new Field(top_right, x1, 8, 32, 24, "Grid X:");
   gridx->callback((Fl_Callback *)check_gridx, &gridx->var);
   gridx->value("8");
-  x1 += 32 + 28 + 8;
+  x1 += 32 + 48 + 8;
   gridy = new Field(top_right, x1, 8, 32, 24, "Grid Y:");
   gridy->callback((Fl_Callback *)check_gridy, &gridy->var);
   gridy->value("8");

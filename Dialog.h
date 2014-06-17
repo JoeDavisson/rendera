@@ -36,6 +36,14 @@ public:
   Fl_Double_Window *save_png;
   Fl_Double_Window *filter;
   Fl_Double_Window *about;
+
+  Field *new_image_width;
+  Field *new_image_height;
+  Fl_Button *new_image_ok;
+  Fl_Button *new_image_cancel;
+
+  Widget *about_logo;
+  Fl_Button *about_ok;
 };
 
 #endif
