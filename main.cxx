@@ -30,7 +30,7 @@ int main(int argc, char **argv)
   Fl_Shared_Image::add_handler(preview_jpg);
 //  Fl_File_Icon::load_system_icons();
 
-  Bitmap::main = new Bitmap(1024 + 64, 1024 + 64);
+  Bitmap::main = new Bitmap(640 + 64, 480 + 64);
   Bitmap::main->clear(makecol(0, 0, 0));
   Bitmap::main->set_clip(32, 32, Bitmap::main->w - 32 - 1, Bitmap::main->h - 32 - 1);
   Bitmap::main->rectfill(32, 32, Bitmap::main->w - 32 - 1, Bitmap::main->h - 32 - 1, makecol(255, 255, 255), 0);

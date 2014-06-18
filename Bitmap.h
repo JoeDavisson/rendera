@@ -45,10 +45,11 @@ public:
   void xor_hline(int, int, int);
   void xor_rect(int, int, int, int);
   void xor_rectfill(int, int, int, int);
+  void setpixel(int, int, int ,int);
   void setpixel_solid(int, int, int ,int);
   void setpixel_wrap(int, int, int ,int);
-  void setpixel_clone(Clone *clone, int, int, int ,int);
-  void setpixel_wrap_clone(Clone *clone, int, int, int ,int);
+  void setpixel_clone(int, int, int ,int);
+  void setpixel_wrap_clone(int, int, int ,int);
   int getpixel(int, int);
   int getpixel_wrap(int, int);
   void clip(int *, int *, int *, int *);
@@ -60,6 +61,13 @@ public:
   void fast_stretch(Bitmap *, int, int, int, int, int, int, int, int);
 
   static Bitmap *main;
+  static int wrap;
+  static int clone;
+  static int clone_x;
+  static int clone_y;
+  static int clone_dx;
+  static int clone_dy;
+  static int clone_mirror;
 };
 
 #endif

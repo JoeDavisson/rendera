@@ -432,7 +432,7 @@ void Stroke::render()
       {
         int c = map->getpixel(x, y);
         if(c)
-          Bitmap::main->setpixel_solid(x, y, brush->color, brush->trans);
+          Bitmap::main->setpixel(x, y, brush->color, brush->trans);
       }
     }
     active = 0;
@@ -544,13 +544,13 @@ int Stroke::render_callback_normal(int ox, int oy, float zoom)
         shrink_block(s0, s1, s2, s3);
 
         if(!*s0 && d0)
-          Bitmap::main->setpixel_solid(x, y, brush->color, soft_trans);
+          Bitmap::main->setpixel(x, y, brush->color, soft_trans);
         if(!*s1 && d1)
-          Bitmap::main->setpixel_solid(x + 1, y, brush->color, soft_trans);
+          Bitmap::main->setpixel(x + 1, y, brush->color, soft_trans);
         if(!*s2 && d2)
-          Bitmap::main->setpixel_solid(x, y + 1, brush->color, soft_trans);
+          Bitmap::main->setpixel(x, y + 1, brush->color, soft_trans);
         if(!*s3 && d3)
-          Bitmap::main->setpixel_solid(x + 1, y + 1, brush->color, soft_trans);
+          Bitmap::main->setpixel(x + 1, y + 1, brush->color, soft_trans);
       }
     }
 
@@ -567,7 +567,7 @@ int Stroke::render_callback_normal(int ox, int oy, float zoom)
         {
           int c = map->getpixel(x, y);
           if(c)
-            Bitmap::main->setpixel_solid(x, y, brush->color, soft_trans);
+            Bitmap::main->setpixel(x, y, brush->color, soft_trans);
         }
       }
       active = 0;
@@ -638,7 +638,7 @@ int Stroke::render_callback_smooth(int ox, int oy, float zoom)
           temp1 = temp2;
         }
       }
-      Bitmap::main->setpixel_solid(x, y, brush->color,
+      Bitmap::main->setpixel(x, y, brush->color,
         sdist(x, y, edgecachex[z], edgecachey[z], brush->edge, brush->trans));
 
       p++;

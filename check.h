@@ -16,6 +16,9 @@ void check_stroke(Widget *, void *);
 void check_edge(Widget *, void *);
 void check_smooth(Widget *, void *);
 void check_color(Widget *, void *);
+void check_wrap(Widget *, void *);
+void check_clone(Widget *, void *);
+void check_mirror(Widget *, void *);
 
 void show_about();
 void hide_about();

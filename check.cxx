@@ -203,6 +203,20 @@ void check_color(Widget *widget, void *var)
   gui->val->redraw();
 }
 
+void check_wrap(Widget *widget, void *var)
+{
+  Bitmap::wrap = *(int *)var;
+}
+
+void check_clone(Widget *widget, void *var)
+{
+  Bitmap::clone = *(int *)var;
+}
+
+void check_mirror(Widget *widget, void *var)
+{
+  Bitmap::clone_mirror = *(int *)var;
+}
 
 // dialogs
 void show_about()

@@ -21,6 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "rendera.h"
 
 Bitmap *Bitmap::main;
+int Bitmap::wrap = 0;
+int Bitmap::clone = 0;
+int Bitmap::clone_x = 0;
+int Bitmap::clone_y = 0;
+int Bitmap::clone_dx = 0;
+int Bitmap::clone_dy = 0;
+int Bitmap::clone_mirror = 0;
 
 Bitmap::Bitmap(int width, int height)
 {
@@ -470,6 +477,30 @@ void Bitmap::xor_rectfill(int x1, int y1, int x2, int y2)
     xor_hline(x1, y1, x2);
 }
 
+void Bitmap::setpixel(int x, int y, int c2, int t)
+{
+  int mode = Bitmap::wrap | (Bitmap::clone << 1);
+
+  switch(mode)
+  {
+    case 0:
+      setpixel_solid(x, y, c2, t);
+      break;
+    case 1:
+      setpixel_wrap(x, y, c2, t);
+      break;
+    case 2:
+      setpixel_clone(x, y, c2, t);
+      break;
+    case 3:
+      setpixel_wrap_clone(x, y, c2, t);
+      break;
+    default:
+      setpixel_solid(x, y, c2, t);
+      break;
+  }
+}
+
 void Bitmap::setpixel_solid(int x, int y, int c2, int t)
 {
   if(x < cl || x > cr || y < ct || y > cb)
@@ -496,36 +527,36 @@ void Bitmap::setpixel_wrap(int x, int y, int c2, int t)
   *c1 = Blend::current(*c1, c2, t);
 }
 
-void Bitmap::setpixel_clone(Clone *clone, int x, int y, int c2, int t)
+void Bitmap::setpixel_clone(int x, int y, int c2, int t)
 {
   if(x < cl || x > cr || y < ct || y > cb)
     return;
 
   int *c1 = row[y] + x;
 
-  int x1 = x - clone->dx;
-  int y1 = y - clone->dy;
+  int x1 = x - Bitmap::clone_dx;
+  int y1 = y - Bitmap::clone_dy;
 
   int w1 = w - 1;
   int h1 = h - 1;
 
-  switch(clone->mirror)
+  switch(Bitmap::clone_mirror)
   {
     case 0:
       x1 = x1;
       y1 = y1;
       break;
     case 1:
-      x1 = (w1 - x1) - (w1 - clone->x * 2);
+      x1 = (w1 - x1) - (w1 - Bitmap::clone_x * 2);
       y1 = y1;
       break;
     case 2:
       x1 = x1;
-      y1 = (h1 - y1) - (h1 - clone->y * 2);
+      y1 = (h1 - y1) - (h1 - Bitmap::clone_y * 2);
       break;
     case 3:
-      x1 = (w1 - x1) - (w1 - clone->x * 2);
-      y1 = (h1 - y1) - (h1 - clone->y * 2);
+      x1 = (w1 - x1) - (w1 - Bitmap::clone_x * 2);
+      y1 = (h1 - y1) - (h1 - Bitmap::clone_y * 2);
       break;
   }
 
@@ -534,7 +565,7 @@ void Bitmap::setpixel_clone(Clone *clone, int x, int y, int c2, int t)
   *c1 = Blend::current(*c1, c2, t);
 }
 
-void Bitmap::setpixel_wrap_clone(Clone *clone, int x, int y, int c2, int t)
+void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
 {
   while(x < cl)
     x += cw;
@@ -547,29 +578,29 @@ void Bitmap::setpixel_wrap_clone(Clone *clone, int x, int y, int c2, int t)
 
   int *c1 = row[y] + x;
 
-  int x1 = x - clone->dx;
-  int y1 = y - clone->dy;
+  int x1 = x - Bitmap::clone_dx;
+  int y1 = y - Bitmap::clone_dy;
 
   int w1 = w - 1;
   int h1 = h - 1;
 
-  switch(clone->mirror)
+  switch(Bitmap::clone_mirror)
   {
     case 0:
       x1 = x1;
       y1 = y1;
       break;
     case 1:
-      x1 = (w1 - x1) - (w1 - clone->x * 2);
+      x1 = (w1 - x1) - (w1 - Bitmap::clone_x * 2);
       y1 = y1;
       break;
     case 2:
       x1 = x1;
-      y1 = (h1 - y1) - (h1 - clone->y * 2);
+      y1 = (h1 - y1) - (h1 - Bitmap::clone_y * 2);
       break;
     case 3:
-      x1 = (w1 - x1) - (w1 - clone->x * 2);
-      y1 = (h1 - y1) - (h1 - clone->y * 2);
+      x1 = (w1 - x1) - (w1 - Bitmap::clone_x * 2);
+      y1 = (h1 - y1) - (h1 - Bitmap::clone_y * 2);
       break;
   }
 
@@ -624,8 +655,8 @@ void Bitmap::set_clip(int x1, int y1, int x2, int y2)
   ct = y1;
   cr = x2;
   cb = y2;
-  cw = w;
-  ch = h;
+  cw = (cr - cl) + 1;
+  ch = (cb - ct) + 1;
 }
 
 void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)

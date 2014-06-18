@@ -95,10 +95,13 @@ Gui::Gui()
   bottom->box(FL_UP_BOX);
   x1 = 8;
   wrap = new ToggleButton(bottom, x1, 8, 24, 24, "Wrap", "data/wrap.png");
+  wrap->callback((Fl_Callback *)check_wrap, &wrap->var);
   x1 += 24 + 8;
   clone = new ToggleButton(bottom, x1, 8, 24, 24, "Clone", "data/clone.png");
+  clone->callback((Fl_Callback *)check_clone, &clone->var);
   x1 += 24 + 8;
   mirror = new Widget(bottom, x1, 8, 96, 24, "Clone Mirroring", "data/mirror.png", 24, 24);
+  mirror->callback((Fl_Callback *)check_mirror, &mirror->var);
   x1 += 96 + 8;
   origin = new Widget(bottom, x1, 8, 48, 24, "Origin", "data/origin.png", 24, 24);
   x1 += 48 + 8;
