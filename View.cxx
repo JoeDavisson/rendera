@@ -27,11 +27,11 @@ static inline void grid_setpixel(const Bitmap *bmp, const int x, const int y,
     return;
 
   int *p = bmp->row[y] + x;
-  *p = blend_fast_ex(*p, c, t);
+  *p = blend_fast_solid(*p, c, t);
 }
 
-static inline void grid_hline(Bitmap *bmp, int x1, int y, int x2, const int c,
-                              const int t)
+static inline void grid_hline(Bitmap *bmp, int x1, int y, int x2,
+                              const int c, const int t)
 {
   int x;
 
@@ -44,7 +44,7 @@ static inline void grid_hline(Bitmap *bmp, int x1, int y, int x2, const int c,
 
   for(x = x1; x <= x2; x++)
   {
-    *p = blend_fast_ex(*p, c, t);
+    *p = blend_fast_solid(*p, c, t);
     p++;
   }
 }
@@ -304,8 +304,8 @@ void View::draw_grid()
   y2 = h() - 1;
 
   d = 224 - zoom;
-  if(d < 192)
-    d = 192;
+  if(d < 128)
+    d = 128;
 
   int zx = zoom * gridx;
   int zy = zoom * gridy;
