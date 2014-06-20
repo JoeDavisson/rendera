@@ -218,6 +218,16 @@ void check_mirror(Widget *widget, void *var)
   Bitmap::clone_mirror = *(int *)var;
 }
 
+void check_origin(Widget *widget, void *var)
+{
+  gui->view->stroke->origin = *(int *)var;
+}
+
+void check_constrain(Widget *widget, void *var)
+{
+  gui->view->stroke->constrain = *(int *)var;
+}
+
 // dialogs
 void show_about()
 {

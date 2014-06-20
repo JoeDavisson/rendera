@@ -46,15 +46,14 @@ static inline float fdist(const int x1, const int y1, const int x2, const int y2
 static inline int sdist(const int x1, const int y1, const int x2, const int y2, const int edge, const int trans)
 {
   double d = sqrt(fdist(x1, y1, x2, y2));
-  //int s = ((255 - trans) << 8) / (((3 << edge) >> 1) + 1);
   double s = (255 - trans) / (((3 << edge) >> 1) + 1);
 
-//  if(s < 255)
-//    s = 255;
+  if(s < 1.0)
+    s = 1.0;
 
   int temp = 255;
+
   temp -= (s * d);
-//  temp -= (s * d) >> 8;
   if(temp < trans)
     temp = trans;
 
@@ -95,6 +94,52 @@ static inline void shrink_block(unsigned char *s0, unsigned char *s1,
   *s3 = 0;
 }
 
+static void keep_square(int x1, int y1, int *x2, int *y2)
+{
+  int px = (*x2 >= x1) ? 1 : 0;
+  int py = (*y2 >= y1) ? 2 : 0;
+
+  int dx = x1 - *x2;
+  int dy = y1 - *y2;
+
+  if(abs(dy) > abs(dx))
+  {
+    switch (px + py)
+    {
+      case 0:
+        *x2 = x1 - dy;
+        break;
+      case 1:
+        *x2 = x1 + dy;
+        break;
+      case 2:
+        *x2 = x1 + dy;
+        break;
+      case 3:
+        *x2 = x1 - dy;
+        break;
+    }
+  }
+  else
+  {
+    switch (px + py)
+    {
+      case 0:
+        *y2 = y1 - dx;
+        break;
+      case 1:
+        *y2 = y1 + dx;
+        break;
+      case 2:
+        *y2 = y1 + dx;
+        break;
+      case 3:
+        *y2 = y1 - dx;
+        break;
+    }
+  }
+}
+
 Stroke::Stroke()
 {
   polycachex = new int[65536];
@@ -104,6 +149,8 @@ Stroke::Stroke()
   polycount = 0;
   type = 0;
   active = 0;
+  origin = 0;
+  constrain = 0;
 }
 
 Stroke::~Stroke()
@@ -132,6 +179,31 @@ void Stroke::clip()
     x2 = Bitmap::main->w - 1;
   if(y2 > Bitmap::main->h - 1)
     y2 = Bitmap::main->h - 1;
+}
+
+void Stroke::size_linear(int bx, int by, int x, int y)
+{
+  if(bx > x)
+  {
+    x1 = x - 48;
+    x2 = bx + 48;
+  }
+  else
+  {
+    x1 = bx - 48;
+    x2 = x + 48;
+  }
+
+  if(by > y)
+  {
+    y1 = y - 48;
+    y2 = by + 48;
+  }
+  else
+  {
+    y1 = by - 48;
+    y2 = y + 48;
+  }
 }
 
 void Stroke::make_blitrect(int x1, int y1, int x2, int y2, int ox, int oy, int size, float zoom)
@@ -271,6 +343,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
   int r = brush->size / 2;
   int inc = brush->size & 1;
+  int w, h;
   int i;
 
   if(x - r - 1 < x1)
@@ -309,29 +382,114 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       oldy = y;
       break;
     case 2:
-      draw_brush_line(lastx, lasty, beginx, beginy, 0);
-      draw_brush_line(x, y, beginx, beginy, 255);
+      if(origin)
+      {
+        w = (lastx - beginx);
+        h = (lasty - beginy);
+        draw_brush_line(beginx - w, beginy - h, beginx + w, beginy + h, 0);
+        w = (x - beginx);
+        h = (y - beginy);
+        draw_brush_line(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+        size_linear(beginx - w, beginy - h, x + w, y + h);
+      }
+      else
+      {
+        draw_brush_line(lastx, lasty, beginx, beginy, 0);
+        draw_brush_line(x, y, beginx, beginy, 255);
+      }
       make_blitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
     case 4:
-      draw_brush_rect(lastx, lasty, beginx, beginy, 0);
-      draw_brush_rect(x, y, beginx, beginy, 255);
+      if(constrain)
+        keep_square(beginx, beginy, &x, &y);
+
+      if(origin)
+      {
+        w = (lastx - beginx);
+        h = (lasty - beginy);
+        draw_brush_rect(beginx - w, beginy - h, beginx + w, beginy + h, 0);
+        w = (x - beginx);
+        h = (y - beginy);
+        draw_brush_rect(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+        size_linear(beginx - w, beginy - h, x + w, y + h);
+      }
+      else
+      {
+        draw_brush_rect(lastx, lasty, beginx, beginy, 0);
+        draw_brush_rect(x, y, beginx, beginy, 255);
+        size_linear(beginx, beginy, x, y);
+      }
+
       make_blitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
     case 5:
-      map->rectfill(lastx, lasty, beginx, beginy, 0);
-      map->rectfill(x, y, beginx, beginy, 255);
+      if(constrain)
+        keep_square(beginx, beginy, &x, &y);
+
+      if(origin)
+      {
+        w = (lastx - beginx);
+        h = (lasty - beginy);
+        map->rectfill(beginx - w, beginy - h, beginx + w, beginy + h, 0);
+        w = (x - beginx);
+        h = (y - beginy);
+        map->rectfill(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+        size_linear(beginx - w, beginy - h, x + w, y + h);
+      }
+      else
+      {
+        map->rectfill(lastx, lasty, beginx, beginy, 0);
+        map->rectfill(x, y, beginx, beginy, 255);
+        size_linear(beginx, beginy, x, y);
+      }
       make_blitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
     case 6:
-      draw_brush_oval(lastx, lasty, beginx, beginy, 0);
-      draw_brush_oval(x, y, beginx, beginy, 255);
+      if(constrain)
+        keep_square(beginx, beginy, &x, &y);
+
+      if(origin)
+      {
+        w = (lastx - beginx);
+        h = (lasty - beginy);
+        draw_brush_oval(beginx - w, beginy - h, beginx + w, beginy + h, 0);
+        w = (x - beginx);
+        h = (y - beginy);
+        draw_brush_oval(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+        size_linear(beginx - w, beginy - h, x + w, y + h);
+      }
+      else
+      {
+        draw_brush_oval(lastx, lasty, beginx, beginy, 0);
+        draw_brush_oval(x, y, beginx, beginy, 255);
+        size_linear(beginx, beginy, x, y);
+      }
       make_blitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
     case 7:
-      map->ovalfill(lastx, lasty, beginx, beginy, 0);
-      map->ovalfill(x, y, beginx, beginy, 255);
+      if(constrain)
+        keep_square(beginx, beginy, &x, &y);
+
+      if(origin)
+      {
+        w = (lastx - beginx);
+        h = (lasty - beginy);
+        map->ovalfill(beginx - w, beginy - h, beginx + w, beginy + h, 0);
+        w = (x - beginx);
+        h = (y - beginy);
+        map->ovalfill(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+        size_linear(beginx - w, beginy - h, x + w, y + h);
+      }
+      else
+      {
+        map->ovalfill(lastx, lasty, beginx, beginy, 0);
+        map->ovalfill(x, y, beginx, beginy, 255);
+        size_linear(beginx, beginy, x, y);
+      }
       make_blitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
+//      map->ovalfill(lastx, lasty, beginx, beginy, 0);
+//      map->ovalfill(x, y, beginx, beginy, 255);
+//      make_blitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
     default:
       break;
@@ -638,14 +796,13 @@ int Stroke::render_callback_smooth(int ox, int oy, float zoom)
 
         const int temp2 = dx * dx + dy * dy;
 
-//        const float temp2 = fdist(x, y, *cx++, *cy++);
-
         if(temp2 < temp1)
         {
           z = i;
           temp1 = temp2;
         }
       }
+
       Bitmap::main->setpixel(x, y, brush->color,
         sdist(x, y, edgecachex[z], edgecachey[z], brush->edge, brush->trans));
 

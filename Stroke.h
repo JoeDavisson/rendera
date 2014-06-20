@@ -30,6 +30,7 @@ public:
   virtual ~Stroke();
 
   void clip();
+  void size_linear(int, int, int, int);
   void make_blitrect(int, int, int, int, int, int, int, float);
   void draw_brush(int, int, int);
   void draw_brush_line(int, int, int, int, int);
@@ -49,6 +50,7 @@ public:
   int render_callback_smooth(int, int, float);
 
   int x1, y1, x2, y2;
+  int origin, constrain;
   int blitx, blity, blitw, blith;
   int beginx, beginy;
   int lastx, lasty;

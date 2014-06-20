@@ -104,8 +104,10 @@ Gui::Gui()
   mirror->callback((Fl_Callback *)check_mirror, &mirror->var);
   x1 += 96 + 8;
   origin = new Widget(bottom, x1, 8, 48, 24, "Origin", "data/origin.png", 24, 24);
+  origin->callback((Fl_Callback *)check_origin, &origin->var);
   x1 += 48 + 8;
   constrain = new Widget(bottom, x1, 8, 48, 24, "Constrain", "data/constrain.png", 24, 24);
+  constrain->callback((Fl_Callback *)check_constrain, &constrain->var);
   bottom->resizable(0);
   bottom->end();
 
@@ -148,8 +150,6 @@ Gui::Gui()
   y1 = 20;
   offset = new Button(left_bottom, 8, y1, 96, 24, "Offset", "data/offset.png");
   y1 += 24 + 8;
-  getcolor = new Button(left_bottom, 8, y1, 96, 24, "Get Color", "data/getcolor.png");
-  y1 += 24 + 8;
   crop = new Button(left_bottom, 8, y1, 96, 24, "Crop", "data/crop.png");
   left_bottom->resizable(0);
   left_bottom->end();
@@ -179,6 +179,8 @@ Gui::Gui()
   y1 += 24 + 8;
   blend = new Widget(right, 8, y1, 96, 24, "Blending Mode", "data/blend.png", 24, 24);
   blend->callback((Fl_Callback *)check_color, &blend->var);
+  y1 += 24 + 8;
+  getcolor = new Button(right, 8, y1, 96, 24, "Get Color", "data/getcolor.png");
   right->resizable(0);
   right->end();
 

@@ -19,6 +19,8 @@ void check_color(Widget *, void *);
 void check_wrap(Widget *, void *);
 void check_clone(Widget *, void *);
 void check_mirror(Widget *, void *);
+void check_origin(Widget *, void *);
+void check_constrain(Widget *, void *);
 
 void show_about();
 void hide_about();
