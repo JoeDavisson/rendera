@@ -85,6 +85,7 @@ int View::handle(int event)
   int button3 = Fl::event_button3() ? 4 : 0;
   int button = button1 | button2 | button3;
   int dclick = Fl::event_clicks() ? 1 : 0;
+  int shift = Fl::event_shift() ? 1 : 0;
 
   switch(event)
   {
@@ -123,10 +124,18 @@ int View::handle(int event)
               stroke->draw(imgx, imgy, ox, oy, zoom);
             }
           }
+          else if(shift)
+          {
+            Bitmap::clone_x = imgx;
+            Bitmap::clone_y = imgy;
+            Bitmap::clone_moved = 1;
+            return 1;
+          }
           else
           {
             stroke->begin(imgx, imgy, ox, oy, zoom);
           }
+
           draw_main(1);
           stroke->preview(backbuf, ox, oy, zoom);
           redraw();
@@ -203,15 +212,15 @@ int View::handle(int event)
         zoom_in(mousex, mousey);
       }
       return 1;
-    case FL_KEYDOWN:
-puts("something pressed");
-      if(Fl::event_key() == 32)
-      {
-puts("space bar");
-        Bitmap::clone_x = imgx;
-        Bitmap::clone_y = imgy;
-      }
-      return 1;
+//    case FL_KEYDOWN:
+//puts("something pressed");
+//      if(Fl::event_key() == 32)
+//      {
+//puts("space bar");
+//        Bitmap::clone_x = imgx;
+//        Bitmap::clone_y = imgy;
+//      }
+//      return 0;
   }
   return 0;
 }

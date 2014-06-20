@@ -265,8 +265,14 @@ void Stroke::begin(int x, int y, int ox, int oy, float zoom)
   beginy = y;
   oldx = x;
   oldy = y;
-  Bitmap::clone_dx = x - Bitmap::clone_x;
-  Bitmap::clone_dy = y - Bitmap::clone_y;
+
+  if(Bitmap::clone_moved)
+  {
+    Bitmap::clone_dx = x - Bitmap::clone_x;
+    Bitmap::clone_dy = y - Bitmap::clone_y;
+    Bitmap::clone_moved = 0;
+  }
+
   polycount = 0;
 
   x1 = x - (r + 1);

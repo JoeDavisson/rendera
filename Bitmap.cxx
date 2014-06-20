@@ -26,6 +26,7 @@ Bitmap *Bitmap::main;
 Bitmap *Bitmap::clone_buffer;
 int Bitmap::wrap = 0;
 int Bitmap::clone = 0;
+int Bitmap::clone_moved = 0;
 int Bitmap::clone_x = 0;
 int Bitmap::clone_y = 0;
 int Bitmap::clone_dx = 0;
@@ -611,6 +612,15 @@ void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
       y1 = (h1 - y1) - (h1 - Bitmap::clone_y * 2);
       break;
   }
+
+  while(x1 < cl)
+    x1 += cw;
+  while(x1 > cr)
+    x1 -= cw;
+  while(y1 < ct)
+    y1 += ch;
+  while(y1 > cb)
+    y1 -= ch;
 
   Stroke *stroke = gui->view->stroke;
 

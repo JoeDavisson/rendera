@@ -64,6 +64,7 @@ public:
   static Bitmap *clone_buffer;
   static int wrap;
   static int clone;
+  static int clone_moved;
   static int clone_x;
   static int clone_y;
   static int clone_dx;
