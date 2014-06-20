@@ -257,9 +257,18 @@ void hide_new_image()
   int h = atoi(dialog->new_image_height->value());
 
   if(w < 1)
-    w = 1;
+  {
+    snprintf(s, sizeof(s), "%d", 1);
+    dialog->new_image_width->value(s);
+    return;
+  }
+
   if(h < 1)
-    h = 1;
+  {
+    snprintf(s, sizeof(s), "%d", 1);
+    dialog->new_image_height->value(s);
+    return;
+  }
 
   if(w > 10000)
   {
@@ -298,5 +307,43 @@ void hide_new_image()
 void cancel_new_image()
 {
   dialog->new_image->hide();
+}
+
+void show_create_palette()
+{
+  char s[8];
+  snprintf(s, sizeof(s), "%d", Palette::main->max);
+  dialog->create_palette_colors->value(s);
+  dialog->create_palette->show();
+}
+
+void hide_create_palette()
+{
+  char s[8];
+
+  int colors = atoi(dialog->create_palette_colors->value());
+
+  if(colors < 1)
+  {
+    snprintf(s, sizeof(s), "%d", 1);
+    dialog->create_palette_colors->value(s);
+    return;
+  }
+
+  if(colors > 256)
+  {
+    snprintf(s, sizeof(s), "%d", 256);
+    dialog->create_palette_colors->value(s);
+    return;
+  }
+
+  dialog->create_palette->hide();
+
+  quantize(Bitmap::main, colors, 32);
+}
+
+void cancel_create_palette()
+{
+  dialog->create_palette->hide();
 }
 

@@ -43,6 +43,17 @@ Dialog::Dialog()
   new_image_cancel->callback((Fl_Callback *)cancel_new_image);
   new_image->set_modal();
   new_image->end(); 
+
+  create_palette = new Fl_Double_Window(200, 128, "Create Palette From Image");
+  create_palette_colors = new Field(create_palette, 64, 8, 72, 24, "Colors:");
+  new_image_width->value("256");
+  new Separator(new_image, 8, 84, 200 - 16, 2, "");
+  create_palette_ok = new Fl_Button(200 - 64 - 8, 96, 64, 24, "OK");
+  create_palette_ok->callback((Fl_Callback *)hide_create_palette);
+  create_palette_cancel = new Fl_Button(200 - 64 - 8 - 64 - 8, 96, 64, 24, "Cancel");
+  create_palette_cancel->callback((Fl_Callback *)cancel_create_palette);
+  create_palette->set_modal();
+  create_palette->end(); 
 }
 
 Dialog::~Dialog()

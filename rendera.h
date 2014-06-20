@@ -58,6 +58,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "ToggleButton.h"
 #include "Field.h"
 #include "Separator.h"
+#include "quantize.h"
 #include "check.h"
 #include "load.h"
 #include "save.h"

@@ -29,18 +29,23 @@ public:
   Dialog();
   virtual ~Dialog();
 
+  Fl_Double_Window *about;
   Fl_Double_Window *new_image;
+  Fl_Double_Window *create_palette;
   Fl_Double_Window *save_bmp;
   Fl_Double_Window *save_tga;
   Fl_Double_Window *save_jpg;
   Fl_Double_Window *save_png;
   Fl_Double_Window *filter;
-  Fl_Double_Window *about;
 
   Field *new_image_width;
   Field *new_image_height;
   Fl_Button *new_image_ok;
   Fl_Button *new_image_cancel;
+
+  Field *create_palette_colors;
+  Fl_Button *create_palette_ok;
+  Fl_Button *create_palette_cancel;
 
   Widget *about_logo;
   Fl_Button *about_ok;

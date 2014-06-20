@@ -27,6 +27,9 @@ void hide_about();
 void show_new_image();
 void hide_new_image();
 void cancel_new_image();
+void show_create_palette();
+void hide_create_palette();
+void cancel_create_palette();
 
 #endif
 
