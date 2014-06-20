@@ -43,39 +43,18 @@ static inline float fdist(const int x1, const int y1, const int x2, const int y2
   return dx * dx + dy * dy;
 }
 
-static inline int isqrt(int i)
-{
-  int count = 0;
-  int j = 1 << 30;
-
-  while(j > i)
-    j >>= 2;
-
-  while(j != 0)
-  {
-    if(i >= count + j)
-    {
-      i -= count + j;
-      count += j << 1;
-    }
-
-    j >>= 2;
-    count >>= 1;
-  }
-
-  return count;
-}
-
 static inline int sdist(const int x1, const int y1, const int x2, const int y2, const int edge, const int trans)
 {
-  int d = isqrt(fdist(x1, y1, x2, y2));
-  int s = ((255 - trans) << 8) / (((3 << edge) >> 1) + 1);
+  double d = sqrt(fdist(x1, y1, x2, y2));
+  //int s = ((255 - trans) << 8) / (((3 << edge) >> 1) + 1);
+  double s = (255 - trans) / (((3 << edge) >> 1) + 1);
 
-  if(s < 255)
-    s = 255;
+//  if(s < 255)
+//    s = 255;
 
   int temp = 255;
-  temp -= (s * d) >> 8;
+  temp -= (s * d);
+//  temp -= (s * d) >> 8;
   if(temp < trans)
     temp = trans;
 
