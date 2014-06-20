@@ -88,18 +88,12 @@ int View::handle(int event)
 
   switch(event)
   {
+    case FL_FOCUS:
+      return 1;
+    case FL_UNFOCUS:
+      return 1;
     case FL_ENTER:
       return 1;
-    case FL_MOVE:
-      if(stroke->active && stroke->type == 3)
-      {
-        stroke->polyline(imgx, imgy, ox, oy, zoom);
-        draw_main(0);
-        stroke->preview(backbuf, ox, oy, zoom);
-        redraw();
-        return 1;
-      }
-      return 0;
     case FL_PUSH:
       switch(button)
       {
@@ -189,6 +183,16 @@ int View::handle(int event)
       moving = 0;
       draw_main(1);
       return 1;
+    case FL_MOVE:
+      if(stroke->active && stroke->type == 3)
+      {
+        stroke->polyline(imgx, imgy, ox, oy, zoom);
+        draw_main(0);
+        stroke->preview(backbuf, ox, oy, zoom);
+        redraw();
+        return 1;
+      }
+      return 0;
     case FL_MOUSEWHEEL:
       if(Fl::event_dy() >= 0)
       {
@@ -197,6 +201,15 @@ int View::handle(int event)
       else
       {
         zoom_in(mousex, mousey);
+      }
+      return 1;
+    case FL_KEYDOWN:
+puts("something pressed");
+      if(Fl::event_key() == 32)
+      {
+puts("space bar");
+        Bitmap::clone_x = imgx;
+        Bitmap::clone_y = imgy;
       }
       return 1;
   }

@@ -265,6 +265,8 @@ void Stroke::begin(int x, int y, int ox, int oy, float zoom)
   beginy = y;
   oldx = x;
   oldy = y;
+  Bitmap::clone_dx = x - Bitmap::clone_x;
+  Bitmap::clone_dy = y - Bitmap::clone_y;
   polycount = 0;
 
   x1 = x - (r + 1);
@@ -302,8 +304,17 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       make_blitrect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
       break;
     case 1:
-    case 3:
       map->line(x, y, lastx, lasty, 255);
+      make_blitrect(x, y, lastx, lasty, ox, oy, 1, zoom);
+      polycachex[polycount] = x;
+      polycachey[polycount] = y;
+      polycount++;
+      polycount &= 65535;
+      oldx = x;
+      oldy = y;
+      break;
+    case 3:
+      map->line(oldx, oldy, lastx, lasty, 0);
       make_blitrect(x, y, lastx, lasty, ox, oy, 1, zoom);
       polycachex[polycount] = x;
       polycachey[polycount] = y;
@@ -350,6 +361,17 @@ void Stroke::end(int xx, int yy, int ox, int oy, float zoom)
   Brush *brush = Brush::main;
   Map *map = Map::main;
 
+  int w, h;
+
+  if(Bitmap::clone)
+  {
+    w = x2 - x1;
+    h = y2 - y1;
+    delete Bitmap::clone_buffer;
+    Bitmap::clone_buffer = new Bitmap(w, h);
+    Bitmap::main->blit(Bitmap::clone_buffer, x1, y1, 0, 0, w, h);
+  }
+
   switch(type)
   {
     case 1:
@@ -378,12 +400,13 @@ void Stroke::polyline(int x, int y, int ox, int oy, float zoom)
   if(y + 1 > y2)
     y2 = y + 1;
 
+  map->line(oldx, oldy, lastx, lasty, 0);
+
   int i;
   for(i = 0; i < polycount - 1; i++)
     map->line(polycachex[i], polycachey[i],
               polycachex[i + 1], polycachey[i + 1], 255);
 
-  map->line(oldx, oldy, lastx, lasty, 0);
   map->line(oldx, oldy, x, y, 255);
 
   make_blitrect(x1, y1, x2, y2, ox, oy, 1, zoom);

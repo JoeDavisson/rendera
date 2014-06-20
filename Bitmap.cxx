@@ -20,7 +20,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+extern Gui *gui;
+
 Bitmap *Bitmap::main;
+Bitmap *Bitmap::clone_buffer;
 int Bitmap::wrap = 0;
 int Bitmap::clone = 0;
 int Bitmap::clone_x = 0;
@@ -560,7 +563,12 @@ void Bitmap::setpixel_clone(int x, int y, int c2, int t)
       break;
   }
 
-  c2 = getpixel(x1, y1);
+  Stroke *stroke = gui->view->stroke;
+
+  if(x1 >= stroke->x1 && x1 <= stroke->x2 && y1 >= stroke->y1 && y1 <= stroke->y2)
+    c2 = Bitmap::clone_buffer->getpixel(x1 - stroke->x1, y1 - stroke->y1);
+  else
+    c2 = getpixel(x1, y1);
 
   *c1 = Blend::current(*c1, c2, t);
 }
@@ -604,7 +612,12 @@ void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
       break;
   }
 
-  c2 = getpixel(x1, y1);
+  Stroke *stroke = gui->view->stroke;
+
+  if(x1 >= stroke->x1 && x1 <= stroke->x2 && y1 >= stroke->y1 && y1 <= stroke->y2)
+    c2 = Bitmap::clone_buffer->getpixel(x1 - stroke->x1, y1 - stroke->y1);
+  else
+    c2 = getpixel(x1, y1);
 
   *c1 = Blend::current(*c1, c2, t);
 }

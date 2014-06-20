@@ -61,6 +61,7 @@ public:
   void fast_stretch(Bitmap *, int, int, int, int, int, int, int, int);
 
   static Bitmap *main;
+  static Bitmap *clone_buffer;
   static int wrap;
   static int clone;
   static int clone_x;
