@@ -65,6 +65,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   backbuf = new Bitmap(Fl::w(), Fl::h());
   image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
+  take_focus();
 }
 
 View::~View()
@@ -93,9 +94,12 @@ int View::handle(int event)
       return 1;
     case FL_UNFOCUS:
       return 1;
-    case FL_ENTER:
-      return 1;
+//    case FL_ENTER:
+//      return 1;
+//    case FL_LEAVE:
+//      return 1;
     case FL_PUSH:
+      take_focus();
       switch(button)
       {
         window()->make_current();
@@ -150,6 +154,7 @@ int View::handle(int event)
           return 0;
       } 
     case FL_DRAG:
+      take_focus();
       window()->make_current();
       fl_overlay_clear();
 
@@ -212,15 +217,29 @@ int View::handle(int event)
         zoom_in(mousex, mousey);
       }
       return 1;
-//    case FL_KEYDOWN:
-//puts("something pressed");
-//      if(Fl::event_key() == 32)
-//      {
-//puts("space bar");
-//        Bitmap::clone_x = imgx;
-//        Bitmap::clone_y = imgy;
-//      }
-//      return 0;
+//    case FL_SHORTCUT:
+    case FL_KEYDOWN:
+      switch(Fl::event_key())
+      {
+        case 32:
+          Bitmap::clone_x = imgx;
+          Bitmap::clone_y = imgy;
+          Bitmap::clone_moved = 1;
+          break;
+        case FL_Right:
+          scroll(0, 64);
+          break;
+        case FL_Left:
+          scroll(1, 64);
+          break;
+        case FL_Down:
+          scroll(2, 64);
+          break;
+        case FL_Up:
+          scroll(3, 64);
+          break;
+      }
+      return 1;
   }
   return 0;
 }
@@ -494,6 +513,43 @@ void View::zoom_one()
   zoom = 1;
   ox = 0;
   oy = 0;
+  draw_main(1);
+}
+
+void View::scroll(int dir, int amount)
+{
+  int x, y;
+
+  switch(dir)
+  {
+    case 0:
+      x = Bitmap::main->w - w() / zoom;
+      if(x < 0)
+        return;
+      ox += amount / zoom;
+      if(ox > x)
+        ox = x;
+      break;
+    case 1:
+      ox -= amount / zoom;
+      if(ox < 0)
+        ox = 0;
+      break;
+    case 2:
+      y = Bitmap::main->h - h() / zoom;
+      if(y < 0)
+        return;
+      oy += amount / zoom;
+      if(oy > y)
+        oy = y;
+      break;
+    case 3:
+      oy -= amount / zoom;
+      if(oy < 0)
+        oy = 0;
+      break;
+  }
+
   draw_main(1);
 }
 
