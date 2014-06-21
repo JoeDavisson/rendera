@@ -300,7 +300,7 @@ void hide_new_image()
 
   gui->view->ox = 0;
   gui->view->oy = 0;
-  gui->view->zoom = 1;
+  gui->view->zoom_fit(0);
   gui->view->draw_main(1);
 }
 

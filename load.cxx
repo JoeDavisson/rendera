@@ -103,6 +103,7 @@ void load(Fl_Widget *, void *)
   delete Map::main;
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
 
+  gui->view->zoom_fit(gui->view->fit);
   gui->view->draw_main(1);
 }
 
