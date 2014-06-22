@@ -24,6 +24,8 @@ extern Gui *gui;
 
 Bitmap *Bitmap::main;
 Bitmap *Bitmap::clone_buffer;
+Bitmap *Bitmap::offset_buffer;
+
 int Bitmap::wrap = 0;
 int Bitmap::clone = 0;
 int Bitmap::clone_moved = 0;
@@ -32,6 +34,7 @@ int Bitmap::clone_y = 0;
 int Bitmap::clone_dx = 0;
 int Bitmap::clone_dy = 0;
 int Bitmap::clone_mirror = 0;
+int Bitmap::overscroll = 64;
 
 Bitmap::Bitmap(int width, int height)
 {

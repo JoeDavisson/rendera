@@ -96,8 +96,9 @@ void save_bmp(const char *fn)
     return;
 
   Bitmap *bmp = Bitmap::main;
-  int w = bmp->w - 64;
-  int h = bmp->h - 64;
+  int overscroll = Bitmap::overscroll;
+  int w = bmp->w - overscroll * 2;
+  int h = bmp->h - overscroll * 2;
   int pad = w % 4;
 
   // BITMAPFILEHEADER
@@ -121,7 +122,7 @@ void save_bmp(const char *fn)
   write_uint32(0, out);
   write_uint32(0, out);
 
-  int *p = bmp->row[32] + 32;
+  int *p = bmp->row[overscroll] + overscroll;
   unsigned char *linebuf = new unsigned char[w * 3 + pad];
 
   int x, y;
@@ -139,7 +140,7 @@ void save_bmp(const char *fn)
     }
     for(x = 0; x < pad; x++)
       linebuf[xx++] = 0;
-    p += 64;
+    p += overscroll * 2;
 
     fwrite(linebuf, 1, w * 3, out);
   }
@@ -155,8 +156,9 @@ void save_tga(const char *fn)
     return;
 
   Bitmap *bmp = Bitmap::main;
-  int w = bmp->w - 64;
-  int h = bmp->h - 64;
+  int overscroll = Bitmap::overscroll;
+  int w = bmp->w - overscroll * 2;
+  int h = bmp->h - overscroll * 2;
 
   write_uint8(0, out);
   write_uint8(0, out);
@@ -171,7 +173,7 @@ void save_tga(const char *fn)
   write_uint8(24, out);
   write_uint8(32, out);
 
-  int *p = bmp->row[32] + 32;
+  int *p = bmp->row[overscroll] + overscroll;
   unsigned char *linebuf = new unsigned char[w * 3];
 
   int x, y;
@@ -187,7 +189,7 @@ void save_tga(const char *fn)
       p++;
       xx += 3;
     }
-    p += 64;
+    p += overscroll * 2;
 
     fwrite(linebuf, 1, w * 3, out);
   }

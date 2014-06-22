@@ -62,6 +62,8 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   gridx = 8;
   gridy = 8;
   tool = 0;
+  beginx = 0;
+  beginy = 0;
   stroke = new Stroke();
   backbuf = new Bitmap(Fl::w(), Fl::h());
   image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
@@ -118,8 +120,9 @@ int View::handle(int event)
           {
             case 0:
               brush_push();
-              draw_main(1);
-              stroke->preview(backbuf, ox, oy, zoom);
+              break;
+            case 3:
+              offset_push();
               break;
           }
 
@@ -147,6 +150,9 @@ int View::handle(int event)
             case 0:
               brush_drag();
               break;
+            case 3:
+              offset_drag();
+              break;
           }
           return 0;
         case 2:
@@ -164,6 +170,9 @@ int View::handle(int event)
         case 0:
           brush_release();
           break;
+        case 3:
+          offset_release();
+          break;
       }
 
       moving = 0;
@@ -173,7 +182,7 @@ int View::handle(int event)
       switch(tool)
       {
         case 0:
-          brush_release();
+          brush_move();
           break;
       }
 
@@ -241,6 +250,9 @@ void View::brush_push()
   {
     stroke->begin(imgx, imgy, ox, oy, zoom);
   }
+
+  draw_main(1);
+  stroke->preview(backbuf, ox, oy, zoom);
 }
 
 void View::brush_drag()
@@ -279,6 +291,53 @@ void View::brush_move()
     stroke->preview(backbuf, ox, oy, zoom);
     redraw();
   }
+}
+
+void View::offset_push()
+{
+  int w = Bitmap::main->cw;
+  int h = Bitmap::main->ch;
+  int overscroll = Bitmap::main->overscroll;
+
+  beginx = imgx;
+  beginy = imgy;
+
+  Bitmap::offset_buffer = new Bitmap(w, h);
+  Bitmap::main->blit(Bitmap::offset_buffer, overscroll, overscroll, 0, 0, w, h);
+}
+
+void View::offset_drag()
+{
+  int w = Bitmap::main->cw;
+  int h = Bitmap::main->ch;
+  int overscroll = Bitmap::main->overscroll;
+
+  int dx = imgx - beginx;
+  int dy = imgy - beginy;
+
+  int x = dx;
+  int y = dy;
+
+  while(x < 0)
+    x += w;
+  while(y < 0)
+    y += h;
+  while(x >= w)
+    x -= w;
+  while(y >= h)
+    y -= h;
+
+  Bitmap::offset_buffer->blit(Bitmap::main, 0, 0, x + overscroll, y + overscroll, w - x, h - y);
+  Bitmap::offset_buffer->blit(Bitmap::main, w - x, 0, overscroll, y + overscroll, x, h - y);
+  Bitmap::offset_buffer->blit(Bitmap::main, 0, h - y, x + overscroll, overscroll, w - x, y);
+  Bitmap::offset_buffer->blit(Bitmap::main, w - x, h - y, overscroll, overscroll, x, y);
+
+  draw_main(1);
+}
+
+void View::offset_release()
+{
+  delete Bitmap::offset_buffer;
 }
 
 void View::resize(int x, int y, int w, int h)

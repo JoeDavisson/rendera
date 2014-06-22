@@ -62,6 +62,7 @@ public:
 
   static Bitmap *main;
   static Bitmap *clone_buffer;
+  static Bitmap *offset_buffer;
   static int wrap;
   static int clone;
   static int clone_moved;
@@ -70,6 +71,7 @@ public:
   static int clone_dx;
   static int clone_dy;
   static int clone_mirror;
+  static int overscroll;
 };
 
 #endif

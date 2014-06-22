@@ -155,7 +155,7 @@ static int limit_colors(float *list, int *colors)
   return count;
 }
 
-void quantize(Bitmap *src, int size, int over)
+void quantize(Bitmap *src, int size, int overscroll)
 {
   // popularity histogram
   float *list = new float[16777216];
@@ -178,11 +178,11 @@ void quantize(Bitmap *src, int size, int over)
     colors[i] = -1;
 
   // build histogram
-  float inc = 1.0 / ((src->w - over * 2) * (src->h - over * 2));
+  float inc = 1.0 / ((src->w - overscroll * 2) * (src->h - overscroll * 2));
   int count = 0;
-  for(j = over; j < src->h - over; j++)
+  for(j = overscroll; j < src->h - overscroll; j++)
   {
-    for(i = over; i < src->w - over; i++)
+    for(i = overscroll; i < src->w - overscroll; i++)
     {
       int c = src->getpixel(i, j);
 

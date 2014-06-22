@@ -144,6 +144,11 @@ void check_smooth(Widget *widget, void *var)
   Brush::main->smooth = *(int *)var;
 }
 
+void check_tool(Widget *widget, void *var)
+{
+  gui->view->tool = *(int *)var;
+}
+
 void check_color(Widget *widget, void *var)
 {
   int pos = gui->hue->var;
@@ -290,10 +295,11 @@ void hide_new_image()
   h += 64;
 
   delete Bitmap::main;
+  int overscroll = Bitmap::overscroll;
   Bitmap::main = new Bitmap(w, h);
   Bitmap::main->clear(makecol(0, 0, 0));
-  Bitmap::main->set_clip(32, 32, w - 32 - 1, h - 32 - 1);
-  Bitmap::main->rectfill(32, 32, w - 32 - 1, h - 32 - 1, makecol(255, 255, 255), 0);
+  Bitmap::main->set_clip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
+  Bitmap::main->rectfill(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1, makecol(255, 255, 255), 0);
 
   delete Map::main;
   Map::main = new Map(w, h);
@@ -339,7 +345,7 @@ void hide_create_palette()
 
   dialog->create_palette->hide();
 
-  quantize(Bitmap::main, colors, 32);
+  quantize(Bitmap::main, colors, Bitmap::overscroll);
 }
 
 void cancel_create_palette()

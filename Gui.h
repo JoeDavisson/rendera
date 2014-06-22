@@ -68,9 +68,7 @@ public:
   Widget *smooth;
 
   // left bottom
-  Button *offset;
-  Button *getcolor;
-  Button *crop;
+  Widget *tool;
 
   // right
   Widget *palette;

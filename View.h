@@ -35,6 +35,9 @@ public:
   void brush_drag();
   void brush_release();
   void brush_move();
+  void offset_push();
+  void offset_drag();
+  void offset_release();
   void draw_move();
   void draw_main(int);
   void draw_grid();
@@ -61,6 +64,7 @@ public:
   float aspect, winaspect;
   Stroke *stroke;
   int tool;
+  int beginx, beginy;
 
   int button;
   int button1, button2, button3;

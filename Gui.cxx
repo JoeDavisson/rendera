@@ -154,9 +154,9 @@ Gui::Gui()
   left_bottom->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   left_bottom->box(FL_UP_BOX);
   y1 = 20;
-  offset = new Button(left_bottom, 8, y1, 96, 24, "Offset", "data/offset.png");
-  y1 += 24 + 8;
-  crop = new Button(left_bottom, 8, y1, 96, 24, "Crop", "data/crop.png");
+  tool = new Widget(left_bottom, 8, y1, 96, 96, "Tools", "data/tools.png", 96, 24);
+  tool->callback((Fl_Callback *)check_tool, &tool->var);
+  y1 += 96 + 8;
   left_bottom->resizable(0);
   left_bottom->end();
 
@@ -186,7 +186,6 @@ Gui::Gui()
   blend = new Widget(right, 8, y1, 96, 24, "Blending Mode", "data/blend.png", 24, 24);
   blend->callback((Fl_Callback *)check_color, &blend->var);
   y1 += 24 + 8;
-  getcolor = new Button(right, 8, y1, 96, 24, "Get Color", "data/getcolor.png");
   right->resizable(0);
   right->end();
 
