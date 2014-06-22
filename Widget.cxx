@@ -58,13 +58,15 @@ int Widget::handle(int event)
 {
   int x1, y1;
 
-  if(stepx == 0 || stepy == 0)
-    return 0;
-
   switch(event)
   {
+    case FL_ENTER:
+      return 1;
     case FL_PUSH:
     case FL_DRAG:
+      if(stepx == 0 || stepy == 0)
+        return 0;
+
       x1 = (Fl::event_x() - x()) / stepx;
       if(x1 > w() / stepx - 1)
         x1 = w() / stepx - 1;
@@ -80,10 +82,10 @@ int Widget::handle(int event)
       var = x1 + (w() / stepx) * y1;
       do_callback();
       redraw();
-      break;
+      return 1;
   }
 
-  return 1;
+  return 0;
 }
 
 void Widget::draw()
@@ -117,6 +119,9 @@ void Widget::draw()
 
   fl_pop_clip();
 
-  fl_draw_box(FL_UP_FRAME, x() + offsetx, y() + offsety, stepx, stepy, FL_BLACK);
+  int tempx = stepx > 1 ? stepx : 2;
+  int tempy = stepy > 1 ? stepy : 2;
+
+  fl_draw_box(FL_UP_FRAME, x() + offsetx, y() + offsety, tempx, tempy, FL_BLACK);
 }
 

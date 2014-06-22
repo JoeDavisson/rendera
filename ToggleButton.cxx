@@ -38,6 +38,8 @@ int ToggleButton::handle(int event)
 {
   switch(event)
   {
+    case FL_ENTER:
+      return 1;
     case FL_PUSH:
       switch(Fl::event_button())
       {

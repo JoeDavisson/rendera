@@ -24,22 +24,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 extern Gui *gui;
 
-static inline double error24(const int c1, const int c2, const double f1,
-                            const double f2)
+static inline float error24(const int c1, const int c2, const float f1,
+                            const float f2)
 {
   return ((f1 * f2) / (f1 + f2)) * diff24(c1, c2);
 }
 
 
-static inline int merge24(const int c1, const int c2, const double f1,
-                          const double f2)
+static inline int merge24(const int c1, const int c2, const float f1,
+                          const float f2)
 {
-  // do not reciprocate this, use the divide
-  const double div = f1 + f2;
+  const float div = 1.0 / (f1 + f2);
 
-  const int r = (double)(f1 * getr(c1) + f2 * getr(c2)) / div;
-  const int g = (double)(f1 * getg(c1) + f2 * getg(c2)) / div;
-  const int b = (double)(f1 * getb(c1) + f2 * getb(c2)) / div;
+  const int r = (float)(f1 * getr(c1) + f2 * getr(c2)) * div;
+  const int g = (float)(f1 * getg(c1) + f2 * getg(c2)) * div;
+  const int b = (float)(f1 * getb(c1) + f2 * getb(c2)) * div;
 
   return makecol_notrans(r, g, b);
 }
@@ -57,7 +56,7 @@ static void stretch_palette(int current, int target)
 {
   int *temp = new int[256];
 
-  double ax = (double)(current - 1) / (double)(target - 1);
+  float ax = (float)(current - 1) / (float)(target - 1);
 
   int *c[2];
   c[0] = c[1] = &Palette::main->data[0];
@@ -65,28 +64,28 @@ static void stretch_palette(int current, int target)
   int x = 0;
   do
   {
-    double uu = (x * ax);
+    float uu = (x * ax);
     int u1 = uu;
     if(u1 > current - 1)
       u1 = current - 1;
     int u2 = (u1 < (current - 1) ? u1 + 1 : u1);
-    double u = uu - u1;
+    float u = uu - u1;
 
     c[0] += u1;
     c[1] += u2;
 
-    double f[2];
+    float f[2];
 
     f[0] = (1.0 - u);
     f[1] = u;
 
-    double r = 0, g = 0, b = 0;
+    float r = 0, g = 0, b = 0;
     int i = 0;
     do
     {
-      r += (double)getr(*c[i]) * f[i];
-      g += (double)getg(*c[i]) * f[i];
-      b += (double)getb(*c[i]) * f[i];
+      r += (float)getr(*c[i]) * f[i];
+      g += (float)getg(*c[i]) * f[i];
+      b += (float)getb(*c[i]) * f[i];
       i++;
     }
     while(i < 2);
@@ -107,7 +106,7 @@ static void stretch_palette(int current, int target)
   delete[] temp;
 }
 
-static int limit_colors(double *list, int *colors)
+static int limit_colors(float *list, int *colors)
 {
   int r, g, b;
   int i, j, k;
@@ -120,10 +119,10 @@ static int limit_colors(double *list, int *colors)
     {
       for(r = 0; r <= 256 - step; r += step)
       {
-        double rr = 0;
-        double gg = 0;
-        double bb = 0;
-        double div = 0;
+        float rr = 0;
+        float gg = 0;
+        float bb = 0;
+        float div = 0;
         for(k = 0; k < step; k++)
         {
           for(j = 0; j < step; j++)
@@ -131,7 +130,7 @@ static int limit_colors(double *list, int *colors)
             for(i = 0; i < step; i++)
             {
               int c = makecol_notrans(r + i, g + j, b + k);
-              double d = list[c];
+              float d = list[c];
               rr += d * getr(c);
               gg += d * getg(c);
               bb += d * getb(c);
@@ -159,13 +158,13 @@ static int limit_colors(double *list, int *colors)
 void quantize(Bitmap *src, int size, int over)
 {
   // popularity histogram
-  double *list = new double[16777216];
+  float *list = new float[16777216];
 
   // color list
   int *colors = new int[1 << SHIFT];
 
   // quantization error matrix
-  double *err = new double[(1 << SHIFT) * (1 << SHIFT)];
+  float *err = new float[(1 << SHIFT) * (1 << SHIFT)];
 
   int i, j;
   int max;
@@ -179,7 +178,7 @@ void quantize(Bitmap *src, int size, int over)
     colors[i] = -1;
 
   // build histogram
-  double inc = 1.0 / ((src->w - over * 2) * (src->h - over * 2));
+  float inc = 1.0 / ((src->w - over * 2) * (src->h - over * 2));
   int count = 0;
   for(j = over; j < src->h - over; j++)
   {
@@ -258,13 +257,13 @@ void quantize(Bitmap *src, int size, int over)
   {
     // find lowest value in error matrix
     int ii = 0, jj = 0;
-    double error = 999999;
+    float error = 999999;
 
     for(j = 0; j < max; j++)
     {
       if(colors[j] >= 0)
       {
-        double *pos = &err[(j << SHIFT)];
+        float *pos = &err[(j << SHIFT)];
         for(i = 0; i < j; i++)
         {
           if((colors[i] >= 0) && (*pos < error))
@@ -279,7 +278,7 @@ void quantize(Bitmap *src, int size, int over)
     }
 
     // compute quantization level and place in i, delete j
-    double temp = list[colors[ii]];
+    float temp = list[colors[ii]];
     colors[ii] = merge24(colors[ii], colors[jj],
                          list[colors[ii]], list[colors[jj]]);
     list[colors[ii]] = temp + list[colors[jj]];
@@ -287,7 +286,7 @@ void quantize(Bitmap *src, int size, int over)
     count--;
 
     // recompute error matrix for new row
-    double *pos = &err[ii + (ii << SHIFT)];
+    float *pos = &err[ii + (ii << SHIFT)];
     for(j = ii; j < max; j++)
     {
       if(colors[j] >= 0)
