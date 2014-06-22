@@ -31,6 +31,10 @@ public:
 
   virtual int handle(int);
   virtual void resize(int, int, int, int);
+  void brush_push();
+  void brush_drag();
+  void brush_release();
+  void brush_move();
   void draw_move();
   void draw_main(int);
   void draw_grid();
@@ -56,6 +60,12 @@ public:
   int bx, by, bw, bh;
   float aspect, winaspect;
   Stroke *stroke;
+  int tool;
+
+  int button;
+  int button1, button2, button3;
+  int dclick;
+  int shift;
 protected:
   virtual void draw();
 };

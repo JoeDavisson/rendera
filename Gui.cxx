@@ -65,7 +65,7 @@ Gui::Gui()
   top_right = new Fl_Group(top_left->w(), menubar->h(), window->w() - top_left->w(), 40);
   top_right->box(FL_UP_BOX);
   x1 = 8;
-  zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24, "Fit", "data/zoom_fit.png");
+  zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24, "Fit In Window", "data/zoom_fit.png");
   zoom_fit->callback((Fl_Callback *)check_zoom_fit, &zoom_fit->var);
   x1 += 24 + 8;
   zoom_one = new Button(top_right, x1, 8, 24, 24, "Actual Size", "data/zoom_one.png");
@@ -96,12 +96,12 @@ Gui::Gui()
   bottom = new Fl_Group(112, window->h() - 40, window->w() - 224, 40);
   bottom->box(FL_UP_BOX);
   x1 = 8;
-  wrap = new ToggleButton(bottom, x1, 8, 24, 24, "Wrap", "data/wrap.png");
+  wrap = new ToggleButton(bottom, x1, 8, 24, 24, "Wrap Edges", "data/wrap.png");
   wrap->callback((Fl_Callback *)check_wrap, &wrap->var);
   x1 += 24 + 6;
   new Separator(bottom, x1, 2, 2, 36, "");
   x1 += 8;
-  clone = new ToggleButton(bottom, x1, 8, 24, 24, "Clone", "data/clone.png");
+  clone = new ToggleButton(bottom, x1, 8, 24, 24, "Clone Enable", "data/clone.png");
   clone->callback((Fl_Callback *)check_clone, &clone->var);
   x1 += 24 + 8;
   mirror = new Widget(bottom, x1, 8, 96, 24, "Clone Mirroring", "data/mirror.png", 24, 24);
@@ -112,7 +112,7 @@ Gui::Gui()
   origin = new Widget(bottom, x1, 8, 48, 24, "Origin", "data/origin.png", 24, 24);
   origin->callback((Fl_Callback *)check_origin, &origin->var);
   x1 += 48 + 8;
-  constrain = new Widget(bottom, x1, 8, 48, 24, "Constrain", "data/constrain.png", 24, 24);
+  constrain = new Widget(bottom, x1, 8, 48, 24, "Keep Square", "data/constrain.png", 24, 24);
   constrain->callback((Fl_Callback *)check_constrain, &constrain->var);
   bottom->resizable(0);
   bottom->end();
@@ -141,7 +141,7 @@ Gui::Gui()
   edge = new Widget(left_top, 8, y1, 96, 24, "Soft Edge", "data/edge.png", 8, 24);
   edge->callback((Fl_Callback *)check_edge, &edge->var);
   y1 += 24 + 8;
-  smooth = new Widget(left_top, 8, y1, 96, 48, "Smoothing", "data/smooth.png", 48, 48);
+  smooth = new Widget(left_top, 8, y1, 96, 48, "Coarse/Fine", "data/smooth.png", 48, 48);
   y1 += 48 + 8;
   smooth->callback((Fl_Callback *)check_smooth, &smooth->var);
   left_top->resizable(0);

@@ -61,6 +61,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   grid = 0;
   gridx = 8;
   gridy = 8;
+  tool = 0;
   stroke = new Stroke();
   backbuf = new Bitmap(Fl::w(), Fl::h());
   image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
@@ -81,12 +82,12 @@ int View::handle(int event)
 
   //int button = Fl::event_button();
   // do is this way to prevent multiple button presses
-  int button1 = Fl::event_button1() ? 1 : 0;
-  int button2 = Fl::event_button2() ? 2 : 0;
-  int button3 = Fl::event_button3() ? 4 : 0;
-  int button = button1 | button2 | button3;
-  int dclick = Fl::event_clicks() ? 1 : 0;
-  int shift = Fl::event_shift() ? 1 : 0;
+  button1 = Fl::event_button1() ? 1 : 0;
+  button2 = Fl::event_button2() ? 2 : 0;
+  button3 = Fl::event_button3() ? 4 : 0;
+  button = button1 | button2 | button3;
+  dclick = Fl::event_clicks() ? 1 : 0;
+  shift = Fl::event_shift() ? 1 : 0;
 
   switch(event)
   {
@@ -94,65 +95,45 @@ int View::handle(int event)
       return 1;
     case FL_UNFOCUS:
       return 1;
-//    case FL_ENTER:
-//      return 1;
-//    case FL_LEAVE:
-//      return 1;
+    case FL_ENTER:
+      return 1;
     case FL_PUSH:
       take_focus();
+
       switch(button)
       {
         window()->make_current();
         fl_overlay_clear();
 
         case 1:
-          if(stroke->active && stroke->type == 3)
-          {
-            if(dclick)
-            {
-              stroke->end(imgx, imgy, ox, oy, zoom);
-              Blend::set(Brush::main->blend);
-              stroke->render();
-              while(stroke->render_callback(ox, oy, zoom))
-              {
-                draw_main(1);
-                Fl::flush();
-              }
-              Blend::set(0);
-              moving = 0;
-              draw_main(1);
-              return 1;
-            }
-            else
-            {
-              stroke->draw(imgx, imgy, ox, oy, zoom);
-            }
-          }
-          else if(shift)
+          if(shift)
           {
             Bitmap::clone_x = imgx;
             Bitmap::clone_y = imgy;
             Bitmap::clone_moved = 1;
-            return 1;
-          }
-          else
-          {
-            stroke->begin(imgx, imgy, ox, oy, zoom);
+            break;
           }
 
-          draw_main(1);
-          stroke->preview(backbuf, ox, oy, zoom);
+          switch(tool)
+          {
+            case 0:
+              brush_push();
+              draw_main(1);
+              stroke->preview(backbuf, ox, oy, zoom);
+              break;
+          }
+
           redraw();
-          return 1;
+          break;
         case 2:
           if(moving == 0)
           {
             begin_move();
             moving = 1;
-            return 1;
+            break;
           }
-          return 0;
       } 
+      return 1;
     case FL_DRAG:
       take_focus();
       window()->make_current();
@@ -161,52 +142,42 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          if(stroke->type != 3)
+          switch(tool)
           {
-            stroke->draw(imgx, imgy, ox, oy, zoom);
-            draw_main(0);
-            stroke->preview(backbuf, ox, oy, zoom);
-            redraw();
-            return 1;
+            case 0:
+              brush_drag();
+              break;
           }
           return 0;
         case 2:
           if(moving == 1)
-          {
             move();
-            return 1;
-          }
-          return 0;
+          break;
       } 
+      return 1;
     case FL_RELEASE:
       window()->make_current();
       fl_overlay_clear();
 
-      if(stroke->active && stroke->type != 3)
+      switch(tool)
       {
-        stroke->end(imgx, imgy, ox, oy, zoom);
-        Blend::set(Brush::main->blend);
-        stroke->render();
-        while(stroke->render_callback(ox, oy, zoom))
-        {
-          draw_main(1);
-          Fl::flush();
-        }
-        Blend::set(0);
+        case 0:
+          brush_release();
+          break;
       }
+
       moving = 0;
       draw_main(1);
       return 1;
     case FL_MOVE:
-      if(stroke->active && stroke->type == 3)
+      switch(tool)
       {
-        stroke->polyline(imgx, imgy, ox, oy, zoom);
-        draw_main(0);
-        stroke->preview(backbuf, ox, oy, zoom);
-        redraw();
-        return 1;
+        case 0:
+          brush_release();
+          break;
       }
-      return 0;
+
+      return 1;
     case FL_MOUSEWHEEL:
       if(Fl::event_dy() >= 0)
       {
@@ -217,7 +188,6 @@ int View::handle(int event)
         zoom_in(mousex, mousey);
       }
       return 1;
-//    case FL_SHORTCUT:
     case FL_KEYDOWN:
       switch(Fl::event_key())
       {
@@ -242,6 +212,73 @@ int View::handle(int event)
       return 1;
   }
   return 0;
+}
+
+void View::brush_push()
+{
+  if(stroke->active && stroke->type == 3)
+  {
+    if(dclick)
+    {
+      stroke->end(imgx, imgy, ox, oy, zoom);
+      Blend::set(Brush::main->blend);
+      stroke->render();
+      while(stroke->render_callback(ox, oy, zoom))
+      {
+        draw_main(1);
+        Fl::flush();
+      }
+      Blend::set(0);
+      moving = 0;
+      draw_main(1);
+    }
+    else
+    {
+      stroke->draw(imgx, imgy, ox, oy, zoom);
+    }
+  }
+  else
+  {
+    stroke->begin(imgx, imgy, ox, oy, zoom);
+  }
+}
+
+void View::brush_drag()
+{
+  if(stroke->type != 3)
+  {
+    stroke->draw(imgx, imgy, ox, oy, zoom);
+    draw_main(0);
+    stroke->preview(backbuf, ox, oy, zoom);
+    redraw();
+  }
+}
+
+void View::brush_release()
+{
+  if(stroke->active && stroke->type != 3)
+  {
+    stroke->end(imgx, imgy, ox, oy, zoom);
+    Blend::set(Brush::main->blend);
+    stroke->render();
+    while(stroke->render_callback(ox, oy, zoom))
+    {
+      draw_main(1);
+      Fl::flush();
+    }
+    Blend::set(0);
+  }
+}
+
+void View::brush_move()
+{
+  if(stroke->active && stroke->type == 3)
+  {
+    stroke->polyline(imgx, imgy, ox, oy, zoom);
+    draw_main(0);
+    stroke->preview(backbuf, ox, oy, zoom);
+    redraw();
+  }
 }
 
 void View::resize(int x, int y, int w, int h)
