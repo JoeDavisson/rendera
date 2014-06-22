@@ -49,6 +49,38 @@ static inline void grid_hline(Bitmap *bmp, int x1, int y, int x2,
   }
 }
 
+/*
+static int inbox(int x, int y, int x1, int y1, int x2, int y2)
+{
+  if(x1 > x2)
+    SWAP(x1, x2);
+  if(y1 > y2)
+    SWAP(y1, y2);
+
+  if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
+    return 1;
+  else
+    return 0;
+}
+*/
+
+static void absrect(int *x1, int *y1, int *x2, int *y2)
+{
+  if(*x1 > *x2)
+    SWAP(*x1, *x2);
+  if(*y1 > *y2)
+    SWAP(*y1, *y2);
+
+  if(*x1 < Bitmap::main->cl)
+    *x1 = Bitmap::main->cl;
+  if(*y1 < Bitmap::main->ct)
+    *y1 = Bitmap::main->ct;
+  if(*x2 > Bitmap::main->cr)
+    *x2 = Bitmap::main->cr;
+  if(*y2 > Bitmap::main->cb)
+    *y2 = Bitmap::main->cb;
+}
+
 View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
 : Fl_Widget(x, y, w, h, label)
 {
@@ -61,9 +93,11 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   grid = 0;
   gridx = 8;
   gridy = 8;
+  oldimgx = 0;
+  oldimgy = 0;
   tool = 0;
-  beginx = 0;
-  beginy = 0;
+  tool_started = 0;
+  crop_resize_started = 0;
   stroke = new Stroke();
   backbuf = new Bitmap(Fl::w(), Fl::h());
   image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
@@ -121,15 +155,18 @@ int View::handle(int event)
             case 0:
               brush_push();
               break;
+            case 1:
+              crop_push();
+              break;
             case 3:
               offset_push();
               break;
           }
 
-          redraw();
+          //redraw();
           break;
         case 2:
-          if(moving == 0)
+          if(tool_started == 0 && moving == 0)
           {
             begin_move();
             moving = 1;
@@ -150,16 +187,22 @@ int View::handle(int event)
             case 0:
               brush_drag();
               break;
+            case 1:
+              crop_drag();
+              break;
             case 3:
               offset_drag();
               break;
           }
-          return 0;
+          //redraw();
+          break;
         case 2:
           if(moving == 1)
             move();
           break;
       } 
+      oldimgx = imgx;
+      oldimgy = imgy;
       return 1;
     case FL_RELEASE:
       window()->make_current();
@@ -170,13 +213,16 @@ int View::handle(int event)
         case 0:
           brush_release();
           break;
+        case 1:
+          crop_release();
+          break;
         case 3:
           offset_release();
           break;
       }
 
       moving = 0;
-      draw_main(1);
+//      draw_main(1);
       return 1;
     case FL_MOVE:
       switch(tool)
@@ -186,8 +232,13 @@ int View::handle(int event)
           break;
       }
 
+      oldimgx = imgx;
+      oldimgy = imgy;
       return 1;
     case FL_MOUSEWHEEL:
+      if(tool_started)
+        break;
+
       if(Fl::event_dy() >= 0)
       {
         zoom_out(mousex, mousey);
@@ -198,6 +249,9 @@ int View::handle(int event)
       }
       return 1;
     case FL_KEYDOWN:
+      if(tool_started)
+        break;
+
       switch(Fl::event_key())
       {
         case 32:
@@ -251,8 +305,8 @@ void View::brush_push()
     stroke->begin(imgx, imgy, ox, oy, zoom);
   }
 
-  draw_main(1);
   stroke->preview(backbuf, ox, oy, zoom);
+  redraw();
 }
 
 void View::brush_drag()
@@ -280,6 +334,8 @@ void View::brush_release()
     }
     Blend::set(0);
   }
+
+  draw_main(1);
 }
 
 void View::brush_move()
@@ -338,6 +394,131 @@ void View::offset_drag()
 void View::offset_release()
 {
   delete Bitmap::offset_buffer;
+}
+
+void View::crop_push()
+{
+  if(tool_started == 0)
+  {
+    Map::main->clear(0);
+    beginx = imgx;
+    beginy = imgy;
+    lastx = imgx;
+    lasty = imgy;
+    tool_started = 1;
+  }
+  else if(tool_started == 2)
+  {
+    if(dclick)
+    {
+      tool_started = 0;
+      absrect(&beginx, &beginy, &lastx, &lasty);
+      int w = lastx - beginx;
+      int h = lasty - beginy;
+      if(w < 1)
+        w = 1;
+      if(h < 1)
+        h = 1;
+      Bitmap *temp = new Bitmap(w, h);
+      Bitmap::main->blit(temp, beginx, beginy, 0, 0, w, h);
+      delete Bitmap::main;
+      int overscroll = Bitmap::overscroll;
+      int aw = w + overscroll * 2;
+      int ah = h + overscroll * 2;
+      Bitmap::main = new Bitmap(aw, ah);
+      Bitmap::main->clear(makecol(0, 0, 0));
+      Bitmap::main->set_clip(overscroll, overscroll, aw - overscroll - 1, ah - overscroll - 1);
+      temp->blit(Bitmap::main, 0, 0, overscroll, overscroll, w, h);
+      delete temp;
+      zoom = 1;
+      ox = 0;
+      oy = 0;
+      draw_main(1);
+    }
+  }
+}
+
+void View::crop_drag()
+{
+  if(tool_started == 1)
+  {
+    absrect(&beginx, &beginy, &lastx, &lasty);
+    Map::main->rect(beginx, beginy, lastx, lasty, 0);
+    absrect(&beginx, &beginy, &imgx, &imgy);
+    Map::main->rect(beginx, beginy, imgx, imgy, 255);
+    stroke->size(beginx, beginy, imgx, imgy);
+
+    lastx = imgx;
+    lasty = imgy;
+
+    draw_main(1);
+    stroke->preview(backbuf, ox, oy, zoom);
+    redraw();
+  }
+  else if(tool_started == 2)
+  {
+    Map::main->rect(beginx, beginy, lastx, lasty, 0);
+
+    if(crop_resize_started)
+    {
+      switch(crop_side)
+      {
+        case 0:
+          beginx = imgx;
+          break;
+        case 1:
+          lastx = imgx;
+          break;
+        case 2:
+          beginy = imgy;
+          break;
+        case 3:
+          lasty = imgy;
+          break;
+      }
+
+      absrect(&beginx, &beginy, &lastx, &lasty);
+      Map::main->rect(beginx, beginy, lastx, lasty, 255);
+      stroke->size(beginx, beginy, lastx, lasty);
+      draw_main(1);
+      stroke->preview(backbuf, ox, oy, zoom);
+      redraw();
+    }
+    else
+    {
+      if(imgx < beginx)
+      {
+        crop_side = 0;
+        crop_resize_started = 1;
+      }
+      else if(imgx > lastx)
+      {
+        crop_side = 1;
+        crop_resize_started = 1;
+      }
+      else if(imgy < beginy)
+      {
+        crop_side = 2;
+        crop_resize_started = 1;
+      }
+      else if(imgy > lasty)
+      {
+        crop_side = 3;
+        crop_resize_started = 1;
+      }
+
+    }
+  }
+}
+
+void View::crop_release()
+{
+  if(tool_started == 1)
+  {
+    tool_started = 2;
+  }
+
+  crop_resize_started = 0;
 }
 
 void View::resize(int x, int y, int w, int h)

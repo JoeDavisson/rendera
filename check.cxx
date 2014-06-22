@@ -146,6 +146,8 @@ void check_smooth(Widget *widget, void *var)
 
 void check_tool(Widget *widget, void *var)
 {
+  if(gui->view->tool_started)
+    return;
   gui->view->tool = *(int *)var;
 }
 

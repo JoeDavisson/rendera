@@ -243,6 +243,19 @@ void Stroke::make_blitrect(int x1, int y1, int x2, int y2, int ox, int oy, int s
     blith = 1;
 }
 
+void Stroke::size(int x1, int y1, int x2, int y2)
+{
+  if(x1 > x2)
+    SWAP(x1, x2);
+  if(y1 > y2)
+    SWAP(y1, y2);
+
+  this->x1 = x1;
+  this->y1 = y1;
+  this->x2 = x2;
+  this->y2 = y2;
+}
+
 void Stroke::draw_brush(int x, int y, int c)
 {
   Brush *brush = Brush::main;

@@ -38,6 +38,9 @@ public:
   void offset_push();
   void offset_drag();
   void offset_release();
+  void crop_push();
+  void crop_drag();
+  void crop_release();
   void draw_move();
   void draw_main(int);
   void draw_grid();
@@ -54,6 +57,7 @@ public:
   Bitmap *backbuf;
   int mousex, mousey;
   int imgx, imgy;
+  int oldimgx, oldimgy;
   int ox, oy;
   float zoom;
   int fit;
@@ -64,7 +68,11 @@ public:
   float aspect, winaspect;
   Stroke *stroke;
   int tool;
+  int tool_started;
+  int crop_resize_started;
+  int crop_side;
   int beginx, beginy;
+  int lastx, lasty;
 
   int button;
   int button1, button2, button3;

@@ -32,11 +32,11 @@ public:
   void clip();
   void size_linear(int, int, int, int);
   void make_blitrect(int, int, int, int, int, int, int, float);
+  void size(int, int, int, int);
   void draw_brush(int, int, int);
   void draw_brush_line(int, int, int, int, int);
   void draw_brush_rect(int, int, int, int, int);
   void draw_brush_oval(int, int, int, int, int);
-
   void begin(int, int, int, int, float);
   void draw(int, int, int, int, float);
   void end(int, int, int, int, float);
