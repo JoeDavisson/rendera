@@ -3,6 +3,7 @@
 
 #include "rendera.h"
 
+void update_color(int);
 void check_palette(Widget *, void *);
 void check_zoom_in(Button *, void *);
 void check_zoom_out(Button *, void *);

@@ -8,6 +8,28 @@ static int brush_sizes[16] = {
   32, 40, 48, 56, 64, 72, 80, 88
 };
 
+void update_color(int c)
+{
+  int r = getr(c);
+  int g = getg(c);
+  int b = getb(c);
+
+  int h, s, v;
+
+  Blend::rgb_to_hsv(r, g, b, &h, &s, &v);
+
+  float angle = ((3.14159 * 2) / 1536) * h;
+  int mx = 48 + 40 * cosf(angle);
+  int my = 48 + 40 * sinf(angle);
+  gui->hue->var = mx + 96 * my;
+  gui->sat->var = s / 2.684f;
+  gui->val->var = v / 2.684f;
+
+  gui->hue->do_callback();
+
+  Brush::main->color = c;
+}
+
 void check_palette(Widget *widget, void *var)
 {
   Palette *palette = Palette::main;
@@ -39,23 +61,7 @@ void check_palette(Widget *widget, void *var)
   }
 
   int c = widget->bitmap->getpixel(x * stepx, y * stepy);
-
-  int r = getr(c);
-  int g = getg(c);
-  int b = getb(c);
-
-  int h, s, v;
-
-  Blend::rgb_to_hsv(r, g, b, &h, &s, &v);
-
-  float angle = ((3.14159 * 2) / 1536) * h;
-  int mx = 48 + 40 * cosf(angle);
-  int my = 48 + 40 * sinf(angle);
-  gui->hue->var = mx + 96 * my;
-  gui->sat->var = s / 2.684f;
-  gui->val->var = v / 2.684f;
-
-  gui->hue->do_callback();
+  update_color(c);
 }
 
 void check_zoom_in(Button *button, void *var)

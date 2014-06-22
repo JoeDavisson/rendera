@@ -42,12 +42,22 @@ Fl_Menu_Item menuitems[] =
   { 0 }
 };
 
+static void close_callback(Fl_Widget *widget, void *)
+{
+  if((Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT)
+    && Fl::event_key() == FL_Escape)
+    return;
+  else
+    widget->hide();
+}
+
 Gui::Gui()
 {
   int x1, y1;
 
   // window
   window = new Fl_Double_Window(800, 600, "Rendera");
+  window->callback(close_callback);
   
   //group_main = new Fl_Group(0, 0, window->w(), window->h());
 

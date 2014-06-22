@@ -41,6 +41,7 @@ public:
   void crop_push();
   void crop_drag();
   void crop_release();
+  void getcolor_push();
   void draw_move();
   void draw_main(int);
   void draw_grid();

@@ -49,7 +49,6 @@ static inline void grid_hline(Bitmap *bmp, int x1, int y, int x2,
   }
 }
 
-/*
 static int inbox(int x, int y, int x1, int y1, int x2, int y2)
 {
   if(x1 > x2)
@@ -62,7 +61,6 @@ static int inbox(int x, int y, int x1, int y1, int x2, int y2)
   else
     return 0;
 }
-*/
 
 static void absrect(int *x1, int *y1, int *x2, int *y2)
 {
@@ -158,6 +156,9 @@ int View::handle(int event)
             case 1:
               crop_push();
               break;
+            case 2:
+              getcolor_push();
+              break;
             case 3:
               offset_push();
               break;
@@ -189,6 +190,9 @@ int View::handle(int event)
               break;
             case 1:
               crop_drag();
+              break;
+            case 2:
+              getcolor_push();
               break;
             case 3:
               offset_drag();
@@ -250,7 +254,14 @@ int View::handle(int event)
       return 1;
     case FL_KEYDOWN:
       if(tool_started)
+      {
+        if(Fl::event_key() == FL_Escape)
+        {
+          tool_started = 0;
+          draw_main(1);
+        }
         break;
+      }
 
       switch(Fl::event_key())
       {
@@ -506,7 +517,6 @@ void View::crop_drag()
         crop_side = 3;
         crop_resize_started = 1;
       }
-
     }
   }
 }
@@ -519,6 +529,16 @@ void View::crop_release()
   }
 
   crop_resize_started = 0;
+}
+
+void View::getcolor_push()
+{
+  if(inbox(imgx, imgy, Bitmap::main->cl, Bitmap::main->ct,
+                       Bitmap::main->cr, Bitmap::main->cb))
+  {
+    int c = Bitmap::main->getpixel(imgx, imgy);
+    update_color(c);
+  }
 }
 
 void View::resize(int x, int y, int w, int h)
