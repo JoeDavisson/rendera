@@ -225,8 +225,12 @@ int View::handle(int event)
           break;
       }
 
-      moving = 0;
-//      draw_main(1);
+      if(moving)
+      {
+        moving = 0;
+        draw_main(1);
+      }
+
       return 1;
     case FL_MOVE:
       switch(tool)
@@ -369,6 +373,7 @@ void View::offset_push()
   beginx = imgx;
   beginy = imgy;
 
+  delete Bitmap::offset_buffer;
   Bitmap::offset_buffer = new Bitmap(w, h);
   Bitmap::main->blit(Bitmap::offset_buffer, overscroll, overscroll, 0, 0, w, h);
 }
@@ -404,7 +409,6 @@ void View::offset_drag()
 
 void View::offset_release()
 {
-  delete Bitmap::offset_buffer;
 }
 
 void View::crop_push()

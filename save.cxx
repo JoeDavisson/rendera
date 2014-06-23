@@ -37,7 +37,8 @@ void save(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
   fc->title("Save Image");
-  fc->filter("JPEG Image\t*.{jpg,jpeg}\nPNG Image\t*.png\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
+//  fc->filter("JPEG Image\t*.{jpg,jpeg}\nPNG Image\t*.png\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
+  fc->filter("Bitmap Image\t*.bmp\nTarga Image\t*.tga\n");
   //fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc->show();

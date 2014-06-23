@@ -41,6 +41,7 @@ int main(int argc, char **argv)
   Brush::main = new Brush();
   Palette::main = new Palette();
   Bitmap::clone_buffer = new Bitmap(8, 8);
+  Bitmap::offset_buffer = new Bitmap(8, 8);
 
   dialog = new Dialog();
 
