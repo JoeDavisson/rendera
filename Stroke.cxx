@@ -104,7 +104,7 @@ static void keep_square(int x1, int y1, int *x2, int *y2)
 
   if(abs(dy) > abs(dx))
   {
-    switch (px + py)
+    switch(px + py)
     {
       case 0:
         *x2 = x1 - dy;
@@ -500,9 +500,6 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         size_linear(beginx, beginy, x, y);
       }
       make_blitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
-//      map->ovalfill(lastx, lasty, beginx, beginy, 0);
-//      map->ovalfill(x, y, beginx, beginy, 255);
-//      make_blitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
     default:
       break;
@@ -579,18 +576,23 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 
   clip();
 
+  ox *= zoom;
+  oy *= zoom;
+
   for(y = y1; y <= y2; y++)
   {
     int yy1 = y * zoom;
     int yy2 = yy1 + zoom - 1;
+
     unsigned char *p = map->row[y] + x1;
+
     for(x = x1; x <= x2; x++)
     {
       if(*p > 0 && is_edge(map, x, y))
       {
         int xx1 = x * zoom;
         int xx2 = xx1 + zoom - 1;
-        backbuf->xor_rectfill(xx1 - ox * zoom, yy1 - oy * zoom, xx2 - ox * zoom, yy2 - oy * zoom);
+        backbuf->xor_rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
       }
       p++;
     }

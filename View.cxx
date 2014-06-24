@@ -565,8 +565,8 @@ void View::draw_main(int refresh)
   if(sh > Bitmap::main->h - oy)
     sh = Bitmap::main->h - oy;
 
-  Bitmap *temp = new Bitmap(sw + 1, sh + 1);
-  Bitmap::main->blit(temp, ox, oy, 0, 0, sw, sh);
+//  Bitmap *temp = new Bitmap(sw + 1, sh + 1);
+//  Bitmap::main->blit(temp, ox, oy, 0, 0, sw, sh);
 
   int dw = sw * zoom;
   int dh = sh * zoom;
@@ -582,9 +582,10 @@ void View::draw_main(int refresh)
 
   backbuf->clear(makecol(0, 0, 0));
 
-  temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
+//  temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
+  Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh, 0, 0, dw, dh, overx, overy);
 
-  delete temp;
+//  delete temp;
 
   if(grid)
     draw_grid();

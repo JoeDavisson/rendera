@@ -421,15 +421,10 @@ void Bitmap::xor_hline(int x1, int y, int x2)
 
   clip(&x1, &y, &x2, &y);
 
-  int x;
-
   int *p = row[y] + x1;
 
-  for(x = x1; x <= x2; x++)
-  {
-    *p ^= 0x00FFFFFF;
-    p++;
-  }
+  for(; x1 <= x2; x1++)
+    *p++ ^= 0x00FFFFFF;
 }
 
 void Bitmap::xor_rect(int x1, int y1, int x2, int y2)
@@ -455,12 +450,12 @@ void Bitmap::xor_rect(int x1, int y1, int x2, int y2)
   if(y1 == y2)
     return;
 
-  int x, y;
+  y1++;
 
-  for(y = y1 + 1; y < y2; y++)
+  for(; y1 < y2; y1++)
   {
-    *(row[y] + x1) ^= 0x00FFFFFF;
-    *(row[y] + x2) ^= 0x00FFFFFF;
+    *(row[y1] + x1) ^= 0x00FFFFFF;
+    *(row[y1] + x2) ^= 0x00FFFFFF;
   }
 }
 
@@ -479,6 +474,8 @@ void Bitmap::xor_rectfill(int x1, int y1, int x2, int y2)
     return;
   if(y2 < ct)
     return;
+
+  clip(&x1, &y1, &x2, &y2);
 
   for(; y1 <= y2; y1++)
     xor_hline(x1, y1, x2);
