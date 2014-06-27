@@ -99,8 +99,8 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   stroke = new Stroke();
   backbuf = new Bitmap(Fl::w(), Fl::h());
   image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
-  resize(group->x() + x, group->y() + y, w, h);
   take_focus();
+  resize(group->x() + x, group->y() + y, w, h);
 }
 
 View::~View()
@@ -547,8 +547,10 @@ void View::getcolor_push()
 void View::resize(int x, int y, int w, int h)
 {
   Fl_Widget::resize(x, y, w, h);
+
   if(fit)
     zoom_fit(1);
+
   draw_main(0);
 }
 
