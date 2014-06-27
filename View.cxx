@@ -98,7 +98,9 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   crop_resize_started = 0;
   stroke = new Stroke();
   backbuf = new Bitmap(Fl::w(), Fl::h());
-  image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
+  alphadata = new unsigned char[Fl::w() * Fl::h() * 3];
+  image_part = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
+  image_full = new Fl_RGB_Image((unsigned char *)alphadata, Fl::w(), Fl::h(), 3, 0);
   take_focus();
   resize(group->x() + x, group->y() + y, w, h);
 }
@@ -867,15 +869,58 @@ void View::draw()
     if(blitw < 1 || blith < 1)
       return;
 
-    fl_push_clip(x() + blitx, y() + blity, blitw, blith);
-    image->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
-    fl_pop_clip();
+    int xx, yy;
+
+    for(yy = blity; yy < blity + blith; yy++)
+    { 
+      int *p = backbuf->row[yy] + blitx;
+      unsigned char *d = &alphadata[yy * (backbuf->w * 3) + (blitx * 3)];
+
+      for(xx = blitx; xx < blitx + blitw; xx++)
+      { 
+        *d++ = getr(*p);
+        *d++ = getg(*p);
+        *d++ = getb(*p);
+        p++;
+      }
+    }
+
+    if(blitw < 256 && blith < 256)
+    {
+      fl_push_clip(x() + blitx, y() + blity, blitw, blith);
+      image_part->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
+      fl_pop_clip();
+    }
+    else
+    {
+      fl_push_clip(x() + blitx, y() + blity, blitw, blith);
+      image_full->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
+      fl_pop_clip();
+      image_full->uncache();
+    }
   }
   else
   {
+    int xx, yy;
+
+    for(yy = 0; yy < h(); yy++)
+    { 
+      int *p = backbuf->row[yy];
+      unsigned char *d = &alphadata[yy * (backbuf->w * 3)];
+
+      for(xx = 0; xx < w(); xx++)
+      { 
+        *d++ = getr(*p);
+        *d++ = getg(*p);
+        *d++ = getb(*p);
+        p++;
+      }
+    }
+
     fl_push_clip(x(), y(), w(), h());
-    image->draw(x(), y(), w(), h(), 0, 0);
+    image_full->draw(x(), y(), w(), h(), 0, 0);
     fl_pop_clip();
+    image_full->uncache();
   }
 }
 

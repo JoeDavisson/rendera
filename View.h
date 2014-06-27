@@ -54,8 +54,9 @@ public:
   void scroll(int, int);
 
   Fl_Group *group;
-  Fl_RGB_Image *image;
+  Fl_RGB_Image *image_part, *image_full;
   Bitmap *backbuf;
+  unsigned char *alphadata;
   int mousex, mousey;
   int imgx, imgy;
   int oldimgx, oldimgy;
