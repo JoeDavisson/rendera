@@ -874,6 +874,7 @@ void View::draw()
       fl_push_clip(x() + blitx, y() + blity, blitw, blith);
       image_part->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
       fl_pop_clip();
+      image_part->uncache();
     }
     else
     {
