@@ -199,6 +199,9 @@ Gui::Gui()
   palette->callback((Fl_Callback *)check_palette, &palette->var);
   palette->bitmap->clear(makecol(255, 255, 255));
   y1 += 192 + 8;
+  plus = new Button(right, 8, y1, 44, 16, "Insert Color", "data/plus.png");
+  minus = new Button(right, 8 + 44 + 8, y1, 44, 16, "Delete Color", "data/minus.png");
+  y1 += 16 + 8;
   hue = new Widget(right, 8, y1, 96, 96, "Hue", 1, 1);
   hue->callback((Fl_Callback *)check_color, &hue->var);
   y1 += 96 + 8;

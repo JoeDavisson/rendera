@@ -72,6 +72,8 @@ public:
 
   // right
   Widget *palette;
+  Button *plus;
+  Button *minus;
   Widget *hue;
   Widget *sat;
   Widget *val;

@@ -164,7 +164,6 @@ int View::handle(int event)
               break;
           }
 
-          //redraw();
           break;
         case 2:
           if(tool_started == 0 && moving == 0)
@@ -198,7 +197,7 @@ int View::handle(int event)
               offset_drag();
               break;
           }
-          //redraw();
+
           break;
         case 2:
           if(moving == 1)
@@ -565,9 +564,6 @@ void View::draw_main(int refresh)
   if(sh > Bitmap::main->h - oy)
     sh = Bitmap::main->h - oy;
 
-//  Bitmap *temp = new Bitmap(sw + 1, sh + 1);
-//  Bitmap::main->blit(temp, ox, oy, 0, 0, sw, sh);
-
   int dw = sw * zoom;
   int dh = sh * zoom;
 
@@ -582,10 +578,7 @@ void View::draw_main(int refresh)
 
   backbuf->clear(makecol(0, 0, 0));
 
-//  temp->point_stretch(backbuf, 0, 0, sw, sh, 0, 0, dw, dh, overx, overy);
   Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh, 0, 0, dw, dh, overx, overy);
-
-//  delete temp;
 
   if(grid)
     draw_grid();
@@ -611,10 +604,8 @@ void View::draw_grid()
 
   int zx = zoom * gridx;
   int zy = zoom * gridy;
-//  int qx = (overscroll % gridx) * zoom;
-//  int qy = (overscroll % gridy) * zoom;
-  int qx = 0;
-  int qy = 0;
+  int qx = (Bitmap::main->overscroll % gridx) * zoom;
+  int qy = (Bitmap::main->overscroll % gridy) * zoom;
 
   y1 = 0 - zy + (offy * zoom) + qy - (int)(oy * zoom) % zy;
 
@@ -724,7 +715,6 @@ void View::move()
 
   window()->make_current();
   fl_overlay_rect(x() + bx, y() + by, bw, bh);
-//  redraw();
 }
 
 void View::zoom_in(int x, int y)
