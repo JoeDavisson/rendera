@@ -22,17 +22,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 static inline int is_edge(Map *map, const int x, const int y)
 {
-  if(map->getpixel(x - 1, y) &&
-     map->getpixel(x + 1, y) &&
-     map->getpixel(x, y - 1) &&
-     map->getpixel(x, y + 1))
-  {
+  if(x < 1 || x >= map->w - 1 || y < 1 || y >= map->h - 1)
     return 0;
-  }
+
+  if( *(map->row[y - 1] + x) &&
+      *(map->row[y] + x - 1) &&
+      *(map->row[y] + x + 1) &&
+      *(map->row[y + 1] + x) )
+    return 0;
   else
-  {
     return 1;
-  }
 }
 
 static inline float fdist(const int x1, const int y1, const int x2, const int y2)
@@ -579,23 +578,25 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
   ox *= zoom;
   oy *= zoom;
 
+  int yy1 = y1 * zoom;
+  int yy2 = yy1 + zoom - 1;
   for(y = y1; y <= y2; y++)
   {
-    int yy1 = y * zoom;
-    int yy2 = yy1 + zoom - 1;
-
     unsigned char *p = map->row[y] + x1;
-
+    int xx1 = x1 * zoom;
+    int xx2 = xx1 + zoom - 1;
     for(x = x1; x <= x2; x++)
     {
       if(*p > 0 && is_edge(map, x, y))
       {
-        int xx1 = x * zoom;
-        int xx2 = xx1 + zoom - 1;
         backbuf->xor_rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
       }
+      xx1 += zoom;
+      xx2 += zoom;
       p++;
     }
+    yy1 += zoom;
+    yy2 += zoom;
   }
 }
 
