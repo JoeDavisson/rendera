@@ -869,22 +869,6 @@ void View::draw()
     if(blitw < 1 || blith < 1)
       return;
 
-    int xx, yy;
-
-    for(yy = blity; yy < blity + blith; yy++)
-    { 
-      int *p = backbuf->row[yy] + blitx;
-      unsigned char *d = &alphadata[yy * (backbuf->w * 3) + (blitx * 3)];
-
-      for(xx = blitx; xx < blitx + blitw; xx++)
-      { 
-        *d++ = getr(*p);
-        *d++ = getg(*p);
-        *d++ = getb(*p);
-        p++;
-      }
-    }
-
     if(blitw < 256 && blith < 256)
     {
       fl_push_clip(x() + blitx, y() + blity, blitw, blith);
@@ -893,6 +877,22 @@ void View::draw()
     }
     else
     {
+      int xx, yy;
+
+      for(yy = blity; yy < blity + blith; yy++)
+      { 
+        int *p = backbuf->row[yy] + blitx;
+        unsigned char *d = &alphadata[yy * (backbuf->w * 3) + (blitx * 3)];
+
+        for(xx = blitx; xx < blitx + blitw; xx++)
+        { 
+          *d++ = getr(*p);
+          *d++ = getg(*p);
+          *d++ = getb(*p);
+          p++;
+        }
+      }
+
       fl_push_clip(x() + blitx, y() + blity, blitw, blith);
       image_full->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
       fl_pop_clip();
