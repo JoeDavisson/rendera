@@ -892,7 +892,6 @@ void View::draw()
           p++;
         }
       }
-
       fl_push_clip(x() + blitx, y() + blity, blitw, blith);
       image_full->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
       fl_pop_clip();
