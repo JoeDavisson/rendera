@@ -36,6 +36,14 @@ int Bitmap::clone_dy = 0;
 int Bitmap::clone_mirror = 0;
 int Bitmap::overscroll = 64;
 
+static inline int convert_format(int c, int bgr_order)
+{
+  if(bgr_order)
+    return makecol(getb(c), getg(c), getr(c));
+  else
+    return c;
+}
+
 Bitmap::Bitmap(int width, int height)
 {
   if(width < 1)
@@ -749,7 +757,7 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 
 void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
                                          int dx, int dy, int dw, int dh,
-                                         int overx, int overy)
+                                         int overx, int overy, int bgr_order)
 {
   const int ax = ((float)dw / sw) * 256;
   const int ay = ((float)dh / sh) * 256;
@@ -809,14 +817,14 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
     for(x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 8);
-      *s++ = *(row[y1] + x1);
+      *s++ = convert_format(*(row[y1] + x1), bgr_order);
     }
   }
 }
 
 void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
                                            int dx, int dy, int dw, int dh,
-                                           int overx, int overy)
+                                           int overx, int overy, int bgr_order)
 {
   const int ax = ((float)dw / sw) * 256;
   const int ay = ((float)dh / sh) * 256;
@@ -922,7 +930,7 @@ void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
         g += (((*c[i] & 0xFF00) * f[i]) >> 8) & 0xFF00;
       }
 
-      *d++ = rb | g | 0xFF000000;
+      *d++ = convert_format(rb | g | 0xFF000000, bgr_order);
 
       c[0] -= u1;
       c[1] -= u2;
@@ -934,7 +942,8 @@ void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
 
 void Bitmap::fast_stretch(Bitmap *dest,
                           int xs1, int ys1, int xs2, int ys2,
-                          int xd1, int yd1, int xd2, int yd2)
+                          int xd1, int yd1, int xd2, int yd2,
+                          int bgr_order)
 {
   xs2 += xs1;
   xs2--;
@@ -975,7 +984,7 @@ void Bitmap::fast_stretch(Bitmap *dest,
 
     for(d_1 = 0; d_1 <= dx_1; d_1++)
     {
-      *p = *q;
+      *p = convert_format(*q, bgr_order);
 
       while(e_1 >= 0)
       {

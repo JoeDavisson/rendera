@@ -5,7 +5,7 @@ CFLAGS = -O3 -march=x86-64 -Wall -Wno-unused -fmax-errors=5
 #CFLAGS = -g -O0 -Wall -Wno-unused -fmax-errors=5
 
 #dynamic link
-LIBS = -lm -lfltk -lfltk_images -ljpeg -lpng
+LIBS = -lm -lfltk -lfltk_images -ljpeg -lpng -lX11
 
 # static link
 #LIBS = -lm -Wl,-Bsymbolic-functions /usr/lib/x86_64-linux-gnu/libfltk_images.a -ljpeg -lpng -lz /usr/lib/x86_64-linux-gnu/libfltk.a -lXext -lXft -lfontconfig -lfontconfig -lXinerama -ldl -lm -lX11

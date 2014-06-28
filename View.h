@@ -54,7 +54,8 @@ public:
   void scroll(int, int);
 
   Fl_Group *group;
-  Fl_RGB_Image *image;
+//  Fl_RGB_Image *image;
+  XImage *image;
   Bitmap *backbuf;
   int mousex, mousey;
   int imgx, imgy;
@@ -68,6 +69,7 @@ public:
   int bx, by, bw, bh;
   float aspect, winaspect;
   Stroke *stroke;
+  int bgr_order;
   int tool;
   int tool_started;
   int crop_resize_started;

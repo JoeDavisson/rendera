@@ -97,8 +97,17 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   tool_started = 0;
   crop_resize_started = 0;
   stroke = new Stroke();
+
+  // try to detect pixelformat (almost always RGB or BGR)
+  if(fl_visual->visual->blue_mask == 0xFF)
+    bgr_order = 1;
+  else
+    bgr_order = 0;
+
   backbuf = new Bitmap(Fl::w(), Fl::h());
-  image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
+// for generic FLTK
+//  image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
+  image = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0, (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
   take_focus();
   resize(group->x() + x, group->y() + y, w, h);
 }
@@ -580,7 +589,7 @@ void View::draw_main(int refresh)
 
   backbuf->clear(makecol(0, 0, 0));
 
-  Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh, 0, 0, dw, dh, overx, overy);
+  Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh, 0, 0, dw, dh, overx, overy, bgr_order);
 
   if(grid)
     draw_grid();
@@ -674,7 +683,7 @@ void View::begin_move()
 
   backbuf->clear(makecol(0, 0, 0));
   Bitmap::main->fast_stretch(backbuf, 0, 0, Bitmap::main->w, Bitmap::main->h,
-                          px, py, pw, ph);
+                          px, py, pw, ph, bgr_order);
 
   // need to force repaint here or the navigator won't have a border
   redraw();
@@ -867,17 +876,25 @@ void View::draw()
     if(blitw < 1 || blith < 1)
       return;
 
+    XPutImage(fl_display, fl_window, fl_gc, image, blitx, blity, x() + blitx, y() + blity, blitw, blith);
+/*
+// for generic FLTK
     fl_push_clip(x() + blitx, y() + blity, blitw, blith);
     image->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
     fl_pop_clip();
     image->uncache();
+*/
   }
   else
   {
+    XPutImage(fl_display, fl_window, fl_gc, image, 0, 0, x(), y(), w(), h());
+/*
+// for generic FLTK
     fl_push_clip(x(), y(), w(), h());
     image->draw(x(), y(), w(), h(), 0, 0);
     fl_pop_clip();
     image->uncache();
+*/
   }
 }
 
