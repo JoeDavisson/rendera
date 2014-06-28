@@ -31,7 +31,7 @@ static inline int rnd32(void)
 
 static inline int makecol(const int r, const int g, const int b)
 {
-  return r | g << 8 | b << 16 | 0xff000000;
+  return r | g << 8 | b << 16 | 0xFF000000;
 }
 
 static inline int makecola(const int r, const int g, const int b, const int a)

@@ -38,6 +38,7 @@ int main(int argc, char **argv)
   Bitmap::main->set_clip(overscroll, overscroll, Bitmap::main->w - overscroll - 1, Bitmap::main->h - overscroll - 1);
   Bitmap::main->rectfill(overscroll, overscroll, Bitmap::main->w - overscroll - 1, Bitmap::main->h - overscroll - 1, makecol(255, 255, 255), 0);
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
+  Map::main->clear(0);
   Brush::main = new Brush();
   Palette::main = new Palette();
   Bitmap::clone_buffer = new Bitmap(8, 8);

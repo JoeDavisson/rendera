@@ -363,12 +363,33 @@ void View::brush_release()
 
 void View::brush_move()
 {
-  if(stroke->active && stroke->type == 3)
+  switch(stroke->type)
   {
-    stroke->polyline(imgx, imgy, ox, oy, zoom);
-    draw_main(0);
-    stroke->preview(backbuf, ox, oy, zoom);
-    redraw();
+    case 3:
+      if(stroke->active)
+      {
+        stroke->polyline(imgx, imgy, ox, oy, zoom);
+        draw_main(0);
+        stroke->preview(backbuf, ox, oy, zoom);
+        redraw();
+      }
+      break;
+    case 0:
+    case 2:
+    case 4:
+    case 6:
+      if(Brush::main->size < 2)
+        break;
+
+      Map::main->rectfill(oldimgx - 48, oldimgy - 48, oldimgx + 48, oldimgy + 48, 0);
+      Map::main->rectfill(imgx - 48, imgy - 48, imgx + 48, imgy + 48, 0);
+      stroke->draw_brush(imgx, imgy, 255);
+      stroke->size(imgx - 48, imgy - 48, imgx + 48, imgy + 48);
+      stroke->make_blitrect(stroke->x1, stroke->y1, stroke->x2, stroke->y2, ox, oy, 96, zoom);
+      draw_main(0);
+      stroke->preview(backbuf, ox, oy, zoom);
+      redraw();
+      break;
   }
 }
 

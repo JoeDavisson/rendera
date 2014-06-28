@@ -578,16 +578,18 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
   ox *= zoom;
   oy *= zoom;
 
-  int yy1 = y1 * zoom;
-  int yy2 = yy1 + zoom - 1;
+  float yy1 = (float)y1 * zoom;
+  float yy2 = yy1 + zoom - 1;
+
   for(y = y1; y <= y2; y++)
   {
     unsigned char *p = map->row[y] + x1;
-    int xx1 = x1 * zoom;
-    int xx2 = xx1 + zoom - 1;
+    float xx1 = (float)x1 * zoom;
+    float xx2 = xx1 + zoom - 1;
+
     for(x = x1; x <= x2; x++)
     {
-      if(*p > 0 && is_edge(map, x, y))
+      if(*p > 0)
       {
         backbuf->xor_rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
       }
