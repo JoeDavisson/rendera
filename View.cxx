@@ -279,15 +279,17 @@ int View::handle(int event)
       }
       return 1;
     case FL_KEYDOWN:
-      if(tool_started)
-      {
+//      if(tool_started)
+//      {
         if(Fl::event_key() == FL_Escape)
         {
+          if(stroke->type == 3)
+            stroke->active = 0;
           tool_started = 0;
           draw_main(1);
         }
         break;
-      }
+//      }
 
       switch(Fl::event_key())
       {
@@ -325,9 +327,12 @@ void View::brush_push()
       stroke->render();
       while(stroke->render_callback(ox, oy, zoom))
       {
+        if(Fl::get_key(FL_Escape))
+          break;
         draw_main(1);
         Fl::flush();
       }
+      stroke->active = 0;
       Blend::set(0);
       moving = 0;
       draw_main(1);
@@ -366,9 +371,12 @@ void View::brush_release()
     stroke->render();
     while(stroke->render_callback(ox, oy, zoom))
     {
+      if(Fl::get_key(FL_Escape))
+        break;
       draw_main(1);
       Fl::flush();
     }
+    stroke->active = 0;
     Blend::set(0);
   }
 
