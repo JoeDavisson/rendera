@@ -50,11 +50,12 @@ int main(int argc, char **argv)
   gui = new Gui();
 
   // initialize some things
-  gui->hue->var = 95 + 96 * 48;
-  gui->sat->var = 95;
-  gui->val->var = 95;
-  gui->hue->do_callback();
+//  gui->hue->var = 95 + 96 * 48;
+//  gui->sat->var = 95;
+//  gui->val->var = 95;
+//  gui->hue->do_callback();
   Palette::main->draw(gui->palette);
+  gui->palette->do_callback();
   check_zoom();
 
   return Fl::run();

@@ -746,6 +746,10 @@ void View::move()
 
   ox = (bx - px) / ((float)pw / (Bitmap::main->w));
   oy = (by - py) / ((float)ph / (Bitmap::main->h));
+  if(ox < 0)
+    ox = 0;
+  if(oy < 0)
+    oy = 0;
 
   if(bw > pw)
   {
