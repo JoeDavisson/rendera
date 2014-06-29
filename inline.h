@@ -106,5 +106,14 @@ static inline int blend_fast_xor(const int c1, const int t)
 
   return rb | g | 0xFF000000;
 }
+
+static inline int convert_format(int c, int bgr_order)
+{
+  if(bgr_order)
+    return makecol(getb(c), getg(c), getr(c));
+  else
+    return c;
+}
+
 #endif
 

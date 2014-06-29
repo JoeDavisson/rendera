@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+#define XOR_VALUE(x, y) ( ((x & 1) ^ (y & 1)) ? 0x00FFFFFF : 0x00808080)
+
 extern Gui *gui;
 
 Bitmap *Bitmap::main;
@@ -35,14 +37,6 @@ int Bitmap::clone_dx = 0;
 int Bitmap::clone_dy = 0;
 int Bitmap::clone_mirror = 0;
 int Bitmap::overscroll = 64;
-
-static inline int convert_format(int c, int bgr_order)
-{
-  if(bgr_order)
-    return makecol(getb(c), getg(c), getr(c));
-  else
-    return c;
-}
 
 Bitmap::Bitmap(int width, int height)
 {
@@ -379,7 +373,7 @@ void Bitmap::xor_line(int x1, int y1, int x2, int y2)
 
     while(x1 != x2)
     {
-      *(row[y1] + x1) ^= 0x00FFFFFF;
+      *(row[y1] + x1) ^= XOR_VALUE(x1, y1);
 
       if(e >= 0)
       {
@@ -399,7 +393,7 @@ void Bitmap::xor_line(int x1, int y1, int x2, int y2)
 
     while(y1 != y2)
     {
-      *(row[y1] + x1) ^= 0x00FFFFFF;
+      *(row[y1] + x1) ^= XOR_VALUE(x1, y1);
 
       if(e >= 0)
       {
@@ -412,7 +406,7 @@ void Bitmap::xor_line(int x1, int y1, int x2, int y2)
     }
   }
 
-  *(row[y1] + x1) ^= 0x00FFFFFF;
+  *(row[y1] + x1) ^= XOR_VALUE(x1, y1);
 }
 
 void Bitmap::xor_hline(int x1, int y, int x2)
@@ -432,7 +426,7 @@ void Bitmap::xor_hline(int x1, int y, int x2)
   int *p = row[y] + x1;
 
   for(; x1 <= x2; x1++)
-    *p++ ^= 0x00FFFFFF;
+    *p++ ^= XOR_VALUE(x1, y);
 }
 
 void Bitmap::xor_rect(int x1, int y1, int x2, int y2)
@@ -462,8 +456,8 @@ void Bitmap::xor_rect(int x1, int y1, int x2, int y2)
 
   for(; y1 < y2; y1++)
   {
-    *(row[y1] + x1) ^= 0x00FFFFFF;
-    *(row[y1] + x2) ^= 0x00FFFFFF;
+    *(row[y1] + x1) ^= XOR_VALUE(x1, y1);
+    *(row[y1] + x2) ^= XOR_VALUE(x1, y1);
   }
 }
 
