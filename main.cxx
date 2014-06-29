@@ -28,6 +28,7 @@ int main(int argc, char **argv)
   Fl::visual(FL_DOUBLE | FL_RGB);
   Fl::background(192, 192, 192);
   Fl_Shared_Image::add_handler(preview_jpg);
+  fl_message_hotspot(0);
 //  Fl_File_Icon::load_system_icons();
 
   int overscroll = 64;

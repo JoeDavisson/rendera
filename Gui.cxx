@@ -22,13 +22,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 extern Dialog *dialog;
 
+static void close_callback(Fl_Widget *widget, void *)
+{
+  if((Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT)
+    && Fl::event_key() == FL_Escape)
+    return;
+  else
+    widget->hide();
+}
+
+static void quit()
+{
+  fl_message_title("Quit");
+  if(fl_choice("Are You Sure?", "No", "Yes", NULL) == 1)
+    exit(0);
+}
+
 Fl_Menu_Item menuitems[] =
 {
   { "&File", 0, 0, 0, FL_SUBMENU },
     { "&New...", 0, (Fl_Callback *)show_new_image, 0 },
     { "&Load...", 0, (Fl_Callback *)load, 0 },
     { "&Save...", 0, (Fl_Callback *)save, 0, FL_MENU_DIVIDER },
-    { "&Quit", 0, 0, 0 },
+    { "&Quit", 0, (Fl_Callback *)quit, 0 },
     { 0 },
   { "&Edit", 0, 0, 0, FL_SUBMENU },
     { "&Undo", 0, 0, 0 },
@@ -59,15 +75,6 @@ Fl_Menu_Item menuitems[] =
     { 0 },
   { 0 }
 };
-
-static void close_callback(Fl_Widget *widget, void *)
-{
-  if((Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT)
-    && Fl::event_key() == FL_Escape)
-    return;
-  else
-    widget->hide();
-}
 
 Gui::Gui()
 {
