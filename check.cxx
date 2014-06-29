@@ -214,6 +214,9 @@ void check_color(Widget *widget, void *var)
   gui->hue->redraw();
   gui->sat->redraw();
   gui->val->redraw();
+
+  gui->color->bitmap->rectfill(0, 0, gui->color->bitmap->w, gui->color->bitmap->h, Brush::main->color, 0);
+  gui->color->redraw();
 }
 
 void check_wrap(Widget *widget, void *var)

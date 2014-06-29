@@ -139,6 +139,20 @@ int View::handle(int event)
     case FL_UNFOCUS:
       return 1;
     case FL_ENTER:
+      switch(tool)
+      {
+        case 0:
+        case 3:
+          window()->cursor(FL_CURSOR_DEFAULT);
+          break;
+        case 1:
+        case 2:
+          window()->cursor(FL_CURSOR_CROSS);
+          break;
+      }
+      return 1;
+    case FL_LEAVE:
+      window()->cursor(FL_CURSOR_DEFAULT);
       return 1;
     case FL_PUSH:
       take_focus();

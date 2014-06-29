@@ -77,6 +77,7 @@ public:
   Widget *hue;
   Widget *sat;
   Widget *val;
+  Widget *color;
   Widget *trans;
   Widget *blend;
 

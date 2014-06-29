@@ -205,6 +205,8 @@ Gui::Gui()
   hue = new Widget(right, 8, y1, 96, 96, "Hue", 1, 1);
   hue->callback((Fl_Callback *)check_color, &hue->var);
   y1 += 96 + 8;
+  color = new Widget(right, 8, y1, 96, 48, "Color", 0, 0);
+  y1 += 48 + 8;
   sat = new Widget(right, 8, y1, 96, 24, "Saturation", 1, 24);
   sat->callback((Fl_Callback *)check_color, &sat->var);
   y1 += 24 + 8;
