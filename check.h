@@ -5,6 +5,8 @@
 
 void update_color(int);
 void check_palette(Widget *, void *);
+void check_plus(Button *, void *);
+void check_minus(Button *, void *);
 void check_zoom_in(Button *, void *);
 void check_zoom_out(Button *, void *);
 void check_zoom_fit(ToggleButton *, void *);

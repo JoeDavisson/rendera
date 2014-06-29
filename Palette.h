@@ -31,6 +31,8 @@ public:
 
   void draw(Widget *);
   void set_default();
+  void insert_color(int, int);
+  void delete_color(int);
 
   int *data;
   int max;

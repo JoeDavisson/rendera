@@ -35,33 +35,45 @@ void check_palette(Widget *widget, void *var)
   Palette *palette = Palette::main;
   int pos = *(int *)var;
 
-  int stepx = widget->stepx;
-  int stepy = widget->stepy;
-  int divx = 96 / stepx;
-  int divy = 96 / stepy;
+  int step = widget->stepx;
+  int div = 96 / step;
 
-  int x = pos % divx;
-  int y = pos / divx;
+  int x = pos % div;
+  int y = pos / div;
 
-  if(y > (palette->max - 1) / divx)
+  if(y > (palette->max - 1) / div)
   {
-    y = (palette->max - 1) / divx;
-    pos = x + divx * y;
-    x = pos % divx;
-    y = pos / divx;
+    y = (palette->max - 1) / div;
+    pos = x + div * y;
+    x = pos % div;
+    y = pos / div;
     widget->var = pos;
   }
 
   if(pos > palette->max - 1)
   {
     pos = palette->max - 1;
-    x = pos % divx;
-    y = pos / divx;
+    x = pos % div;
+    y = pos / div;
     widget->var = pos;
   }
 
-  int c = widget->bitmap->getpixel(x * stepx, y * stepy);
+  int c = widget->bitmap->getpixel(x * step, y * step);
   update_color(c);
+}
+
+void check_plus(Button *button, void *var)
+{
+  Palette::main->insert_color(Brush::main->color, gui->palette->var);
+  Palette::main->draw(gui->palette);
+  gui->palette->do_callback();
+}
+
+void check_minus(Button *button, void *var)
+{
+  Palette::main->delete_color(gui->palette->var);
+  Palette::main->draw(gui->palette);
+  gui->palette->do_callback();
 }
 
 void check_zoom_in(Button *button, void *var)
