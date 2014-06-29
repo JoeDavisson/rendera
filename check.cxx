@@ -67,16 +67,19 @@ void check_palette(Widget *widget, void *var)
 void check_zoom_in(Button *button, void *var)
 {
   gui->view->zoom_in(gui->view->w() / 2, gui->view->h() / 2);
+  check_zoom();
 }
 
 void check_zoom_out(Button *button, void *var)
 {
   gui->view->zoom_out(gui->view->w() / 2, gui->view->h() / 2);
+  check_zoom();
 }
 
 void check_zoom_fit(ToggleButton *button, void *var)
 {
   gui->view->zoom_fit(*(int *)var);
+  check_zoom();
 }
 
 void check_zoom_one(Button *button, void *var)
@@ -84,6 +87,15 @@ void check_zoom_one(Button *button, void *var)
   gui->zoom_fit->var = 0;
   gui->zoom_fit->redraw();
   gui->view->zoom_one();
+  check_zoom();
+}
+
+void check_zoom()
+{
+  char s[8];
+  snprintf(s, sizeof(s), "%2.3f", gui->view->zoom);
+  gui->zoom->value(s);
+  gui->zoom->redraw();
 }
 
 void check_grid(ToggleButton *button, void *var)

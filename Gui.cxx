@@ -104,7 +104,10 @@ Gui::Gui()
   x1 += 24 + 8;
   zoom_out = new Button(top_right, x1, 8, 24, 24, "Zoom Out", "data/zoom_out.png");
   zoom_out->callback((Fl_Callback *)check_zoom_out, &zoom_out->var);
-  x1 += 24 + 6;
+  x1 += 24 + 8;
+  zoom = new Field(top_right, x1, 8, 56, 24, "");
+  zoom->deactivate();
+  x1 += 56 + 6;
   new Separator(top_right, x1, 2, 2, 36, "");
   x1 += 8;
   grid = new ToggleButton(top_right, x1, 8, 24, 24, "Show Grid", "data/grid.png");

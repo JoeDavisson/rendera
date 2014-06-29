@@ -788,6 +788,7 @@ void View::zoom_in(int x, int y)
   }
 
   draw_main(1);
+  check_zoom();
 }
 
 void View::zoom_out(int x, int y)
@@ -795,11 +796,11 @@ void View::zoom_out(int x, int y)
   if(fit)
     return;
 
-  int oldzoom = zoom;
+  float oldzoom = zoom;
   zoom /= 2;
-  if(zoom < 1)
+  if(zoom < .125)
   {
-    zoom = 1;
+    zoom = .125;
   }
   else
   {
@@ -816,6 +817,7 @@ void View::zoom_out(int x, int y)
   }
 
   draw_main(1);
+  check_zoom();
 }
 
 void View::zoom_fit(int fitting)
@@ -843,6 +845,7 @@ void View::zoom_fit(int fitting)
 
   fit = 1;
   draw_main(1);
+  check_zoom();
 }
 
 void View::zoom_one()
@@ -852,6 +855,7 @@ void View::zoom_one()
   ox = 0;
   oy = 0;
   draw_main(1);
+  check_zoom();
 }
 
 void View::scroll(int dir, int amount)

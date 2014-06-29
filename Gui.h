@@ -55,6 +55,7 @@ public:
   Button *zoom_one;
   Button *zoom_in;
   Button *zoom_out;
+  Field *zoom;
   ToggleButton *grid;
   Field *gridx;
   Field *gridy;
