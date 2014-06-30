@@ -397,9 +397,6 @@ void View::brush_move()
     case 2:
     case 4:
     case 6:
-      if(Brush::main->size < 2)
-        break;
-
       Map::main->rectfill(oldimgx - 48, oldimgy - 48, oldimgx + 48, oldimgy + 48, 0);
       Map::main->rectfill(imgx - 48, imgy - 48, imgx + 48, imgy + 48, 0);
       stroke->draw_brush(imgx, imgy, 255);
@@ -643,7 +640,7 @@ void View::draw_grid()
   int x1, y1, x2, y2, d, i;
   int offx = 0, offy = 0;
 
-  if((zoom < 2) && ((gridx <= zoom) || (gridy <= zoom)))
+  if(zoom < 2)
     return;
 
   x2 = w() - 1;

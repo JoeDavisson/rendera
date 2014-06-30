@@ -589,13 +589,11 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 
     for(x = x1; x <= x2; x++)
     {
-      if(*p > 0)
-      {
+      if(*p++)
         backbuf->xor_rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
-      }
+
       xx1 += zoom;
       xx2 += zoom;
-      p++;
     }
     yy1 += zoom;
     yy2 += zoom;

@@ -51,13 +51,11 @@ void Brush::make(int shape, int s)
 
   int r = s / 2;
   int inc = s & 1;
-  if(s == 1)
-    inc = 0;
 
   int x1 = 48 - r;
   int y1 = 48 - r;
-  int x2 = 48 + r + inc;
-  int y2 = 48 + r + inc;
+  int x2 = 48 + r - 1 + inc;
+  int y2 = 48 + r - 1 + inc;
 
   solid_count = 0;
   hollow_count = 0;
