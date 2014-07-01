@@ -287,7 +287,7 @@ void load_jpg(const char *fn)
 
   delete Bitmap::main;
   Bitmap::main = new Bitmap(aw, ah);
-  Bitmap::main->clear(makecol(0, 0, 0));
+  Bitmap::main->clear(makecol(128, 128, 128));
   Bitmap::main->set_clip(overscroll, overscroll, aw - overscroll - 1, ah - overscroll - 1);
 
   int x;
@@ -407,7 +407,7 @@ void load_bmp(const char *fn)
 
   delete Bitmap::main;
   Bitmap::main = new Bitmap(aw, ah);
-  Bitmap::main->clear(makecol(0, 0, 0));
+  Bitmap::main->clear(makecol(128, 128, 128));
   Bitmap::main->set_clip(overscroll, overscroll, aw - overscroll - 1, ah - overscroll - 1);
 
   unsigned char *linebuf = new unsigned char[w * mul + pad];
@@ -501,7 +501,7 @@ void load_tga(const char *fn)
 
   delete Bitmap::main;
   Bitmap::main = new Bitmap(aw, ah);
-  Bitmap::main->clear(makecol(0, 0, 0));
+  Bitmap::main->clear(makecol(128, 128, 128));
   Bitmap::main->set_clip(overscroll, overscroll, aw - overscroll - 1, ah - overscroll - 1);
 
   unsigned char *linebuf = new unsigned char[w * 3];
@@ -613,7 +613,7 @@ void load_png(const char *fn)
 
   delete Bitmap::main;
   Bitmap::main = new Bitmap(aw, ah);
-  Bitmap::main->clear(makecol(0, 0, 0));
+  Bitmap::main->clear(makecol(128, 128, 128));
   Bitmap::main->set_clip(overscroll, overscroll, aw - overscroll - 1, ah - overscroll - 1);
 
   int *p = Bitmap::main->row[overscroll] + overscroll;

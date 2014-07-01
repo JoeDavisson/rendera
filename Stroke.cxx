@@ -47,8 +47,8 @@ static inline int sdist(const int x1, const int y1, const int x2, const int y2, 
   float d = sqrtf(fdist(x1, y1, x2, y2));
   float s = (255 - trans) / (((3 << edge) >> 1) + 1);
 
-  if(s < 1.0)
-    s = 1.0;
+  if(s < 1)
+    s = 1;
 
   int temp = 255;
 
@@ -627,51 +627,6 @@ void Stroke::render()
     render_normal();
 }
 
-void Stroke::render_normal()
-{
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
-
-  soft_trans = 255.0f;
-  float j = (float)(3 << brush->edge);
-  soft_step = (255 - brush->trans) / (((3 << brush->edge) >> 1) + 1);
-
-  if(soft_step < 1.0f)
-    soft_step = 1.0f;
-
-  render_pos = 0;
-  render_end = j;
-}
-
-void Stroke::render_smooth()
-{
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
-
-  int x, y;
-
-  if(brush->edge == 0)
-    return;
-
-  render_count = 0;
-
-  for(y = y1; y <= y2; y++)
-  {
-    for(x = x1; x <= x2; x++)
-    {
-      if(map->getpixel(x, y) && is_edge(map, x, y))
-      {
-        edgecachex[render_count] = x;
-        edgecachey[render_count] = y;
-        render_count++;
-        render_count &= 0xFFFFF;
-      }
-    }
-  }
-
-  render_pos = y1;
-}
-
 int Stroke::render_callback(int ox, int oy, float zoom)
 {
   Brush *brush = Brush::main;
@@ -684,6 +639,22 @@ int Stroke::render_callback(int ox, int oy, float zoom)
     return render_callback_smooth(ox, oy, zoom);
   else
     return render_callback_normal(ox, oy, zoom);
+}
+
+void Stroke::render_normal()
+{
+  Brush *brush = Brush::main;
+  Map *map = Map::main;
+
+  soft_trans = 255;
+  float j = (float)(3 << brush->edge);
+  soft_step = (255 - brush->trans) / (((3 << brush->edge) >> 1) + 1);
+
+  if(soft_step < 1)
+    soft_step = 1;
+
+  render_pos = 0;
+  render_end = j;
 }
 
 int Stroke::render_callback_normal(int ox, int oy, float zoom)
@@ -767,6 +738,35 @@ int Stroke::render_callback_normal(int ox, int oy, float zoom)
 
   make_blitrect(x1, y1, x2, y2, ox, oy, 1, zoom);
   return 1;
+}
+
+void Stroke::render_smooth()
+{
+  Brush *brush = Brush::main;
+  Map *map = Map::main;
+
+  int x, y;
+
+  if(brush->edge == 0)
+    return;
+
+  render_count = 0;
+
+  for(y = y1; y <= y2; y++)
+  {
+    for(x = x1; x <= x2; x++)
+    {
+      if(map->getpixel(x, y) && is_edge(map, x, y))
+      {
+        edgecachex[render_count] = x;
+        edgecachey[render_count] = y;
+        render_count++;
+        render_count &= 0xFFFFF;
+      }
+    }
+  }
+
+  render_pos = y1;
 }
 
 int Stroke::render_callback_smooth(int ox, int oy, float zoom)

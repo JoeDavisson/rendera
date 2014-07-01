@@ -479,7 +479,7 @@ void View::crop_push()
       int aw = w + overscroll * 2;
       int ah = h + overscroll * 2;
       Bitmap::main = new Bitmap(aw, ah);
-      Bitmap::main->clear(makecol(0, 0, 0));
+      Bitmap::main->clear(makecol(128, 128, 128));
       Bitmap::main->set_clip(overscroll, overscroll, aw - overscroll - 1, ah - overscroll - 1);
       temp->blit(Bitmap::main, 0, 0, overscroll, overscroll, w, h);
       delete temp;
@@ -617,7 +617,7 @@ void View::draw_main(int refresh)
     overy = 0;
   }
 
-  backbuf->clear(makecol(0, 0, 0));
+  backbuf->clear(makecol(128, 128, 128));
 
   Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh, 0, 0, dw, dh, overx, overy, bgr_order);
 
@@ -711,7 +711,7 @@ void View::begin_move()
   // pos.y = by + bh / 2;
   // warp mouse here... (unsupported in fltk)
 
-  backbuf->clear(makecol(0, 0, 0));
+  backbuf->clear(makecol(128, 128, 128));
   Bitmap::main->fast_stretch(backbuf, 0, 0, Bitmap::main->w, Bitmap::main->h,
                           px, py, pw, ph, bgr_order);
 

@@ -43,10 +43,10 @@ public:
   void polyline(int, int, int, int, float);
   void preview(Bitmap *,int, int, float);
   void render();
-  void render_normal();
-  void render_smooth();
   int render_callback(int, int, float);
+  void render_normal();
   int render_callback_normal(int, int, float);
+  void render_smooth();
   int render_callback_smooth(int, int, float);
 
   int x1, y1, x2, y2;
