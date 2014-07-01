@@ -259,7 +259,7 @@ int View::handle(int event)
       oldimgy = imgy;
       return 1;
     case FL_MOUSEWHEEL:
-      if(tool_started)
+      if(moving || tool_started)
         break;
 
       if(Fl::event_dy() >= 0)
