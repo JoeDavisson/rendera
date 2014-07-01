@@ -34,7 +34,7 @@ static inline int is_edge(Map *map, const int x, const int y)
     return 1;
 }
 
-static inline float fdist(const int x1, const int y1, const int x2, const int y2)
+static inline int fdist(const int x1, const int y1, const int x2, const int y2)
 {
   const int dx = (x1 - x2);
   const int dy = (y1 - y2);
@@ -44,15 +44,15 @@ static inline float fdist(const int x1, const int y1, const int x2, const int y2
 
 static inline int sdist(const int x1, const int y1, const int x2, const int y2, const int edge, const int trans)
 {
-  double d = sqrt(fdist(x1, y1, x2, y2));
-  double s = (255 - trans) / (((3 << edge) >> 1) + 1);
+  float d = sqrtf(fdist(x1, y1, x2, y2));
+  float s = (255 - trans) / (((3 << edge) >> 1) + 1);
 
   if(s < 1.0)
     s = 1.0;
 
   int temp = 255;
 
-  temp -= (s * d);
+  temp -= s * d;
   if(temp < trans)
     temp = trans;
 
@@ -634,7 +634,7 @@ void Stroke::render_normal()
 
   soft_trans = 255.0f;
   float j = (float)(3 << brush->edge);
-  soft_step = (float)(255 - brush->trans) / (j / 2 + 1);
+  soft_step = (255 - brush->trans) / (((3 << brush->edge) >> 1) + 1);
 
   if(soft_step < 1.0f)
     soft_step = 1.0f;
@@ -801,7 +801,7 @@ int Stroke::render_callback_smooth(int ox, int oy, float zoom)
 
       int *cx = &edgecachex[0];
       int *cy = &edgecachey[0];
-      float temp1 = fdist(x, y, *cx++, *cy++);
+      int temp1 = fdist(x, y, *cx++, *cy++);
       int z = 0;
       int i;
 
