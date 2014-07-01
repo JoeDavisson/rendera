@@ -67,6 +67,7 @@ public:
   int grid, gridx, gridy;
   int px, py, pw, ph;
   int bx, by, bw, bh;
+  int lastbx, lastby, lastbw, lastbh;
   float aspect, winaspect;
   Stroke *stroke;
   int bgr_order;

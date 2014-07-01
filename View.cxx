@@ -159,9 +159,6 @@ int View::handle(int event)
 
       switch(button)
       {
-        window()->make_current();
-        fl_overlay_clear();
-
         case 1:
           if(shift)
           {
@@ -199,8 +196,6 @@ int View::handle(int event)
       return 1;
     case FL_DRAG:
       take_focus();
-      window()->make_current();
-      fl_overlay_clear();
 
       switch(button)
       {
@@ -231,8 +226,6 @@ int View::handle(int event)
       oldimgy = imgy;
       return 1;
     case FL_RELEASE:
-      window()->make_current();
-      fl_overlay_clear();
 
       switch(tool)
       {
@@ -722,7 +715,12 @@ void View::begin_move()
   Bitmap::main->fast_stretch(backbuf, 0, 0, Bitmap::main->w, Bitmap::main->h,
                           px, py, pw, ph, bgr_order);
 
-  // need to force repaint here or the navigator won't have a border
+  lastbx = bx;
+  lastby = by;
+  lastbw = bw;
+  lastbh = bh;
+
+  backbuf->xor_rect(bx, by, bx + bw - 1, by + bh - 1);
   redraw();
   Fl::flush();
 }
@@ -765,8 +763,16 @@ void View::move()
   if(bh < 1)
     bh = 1;
 
-  window()->make_current();
-  fl_overlay_rect(x() + bx, y() + by, bw, bh);
+  backbuf->xor_rect(lastbx, lastby, lastbx + lastbw - 1, lastby + lastbh - 1);
+  backbuf->xor_rect(bx, by, bx + bw - 1, by + bh - 1);
+
+  redraw();
+  Fl::flush();
+
+  lastbx = bx;
+  lastby = by;
+  lastbw = bw;
+  lastbh = bh;
 }
 
 void View::zoom_in(int x, int y)
