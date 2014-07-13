@@ -53,6 +53,7 @@ void GetColor::push(View *view)
 
 void GetColor::drag(View *view)
 {
+  push(view);
 }
 
 void GetColor::release(View *view)
