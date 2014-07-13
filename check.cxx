@@ -178,7 +178,24 @@ void check_tool(Widget *widget, void *var)
 {
   if(gui->view->tool_started)
     return;
-  gui->view->tool = *(int *)var;
+
+  delete gui->view->tool;
+
+  switch(*(int *)var)
+  {
+    case 0:
+      gui->view->tool = new Paint();
+      break;
+    case 1:
+      gui->view->tool = new Crop();
+      break;
+    case 2:
+      gui->view->tool = new GetColor();
+      break;
+    case 3:
+      gui->view->tool = new Offset();
+      break;
+  }
 }
 
 void check_color(Widget *widget, void *var)

@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+extern Gui *gui;
+
 static inline void grid_setpixel(const Bitmap *bmp, const int x, const int y,
                                  const int c, const int t)
 {
@@ -49,36 +51,6 @@ static inline void grid_hline(Bitmap *bmp, int x1, int y, int x2,
   }
 }
 
-static int inbox(int x, int y, int x1, int y1, int x2, int y2)
-{
-  if(x1 > x2)
-    SWAP(x1, x2);
-  if(y1 > y2)
-    SWAP(y1, y2);
-
-  if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
-    return 1;
-  else
-    return 0;
-}
-
-static void absrect(int *x1, int *y1, int *x2, int *y2)
-{
-  if(*x1 > *x2)
-    SWAP(*x1, *x2);
-  if(*y1 > *y2)
-    SWAP(*y1, *y2);
-
-  if(*x1 < Bitmap::main->cl)
-    *x1 = Bitmap::main->cl;
-  if(*y1 < Bitmap::main->ct)
-    *y1 = Bitmap::main->ct;
-  if(*x2 > Bitmap::main->cr)
-    *x2 = Bitmap::main->cr;
-  if(*y2 > Bitmap::main->cb)
-    *y2 = Bitmap::main->cb;
-}
-
 View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
 : Fl_Widget(x, y, w, h, label)
 {
@@ -93,10 +65,9 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   gridy = 8;
   oldimgx = 0;
   oldimgy = 0;
-  tool = 0;
   tool_started = 0;
-  crop_resize_started = 0;
   stroke = new Stroke();
+  tool = (Tool *)new Paint();
 
   // try to detect pixelformat (almost always RGB or BGR)
   if(fl_visual->visual->blue_mask == 0xFF)
@@ -105,7 +76,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
     bgr_order = 0;
 
   backbuf = new Bitmap(Fl::w(), Fl::h());
-// for generic FLTK
+// for generic FLTK - VERY SLOW
 //  image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
   image = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0, (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
   take_focus();
@@ -139,10 +110,11 @@ int View::handle(int event)
     case FL_UNFOCUS:
       return 1;
     case FL_ENTER:
-      switch(tool)
+      switch(gui->tool->var)
       {
         case 0:
         case 3:
+        default:
           window()->cursor(FL_CURSOR_DEFAULT);
           break;
         case 1:
@@ -168,21 +140,7 @@ int View::handle(int event)
             break;
           }
 
-          switch(tool)
-          {
-            case 0:
-              brush_push();
-              break;
-            case 1:
-              crop_push();
-              break;
-            case 2:
-              getcolor_push();
-              break;
-            case 3:
-              offset_push();
-              break;
-          }
+          tool->push(this);
 
           break;
         case 2:
@@ -200,22 +158,7 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          switch(tool)
-          {
-            case 0:
-              brush_drag();
-              break;
-            case 1:
-              crop_drag();
-              break;
-            case 2:
-              getcolor_push();
-              break;
-            case 3:
-              offset_drag();
-              break;
-          }
-
+          tool->drag(this);
           break;
         case 2:
           if(moving == 1)
@@ -226,19 +169,7 @@ int View::handle(int event)
       oldimgy = imgy;
       return 1;
     case FL_RELEASE:
-
-      switch(tool)
-      {
-        case 0:
-          brush_release();
-          break;
-        case 1:
-          crop_release();
-          break;
-        case 3:
-          offset_release();
-          break;
-      }
+      tool->release(this);
 
       if(moving)
       {
@@ -248,12 +179,7 @@ int View::handle(int event)
 
       return 1;
     case FL_MOVE:
-      switch(tool)
-      {
-        case 0:
-          brush_move();
-          break;
-      }
+      tool->move(this);
 
       oldimgx = imgx;
       oldimgy = imgy;
@@ -304,283 +230,6 @@ int View::handle(int event)
       return 1;
   }
   return 0;
-}
-
-void View::brush_push()
-{
-  if(stroke->active && stroke->type == 3)
-  {
-    if(dclick)
-    {
-      stroke->end(imgx, imgy, ox, oy, zoom);
-      Blend::set(Brush::main->blend);
-      stroke->render();
-      while(stroke->render_callback(ox, oy, zoom))
-      {
-        if(Fl::get_key(FL_Escape))
-          break;
-        draw_main(1);
-        Fl::flush();
-      }
-      stroke->active = 0;
-      Blend::set(0);
-      moving = 0;
-      draw_main(1);
-    }
-    else
-    {
-      stroke->draw(imgx, imgy, ox, oy, zoom);
-    }
-  }
-  else
-  {
-    stroke->begin(imgx, imgy, ox, oy, zoom);
-  }
-
-  stroke->preview(backbuf, ox, oy, zoom);
-  redraw();
-}
-
-void View::brush_drag()
-{
-  if(stroke->type != 3)
-  {
-    stroke->draw(imgx, imgy, ox, oy, zoom);
-    draw_main(0);
-    stroke->preview(backbuf, ox, oy, zoom);
-    redraw();
-  }
-}
-
-void View::brush_release()
-{
-  if(stroke->active && stroke->type != 3)
-  {
-    stroke->end(imgx, imgy, ox, oy, zoom);
-    Blend::set(Brush::main->blend);
-    stroke->render();
-    while(stroke->render_callback(ox, oy, zoom))
-    {
-      if(Fl::get_key(FL_Escape))
-        break;
-      draw_main(1);
-      Fl::flush();
-    }
-    stroke->active = 0;
-    Blend::set(0);
-  }
-
-  draw_main(1);
-}
-
-void View::brush_move()
-{
-  switch(stroke->type)
-  {
-    case 3:
-      if(stroke->active)
-      {
-        stroke->polyline(imgx, imgy, ox, oy, zoom);
-        draw_main(0);
-        stroke->preview(backbuf, ox, oy, zoom);
-        redraw();
-      }
-      break;
-    case 0:
-    case 2:
-    case 4:
-    case 6:
-      Map::main->rectfill(oldimgx - 48, oldimgy - 48, oldimgx + 48, oldimgy + 48, 0);
-      Map::main->rectfill(imgx - 48, imgy - 48, imgx + 48, imgy + 48, 0);
-      stroke->draw_brush(imgx, imgy, 255);
-      stroke->size(imgx - 48, imgy - 48, imgx + 48, imgy + 48);
-      stroke->make_blitrect(stroke->x1, stroke->y1, stroke->x2, stroke->y2, ox, oy, 96, zoom);
-      draw_main(0);
-      stroke->preview(backbuf, ox, oy, zoom);
-      redraw();
-      break;
-  }
-}
-
-void View::offset_push()
-{
-  int w = Bitmap::main->cw;
-  int h = Bitmap::main->ch;
-  int overscroll = Bitmap::main->overscroll;
-
-  beginx = imgx;
-  beginy = imgy;
-
-  delete Bitmap::offset_buffer;
-  Bitmap::offset_buffer = new Bitmap(w, h);
-  Bitmap::main->blit(Bitmap::offset_buffer, overscroll, overscroll, 0, 0, w, h);
-}
-
-void View::offset_drag()
-{
-  int w = Bitmap::main->cw;
-  int h = Bitmap::main->ch;
-  int overscroll = Bitmap::main->overscroll;
-
-  int dx = imgx - beginx;
-  int dy = imgy - beginy;
-
-  int x = dx;
-  int y = dy;
-
-  while(x < 0)
-    x += w;
-  while(y < 0)
-    y += h;
-  while(x >= w)
-    x -= w;
-  while(y >= h)
-    y -= h;
-
-  Bitmap::offset_buffer->blit(Bitmap::main, 0, 0, x + overscroll, y + overscroll, w - x, h - y);
-  Bitmap::offset_buffer->blit(Bitmap::main, w - x, 0, overscroll, y + overscroll, x, h - y);
-  Bitmap::offset_buffer->blit(Bitmap::main, 0, h - y, x + overscroll, overscroll, w - x, y);
-  Bitmap::offset_buffer->blit(Bitmap::main, w - x, h - y, overscroll, overscroll, x, y);
-
-  draw_main(1);
-}
-
-void View::offset_release()
-{
-}
-
-void View::crop_push()
-{
-  if(tool_started == 0)
-  {
-    Map::main->clear(0);
-    beginx = imgx;
-    beginy = imgy;
-    lastx = imgx;
-    lasty = imgy;
-    tool_started = 1;
-  }
-  else if(tool_started == 2)
-  {
-    if(dclick)
-    {
-      tool_started = 0;
-      absrect(&beginx, &beginy, &lastx, &lasty);
-      int w = lastx - beginx;
-      int h = lasty - beginy;
-      if(w < 1)
-        w = 1;
-      if(h < 1)
-        h = 1;
-      Bitmap *temp = new Bitmap(w, h);
-      Bitmap::main->blit(temp, beginx, beginy, 0, 0, w, h);
-      delete Bitmap::main;
-      int overscroll = Bitmap::overscroll;
-      int aw = w + overscroll * 2;
-      int ah = h + overscroll * 2;
-      Bitmap::main = new Bitmap(aw, ah);
-      Bitmap::main->clear(makecol(128, 128, 128));
-      Bitmap::main->set_clip(overscroll, overscroll, aw - overscroll - 1, ah - overscroll - 1);
-      temp->blit(Bitmap::main, 0, 0, overscroll, overscroll, w, h);
-      delete temp;
-      zoom = 1;
-      ox = 0;
-      oy = 0;
-      draw_main(1);
-    }
-  }
-}
-
-void View::crop_drag()
-{
-  if(tool_started == 1)
-  {
-    absrect(&beginx, &beginy, &lastx, &lasty);
-    Map::main->rect(beginx, beginy, lastx, lasty, 0);
-    absrect(&beginx, &beginy, &imgx, &imgy);
-    Map::main->rect(beginx, beginy, imgx, imgy, 255);
-    stroke->size(beginx, beginy, imgx, imgy);
-
-    lastx = imgx;
-    lasty = imgy;
-
-    draw_main(1);
-    stroke->preview(backbuf, ox, oy, zoom);
-    redraw();
-  }
-  else if(tool_started == 2)
-  {
-    Map::main->rect(beginx, beginy, lastx, lasty, 0);
-
-    if(crop_resize_started)
-    {
-      switch(crop_side)
-      {
-        case 0:
-          beginx = imgx;
-          break;
-        case 1:
-          lastx = imgx;
-          break;
-        case 2:
-          beginy = imgy;
-          break;
-        case 3:
-          lasty = imgy;
-          break;
-      }
-
-      absrect(&beginx, &beginy, &lastx, &lasty);
-      Map::main->rect(beginx, beginy, lastx, lasty, 255);
-      stroke->size(beginx, beginy, lastx, lasty);
-      draw_main(1);
-      stroke->preview(backbuf, ox, oy, zoom);
-      redraw();
-    }
-    else
-    {
-      if(imgx < beginx)
-      {
-        crop_side = 0;
-        crop_resize_started = 1;
-      }
-      else if(imgx > lastx)
-      {
-        crop_side = 1;
-        crop_resize_started = 1;
-      }
-      else if(imgy < beginy)
-      {
-        crop_side = 2;
-        crop_resize_started = 1;
-      }
-      else if(imgy > lasty)
-      {
-        crop_side = 3;
-        crop_resize_started = 1;
-      }
-    }
-  }
-}
-
-void View::crop_release()
-{
-  if(tool_started == 1)
-  {
-    tool_started = 2;
-  }
-
-  crop_resize_started = 0;
-}
-
-void View::getcolor_push()
-{
-  if(inbox(imgx, imgy, Bitmap::main->cl, Bitmap::main->ct,
-                       Bitmap::main->cr, Bitmap::main->cb))
-  {
-    int c = Bitmap::main->getpixel(imgx, imgy);
-    update_color(c);
-  }
 }
 
 void View::resize(int x, int y, int w, int h)

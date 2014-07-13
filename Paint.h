@@ -18,33 +18,21 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef TOOL_H
-#define TOOL_H
+#ifndef PAINT_H
+#define PAINT_H
 
 #include "rendera.h"
 
-// extend this class for painting/interactive tools
-class Tool
+class Paint : public Tool
 {
 public:
-  Tool();
-  virtual ~Tool();
+  Paint();
+  virtual ~Paint();
 
-  // called when mouse button is initially pressed
-  virtual void push(View *) = 0;
-
-  // called when mouse is dragged
-  virtual void drag(View *) = 0;
-
-  // called when mouse button is released
-  virtual void release(View *) = 0;
-
-  // called when mouse is moved, but tool is not completed yet
-  // in the case of an tool that requires multiple steps (such as crop)
-  virtual void move(View *) = 0;
-
-  // vars
-  int beginx, beginy, lastx, lasty;
+  virtual void push(View *);
+  virtual void drag(View *);
+  virtual void release(View *);
+  virtual void move(View *);
 };
 
 #endif

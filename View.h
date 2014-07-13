@@ -23,6 +23,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+// FIXME these forward declarations kinda suck
+class Tool;
+class Paint;
+class Crop;
+class GetColor;
+class Offset;
+
 class View : public Fl_Widget
 {
 public:
@@ -31,17 +38,6 @@ public:
 
   virtual int handle(int);
   virtual void resize(int, int, int, int);
-  void brush_push();
-  void brush_drag();
-  void brush_release();
-  void brush_move();
-  void offset_push();
-  void offset_drag();
-  void offset_release();
-  void crop_push();
-  void crop_drag();
-  void crop_release();
-  void getcolor_push();
   void draw_move();
   void draw_main(int);
   void draw_grid();
@@ -70,14 +66,9 @@ public:
   int lastbx, lastby, lastbw, lastbh;
   float aspect, winaspect;
   Stroke *stroke;
+  Tool *tool;
   int bgr_order;
-  int tool;
   int tool_started;
-  int crop_resize_started;
-  int crop_side;
-  int beginx, beginy;
-  int lastx, lasty;
-
   int button;
   int button1, button2, button3;
   int dclick;

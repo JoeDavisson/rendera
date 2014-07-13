@@ -829,6 +829,7 @@ int Stroke::render_callback_smooth(int ox, int oy, float zoom)
   make_blitrect(x1, render_pos, x2, render_end, ox, oy, 1, zoom);
 
   render_pos += 64;
+
   if(render_pos > y2)
   {
     active = 0;

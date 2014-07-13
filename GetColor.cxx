@@ -18,34 +18,48 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef TOOL_H
-#define TOOL_H
-
 #include "rendera.h"
 
-// extend this class for painting/interactive tools
-class Tool
+static int inbox(int x, int y, int x1, int y1, int x2, int y2)
 {
-public:
-  Tool();
-  virtual ~Tool();
+  if(x1 > x2)
+    SWAP(x1, x2);
+  if(y1 > y2)
+    SWAP(y1, y2);
 
-  // called when mouse button is initially pressed
-  virtual void push(View *) = 0;
+  if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
+    return 1;
+  else
+    return 0;
+}
 
-  // called when mouse is dragged
-  virtual void drag(View *) = 0;
+GetColor::GetColor()
+{
+}
 
-  // called when mouse button is released
-  virtual void release(View *) = 0;
+GetColor::~GetColor()
+{
+}
 
-  // called when mouse is moved, but tool is not completed yet
-  // in the case of an tool that requires multiple steps (such as crop)
-  virtual void move(View *) = 0;
+void GetColor::push(View *view)
+{
+  if(inbox(view->imgx, view->imgy, Bitmap::main->cl, Bitmap::main->ct,
+                       Bitmap::main->cr, Bitmap::main->cb))
+  {
+    int c = Bitmap::main->getpixel(view->imgx, view->imgy);
+    update_color(c);
+  }
+}
 
-  // vars
-  int beginx, beginy, lastx, lasty;
-};
+void GetColor::drag(View *view)
+{
+}
 
-#endif
+void GetColor::release(View *view)
+{
+}
+
+void GetColor::move(View *view)
+{
+}
 
