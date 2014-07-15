@@ -76,7 +76,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
     bgr_order = 0;
 
   backbuf = new Bitmap(Fl::w(), Fl::h());
-// for generic FLTK - VERY SLOW
+// for generic FLTK
 //  image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
   image = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0, (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
   take_focus();
