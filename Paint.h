@@ -29,6 +29,8 @@ public:
   Paint();
   virtual ~Paint();
 
+  virtual void render();
+
   virtual void push(View *);
   virtual void drag(View *);
   virtual void release(View *);

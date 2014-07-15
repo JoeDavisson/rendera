@@ -161,7 +161,7 @@ void check_size(Widget *widget, void *var)
 
 void check_stroke(Widget *widget, void *var)
 {
-  gui->view->stroke->type = *(int *)var;
+  gui->view->tool->stroke->type = *(int *)var;
 }
 
 void check_edge(Widget *widget, void *var)
@@ -187,12 +187,15 @@ void check_tool(Widget *widget, void *var)
       gui->view->tool = new Paint();
       break;
     case 1:
-      gui->view->tool = new Crop();
+      gui->view->tool = new Airbrush();
       break;
     case 2:
-      gui->view->tool = new GetColor();
+      gui->view->tool = new Crop();
       break;
     case 3:
+      gui->view->tool = new GetColor();
+      break;
+    case 4:
       gui->view->tool = new Offset();
       break;
   }
@@ -277,12 +280,12 @@ void check_mirror(Widget *widget, void *var)
 
 void check_origin(Widget *widget, void *var)
 {
-  gui->view->stroke->origin = *(int *)var;
+  gui->view->tool->stroke->origin = *(int *)var;
 }
 
 void check_constrain(Widget *widget, void *var)
 {
-  gui->view->stroke->constrain = *(int *)var;
+  gui->view->tool->stroke->constrain = *(int *)var;
 }
 
 // dialogs

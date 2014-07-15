@@ -566,7 +566,7 @@ void Bitmap::setpixel_clone(int x, int y, int c2, int t)
       break;
   }
 
-  Stroke *stroke = gui->view->stroke;
+  Stroke *stroke = gui->view->tool->stroke;
 
   if(x1 >= stroke->x1 && x1 <= stroke->x2 && y1 >= stroke->y1 && y1 <= stroke->y2)
     c2 = Bitmap::clone_buffer->getpixel(x1 - stroke->x1, y1 - stroke->y1);
@@ -624,7 +624,7 @@ void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
   while(y1 > cb)
     y1 -= ch;
 
-  Stroke *stroke = gui->view->stroke;
+  Stroke *stroke = gui->view->tool->stroke;
 
   if(x1 >= stroke->x1 && x1 <= stroke->x2 && y1 >= stroke->y1 && y1 <= stroke->y2)
     c2 = Bitmap::clone_buffer->getpixel(x1 - stroke->x1, y1 - stroke->y1);

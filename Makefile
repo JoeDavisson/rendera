@@ -10,7 +10,7 @@ LIBS = -lm -lfltk -lfltk_images -ljpeg -lpng -lX11
 # static link
 #LIBS = -lm -Wl,-Bsymbolic-functions /usr/lib/x86_64-linux-gnu/libfltk_images.a -ljpeg -lpng -lz /usr/lib/x86_64-linux-gnu/libfltk.a -lXext -lXft -lfontconfig -lfontconfig -lXinerama -ldl -lm -lX11
 
-OBJS = Blend.o Bitmap.o Map.o Brush.o Tool.o Paint.o Offset.o GetColor.o Crop.o Stroke.o View.o Widget.o Palette.o Button.o ToggleButton.o Field.o Separator.o Dialog.o Gui.o quantize.o check.o load.o save.o main.o
+OBJS = Blend.o Bitmap.o Map.o Brush.o Tool.o Paint.o Airbrush.o Offset.o GetColor.o Crop.o Stroke.o View.o Widget.o Palette.o Button.o ToggleButton.o Field.o Separator.o Dialog.o Gui.o quantize.o check.o load.o save.o main.o
 
 default: $(OBJS)
 	$(CXX) -o rendera $(OBJS) $(LIBS)

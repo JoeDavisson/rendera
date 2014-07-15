@@ -49,20 +49,20 @@ Crop::~Crop()
 
 void Crop::push(View *view)
 {
-  if(view->tool_started == 0)
+  if(started == 0)
   {
     Map::main->clear(0);
     beginx = view->imgx;
     beginy = view->imgy;
     lastx = view->imgx;
     lasty = view->imgy;
-    view->tool_started = 1;
+    started = 1;
   }
-  else if(view->tool_started == 2)
+  else if(started == 2)
   {
     if(view->dclick)
     {
-      view->tool_started = 0;
+      started = 0;
       absrect(&beginx, &beginy, &lastx, &lasty);
       int w = lastx - beginx;
       int h = lasty - beginy;
@@ -91,22 +91,22 @@ void Crop::push(View *view)
 
 void Crop::drag(View *view)
 {
-  if(view->tool_started == 1)
+  if(started == 1)
   {
     absrect(&beginx, &beginy, &lastx, &lasty);
     Map::main->rect(beginx, beginy, lastx, lasty, 0);
     absrect(&beginx, &beginy, &view->imgx, &view->imgy);
     Map::main->rect(beginx, beginy, view->imgx, view->imgy, 255);
-    view->stroke->size(beginx, beginy, view->imgx, view->imgy);
+    stroke->size(beginx, beginy, view->imgx, view->imgy);
 
     lastx = view->imgx;
     lasty = view->imgy;
 
     view->draw_main(1);
-    view->stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+    stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
     view->redraw();
   }
-  else if(view->tool_started == 2)
+  else if(started == 2)
   {
     Map::main->rect(beginx, beginy, lastx, lasty, 0);
 
@@ -129,9 +129,9 @@ void Crop::drag(View *view)
       }
       absrect(&beginx, &beginy, &lastx, &lasty);
       Map::main->rect(beginx, beginy, lastx, lasty, 255);
-      view->stroke->size(beginx, beginy, lastx, lasty);
+      stroke->size(beginx, beginy, lastx, lasty);
       view->draw_main(1);
-      view->stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+      stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
       view->redraw();
     }
     else
@@ -162,9 +162,9 @@ void Crop::drag(View *view)
 
 void Crop::release(View *view)
 {
-  if(view->tool_started == 1)
+  if(started == 1)
   {
-    view->tool_started = 2;
+    started = 2;
   }
 
   crop_resize_started = 0;

@@ -65,8 +65,6 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   gridy = 8;
   oldimgx = 0;
   oldimgy = 0;
-  tool_started = 0;
-  stroke = new Stroke();
   tool = (Tool *)new Paint();
 
   // try to detect pixelformat (almost always RGB or BGR)
@@ -144,7 +142,7 @@ int View::handle(int event)
 
           break;
         case 2:
-          if(tool_started == 0 && moving == 0)
+          if(tool->started == 0 && moving == 0)
           {
             begin_move();
             moving = 1;
@@ -185,7 +183,7 @@ int View::handle(int event)
       oldimgy = imgy;
       return 1;
     case FL_MOUSEWHEEL:
-      if(moving || tool_started)
+      if(moving || tool->started)
         break;
 
       if(Fl::event_dy() >= 0)
@@ -200,9 +198,9 @@ int View::handle(int event)
     case FL_KEYDOWN:
       if(Fl::event_key() == FL_Escape)
       {
-        if(stroke->type == 3)
-          stroke->active = 0;
-        tool_started = 0;
+        if(tool->stroke->type == 3)
+          tool->active = 0;
+        tool->started = 0;
         draw_main(1);
         break;
       }
@@ -558,12 +556,12 @@ void View::scroll(int dir, int amount)
 
 void View::draw()
 {
-  if(stroke->active)
+  if(tool->active)
   {
-    int blitx = stroke->blitx;
-    int blity = stroke->blity;
-    int blitw = stroke->blitw;
-    int blith = stroke->blith;
+    int blitx = tool->stroke->blitx;
+    int blity = tool->stroke->blity;
+    int blitw = tool->stroke->blitw;
+    int blith = tool->stroke->blith;
 
     if(blitx < 0)
       blitx = 0;

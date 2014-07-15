@@ -28,67 +28,73 @@ Paint::~Paint()
 {
 }
 
+void Paint::render()
+{
+  Brush *brush = Brush::main;
+  Map *map = Map::main;
+
+  int x, y;
+
+  for(y = stroke->y1; y <= stroke->y2; y++)
+  {
+    for(x = stroke->x1; x <= stroke->x2; x++)
+    {
+      int c = map->getpixel(x, y);
+      if(c)
+        Bitmap::main->setpixel(x, y, brush->color, brush->trans);
+    }
+  }
+}
+
 void Paint::push(View *view)
 {
-  if(view->stroke->active && view->stroke->type == 3)
+  if(active && stroke->type == 3)
   {
     if(view->dclick)
     {
-      view->stroke->end(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
+      stroke->end(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
       Blend::set(Brush::main->blend);
-      view->stroke->render();
-      while(view->stroke->render_callback(view->ox, view->oy, view->zoom))
-      {
-        if(Fl::get_key(FL_Escape))
-          break;
-        view->draw_main(1);
-        Fl::flush();
-      }
-      view->stroke->active = 0;
+      render();
+      active = 0;
       Blend::set(0);
       view->moving = 0;
       view->draw_main(1);
     }
     else
     {
-      view->stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
+      stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
     }
   }
   else
   {
-    view->stroke->begin(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
+    stroke->begin(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
   }
 
-  view->stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+  stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
   view->redraw();
+
+  active = 1;
 }
 
 void Paint::drag(View *view)
 {
-  if(view->stroke->type != 3)
+  if(stroke->type != 3)
   {
-    view->stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
+    stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
     view->draw_main(0);
-    view->stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+    stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
     view->redraw();
   }
 }
 
 void Paint::release(View *view)
 {
-  if(view->stroke->active && view->stroke->type != 3)
+  if(active && stroke->type != 3)
   {
-    view->stroke->end(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
+    stroke->end(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
     Blend::set(Brush::main->blend);
-    view->stroke->render();
-    while(view->stroke->render_callback(view->ox, view->oy, view->zoom))
-    {
-      if(Fl::get_key(FL_Escape))
-        break;
-      view->draw_main(1);
-      Fl::flush();
-    }
-    view->stroke->active = 0;
+    render();
+    active = 0;
     Blend::set(0);
   }
 
@@ -97,14 +103,14 @@ void Paint::release(View *view)
 
 void Paint::move(View *view)
 {
-  switch(view->stroke->type)
+  switch(stroke->type)
   {
     case 3:
-      if(view->stroke->active)
+      if(active)
       {
-        view->stroke->polyline(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
+        stroke->polyline(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
         view->draw_main(0);
-        view->stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+        stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
         view->redraw();
       }
       break;
@@ -114,11 +120,11 @@ void Paint::move(View *view)
     case 6:
       Map::main->rectfill(view->oldimgx - 48, view->oldimgy - 48, view->oldimgx + 48, view->oldimgy + 48, 0);
       Map::main->rectfill(view->imgx - 48, view->imgy - 48, view->imgx + 48, view->imgy + 48, 0);
-      view->stroke->draw_brush(view->imgx, view->imgy, 255);
-      view->stroke->size(view->imgx - 48, view->imgy - 48, view->imgx + 48, view->imgy + 48);
-      view->stroke->make_blitrect(view->stroke->x1, view->stroke->y1, view->stroke->x2, view->stroke->y2, view->ox, view->oy, 96, view->zoom);
+      stroke->draw_brush(view->imgx, view->imgy, 255);
+      stroke->size(view->imgx - 48, view->imgy - 48, view->imgx + 48, view->imgy + 48);
+      stroke->make_blitrect(stroke->x1, stroke->y1, stroke->x2, stroke->y2, view->ox, view->oy, 96, view->zoom);
       view->draw_main(0);
-      view->stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+      stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
       view->redraw();
       break;
   }

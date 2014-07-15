@@ -53,6 +53,7 @@ public:
 //  Fl_RGB_Image *image;
   XImage *image;
   Bitmap *backbuf;
+  Tool *tool;
   int mousex, mousey;
   int imgx, imgy;
   int oldimgx, oldimgy;
@@ -65,8 +66,6 @@ public:
   int bx, by, bw, bh;
   int lastbx, lastby, lastbw, lastbh;
   float aspect, winaspect;
-  Stroke *stroke;
-  Tool *tool;
   int bgr_order;
   int tool_started;
   int button;

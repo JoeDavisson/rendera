@@ -22,9 +22,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Tool::Tool()
 {
+  stroke = new Stroke();
+  started = 0;
+  active = 0;
 }
 
 Tool::~Tool()
 {
+  delete stroke;
 }
 

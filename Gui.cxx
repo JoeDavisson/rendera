@@ -192,7 +192,7 @@ Gui::Gui()
   left_bottom->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   left_bottom->box(FL_UP_BOX);
   y1 = 20;
-  tool = new Widget(left_bottom, 8, y1, 96, 96, "Tools", "data/tools.png", 96, 24);
+  tool = new Widget(left_bottom, 8, y1, 96, 120, "Tools", "data/tools.png", 96, 24);
   tool->callback((Fl_Callback *)check_tool, &tool->var);
   y1 += 96 + 8;
   left_bottom->resizable(0);
