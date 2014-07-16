@@ -28,6 +28,7 @@ void check_clone(Widget *, void *);
 void check_mirror(Widget *, void *);
 void check_origin(Widget *, void *);
 void check_constrain(Widget *, void *);
+void check_crop();
 
 void show_about();
 void hide_about();

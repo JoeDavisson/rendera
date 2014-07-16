@@ -227,6 +227,19 @@ Gui::Gui()
   crop->labelsize(12);
   crop->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   crop->box(FL_UP_BOX);
+  y1 = 20;
+  crop_x = new Field(crop, 24, y1, 72, 24, "X:");
+  crop_x->deactivate();
+  y1 += 24 + 6;
+  crop_y = new Field(crop, 24, y1, 72, 24, "Y:");
+  crop_y->deactivate();
+  y1 += 24 + 6;
+  crop_w = new Field(crop, 24, y1, 72, 24, "W:");
+  crop_w->deactivate();
+  y1 += 24 + 6;
+  crop_h = new Field(crop, 24, y1, 72, 24, "H:");
+  crop_h->deactivate();
+  y1 += 24 + 6;
   crop->resizable(0);
   crop->end();
 

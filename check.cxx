@@ -321,6 +321,34 @@ void check_constrain(Widget *widget, void *var)
   gui->view->tool->stroke->constrain = *(int *)var;
 }
 
+void check_crop()
+{
+  char s[8];
+
+  int overscroll = Bitmap::main->overscroll;
+
+  int x = gui->view->tool->beginx - overscroll;
+  int y = gui->view->tool->beginy - overscroll;
+  int w = (gui->view->tool->lastx - gui->view->tool->beginx) + 1;
+  int h = (gui->view->tool->lasty - gui->view->tool->beginy) + 1;
+
+  snprintf(s, sizeof(s), "%d", x);
+  gui->crop_x->value(s);
+  gui->crop_x->redraw();
+
+  snprintf(s, sizeof(s), "%d", y);
+  gui->crop_y->value(s);
+  gui->crop_y->redraw();
+
+  snprintf(s, sizeof(s), "%d", w);
+  gui->crop_w->value(s);
+  gui->crop_w->redraw();
+
+  snprintf(s, sizeof(s), "%d", h);
+  gui->crop_h->value(s);
+  gui->crop_h->redraw();
+}
+
 // dialogs
 void show_about()
 {

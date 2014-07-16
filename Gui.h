@@ -80,6 +80,11 @@ public:
   Widget *airbrush_edge;
   Widget *airbrush_smooth;
 
+  Field *crop_x;
+  Field *crop_y;
+  Field *crop_w;
+  Field *crop_h;
+
   // right
   Widget *palette;
   Button *plus;

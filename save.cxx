@@ -33,6 +33,24 @@ static inline void write_uint32(uint32_t num, FILE *out)
   #endif
 }
 
+/*
+static int file_exists(const char *s)
+{
+  FILE *temp = fopen(s, "r");
+
+  if(temp)
+  {
+    fclose(temp);
+    return 1;
+  }
+  else
+  {
+    fclose(temp);
+    return 0;
+  }
+}
+*/
+
 void save(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
@@ -58,6 +76,15 @@ void save(Fl_Widget *, void *)
 
     p--;
   }
+
+/*
+  if(file_exists(fn))
+  {
+    fl_message_title("Replace File?");
+    if(fl_choice("Replace File?", "No", "Yes", NULL) == 1)
+      return;
+  }
+*/
   
   if(strcasecmp(ext, ".bmp") == 0)
     save_bmp(fn);

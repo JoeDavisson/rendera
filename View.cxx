@@ -182,7 +182,7 @@ int View::handle(int event)
       oldimgy = imgy;
       return 1;
     case FL_MOUSEWHEEL:
-      if(moving || tool->started)
+      if(moving/* || tool->started*/)
         break;
 
       if(Fl::event_dy() >= 0)
@@ -446,6 +446,8 @@ void View::zoom_in(int x, int y)
   }
 
   draw_main(1);
+  if(tool->started)
+    tool->stroke->preview(backbuf, ox, oy, zoom);
   check_zoom();
 }
 
@@ -475,6 +477,8 @@ void View::zoom_out(int x, int y)
   }
 
   draw_main(1);
+  if(tool->started)
+    tool->stroke->preview(backbuf, ox, oy, zoom);
   check_zoom();
 }
 

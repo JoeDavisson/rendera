@@ -158,6 +158,8 @@ void Crop::drag(View *view)
       }
     }
   }
+
+  check_crop();
 }
 
 void Crop::release(View *view)
