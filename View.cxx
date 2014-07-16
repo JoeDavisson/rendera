@@ -141,7 +141,7 @@ int View::handle(int event)
 
           break;
         case 2:
-          if(tool->started == 0 && moving == 0)
+          if(/*tool->started == 0 && */moving == 0)
           {
             begin_move();
             moving = 1;
@@ -173,6 +173,9 @@ int View::handle(int event)
         moving = 0;
         draw_main(1);
       }
+
+      if(tool->started)
+        tool->stroke->preview(backbuf, ox, oy, zoom);
 
       return 1;
     case FL_MOVE:
