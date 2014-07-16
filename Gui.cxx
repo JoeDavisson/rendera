@@ -131,7 +131,7 @@ Gui::Gui()
   top_right->end();
 
   // bottom
-  bottom = new Fl_Group(112, window->h() - 40, window->w() - 224, 40);
+  bottom = new Fl_Group(224, window->h() - 40, window->w() - 224 - 112, 40);
   bottom->box(FL_UP_BOX);
   x1 = 8;
   wrap = new ToggleButton(bottom, x1, 8, 24, 24, "Wrap Edges", "data/wrap.png");
@@ -155,48 +155,48 @@ Gui::Gui()
   bottom->resizable(0);
   bottom->end();
 
-  // left top
-  left_top = new Fl_Group(0, top_right->h() + menubar->h(), 112, 264 + 68);
-  left_top->label("Brush");
-  left_top->labelsize(12);
-  left_top->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  left_top->box(FL_UP_BOX);
+  // tools
+  tools = new Fl_Group(0, top_right->h() + menubar->h(), 112, window->h() - (menubar->h() + top_right->h()));
+  tools->label("Tools");
+  tools->labelsize(12);
+  tools->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  tools->box(FL_UP_BOX);
   y1 = 20;
-  brush = new Widget(left_top, 8, y1, 96, 96, "Brush Preview", 0, 0);
+  tool = new Widget(tools, 8, y1, 96, 120, "Tools", "data/tools.png", 96, 24);
+  tool->callback((Fl_Callback *)check_tool, &tool->var);
+  y1 += 96 + 8;
+  tools->resizable(0);
+  tools->end();
+
+  // options
+  options = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  options->label("Brush");
+  options->labelsize(12);
+  options->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  options->box(FL_UP_BOX);
+  y1 = 20;
+  brush = new Widget(options, 8, y1, 96, 96, "Brush Preview", 0, 0);
   brush->bitmap->clear(makecol(255, 255, 255));
   brush->bitmap->setpixel_solid(48, 48, makecol(0, 0, 0), 0);
   y1 += 96 + 8;
-  size = new Widget(left_top, 8, y1, 96, 24, "Size", "data/size.png", 6, 24);
+  size = new Widget(options, 8, y1, 96, 24, "Size", "data/size.png", 6, 24);
   size->callback((Fl_Callback *)check_size, &size->var);
   y1 += 24 + 8;
-  stroke = new Widget(left_top, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24);
+  stroke = new Widget(options, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24);
   stroke->callback((Fl_Callback *)check_stroke, &stroke->var);
   y1 += 48 + 8;
-  shape = new Widget(left_top, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24);
+  shape = new Widget(options, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24);
   // use same callback as size here
   shape->callback((Fl_Callback *)check_size, &size->var);
   y1 += 24 + 8;
-  edge = new Widget(left_top, 8, y1, 96, 24, "Soft Edge", "data/edge.png", 8, 24);
+  edge = new Widget(options, 8, y1, 96, 24, "Soft Edge", "data/edge.png", 8, 24);
   edge->callback((Fl_Callback *)check_edge, &edge->var);
   y1 += 24 + 8;
-  smooth = new Widget(left_top, 8, y1, 96, 48, "Coarse/Fine", "data/smooth.png", 48, 48);
+  smooth = new Widget(options, 8, y1, 96, 48, "Coarse/Fine", "data/smooth.png", 48, 48);
   y1 += 48 + 8;
   smooth->callback((Fl_Callback *)check_smooth, &smooth->var);
-  left_top->resizable(0);
-  left_top->end();
-
-  // left bottom
-  left_bottom = new Fl_Group(0, top_right->h() + menubar->h() + left_top->h(), 112, window->h() - (menubar->h() + top_right->h() + left_top->h()));
-  left_bottom->label("Tools");
-  left_bottom->labelsize(12);
-  left_bottom->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  left_bottom->box(FL_UP_BOX);
-  y1 = 20;
-  tool = new Widget(left_bottom, 8, y1, 96, 120, "Tools", "data/tools.png", 96, 24);
-  tool->callback((Fl_Callback *)check_tool, &tool->var);
-  y1 += 96 + 8;
-  left_bottom->resizable(0);
-  left_bottom->end();
+  options->resizable(0);
+  options->end();
 
   // right
   right = new Fl_Group(window->w() - 112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
@@ -234,7 +234,7 @@ Gui::Gui()
   right->end();
 
   // middle
-  middle = new Fl_Group(112, top_right->h() + menubar->h(), window->w() - 224, window->h() - (menubar->h() + top_right->h() + bottom->h()));
+  middle = new Fl_Group(224, top_right->h() + menubar->h(), window->w() - 224 - 112, window->h() - (menubar->h() + top_right->h() + bottom->h()));
   middle->box(FL_FLAT_BOX);
   view = new View(middle, 0, 0, middle->w(), middle->h(), "View");
   middle->resizable(view);
@@ -248,10 +248,11 @@ Gui::Gui()
   group_top->end();
 
   // container for left panels
-  group_left = new Fl_Group(0, top_right->h() + menubar->h(), 112, window->h() - (menubar->h() + top_right->h() + bottom->h()));
-  group_left->add(left_top);
-  group_left->add(left_bottom);
-  group_left->resizable(left_bottom);
+  group_left = new Fl_Group(0, top_right->h() + menubar->h(), 224, window->h() - (menubar->h() + top_right->h() + bottom->h()));
+  group_left->add(tools);
+  group_left->add(options);
+//  group_left->resizable(tools);
+//  group_left->resizable(options);
   group_left->end();
 
   //group_main->resizable(view);

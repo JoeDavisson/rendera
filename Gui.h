@@ -41,8 +41,8 @@ public:
   // panels
   Fl_Group *top_left;
   Fl_Group *top_right;
-  Fl_Group *left_top;
-  Fl_Group *left_bottom;
+  Fl_Group *tools;
+  Fl_Group *options;
   Fl_Group *right;
   Fl_Group *bottom;
   Fl_Group *middle;
