@@ -221,6 +221,33 @@ Gui::Gui()
   airbrush->resizable(0);
   airbrush->end();
 
+  // crop
+  crop = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  crop->label("Crop");
+  crop->labelsize(12);
+  crop->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  crop->box(FL_UP_BOX);
+  crop->resizable(0);
+  crop->end();
+
+  // getcolor
+  getcolor = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  getcolor->label("Get Color");
+  getcolor->labelsize(12);
+  getcolor->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  getcolor->box(FL_UP_BOX);
+  getcolor->resizable(0);
+  getcolor->end();
+
+  // offset
+  offset = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  offset->label("Offset");
+  offset->labelsize(12);
+  offset->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  offset->box(FL_UP_BOX);
+  offset->resizable(0);
+  offset->end();
+
   // right
   right = new Fl_Group(window->w() - 112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
   right->label("Colors");

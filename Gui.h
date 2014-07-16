@@ -44,6 +44,9 @@ public:
   Fl_Group *tools;
   Fl_Group *paint;
   Fl_Group *airbrush;
+  Fl_Group *crop;
+  Fl_Group *getcolor;
+  Fl_Group *offset;
   Fl_Group *right;
   Fl_Group *bottom;
   Fl_Group *middle;

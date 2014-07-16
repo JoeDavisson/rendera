@@ -201,9 +201,9 @@ void check_tool(Widget *widget, void *var)
 
   gui->paint->hide();
   gui->airbrush->hide();
-//  gui->crop->hide();
-//  gui->getcolor->hide();
-//  gui->offset->hide();
+  gui->crop->hide();
+  gui->getcolor->hide();
+  gui->offset->hide();
 
   switch(*(int *)var)
   {
@@ -221,15 +221,15 @@ void check_tool(Widget *widget, void *var)
       break;
     case 2:
       gui->view->tool = Tool::crop;
-//      gui->crop->show();
+      gui->crop->show();
       break;
     case 3:
       gui->view->tool = Tool::getcolor;
-//      gui->view->getcolor->show();
+      gui->getcolor->show();
       break;
     case 4:
       gui->view->tool = Tool::offset;
-//      gui->offset->show();
+      gui->offset->show();
       break;
   }
 }
