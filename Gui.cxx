@@ -168,35 +168,58 @@ Gui::Gui()
   tools->resizable(0);
   tools->end();
 
-  // options
-  options = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
-  options->label("Brush");
-  options->labelsize(12);
-  options->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  options->box(FL_UP_BOX);
+  // paint
+  paint = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  paint->label("Paint");
+  paint->labelsize(12);
+  paint->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  paint->box(FL_UP_BOX);
   y1 = 20;
-  brush = new Widget(options, 8, y1, 96, 96, "Brush Preview", 0, 0);
-  brush->bitmap->clear(makecol(255, 255, 255));
-  brush->bitmap->setpixel_solid(48, 48, makecol(0, 0, 0), 0);
+  paint_brush = new Widget(paint, 8, y1, 96, 96, "Brush Preview", 0, 0);
+  paint_brush->bitmap->clear(makecol(255, 255, 255));
+  paint_brush->bitmap->setpixel_solid(48, 48, makecol(0, 0, 0), 0);
   y1 += 96 + 8;
-  size = new Widget(options, 8, y1, 96, 24, "Size", "data/size.png", 6, 24);
-  size->callback((Fl_Callback *)check_size, &size->var);
+  paint_size = new Widget(paint, 8, y1, 96, 24, "Size", "data/size.png", 6, 24);
+  paint_size->callback((Fl_Callback *)check_paint_size, &paint_size->var);
   y1 += 24 + 8;
-  stroke = new Widget(options, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24);
-  stroke->callback((Fl_Callback *)check_stroke, &stroke->var);
+  paint_stroke = new Widget(paint, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24);
+  paint_stroke->callback((Fl_Callback *)check_paint_stroke, &paint_stroke->var);
   y1 += 48 + 8;
-  shape = new Widget(options, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24);
+  paint_shape = new Widget(paint, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24);
   // use same callback as size here
-  shape->callback((Fl_Callback *)check_size, &size->var);
+  paint_shape->callback((Fl_Callback *)check_paint_size, &paint_size->var);
+  paint->resizable(0);
+  paint->end();
+
+  // airbrush
+  airbrush = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  airbrush->label("Airbrush");
+  airbrush->labelsize(12);
+  airbrush->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  airbrush->box(FL_UP_BOX);
+  y1 = 20;
+  airbrush_brush = new Widget(airbrush, 8, y1, 96, 96, "Brush Preview", 0, 0);
+  airbrush_brush->bitmap->clear(makecol(255, 255, 255));
+  airbrush_brush->bitmap->setpixel_solid(48, 48, makecol(0, 0, 0), 0);
+  y1 += 96 + 8;
+  airbrush_size = new Widget(airbrush, 8, y1, 96, 24, "Size", "data/size.png", 6, 24);
+  airbrush_size->callback((Fl_Callback *)check_airbrush_size, &airbrush_size->var);
   y1 += 24 + 8;
-  edge = new Widget(options, 8, y1, 96, 24, "Soft Edge", "data/edge.png", 8, 24);
-  edge->callback((Fl_Callback *)check_edge, &edge->var);
-  y1 += 24 + 8;
-  smooth = new Widget(options, 8, y1, 96, 48, "Coarse/Fine", "data/smooth.png", 48, 48);
+  airbrush_stroke = new Widget(airbrush, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24);
+  airbrush_stroke->callback((Fl_Callback *)check_airbrush_stroke, &airbrush_stroke->var);
   y1 += 48 + 8;
-  smooth->callback((Fl_Callback *)check_smooth, &smooth->var);
-  options->resizable(0);
-  options->end();
+  airbrush_shape = new Widget(airbrush, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24);
+  // use same callback as size here
+  airbrush_shape->callback((Fl_Callback *)check_airbrush_size, &airbrush_size->var);
+  y1 += 24 + 8;
+  airbrush_edge = new Widget(airbrush, 8, y1, 96, 24, "Soft Edge", "data/edge.png", 8, 24);
+  airbrush_edge->callback((Fl_Callback *)check_airbrush_edge, &airbrush_edge->var);
+  y1 += 24 + 8;
+  airbrush_smooth = new Widget(airbrush, 8, y1, 96, 48, "Coarse/Fine", "data/smooth.png", 48, 48);
+  y1 += 48 + 8;
+  airbrush_smooth->callback((Fl_Callback *)check_airbrush_smooth, &airbrush_smooth->var);
+  airbrush->resizable(0);
+  airbrush->end();
 
   // right
   right = new Fl_Group(window->w() - 112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
@@ -250,13 +273,17 @@ Gui::Gui()
   // container for left panels
   group_left = new Fl_Group(0, top_right->h() + menubar->h(), 224, window->h() - (menubar->h() + top_right->h() + bottom->h()));
   group_left->add(tools);
-  group_left->add(options);
+  group_left->add(paint);
+  group_left->add(airbrush);
 //  group_left->resizable(tools);
 //  group_left->resizable(options);
   group_left->end();
 
   //group_main->resizable(view);
   //group_main->end();
+
+  paint->show();
+  airbrush->hide();
 
   window->size_range(640, 480, 0, 0, 0, 0, 0);
   window->resizable(view);

@@ -30,6 +30,9 @@ public:
   Tool();
   virtual ~Tool();
 
+  // reset tool
+  void reset();
+
   // called when mouse button is initially pressed
   virtual void push(View *) = 0;
 
@@ -48,6 +51,13 @@ public:
   int beginx, beginy, lastx, lasty;
   int started;
   int active;
+
+  // static vars
+  static Tool *paint;
+  static Tool *airbrush;
+  static Tool *crop;
+  static Tool *getcolor;
+  static Tool *offset;
 };
 
 #endif

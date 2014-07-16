@@ -65,7 +65,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   gridy = 8;
   oldimgx = 0;
   oldimgy = 0;
-  tool = (Tool *)new Paint();
+  tool = (Tool *)Tool::paint;
 
   // try to detect pixelformat (almost always RGB or BGR)
   if(fl_visual->visual->blue_mask == 0xFF)
@@ -110,14 +110,13 @@ int View::handle(int event)
     case FL_ENTER:
       switch(gui->tool->var)
       {
-        case 0:
+        case 2:
         case 3:
+        case 4:
+          window()->cursor(FL_CURSOR_CROSS);
+          break;
         default:
           window()->cursor(FL_CURSOR_DEFAULT);
-          break;
-        case 1:
-        case 2:
-          window()->cursor(FL_CURSOR_CROSS);
           break;
       }
       return 1;

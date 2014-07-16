@@ -20,15 +20,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+Tool *Tool::paint;
+Tool *Tool::airbrush;
+Tool *Tool::crop;
+Tool *Tool::getcolor;
+Tool *Tool::offset;
+
 Tool::Tool()
 {
   stroke = new Stroke();
-  started = 0;
-  active = 0;
+  reset();
 }
 
 Tool::~Tool()
 {
   delete stroke;
+}
+
+void Tool::reset()
+{
+  started = 0;
+  active = 0;
 }
 

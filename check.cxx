@@ -144,59 +144,92 @@ void check_gridy(Field *field, void *var)
   gui->view->draw_main(1);
 }
 
-void check_size(Widget *widget, void *var)
+void check_paint_size(Widget *widget, void *var)
 {
   Brush *brush = Brush::main;
 
   int size = brush_sizes[*(int *)var];
-  int shape = gui->shape->var;
+  int shape = gui->paint_shape->var;
 
   brush->make(shape, size);
-  gui->brush->bitmap->clear(makecol(255, 255, 255));
+  gui->paint_brush->bitmap->clear(makecol(255, 255, 255));
   int i;
   for(i = 0; i < Brush::main->solid_count; i++)
-    gui->brush->bitmap->setpixel_solid(48 + brush->solidx[i], 48 + brush->solidy[i], makecol(0, 0, 0), 0);
-  gui->brush->redraw();
+    gui->paint_brush->bitmap->setpixel_solid(48 + brush->solidx[i], 48 + brush->solidy[i], makecol(0, 0, 0), 0);
+  gui->paint_brush->redraw();
 }
 
-void check_stroke(Widget *widget, void *var)
+void check_paint_stroke(Widget *widget, void *var)
 {
   gui->view->tool->stroke->type = *(int *)var;
 }
 
-void check_edge(Widget *widget, void *var)
+void check_airbrush_size(Widget *widget, void *var)
+{
+  Brush *brush = Brush::main;
+
+  int size = brush_sizes[*(int *)var];
+  int shape = gui->airbrush_shape->var;
+
+  brush->make(shape, size);
+  gui->airbrush_brush->bitmap->clear(makecol(255, 255, 255));
+  int i;
+  for(i = 0; i < Brush::main->solid_count; i++)
+    gui->airbrush_brush->bitmap->setpixel_solid(48 + brush->solidx[i], 48 + brush->solidy[i], makecol(0, 0, 0), 0);
+  gui->airbrush_brush->redraw();
+}
+
+void check_airbrush_stroke(Widget *widget, void *var)
+{
+  gui->view->tool->stroke->type = *(int *)var;
+}
+
+void check_airbrush_edge(Widget *widget, void *var)
 {
   Brush::main->edge = *(int *)var;
 }
 
-void check_smooth(Widget *widget, void *var)
+void check_airbrush_smooth(Widget *widget, void *var)
 {
   Brush::main->smooth = *(int *)var;
 }
 
 void check_tool(Widget *widget, void *var)
 {
-  if(gui->view->tool_started)
+  if(gui->view->tool->started)
     return;
 
-  delete gui->view->tool;
+  gui->paint->hide();
+  gui->airbrush->hide();
+//  gui->crop->hide();
+//  gui->getcolor->hide();
+//  gui->offset->hide();
 
   switch(*(int *)var)
   {
     case 0:
-      gui->view->tool = new Paint();
+      gui->view->tool = Tool::paint;
+      gui->paint_brush->do_callback();
+      gui->paint_shape->do_callback();
+      gui->paint->show();
       break;
     case 1:
-      gui->view->tool = new Airbrush();
+      gui->view->tool = Tool::airbrush;
+      gui->airbrush_brush->do_callback();
+      gui->airbrush_shape->do_callback();
+      gui->airbrush->show();
       break;
     case 2:
-      gui->view->tool = new Crop();
+      gui->view->tool = Tool::crop;
+//      gui->crop->show();
       break;
     case 3:
-      gui->view->tool = new GetColor();
+      gui->view->tool = Tool::getcolor;
+//      gui->view->getcolor->show();
       break;
     case 4:
-      gui->view->tool = new Offset();
+      gui->view->tool = Tool::offset;
+//      gui->offset->show();
       break;
   }
 }

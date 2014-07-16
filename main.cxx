@@ -47,6 +47,12 @@ int main(int argc, char **argv)
 
   dialog = new Dialog();
 
+  Tool::paint = new Paint();
+  Tool::airbrush = new Airbrush();
+  Tool::crop = new Crop();
+  Tool::getcolor = new GetColor();
+  Tool::offset = new Offset();
+
   gui = new Gui();
 
   // initialize some things

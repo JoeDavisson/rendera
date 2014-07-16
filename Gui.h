@@ -42,7 +42,8 @@ public:
   Fl_Group *top_left;
   Fl_Group *top_right;
   Fl_Group *tools;
-  Fl_Group *options;
+  Fl_Group *paint;
+  Fl_Group *airbrush;
   Fl_Group *right;
   Fl_Group *bottom;
   Fl_Group *middle;
@@ -60,16 +61,21 @@ public:
   Field *gridx;
   Field *gridy;
 
-  // left top
-  Widget *brush;
-  Widget *size;
-  Widget *stroke;
-  Widget *shape;
-  Widget *edge;
-  Widget *smooth;
-
-  // left bottom
+  // tools
   Widget *tool;
+
+  // options
+  Widget *paint_brush;
+  Widget *paint_size;
+  Widget *paint_stroke;
+  Widget *paint_shape;
+
+  Widget *airbrush_brush;
+  Widget *airbrush_size;
+  Widget *airbrush_stroke;
+  Widget *airbrush_shape;
+  Widget *airbrush_edge;
+  Widget *airbrush_smooth;
 
   // right
   Widget *palette;

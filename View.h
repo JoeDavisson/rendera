@@ -67,7 +67,6 @@ public:
   int lastbx, lastby, lastbw, lastbh;
   float aspect, winaspect;
   int bgr_order;
-  int tool_started;
   int button;
   int button1, button2, button3;
   int dclick;
