@@ -359,6 +359,7 @@ void Airbrush::push(View *view)
       Blend::set(0);
       view->moving = 0;
       view->draw_main(1);
+      return;
     }
     else
     {
