@@ -212,7 +212,7 @@ Gui::Gui()
   // use same callback as size here
   airbrush_shape->callback((Fl_Callback *)check_airbrush_size, &airbrush_size->var);
   y1 += 24 + 8;
-  airbrush_edge = new Widget(airbrush, 8, y1, 96, 24, "Soft Edge", "data/edge.png", 8, 24);
+  airbrush_edge = new Widget(airbrush, 8, y1, 96, 24, "Soft Edge", "data/soft_edge.png", 12, 24);
   airbrush_edge->callback((Fl_Callback *)check_airbrush_edge, &airbrush_edge->var);
   y1 += 24 + 8;
   airbrush_smooth = new Widget(airbrush, 8, y1, 96, 48, "Coarse/Fine", "data/smooth.png", 48, 48);
@@ -223,7 +223,7 @@ Gui::Gui()
 
   // pixelart
   pixelart = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
-  pixelart->label("PixelArt");
+  pixelart->label("Pixel Art");
   pixelart->labelsize(12);
   pixelart->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   pixelart->box(FL_UP_BOX);
