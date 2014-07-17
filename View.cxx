@@ -35,14 +35,21 @@ static inline void grid_setpixel(const Bitmap *bmp, const int x, const int y,
 static inline void grid_hline(Bitmap *bmp, int x1, int y, int x2,
                               const int c, const int t)
 {
-  int x;
+  if(y < 0 || y >= bmp->h)
+    return;
 
   if(x1 < 0)
     x1 = 0;
-  if(y < 0)
-    y = 0;
+  if(x1 > bmp->w - 1)
+    x1 = bmp->w - 1;
+  if(x2 < 0)
+    x2 = 0;
+  if(x2 > bmp->w - 1)
+    x2 = bmp->w - 1;
 
   int *p = bmp->row[y] + x1;
+
+  int x;
 
   for(x = x1; x <= x2; x++)
   {
