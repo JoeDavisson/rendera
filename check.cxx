@@ -211,7 +211,7 @@ void check_pixelart_brush(Widget *widget, void *var)
     {
       if(widget->bitmap->getpixel(xpos + x, ypos + y) == makecol(0, 0, 0))
       {
-        map->setpixel(40 + x, 40 + y, 255);
+        map->setpixel(41 + x, 41 + y, 255);
       }
     }
   }
@@ -252,8 +252,9 @@ void check_pixelart_stroke(Widget *widget, void *var)
 
 void check_tool(Widget *widget, void *var)
 {
-  if(gui->view->tool->started)
-    return;
+//  if(gui->view->tool->started)
+//    return;
+  gui->view->tool->reset();
 
   gui->paint->hide();
   gui->airbrush->hide();
@@ -278,6 +279,7 @@ void check_tool(Widget *widget, void *var)
       break;
     case 2:
       gui->view->tool = Tool::pixelart;
+      gui->pixelart_brush->do_callback();
       gui->pixelart->show();
       break;
     case 3:
