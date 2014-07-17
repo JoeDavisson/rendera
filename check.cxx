@@ -426,9 +426,9 @@ void hide_about()
 void show_new_image()
 {
   char s[8];
-  snprintf(s, sizeof(s), "%d", Bitmap::main->w - 64);
+  snprintf(s, sizeof(s), "%d", Bitmap::main->w - Bitmap::main->overscroll * 2);
   dialog->new_image_width->value(s);
-  snprintf(s, sizeof(s), "%d", Bitmap::main->h - 64);
+  snprintf(s, sizeof(s), "%d", Bitmap::main->h - Bitmap::main->overscroll * 2);
   dialog->new_image_height->value(s);
   dialog->new_image->show();
 }
@@ -470,11 +470,10 @@ void hide_new_image()
 
   dialog->new_image->hide();
 
-  w += 64;
-  h += 64;
-
   delete Bitmap::main;
   int overscroll = Bitmap::overscroll;
+  w += overscroll * 2;
+  h += overscroll * 2;
   Bitmap::main = new Bitmap(w, h);
   Bitmap::main->clear(makecol(0, 0, 0));
   Bitmap::main->set_clip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
