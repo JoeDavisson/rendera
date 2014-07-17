@@ -21,6 +21,8 @@ void check_airbrush_size(Widget *, void *);
 void check_airbrush_stroke(Widget *, void *);
 void check_airbrush_edge(Widget *, void *);
 void check_airbrush_smooth(Widget *, void *);
+void check_pixelart_brush(Widget *, void *);
+void check_pixelart_stroke(Widget *, void *);
 void check_tool(Widget *, void *);
 void check_color(Widget *, void *);
 void check_wrap(Widget *, void *);

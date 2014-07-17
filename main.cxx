@@ -49,6 +49,7 @@ int main(int argc, char **argv)
 
   Tool::paint = new Paint();
   Tool::airbrush = new Airbrush();
+  Tool::pixelart = new PixelArt();
   Tool::crop = new Crop();
   Tool::getcolor = new GetColor();
   Tool::offset = new Offset();

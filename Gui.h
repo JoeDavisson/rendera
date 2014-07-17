@@ -44,6 +44,7 @@ public:
   Fl_Group *tools;
   Fl_Group *paint;
   Fl_Group *airbrush;
+  Fl_Group *pixelart;
   Fl_Group *crop;
   Fl_Group *getcolor;
   Fl_Group *offset;
@@ -79,6 +80,10 @@ public:
   Widget *airbrush_shape;
   Widget *airbrush_edge;
   Widget *airbrush_smooth;
+
+  Widget *pixelart_brush;
+  Widget *pixelart_stroke;
+  Widget *pixelart_pattern;
 
   Field *crop_x;
   Field *crop_y;

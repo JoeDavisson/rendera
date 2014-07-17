@@ -18,29 +18,24 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#ifndef PIXELART_H
+#define PIXELART_H
+
 #include "rendera.h"
 
-Tool *Tool::paint;
-Tool *Tool::airbrush;
-Tool *Tool::pixelart;
-Tool *Tool::crop;
-Tool *Tool::getcolor;
-Tool *Tool::offset;
-
-Tool::Tool()
+class PixelArt : public Tool
 {
-  stroke = new Stroke();
-  reset();
-}
+public:
+  PixelArt();
+  virtual ~PixelArt();
 
-Tool::~Tool()
-{
-  delete stroke;
-}
+  virtual void render();
 
-void Tool::reset()
-{
-  started = 0;
-  active = 0;
-}
+  virtual void push(View *);
+  virtual void drag(View *);
+  virtual void release(View *);
+  virtual void move(View *);
+};
+
+#endif
 

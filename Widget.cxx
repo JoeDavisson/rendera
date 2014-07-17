@@ -30,6 +30,28 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, const
   stepy = sy;
   group = g;
   png_image = new Fl_PNG_Image(filename);
+
+  // copy image to internal format so we can access pixels if needed
+  bitmap = new Bitmap(png_image->w(), png_image->h());
+  int i;
+  int index = 0;
+
+  int xx, yy;
+
+  const unsigned char *p = png_image->array;
+
+  for(yy = 0; yy < png_image->h(); yy++)
+  {
+    for(xx = 0; xx < png_image->w(); xx++)
+    {
+      int r = *p++;
+      int g = *p++;
+      int b = *p++;
+
+      bitmap->data[index++] = makecol(r, g, b);
+    }
+  }
+
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
   redraw();

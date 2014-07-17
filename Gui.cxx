@@ -162,7 +162,7 @@ Gui::Gui()
   tools->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   tools->box(FL_UP_BOX);
   y1 = 20;
-  tool = new Widget(tools, 8, y1, 96, 120, "Tools", "data/tools.png", 96, 24);
+  tool = new Widget(tools, 8, y1, 96, 144, "Tools", "data/tools.png", 96, 24);
   tool->callback((Fl_Callback *)check_tool, &tool->var);
   y1 += 96 + 8;
   tools->resizable(0);
@@ -220,6 +220,22 @@ Gui::Gui()
   airbrush_smooth->callback((Fl_Callback *)check_airbrush_smooth, &airbrush_smooth->var);
   airbrush->resizable(0);
   airbrush->end();
+
+  // pixelart
+  pixelart = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  pixelart->label("PixelArt");
+  pixelart->labelsize(12);
+  pixelart->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  pixelart->box(FL_UP_BOX);
+  y1 = 20;
+  pixelart_brush = new Widget(pixelart, 8, y1, 96, 96, "Brush Shape", "data/tiny.png", 16, 16);
+  pixelart_brush->callback((Fl_Callback *)check_pixelart_brush, &pixelart_brush->var);
+  y1 += 96 + 8;
+  pixelart_stroke = new Widget(pixelart, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24);
+  pixelart_stroke->callback((Fl_Callback *)check_pixelart_stroke, &pixelart_stroke->var);
+  y1 += 48 + 8;
+  pixelart->resizable(0);
+  pixelart->end();
 
   // crop
   crop = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());

@@ -55,6 +55,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Tool.h"
 #include "Paint.h"
 #include "Airbrush.h"
+#include "PixelArt.h"
 #include "Offset.h"
 #include "GetColor.h"
 #include "Crop.h"

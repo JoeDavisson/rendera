@@ -194,6 +194,62 @@ void check_airbrush_smooth(Widget *widget, void *var)
   Brush::main->smooth = *(int *)var;
 }
 
+void check_pixelart_brush(Widget *widget, void *var)
+{
+  int xpos = *(int *)var % 6;
+  int ypos = *(int *)var / 6;
+  xpos *= 16;
+  ypos *= 16;
+  int x, y;
+
+  Map *map = new Map(96, 96);
+  map->clear(0);
+
+  for(y = 0; y < 16; y++)
+  {
+    for(x = 0; x < 16; x++)
+    {
+      if(widget->bitmap->getpixel(xpos + x, ypos + y) == makecol(0, 0, 0))
+      {
+        map->setpixel(40 + x, 40 + y, 255);
+      }
+    }
+  }
+
+  Brush::main->solid_count = 0;
+  Brush::main->hollow_count = 0;
+
+  for(y = 0; y < 96; y++)
+  {
+    for(x = 0; x < 96; x++)
+    {
+      if(map->getpixel(x, y))
+      {
+        Brush::main->solidx[Brush::main->solid_count] = x - 48;
+        Brush::main->solidy[Brush::main->solid_count] = y - 48;
+        Brush::main->hollowx[Brush::main->hollow_count] = x - 48;
+        Brush::main->hollowy[Brush::main->hollow_count] = y - 48;
+        Brush::main->solid_count++;
+        Brush::main->hollow_count++;
+      }
+    }
+  }
+
+  Brush::main->size = 16;
+
+  delete map;
+
+//  gui->paint_brush->bitmap->clear(makecol(255, 255, 255));
+//  int i;
+//  for(i = 0; i < Brush::main->solid_count; i++)
+//    gui->paint_brush->bitmap->setpixel_solid(48 + brush->solidx[i], 48 + brush->solidy[i], makecol(0, 0, 0), 0);
+}
+
+void check_pixelart_stroke(Widget *widget, void *var)
+{
+  gui->view->tool->stroke->type = *(int *)var;
+}
+
 void check_tool(Widget *widget, void *var)
 {
   if(gui->view->tool->started)
@@ -201,6 +257,7 @@ void check_tool(Widget *widget, void *var)
 
   gui->paint->hide();
   gui->airbrush->hide();
+  gui->pixelart->hide();
   gui->crop->hide();
   gui->getcolor->hide();
   gui->offset->hide();
@@ -220,14 +277,18 @@ void check_tool(Widget *widget, void *var)
       gui->airbrush->show();
       break;
     case 2:
+      gui->view->tool = Tool::pixelart;
+      gui->pixelart->show();
+      break;
+    case 3:
       gui->view->tool = Tool::crop;
       gui->crop->show();
       break;
-    case 3:
+    case 4:
       gui->view->tool = Tool::getcolor;
       gui->getcolor->show();
       break;
-    case 4:
+    case 5:
       gui->view->tool = Tool::offset;
       gui->offset->show();
       break;
