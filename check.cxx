@@ -475,7 +475,7 @@ void hide_new_image()
   w += overscroll * 2;
   h += overscroll * 2;
   Bitmap::main = new Bitmap(w, h);
-  Bitmap::main->clear(makecol(0, 0, 0));
+  Bitmap::main->clear(makecol(128, 128, 128));
   Bitmap::main->set_clip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
   Bitmap::main->rectfill(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1, makecol(255, 255, 255), 0);
 
