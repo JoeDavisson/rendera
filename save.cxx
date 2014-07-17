@@ -33,7 +33,7 @@ static inline void write_uint32(uint32_t num, FILE *out)
   #endif
 }
 
-/*
+
 static int file_exists(const char *s)
 {
   FILE *temp = fopen(s, "r");
@@ -43,13 +43,10 @@ static int file_exists(const char *s)
     fclose(temp);
     return 1;
   }
-  else
-  {
-    fclose(temp);
-    return 0;
-  }
+
+  return 0;
 }
-*/
+
 
 void save(Fl_Widget *, void *)
 {
@@ -77,14 +74,12 @@ void save(Fl_Widget *, void *)
     p--;
   }
 
-/*
   if(file_exists(fn))
   {
     fl_message_title("Replace File?");
-    if(fl_choice("Replace File?", "No", "Yes", NULL) == 1)
+    if(fl_choice("Replace File?", "No", "Yes", NULL) == 0)
       return;
   }
-*/
   
   if(strcasecmp(ext, ".bmp") == 0)
     save_bmp(fn);
