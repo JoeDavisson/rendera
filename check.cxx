@@ -23,8 +23,8 @@ void update_color(int c)
   int mx = 48 + 40 * cosf(angle);
   int my = 48 + 40 * sinf(angle);
   gui->hue->var = mx + 96 * my;
-  gui->sat->var = s / 2.684f;
-  gui->val->var = v / 2.684f;
+  gui->sat->var = s / 2.685;
+  gui->val->var = v / 2.685;
 
   gui->hue->do_callback();
 
@@ -279,11 +279,39 @@ void check_pixelart_invert(Widget *widget, void *var)
   PixelArt::invert = *(int *)var;  
 }
 
+void check_stump_size(Widget *widget, void *var)
+{
+  Brush *brush = Brush::main;
+
+  int size = brush_sizes[*(int *)var];
+  int shape = gui->stump_shape->var;
+
+  brush->make(shape, size);
+  gui->stump_brush->bitmap->clear(makecol(255, 255, 255));
+  int i;
+  for(i = 0; i < Brush::main->solid_count; i++)
+    gui->stump_brush->bitmap->setpixel_solid(48 + brush->solidx[i], 48 + brush->solidy[i], makecol(0, 0, 0), 0);
+  gui->stump_brush->redraw();
+}
+
+void check_stump_stroke(Widget *widget, void *var)
+{
+  gui->view->tool->stroke->type = *(int *)var;
+}
+
+void check_stump_amount(Widget *widget, void *var)
+{ 
+  gui->view->tool->amount = 255 - *(int *)var * 2.685;
+  if(gui->view->tool->amount > 252)
+    gui->view->tool->amount = 252;
+}
+
 void check_tool(Widget *widget, void *var)
 {
   gui->paint->hide();
   gui->airbrush->hide();
   gui->pixelart->hide();
+  gui->stump->hide();
   gui->crop->hide();
   gui->getcolor->hide();
   gui->offset->hide();
@@ -309,20 +337,27 @@ void check_tool(Widget *widget, void *var)
       gui->pixelart->show();
       break;
     case 3:
+      gui->view->tool = Tool::stump;
+      gui->stump_brush->do_callback();
+      gui->stump_shape->do_callback();
+      gui->stump_amount->do_callback();
+      gui->stump->show();
+      break;
+    case 4:
       gui->view->tool = Tool::crop;
       gui->crop->show();
       break;
-    case 4:
+    case 5:
       gui->view->tool = Tool::getcolor;
       gui->getcolor->show();
       break;
-    case 5:
+    case 6:
       gui->view->tool = Tool::offset;
       gui->offset->show();
       break;
   }
 
-  gui->view->tool->reset();
+//  gui->view->tool->reset();
 }
 
 void check_color(Widget *widget, void *var)
@@ -332,15 +367,15 @@ void check_color(Widget *widget, void *var)
   int my = pos / 96;
 
   float mouse_angle = atan2f(my - 48, mx - 48);
-  int h = ((int)(mouse_angle * 244.46f) + 1536) % 1536;
-  int s = gui->sat->var * 2.684f;
-  int v = gui->val->var * 2.684f;
+  int h = ((int)(mouse_angle * 244.46) + 1536) % 1536;
+  int s = gui->sat->var * 2.685;
+  int v = gui->val->var * 2.685;
 
   int r, g, b;
 
   Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
   Brush::main->color = makecol(r, g, b);
-  Brush::main->trans = gui->trans->var * 2.685f;
+  Brush::main->trans = gui->trans->var * 2.685;
   Brush::main->blend = gui->blend->var;
 
   int i;
@@ -373,9 +408,9 @@ void check_color(Widget *widget, void *var)
 
   for(i = 0; i < 96; i++)
   {
-    Blend::hsv_to_rgb(h, i * 2.685f, v, &r, &g, &b);
+    Blend::hsv_to_rgb(h, i * 2.685, v, &r, &g, &b);
     gui->sat->bitmap->vline(0, i, 23, makecol(r, g, b), 0);
-    Blend::hsv_to_rgb(h, s, i * 2.685f, &r, &g, &b);
+    Blend::hsv_to_rgb(h, s, i * 2.685, &r, &g, &b);
     gui->val->bitmap->vline(0, i, 23, makecol(r, g, b), 0);
   }
 

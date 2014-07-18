@@ -162,7 +162,7 @@ Gui::Gui()
   tools->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   tools->box(FL_UP_BOX);
   y1 = 20;
-  tool = new Widget(tools, 8, y1, 96, 144, "Tools", "data/tools.png", 96, 24);
+  tool = new Widget(tools, 8, y1, 96, 168, "Tools", "data/tools.png", 96, 24);
   tool->callback((Fl_Callback *)check_tool, &tool->var);
   y1 += 96 + 8;
   tools->resizable(0);
@@ -186,7 +186,6 @@ Gui::Gui()
   paint_stroke->callback((Fl_Callback *)check_paint_stroke, &paint_stroke->var);
   y1 += 48 + 8;
   paint_shape = new Widget(paint, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24);
-  // use same callback as size here
   paint_shape->callback((Fl_Callback *)check_paint_size, &paint_size->var);
   paint->resizable(0);
   paint->end();
@@ -209,7 +208,6 @@ Gui::Gui()
   airbrush_stroke->callback((Fl_Callback *)check_airbrush_stroke, &airbrush_stroke->var);
   y1 += 48 + 8;
   airbrush_shape = new Widget(airbrush, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24);
-  // use same callback as size here
   airbrush_shape->callback((Fl_Callback *)check_airbrush_size, &airbrush_size->var);
   y1 += 24 + 8;
   airbrush_edge = new Widget(airbrush, 8, y1, 96, 24, "Soft Edge", "data/soft_edge.png", 12, 24);
@@ -243,6 +241,30 @@ Gui::Gui()
   pixelart_invert->callback((Fl_Callback *)check_pixelart_invert, &pixelart_invert->var);
   pixelart->resizable(0);
   pixelart->end();
+
+  // stump
+  stump = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  stump->label("Stump");
+  stump->labelsize(12);
+  stump->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  stump->box(FL_UP_BOX);
+  y1 = 20;
+  stump_brush = new Widget(stump, 8, y1, 96, 96, "Brush Preview", 0, 0);
+  stump_brush->bitmap->clear(makecol(255, 255, 255));
+  stump_brush->bitmap->setpixel_solid(48, 48, makecol(0, 0, 0), 0);
+  y1 += 96 + 8;
+  stump_size = new Widget(stump, 8, y1, 96, 24, "Size", "data/size.png", 6, 24);
+  stump_size->callback((Fl_Callback *)check_stump_size, &stump_size->var);
+  y1 += 24 + 8;
+  stump_stroke = new Widget(stump, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24);
+  stump_stroke->callback((Fl_Callback *)check_stump_stroke, &stump_stroke->var);
+  y1 += 48 + 8;
+  stump_shape = new Widget(stump, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24);
+  stump_shape->callback((Fl_Callback *)check_stump_size, &stump_size->var);
+  stump_amount = new Widget(stump, 8, y1, 96, 24, "Amount", "data/amount.png", 1, 24);
+  stump_amount->callback((Fl_Callback *)check_stump_amount, &stump_amount->var);
+  stump->resizable(0);
+  stump->end();
 
   // crop
   crop = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
@@ -339,24 +361,11 @@ Gui::Gui()
   group_left->add(paint);
   group_left->add(airbrush);
   group_left->add(pixelart);
+  group_left->add(stump);
   group_left->add(crop);
   group_left->add(getcolor);
   group_left->add(offset);
   group_left->end();
-
-  //group_main->resizable(view);
-  //group_main->end();
-
-/*
-  tool->show();
-  airbrush->hide();
-  airbrush->hide();
-  airbrush->hide();
-  airbrush->hide();
-  airbrush->hide();
-  airbrush->hide();
-  airbrush->hide();
-*/
 
   window->size_range(640, 480, 0, 0, 0, 0, 0);
   window->resizable(view);

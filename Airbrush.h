@@ -41,6 +41,7 @@ public:
   virtual void release(View *);
   virtual void move(View *);
 
+private:
   int render_pos, render_end, render_count;
   float soft_trans, soft_step;
 };

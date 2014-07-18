@@ -45,6 +45,7 @@ public:
   Fl_Group *paint;
   Fl_Group *airbrush;
   Fl_Group *pixelart;
+  Fl_Group *stump;
   Fl_Group *crop;
   Fl_Group *getcolor;
   Fl_Group *offset;
@@ -86,6 +87,12 @@ public:
   Widget *pixelart_pattern;
   ToggleButton *pixelart_lock;
   ToggleButton *pixelart_invert;
+
+  Widget *stump_brush;
+  Widget *stump_size;
+  Widget *stump_stroke;
+  Widget *stump_shape;
+  Widget *stump_amount;
 
   Field *crop_x;
   Field *crop_y;
