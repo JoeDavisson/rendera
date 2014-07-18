@@ -3,7 +3,8 @@
 extern Dialog *dialog;
 extern Gui *gui;
 
-static int brush_sizes[16] = {
+static int brush_sizes[16] =
+{
   1, 2, 3, 4, 8, 12, 16, 24,
   32, 40, 48, 56, 64, 72, 80, 88
 };
@@ -250,12 +251,36 @@ void check_pixelart_stroke(Widget *widget, void *var)
   gui->view->tool->stroke->type = *(int *)var;
 }
 
+void check_pixelart_pattern(Widget *widget, void *var)
+{
+  int x, y;
+  int xpos = *(int *)var % 3;
+  int ypos = *(int *)var / 3;
+
+  xpos *= 32;
+  ypos *= 32;
+
+  for(y = 0; y < 8; y++)
+  {
+    for(x = 0; x < 8; x++)
+    {
+      PixelArt::pattern->setpixel(x, y, widget->bitmap->getpixel(xpos + x * 4, ypos + y * 4), 0);
+    }
+  }
+}
+
+void check_pixelart_lock(Widget *widget, void *var)
+{
+  PixelArt::lock = *(int *)var;  
+}
+
+void check_pixelart_invert(Widget *widget, void *var)
+{
+  PixelArt::invert = *(int *)var;  
+}
+
 void check_tool(Widget *widget, void *var)
 {
-//  if(gui->view->tool->started)
-//    return;
-  gui->view->tool->reset();
-
   gui->paint->hide();
   gui->airbrush->hide();
   gui->pixelart->hide();
@@ -280,6 +305,7 @@ void check_tool(Widget *widget, void *var)
     case 2:
       gui->view->tool = Tool::pixelart;
       gui->pixelart_brush->do_callback();
+      gui->pixelart_pattern->do_callback();
       gui->pixelart->show();
       break;
     case 3:
@@ -295,6 +321,8 @@ void check_tool(Widget *widget, void *var)
       gui->offset->show();
       break;
   }
+
+  gui->view->tool->reset();
 }
 
 void check_color(Widget *widget, void *var)

@@ -35,6 +35,12 @@ public:
   virtual void drag(View *);
   virtual void release(View *);
   virtual void move(View *);
+
+  int patternx, patterny;
+
+  static Bitmap *pattern;
+  static int lock;
+  static int invert;
 };
 
 #endif

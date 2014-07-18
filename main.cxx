@@ -62,6 +62,7 @@ int main(int argc, char **argv)
 //  gui->val->var = 95;
 //  gui->hue->do_callback();
   Palette::main->draw(gui->palette);
+  gui->tool->do_callback();
   gui->palette->do_callback();
   check_zoom();
 

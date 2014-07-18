@@ -20,8 +20,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+Bitmap *PixelArt::pattern;
+int PixelArt::lock;
+int PixelArt::invert;
+
 PixelArt::PixelArt()
 {
+  PixelArt::pattern = new Bitmap(8, 8);
+  PixelArt::lock = 0;
+  PixelArt::invert = 0;
 }
 
 PixelArt::~PixelArt()
@@ -35,13 +42,26 @@ void PixelArt::render()
 
   int x, y;
 
+  int color = PixelArt::invert ? makecol(255, 255, 255) : makecol(0, 0, 0);
+
   for(y = stroke->y1; y <= stroke->y2; y++)
   {
     for(x = stroke->x1; x <= stroke->x2; x++)
     {
       int c = map->getpixel(x, y);
       if(c)
-        Bitmap::main->setpixel(x, y, brush->color, brush->trans);
+      {
+        if(PixelArt::lock)
+        {
+          if(PixelArt::pattern->getpixel(x & 7, y & 7) == color)
+            Bitmap::main->setpixel(x, y, brush->color, brush->trans);
+        }
+        else
+        {
+          if(PixelArt::pattern->getpixel((patternx + x) & 7, (patterny + y) & 7) == color)
+            Bitmap::main->setpixel(x, y, brush->color, brush->trans);
+        }
+      }
     }
   }
 }
@@ -69,6 +89,8 @@ void PixelArt::push(View *view)
   else
   {
     stroke->begin(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
+    patternx = view->imgx;
+    patterny = view->imgy;
   }
 
   stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);

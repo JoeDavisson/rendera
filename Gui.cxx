@@ -234,6 +234,13 @@ Gui::Gui()
   pixelart_stroke = new Widget(pixelart, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24);
   pixelart_stroke->callback((Fl_Callback *)check_pixelart_stroke, &pixelart_stroke->var);
   y1 += 48 + 8;
+  pixelart_pattern = new Widget(pixelart, 8, y1, 96, 192, "Pattern", "data/patterns.png", 32, 32);
+  pixelart_pattern->callback((Fl_Callback *)check_pixelart_pattern, &pixelart_pattern->var);
+  y1 += 192 + 8;
+  pixelart_lock = new ToggleButton(pixelart, 8, y1, 44, 44, "Lock Pattern", "data/lock.png");
+  pixelart_lock->callback((Fl_Callback *)check_pixelart_lock, &pixelart_lock->var);
+  pixelart_invert = new ToggleButton(pixelart, 8 + 44 + 8, y1, 44, 44, "Invert Pattern", "data/invert.png");
+  pixelart_invert->callback((Fl_Callback *)check_pixelart_invert, &pixelart_invert->var);
   pixelart->resizable(0);
   pixelart->end();
 
@@ -331,15 +338,25 @@ Gui::Gui()
   group_left->add(tools);
   group_left->add(paint);
   group_left->add(airbrush);
-//  group_left->resizable(tools);
-//  group_left->resizable(options);
+  group_left->add(pixelart);
+  group_left->add(crop);
+  group_left->add(getcolor);
+  group_left->add(offset);
   group_left->end();
 
   //group_main->resizable(view);
   //group_main->end();
 
-  paint->show();
+/*
+  tool->show();
   airbrush->hide();
+  airbrush->hide();
+  airbrush->hide();
+  airbrush->hide();
+  airbrush->hide();
+  airbrush->hide();
+  airbrush->hide();
+*/
 
   window->size_range(640, 480, 0, 0, 0, 0, 0);
   window->resizable(view);
@@ -348,7 +365,6 @@ Gui::Gui()
   Fl_Tooltip::enable(1);
   Fl_Tooltip::color(fl_rgb_color(192, 224, 248));
   Fl_Tooltip::textcolor(FL_BLACK);
-
 }
 
 Gui::~Gui()

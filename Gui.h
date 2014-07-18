@@ -84,6 +84,8 @@ public:
   Widget *pixelart_brush;
   Widget *pixelart_stroke;
   Widget *pixelart_pattern;
+  ToggleButton *pixelart_lock;
+  ToggleButton *pixelart_invert;
 
   Field *crop_x;
   Field *crop_y;
