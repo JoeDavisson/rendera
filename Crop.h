@@ -35,8 +35,10 @@ public:
   virtual void move(View *);
 
 private:
-  int crop_resize_started;
-  int crop_side;
+  int drag_started;
+  int resize_started;
+  int side;
+  int offset;
 };
 
 #endif

@@ -155,6 +155,8 @@ int View::handle(int event)
             break;
           }
       } 
+      oldimgx = imgx;
+      oldimgy = imgy;
       return 1;
     case FL_DRAG:
       take_focus();

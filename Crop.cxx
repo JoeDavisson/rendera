@@ -20,6 +20,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+static int inbox(int x, int y, int x1, int y1, int x2, int y2)
+{
+  if(x1 > x2)
+    SWAP(x1, x2);
+  if(y1 > y2)
+    SWAP(y1, y2);
+
+  if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
+    return 1;
+  else
+    return 0;
+}
+
 static void absrect(int *x1, int *y1, int *x2, int *y2)
 {
   if(*x1 > *x2)
@@ -39,8 +52,9 @@ static void absrect(int *x1, int *y1, int *x2, int *y2)
 
 Crop::Crop()
 {
-  crop_resize_started = 0;
-  crop_side = 0;
+  drag_started = 0;
+  resize_started = 0;
+  side = 0;
 }
 
 Crop::~Crop()
@@ -60,7 +74,8 @@ void Crop::push(View *view)
   }
   else if(started == 2)
   {
-    if(view->dclick)
+    if(view->dclick && inbox(view->imgx, view->imgy,
+                             beginx, beginy, lastx, lasty))
     {
       started = 0;
       absrect(&beginx, &beginy, &lastx, &lasty);
@@ -110,55 +125,83 @@ void Crop::drag(View *view)
   {
     Map::main->rect(beginx, beginy, lastx, lasty, 0);
 
-    if(crop_resize_started)
+    if(inbox(view->imgx, view->imgy, beginx, beginy, lastx, lasty))
     {
-      switch(crop_side)
+      int dx = view->imgx - view->oldimgx;
+      int dy = view->imgy - view->oldimgy;
+
+      int cl = Bitmap::main->cl;
+      int cr = Bitmap::main->cr;
+      int ct = Bitmap::main->ct;
+      int cb = Bitmap::main->cb;
+
+      if( (beginx + dx >= cl) && (beginx + dx <= cr) &&
+          (beginy + dy >= ct) && (beginy + dy <= cb) &&
+          (lastx + dx >= cl) && (lastx + dx <= cr) &&
+          (lasty + dy >= ct) && (lasty + dy <= cb) )
+      {
+        beginx += dx;
+        beginy += dy;
+        lastx += dx;
+        lasty += dy;
+
+        drag_started = 1;
+        resize_started = 0;
+      }
+    }
+    else if(!drag_started && resize_started)
+    {
+      switch(side)
       {
         case 0:
-          beginx = view->imgx;
+          beginx = view->imgx + offset;
           break;
         case 1:
-          lastx = view->imgx;
+          lastx = view->imgx - offset;
           break;
         case 2:
-          beginy = view->imgy;
+          beginy = view->imgy + offset;
           break;
         case 3:
-          lasty = view->imgy;
+          lasty = view->imgy - offset;
           break;
       }
-      absrect(&beginx, &beginy, &lastx, &lasty);
-      Map::main->rect(beginx, beginy, lastx, lasty, 255);
-      stroke->size(beginx, beginy, lastx, lasty);
-      view->draw_main(1);
-      stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
-      view->redraw();
     }
     else
     {
       if(view->imgx < beginx)
       {
-        crop_side = 0;
-        crop_resize_started = 1;
+        side = 0;
+        offset = ABS(view->imgx - beginx);
+        resize_started = 1;
       }
       else if(view->imgx > lastx)
       {
-        crop_side = 1;
-        crop_resize_started = 1;
+        side = 1;
+        offset = ABS(view->imgx - lastx);
+        resize_started = 1;
       }
       else if(view->imgy < beginy)
       {
-        crop_side = 2;
-        crop_resize_started = 1;
+        side = 2;
+        offset = ABS(view->imgy - beginy);
+        resize_started = 1;
       }
       else if(view->imgy > lasty)
       {
-        crop_side = 3;
-        crop_resize_started = 1;
+        side = 3;
+        offset = ABS(view->imgy - lasty);
+        resize_started = 1;
       }
     }
   }
 
+  absrect(&beginx, &beginy, &lastx, &lasty);
+  Map::main->rect(beginx, beginy, lastx, lasty, 255);
+  stroke->size(beginx, beginy, lastx, lasty);
+  view->draw_main(1);
+  stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+  view->redraw();
   check_crop();
 }
 
@@ -169,7 +212,8 @@ void Crop::release(View *view)
     started = 2;
   }
 
-  crop_resize_started = 0;
+  drag_started = 0;
+  resize_started = 0;
 }
 
 void Crop::move(View *view)
