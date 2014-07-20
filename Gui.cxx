@@ -244,7 +244,7 @@ Gui::Gui()
 
   // stump
   stump = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
-  stump->label("Stump");
+  stump->label("Blender");
   stump->labelsize(12);
   stump->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   stump->box(FL_UP_BOX);

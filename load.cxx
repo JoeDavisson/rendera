@@ -233,6 +233,7 @@ Fl_Image *preview_jpg(const char *fn, unsigned char *header, int len)
   {
     while(cinfo.output_scanline < cinfo.output_height)
     {
+      jpeg_read_scanlines(&cinfo, linebuf, 1);
       for(x = 0; x < row_stride; x += 1)
       {
         *p++ = makecol((linebuf[0][x] & 0xFF),
@@ -312,6 +313,7 @@ void load_jpg(const char *fn)
   {
     while(cinfo.output_scanline < cinfo.output_height)
     {
+      jpeg_read_scanlines(&cinfo, linebuf, 1);
       for(x = 0; x < row_stride; x += 1)
       {
         *p++ = makecol(linebuf[0][x] & 0xFF,
