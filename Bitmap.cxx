@@ -59,6 +59,32 @@ Bitmap::Bitmap(int width, int height)
     row[i] = &data[width * i];
 }
 
+Bitmap::Bitmap(int width, int height, int overscroll, int insideColor, int outsideColor)
+{
+  width += overscroll * 2;
+  height += overscroll * 2;
+
+  if(width < 1)
+    width = 1;
+  if(height < 1)
+    height = 1;
+
+  data = new int [width * height];
+  row = new int *[height];
+
+  w = width;
+  h = height;
+
+  int i;
+
+  for(i = 0; i < height; i++)
+    row[i] = &data[width * i];
+
+  set_clip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
+  clear(outsideColor);
+  rectfill(cl, ct, cr, cb, insideColor, 0);
+}
+
 Bitmap::~Bitmap()
 {
   delete[] row;

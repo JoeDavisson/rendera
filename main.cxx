@@ -34,10 +34,9 @@ int main(int argc, char **argv)
   int overscroll = 64;
   Bitmap::overscroll = overscroll;
 
-  Bitmap::main = new Bitmap(640 + overscroll * 2, 480 +  + overscroll * 2);
-  Bitmap::main->clear(makecol(128, 128, 128));
-  Bitmap::main->set_clip(overscroll, overscroll, Bitmap::main->w - overscroll - 1, Bitmap::main->h - overscroll - 1);
-  Bitmap::main->rectfill(overscroll, overscroll, Bitmap::main->w - overscroll - 1, Bitmap::main->h - overscroll - 1, makecol(255, 255, 255), 0);
+  Bitmap::main = new Bitmap(640, 480, overscroll,
+                            makecol(255, 255, 255), makecol(128, 128, 128));
+
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
   Map::main->clear(0);
   Brush::main = new Brush();

@@ -27,6 +27,7 @@ class Bitmap
 {
 public:
   Bitmap(int, int);
+  Bitmap(int, int, int, int, int);
   virtual ~Bitmap();
 
   int w, h;

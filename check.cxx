@@ -535,15 +535,11 @@ void hide_new_image()
 
   delete Bitmap::main;
   int overscroll = Bitmap::overscroll;
-  w += overscroll * 2;
-  h += overscroll * 2;
-  Bitmap::main = new Bitmap(w, h);
-  Bitmap::main->clear(makecol(128, 128, 128));
-  Bitmap::main->set_clip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
-  Bitmap::main->rectfill(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1, makecol(255, 255, 255), 0);
+  Bitmap::main = new Bitmap(w, h, overscroll,
+                            makecol(255, 255, 255), makecol(128, 128, 128));
 
   delete Map::main;
-  Map::main = new Map(w, h);
+  Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
 
   gui->view->ox = 0;
   gui->view->oy = 0;
