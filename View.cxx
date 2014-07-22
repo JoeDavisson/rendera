@@ -72,6 +72,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   gridy = 8;
   oldimgx = 0;
   oldimgy = 0;
+
   tool = Tool::paint;
 
   // try to detect pixelformat (almost always RGB or BGR)
