@@ -35,12 +35,10 @@ public:
   int stepx;
   int stepy;
   Fl_Group *group;
-  Fl_PNG_Image *png_image;
   Fl_RGB_Image *image;
   Bitmap *bitmap;
 protected:
   virtual void draw();
-  int use_png;
 };
 
 #endif

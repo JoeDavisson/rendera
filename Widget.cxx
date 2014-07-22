@@ -24,15 +24,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, const char *filename, int sx, int sy)
 : Fl_Widget(x, y, w, h, label)
 {
-  use_png = 1;
   var = 0;
   stepx = sx;
   stepy = sy;
   group = g;
-  png_image = new Fl_PNG_Image(filename);
 
-  // copy image to internal format so we can access pixels if needed
+  Fl_PNG_Image *png_image = new Fl_PNG_Image(filename);
   bitmap = new Bitmap(png_image->w(), png_image->h());
+  image = new Fl_RGB_Image((unsigned char *)bitmap->data, w, h, 4, 0);
+
   int i;
   int index = 0;
 
@@ -52,6 +52,8 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, const
     }
   }
 
+  delete png_image;
+
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
   redraw();
@@ -61,7 +63,6 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, const
 Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, int sx, int sy)
 : Fl_Widget(x, y, w, h, label)
 {
-  use_png = 0;
   var = 0;
   stepx = sx;
   stepy = sy;
@@ -112,10 +113,7 @@ int Widget::handle(int event)
 
 void Widget::draw()
 {
-  if(use_png)
-    png_image->draw(x(), y());
-  else
-    image->draw(x(), y());
+  image->draw(x(), y());
     
   fl_draw_box(FL_DOWN_FRAME, x(), y(), w(), h(), FL_BLACK);
 
@@ -132,12 +130,8 @@ void Widget::draw()
 
   fl_push_clip(x() + offsetx, y() + offsety, stepx, stepy);
 
-  if(use_png)
-    png_image->draw(x() + offsetx, y() + offsety, stepx, stepy,
-                    offsetx + 1, offsety + 1);
-  else
-    image->draw(x() + offsetx, y() + offsety, stepx, stepy,
-                offsetx + 1, offsety + 1);
+  image->draw(x() + offsetx, y() + offsety, stepx, stepy,
+              offsetx + 1, offsety + 1);
 
   fl_pop_clip();
 
