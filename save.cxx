@@ -86,7 +86,7 @@ void save(Fl_Widget *, void *)
   else if(strcasecmp(ext, ".tga") == 0)
     save_tga(fn);
   else if(strcasecmp(ext, ".png") == 0)
-    save_tga(fn);
+    save_png(fn);
   else
   {
     delete fc;
@@ -242,14 +242,14 @@ void save_png(const char *fn)
   info_ptr = png_create_info_struct(png_ptr);
   if(!info_ptr)
   {
-//    png_destroy_write_struct(&png_ptr, 0);
+    png_destroy_write_struct(&png_ptr, 0);
     fclose(out);
     return;
   }
 
   if(setjmp(png_jmpbuf(png_ptr)))
   {
-//    png_destroy_write_struct(&png_ptr, &info_ptr);
+    png_destroy_write_struct(&png_ptr, &info_ptr);
     fclose(out);
     return;
   }
@@ -284,10 +284,9 @@ void save_png(const char *fn)
     png_write_row(png_ptr, linebuf);
   }
 
-  png_write_end(png_ptr, 0);
-//  png_write_end(png_ptr, info_ptr);
+  png_write_end(png_ptr, info_ptr);
 
-//  png_destroy_write_struct(&png_ptr, 0);
+  png_destroy_write_struct(&png_ptr, &info_ptr);
   fclose(out);
   delete[] linebuf;
 }
