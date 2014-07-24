@@ -53,7 +53,7 @@ void save(Fl_Widget *, void *)
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
   fc->title("Save Image");
 //  fc->filter("JPEG Image\t*.{jpg,jpeg}\nPNG Image\t*.png\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
-  fc->filter("PNG Image\t*.png\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
+  fc->filter("PNG Image\t*.png\nJPEG Image\t*.jpg\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
   //fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc->show();
@@ -87,6 +87,8 @@ void save(Fl_Widget *, void *)
     save_tga(fn);
   else if(strcasecmp(ext, ".png") == 0)
     save_png(fn);
+  else if(strcasecmp(ext, ".jpg") == 0)
+    save_jpg(fn);
   else
   {
     delete fc;
@@ -287,6 +289,76 @@ void save_png(const char *fn)
   png_write_end(png_ptr, info_ptr);
 
   png_destroy_write_struct(&png_ptr, &info_ptr);
-  fclose(out);
   delete[] linebuf;
+  fclose(out);
+}
+
+void save_jpg(const char *fn)
+{
+  FILE *out = fl_fopen(fn, "wb");
+  if(!out)
+    return;
+
+  struct jpeg_compress_struct cinfo;
+
+  struct jpeg_error_mgr jerr;
+  JSAMPROW row_pointer[1];
+  JSAMPLE *linebuf;
+  int row_stride;
+
+  Bitmap *bmp = Bitmap::main;
+  int overscroll = Bitmap::overscroll;
+  int w = bmp->w - overscroll * 2;
+  int h = bmp->h - overscroll * 2;
+
+
+  linebuf = new JSAMPLE[w * 3];
+  if(!linebuf)
+    return;
+
+  if((out = fopen(fn, "wb")) == NULL)
+    return;
+
+  cinfo.err = jpeg_std_error(&jerr);
+  jpeg_create_compress(&cinfo);
+
+  jpeg_stdio_dest(&cinfo, out);
+
+  cinfo.image_width = w;
+  cinfo.image_height = h;
+  cinfo.input_components = 3;
+  cinfo.in_color_space = JCS_RGB;
+  jpeg_set_defaults(&cinfo);
+//FIXME
+  jpeg_set_quality(&cinfo, 95, TRUE);
+
+  jpeg_start_compress(&cinfo, TRUE);
+
+  row_stride = w * 3;
+
+  int x, y;
+
+  int *p = bmp->row[overscroll] + overscroll;
+
+  while(cinfo.next_scanline < cinfo.image_height)
+  {
+    // copy row
+    for(x = 0; x < w * 3; x += 3)
+    {
+      linebuf[x + 0] = getr(*p); 
+      linebuf[x + 1] = getg(*p); 
+      linebuf[x + 2] = getb(*p); 
+      p++;
+    }
+
+    row_pointer[0] = &linebuf[0];
+    jpeg_write_scanlines(&cinfo, row_pointer, 1);
+    p += overscroll * 2;
+  }
+
+  jpeg_finish_compress(&cinfo);
+  jpeg_destroy_compress(&cinfo);
+
+  delete[] linebuf;
+  fclose(out);
 }
