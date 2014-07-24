@@ -53,7 +53,7 @@ void save(Fl_Widget *, void *)
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
   fc->title("Save Image");
 //  fc->filter("JPEG Image\t*.{jpg,jpeg}\nPNG Image\t*.png\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
-  fc->filter("Bitmap Image\t*.bmp\nTarga Image\t*.tga\n");
+  fc->filter("PNG Image\t*.png\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
   //fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc->show();
@@ -84,6 +84,8 @@ void save(Fl_Widget *, void *)
   if(strcasecmp(ext, ".bmp") == 0)
     save_bmp(fn);
   else if(strcasecmp(ext, ".tga") == 0)
+    save_tga(fn);
+  else if(strcasecmp(ext, ".png") == 0)
     save_tga(fn);
   else
   {
@@ -221,3 +223,69 @@ void save_tga(const char *fn)
   fclose(out);
 }
 
+void save_png(const char *fn)
+{
+  FILE *out = fl_fopen(fn, "wb");
+  if(!out)
+    return;
+
+  png_structp png_ptr;
+  png_infop info_ptr;
+
+  png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+  if(!png_ptr)
+  {
+    fclose(out);
+    return;
+  }
+
+  info_ptr = png_create_info_struct(png_ptr);
+  if(!info_ptr)
+  {
+    fclose(out);
+    png_destroy_write_struct(&png_ptr, 0);
+    return;
+  }
+
+//  if(setjmp(png_jmpbuf(png_ptr)))
+//  {
+//    fclose(out);
+//    png_destroy_write_struct(&png_ptr, &info_ptr);
+//    return;
+//  }
+
+  Bitmap *bmp = Bitmap::main;
+  int overscroll = Bitmap::overscroll;
+  int w = bmp->w - overscroll * 2;
+  int h = bmp->h - overscroll * 2;
+
+  png_init_io(png_ptr, out);
+  png_set_IHDR(png_ptr, info_ptr, w, h, 8,
+               PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+               PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+  png_write_info(png_ptr, info_ptr);
+  png_bytep linebuf = new png_byte[w * 3];
+
+  int x, y;
+
+  for(y = 0; y < h; y++)
+  {
+    int *p = bmp->row[y + overscroll] + overscroll;
+    // copy row
+    for(x = 0; x < w * 3; x += 3)
+    {
+      linebuf[x + 0] = getr(*p); 
+      linebuf[x + 1] = getg(*p); 
+      linebuf[x + 2] = getb(*p); 
+      p++;
+    }
+
+    png_write_row(png_ptr, linebuf);
+  }
+
+  png_write_end(png_ptr, info_ptr);
+
+  fclose(out);
+  png_destroy_write_struct(&png_ptr, 0);
+  delete[] linebuf;
+}

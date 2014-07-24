@@ -629,6 +629,7 @@ void load_png(const char *fn)
     p += overscroll * 2;
   }
 
+  png_destroy_read_struct(&png_ptr, &info_ptr, 0);
   delete[] linebuf;
   fclose(in);
 }
