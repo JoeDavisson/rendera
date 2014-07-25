@@ -534,7 +534,7 @@ void hide_new_image()
   dialog->new_image->hide();
 
   delete Bitmap::main;
-  int overscroll = Bitmap::overscroll;
+  int overscroll = Bitmap::main->overscroll;
   Bitmap::main = new Bitmap(w, h, overscroll,
                             makecol(255, 255, 255), makecol(128, 128, 128));
 
@@ -582,7 +582,7 @@ void hide_create_palette()
 
   dialog->create_palette->hide();
 
-  quantize(Bitmap::main, colors, Bitmap::overscroll);
+  quantize(Bitmap::main, colors, Bitmap::main->overscroll);
 }
 
 void cancel_create_palette()

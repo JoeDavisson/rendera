@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 extern Gui *gui;
 
 Bitmap *Bitmap::main;
+Bitmap *Bitmap::preview;
 Bitmap *Bitmap::clone_buffer;
 Bitmap *Bitmap::offset_buffer;
 
@@ -36,7 +37,6 @@ int Bitmap::clone_y = 0;
 int Bitmap::clone_dx = 0;
 int Bitmap::clone_dy = 0;
 int Bitmap::clone_mirror = 0;
-int Bitmap::overscroll = 64;
 
 Bitmap::Bitmap(int width, int height)
 {
@@ -50,6 +50,7 @@ Bitmap::Bitmap(int width, int height)
 
   w = width;
   h = height;
+  overscroll = 0;
 
   set_clip(0, 0, w - 1, h - 1);
 

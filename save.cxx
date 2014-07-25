@@ -33,7 +33,6 @@ static inline void write_uint32(uint32_t num, FILE *out)
   #endif
 }
 
-
 static int file_exists(const char *s)
 {
   FILE *temp = fopen(s, "r");
@@ -47,14 +46,11 @@ static int file_exists(const char *s)
   return 0;
 }
 
-
 void save(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
   fc->title("Save Image");
-//  fc->filter("JPEG Image\t*.{jpg,jpeg}\nPNG Image\t*.png\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
   fc->filter("PNG Image\t*.png\nJPEG Image\t*.jpg\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
-  //fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc->show();
 
@@ -81,14 +77,14 @@ void save(Fl_Widget *, void *)
       return;
   }
   
-  if(strcasecmp(ext, ".bmp") == 0)
-    save_bmp(fn);
-  else if(strcasecmp(ext, ".tga") == 0)
-    save_tga(fn);
-  else if(strcasecmp(ext, ".png") == 0)
+  if(strcasecmp(ext, ".png") == 0)
     save_png(fn);
   else if(strcasecmp(ext, ".jpg") == 0)
     save_jpg(fn);
+  else if(strcasecmp(ext, ".bmp") == 0)
+    save_bmp(fn);
+  else if(strcasecmp(ext, ".tga") == 0)
+    save_tga(fn);
   else
   {
     delete fc;
@@ -123,7 +119,7 @@ void save_bmp(const char *fn)
     return;
 
   Bitmap *bmp = Bitmap::main;
-  int overscroll = Bitmap::overscroll;
+  int overscroll = Bitmap::main->overscroll;
   int w = bmp->w - overscroll * 2;
   int h = bmp->h - overscroll * 2;
   int pad = w % 4;
@@ -183,7 +179,7 @@ void save_tga(const char *fn)
     return;
 
   Bitmap *bmp = Bitmap::main;
-  int overscroll = Bitmap::overscroll;
+  int overscroll = Bitmap::main->overscroll;
   int w = bmp->w - overscroll * 2;
   int h = bmp->h - overscroll * 2;
 
@@ -257,7 +253,7 @@ void save_png(const char *fn)
   }
 
   Bitmap *bmp = Bitmap::main;
-  int overscroll = Bitmap::overscroll;
+  int overscroll = Bitmap::main->overscroll;
   int w = bmp->w - overscroll * 2;
   int h = bmp->h - overscroll * 2;
 
@@ -307,7 +303,7 @@ void save_jpg(const char *fn)
   int row_stride;
 
   Bitmap *bmp = Bitmap::main;
-  int overscroll = Bitmap::overscroll;
+  int overscroll = Bitmap::main->overscroll;
   int w = bmp->w - overscroll * 2;
   int h = bmp->h - overscroll * 2;
 

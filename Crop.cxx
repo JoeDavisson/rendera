@@ -88,7 +88,7 @@ void Crop::push(View *view)
       Bitmap *temp = new Bitmap(w, h);
       Bitmap::main->blit(temp, beginx, beginy, 0, 0, w, h);
       delete Bitmap::main;
-      int overscroll = Bitmap::overscroll;
+      int overscroll = Bitmap::main->overscroll;
       int aw = w + overscroll * 2;
       int ah = h + overscroll * 2;
       Bitmap::main = new Bitmap(aw, ah);

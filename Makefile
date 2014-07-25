@@ -1,8 +1,8 @@
 CXX = g++
-CFLAGS = -O3 -march=x86-64 -Wall -Wno-unused -fmax-errors=5
+#CFLAGS = -O3 -march=x86-64 -Wall -Wno-unused -fmax-errors=5
 
 # for valgrind
-#CFLAGS = -g -O2 -Wall -Wno-unused -fmax-errors=5
+CFLAGS = -g -O2 -Wall -Wno-unused -fmax-errors=5
 
 #dynamic link
 LIBS = -lm -lfltk -lfltk_images -ljpeg -lpng -lX11

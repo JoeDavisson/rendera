@@ -5,10 +5,11 @@
 
 void load(Fl_Widget *, void *);
 Fl_Image *preview_jpg(const char *, unsigned char *, int);
-void load_jpg(const char *);
-void load_bmp(const char *);
-void load_tga(const char *);
-void load_png(const char *);
+Fl_Image *preview_png(const char *, unsigned char *, int);
+void load_jpg(const char *, Bitmap *, int);
+void load_bmp(const char *, Bitmap *, int);
+void load_tga(const char *, Bitmap *, int);
+void load_png(const char *, Bitmap *, int);
 
 #endif
 

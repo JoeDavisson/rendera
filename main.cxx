@@ -28,14 +28,13 @@ int main(int argc, char **argv)
   Fl::visual(FL_DOUBLE | FL_RGB);
   Fl::background(192, 192, 192);
   Fl_Shared_Image::add_handler(preview_jpg);
+  Fl_Shared_Image::add_handler(preview_png);
   fl_message_hotspot(0);
 //  Fl_File_Icon::load_system_icons();
 
-  int overscroll = 64;
-  Bitmap::overscroll = overscroll;
-
-  Bitmap::main = new Bitmap(640, 480, overscroll,
+  Bitmap::main = new Bitmap(640, 480, 64,
                             makecol(255, 255, 255), makecol(128, 128, 128));
+  Bitmap::preview = new Bitmap(8, 8);
 
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
   Map::main->clear(0);

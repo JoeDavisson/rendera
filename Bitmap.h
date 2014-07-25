@@ -32,6 +32,7 @@ public:
 
   int w, h;
   int cl, cr, ct, cb, cw, ch;
+  int overscroll;
   int *data;
   int **row;
 
@@ -62,6 +63,7 @@ public:
   void fast_stretch(Bitmap *, int, int, int, int, int, int, int, int, int);
 
   static Bitmap *main;
+  static Bitmap *preview;
   static Bitmap *clone_buffer;
   static Bitmap *offset_buffer;
   static int wrap;
@@ -72,7 +74,6 @@ public:
   static int clone_dx;
   static int clone_dy;
   static int clone_mirror;
-  static int overscroll;
 };
 
 #endif
