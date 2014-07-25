@@ -94,24 +94,6 @@ void save(Fl_Widget *, void *)
   delete fc;
 }
 
-// jpeg structures
-/*
-struct my_error_mgr
-{
-  struct jpeg_error_mgr pub;
-  jmp_buf setjmp_buffer;
-};
-
-typedef struct my_error_mgr *my_error_ptr;
-
-static void jpg_exit(j_common_ptr cinfo)
-{
-  my_error_ptr myerr = (my_error_ptr)cinfo->err;
-  (*cinfo->err->output_message)(cinfo);
-  longjmp(myerr->setjmp_buffer, 1);
-}
-*/
-
 void save_bmp(const char *fn)
 {
   FILE *out = fl_fopen(fn, "wb");
@@ -325,8 +307,8 @@ void save_jpg(const char *fn)
   cinfo.input_components = 3;
   cinfo.in_color_space = JCS_RGB;
   jpeg_set_defaults(&cinfo);
-//FIXME
-  jpeg_set_quality(&cinfo, 95, TRUE);
+//FIXME need quality dialog
+  jpeg_set_quality(&cinfo, 100, TRUE);
 
   jpeg_start_compress(&cinfo, TRUE);
 

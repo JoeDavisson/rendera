@@ -75,6 +75,7 @@ Bitmap::Bitmap(int width, int height, int overscroll, int insideColor, int outsi
 
   w = width;
   h = height;
+  this->overscroll = overscroll;
 
   int i;
 
