@@ -29,6 +29,8 @@ int main(int argc, char **argv)
   Fl::background(192, 192, 192);
   Fl_Shared_Image::add_handler(preview_jpg);
   Fl_Shared_Image::add_handler(preview_png);
+  Fl_Shared_Image::add_handler(preview_bmp);
+  Fl_Shared_Image::add_handler(preview_tga);
   fl_message_hotspot(0);
 //  Fl_File_Icon::load_system_icons();
 

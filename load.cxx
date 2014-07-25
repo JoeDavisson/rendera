@@ -192,6 +192,27 @@ Fl_Image *preview_jpg(const char *fn, unsigned char *header, int len)
   return image;
 }
 
+Fl_Image *preview_bmp(const char *fn, unsigned char *header, int len)
+{
+  if(memcmp(header, "BM", 2) != 0)
+    return 0;
+
+  load_bmp(fn, Bitmap::preview, 0);
+
+  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data, Bitmap::preview->w, Bitmap::preview->h, 4, 0);
+
+  return image;
+}
+
+Fl_Image *preview_tga(const char *fn, unsigned char *header, int len)
+{
+  load_tga(fn, Bitmap::preview, 0);
+
+  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data, Bitmap::preview->w, Bitmap::preview->h, 4, 0);
+
+  return image;
+}
+
 void load_jpg(const char *fn, Bitmap *bitmap, int overscroll)
 {
   struct jpeg_decompress_struct cinfo;
@@ -419,11 +440,14 @@ void load_tga(const char *fn, Bitmap *bitmap, int overscroll)
     return;
   }
 
-  if(header.bpp != 24)
+  if(header.bpp != 24 && header.bpp != 32)
   {
     fclose(in);
     return;
   }
+
+  int depth = header.bpp / 8;
+printf("depth=%d\n", depth);
 
   // skip additional header info if it exists
   if(header.id_length > 0)
@@ -441,7 +465,7 @@ void load_tga(const char *fn, Bitmap *bitmap, int overscroll)
   bitmap = new Bitmap(w, h, overscroll,
                       makecol(255, 255, 255), makecol(128, 128, 128));
 
-  unsigned char *linebuf = new unsigned char[w * 3];
+  unsigned char *linebuf = new unsigned char[w * depth];
 
   int x, y;
 
@@ -465,7 +489,7 @@ void load_tga(const char *fn, Bitmap *bitmap, int overscroll)
 
   for(y = ystart; y != yend; y += negy ? -1 : 1)
   {
-    if(fread(linebuf, 1, w * 3, in) != (unsigned)(w * 3))
+    if(fread(linebuf, 1, w * depth, in) != (unsigned)(w * depth))
     {
       fclose(in);
       return;
@@ -473,9 +497,9 @@ void load_tga(const char *fn, Bitmap *bitmap, int overscroll)
     for(x = xstart; x != xend; x += negx ? -1 : 1)
     {
       *(bitmap->row[y + overscroll] + x + overscroll) =
-                     makecol((linebuf[x * 3 + 2] & 0xFF),
-                             (linebuf[x * 3 + 1] & 0xFF),
-                             (linebuf[x * 3 + 0] & 0xFF));
+                     makecol((linebuf[x * depth + 2] & 0xFF),
+                             (linebuf[x * depth + 1] & 0xFF),
+                             (linebuf[x * depth + 0] & 0xFF));
     }
   }
 
