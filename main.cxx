@@ -31,6 +31,7 @@ int main(int argc, char **argv)
   Fl_Shared_Image::add_handler(preview_png);
   Fl_Shared_Image::add_handler(preview_bmp);
   Fl_Shared_Image::add_handler(preview_tga);
+  Fl_Shared_Image::add_handler(preview_pal);
   fl_message_hotspot(0);
 //  Fl_File_Icon::load_system_icons();
 

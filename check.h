@@ -46,6 +46,8 @@ void cancel_new_image();
 void show_create_palette();
 void hide_create_palette();
 void cancel_create_palette();
+Fl_Image *preview_pal(const char *, unsigned char *, int);
+void load_palette();
 
 #endif
 

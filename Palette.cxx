@@ -20,6 +20,42 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+static inline uint8_t parse_uint8(unsigned char *&buffer)
+{
+  uint8_t num = buffer[0];
+
+  buffer += 1;
+  return num;
+}
+
+static inline uint16_t parse_uint16(unsigned char *&buffer)
+{
+  uint16_t num;
+
+  #if BYTE_ORDER == BIG_ENDIAN
+  num = buffer[1] | buffer[0] << 8;
+  #else
+  num = buffer[0] | buffer[1] << 8;
+  #endif
+
+  buffer += 2;
+  return num;
+}
+
+static inline uint32_t parse_uint32(unsigned char *&buffer)
+{
+  uint32_t num;
+
+  #if BYTE_ORDER == BIG_ENDIAN
+  num = buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24;
+  #else
+  num = buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24;
+  #endif
+
+  buffer += 4;
+  return num;
+}
+
 Palette *Palette::main;
 
 Palette::Palette()
@@ -83,75 +119,6 @@ void Palette::draw(Widget *widget)
   }
 
   widget->redraw();
-/*
-  int stepx = 6;
-  int stepy = 6;
-
-  if(max > 256)
-    return;
-
-  int x = 0, y = 0;
-
-  for(x = sqrtf(max); x >= 0; x--)
-  {
-    y = max / x;
-    if(x * y >= max)
-        break;
-  }
-
-  int tempx = x;
-  int tempy = y;
-
-  for(x = 0; x < 12; x++)
-  {
-    if(factors[x] >= tempx)
-    {
-      stepx = 96 / factors[x];
-      break;
-    }
-  }
-      
-  for(y = 0; y < 13; y++)
-  {
-    if(factors[y] >= tempy)
-    {
-      stepy = 192 / factors[y];
-      break;
-    }
-  }
-
-  widget->stepx = stepx;
-  widget->stepy = stepy;
-
-  int divx = 96 / stepx;
-  int divy = 192 / stepy;
-
-  widget->bitmap->clear(makecol(0, 0, 0));
-
-  for(y = 0; y < 192; y += stepy)
-  {
-    for(x = 0; x < 96; x += stepx)
-    {
-      widget->bitmap->rect(x, y, x + stepx, y + stepy, makecol(160, 160, 160), 0);
-      widget->bitmap->line(x, y, x + stepx - 1, y + stepy - 1, makecol(160, 160, 160), 0);
-      widget->bitmap->line(95 - x, y, 95 - (x + stepx - 1), y + stepy - 1, makecol(160, 160, 160), 0);
-    }
-  }
-
-  int i = 0;
-  for(y = 0; y < divy; y++)
-  {
-    for(x = 0; x < divx; x++)
-    {
-      if(i >= max)
-        break;
-      int x1 = x * stepx;
-      int y1 = y * stepy;
-      widget->bitmap->rectfill(x1, y1, x1 + stepx - 1, y1 + stepy - 1, data[i], 0);
-      i++;
-    }
-  }
-  */
 }
 
 void Palette::set_default()
@@ -200,5 +167,56 @@ void Palette::delete_color(int index)
     data[i] = data[i + 1];
 
   max--;
+}
+
+void Palette::load(const char *fn)
+{
+  max = 0;
+
+  FILE *in = fl_fopen(fn, "r");
+  if(!in)
+  {
+    return;
+  }
+
+  int index = 0;
+
+  // read line
+  int r, g, b;
+  char line[256];
+  int ch;
+  int len = 0;
+  int i, j;
+
+  while(1)
+  {
+    for(i = 0; i < 255; i++)
+    {
+      line[i] = '\0';
+      ch = fgetc(in);
+      if(ch == '\n' || ch == EOF)
+        break;
+      line[i] = ch;
+    }
+
+    if(ch == EOF)
+      break;
+
+    // replace tabs with spaces
+    for(i = 0; i < len; i++)
+      if(line[i] == '\t')
+        line[i] = ' ';
+
+    // get first three strings
+    if(sscanf(line, "%d %d %d", &r, &g, &b) != 3)
+      continue;
+
+    // add to palette
+    data[index++] = makecol(r, g, b);
+    if(index > 256)
+      break;
+  }
+
+  max = index;
 }
 

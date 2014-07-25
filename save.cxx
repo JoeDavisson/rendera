@@ -59,6 +59,7 @@ void save(Fl_Widget *, void *)
   // get file extension
   char ext[16];
   char *p = (char *)fn + strlen(fn) - 1;
+
   while(p >= fn)
   {
     if(*p == '.')

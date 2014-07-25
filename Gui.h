@@ -100,6 +100,7 @@ public:
   Field *crop_h;
 
   // right
+  Widget *pal_preview;
   Widget *palette;
   Button *plus;
   Button *minus;

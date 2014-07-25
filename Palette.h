@@ -33,6 +33,7 @@ public:
   void set_default();
   void insert_color(int, int);
   void delete_color(int);
+  void load(const char *);
 
   int *data;
   int max;

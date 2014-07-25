@@ -582,11 +582,92 @@ void hide_create_palette()
 
   dialog->create_palette->hide();
 
-  quantize(Bitmap::main, colors, Bitmap::main->overscroll);
+  quantize(Bitmap::main, colors);
 }
 
 void cancel_create_palette()
 {
   dialog->create_palette->hide();
+}
+
+Fl_Image *preview_pal(const char *fn, unsigned char *header, int len)
+{
+  // get file extension
+  char ext[16];
+  char *p = (char *)fn + strlen(fn) - 1;
+
+  while(p >= fn)
+  {
+    if(*p == '.')
+    {
+      strcpy(ext, p);
+      break;
+    }
+
+    p--;
+  }
+
+  if(strcasecmp(ext, ".gpl") != 0)
+    return 0;
+
+  Palette *pal = new Palette();
+
+  pal->load(fn);
+  if(pal->max == 0)
+    return 0;
+
+  pal->draw(gui->pal_preview);
+
+  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)gui->pal_preview->bitmap->data, 96, 96, 4, 0);
+
+  delete pal;
+  return image;
+}
+
+void load_palette()
+{
+  Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
+  fc->title("Load Palette");
+  fc->filter("GIMP Palette\t*.gpl\n");
+  fc->options(Fl_Native_File_Chooser::PREVIEW);
+  fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
+  fc->show();
+
+  const char *fn = fc->filename();
+
+  // get file extension
+  char ext[16];
+  char *p = (char *)fn + strlen(fn) - 1;
+
+  while(p >= fn)
+  {
+    if(*p == '.')
+    {
+      strcpy(ext, p);
+      break;
+    }
+
+    p--;
+  }
+
+  if(strcasecmp(ext, ".gpl") != 0)
+  {
+    delete fc;
+    return;
+  }
+
+  FILE *in = fl_fopen(fn, "r");
+  if(!in)
+  {
+    delete fc;
+    return;
+  }
+
+  Palette::main->load(fn);
+  Palette::main->draw(gui->palette);
+  gui->palette->var = 0;
+  gui->palette->redraw();
+
+  delete fc;
 }
 

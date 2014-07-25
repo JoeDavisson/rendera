@@ -55,9 +55,9 @@ Fl_Menu_Item menuitems[] =
     { "&Scale Image...", 0, 0, 0 },
     { 0 },
   { "&Palette", 0, 0, 0, FL_SUBMENU },
-    { "&Create From Image...", 0, (Fl_Callback *)show_create_palette, 0, FL_MENU_DIVIDER },
-    { "&Load...", 0, 0, 0 },
-    { "&Save...", 0, 0, 0 },
+    { "&Load...", 0, (Fl_Callback *)load_palette, 0 },
+    { "&Save...", 0, 0, 0, FL_MENU_DIVIDER },
+    { "&Create From Image...", 0, (Fl_Callback *)show_create_palette, 0 },
     { 0 },
   { "&Effects", 0, 0, 0, FL_SUBMENU },
     { "Normalize", 0, 0, 0 },
@@ -83,7 +83,7 @@ Gui::Gui()
   // window
   window = new Fl_Double_Window(800, 600, "Rendera");
   window->callback(close_callback);
-  
+
   //group_main = new Fl_Group(0, 0, window->w(), window->h());
 
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
@@ -312,6 +312,11 @@ Gui::Gui()
   right->labelsize(12);
   right->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   right->box(FL_UP_BOX);
+
+  // invisible palette preview widget
+  pal_preview = new Widget(right, 0, 0, 96, 96, "", 6, 6);
+  pal_preview->hide();
+  
   y1 = 20;
   palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 6, 6);
   palette->callback((Fl_Callback *)check_palette, &palette->var);

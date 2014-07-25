@@ -54,6 +54,7 @@ void load(Fl_Widget *, void *)
   // get file extension
   char ext[16];
   char *p = (char *)fn + strlen(fn) - 1;
+
   while(p >= fn)
   {
     if(*p == '.')
@@ -206,6 +207,24 @@ Fl_Image *preview_bmp(const char *fn, unsigned char *header, int len)
 
 Fl_Image *preview_tga(const char *fn, unsigned char *header, int len)
 {
+  // get file extension
+  char ext[16];
+  char *p = (char *)fn + strlen(fn) - 1;
+
+  while(p >= fn)
+  {
+    if(*p == '.')
+    {
+      strcpy(ext, p);
+      break;
+    }
+
+    p--;
+  }
+
+  if(strcasecmp(ext, ".tga") != 0)
+    return 0;
+
   load_tga(fn, Bitmap::preview, 0);
 
   Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data, Bitmap::preview->w, Bitmap::preview->h, 4, 0);
@@ -447,7 +466,6 @@ void load_tga(const char *fn, Bitmap *bitmap, int overscroll)
   }
 
   int depth = header.bpp / 8;
-printf("depth=%d\n", depth);
 
   // skip additional header info if it exists
   if(header.id_length > 0)
