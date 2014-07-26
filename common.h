@@ -18,8 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef INLINE_H
-#define INLINE_H
+#ifndef COMMON_H
+#define COMMON_H
 
 static int seed;
 
@@ -113,6 +113,73 @@ static inline int convert_format(int c, int bgr_order)
     return makecol(getb(c), getg(c), getr(c));
   else
     return c;
+}
+
+static inline uint8_t parse_uint8(unsigned char *&buffer)
+{
+  uint8_t num = buffer[0];
+
+  buffer += 1;
+  return num;
+}
+
+static uint16_t parse_uint16(unsigned char *&buffer)
+{
+  uint16_t num;
+
+//  #if BYTE_ORDER == BIG_ENDIAN
+//  num = buffer[1] | buffer[0] << 8;
+//  #else
+  num = buffer[0] | buffer[1] << 8;
+//  #endif
+
+  buffer += 2;
+  return num;
+}
+
+static uint32_t parse_uint32(unsigned char *&buffer)
+{
+  uint32_t num;
+
+//  #if BYTE_ORDER == BIG_ENDIAN
+//  num = buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24;
+//  #else
+  num = buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24;
+//  #endif
+
+  buffer += 4;
+  return num;
+}
+
+static void write_uint8(uint8_t num, FILE *out)
+{
+  fputc(num, out);
+}
+
+static void write_uint16(uint16_t num, FILE *out)
+{
+//  #if BYTE_ORDER == BIG_ENDIAN
+//  fputc((num >> 8) & 0xff, out);
+//  fputc(num & 0xff, out);
+//  #else
+  fputc(num & 0xff, out);
+  fputc((num >> 8) & 0xff, out);
+//  #endif
+}
+
+static void write_uint32(uint32_t num, FILE *out)
+{
+//  #if BYTE_ORDER == BIG_ENDIAN
+//  fputc((num >> 24) & 0xff, out);
+//  fputc((num >> 16) & 0xff, out);
+//  fputc((num >> 8) & 0xff, out);
+//  fputc(num & 0xff, out);
+//  #else
+  fputc(num & 0xff, out);
+  fputc((num >> 8) & 0xff, out);
+  fputc((num >> 16) & 0xff, out);
+  fputc((num >> 24) & 0xff, out);
+//  #endif
 }
 
 #endif

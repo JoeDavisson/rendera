@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <stdlib.h>
 #include <stdint.h>
 #include <math.h>
-#include <endian.h>
 #include <png.h>
 
 #include <FL/Fl.H>
@@ -45,7 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Native_File_Chooser.H>
 //#include <FL/Fl_File_Chooser.H>
 
-#include "inline.h"
+#include "common.h"
 #include "Blend.h"
 #include "Bitmap.h"
 #include "Map.h"

@@ -4,41 +4,14 @@
 
 extern Gui *gui;
 
-static inline uint8_t parse_uint8(unsigned char *&buffer)
+// jpeg structures
+struct my_error_mgr
 {
-  uint8_t num = buffer[0];
+  struct jpeg_error_mgr pub;
+  jmp_buf setjmp_buffer;
+};
 
-  buffer += 1;
-  return num;
-}
-
-static inline uint16_t parse_uint16(unsigned char *&buffer)
-{
-  uint16_t num;
-
-  #if BYTE_ORDER == BIG_ENDIAN
-  num = buffer[1] | buffer[0] << 8;
-  #else
-  num = buffer[0] | buffer[1] << 8;
-  #endif
-
-  buffer += 2;
-  return num;
-}
-
-static inline uint32_t parse_uint32(unsigned char *&buffer)
-{
-  uint32_t num;
-
-  #if BYTE_ORDER == BIG_ENDIAN
-  num = buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24;
-  #else
-  num = buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24;
-  #endif
-
-  buffer += 4;
-  return num;
-}
+typedef struct my_error_mgr *my_error_ptr;
 
 void load(Fl_Widget *, void *)
 {
@@ -105,15 +78,6 @@ void load(Fl_Widget *, void *)
   gui->view->zoom_fit(gui->view->fit);
   gui->view->draw_main(1);
 }
-
-// jpeg structures
-struct my_error_mgr
-{
-  struct jpeg_error_mgr pub;
-  jmp_buf setjmp_buffer;
-};
-
-typedef struct my_error_mgr *my_error_ptr;
 
 static void jpg_exit(j_common_ptr cinfo)
 {

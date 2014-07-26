@@ -20,42 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-static inline uint8_t parse_uint8(unsigned char *&buffer)
-{
-  uint8_t num = buffer[0];
-
-  buffer += 1;
-  return num;
-}
-
-static inline uint16_t parse_uint16(unsigned char *&buffer)
-{
-  uint16_t num;
-
-  #if BYTE_ORDER == BIG_ENDIAN
-  num = buffer[1] | buffer[0] << 8;
-  #else
-  num = buffer[0] | buffer[1] << 8;
-  #endif
-
-  buffer += 2;
-  return num;
-}
-
-static inline uint32_t parse_uint32(unsigned char *&buffer)
-{
-  uint32_t num;
-
-  #if BYTE_ORDER == BIG_ENDIAN
-  num = buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24;
-  #else
-  num = buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24;
-  #endif
-
-  buffer += 4;
-  return num;
-}
-
 Palette *Palette::main;
 
 Palette::Palette()

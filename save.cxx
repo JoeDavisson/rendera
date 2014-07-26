@@ -2,37 +2,6 @@
 #include <jpeglib.h>
 #include <setjmp.h>
 
-static inline void write_uint8(uint8_t num, FILE *out)
-{
-  fputc(num, out);
-}
-
-static inline void write_uint16(uint16_t num, FILE *out)
-{
-  #if BYTE_ORDER == BIG_ENDIAN
-  fputc((num >> 8) & 0xff, out);
-  fputc(num & 0xff, out);
-  #else
-  fputc(num & 0xff, out);
-  fputc((num >> 8) & 0xff, out);
-  #endif
-}
-
-static inline void write_uint32(uint32_t num, FILE *out)
-{
-  #if BYTE_ORDER == BIG_ENDIAN
-  fputc((num >> 24) & 0xff, out);
-  fputc((num >> 16) & 0xff, out);
-  fputc((num >> 8) & 0xff, out);
-  fputc(num & 0xff, out);
-  #else
-  fputc(num & 0xff, out);
-  fputc((num >> 8) & 0xff, out);
-  fputc((num >> 16) & 0xff, out);
-  fputc((num >> 24) & 0xff, out);
-  #endif
-}
-
 static int file_exists(const char *s)
 {
   FILE *temp = fopen(s, "r");
