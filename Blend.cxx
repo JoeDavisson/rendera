@@ -150,6 +150,9 @@ int Blend::force_lum(int c, int vdest)
   return makecol(n[1], n[0], n[2]);
 }
 
+// hue 0-1535
+// sat 0-255
+// val 0-255
 void Blend::hsv_to_rgb(int h, int s, int v, int *r, int *g, int *b)
 {
   if(!s)
@@ -201,6 +204,9 @@ void Blend::hsv_to_rgb(int h, int s, int v, int *r, int *g, int *b)
   }
 }
 
+// hue 0-1535
+// sat 0-255
+// val 0-255
 void Blend::rgb_to_hsv(int r, int g, int b, int *h, int *s, int *v)
 {
   int max = MAX(r, MAX(g, b));

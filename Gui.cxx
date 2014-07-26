@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 extern Dialog *dialog;
 
+// prevent escape from closing main window
 static void close_callback(Fl_Widget *widget, void *)
 {
   if((Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT)
@@ -31,6 +32,7 @@ static void close_callback(Fl_Widget *widget, void *)
     widget->hide();
 }
 
+// quit program
 static void quit()
 {
   fl_message_title("Quit");
@@ -38,6 +40,7 @@ static void quit()
     exit(0);
 }
 
+// main menu
 Fl_Menu_Item menuitems[] =
 {
   { "&File", 0, 0, 0, FL_SUBMENU },

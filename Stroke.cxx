@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+// brushstroke routines common to most painting tools
+
 static void keep_square(int x1, int y1, int *x2, int *y2)
 {
   int px = (*x2 >= x1) ? 1 : 0;
@@ -74,7 +76,6 @@ Stroke::Stroke()
   edgecachey = new int[0x100000];
   polycount = 0;
   type = 0;
-//  active = 0;
   origin = 0;
   constrain = 0;
 }
@@ -272,7 +273,6 @@ void Stroke::begin(int x, int y, int ox, int oy, float zoom)
 
   map->clear(0);
   draw(x, y, ox, oy, zoom);
-//  active = 1;
 }
 
 void Stroke::draw(int x, int y, int ox, int oy, float zoom)

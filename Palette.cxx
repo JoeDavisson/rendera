@@ -133,6 +133,7 @@ void Palette::delete_color(int index)
   max--;
 }
 
+// uses GIMP .gpl palette format
 void Palette::load(const char *fn)
 {
   max = 0;

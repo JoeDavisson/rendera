@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Dialog::Dialog()
 {
+  // about
   about = new Fl_Double_Window(336, 112, "About");
   about_logo = new Widget(about, 8, 8, 320, 64, "Logo", "data/logo_large.png", 0, 0);
   about_ok = new Fl_Button(336 / 2 - 32, 80, 64, 24, "OK");
@@ -29,6 +30,7 @@ Dialog::Dialog()
   about->set_modal();
   about->end(); 
 
+  // new image
   new_image = new Fl_Double_Window(256, 184, "New Image");
   new_image_width = new Field(new_image, 120, 32, 72, 24, "Width:");
   new_image_height = new Field(new_image, 120, 72, 72, 24, "Height:");
@@ -44,6 +46,7 @@ Dialog::Dialog()
   new_image->set_modal();
   new_image->end(); 
 
+  // create palette from image
   create_palette = new Fl_Double_Window(256, 144, "Create Palette From Image");
   create_palette_colors = new Field(create_palette, 120, 32, 72, 24, "Colors:");
   new_image_width->value("256");

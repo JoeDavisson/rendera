@@ -93,6 +93,8 @@ static inline void shrink_block(unsigned char *s0, unsigned char *s1,
   *s3 = 0;
 }
 
+// The airbrush uses two distinct algorithms, marching squares (faster)
+// and one that uses distance calculations (slower).
 Airbrush::Airbrush()
 {
 }

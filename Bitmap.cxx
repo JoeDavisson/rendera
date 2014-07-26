@@ -844,6 +844,7 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
   }
 }
 
+// fast integer-based bilinear stretch (produces minor artifacts)
 void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
                                            int dx, int dy, int dw, int dh,
                                            int overx, int overy, int bgr_order)
@@ -962,6 +963,7 @@ void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
   }
 }
 
+// Bresenham algorithm
 void Bitmap::fast_stretch(Bitmap *dest,
                           int xs1, int ys1, int xs2, int ys2,
                           int xd1, int yd1, int xd2, int yd2,

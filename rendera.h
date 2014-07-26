@@ -72,7 +72,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Dialog.h"
 #include "Gui.h"
 
-// macros here
 #define MIN(x, y)          (((x) < (y)) ? (x) : (y))
 #define MAX(x, y)          (((x) > (y)) ? (x) : (y))
 #define MID(a, b, c)       (MAX(a, MIN(b, c)))

@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-// load PNG from file
+// load a PNG image from a file
 Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, const char *filename, int sx, int sy)
 : Fl_Widget(x, y, w, h, label)
 {
@@ -59,7 +59,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, const
   redraw();
 }
 
-// user-defined image
+// use a blank bitmap
 Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, int sx, int sy)
 : Fl_Widget(x, y, w, h, label)
 {

@@ -20,30 +20,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-#define SHIFT		12
+#define SHIFT 12
 
 extern Gui *gui;
 
-static inline float error24(const int c1, const int c2, const float f1,
-                            const float f2)
-{
-  return ((f1 * f2) / (f1 + f2)) * diff24(c1, c2);
-}
-
-
-static inline int merge24(const int c1, const int c2, const float f1,
-                          const float f2)
-{
-  const float div = 1.0 / (f1 + f2);
-
-  const int r = (float)(f1 * getr(c1) + f2 * getr(c2)) * div;
-  const int g = (float)(f1 * getg(c1) + f2 * getg(c2)) * div;
-  const int b = (float)(f1 * getb(c1) + f2 * getb(c2)) * div;
-
-  return makecol_notrans(r, g, b);
-}
-
-
+// qsort callback to sort palette by luminance
 static int comp_lum(const void *a, const void *b)
 {
   int c1 = *(int *)a;
@@ -52,6 +33,8 @@ static int comp_lum(const void *a, const void *b)
   return getl(c1) - getl(c2);
 }
 
+// 1D bilinear filter to stretch a palette
+// FIXME add gamma correction
 static void stretch_palette(int current, int target)
 {
   int *temp = new int[256];
@@ -106,6 +89,7 @@ static void stretch_palette(int current, int target)
   delete[] temp;
 }
 
+// limit colors being clustered to a reasonable number
 static int limit_colors(float *list, int *colors)
 {
   int r, g, b;
@@ -155,6 +139,27 @@ static int limit_colors(float *list, int *colors)
   return count;
 }
 
+// compute quantization error
+static inline float error24(const int c1, const int c2, const float f1,
+                            const float f2)
+{
+  return ((f1 * f2) / (f1 + f2)) * diff24(c1, c2);
+}
+
+// merge two colors
+static inline int merge24(const int c1, const int c2, const float f1,
+                          const float f2)
+{
+  const float div = 1.0 / (f1 + f2);
+
+  const int r = (float)(f1 * getr(c1) + f2 * getr(c2)) * div;
+  const int g = (float)(f1 * getg(c1) + f2 * getg(c2)) * div;
+  const int b = (float)(f1 * getb(c1) + f2 * getb(c2)) * div;
+
+  return makecol_notrans(r, g, b);
+}
+
+// pairwise-clustering algorithm
 void quantize(Bitmap *src, int size)
 {
   // popularity histogram
@@ -234,7 +239,7 @@ void quantize(Bitmap *src, int size)
   }
   else
   {
-    // pick best 4096 colors
+    // limit color count to 4096
     count = limit_colors(list, colors);
   }
 
@@ -325,6 +330,7 @@ void quantize(Bitmap *src, int size)
   delete[] colors;
   delete[] list;
 
+  // redraw palette widget
   Palette::main->draw(gui->palette);
   gui->palette->redraw();
 }

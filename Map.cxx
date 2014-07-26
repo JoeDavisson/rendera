@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Map *Map::main;
 
+// The "Map" is an 8-bit image used to buffer brushstrokes
+// before being rendered.
 Map::Map(int width, int height)
 {
   int i;
