@@ -86,6 +86,7 @@ static void jpg_exit(j_common_ptr cinfo)
   longjmp(myerr->setjmp_buffer, 1);
 }
 
+#ifndef WINDOWS
 // bmp structures
 #pragma pack(1)
 typedef struct
@@ -114,6 +115,7 @@ typedef struct
   uint32_t biClrImportant;
 }
 BITMAPINFOHEADER;
+#endif
 
 #pragma pack(1)
 typedef struct
