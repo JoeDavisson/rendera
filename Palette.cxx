@@ -110,14 +110,14 @@ void Palette::insert_color(int color, int index)
   if(max >= 256)
     return;
 
+  max++;
+
   int i;
 
   for(i = max - 1; i > index; i--)
     data[i] = data[i - 1];
 
   data[index] = color;
-
-  max++;
 }
 
 void Palette::delete_color(int index)
