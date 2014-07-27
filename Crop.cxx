@@ -88,13 +88,9 @@ void Crop::push(View *view)
       Bitmap *temp = new Bitmap(w, h);
       Bitmap::main->blit(temp, beginx, beginy, 0, 0, w, h);
       delete Bitmap::main;
-      int overscroll = Bitmap::main->overscroll;
-      int aw = w + overscroll * 2;
-      int ah = h + overscroll * 2;
-      Bitmap::main = new Bitmap(aw, ah);
-      Bitmap::main->clear(makecol(128, 128, 128));
-      Bitmap::main->set_clip(overscroll, overscroll, aw - overscroll - 1, ah - overscroll - 1);
-      temp->blit(Bitmap::main, 0, 0, overscroll, overscroll, w, h);
+      Bitmap::main = new Bitmap(w, h, 64,
+                                makecol(255, 255, 255), makecol(128, 128, 128));
+      temp->blit(Bitmap::main, 0, 0, Bitmap::main->overscroll, Bitmap::main->overscroll, w, h);
       delete temp;
       view->zoom = 1;
       view->ox = 0;
