@@ -22,7 +22,7 @@ compile_arch=`uname -m | sed -e s/i.86/i386/`
 
 case $compile_platform in
 mingw*)
-CFLAGS="${CFLAGS} -DWINDOWS -mwindows"
+CFLAGS="${CFLAGS} -static -DWINDOWS -mwindows"
 EXT=".exe"
   case $compile_arch in
   i386*)
