@@ -50,8 +50,11 @@ public:
   void scroll(int, int);
 
   Fl_Group *group;
-//  Fl_RGB_Image *image;
+#ifdef LINUX
   XImage *image;
+#else
+  Fl_RGB_Image *image;
+#endif
   Bitmap *backbuf;
   Tool *tool;
   int mousex, mousey;

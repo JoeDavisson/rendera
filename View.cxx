@@ -82,9 +82,11 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
     bgr_order = 0;
 
   backbuf = new Bitmap(Fl::w(), Fl::h());
-// for generic FLTK
-//  image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
+#ifdef LINUX
   image = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0, (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
+#else
+  image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
+#endif
   take_focus();
   resize(group->x() + x, group->y() + y, w, h);
 }
@@ -590,25 +592,25 @@ void View::draw()
     if(blitw < 1 || blith < 1)
       return;
 
+#ifdef LINUX
     XPutImage(fl_display, fl_window, fl_gc, image, blitx, blity, x() + blitx, y() + blity, blitw, blith);
-/*
-// for generic FLTK
+#else
     fl_push_clip(x() + blitx, y() + blity, blitw, blith);
     image->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
     fl_pop_clip();
     image->uncache();
-*/
+#endif
   }
   else
   {
+#ifdef LINUX
     XPutImage(fl_display, fl_window, fl_gc, image, 0, 0, x(), y(), w(), h());
-/*
-// for generic FLTK
+#else
     fl_push_clip(x(), y(), w(), h());
     image->draw(x(), y(), w(), h(), 0, 0);
     fl_pop_clip();
     image->uncache();
-*/
+#endif
   }
 }
 

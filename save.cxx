@@ -20,6 +20,7 @@ void save(Fl_Widget *, void *)
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
   fc->title("Save Image");
   fc->filter("PNG Image\t*.png\nJPEG Image\t*.jpg\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
+  fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc->show();
 
