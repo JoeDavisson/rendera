@@ -108,6 +108,9 @@ echo >> config.mak
 
 echo
 echo "Configuration:"
+echo "      OS: $compile_platform"
+echo "    ARCH: $compile_arch"
+echo "---------------------------"
 echo "  CFLAGS: ${CFLAGS}"
 echo "    LIBS: ${LIBS}"
 echo "    OBJS: ${OBJS}"
