@@ -10,7 +10,6 @@
 extern Gui *gui;
 
 // jpeg structures
-#pragma pack(8)
 struct my_error_mgr
 {
   struct jpeg_error_mgr pub;
