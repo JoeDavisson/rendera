@@ -1,6 +1,9 @@
 #include "rendera.h"
 
 #ifdef WINDOWS
+#ifndef __RPCNDR_H__
+  typedef unsigned char boolean;
+#endif
 #define HAVE_BOOLEAN
 #endif
 
