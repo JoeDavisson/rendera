@@ -1,5 +1,9 @@
 #include "rendera.h"
+
+#ifdef WINDOWS
 #define HAVE_BOOLEAN
+#endif
+
 #include <jpeglib.h>
 #include <setjmp.h>
 

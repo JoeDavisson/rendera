@@ -1,11 +1,16 @@
 #include "rendera.h"
+
+#ifdef WINDOWS
 #define HAVE_BOOLEAN
+#endif
+
 #include <jpeglib.h>
 #include <setjmp.h>
 
 extern Gui *gui;
 
 // jpeg structures
+#pragma pack(1)
 struct my_error_mgr
 {
   struct jpeg_error_mgr pub;
