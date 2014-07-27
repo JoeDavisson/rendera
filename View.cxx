@@ -75,11 +75,12 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
 
   tool = Tool::paint;
 
+  bgr_order = 0;
   // try to detect pixelformat (almost always RGB or BGR)
+#ifdef LINUX
   if(fl_visual->visual->blue_mask == 0xFF)
     bgr_order = 1;
-  else
-    bgr_order = 0;
+#endif
 
   backbuf = new Bitmap(Fl::w(), Fl::h());
 #ifdef LINUX
