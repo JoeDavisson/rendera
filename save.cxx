@@ -1,6 +1,5 @@
 #include "rendera.h"
-//#define HAVE_BOOLEAN
-typedef int boolean;
+#define HAVE_BOOLEAN
 #include <jpeglib.h>
 #include <setjmp.h>
 
