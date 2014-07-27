@@ -79,8 +79,8 @@ void Crop::push(View *view)
     {
       started = 0;
       absrect(&beginx, &beginy, &lastx, &lasty);
-      int w = lastx - beginx;
-      int h = lasty - beginy;
+      int w = lastx - beginx + 1;
+      int h = lasty - beginy + 1;
       if(w < 1)
         w = 1;
       if(h < 1)
