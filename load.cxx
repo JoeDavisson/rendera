@@ -528,8 +528,7 @@ void load_png(const char *fn, Bitmap *bitmap, int overscroll)
     return;
   }
 
-//  if(setjmp(png_jmpbuf(png_ptr)))
-  if(setjmp(png_ptr->jmpbuf))
+  if(setjmp(png_jmpbuf(png_ptr)))
   {
     fclose(in);
     return;

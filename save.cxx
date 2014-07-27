@@ -198,8 +198,7 @@ void save_png(const char *fn)
     return;
   }
 
-//  if(setjmp(png_jmpbuf(png_ptr)))
-  if(setjmp(png_ptr->jmpbuf))
+  if(setjmp(png_jmpbuf(png_ptr)))
   {
     png_destroy_write_struct(&png_ptr, &info_ptr);
     fclose(out);
