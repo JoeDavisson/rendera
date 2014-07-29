@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+extern Dialog *dialog;
+
 // prevent escape from closing main window
 static void close_callback(Fl_Widget *widget, void *)
 {
@@ -56,7 +58,7 @@ Fl_Menu_Item menuitems[] =
     { "&Scale Image...", 0, 0, 0 },
     { 0 },
   { "&Palette", 0, 0, 0, FL_SUBMENU },
-    { "&Load...", 0, (Fl_Callback *)load_palette, 0 },
+    { "&Load...", 0, (Fl_Callback *)show_load_palette, 0 },
     { "&Save...", 0, 0, 0, FL_MENU_DIVIDER },
     { "&Create From Image...", 0, (Fl_Callback *)show_create_palette, 0 },
     { 0 },
@@ -77,6 +79,7 @@ Fl_Menu_Item menuitems[] =
   { 0 }
 };
 
+// callbacks are in check.cxx
 Gui::Gui()
 {
   int x1, y1;

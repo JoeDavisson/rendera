@@ -140,69 +140,6 @@ typedef struct
 }
 TARGA_HEADER;
 
-Fl_Image *preview_png(const char *fn, unsigned char *header, int len)
-{
-  if(png_sig_cmp(header, 0, 8) != 0)
-    return 0;
-
-  load_png(fn, Bitmap::preview, 0);
-
-  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data, Bitmap::preview->w, Bitmap::preview->h, 4, 0);
-
-  return image;
-}
-
-Fl_Image *preview_jpg(const char *fn, unsigned char *header, int len)
-{
-  if(memcmp(header, (const unsigned char[2]){ 0xff, 0xd8 }, 2) != 0)
-    return 0;
-
-  load_jpg(fn, Bitmap::preview, 0);
-
-  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data, Bitmap::preview->w, Bitmap::preview->h, 4, 0);
-
-  return image;
-}
-
-Fl_Image *preview_bmp(const char *fn, unsigned char *header, int len)
-{
-  if(memcmp(header, "BM", 2) != 0)
-    return 0;
-
-  load_bmp(fn, Bitmap::preview, 0);
-
-  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data, Bitmap::preview->w, Bitmap::preview->h, 4, 0);
-
-  return image;
-}
-
-Fl_Image *preview_tga(const char *fn, unsigned char *header, int len)
-{
-  // get file extension
-  char ext[16];
-  char *p = (char *)fn + strlen(fn) - 1;
-
-  while(p >= fn)
-  {
-    if(*p == '.')
-    {
-      strcpy(ext, p);
-      break;
-    }
-
-    p--;
-  }
-
-  if(strcasecmp(ext, ".tga") != 0)
-    return 0;
-
-  load_tga(fn, Bitmap::preview, 0);
-
-  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data, Bitmap::preview->w, Bitmap::preview->h, 4, 0);
-
-  return image;
-}
-
 void load_jpg(const char *fn, Bitmap *bitmap, int overscroll)
 {
   struct jpeg_decompress_struct cinfo;

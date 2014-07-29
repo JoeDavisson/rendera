@@ -46,16 +46,5 @@ void check_origin(Widget *, void *);
 void check_constrain(Widget *, void *);
 void check_crop();
 
-void show_about();
-void hide_about();
-void show_new_image();
-void hide_new_image();
-void cancel_new_image();
-void show_create_palette();
-void hide_create_palette();
-void cancel_create_palette();
-Fl_Image *preview_pal(const char *, unsigned char *, int);
-void load_palette();
-
 #endif
 

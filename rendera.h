@@ -67,8 +67,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Separator.h"
 #include "quantize.h"
 #include "check.h"
+#include "preview.h"
 #include "load.h"
 #include "save.h"
+#include "dialog_callback.h"
 #include "Dialog.h"
 #include "Gui.h"
 
