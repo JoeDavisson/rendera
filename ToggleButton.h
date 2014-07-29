@@ -26,7 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class ToggleButton : public Fl_Button
 {
 public:
-  ToggleButton(Fl_Group *, int, int, int, int, const char *, const char *);
+  ToggleButton(Fl_Group *, int, int, int, int,
+               const char *, const char *, Fl_Callback *);
   virtual ~ToggleButton();
 
   virtual int handle(int);

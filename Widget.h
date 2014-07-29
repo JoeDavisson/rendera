@@ -26,8 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Widget : public Fl_Widget
 {
 public:
-  Widget(Fl_Group *, int, int, int, int, const char *, const char *, int, int);
-  Widget(Fl_Group *, int, int, int, int, const char *, int, int);
+  Widget(Fl_Group *, int, int, int, int,
+         const char *, const char *, int, int, Fl_Callback *);
+  Widget(Fl_Group *, int, int, int, int,
+         const char *, int, int, Fl_Callback *);
   virtual ~Widget();
 
   virtual int handle(int);

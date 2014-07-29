@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-extern Dialog *dialog;
+//extern Dialog *dialog;
 
 // prevent escape from closing main window
 static void close_callback(Fl_Widget *widget, void *)
@@ -95,7 +95,7 @@ Gui::Gui()
   // top_left
   top_left = new Fl_Group(0, menubar->h(), 112, 40);
   top_left->box(FL_UP_BOX);
-  logo = new Widget(top_left, 8, 8, 96, 24, "", "data/logo.png", 0, 0);
+  logo = new Widget(top_left, 8, 8, 96, 24, "", "data/logo.png", 0, 0, 0);
   top_left->resizable(0);
   top_left->end();
 
@@ -103,32 +103,26 @@ Gui::Gui()
   top_right = new Fl_Group(top_left->w(), menubar->h(), window->w() - top_left->w(), 40);
   top_right->box(FL_UP_BOX);
   x1 = 8;
-  zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24, "Fit In Window", "data/zoom_fit.png");
-  zoom_fit->callback((Fl_Callback *)check_zoom_fit, &zoom_fit->var);
+  zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24, "Fit In Window", "data/zoom_fit.png", (Fl_Callback *)check_zoom_fit);
   x1 += 24 + 8;
-  zoom_one = new Button(top_right, x1, 8, 24, 24, "Actual Size", "data/zoom_one.png");
-  zoom_one->callback((Fl_Callback *)check_zoom_one, &zoom_one->var);
+  zoom_one = new Button(top_right, x1, 8, 24, 24, "Actual Size", "data/zoom_one.png", (Fl_Callback *)check_zoom_one);
   x1 += 24 + 8;
-  zoom_in = new Button(top_right, x1, 8, 24, 24, "Zoom In", "data/zoom_in.png");
-  zoom_in->callback((Fl_Callback *)check_zoom_in, &zoom_in->var);
+  zoom_in = new Button(top_right, x1, 8, 24, 24, "Zoom In", "data/zoom_in.png", (Fl_Callback *)check_zoom_in);
   x1 += 24 + 8;
-  zoom_out = new Button(top_right, x1, 8, 24, 24, "Zoom Out", "data/zoom_out.png");
-  zoom_out->callback((Fl_Callback *)check_zoom_out, &zoom_out->var);
+  zoom_out = new Button(top_right, x1, 8, 24, 24, "Zoom Out", "data/zoom_out.png", (Fl_Callback *)check_zoom_out);
   x1 += 24 + 8;
-  zoom = new Field(top_right, x1, 8, 56, 24, "");
+  zoom = new Field(top_right, x1, 8, 56, 24, "", 0);
+  // make this inactive, display only for now
   zoom->deactivate();
   x1 += 56 + 6;
   new Separator(top_right, x1, 2, 2, 36, "");
   x1 += 8;
-  grid = new ToggleButton(top_right, x1, 8, 24, 24, "Show Grid", "data/grid.png");
-  grid->callback((Fl_Callback *)check_grid, &grid->var);
+  grid = new ToggleButton(top_right, x1, 8, 24, 24, "Show Grid", "data/grid.png", (Fl_Callback *)check_grid);
   x1 += 24 + 48 + 8;
-  gridx = new Field(top_right, x1, 8, 32, 24, "Grid X:");
-  gridx->callback((Fl_Callback *)check_gridx, &gridx->var);
+  gridx = new Field(top_right, x1, 8, 32, 24, "Grid X:", (Fl_Callback *)check_gridx);
   gridx->value("8");
   x1 += 32 + 48 + 8;
-  gridy = new Field(top_right, x1, 8, 32, 24, "Grid Y:");
-  gridy->callback((Fl_Callback *)check_gridy, &gridy->var);
+  gridy = new Field(top_right, x1, 8, 32, 24, "Grid Y:", (Fl_Callback *)check_gridy);
   gridy->value("8");
   top_right->resizable(0);
   top_right->end();
@@ -137,24 +131,19 @@ Gui::Gui()
   bottom = new Fl_Group(224, window->h() - 40, window->w() - 224 - 112, 40);
   bottom->box(FL_UP_BOX);
   x1 = 8;
-  wrap = new ToggleButton(bottom, x1, 8, 24, 24, "Wrap Edges", "data/wrap.png");
-  wrap->callback((Fl_Callback *)check_wrap, &wrap->var);
+  wrap = new ToggleButton(bottom, x1, 8, 24, 24, "Wrap Edges", "data/wrap.png", (Fl_Callback *)check_wrap);
   x1 += 24 + 6;
   new Separator(bottom, x1, 2, 2, 36, "");
   x1 += 8;
-  clone = new ToggleButton(bottom, x1, 8, 24, 24, "Clone Enable", "data/clone.png");
-  clone->callback((Fl_Callback *)check_clone, &clone->var);
+  clone = new ToggleButton(bottom, x1, 8, 24, 24, "Clone Enable", "data/clone.png", (Fl_Callback *)check_clone);
   x1 += 24 + 8;
-  mirror = new Widget(bottom, x1, 8, 96, 24, "Clone Mirroring", "data/mirror.png", 24, 24);
-  mirror->callback((Fl_Callback *)check_mirror, &mirror->var);
+  mirror = new Widget(bottom, x1, 8, 96, 24, "Clone Mirroring", "data/mirror.png", 24, 24, (Fl_Callback *)check_mirror);
   x1 += 96 + 6;
   new Separator(bottom, x1, 2, 2, 36, "");
   x1 += 8;
-  origin = new Widget(bottom, x1, 8, 48, 24, "Origin", "data/origin.png", 24, 24);
-  origin->callback((Fl_Callback *)check_origin, &origin->var);
+  origin = new Widget(bottom, x1, 8, 48, 24, "Origin", "data/origin.png", 24, 24, (Fl_Callback *)check_origin);
   x1 += 48 + 8;
-  constrain = new Widget(bottom, x1, 8, 48, 24, "Keep Square", "data/constrain.png", 24, 24);
-  constrain->callback((Fl_Callback *)check_constrain, &constrain->var);
+  constrain = new Widget(bottom, x1, 8, 48, 24, "Keep Square", "data/constrain.png", 24, 24, (Fl_Callback *)check_constrain);
   bottom->resizable(0);
   bottom->end();
 
@@ -165,8 +154,7 @@ Gui::Gui()
   tools->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   tools->box(FL_UP_BOX);
   y1 = 20;
-  tool = new Widget(tools, 8, y1, 96, 168, "Tools", "data/tools.png", 96, 24);
-  tool->callback((Fl_Callback *)check_tool, &tool->var);
+  tool = new Widget(tools, 8, y1, 96, 168, "Tools", "data/tools.png", 96, 24, (Fl_Callback *)check_tool);
   y1 += 96 + 8;
   tools->resizable(0);
   tools->end();
@@ -178,18 +166,15 @@ Gui::Gui()
   paint->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   paint->box(FL_UP_BOX);
   y1 = 20;
-  paint_brush = new Widget(paint, 8, y1, 96, 96, "Brush Preview", 0, 0);
+  paint_brush = new Widget(paint, 8, y1, 96, 96, "Brush Preview", 0, 0, 0);
   paint_brush->bitmap->clear(makecol(255, 255, 255));
   paint_brush->bitmap->setpixel_solid(48, 48, makecol(0, 0, 0), 0);
   y1 += 96 + 8;
-  paint_size = new Widget(paint, 8, y1, 96, 24, "Size", "data/size.png", 6, 24);
-  paint_size->callback((Fl_Callback *)check_paint_size, &paint_size->var);
+  paint_size = new Widget(paint, 8, y1, 96, 24, "Size", "data/size.png", 6, 24, (Fl_Callback *)check_paint_size);
   y1 += 24 + 8;
-  paint_stroke = new Widget(paint, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24);
-  paint_stroke->callback((Fl_Callback *)check_paint_stroke, &paint_stroke->var);
+  paint_stroke = new Widget(paint, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24, (Fl_Callback *)check_paint_stroke);
   y1 += 48 + 8;
-  paint_shape = new Widget(paint, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24);
-  paint_shape->callback((Fl_Callback *)check_paint_size, &paint_size->var);
+  paint_shape = new Widget(paint, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24, (Fl_Callback *)check_paint_shape);
   paint->resizable(0);
   paint->end();
 
@@ -200,25 +185,20 @@ Gui::Gui()
   airbrush->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   airbrush->box(FL_UP_BOX);
   y1 = 20;
-  airbrush_brush = new Widget(airbrush, 8, y1, 96, 96, "Brush Preview", 0, 0);
+  airbrush_brush = new Widget(airbrush, 8, y1, 96, 96, "Brush Preview", 0, 0, 0);
   airbrush_brush->bitmap->clear(makecol(255, 255, 255));
   airbrush_brush->bitmap->setpixel_solid(48, 48, makecol(0, 0, 0), 0);
   y1 += 96 + 8;
-  airbrush_size = new Widget(airbrush, 8, y1, 96, 24, "Size", "data/size.png", 6, 24);
-  airbrush_size->callback((Fl_Callback *)check_airbrush_size, &airbrush_size->var);
+  airbrush_size = new Widget(airbrush, 8, y1, 96, 24, "Size", "data/size.png", 6, 24, (Fl_Callback *)check_airbrush_size);
   y1 += 24 + 8;
-  airbrush_stroke = new Widget(airbrush, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24);
-  airbrush_stroke->callback((Fl_Callback *)check_airbrush_stroke, &airbrush_stroke->var);
+  airbrush_stroke = new Widget(airbrush, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24, (Fl_Callback *)check_airbrush_stroke);
   y1 += 48 + 8;
-  airbrush_shape = new Widget(airbrush, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24);
-  airbrush_shape->callback((Fl_Callback *)check_airbrush_size, &airbrush_size->var);
+  airbrush_shape = new Widget(airbrush, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24, (Fl_Callback *)check_airbrush_shape);
   y1 += 24 + 8;
-  airbrush_edge = new Widget(airbrush, 8, y1, 96, 24, "Soft Edge", "data/soft_edge.png", 12, 24);
-  airbrush_edge->callback((Fl_Callback *)check_airbrush_edge, &airbrush_edge->var);
+  airbrush_edge = new Widget(airbrush, 8, y1, 96, 24, "Soft Edge", "data/soft_edge.png", 12, 24, (Fl_Callback *)check_airbrush_edge);
   y1 += 24 + 8;
-  airbrush_smooth = new Widget(airbrush, 8, y1, 96, 48, "Coarse/Fine", "data/smooth.png", 48, 48);
+  airbrush_smooth = new Widget(airbrush, 8, y1, 96, 48, "Coarse/Fine", "data/smooth.png", 48, 48, (Fl_Callback *)check_airbrush_smooth);
   y1 += 48 + 8;
-  airbrush_smooth->callback((Fl_Callback *)check_airbrush_smooth, &airbrush_smooth->var);
   airbrush->resizable(0);
   airbrush->end();
 
@@ -229,19 +209,14 @@ Gui::Gui()
   pixelart->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   pixelart->box(FL_UP_BOX);
   y1 = 20;
-  pixelart_brush = new Widget(pixelart, 8, y1, 96, 96, "Brush Shape", "data/tiny.png", 16, 16);
-  pixelart_brush->callback((Fl_Callback *)check_pixelart_brush, &pixelart_brush->var);
+  pixelart_brush = new Widget(pixelart, 8, y1, 96, 96, "Brush Shape", "data/tiny.png", 16, 16, (Fl_Callback *)check_pixelart_brush);
   y1 += 96 + 8;
-  pixelart_stroke = new Widget(pixelart, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24);
-  pixelart_stroke->callback((Fl_Callback *)check_pixelart_stroke, &pixelart_stroke->var);
+  pixelart_stroke = new Widget(pixelart, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24, (Fl_Callback *)check_pixelart_stroke);
   y1 += 48 + 8;
-  pixelart_pattern = new Widget(pixelart, 8, y1, 96, 192, "Pattern", "data/patterns.png", 32, 32);
-  pixelart_pattern->callback((Fl_Callback *)check_pixelart_pattern, &pixelart_pattern->var);
+  pixelart_pattern = new Widget(pixelart, 8, y1, 96, 192, "Pattern", "data/patterns.png", 32, 32, (Fl_Callback *)check_pixelart_pattern);
   y1 += 192 + 8;
-  pixelart_lock = new ToggleButton(pixelart, 8, y1, 44, 44, "Lock Pattern", "data/lock.png");
-  pixelart_lock->callback((Fl_Callback *)check_pixelart_lock, &pixelart_lock->var);
-  pixelart_invert = new ToggleButton(pixelart, 8 + 44 + 8, y1, 44, 44, "Invert Pattern", "data/invert.png");
-  pixelart_invert->callback((Fl_Callback *)check_pixelart_invert, &pixelart_invert->var);
+  pixelart_lock = new ToggleButton(pixelart, 8, y1, 44, 44, "Lock Pattern", "data/lock.png", (Fl_Callback *)pixelart_lock);
+  pixelart_invert = new ToggleButton(pixelart, 8 + 44 + 8, y1, 44, 44, "Invert Pattern", "data/invert.png", (Fl_Callback *)pixelart_invert);
   pixelart->resizable(0);
   pixelart->end();
 
@@ -252,20 +227,16 @@ Gui::Gui()
   stump->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   stump->box(FL_UP_BOX);
   y1 = 20;
-  stump_brush = new Widget(stump, 8, y1, 96, 96, "Brush Preview", 0, 0);
+  stump_brush = new Widget(stump, 8, y1, 96, 96, "Brush Preview", 0, 0, 0);
   stump_brush->bitmap->clear(makecol(255, 255, 255));
   stump_brush->bitmap->setpixel_solid(48, 48, makecol(0, 0, 0), 0);
   y1 += 96 + 8;
-  stump_size = new Widget(stump, 8, y1, 96, 24, "Size", "data/size.png", 6, 24);
-  stump_size->callback((Fl_Callback *)check_stump_size, &stump_size->var);
+  stump_size = new Widget(stump, 8, y1, 96, 24, "Size", "data/size.png", 6, 24, (Fl_Callback *)check_stump_size);
   y1 += 24 + 8;
-  stump_stroke = new Widget(stump, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24);
-  stump_stroke->callback((Fl_Callback *)check_stump_stroke, &stump_stroke->var);
+  stump_stroke = new Widget(stump, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24, (Fl_Callback *)check_stump_stroke);
   y1 += 48 + 8;
-  stump_shape = new Widget(stump, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24);
-  stump_shape->callback((Fl_Callback *)check_stump_size, &stump_size->var);
-  stump_amount = new Widget(stump, 8, y1, 96, 24, "Amount", "data/amount.png", 1, 24);
-  stump_amount->callback((Fl_Callback *)check_stump_amount, &stump_amount->var);
+  stump_shape = new Widget(stump, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24, (Fl_Callback *)check_stump_shape);
+  stump_amount = new Widget(stump, 8, y1, 96, 24, "Amount", "data/amount.png", 1, 24, (Fl_Callback *)check_stump_amount);
   stump->resizable(0);
   stump->end();
 
@@ -276,16 +247,16 @@ Gui::Gui()
   crop->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   crop->box(FL_UP_BOX);
   y1 = 20;
-  crop_x = new Field(crop, 24, y1, 72, 24, "X:");
+  crop_x = new Field(crop, 24, y1, 72, 24, "X:", 0);
   crop_x->deactivate();
   y1 += 24 + 6;
-  crop_y = new Field(crop, 24, y1, 72, 24, "Y:");
+  crop_y = new Field(crop, 24, y1, 72, 24, "Y:", 0);
   crop_y->deactivate();
   y1 += 24 + 6;
-  crop_w = new Field(crop, 24, y1, 72, 24, "W:");
+  crop_w = new Field(crop, 24, y1, 72, 24, "W:", 0);
   crop_w->deactivate();
   y1 += 24 + 6;
-  crop_h = new Field(crop, 24, y1, 72, 24, "H:");
+  crop_h = new Field(crop, 24, y1, 72, 24, "H:", 0);
   crop_h->deactivate();
   y1 += 24 + 6;
   crop->resizable(0);
@@ -317,34 +288,26 @@ Gui::Gui()
   right->box(FL_UP_BOX);
 
   // invisible palette preview widget
-  pal_preview = new Widget(right, 0, 0, 96, 96, "", 6, 6);
+  pal_preview = new Widget(right, 0, 0, 96, 96, "", 6, 6, 0);
   pal_preview->hide();
   
   y1 = 20;
-  palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 6, 6);
-  palette->callback((Fl_Callback *)check_palette, &palette->var);
+  palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 6, 6, (Fl_Callback *)check_palette);
   y1 += 96 + 8;
-  plus = new Button(right, 8, y1, 44, 16, "Insert Color", "data/plus.png");
-  plus->callback((Fl_Callback *)check_plus, &plus->var);
-  minus = new Button(right, 8 + 44 + 8, y1, 44, 16, "Delete Color", "data/minus.png");
-  minus->callback((Fl_Callback *)check_minus, &minus->var);
+  plus = new Button(right, 8, y1, 44, 16, "Insert Color", "data/plus.png", (Fl_Callback *)check_plus);
+  minus = new Button(right, 8 + 44 + 8, y1, 44, 16, "Delete Color", "data/minus.png", (Fl_Callback *)check_minus);
   y1 += 16 + 8;
-  hue = new Widget(right, 8, y1, 96, 96, "Hue", 1, 1);
-  hue->callback((Fl_Callback *)check_color, &hue->var);
+  hue = new Widget(right, 8, y1, 96, 96, "Hue", 1, 1, (Fl_Callback *)check_hue);
   y1 += 96 + 8;
-  color = new Widget(right, 8, y1, 96, 48, "Color", 0, 0);
+  color = new Widget(right, 8, y1, 96, 48, "Color", 0, 0, 0);
   y1 += 48 + 8;
-  sat = new Widget(right, 8, y1, 96, 24, "Saturation", 1, 24);
-  sat->callback((Fl_Callback *)check_color, &sat->var);
+  sat = new Widget(right, 8, y1, 96, 24, "Saturation", 1, 24, (Fl_Callback *)check_sat);
   y1 += 24 + 8;
-  val = new Widget(right, 8, y1, 96, 24, "Value", 1, 24);
-  val->callback((Fl_Callback *)check_color, &val->var);
+  val = new Widget(right, 8, y1, 96, 24, "Value", 1, 24, (Fl_Callback *)check_val);
   y1 += 24 + 8;
-  trans = new Widget(right, 8, y1, 96, 24, "Transparency", "data/transparency.png", 1, 24);
-  trans->callback((Fl_Callback *)check_color, &trans->var);
+  trans = new Widget(right, 8, y1, 96, 24, "Transparency", "data/transparency.png", 1, 24, (Fl_Callback *)check_trans);
   y1 += 24 + 8;
-  blend = new Widget(right, 8, y1, 96, 24, "Blending Mode", "data/blend.png", 24, 24);
-  blend->callback((Fl_Callback *)check_color, &blend->var);
+  blend = new Widget(right, 8, y1, 96, 24, "Blending Mode", "data/blend.png", 24, 24, (Fl_Callback *)check_blend);
   y1 += 24 + 8;
   right->resizable(0);
   right->end();

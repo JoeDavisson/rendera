@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Field : public Fl_Int_Input
 {
 public:
-  Field(Fl_Group *, int, int, int, int, const char *);
+  Field(Fl_Group *, int, int, int, int, const char *, Fl_Callback *);
   virtual ~Field();
 
   int var;

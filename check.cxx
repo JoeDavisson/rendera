@@ -160,6 +160,11 @@ void check_paint_size(Widget *widget, void *var)
   gui->paint_brush->redraw();
 }
 
+void check_paint_shape(Widget *widget, void *var)
+{
+  gui->paint_size->do_callback();
+}
+
 void check_paint_stroke(Widget *widget, void *var)
 {
   gui->view->tool->stroke->type = *(int *)var;
@@ -178,6 +183,11 @@ void check_airbrush_size(Widget *widget, void *var)
   for(i = 0; i < Brush::main->solid_count; i++)
     gui->airbrush_brush->bitmap->setpixel_solid(48 + brush->solidx[i], 48 + brush->solidy[i], makecol(0, 0, 0), 0);
   gui->airbrush_brush->redraw();
+}
+
+void check_airbrush_shape(Widget *widget, void *var)
+{
+  gui->airbrush_size->do_callback();
 }
 
 void check_airbrush_stroke(Widget *widget, void *var)
@@ -292,6 +302,11 @@ void check_stump_size(Widget *widget, void *var)
   for(i = 0; i < Brush::main->solid_count; i++)
     gui->stump_brush->bitmap->setpixel_solid(48 + brush->solidx[i], 48 + brush->solidy[i], makecol(0, 0, 0), 0);
   gui->stump_brush->redraw();
+}
+
+void check_stump_shape(Widget *widget, void *var)
+{
+  gui->stump_size->do_callback();
 }
 
 void check_stump_stroke(Widget *widget, void *var)
@@ -420,6 +435,31 @@ void check_color(Widget *widget, void *var)
 
   gui->color->bitmap->rectfill(0, 0, gui->color->bitmap->w, gui->color->bitmap->h, Brush::main->color, 0);
   gui->color->redraw();
+}
+
+void check_hue(Widget *widget, void *var)
+{
+  check_color(0, 0);
+}
+
+void check_sat(Widget *widget, void *var)
+{
+  check_color(0, 0);
+}
+
+void check_val(Widget *widget, void *var)
+{
+  check_color(0, 0);
+}
+
+void check_trans(Widget *widget, void *var)
+{
+  check_color(0, 0);
+}
+
+void check_blend(Widget *widget, void *var)
+{
+  check_color(0, 0);
 }
 
 void check_wrap(Widget *widget, void *var)

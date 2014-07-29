@@ -26,7 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Button : public Fl_Button
 {
 public:
-  Button(Fl_Group *, int, int, int, int, const char *, const char *);
+  Button(Fl_Group *, int, int, int, int,
+         const char *, const char *, Fl_Callback *);
   virtual ~Button();
 
   int var;

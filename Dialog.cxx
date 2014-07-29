@@ -24,7 +24,7 @@ Dialog::Dialog()
 {
   // about
   about = new Fl_Double_Window(336, 112, "About");
-  about_logo = new Widget(about, 8, 8, 320, 64, "Logo", "data/logo_large.png", 0, 0);
+  about_logo = new Widget(about, 8, 8, 320, 64, "Logo", "data/logo_large.png", 0, 0, 0);
   about_ok = new Fl_Button(336 / 2 - 32, 80, 64, 24, "OK");
   about_ok->callback((Fl_Callback *)hide_about);
   about->set_modal();
@@ -32,8 +32,8 @@ Dialog::Dialog()
 
   // new image
   new_image = new Fl_Double_Window(256, 184, "New Image");
-  new_image_width = new Field(new_image, 120, 32, 72, 24, "Width:");
-  new_image_height = new Field(new_image, 120, 72, 72, 24, "Height:");
+  new_image_width = new Field(new_image, 120, 32, 72, 24, "Width:", 0);
+  new_image_height = new Field(new_image, 120, 72, 72, 24, "Height:", 0);
   new_image_width->maximum_size(8);
   new_image_height->maximum_size(8);
   new_image_width->value("640");
@@ -48,7 +48,7 @@ Dialog::Dialog()
 
   // create palette from image
   create_palette = new Fl_Double_Window(256, 144, "Create Palette From Image");
-  create_palette_colors = new Field(create_palette, 120, 32, 72, 24, "Colors:");
+  create_palette_colors = new Field(create_palette, 120, 32, 72, 24, "Colors:", 0);
   new_image_width->value("256");
   new Separator(new_image, 16, 88, 226, 2, "");
   create_palette_ok = new Fl_Button(96, 104, 64, 24, "OK");

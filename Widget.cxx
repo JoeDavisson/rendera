@@ -21,10 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "rendera.h"
 
 // load a PNG image from a file
-Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, const char *filename, int sx, int sy)
+Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, const char *filename, int sx, int sy, Fl_Callback *cb)
 : Fl_Widget(x, y, w, h, label)
 {
   var = 0;
+  if(cb)
+    callback(cb, &var);
   stepx = sx;
   stepy = sy;
   group = g;
@@ -60,10 +62,12 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, const
 }
 
 // use a blank bitmap
-Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, int sx, int sy)
+Widget::Widget(Fl_Group *g, int x, int y, int w, int h, const char *label, int sx, int sy, Fl_Callback *cb)
 : Fl_Widget(x, y, w, h, label)
 {
   var = 0;
+  if(cb)
+    callback(cb, &var);
   stepx = sx;
   stepy = sy;
   group = g;
