@@ -109,39 +109,40 @@ int Blend::colorize(int c1, int c2, int t)
   return force_lum(c3, getl(c1));
 }
 
-int Blend::force_lum(int c, int vdest)
+// forces a color to a similar one with the specified luminance
+int Blend::force_lum(int c, int dest_lum)
 {
   int i;
   int n[3];
-  int vsrc = getl(c);
+  int src_lum = getl(c);
 
   n[0] = getg(c);
   n[1] = getr(c);
   n[2] = getb(c);
 
-  while(vsrc < vdest)
+  while(src_lum < dest_lum)
   {
     for(i = 0; i < 3; i++)
     {
       if(n[i] < 255)
       {
         n[i]++;
-        vsrc = getl(makecol(n[1], n[0], n[2]));
-        if(vsrc == vdest)
+        src_lum = getl(makecol(n[1], n[0], n[2]));
+        if(src_lum == dest_lum)
           break;
       }
     }
   }
 
-  while(vsrc > vdest)
+  while(src_lum > dest_lum)
   {
     for(i = 0; i < 3; i++)
     {
       if(n[i] > 0)
       {
         n[i]--;
-        vsrc = getl(makecol(n[1], n[0], n[2]));
-        if(vsrc == vdest)
+        src_lum = getl(makecol(n[1], n[0], n[2]));
+        if(src_lum == dest_lum)
           break;
       }
     }

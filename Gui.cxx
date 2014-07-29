@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-//extern Dialog *dialog;
-
 // prevent escape from closing main window
 static void close_callback(Fl_Widget *widget, void *)
 {
@@ -287,7 +285,7 @@ Gui::Gui()
   right->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   right->box(FL_UP_BOX);
 
-  // invisible palette preview widget
+  // invisible palette file preview widget
   pal_preview = new Widget(right, 0, 0, 96, 96, "", 6, 6, 0);
   pal_preview->hide();
   
