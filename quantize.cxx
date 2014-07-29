@@ -107,6 +107,7 @@ static int limit_colors(float *list, int *colors)
         float gg = 0;
         float bb = 0;
         float div = 0;
+
         for(k = 0; k < step; k++)
         {
           for(j = 0; j < step; j++)
@@ -115,6 +116,7 @@ static int limit_colors(float *list, int *colors)
             {
               int c = makecol_notrans(r + i, g + j, b + k);
               float d = list[c];
+
               rr += d * getr(c);
               gg += d * getg(c);
               bb += d * getb(c);
@@ -123,6 +125,7 @@ static int limit_colors(float *list, int *colors)
             }
           }
         }
+
         if(div > 0)
         {
           rr /= div;
@@ -258,7 +261,6 @@ void quantize(Bitmap *src, int size)
     }
   }
 
-  // BEGIN LOOP
   while(count > rep)
   {
     // find lowest value in error matrix
@@ -270,6 +272,7 @@ void quantize(Bitmap *src, int size)
       if(colors[j] >= 0)
       {
         float *pos = &err[(j << SHIFT)];
+
         for(i = 0; i < j; i++)
         {
           if((colors[i] >= 0) && (*pos < error))
@@ -285,6 +288,7 @@ void quantize(Bitmap *src, int size)
 
     // compute quantization level and place in i, delete j
     float temp = list[colors[ii]];
+
     colors[ii] = merge24(colors[ii], colors[jj],
                          list[colors[ii]], list[colors[jj]]);
     list[colors[ii]] = temp + list[colors[jj]];
@@ -293,6 +297,7 @@ void quantize(Bitmap *src, int size)
 
     // recompute error matrix for new row
     float *pos = &err[ii + (ii << SHIFT)];
+
     for(j = ii; j < max; j++)
     {
       if(colors[j] >= 0)
@@ -303,10 +308,10 @@ void quantize(Bitmap *src, int size)
       pos += (1 << SHIFT);
     }
   }
-  // END LOOP
 
   // build palette
   int index = 0;
+
   for(i = 0; i < max; i++)
   {
     if(colors[i] != -1)
