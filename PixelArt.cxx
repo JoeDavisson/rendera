@@ -37,6 +37,8 @@ PixelArt::~PixelArt()
 
 void PixelArt::render()
 {
+  undo(0);
+
   Brush *brush = Brush::main;
   Map *map = Map::main;
 
