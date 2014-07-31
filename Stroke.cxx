@@ -183,6 +183,14 @@ void Stroke::size(int x1, int y1, int x2, int y2)
   this->y2 = y2;
 }
 
+void Stroke::max()
+{
+  this->x1 = 0;
+  this->y1 = 0;
+  this->x2 = Bitmap::main->w - 1;
+  this->y2 = Bitmap::main->h - 1;
+}
+
 void Stroke::draw_brush(int x, int y, int c)
 {
   Brush *brush = Brush::main;

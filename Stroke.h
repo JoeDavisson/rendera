@@ -33,6 +33,7 @@ public:
   void size_linear(int, int, int, int);
   void make_blitrect(int, int, int, int, int, int, int, float);
   void size(int, int, int, int);
+  void max();
   void draw_brush(int, int, int);
   void draw_brush_line(int, int, int, int, int);
   void draw_brush_rect(int, int, int, int, int);

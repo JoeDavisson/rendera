@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 extern Gui *gui;
 
 Bitmap *undo_stack[MAX_UNDO];
+int undo_resized[MAX_UNDO];
 int undo_current;
 
 void undo_init()
@@ -30,17 +31,21 @@ void undo_init()
   int i;
 
   for(i = 0; i < MAX_UNDO; i++)
+  {
     undo_stack[i] = new Bitmap(8, 8);
+    undo_resized[i] = 0;
+  }
 
   undo_current = MAX_UNDO - 1;
 }
 
-void undo_push(int x, int y, int w, int h)
+void undo_push(int x, int y, int w, int h, int resized)
 {
   if(undo_current < 0)
     return;
 
   Bitmap *bmp = undo_stack[undo_current];
+  undo_resized[undo_current] = resized;
 
   delete bmp;
   bmp = new Bitmap(w, h);
@@ -57,8 +62,16 @@ void undo_pop()
     return;
 
   undo_current++;
-
   Bitmap *bmp = undo_stack[undo_current];
+
+  if(undo_resized[undo_current])
+  {
+    delete Bitmap::main;
+    Bitmap::main = new Bitmap(bmp->w, bmp->h);
+    gui->view->ox = 0;
+    gui->view->oy = 0;
+  }
+
   bmp->blit(Bitmap::main, 0, 0, bmp->x, bmp->y, bmp->w, bmp->h);
 
   gui->view->draw_main(1);

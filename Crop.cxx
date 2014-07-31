@@ -77,6 +77,8 @@ void Crop::push(View *view)
     if(view->dclick && inbox(view->imgx, view->imgy,
                              beginx, beginy, lastx, lasty))
     {
+      stroke->max(); 
+      undo(1);
       started = 0;
       absrect(&beginx, &beginy, &lastx, &lasty);
       int w = lastx - beginx + 1;

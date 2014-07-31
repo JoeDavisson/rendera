@@ -34,7 +34,7 @@ public:
   void reset();
 
   // store undo
-  void undo();
+  void undo(int);
 
   // called when mouse button is initially pressed
   virtual void push(View *) = 0;

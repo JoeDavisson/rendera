@@ -30,7 +30,7 @@ Paint::~Paint()
 
 void Paint::render()
 {
-  undo();
+  undo(0);
 
   Brush *brush = Brush::main;
   Map *map = Map::main;

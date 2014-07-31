@@ -30,6 +30,8 @@ Stump::~Stump()
 
 void Stump::render()
 {
+  undo(0);
+
   Brush *brush = Brush::main;
   Map *map = Map::main;
 

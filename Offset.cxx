@@ -30,6 +30,9 @@ Offset::~Offset()
 
 void Offset::push(View *view)
 {
+  stroke->max();
+  undo(0);
+
   int w = Bitmap::main->cw;
   int h = Bitmap::main->ch;
   int overscroll = Bitmap::main->overscroll;

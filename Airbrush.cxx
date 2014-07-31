@@ -150,6 +150,8 @@ void Airbrush::render_begin_smooth(View *view)
 
 void Airbrush::render_begin(View *view)
 {
+  undo(0);
+
   Brush *brush = Brush::main;
   Map *map = Map::main;
 
