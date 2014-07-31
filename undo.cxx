@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-#define MAX_UNDO 4
+#define MAX_UNDO 32
 
 extern Gui *gui;
 
@@ -74,7 +74,6 @@ void undo_pop()
     return;
 
   undo_current++;
-//printf("undo_current = %d\n", undo_current);
   Bitmap *bmp = undo_stack[undo_current];
 
   if(undo_resized[undo_current])
