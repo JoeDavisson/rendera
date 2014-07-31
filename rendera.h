@@ -48,6 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.h"
 #include "Bitmap.h"
 #include "Map.h"
+#include "undo.h"
 #include "Stroke.h"
 #include "View.h"
 #include "Brush.h"

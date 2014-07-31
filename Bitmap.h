@@ -30,7 +30,7 @@ public:
   Bitmap(int, int, int, int, int);
   virtual ~Bitmap();
 
-  int w, h;
+  int x, y, w, h;
   int cl, cr, ct, cb, cw, ch;
   int overscroll;
   int *data;

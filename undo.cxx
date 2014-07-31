@@ -20,38 +20,47 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-Tool *Tool::paint;
-Tool *Tool::airbrush;
-Tool *Tool::pixelart;
-Tool *Tool::stump;
-Tool *Tool::crop;
-Tool *Tool::getcolor;
-Tool *Tool::offset;
+extern Gui *gui;
 
-Tool *Tool::current;
+Bitmap *undo_stack[MAX_UNDO];
+int undo_current;
 
-Tool::Tool()
+void undo_init()
 {
-  stroke = new Stroke();
-  reset();
+  int i;
+
+  for(i = 0; i < MAX_UNDO; i++)
+    undo_stack[i] = new Bitmap(8, 8);
+
+  undo_current = MAX_UNDO - 1;
 }
 
-Tool::~Tool()
+void undo_push(int x, int y, int w, int h)
 {
-  delete stroke;
+  if(undo_current < 0)
+    return;
+
+  Bitmap *bmp = undo_stack[undo_current];
+
+  delete bmp;
+  bmp = new Bitmap(w, h);
+  bmp->x = x;
+  bmp->y = y;
+
+  Bitmap::main->blit(bmp, x, y, 0, 0, w, h);
+  undo_current--;
 }
 
-void Tool::reset()
+void undo_pop()
 {
-  started = 0;
-  active = 0;
-}
+  if(undo_current == MAX_UNDO - 1)
+    return;
 
-void Tool::undo()
-{
-  undo_push(stroke->x1,
-            stroke->y1,
-            stroke->x2 - stroke->x1 + 1,
-            stroke->y2 - stroke->y1 + 1);
+  undo_current++;
+
+  Bitmap *bmp = undo_stack[undo_current];
+  bmp->blit(Bitmap::main, 0, 0, bmp->x, bmp->y, bmp->w, bmp->h);
+
+  gui->view->draw_main(1);
 }
 

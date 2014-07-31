@@ -48,6 +48,8 @@ Bitmap::Bitmap(int width, int height)
   data = new int [width * height];
   row = new int *[height];
 
+  x = 0;
+  y = 0;
   w = width;
   h = height;
   overscroll = 0;
@@ -73,6 +75,8 @@ Bitmap::Bitmap(int width, int height, int overscroll, int insideColor, int outsi
   data = new int [width * height];
   row = new int *[height];
 
+  x = 0;
+  y = 0;
   w = width;
   h = height;
   this->overscroll = overscroll;

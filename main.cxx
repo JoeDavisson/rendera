@@ -68,6 +68,8 @@ int main(int argc, char **argv)
   gui->palette->do_callback();
   check_zoom();
 
+  undo_init();
+
   return Fl::run();
 }
 

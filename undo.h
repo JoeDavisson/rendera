@@ -18,40 +18,16 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#ifndef UNDO_H
+#define UNDO_H
+
 #include "rendera.h"
 
-Tool *Tool::paint;
-Tool *Tool::airbrush;
-Tool *Tool::pixelart;
-Tool *Tool::stump;
-Tool *Tool::crop;
-Tool *Tool::getcolor;
-Tool *Tool::offset;
+#define MAX_UNDO 32
 
-Tool *Tool::current;
+void undo_init();
+void undo_push(int, int, int, int);
+void undo_pop();
 
-Tool::Tool()
-{
-  stroke = new Stroke();
-  reset();
-}
-
-Tool::~Tool()
-{
-  delete stroke;
-}
-
-void Tool::reset()
-{
-  started = 0;
-  active = 0;
-}
-
-void Tool::undo()
-{
-  undo_push(stroke->x1,
-            stroke->y1,
-            stroke->x2 - stroke->x1 + 1,
-            stroke->y2 - stroke->y1 + 1);
-}
+#endif
 

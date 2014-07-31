@@ -2,6 +2,8 @@
 
 extern Gui *gui;
 
+// Callbacks for FLTK's file chooser preview pane
+
 Fl_Image *preview_png(const char *fn, unsigned char *header, int len)
 {
   if(png_sig_cmp(header, 0, 8) != 0)
