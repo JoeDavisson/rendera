@@ -23,8 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-#define MAX_UNDO 32
-
 void undo_init();
 void undo_push(int, int, int, int, int);
 void undo_pop();

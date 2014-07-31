@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+#define MAX_UNDO 4
+
 extern Gui *gui;
 
 Bitmap *undo_stack[MAX_UNDO];
@@ -41,8 +43,18 @@ void undo_init()
 
 void undo_push(int x, int y, int w, int h, int resized)
 {
+  int i;
+
   if(undo_current < 0)
-    return;
+  {
+    undo_current = 0;
+
+    undo_stack[0] = undo_stack[MAX_UNDO - 1];
+    for(i = MAX_UNDO - 1; i > 0; i--)
+    {
+      undo_stack[i] = undo_stack[i - 1];
+    }
+  }
 
   Bitmap *bmp = undo_stack[undo_current];
   undo_resized[undo_current] = resized;
@@ -58,16 +70,18 @@ void undo_push(int x, int y, int w, int h, int resized)
 
 void undo_pop()
 {
-  if(undo_current == MAX_UNDO - 1)
+  if(undo_current >= MAX_UNDO - 1)
     return;
 
   undo_current++;
+//printf("undo_current = %d\n", undo_current);
   Bitmap *bmp = undo_stack[undo_current];
 
   if(undo_resized[undo_current])
   {
     delete Bitmap::main;
-    Bitmap::main = new Bitmap(bmp->w, bmp->h);
+    Bitmap::main = new Bitmap(bmp->w, bmp->h, 64,
+                              makecol(255, 255, 255), makecol(128, 128, 128));
     gui->view->ox = 0;
     gui->view->oy = 0;
   }
