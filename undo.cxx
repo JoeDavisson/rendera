@@ -78,18 +78,23 @@ void undo_pop()
     return;
 
   undo_current++;
-  Bitmap *bmp = undo_stack[undo_current];
 
   if(undo_resized[undo_current])
   {
     delete Bitmap::main;
-    Bitmap::main = new Bitmap(bmp->w, bmp->h, 64,
-                              makecol(255, 255, 255), makecol(128, 128, 128));
+    Bitmap::main = new Bitmap(undo_stack[undo_current]->w,
+                              undo_stack[undo_current]->h, 64,
+                              makecol(255, 255, 255),
+                              makecol(128, 128, 128));
     gui->view->ox = 0;
     gui->view->oy = 0;
   }
 
-  bmp->blit(Bitmap::main, 0, 0, bmp->x, bmp->y, bmp->w, bmp->h);
+  undo_stack[undo_current]->blit(Bitmap::main, 0, 0,
+                                 undo_stack[undo_current]->x,
+                                 undo_stack[undo_current]->y,
+                                 undo_stack[undo_current]->w,
+                                 undo_stack[undo_current]->h);
 
   gui->view->draw_main(1);
 }
