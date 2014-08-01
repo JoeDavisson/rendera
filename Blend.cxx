@@ -106,7 +106,7 @@ int Blend::colorize(int c1, int c2, int t)
 {
   int c3 = trans(c1, c2, t);
 
-  return force_lum(c3, getl(c1));
+  return force_lum(c3, getv(c1));
 }
 
 // forces a color to a similar one with the specified luminance
@@ -114,10 +114,10 @@ int Blend::force_lum(int c, int dest_lum)
 {
   int i;
   int n[3];
-  int src_lum = getl(c);
+  int src_lum = getv(c);
 
-  n[0] = getg(c);
-  n[1] = getr(c);
+  n[0] = getr(c);
+  n[1] = getg(c);
   n[2] = getb(c);
 
   while(src_lum < dest_lum)
@@ -127,7 +127,7 @@ int Blend::force_lum(int c, int dest_lum)
       if(n[i] < 255)
       {
         n[i]++;
-        src_lum = getl(makecol(n[1], n[0], n[2]));
+        src_lum = getv(makecol(n[0], n[1], n[2]));
         if(src_lum == dest_lum)
           break;
       }
@@ -141,14 +141,14 @@ int Blend::force_lum(int c, int dest_lum)
       if(n[i] > 0)
       {
         n[i]--;
-        src_lum = getl(makecol(n[1], n[0], n[2]));
+        src_lum = getv(makecol(n[0], n[1], n[2]));
         if(src_lum == dest_lum)
           break;
       }
     }
   }
 
-  return makecol(n[1], n[0], n[2]);
+  return makecol(n[0], n[1], n[2]);
 }
 
 // hue 0-1535
