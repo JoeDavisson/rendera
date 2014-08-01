@@ -18,32 +18,40 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef DIALOG_H
-#define DIALOG_H
-
 #include "rendera.h"
 
-class Dialog
+extern Plugin *plugin;
+
+void show_rotate_hue()
 {
-public:
-  Dialog();
-  virtual ~Dialog();
+  plugin->rotate_hue->show();
+}
 
-  Fl_Double_Window *about;
-  Widget *about_logo;
-  Fl_Button *about_ok;
+void hide_rotate_hue()
+{
+  char s[8];
 
-  Fl_Double_Window *new_image;
-  Field *new_image_width;
-  Field *new_image_height;
-  Fl_Button *new_image_ok;
-  Fl_Button *new_image_cancel;
+  int amount = atoi(plugin->rotate_hue_amount->value());
 
-  Fl_Double_Window *create_palette;
-  Field *create_palette_colors;
-  Fl_Button *create_palette_ok;
-  Fl_Button *create_palette_cancel;
-};
+  if(amount < 1)
+  {
+    snprintf(s, sizeof(s), "%d", 1);
+    plugin->rotate_hue_amount->value(s);
+    return;
+  }
 
-#endif
+  if(amount > 359)
+  {
+    snprintf(s, sizeof(s), "%d", 359);
+    plugin->rotate_hue_amount->value(s);
+    return;
+  }
+
+  plugin->rotate_hue->hide();
+}
+
+void cancel_rotate_hue()
+{
+  plugin->rotate_hue->hide();
+}
 

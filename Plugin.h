@@ -18,31 +18,21 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef PLUGIN_H
+#define PLUGIN_H
 
 #include "rendera.h"
 
-class Dialog
+class Plugin
 {
 public:
-  Dialog();
-  virtual ~Dialog();
+  Plugin();
+  virtual ~Plugin();
 
-  Fl_Double_Window *about;
-  Widget *about_logo;
-  Fl_Button *about_ok;
-
-  Fl_Double_Window *new_image;
-  Field *new_image_width;
-  Field *new_image_height;
-  Fl_Button *new_image_ok;
-  Fl_Button *new_image_cancel;
-
-  Fl_Double_Window *create_palette;
-  Field *create_palette_colors;
-  Fl_Button *create_palette_ok;
-  Fl_Button *create_palette_cancel;
+  Fl_Double_Window *rotate_hue;
+  Field *rotate_hue_amount;
+  Fl_Button *rotate_hue_ok;
+  Fl_Button *rotate_hue_cancel;
 };
 
 #endif

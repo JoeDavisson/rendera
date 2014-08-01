@@ -66,7 +66,7 @@ Fl_Menu_Item menuitems[] =
     { "Equalize", 0, 0, 0 },
     { "Equalize Saturation", 0, 0, 0 },
     { "Saturate", 0, 0, 0 },
-    { "Rotate Hue...", 0, 0, 0 },
+    { "Rotate Hue...", 0, (Fl_Callback *)show_rotate_hue, 0 },
     { "Invert", 0, 0, 0 },
     { "Restore...", 0, 0, 0 },
     { "Remove Dust...", 0, 0, 0 },
