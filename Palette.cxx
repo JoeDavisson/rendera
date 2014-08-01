@@ -95,27 +95,17 @@ void Palette::set_default()
   int index = 0;
   int h, v;
 
-/*
-  for(r = 0; r < 3; r++)
-  {
-    for(g = 0; g < 3; g++)
-    {
-      for(b = 0; b < 3; b++)
-      {
-        data[i++] = makecol(MIN(r * 128, 255),
-                         MIN(g * 128, 255), MIN(b * 128, 255));
-      }
-    }
-  }
-*/
-  int sat[12] = { 255, 255, 255, 255, 255, 255, 224, 192, 160, 128, 96, 64 };
-//  int val[12] = { 72, 88, 104, 120, 136, 152, 168, 184, 200, 216, 232, 248 };
+  int sat[12] = { 255, 255, 255, 255, 255, 255, 224, 192, 160, 128, 96, 72 };
 
   for(v = 0; v < 12; v++)
   {
     for(h = 0; h < 12; h++)
     {
-      Blend::hsv_to_rgb(h * 128, sat[11 - v], sat[v], &r, &g, &b);
+      if(v == 5)
+        Blend::hsv_to_rgb(h * 128, 255, 255, &r, &g, &b);
+      else
+        Blend::hsv_to_rgb(h * 128, sat[11 - v], sat[v], &r, &g, &b);
+
       data[index++] = makecol(r, g, b);
     }
   }
