@@ -20,11 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-static int default_hues[16] =
-{
-  0, 128, 256, 384, 512, 640, 768, 896, 1024, 1152, 1280, 1408
-};
-
 Palette *Palette::main;
 
 Palette::Palette()
@@ -98,7 +93,7 @@ void Palette::set_default()
 {
   int r, g, b;
   int index = 0;
-  int h, l;
+  int h, v;
 
 /*
   for(r = 0; r < 3; r++)
@@ -113,13 +108,14 @@ void Palette::set_default()
     }
   }
 */
+  int sat[12] = { 255, 255, 255, 255, 255, 255, 224, 192, 160, 128, 96, 64 };
+//  int val[12] = { 72, 88, 104, 120, 136, 152, 168, 184, 200, 216, 232, 248 };
 
-  for(l = 0; l < 12; l++)
+  for(v = 0; v < 12; v++)
   {
     for(h = 0; h < 12; h++)
     {
-      Blend::hsv_to_rgb(default_hues[h], 255 - l * 23.182, l * 23.182, &r, &g, &b);
-//      data[index++] = Blend::force_lum(makecol(r, g, b), l * 23.182);
+      Blend::hsv_to_rgb(h * 128, sat[11 - v], sat[v], &r, &g, &b);
       data[index++] = makecol(r, g, b);
     }
   }
