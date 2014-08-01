@@ -59,19 +59,16 @@ void undo_push(int x, int y, int w, int h, int resized)
 
     undo_stack[0] = temp_bmp;
     undo_resized[0] = temp_resized;
-
   }
-printf("undo push = %d\n", undo_current);
 
-  Bitmap *bmp = undo_stack[undo_current];
   undo_resized[undo_current] = resized;
 
-  delete bmp;
-  bmp = new Bitmap(w, h);
-  bmp->x = x;
-  bmp->y = y;
+  delete undo_stack[undo_current];
+  undo_stack[undo_current] = new Bitmap(w, h);
+  undo_stack[undo_current]->x = x;
+  undo_stack[undo_current]->y = y;
 
-  Bitmap::main->blit(bmp, x, y, 0, 0, w, h);
+  Bitmap::main->blit(undo_stack[undo_current], x, y, 0, 0, w, h);
   undo_current--;
 }
 
@@ -81,7 +78,6 @@ void undo_pop()
     return;
 
   undo_current++;
-printf("undo pop = %d\n", undo_current);
   Bitmap *bmp = undo_stack[undo_current];
 
   if(undo_resized[undo_current])
