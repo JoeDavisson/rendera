@@ -49,12 +49,19 @@ void undo_push(int x, int y, int w, int h, int resized)
   {
     undo_current = 0;
 
-    undo_stack[0] = undo_stack[MAX_UNDO - 1];
+    Bitmap *temp_bmp = undo_stack[MAX_UNDO - 1];
+    int temp_resized = undo_resized[MAX_UNDO - 1];
     for(i = MAX_UNDO - 1; i > 0; i--)
     {
       undo_stack[i] = undo_stack[i - 1];
+      undo_resized[i] = undo_resized[i - 1];
     }
+
+    undo_stack[0] = temp_bmp;
+    undo_resized[0] = temp_resized;
+
   }
+printf("undo push = %d\n", undo_current);
 
   Bitmap *bmp = undo_stack[undo_current];
   undo_resized[undo_current] = resized;
@@ -74,6 +81,7 @@ void undo_pop()
     return;
 
   undo_current++;
+printf("undo pop = %d\n", undo_current);
   Bitmap *bmp = undo_stack[undo_current];
 
   if(undo_resized[undo_current])
