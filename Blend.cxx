@@ -87,7 +87,7 @@ int Blend::sub(int c1, int c2, int t)
   h += 768;
   if(h >= 1536)
         h -= 1536;
-  hsv_to_rgb(h, s, v, &r, &g, &b);
+  hsv_to_rgb(h, 255 - s, 255 - v, &r, &g, &b);
   c2 = makecol(r, g, b);
 
   t = 255 - t;

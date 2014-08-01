@@ -20,6 +20,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+static int default_hues[16] =
+{
+  0, 128, 256, 384, 512, 640, 768, 896, 1024, 1152, 1280, 1408
+};
+
 Palette *Palette::main;
 
 Palette::Palette()
@@ -46,8 +51,12 @@ void Palette::draw(Widget *widget)
     step = 48;
   else if(max <= 16)
     step = 24;
+  else if(max <= 36)
+    step = 16;
   else if(max <= 64)
     step = 12;
+  else if(max <= 144)
+    step = 8;
   else if(max <= 256)
     step = 6;
 
@@ -88,8 +97,10 @@ void Palette::draw(Widget *widget)
 void Palette::set_default()
 {
   int r, g, b;
-  int i = 0;
+  int index = 0;
+  int h, l;
 
+/*
   for(r = 0; r < 3; r++)
   {
     for(g = 0; g < 3; g++)
@@ -101,8 +112,19 @@ void Palette::set_default()
       }
     }
   }
+*/
 
-  max = i;
+  for(l = 0; l < 12; l++)
+  {
+    for(h = 0; h < 12; h++)
+    {
+      Blend::hsv_to_rgb(default_hues[h], 255 - l * 23.182, l * 23.182, &r, &g, &b);
+//      data[index++] = Blend::force_lum(makecol(r, g, b), l * 23.182);
+      data[index++] = makecol(r, g, b);
+    }
+  }
+
+  max = index;
 }
 
 void Palette::insert_color(int color, int index)
