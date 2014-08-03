@@ -18,22 +18,40 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef PLUGIN_H
-#define PLUGIN_H
-
 #include "rendera.h"
 
-class Plugin
+extern FX *fx;
+
+void show_rotate_hue()
 {
-public:
-  Plugin();
-  virtual ~Plugin();
+  fx->rotate_hue->show();
+}
 
-  Fl_Double_Window *rotate_hue;
-  Field *rotate_hue_amount;
-  Fl_Button *rotate_hue_ok;
-  Fl_Button *rotate_hue_cancel;
-};
+void hide_rotate_hue()
+{
+  char s[8];
 
-#endif
+  int amount = atoi(fx->rotate_hue_amount->value());
+
+  if(amount < 1)
+  {
+    snprintf(s, sizeof(s), "%d", 1);
+    fx->rotate_hue_amount->value(s);
+    return;
+  }
+
+  if(amount > 359)
+  {
+    snprintf(s, sizeof(s), "%d", 359);
+    fx->rotate_hue_amount->value(s);
+    return;
+  }
+
+  fx->rotate_hue->hide();
+}
+
+void cancel_rotate_hue()
+{
+  fx->rotate_hue->hide();
+}
 

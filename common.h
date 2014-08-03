@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef COMMON_H
 #define COMMON_H
 
+// need to recompile program if this file changes
+
 static int seed;
 
 static inline int rnd32(void)

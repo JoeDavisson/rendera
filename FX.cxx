@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "rendera.h"
 
 // callbacks are in plugin_callback.cxx
-Plugin::Plugin()
+FX::FX()
 {
   rotate_hue = new Fl_Double_Window(256, 144, "Rotate Hue");
   rotate_hue_amount = new Field(rotate_hue, 120, 32, 72, 24, "Amount:", 0);
@@ -35,7 +35,7 @@ Plugin::Plugin()
   rotate_hue->end();
 }
 
-Plugin::~Plugin()
+FX::~FX()
 {
 }
 

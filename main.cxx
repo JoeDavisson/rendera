@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "rendera.h"
 
 Dialog *dialog;
-Plugin *plugin;
+FX *fx;
 Gui *gui;
 
 int main(int argc, char **argv)
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
   Bitmap::offset_buffer = new Bitmap(8, 8);
 
   dialog = new Dialog();
-  plugin = new Plugin();
+  fx = new FX();
 
   Tool::paint = new Paint();
   Tool::airbrush = new Airbrush();
