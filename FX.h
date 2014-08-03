@@ -31,12 +31,14 @@ public:
 
   Fl_Double_Window *rotate_hue;
   Field *rotate_hue_amount;
+  Fl_Check_Button *rotate_hue_preserve;
   Fl_Button *rotate_hue_ok;
   Fl_Button *rotate_hue_cancel;
 
   Fl_Double_Window *restore;
   Fl_Check_Button *restore_normalize;
-  Fl_Check_Button *restore_dyefix;
+  Fl_Check_Button *restore_invert;
+  Fl_Check_Button *restore_correct;
   Fl_Button *restore_ok;
   Fl_Button *restore_cancel;
 

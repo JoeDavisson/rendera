@@ -23,24 +23,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // callbacks are in fx_callback.cxx
 FX::FX()
 {
-  rotate_hue = new Fl_Double_Window(256, 144, "Rotate Hue");
+  rotate_hue = new Fl_Double_Window(256, 184, "Rotate Hue");
   rotate_hue_amount = new Field(rotate_hue, 120, 32, 72, 24, "Amount:", 0);
+  rotate_hue_amount->maximum_size(4);
   rotate_hue_amount->value("60");
-  new Separator(rotate_hue, 16, 88, 226, 2, "");
-  rotate_hue_ok = new Fl_Button(96, 104, 64, 24, "OK");
+  rotate_hue_preserve = new Fl_Check_Button(48, 80, 16, 16, "Preserve Luminance");
+  new Separator(rotate_hue, 16, 126, 226, 2, "");
+  rotate_hue_ok = new Fl_Button(96, 144, 64, 24, "OK");
   rotate_hue_ok->callback((Fl_Callback *)hide_rotate_hue);
-  rotate_hue_cancel = new Fl_Button(176, 104, 64, 24, "Cancel");
+  rotate_hue_cancel = new Fl_Button(176, 144, 64, 24, "Cancel");
   rotate_hue_cancel->callback((Fl_Callback *)cancel_rotate_hue);
   rotate_hue->set_modal();
   rotate_hue->end();
 
-  restore = new Fl_Double_Window(256, 144, "Restore");
-  restore_normalize = new Fl_Check_Button(32, 32, 16, 16, "Normalize");
-  restore_dyefix = new Fl_Check_Button(32, 56, 16, 16, "Uneven Dye Fix");
-  new Separator(restore, 16, 88, 226, 2, "");
-  restore_ok = new Fl_Button(96, 104, 64, 24, "OK");
+  restore = new Fl_Double_Window(256, 200, "Restore");
+  restore_normalize = new Fl_Check_Button(48, 32, 16, 16, "Normalize First");
+  restore_invert = new Fl_Check_Button(48, 64, 16, 16, "Invert First");
+  restore_correct = new Fl_Check_Button(48, 96, 16, 16, "Correction Matrix");
+  new Separator(restore, 16, 142, 226, 2, "");
+  restore_ok = new Fl_Button(96, 160, 64, 24, "OK");
   restore_ok->callback((Fl_Callback *)hide_restore);
-  restore_cancel = new Fl_Button(176, 104, 64, 24, "Cancel");
+  restore_cancel = new Fl_Button(176, 160, 64, 24, "Cancel");
   restore_cancel->callback((Fl_Callback *)cancel_restore);
   restore->set_modal();
   restore->end();
