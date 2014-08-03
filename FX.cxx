@@ -48,13 +48,14 @@ FX::FX()
   restore->set_modal();
   restore->end();
 
-  remove_dust = new Fl_Double_Window(256, 144, "Remove Dust");
+  remove_dust = new Fl_Double_Window(256, 184, "Remove Dust");
   remove_dust_amount = new Field(remove_dust, 120, 32, 72, 24, "Amount:", 0);
   remove_dust_amount->value("4");
-  new Separator(remove_dust, 16, 88, 226, 2, "");
-  remove_dust_ok = new Fl_Button(96, 104, 64, 24, "OK");
+  remove_dust_invert = new Fl_Check_Button(48, 80, 16, 16, "Invert First");
+  new Separator(remove_dust, 16, 126, 226, 2, "");
+  remove_dust_ok = new Fl_Button(96, 144, 64, 24, "OK");
   remove_dust_ok->callback((Fl_Callback *)hide_remove_dust);
-  remove_dust_cancel = new Fl_Button(176, 104, 64, 24, "Cancel");
+  remove_dust_cancel = new Fl_Button(176, 144, 64, 24, "Cancel");
   remove_dust_cancel->callback((Fl_Callback *)cancel_remove_dust);
   remove_dust->set_modal();
   remove_dust->end();

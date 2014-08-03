@@ -44,6 +44,7 @@ public:
 
   Fl_Double_Window *remove_dust;
   Field *remove_dust_amount;
+  Fl_Check_Button *remove_dust_invert;
   Fl_Button *remove_dust_ok;
   Fl_Button *remove_dust_cancel;
 };

@@ -35,10 +35,14 @@ static void begin()
 }
 
 // normalize
-void normalize()
+void show_normalize()
 {
   begin();
+  normalize();
+}
 
+void normalize()
+{
   // search for highest & lowest RGB values
   int x, y;
   int r_high = 0;
@@ -100,10 +104,14 @@ void normalize()
   }
 }
 
-void equalize()
+void show_equalize()
 {
   begin();
+  equalize();
+}
 
+void equalize()
+{
   int *list_r = new int[256];
   int *list_g = new int[256];
   int *list_b = new int[256];
@@ -173,10 +181,14 @@ void equalize()
 }
 
 // saturate
-void saturate()
+void show_saturate()
 {
   begin();
+  saturate();
+}
 
+void saturate()
+{
   int *list_s = new int[256];
 
   int x, y;
@@ -215,6 +227,7 @@ void saturate()
       int r = getr(c);
       int g = getg(c);
       int b = getb(c);
+      int l = getl(c);
       int h, s, v;
       Blend::rgb_to_hsv(r, g, b, &h, &s, &v);
       int temp = s;
@@ -223,7 +236,7 @@ void saturate()
         s = temp;
       Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
 
-      bmp->setpixel(x, y, makecol(r, g, b), 0);
+      bmp->setpixel(x, y, Blend::force_lum(makecol(r, g, b), l), 0);
     }
 
     if(!(y % 64))
@@ -242,7 +255,6 @@ void show_rotate_hue()
 void hide_rotate_hue()
 {
   char str[8];
-
   int amount = atoi(fx->rotate_hue_amount->value());
 
   if(amount < -359)
@@ -262,9 +274,13 @@ void hide_rotate_hue()
   if(amount < 0)
     amount += 360;
 
-  fx->rotate_hue->hide();
   begin();
+  rotate_hue(amount);
+  fx->rotate_hue->hide();
+}
 
+void rotate_hue(int amount)
+{
   int x, y;
   int r, g, b;
   int h, s, v;
@@ -302,10 +318,14 @@ void cancel_rotate_hue()
 }
 
 // invert
-void invert()
+void show_invert()
 {
   begin();
+  invert();
+}
 
+void invert()
+{
   int x, y;
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
@@ -317,9 +337,7 @@ void invert()
     }
 
     if(!(y % 64))
-    {
       gui->view->draw_main(1);
-    }
   }
 }
 
@@ -331,9 +349,21 @@ void show_restore()
 
 void hide_restore()
 {
-  fx->restore->hide();
   begin();
+  if(fx->restore_normalize->value())
+    normalize();
+  if(fx->restore_invert->value())
+    invert();
+  restore();
+  if(fx->restore_invert->value())
+    invert();
+  if(fx->restore_correct->value())
+    correct();
+  fx->restore->hide();
+}
 
+void restore()
+{
   int x, y;
 
   double rr = 0;
@@ -388,9 +418,7 @@ void hide_restore()
     }
 
     if(!(y % 64))
-    {
       gui->view->draw_main(1);
-    }
   }
 }
 
@@ -407,9 +435,70 @@ void show_remove_dust()
 
 void hide_remove_dust()
 {
-  begin();
+  char str[8];
+  int amount = atoi(fx->remove_dust_amount->value());
 
+  if(amount < 1)
+  {
+    snprintf(str, sizeof(str), "%d", 1);
+    fx->remove_dust_amount->value(str);
+    return;
+  }
+
+  if(amount > 10)
+  {
+    snprintf(str, sizeof(str), "%d", 10);
+    fx->remove_dust_amount->value(str);
+    return;
+  }
+
+  begin();
+  if(fx->remove_dust_invert->value())
+    invert();
+  remove_dust(amount);
+  if(fx->remove_dust_invert->value())
+    invert();
   fx->remove_dust->hide();
+}
+
+void remove_dust(int amount)
+{
+  int x, y, i;
+  int c[8];
+  int r, g, b;
+  int test, avg;
+
+  for(y = (overscroll + 1); y < bmp->h - (overscroll + 1); y++)
+  {
+    for(x = (overscroll + 1); x < bmp->w - (overscroll + 1); x++)
+    {
+      test = bmp->getpixel(x, y);
+      c[0] = bmp->getpixel(x + 1, y);
+      c[1] = bmp->getpixel(x - 1, y);
+      c[2] = bmp->getpixel(x, y + 1);
+      c[3] = bmp->getpixel(x, y - 1);
+      c[4] = bmp->getpixel(x - 1, y - 1);
+      c[5] = bmp->getpixel(x + 1, y - 1);
+      c[6] = bmp->getpixel(x - 1, y + 1);
+      c[7] = bmp->getpixel(x + 1, y + 1);
+
+      r = g = b = 0;
+
+      for(i = 0; i < 8; i++)
+      {
+        r += getr(c[i]);
+        g += getg(c[i]);
+        b += getb(c[i]);
+      }
+
+      avg = makecol(r / 8, g / 8, b / 8);
+      if((getl(avg) - getl(test)) > amount)
+        bmp->setpixel(x, y, avg, 0);
+    }
+
+    if(!(y % 64))
+      gui->view->draw_main(1);
+  }
 }
 
 void cancel_remove_dust()
@@ -418,10 +507,14 @@ void cancel_remove_dust()
 }
 
 // colorize
-void colorize()
+void show_colorize()
 {
   begin();
+  colorize();
+}
 
+void colorize()
+{
   int x, y;
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
@@ -447,9 +540,47 @@ void colorize()
     }
 
     if(!(y % 64))
-    {
       gui->view->draw_main(1);
+  }
+}
+
+void correct()
+{
+  int x, y;
+
+  for(y = overscroll; y < bmp->h - overscroll; y++)
+  {
+    for(x = overscroll; x < bmp->w - overscroll; x++)
+    {
+      int c = bmp->getpixel(x, y);
+      int r = getr(c);
+      int g = getg(c);
+      int b = getb(c);
+      int l = getl(c);
+
+      // only change hue
+      int h, s, v;
+      Blend::rgb_to_hsv(r, g, b, &h, &s, &v);
+      int sat = s;
+      int val = v;
+
+      // correction matrix
+      int ra = r;
+      int ga = (r * 4 + g * 8 + b * 1) / 13;
+      int ba = (r * 2 + g * 4 + b * 8) / 14;
+
+      ra = MAX(MIN(ra, 255), 0);
+      ga = MAX(MIN(ga, 255), 0);
+      ba = MAX(MIN(ba, 255), 0);
+
+      Blend::rgb_to_hsv(ra, ga, ba, &h, &s, &v);
+      Blend::hsv_to_rgb(h, sat, val, &ra, &ga, &ba);
+
+      bmp->setpixel(x, y, Blend::force_lum(makecol(ra, ga, ba), l), 0);
     }
+
+    if(!(y % 64))
+      gui->view->draw_main(1);
   }
 }
 
