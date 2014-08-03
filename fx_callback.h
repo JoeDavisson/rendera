@@ -23,9 +23,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+void normalize();
+void equalize();
+void saturate();
+
 void show_rotate_hue();
 void hide_rotate_hue();
 void cancel_rotate_hue();
+
+void invert();
 
 void show_restore();
 void hide_restore();
@@ -34,6 +40,8 @@ void cancel_restore();
 void show_remove_dust();
 void hide_remove_dust();
 void cancel_remove_dust();
+
+void colorize();
 
 #endif
 

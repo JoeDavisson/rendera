@@ -22,6 +22,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 extern FX *fx;
 
+// normalize
+void normalize()
+{
+}
+
+void equalize()
+{
+}
+
+// saturate
+void saturate()
+{
+}
+
 // rotate hue
 void show_rotate_hue()
 {
@@ -56,7 +70,12 @@ void cancel_rotate_hue()
   fx->rotate_hue->hide();
 }
 
-//restore
+// invert
+void invert()
+{
+}
+
+// restore
 void show_restore()
 {
   fx->restore->show();
@@ -86,5 +105,10 @@ void hide_remove_dust()
 void cancel_remove_dust()
 {
   fx->remove_dust->hide();
+}
+
+// colorize
+void colorize()
+{
 }
 
