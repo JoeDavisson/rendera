@@ -41,6 +41,21 @@ void undo_init()
   undo_current = MAX_UNDO - 1;
 }
 
+void undo_reset()
+{
+  int i;
+
+  // free some memory
+  for(i = 0; i < MAX_UNDO; i++)
+  {
+    delete undo_stack[i];
+    undo_stack[i] = new Bitmap(8, 8);
+    undo_resized[i] = 0;
+  }
+
+  undo_current = MAX_UNDO - 1;
+}
+
 void undo_push(int x, int y, int w, int h, int resized)
 {
   int i;

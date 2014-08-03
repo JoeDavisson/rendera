@@ -29,6 +29,9 @@ void normalize();
 void show_equalize();
 void equalize();
 
+void show_value_stretch();
+void value_stretch();
+
 void show_saturate();
 void saturate();
 
@@ -53,6 +56,7 @@ void cancel_remove_dust();
 void show_colorize();
 void colorize();
 
+void show_correct();
 void correct();
 
 #endif

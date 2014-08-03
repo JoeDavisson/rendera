@@ -82,6 +82,7 @@ void load(Fl_Widget *, void *)
 
   gui->view->zoom_fit(gui->view->fit);
   gui->view->draw_main(1);
+  undo_reset();
 }
 
 static void jpg_exit(j_common_ptr cinfo)

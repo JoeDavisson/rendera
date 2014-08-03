@@ -83,9 +83,9 @@ void normalize()
     b_high++;
 
   // scale image
-  float r_scale = 255.0f / (r_high - r_low);
-  float g_scale = 255.0f / (g_high - g_low);
-  float b_scale = 255.0f / (b_high - b_low);
+  double r_scale = 255.0 / (r_high - r_low);
+  double g_scale = 255.0 / (g_high - g_low);
+  double b_scale = 255.0 / (b_high - b_low);
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -153,7 +153,7 @@ void equalize()
     }
   }
 
-  float scale = 255.0f / size;
+  double scale = 255.0 / size;
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -167,6 +167,114 @@ void equalize()
       r = list_r[r] * scale;
       g = list_g[g] * scale;
       b = list_b[b] * scale;
+
+      bmp->setpixel(x, y, makecol(r, g, b), 0);
+    }
+
+    if(!(y % 64))
+      gui->view->draw_main(1);
+  }
+
+  delete[] list_r;
+  delete[] list_g;
+  delete[] list_b;
+}
+
+// value stretch
+void show_value_stretch()
+{
+  begin();
+  value_stretch();
+}
+
+void value_stretch()
+{
+  int *list_r = new int[256];
+  int *list_g = new int[256];
+  int *list_b = new int[256];
+
+  int x, y;
+  int i, j;
+
+  double rr = 0;
+  double gg = 0;
+  double bb = 0;
+  int count = 0;
+
+  // determine overall color cast
+  for(y = overscroll; y < bmp->h - overscroll; y++)
+  {
+    for(x = overscroll; x < bmp->w - overscroll; x++)
+    {
+      int c = bmp->getpixel(x, y);
+
+      rr += getr(c);
+      gg += getg(c);
+      bb += getb(c);
+
+      count++;
+    }
+  }
+
+  rr /= count;
+  gg /= count;
+  bb /= count;
+
+  for(i = 0; i < 256; i++)
+  {
+    list_r[i] = 0;
+    list_g[i] = 0;
+    list_b[i] = 0;
+  }
+
+  int size = (bmp->w - overscroll * 2) * (bmp->h - overscroll * 2);
+
+  for(y = overscroll; y < bmp->h - overscroll; y++)
+  {
+    for(x = overscroll; x < bmp->w - overscroll; x++)
+    {
+      int c = bmp->getpixel(x, y);
+      int r = getr(c);
+      int g = getg(c);
+      int b = getb(c);
+
+      list_r[r]++;
+      list_g[g]++;
+      list_b[b]++;
+    }
+  }
+
+  for(j = 255; j >= 0; j--)
+  {
+    for(i = 0; i < j; i++)
+    {
+      list_r[j] += list_r[i];
+      list_g[j] += list_g[i];
+      list_b[j] += list_b[i];
+    }
+  }
+  double scale = 255.0 / size;
+
+  for(y = overscroll; y < bmp->h - overscroll; y++)
+  {
+    for(x = overscroll; x < bmp->w - overscroll; x++)
+    {
+      int c = bmp->getpixel(x, y);
+      int r = getr(c);
+      int g = getg(c);
+      int b = getb(c);
+
+      int ra = list_r[r] * scale;
+      int ga = list_g[g] * scale;
+      int ba = list_b[b] * scale;
+
+      r = ((ra * rr) + (r * (255 - rr))) / 255;
+      g = ((ga * gg) + (g * (255 - gg))) / 255;
+      b = ((ba * bb) + (b * (255 - bb))) / 255;
+
+      r = MIN(MAX(r, 0), 255);
+      g = MIN(MAX(g, 0), 255);
+      b = MIN(MAX(b, 0), 255);
 
       bmp->setpixel(x, y, makecol(r, g, b), 0);
     }
@@ -217,7 +325,7 @@ void saturate()
     for(i = 0; i < j; i++)
       list_s[j] += list_s[i];
 
-  float scale = 255.0f / size;
+  double scale = 255.0 / size;
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -391,9 +499,9 @@ void restore()
   bb /= count;
 
   // adjustment factors
-  double ra = (256.0 / (256 - rr)) / sqrtf(256.0 / (rr + 1));
-  double ga = (256.0 / (256 - gg)) / sqrtf(256.0 / (gg + 1));
-  double ba = (256.0 / (256 - bb)) / sqrtf(256.0 / (bb + 1));
+  double ra = (256.0 / (256 - rr)) / sqrt(256.0 / (rr + 1));
+  double ga = (256.0 / (256 - gg)) / sqrt(256.0 / (gg + 1));
+  double ba = (256.0 / (256 - bb)) / sqrt(256.0 / (bb + 1));
 
   // begin restore
   for(y = overscroll; y < bmp->h - overscroll; y++)
@@ -406,9 +514,9 @@ void restore()
       int b = getb(c);
 
       // apply adjustments
-      r = 255 * powf((float)r / 255, ra);
-      g = 255 * powf((float)g / 255, ga);
-      b = 255 * powf((float)b / 255, ba);
+      r = 255 * pow((double)r / 255, ra);
+      g = 255 * pow((double)g / 255, ga);
+      b = 255 * pow((double)b / 255, ba);
 
       r = MAX(MIN(r, 255), 0);
       g = MAX(MIN(g, 255), 0);
@@ -542,6 +650,12 @@ void colorize()
     if(!(y % 64))
       gui->view->draw_main(1);
   }
+}
+
+void show_correct()
+{
+  begin();
+  correct();
 }
 
 void correct()

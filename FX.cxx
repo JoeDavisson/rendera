@@ -38,8 +38,9 @@ FX::FX()
 
   restore = new Fl_Double_Window(256, 200, "Restore");
   restore_normalize = new Fl_Check_Button(48, 32, 16, 16, "Normalize First");
+  restore_normalize->value(1);
   restore_invert = new Fl_Check_Button(48, 64, 16, 16, "Invert First");
-  restore_correct = new Fl_Check_Button(48, 96, 16, 16, "Correction Matrix");
+  restore_correct = new Fl_Check_Button(48, 96, 16, 16, "Use Correction Matrix");
   new Separator(restore, 16, 142, 226, 2, "");
   restore_ok = new Fl_Button(96, 160, 64, 24, "OK");
   restore_ok->callback((Fl_Callback *)hide_restore);
