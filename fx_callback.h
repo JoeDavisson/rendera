@@ -27,5 +27,13 @@ void show_rotate_hue();
 void hide_rotate_hue();
 void cancel_rotate_hue();
 
+void show_restore();
+void hide_restore();
+void cancel_restore();
+
+void show_remove_dust();
+void hide_remove_dust();
+void cancel_remove_dust();
+
 #endif
 

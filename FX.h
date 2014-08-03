@@ -33,6 +33,17 @@ public:
   Field *rotate_hue_amount;
   Fl_Button *rotate_hue_ok;
   Fl_Button *rotate_hue_cancel;
+
+  Fl_Double_Window *restore;
+  Fl_Check_Button *restore_normalize;
+  Fl_Check_Button *restore_dyefix;
+  Fl_Button *restore_ok;
+  Fl_Button *restore_cancel;
+
+  Fl_Double_Window *remove_dust;
+  Field *remove_dust_amount;
+  Fl_Button *remove_dust_ok;
+  Fl_Button *remove_dust_cancel;
 };
 
 #endif

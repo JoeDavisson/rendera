@@ -295,7 +295,10 @@ void View::draw_grid()
   int x1, y1, x2, y2, d, i;
   int offx = 0, offy = 0;
 
-  if(zoom < 2)
+  if(zoom < 1)
+    return;
+
+  if(zoom < 2 && (gridx == 1 || gridy == 1))
     return;
 
   x2 = w() - 1;

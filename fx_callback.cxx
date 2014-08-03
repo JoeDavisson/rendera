@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 extern FX *fx;
 
+// rotate hue
 void show_rotate_hue()
 {
   fx->rotate_hue->show();
@@ -53,5 +54,37 @@ void hide_rotate_hue()
 void cancel_rotate_hue()
 {
   fx->rotate_hue->hide();
+}
+
+//restore
+void show_restore()
+{
+  fx->restore->show();
+}
+
+void hide_restore()
+{
+  fx->restore->hide();
+}
+
+void cancel_restore()
+{
+  fx->restore->hide();
+}
+
+// remove dust
+void show_remove_dust()
+{
+  fx->remove_dust->show();
+}
+
+void hide_remove_dust()
+{
+  fx->remove_dust->hide();
+}
+
+void cancel_remove_dust()
+{
+  fx->remove_dust->hide();
 }
 
