@@ -6,6 +6,7 @@
 
 #include <jpeglib.h>
 #include <setjmp.h>
+#include <vector>
 
 static int file_exists(const char *s)
 {
@@ -104,7 +105,8 @@ void save_bmp(const char *fn)
   write_uint32(0, out);
 
   int *p = bmp->row[overscroll] + overscroll;
-  unsigned char *linebuf = new unsigned char[w * 3 + pad];
+  std::vector<unsigned char>linebuf(w * 3 + pad);
+//  unsigned char *linebuf = new unsigned char[w * 3 + pad];
 
   int x, y;
 
@@ -123,10 +125,10 @@ void save_bmp(const char *fn)
       linebuf[xx++] = 0;
     p += overscroll * 2;
 
-    fwrite(linebuf, 1, w * 3, out);
+    fwrite(&linebuf[0], 1, w * 3, out);
   }
 
-  delete[] linebuf;
+//  delete[] linebuf;
   fclose(out);
 }
 
@@ -155,7 +157,8 @@ void save_tga(const char *fn)
   write_uint8(32, out);
 
   int *p = bmp->row[overscroll] + overscroll;
-  unsigned char *linebuf = new unsigned char[w * 3];
+  //unsigned char *linebuf = new unsigned char[w * 3];
+  std::vector<unsigned char>linebuf(w * 3);
 
   int x, y;
 
@@ -172,10 +175,10 @@ void save_tga(const char *fn)
     }
     p += overscroll * 2;
 
-    fwrite(linebuf, 1, w * 3, out);
+    fwrite(&linebuf[0], 1, w * 3, out);
   }
 
-  delete[] linebuf;
+//  delete[] linebuf;
   fclose(out);
 }
 
@@ -221,7 +224,8 @@ void save_png(const char *fn)
                PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
   png_write_info(png_ptr, info_ptr);
 
-  png_bytep linebuf = new png_byte[w * 3];
+  //png_bytep linebuf = new png_byte[w * 3];
+  std::vector<png_byte>linebuf(w * 3);
 
   int x, y;
 
@@ -237,13 +241,13 @@ void save_png(const char *fn)
       p++;
     }
 
-    png_write_row(png_ptr, linebuf);
+    png_write_row(png_ptr, &linebuf[0]);
   }
 
   png_write_end(png_ptr, info_ptr);
 
   png_destroy_write_struct(&png_ptr, &info_ptr);
-  delete[] linebuf;
+//  delete[] linebuf;
   fclose(out);
 }
 
@@ -257,7 +261,7 @@ void save_jpg(const char *fn)
 
   struct jpeg_error_mgr jerr;
   JSAMPROW row_pointer[1];
-  JSAMPLE *linebuf;
+//  JSAMPLE *linebuf;
   int row_stride;
 
   Bitmap *bmp = Bitmap::main;
@@ -266,13 +270,14 @@ void save_jpg(const char *fn)
   int h = bmp->h - overscroll * 2;
 
 
-  linebuf = new JSAMPLE[w * 3];
-  if(!linebuf)
-    return;
+//  linebuf = new JSAMPLE[w * 3];
+//  if(!linebuf)
+//    return;
+  std::vector<JSAMPLE>linebuf(w * 3);
 
   if((out = fopen(fn, "wb")) == NULL)
   {
-    delete[] linebuf;
+//    delete[] linebuf;
     return;
   }
 
@@ -316,6 +321,7 @@ void save_jpg(const char *fn)
   jpeg_finish_compress(&cinfo);
   jpeg_destroy_compress(&cinfo);
 
-  delete[] linebuf;
+//  delete[] linebuf;
   fclose(out);
 }
+
