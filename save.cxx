@@ -271,7 +271,10 @@ void save_jpg(const char *fn)
     return;
 
   if((out = fopen(fn, "wb")) == NULL)
+  {
+    delete[] linebuf;
     return;
+  }
 
   cinfo.err = jpeg_std_error(&jerr);
   jpeg_create_compress(&cinfo);

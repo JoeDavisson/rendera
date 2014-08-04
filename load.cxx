@@ -6,6 +6,7 @@
 
 #include <jpeglib.h>
 #include <setjmp.h>
+#include <vector>
 
 extern Gui *gui;
 
@@ -298,7 +299,8 @@ void load_bmp(const char *fn, Bitmap *bitmap, int overscroll)
   bitmap = new Bitmap(w, h, overscroll,
                       makecol(255, 255, 255), makecol(128, 128, 128));
 
-  unsigned char *linebuf = new unsigned char[w * mul + pad];
+//  unsigned char *linebuf = new unsigned char[w * mul + pad];
+  std::vector<unsigned char>linebuf(w * mul + pad);
 
   int x, y;
 
@@ -307,9 +309,11 @@ void load_bmp(const char *fn, Bitmap *bitmap, int overscroll)
     int y1 = negy ? h - 1 - y : y;
     y1 += overscroll;
 
-    if(fread(linebuf, 1, w * mul + pad, in) != (unsigned)(w * mul + pad))
+//    if(fread(linebuf, 1, w * mul + pad, in) != (unsigned)(w * mul + pad))
+    if(fread(&linebuf[0], 1, w * mul + pad, in) != (unsigned)(w * mul + pad))
     {
       fclose(in);
+//      delete[] linebuf;
       return;
     }
     else
@@ -327,7 +331,7 @@ void load_bmp(const char *fn, Bitmap *bitmap, int overscroll)
     }
   }
 
-  delete[] linebuf;
+//  delete[] linebuf;
   fclose(in);
 }
 
@@ -392,7 +396,8 @@ void load_tga(const char *fn, Bitmap *bitmap, int overscroll)
   bitmap = new Bitmap(w, h, overscroll,
                       makecol(255, 255, 255), makecol(128, 128, 128));
 
-  unsigned char *linebuf = new unsigned char[w * depth];
+  std::vector<unsigned char>linebuf(w * depth);
+  //unsigned char *linebuf = new unsigned char[w * depth];
 
   int x, y;
 
@@ -416,9 +421,11 @@ void load_tga(const char *fn, Bitmap *bitmap, int overscroll)
 
   for(y = ystart; y != yend; y += negy ? -1 : 1)
   {
-    if(fread(linebuf, 1, w * depth, in) != (unsigned)(w * depth))
+//    if(fread(linebuf, 1, w * depth, in) != (unsigned)(w * depth))
+    if(fread(&linebuf[0], 1, w * depth, in) != (unsigned)(w * depth))
     {
       fclose(in);
+//      delete[] linebuf;
       return;
     }
     for(x = xstart; x != xend; x += negx ? -1 : 1)
@@ -430,7 +437,7 @@ void load_tga(const char *fn, Bitmap *bitmap, int overscroll)
     }
   }
 
-  delete[] linebuf;
+//  delete[] linebuf;
   fclose(in);
 }
 
@@ -494,7 +501,8 @@ void load_png(const char *fn, Bitmap *bitmap, int overscroll)
   int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
   int depth = rowbytes / w;
 
-  png_bytep linebuf = new png_byte[rowbytes];
+//  png_bytep linebuf = new png_byte[rowbytes];
+  std::vector<png_byte>linebuf(rowbytes);
 
   int x, y;
 
@@ -509,7 +517,8 @@ void load_png(const char *fn, Bitmap *bitmap, int overscroll)
 
   for(y = 0; y < h; y++)
   {
-    png_read_row(png_ptr, linebuf, (png_bytep)0); 
+//    png_read_row(png_ptr, linebuf, (png_bytep)0); 
+    png_read_row(png_ptr, &linebuf[0], (png_bytep)0); 
     int xx = 0;
     for(x = 0; x < w; x++)
     {
@@ -522,7 +531,7 @@ void load_png(const char *fn, Bitmap *bitmap, int overscroll)
   }
 
   png_destroy_read_struct(&png_ptr, &info_ptr, 0);
-  delete[] linebuf;
+//  delete[] linebuf;
   fclose(in);
 }
 
