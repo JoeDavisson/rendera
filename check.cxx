@@ -403,6 +403,9 @@ void check_color(Widget *widget, void *var)
   int py[4];
 
   gui->hue->bitmap->clear((Fl::get_color(FL_BACKGROUND_COLOR) >> 8) | 0xFF000000);
+  gui->sat->bitmap->clear(0xFF000000);
+  gui->val->bitmap->clear(0xFF000000);
+  gui->color->bitmap->clear(0xFF000000);
 
   for(i = 1; i < 1536; i++)
   {

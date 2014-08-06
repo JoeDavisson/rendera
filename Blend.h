@@ -33,7 +33,8 @@ public:
   static int sub(int, int, int);
   static int colorize(int, int, int);
   static int force_lum(int, int);
-  static int alpha(int, int, int);
+  static int alpha_add(int, int, int);
+  static int alpha_sub(int, int, int);
   static void hsv_to_rgb(int, int, int, int *, int *, int *);
   static void rgb_to_hsv(int, int, int, int *, int *, int *);
 

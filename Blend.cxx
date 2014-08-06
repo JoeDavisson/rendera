@@ -39,7 +39,10 @@ void Blend::set(int mode)
       current = colorize;
       break;
     case 4:
-      current = alpha;
+      current = alpha_add;
+      break;
+    case 5:
+      current = alpha_sub;
       break;
     default:
       current = trans;
@@ -58,7 +61,7 @@ int Blend::trans(int c1, int c2, int t)
   int g = ((getg(c1) * t) + (getg(c2) * (255 - t))) / 255;
   int b = ((getb(c1) * t) + (getb(c2) * (255 - t))) / 255;
 
-  return makecol(r, g, b);
+  return makecola(r, g, b, geta(c1));
 }
 
 int Blend::add(int c1, int c2, int t)
@@ -79,7 +82,7 @@ int Blend::add(int c1, int c2, int t)
   g = MIN(g, 255);
   b = MIN(b, 255);
 
-  return makecol(r, g, b);
+  return makecola(r, g, b, geta(c1));
 }
 
 int Blend::sub(int c1, int c2, int t)
@@ -105,7 +108,7 @@ int Blend::sub(int c1, int c2, int t)
   g = MAX(g, 0);
   b = MAX(b, 0);
 
-  return makecol(r, g, b);
+  return makecola(r, g, b, geta(c1));
 }
 
 int Blend::colorize(int c1, int c2, int t)
@@ -121,6 +124,7 @@ int Blend::force_lum(int c, int dest_lum)
   int i;
   int n[3];
   int src_lum = getl(c);
+  int a = geta(c);
 
   n[0] = getr(c);
   n[1] = getg(c);
@@ -133,7 +137,7 @@ int Blend::force_lum(int c, int dest_lum)
       if(n[i] < 255)
       {
         n[i]++;
-        src_lum = getl(makecol(n[0], n[1], n[2]));
+        src_lum = getl(makecola(n[0], n[1], n[2], a));
         if(src_lum == dest_lum)
           break;
       }
@@ -147,19 +151,24 @@ int Blend::force_lum(int c, int dest_lum)
       if(n[i] > 0)
       {
         n[i]--;
-        src_lum = getl(makecol(n[0], n[1], n[2]));
+        src_lum = getl(makecola(n[0], n[1], n[2], a));
         if(src_lum == dest_lum)
           break;
       }
     }
   }
 
-  return makecol(n[0], n[1], n[2]);
+  return makecola(n[0], n[1], n[2], a);
 }
 
-int Blend::alpha(int c1, int c2, int t)
+int Blend::alpha_add(int c1, int c2, int t)
 {
-  return (c1 & 0xFFFFFF) | (t << 24);
+  return makecola(getr(c1), getg(c1), getb(c1), (geta(c1) * t) / 255);
+}
+
+int Blend::alpha_sub(int c1, int c2, int t)
+{
+  return makecola(getr(c1), getg(c1), getb(c1), 255 - ((255 - geta(c1)) * t) / 255);
 }
 
 // hue 0-1535

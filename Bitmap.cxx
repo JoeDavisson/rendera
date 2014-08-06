@@ -836,14 +836,25 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
 
   int x, y;
 
+  int color[2];
+  color[0] = makecol(160, 160, 160);
+  color[1] = makecol(96, 96, 96);
+  int use = 0;
+
   for(y = 0; y < dh; y++)
   {
+    if((y & 7) == 7)
+      use = !use;
     const int y1 = sy + ((y * by) >> 8);
     int *s = dest->row[dy + y];
     for(x = 0; x < dw; x++)
     {
+      if((x & 7) == 7)
+        use = !use;
       const int x1 = sx + ((x * bx) >> 8);
-      *s++ = convert_format(*(row[y1] + x1), bgr_order);
+      const int c = *(row[y1] + x1);
+      *s++ = convert_format(Blend::trans(color[use], c, 255 - geta(c)), bgr_order);
+//      *s++ = convert_format(*(row[y1] + x1), , bgr_order);
     }
   }
 }

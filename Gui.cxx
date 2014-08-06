@@ -315,7 +315,8 @@ Gui::Gui()
   blend->add("Darken");
   blend->add("Lighten");
   blend->add("Colorize");
-  blend->add("Alpha");
+  blend->add("Alpha Add");
+  blend->add("Alpha Subtract");
   blend->value(0);
   blend->callback((Fl_Callback *)check_blend);
   y1 += 24 + 8;

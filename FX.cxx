@@ -27,7 +27,8 @@ FX::FX()
   rotate_hue_amount = new Field(rotate_hue, 120, 32, 72, 24, "Amount:", 0);
   rotate_hue_amount->maximum_size(4);
   rotate_hue_amount->value("60");
-  rotate_hue_preserve = new Fl_Check_Button(48, 80, 16, 16, "Preserve Luminance");
+  rotate_hue_preserve = new Fl_Check_Button(48, 80, 16, 16,
+                                            "Preserve Luminance");
   new Separator(rotate_hue, 16, 126, 226, 2, "");
   rotate_hue_ok = new Fl_Button(96, 144, 64, 24, "OK");
   rotate_hue_ok->callback((Fl_Callback *)hide_rotate_hue);
