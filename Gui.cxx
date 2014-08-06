@@ -308,7 +308,16 @@ Gui::Gui()
   y1 += 24 + 8;
   trans = new Widget(right, 8, y1, 96, 24, "Transparency", "data/transparency.png", 1, 24, (Fl_Callback *)check_trans);
   y1 += 24 + 8;
-  blend = new Widget(right, 8, y1, 96, 24, "Blending Mode", "data/blend.png", 24, 24, (Fl_Callback *)check_blend);
+//  blend = new Widget(right, 8, y1, 96, 24, "Blending Mode", "data/blend.png", 24, 24, (Fl_Callback *)check_blend);
+  blend = new Fl_Choice(8, y1, 96, 24, "");
+  blend->resize(right->x() + 8, right->y() + y1, 96, 24);
+  blend->add("Normal");
+  blend->add("Darken");
+  blend->add("Lighten");
+  blend->add("Colorize");
+  blend->add("Alpha");
+  blend->value(0);
+  blend->callback((Fl_Callback *)check_blend);
   y1 += 24 + 8;
   right->resizable(0);
   right->end();

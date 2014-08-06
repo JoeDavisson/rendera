@@ -391,7 +391,8 @@ void check_color(Widget *widget, void *var)
   Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
   Brush::main->color = makecol(r, g, b);
   Brush::main->trans = gui->trans->var * 2.685;
-  Brush::main->blend = gui->blend->var;
+//  Brush::main->blend = gui->blend->var;
+  Brush::main->blend = gui->blend->value();
 
   int i;
   int lastx1 = 48 + 40;
