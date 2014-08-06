@@ -38,6 +38,12 @@ void Blend::set(int mode)
     case 3:
       current = colorize;
       break;
+    case 4:
+      current = alpha;
+      break;
+    default:
+      current = trans;
+      break;
   }
 }
 
@@ -149,6 +155,11 @@ int Blend::force_lum(int c, int dest_lum)
   }
 
   return makecol(n[0], n[1], n[2]);
+}
+
+int Blend::alpha(int c1, int c2, int t)
+{
+  return (c1 & 0xFFFFFF) | (t << 24);
 }
 
 // hue 0-1535

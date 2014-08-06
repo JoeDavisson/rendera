@@ -109,7 +109,8 @@ public:
   Widget *val;
   Widget *color;
   Widget *trans;
-  Widget *blend;
+//  Widget *blend;
+  Fl_Choice *blend;
 
   // bottom
   ToggleButton *wrap;
