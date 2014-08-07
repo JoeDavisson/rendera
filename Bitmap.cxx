@@ -783,7 +783,8 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 
 void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
                                          int dx, int dy, int dw, int dh,
-                                         int overx, int overy, int bgr_order)
+                                         int overx, int overy, int bgr_order,
+                                         int indexed)
 {
   const int ax = ((float)dw / sw) * 256;
   const int ay = ((float)dh / sh) * 256;
@@ -836,27 +837,42 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
 
   int x, y;
 
-  int color[2];
-  color[0] = makecol(160, 160, 160);
-  color[1] = makecol(96, 96, 96);
-  int use = 0;
-
-  for(y = 0; y < dh; y++)
+  if(indexed)
   {
-    if((y & 7) == 7)
-      use = !use;
-    const int y1 = sy + ((y * by) >> 8);
-    int *s = dest->row[dy + y];
-    for(x = 0; x < dw; x++)
+    for(y = 0; y < dh; y++)
     {
-      if((x & 7) == 7)
-        use = !use;
-      const int x1 = sx + ((x * bx) >> 8);
-      const int c = *(row[y1] + x1);
-      *s++ = convert_format(Blend::trans(color[use], c, 255 - geta(c)), bgr_order);
-//      *s++ = convert_format(*(row[y1] + x1), , bgr_order);
+      const int y1 = sy + ((y * by) >> 8);
+      int *s = dest->row[dy + y];
+
+      for(x = 0; x < dw; x++)
+      {
+        const int x1 = sx + ((x * bx) >> 8);
+        int c = *(row[y1] + x1);
+        if(geta(c) < 128)
+          *s++ = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
+        else
+          *s++ = convert_format(Palette::main->data[Palette::main->lookup[c & 0xFFFFFF]], bgr_order);
+      }
     }
   }
+  else
+  {
+    for(y = 0; y < dh; y++)
+    {
+      const int y1 = sy + ((y * by) >> 8);
+      int *s = dest->row[dy + y];
+
+      for(x = 0; x < dw; x++)
+      {
+        const int x1 = sx + ((x * bx) >> 8);
+        const int c = *(row[y1] + x1);
+        *s++ = convert_format(blend_fast_solid(((x >> 4) & 1) ^ ((y >> 4) & 1)
+                                               ? 0xA0A0A0 : 0x606060,
+                                               c, 255 - geta(c)), bgr_order);
+      }
+    }
+  }
+
 }
 
 // fast integer-based bilinear stretch (produces minor artifacts)

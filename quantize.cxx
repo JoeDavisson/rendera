@@ -338,5 +338,6 @@ void quantize(Bitmap *src, int size)
   // redraw palette widget
   Palette::main->draw(gui->palette);
   gui->palette->redraw();
+  Palette::main->fill_lookup();
 }
 

@@ -33,9 +33,11 @@ public:
   void set_default();
   void insert_color(int, int);
   void delete_color(int);
+  void fill_lookup();
   void load(const char *);
 
   int *data;
+  unsigned char *lookup;
   int max;
 
   static Palette *main;

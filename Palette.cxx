@@ -25,7 +25,9 @@ Palette *Palette::main;
 Palette::Palette()
 {
   data = new int[256];
+  lookup = new unsigned char[16777216];
   set_default();
+  fill_lookup();
 }
 
 Palette::~Palette()
@@ -141,6 +143,53 @@ void Palette::delete_color(int index)
   max--;
 }
 
+void Palette::fill_lookup()
+{
+  int r, g, b;
+  int i, j, k;
+  int use, z;
+  int step = 4;
+
+  // fill lookup in 4x4x4 blocks to save time
+  for(b = 0; b <= 256 - step; b += step)
+  {
+    for(g = 0; g <= 256 - step; g += step)
+    {
+      for(r = 0; r <= 256 - step; r += step)
+      {
+        int c = makecol_notrans(r, g, b);
+        int smallest = 0xFFFFFF;
+        use = 0;
+        for(z = 0; z < max; z++)
+        {
+          int d = diff24(c, data[z]);
+          if(d < smallest)
+          {
+            smallest = d;
+            use = z;
+          }
+        }
+
+        for(k = b; k < b + step; k++)
+        {
+          for(j = g; j < g + step; j++)
+          {
+            for(i = r; i < r + step; i++)
+            {
+              lookup[makecol_notrans(i, j, k)] = use;
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+  // then put exact matches back in
+  for(z = 0; z < max; z++)
+    lookup[data[z] & 0xFFFFFF] = z;
+}
+
 // uses GIMP .gpl palette format
 void Palette::load(const char *fn)
 {
@@ -191,5 +240,6 @@ void Palette::load(const char *fn)
   }
 
   max = index;
+  fill_lookup();
 }
 

@@ -57,7 +57,7 @@ public:
   void clip(int *, int *, int *, int *);
   void set_clip(int, int, int, int);
   void blit(Bitmap *, int, int, int, int, int, int);
-  void point_stretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, int);
+  void point_stretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, int, int);
   void integer_stretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, int);
 //  void stretch_line(Bitmap *, int, int, int, int, int, int);
   void fast_stretch(Bitmap *, int, int, int, int, int, int, int, int, int);
