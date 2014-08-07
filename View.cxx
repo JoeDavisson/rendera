@@ -377,8 +377,8 @@ void View::begin_move()
   // warp mouse here... (unsupported in fltk)
 
   backbuf->clear(makecol(128, 128, 128));
-  Bitmap::main->fast_stretch(backbuf, 0, 0, Bitmap::main->w, Bitmap::main->h,
-                          px, py, pw, ph, bgr_order);
+  Bitmap::main->point_stretch(backbuf, 0, 0, Bitmap::main->w, Bitmap::main->h,
+                          px, py, pw, ph, 0, 0, bgr_order, 0 /* 1 for indexed */);
 
   lastbx = bx;
   lastby = by;
