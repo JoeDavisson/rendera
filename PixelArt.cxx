@@ -55,12 +55,15 @@ void PixelArt::render()
       {
         if(PixelArt::lock)
         {
-          if(PixelArt::pattern->getpixel(x & 7, y & 7) == color)
+          if((PixelArt::pattern->getpixel(x & 7, y & 7) & 0xFFFFFF)
+              == (color & 0xFFFFFF))
             Bitmap::main->setpixel(x, y, brush->color, brush->trans);
         }
         else
         {
-          if(PixelArt::pattern->getpixel((patternx + x) & 7, (patterny + y) & 7) == color)
+          if((PixelArt::pattern->getpixel(
+              (patternx + x) & 7, (patterny + y) & 7) & 0xFFFFFF)
+              == (color & 0xFFFFFF))
             Bitmap::main->setpixel(x, y, brush->color, brush->trans);
         }
       }
