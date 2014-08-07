@@ -59,6 +59,7 @@ void Stump::render()
         int r = 0;
         int g = 0;
         int b = 0;
+        int a = 0;
 
         r += getr(c[0]) * 1;
         r += getr(c[1]) * 2;
@@ -93,7 +94,18 @@ void Stump::render()
         b += getb(c[8]) * 1;
         b /= 15;
 
-        Bitmap::main->setpixel(x, y, makecol(r, g, b), amount);
+        a += geta(c[0]) * 1;
+        a += geta(c[1]) * 2;
+        a += geta(c[2]) * 1;
+        a += geta(c[3]) * 2;
+        a += geta(c[4]) * 3;
+        a += geta(c[5]) * 2;
+        a += geta(c[6]) * 1;
+        a += geta(c[7]) * 2;
+        a += geta(c[8]) * 1;
+        a /= 15;
+
+        Bitmap::main->setpixel(x, y, makecola(r, g, b, a), amount);
       }
     }
   }
@@ -106,7 +118,7 @@ void Stump::push(View *view)
     if(view->dclick)
     {
       stroke->end(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
-      Blend::set(Brush::main->blend);
+      Blend::current = Blend::trans_all;
       render();
       active = 0;
       Blend::set(0);
@@ -146,7 +158,7 @@ void Stump::release(View *view)
   if(active && stroke->type != 3)
   {
     stroke->end(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
-    Blend::set(Brush::main->blend);
+    Blend::current = Blend::trans_all;
     render();
     active = 0;
     Blend::set(0);

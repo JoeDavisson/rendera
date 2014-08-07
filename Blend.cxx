@@ -64,6 +64,16 @@ int Blend::trans(int c1, int c2, int t)
   return makecola(r, g, b, geta(c1));
 }
 
+int Blend::trans_all(int c1, int c2, int t)
+{
+  int r = ((getr(c1) * t) + (getr(c2) * (255 - t))) / 255;
+  int g = ((getg(c1) * t) + (getg(c2) * (255 - t))) / 255;
+  int b = ((getb(c1) * t) + (getb(c2) * (255 - t))) / 255;
+  int a = ((geta(c1) * t) + (geta(c2) * (255 - t))) / 255;
+
+  return makecola(r, g, b, a);
+}
+
 int Blend::add(int c1, int c2, int t)
 {
   t = 255 - t;

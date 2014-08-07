@@ -29,6 +29,7 @@ public:
   static void set(int);
   static int invert(int, int, int);
   static int trans(int, int, int);
+  static int trans_all(int, int, int);
   static int add(int, int, int);
   static int sub(int, int, int);
   static int colorize(int, int, int);
