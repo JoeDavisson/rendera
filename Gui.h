@@ -29,6 +29,9 @@ public:
   Gui();
   virtual ~Gui();
 
+  void set_menu_item(const char *);
+  void clear_menu_item(const char *);
+
   // window
   Fl_Double_Window *window;
   //Fl_Group *group_main;

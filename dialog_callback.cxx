@@ -184,4 +184,3 @@ void show_load_palette()
   delete fc;
 }
 
-

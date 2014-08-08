@@ -72,6 +72,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   gridy = 8;
   oldimgx = 0;
   oldimgy = 0;
+  mode = 0;
 
   tool = Tool::paint;
 
@@ -281,7 +282,7 @@ void View::draw_main(int refresh)
 
   backbuf->clear(makecol(128, 128, 128));
 
-  Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh, 0, 0, dw, dh, overx, overy, bgr_order, 0 /* 1 for indexed */);
+  Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh, 0, 0, dw, dh, overx, overy, bgr_order, mode);
 
   if(grid)
     draw_grid();
@@ -378,7 +379,7 @@ void View::begin_move()
 
   backbuf->clear(makecol(128, 128, 128));
   Bitmap::main->point_stretch(backbuf, 0, 0, Bitmap::main->w, Bitmap::main->h,
-                          px, py, pw, ph, 0, 0, bgr_order, 0 /* 1 for indexed */);
+                          px, py, pw, ph, 0, 0, bgr_order, mode);
 
   lastbx = bx;
   lastby = by;

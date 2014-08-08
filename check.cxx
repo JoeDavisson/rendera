@@ -519,3 +519,19 @@ void check_crop()
   gui->crop_h->redraw();
 }
 
+void check_rgba()
+{
+  gui->set_menu_item("Mode/RGBA");
+  gui->clear_menu_item("Mode/Indexed");
+  gui->view->mode = 0;
+  gui->view->draw_main(1);
+}
+
+void check_indexed()
+{
+  gui->clear_menu_item("Mode/RGBA");
+  gui->set_menu_item("Mode/Indexed");
+  gui->view->mode = 1;
+  gui->view->draw_main(1);
+}
+

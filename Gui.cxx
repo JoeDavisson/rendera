@@ -40,45 +40,6 @@ static void quit()
     exit(0);
 }
 
-// main menu
-Fl_Menu_Item menuitems[] =
-{
-  { "&File", 0, 0, 0, FL_SUBMENU },
-    { "&New...", 0, (Fl_Callback *)show_new_image, 0 },
-    { "&Load...", 0, (Fl_Callback *)load, 0 },
-    { "&Save...", 0, (Fl_Callback *)save, 0, FL_MENU_DIVIDER },
-    { "&Quit", 0, (Fl_Callback *)quit, 0 },
-    { 0 },
-  { "&Edit", 0, 0, 0, FL_SUBMENU },
-    { "&Undo", 0, (Fl_Callback *)undo_pop, 0, FL_MENU_DIVIDER },
-    { "Clear To Black", 0, 0, 0 },
-    { "Clear To White", 0, 0, 0 },
-    { "Clear To Color", 0, 0, 0, FL_MENU_DIVIDER },
-    { "&Scale Image...", 0, 0, 0 },
-    { 0 },
-  { "&Palette", 0, 0, 0, FL_SUBMENU },
-    { "&Load...", 0, (Fl_Callback *)show_load_palette, 0 },
-    { "&Save...", 0, 0, 0, FL_MENU_DIVIDER },
-    { "&Create From Image...", 0, (Fl_Callback *)show_create_palette, 0 },
-    { 0 },
-  { "&Effects", 0, 0, 0, FL_SUBMENU },
-    { "Normalize", 0, (Fl_Callback *)show_normalize, 0 },
-    { "Equalize", 0, (Fl_Callback *)show_equalize, 0 },
-    { "Value Stretch", 0, (Fl_Callback *)show_value_stretch, 0 },
-    { "Saturate", 0, (Fl_Callback *)show_saturate, 0 },
-    { "Rotate Hue...", 0, (Fl_Callback *)show_rotate_hue, 0 },
-    { "Invert", 0, (Fl_Callback *)show_invert, 0 },
-    { "Restore...", 0, (Fl_Callback *)show_restore, 0 },
-    { "Correction Matrix", 0, (Fl_Callback *)show_correct, 0 },
-    { "Remove Dust...", 0, (Fl_Callback *)show_remove_dust, 0 },
-    { "Colorize", 0, (Fl_Callback *)show_colorize, 0 },
-    { 0 },
-  { "&Help", 0, 0, 0, FL_SUBMENU },
-    { "&About", 0, (Fl_Callback *)show_about, 0 },
-    { 0 },
-  { 0 }
-};
-
 // callbacks are in check.cxx
 Gui::Gui()
 {
@@ -90,8 +51,32 @@ Gui::Gui()
 
   //group_main = new Fl_Group(0, 0, window->w(), window->h());
 
+  // menu
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
-  menubar->menu(menuitems);
+  //menubar->menu(menuitems);
+  menubar->add("File/Load", 0, (Fl_Callback *)load, 0, 0);
+  menubar->add("File/Save", 0, (Fl_Callback *)save, 0, FL_MENU_DIVIDER);
+  menubar->add("File/Quit", 0, (Fl_Callback *)quit, 0, 0);
+  menubar->add("Edit/Undo", 0, (Fl_Callback *)undo_pop, 0, 0);
+  menubar->add("Mode/RGBA", 0, (Fl_Callback *)check_rgba, 0, FL_MENU_TOGGLE);
+  menubar->add("Mode/Indexed", 0, (Fl_Callback *)check_indexed, 0, FL_MENU_TOGGLE);
+  menubar->add("Palette/Load", 0, (Fl_Callback *)show_load_palette, 0, 0);
+  menubar->add("Palette/Save", 0, 0, 0, FL_MENU_DIVIDER);
+  menubar->add("Palette/Create From Image", 0, (Fl_Callback *)show_create_palette, 0, 0);
+  menubar->add("Effects/Normalize", 0, (Fl_Callback *)show_normalize, 0, 0);
+  menubar->add("Effects/Equalize", 0, (Fl_Callback *)show_equalize, 0, 0);
+  menubar->add("Effects/Value Stretch", 0, (Fl_Callback *)show_value_stretch, 0, 0);
+  menubar->add("Effects/Saturate", 0, (Fl_Callback *)show_saturate, 0, 0);
+  menubar->add("Effects/Rotate Hue...", 0, (Fl_Callback *)show_rotate_hue, 0, 0);
+  menubar->add("Effects/Invert", 0, (Fl_Callback *)show_invert, 0, 0);
+  menubar->add("Effects/Restore...", 0, (Fl_Callback *)show_restore, 0, 0);
+  menubar->add("Effects/Correction Matrix", 0, (Fl_Callback *)show_correct, 0, 0);
+  menubar->add("Effects/Remove Dust...", 0, (Fl_Callback *)show_remove_dust, 0, 0);
+  menubar->add("Effects/Colorize", 0, (Fl_Callback *)show_colorize, 0, 0);
+  menubar->add("Help/About...", 0, (Fl_Callback *)show_about, 0, 0);
+
+  set_menu_item("Mode/RGBA");
+  clear_menu_item("Mode/Indexed");
 
   // top_left
   top_left = new Fl_Group(0, menubar->h(), 112, 40);
@@ -362,3 +347,20 @@ Gui::~Gui()
 {
 }
 
+void Gui::set_menu_item(const char *s)
+{
+  Fl_Menu_Item *m;
+  m = (Fl_Menu_Item *)menubar->find_item(s);
+
+  if(m)
+    m->set();
+}
+
+void Gui::clear_menu_item(const char *s)
+{
+  Fl_Menu_Item *m;
+  m = (Fl_Menu_Item *)menubar->find_item(s);
+
+  if(m)
+    m->clear();
+}
