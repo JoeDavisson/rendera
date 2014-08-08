@@ -37,7 +37,7 @@ void check_palette(Widget *widget, void *var)
   int pos = *(int *)var;
 
   int step = widget->stepx;
-  int div = 96 / step;
+  int div = widget->w() / step;
 
   int x = pos % div;
   int y = pos / div;

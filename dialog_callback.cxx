@@ -186,6 +186,8 @@ void show_load_palette()
 
 void show_editor()
 {
+  Palette::main->draw(dialog->editor_palette);
+  do_editor_rgbhsv();
   dialog->editor->show();
 }
 
@@ -194,3 +196,82 @@ void hide_editor()
   dialog->editor->hide();
 }
 
+void do_editor_palette(Widget *widget, void *var)
+{
+  check_palette(widget, var);
+  do_editor_rgbhsv();
+}
+
+void do_editor_rgbhsv()
+{
+  int i;
+  int r = 0, g = 0, b = 0;
+  int h = 0, s = 0, v = 0;
+  int color = Brush::main->color;
+
+  Blend::rgb_to_hsv(getr(color), getg(color), getb(color), &h, &s, &v);
+
+  dialog->editor_r->var = getr(color);
+  dialog->editor_g->var = getg(color);
+  dialog->editor_b->var = getb(color);
+  dialog->editor_h->var = h / 6;
+  dialog->editor_s->var = s;
+  dialog->editor_v->var = v;
+
+  dialog->editor_r->bitmap->clear(makecol(0, 0, 0));
+  dialog->editor_g->bitmap->clear(makecol(0, 0, 0));
+  dialog->editor_b->bitmap->clear(makecol(0, 0, 0));
+  dialog->editor_h->bitmap->clear(makecol(0, 0, 0));
+  dialog->editor_s->bitmap->clear(makecol(0, 0, 0));
+  dialog->editor_v->bitmap->clear(makecol(0, 0, 0));
+
+  for(i = 0; i < 256; i++)
+  {
+    dialog->editor_r->bitmap->hline(0, i, 23, makecol(i, 0, 0), 0);
+    dialog->editor_g->bitmap->hline(0, i, 23, makecol(0, i, 0), 0);
+    dialog->editor_b->bitmap->hline(0, i, 23, makecol(0, 0, i), 0);
+
+    Blend::hsv_to_rgb(i * 6, s, v, &r, &g, &b);
+    dialog->editor_h->bitmap->hline(0, i, 23, makecol(r, g, b), 0);
+    Blend::hsv_to_rgb(h, i, v, &r, &g, &b);
+    dialog->editor_s->bitmap->hline(0, i, 23, makecol(r, g, b), 0);
+    Blend::hsv_to_rgb(h, s, i, &r, &g, &b);
+    dialog->editor_v->bitmap->hline(0, i, 23, makecol(r, g, b), 0);
+  }
+
+  dialog->editor_r->redraw();
+  dialog->editor_g->redraw();
+  dialog->editor_b->redraw();
+  dialog->editor_h->redraw();
+  dialog->editor_s->redraw();
+  dialog->editor_v->redraw();
+
+  dialog->editor_color->bitmap->clear(Brush::main->color);
+  dialog->editor_color->redraw();
+}
+
+void do_editor_get_rgb()
+{
+  int r = dialog->editor_r->var;
+  int g = dialog->editor_g->var;
+  int b = dialog->editor_b->var;
+
+  Brush::main->color = makecol(r, g, b);
+
+  update_color(Brush::main->color);
+  do_editor_rgbhsv();
+}
+
+void do_editor_get_hsv()
+{
+  int h = dialog->editor_h->var * 6;
+  int s = dialog->editor_s->var;
+  int v = dialog->editor_v->var;
+  int r, g, b;
+
+  Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
+  Brush::main->color = makecol(r, g, b);
+
+  update_color(Brush::main->color);
+  do_editor_rgbhsv();
+}

@@ -38,6 +38,7 @@ Palette::~Palette()
 void Palette::draw(Widget *widget)
 {
   int x, y;
+  int w = widget->w();
 
   int step = 3;
 
@@ -57,16 +58,20 @@ void Palette::draw(Widget *widget)
   else if(max <= 256)
     step = 6;
 
+  // for large palette
+  if(widget->w() == 192)
+    step *= 2;
+
   widget->stepx = step;
   widget->stepy = step;
 
-  int div = 96 / step;
+  int div = w / step;
 
   widget->bitmap->clear(makecol(0, 0, 0));
 
-  for(y = 0; y < 96; y += step)
+  for(y = 0; y < w; y += step)
   {
-    for(x = 0; x < 96; x += step)
+    for(x = 0; x < w; x += step)
     {
       widget->bitmap->rect(x, y, x + step, y + step, makecol(160, 160, 160), 0);
       widget->bitmap->line(x, y, x + step - 1, y + step - 1, makecol(160, 160, 160), 0);

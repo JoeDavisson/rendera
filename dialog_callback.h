@@ -34,6 +34,10 @@ void cancel_create_palette();
 void show_load_palette();
 void show_editor();
 void hide_editor();
+void do_editor_palette(Widget *, void *);
+void do_editor_rgbhsv();
+void do_editor_get_rgb();
+void do_editor_get_hsv();
 
 #endif
 

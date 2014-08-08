@@ -58,6 +58,7 @@ public:
   Fl_Button *editor_rgb_ramp;
   Fl_Button *editor_hsv_ramp;
   Widget *editor_palette;
+  Widget *editor_color;
   Fl_Button *editor_done;
 };
 

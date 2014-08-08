@@ -61,19 +61,20 @@ Dialog::Dialog()
 
   // palette editor
   editor = new Fl_Double_Window(576, 360, "Palette Editor");
-  editor_r = new Widget(editor, 16, 16, 24, 256, "Red", 24, 1, 0);
-  editor_g = new Widget(editor, 56, 16, 24, 256, "Green", 24, 1, 0);
-  editor_b = new Widget(editor, 96, 16, 24, 256, "Blue", 24, 1, 0);
-  editor_h = new Widget(editor, 136, 16, 24, 256, "Hue", 24, 1, 0);
-  editor_s = new Widget(editor, 176, 16, 24, 256, "Saturation", 24, 1, 0);
-  editor_v = new Widget(editor, 216, 16, 24, 256, "Value", 24, 1, 0);
+  editor_r = new Widget(editor, 16, 16, 24, 256, "Red", 24, 1, (Fl_Callback *)do_editor_get_rgb);
+  editor_g = new Widget(editor, 56, 16, 24, 256, "Green", 24, 1, (Fl_Callback *)do_editor_get_rgb);
+  editor_b = new Widget(editor, 96, 16, 24, 256, "Blue", 24, 1, (Fl_Callback *)do_editor_get_rgb);
+  editor_h = new Widget(editor, 136, 16, 24, 256, "Hue", 24, 1, (Fl_Callback *)do_editor_get_hsv);
+  editor_s = new Widget(editor, 176, 16, 24, 256, "Saturation", 24, 1, (Fl_Callback *)do_editor_get_hsv);
+  editor_v = new Widget(editor, 216, 16, 24, 256, "Value", 24, 1, (Fl_Callback *)do_editor_get_hsv);
   editor_insert = new Fl_Button(256, 16, 96, 24, "Insert");
   editor_delete = new Fl_Button(256, 56, 96, 24, "Delete");
   editor_replace = new Fl_Button(256, 96, 96, 24, "Replace");
   editor_begin_ramp = new Fl_Button(256, 168, 96, 24, "Begin Ramp");
   editor_rgb_ramp = new Fl_Button(256, 208, 96, 24, "RGB Ramp");
   editor_hsv_ramp = new Fl_Button(256, 248, 96, 24, "HSV Ramp");
-  editor_palette = new Widget(editor, 368, 16, 192, 192, "Palette", 24, 24, 0);
+  editor_palette = new Widget(editor, 368, 16, 192, 192, "Palette", 24, 24, (Fl_Callback *)do_editor_palette);
+  editor_color = new Widget(editor, 368, 224, 192, 48, "Color", 0, 0, 0);
   new Separator(editor, 16, 302, 546, 2, "");
   editor_done = new Fl_Button(464, 320, 96, 24, "Done");
   editor_done->callback((Fl_Callback *)hide_editor);
