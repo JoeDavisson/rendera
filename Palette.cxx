@@ -94,22 +94,25 @@ void Palette::draw(Widget *widget)
 void Palette::set_default()
 {
   int r, g, b;
+  int h, s, v;
   int index = 0;
-  int h, v;
 
-  int sat[12] = { 255, 255, 255, 255, 255, 255, 224, 192, 160, 128, 96, 72 };
+  int sat[12] = { 255, 255, 255, 255, 255, 255, 192, 160, 128, 96, 64, 32 };
+  int val[12] = { 64, 96, 128, 160, 192, 255, 255, 255, 255, 255, 255, 255 };
 
-  for(v = 0; v < 12; v++)
+  for(v = 10; v >= 0; v--)
   {
     for(h = 0; h < 12; h++)
     {
-      if(v == 5)
-        Blend::hsv_to_rgb(h * 128, 255, 255, &r, &g, &b);
-      else
-        Blend::hsv_to_rgb(h * 128, sat[11 - v], sat[v], &r, &g, &b);
+      Blend::hsv_to_rgb(h * 128, sat[v], val[v], &r, &g, &b);
 
       data[index++] = makecol(r, g, b);
     }
+  }
+
+  for(v = 0; v < 12; v++)
+  {
+    data[index++] = makecol(v * 23.19, v * 23.19, v * 23.19);
   }
 
   max = index;

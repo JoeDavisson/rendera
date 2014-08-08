@@ -295,9 +295,9 @@ Gui::Gui()
   y1 = 20;
   palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 6, 6, (Fl_Callback *)check_palette);
   y1 += 96 + 8;
-  plus = new Button(right, 8, y1, 44, 16, "Insert Color", "data/plus.png", (Fl_Callback *)check_plus);
-  minus = new Button(right, 8 + 44 + 8, y1, 44, 16, "Delete Color", "data/minus.png", (Fl_Callback *)check_minus);
-  y1 += 16 + 8;
+//  plus = new Button(right, 8, y1, 44, 16, "Insert Color", "data/plus.png", (Fl_Callback *)check_plus);
+//  minus = new Button(right, 8 + 44 + 8, y1, 44, 16, "Delete Color", "data/minus.png", (Fl_Callback *)check_minus);
+//  y1 += 16 + 8;
   hue = new Widget(right, 8, y1, 96, 96, "Hue", 1, 1, (Fl_Callback *)check_hue);
   y1 += 96 + 8;
   color = new Widget(right, 8, y1, 96, 48, "Color", 0, 0, 0);
