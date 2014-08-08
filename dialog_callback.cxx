@@ -184,3 +184,13 @@ void show_load_palette()
   delete fc;
 }
 
+void show_editor()
+{
+  dialog->editor->show();
+}
+
+void hide_editor()
+{
+  dialog->editor->hide();
+}
+

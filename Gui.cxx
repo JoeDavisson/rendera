@@ -53,7 +53,6 @@ Gui::Gui()
 
   // menu
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
-  //menubar->menu(menuitems);
   menubar->add("File/Load", 0, (Fl_Callback *)load, 0, 0);
   menubar->add("File/Save", 0, (Fl_Callback *)save, 0, FL_MENU_DIVIDER);
   menubar->add("File/Quit", 0, (Fl_Callback *)quit, 0, 0);
@@ -62,6 +61,7 @@ Gui::Gui()
   menubar->add("Mode/Indexed", 0, (Fl_Callback *)check_indexed, 0, FL_MENU_TOGGLE);
   menubar->add("Palette/Load", 0, (Fl_Callback *)show_load_palette, 0, 0);
   menubar->add("Palette/Save", 0, 0, 0, FL_MENU_DIVIDER);
+  menubar->add("Palette/Editor...", 0, (Fl_Callback *)show_editor, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Create From Image", 0, (Fl_Callback *)show_create_palette, 0, 0);
   menubar->add("Effects/Normalize", 0, (Fl_Callback *)show_normalize, 0, 0);
   menubar->add("Effects/Equalize", 0, (Fl_Callback *)show_equalize, 0, 0);

@@ -43,6 +43,22 @@ public:
   Field *create_palette_colors;
   Fl_Button *create_palette_ok;
   Fl_Button *create_palette_cancel;
+
+  Fl_Double_Window *editor;
+  Widget *editor_r;
+  Widget *editor_g;
+  Widget *editor_b;
+  Widget *editor_h;
+  Widget *editor_s;
+  Widget *editor_v;
+  Fl_Button *editor_insert;
+  Fl_Button *editor_delete;
+  Fl_Button *editor_replace;
+  Fl_Button *editor_begin_ramp;
+  Fl_Button *editor_rgb_ramp;
+  Fl_Button *editor_hsv_ramp;
+  Widget *editor_palette;
+  Fl_Button *editor_done;
 };
 
 #endif
