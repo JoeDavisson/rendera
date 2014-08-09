@@ -231,7 +231,7 @@ void do_editor_rgbhsv()
     dialog->editor_g->bitmap->hline(0, i, 23, makecol(0, i, 0), 0);
     dialog->editor_b->bitmap->hline(0, i, 23, makecol(0, 0, i), 0);
 
-    Blend::hsv_to_rgb(i * 6, s, v, &r, &g, &b);
+    Blend::hsv_to_rgb(i * 6, 255, 255, &r, &g, &b);
     dialog->editor_h->bitmap->hline(0, i, 23, makecol(r, g, b), 0);
     Blend::hsv_to_rgb(h, i, v, &r, &g, &b);
     dialog->editor_s->bitmap->hline(0, i, 23, makecol(r, g, b), 0);

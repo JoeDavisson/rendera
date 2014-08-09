@@ -842,7 +842,7 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
     for(y = 0; y < dh; y++)
     {
       const int y1 = sy + ((y * by) >> 8);
-      int *s = dest->row[dy + y];
+      int *s = dest->row[dy + y] + dx;
 
       for(x = 0; x < dw; x++)
       {
@@ -860,7 +860,7 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
     for(y = 0; y < dh; y++)
     {
       const int y1 = sy + ((y * by) >> 8);
-      int *s = dest->row[dy + y];
+      int *s = dest->row[dy + y] + dx;
 
       for(x = 0; x < dw; x++)
       {
