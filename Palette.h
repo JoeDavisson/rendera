@@ -33,6 +33,7 @@ public:
   void set_default();
   void insert_color(int, int);
   void delete_color(int);
+  void replace_color(int, int);
   void fill_lookup();
   void load(const char *);
 

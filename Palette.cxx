@@ -151,6 +151,11 @@ void Palette::delete_color(int index)
   max--;
 }
 
+void Palette::replace_color(int color, int index)
+{
+  data[index] = color;
+}
+
 void Palette::fill_lookup()
 {
   int r, g, b;

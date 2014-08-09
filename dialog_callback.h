@@ -38,6 +38,9 @@ void do_editor_palette(Widget *, void *);
 void do_editor_rgbhsv();
 void do_editor_get_rgb();
 void do_editor_get_hsv();
+void do_editor_insert();
+void do_editor_delete();
+void do_editor_replace();
 
 #endif
 

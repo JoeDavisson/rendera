@@ -275,3 +275,31 @@ void do_editor_get_hsv()
   update_color(Brush::main->color);
   do_editor_rgbhsv();
 }
+
+void do_editor_insert()
+{
+  Palette::main->insert_color(Brush::main->color, dialog->editor_palette->var);
+  Palette::main->draw(dialog->editor_palette);
+  Palette::main->draw(gui->palette);
+  dialog->editor_palette->do_callback();
+  gui->palette->do_callback();
+}
+
+void do_editor_delete()
+{
+  Palette::main->delete_color(dialog->editor_palette->var);
+  Palette::main->draw(dialog->editor_palette);
+  Palette::main->draw(gui->palette);
+  dialog->editor_palette->do_callback();
+  gui->palette->do_callback();
+}
+
+void do_editor_replace()
+{
+  Palette::main->replace_color(Brush::main->color, dialog->editor_palette->var);
+  Palette::main->draw(dialog->editor_palette);
+  Palette::main->draw(gui->palette);
+  dialog->editor_palette->do_callback();
+  gui->palette->do_callback();
+}
+

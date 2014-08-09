@@ -63,20 +63,6 @@ void check_palette(Widget *widget, void *var)
   update_color(c);
 }
 
-void check_plus(Button *button, void *var)
-{
-  Palette::main->insert_color(Brush::main->color, gui->palette->var);
-  Palette::main->draw(gui->palette);
-  gui->palette->do_callback();
-}
-
-void check_minus(Button *button, void *var)
-{
-  Palette::main->delete_color(gui->palette->var);
-  Palette::main->draw(gui->palette);
-  gui->palette->do_callback();
-}
-
 void check_zoom_in(Button *button, void *var)
 {
   gui->view->zoom_in(gui->view->w() / 2, gui->view->h() / 2);

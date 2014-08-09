@@ -68,8 +68,11 @@ Dialog::Dialog()
   editor_s = new Widget(editor, 176, 16, 24, 256, "Saturation", 24, 1, (Fl_Callback *)do_editor_get_hsv);
   editor_v = new Widget(editor, 216, 16, 24, 256, "Value", 24, 1, (Fl_Callback *)do_editor_get_hsv);
   editor_insert = new Fl_Button(256, 16, 96, 24, "Insert");
+  editor_insert->callback((Fl_Callback *)do_editor_insert);
   editor_delete = new Fl_Button(256, 56, 96, 24, "Delete");
+  editor_delete->callback((Fl_Callback *)do_editor_delete);
   editor_replace = new Fl_Button(256, 96, 96, 24, "Replace");
+  editor_replace->callback((Fl_Callback *)do_editor_replace);
   editor_begin_ramp = new Fl_Button(256, 168, 96, 24, "Begin Ramp");
   editor_rgb_ramp = new Fl_Button(256, 208, 96, 24, "RGB Ramp");
   editor_hsv_ramp = new Fl_Button(256, 248, 96, 24, "HSV Ramp");
