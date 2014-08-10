@@ -43,8 +43,12 @@ void do_editor_delete();
 void do_editor_replace();
 void do_editor_store_undo();
 void do_editor_get_undo();
+void do_editor_rgb_ramp();
+void do_editor_hsv_ramp();
 
 static int undo;
+static int ramp_begin;
+static int ramp_started;
 
 #endif
 

@@ -190,6 +190,8 @@ void show_editor()
   do_editor_rgbhsv();
   dialog->editor->show();
   undo = 0;
+  ramp_begin = 0;
+  ramp_started = 0;
 }
 
 void hide_editor()
@@ -200,7 +202,71 @@ void hide_editor()
 
 void do_editor_palette(Widget *widget, void *var)
 {
+  int i;
+  int begin, end;
+  Palette *pal = Palette::main;
+
+  if(ramp_started > 0)
+  {
+    do_editor_store_undo();
+    begin = ramp_begin;
+    end = dialog->editor_palette->var;
+    if(begin > end)
+      SWAP(begin, end);
+
+    if(ramp_started == 1)
+    {
+      // rgb ramp
+      int c1 = pal->data[begin];
+      int c2 = pal->data[end];
+      int num = ABS(end - begin);
+      double stepr = (double)(getr(c2) - getr(c1)) / num;
+      double stepg = (double)(getg(c2) - getg(c1)) / num;
+      double stepb = (double)(getb(c2) - getb(c1)) / num;
+      double r = getr(c1);
+      double g = getg(c1);
+      double b = getb(c1);
+
+      for(i = begin; i < end; i++)
+      {
+        pal->data[i] = makecol(r, g, b);
+        r += stepr;
+        g += stepg;
+        b += stepb;
+      }
+    }
+    else if(ramp_started == 2)
+    {
+      // hsv ramp
+      int c1 = pal->data[begin];
+      int c2 = pal->data[end];
+      int num = ABS(end - begin);
+      int h1, s1, v1;
+      int h2, s2, v2;
+      Blend::rgb_to_hsv(getr(c1), getg(c1), getb(c1), &h1, &s1, &v1);
+      Blend::rgb_to_hsv(getr(c2), getg(c2), getb(c2), &h2, &s2, &v2);
+      double steph = (double)(h2 - h1) / num;
+      double steps = (double)(s2 - s1) / num;
+      double stepv = (double)(v2 - v1) / num;
+      int r, g, b;
+
+      for(i = begin; i < end; i++)
+      {
+        Blend::hsv_to_rgb(h1, s1, v1, &r, &g, &b);
+        pal->data[i] = makecol(r, g, b);
+        h1 += steph;
+        s1 += steps;
+        v1 += stepv;
+      }
+    }
+
+    ramp_started = 0;
+    Palette::main->draw(dialog->editor_palette);
+    Palette::main->draw(gui->palette);
+  }
+
   check_palette(widget, var);
+  ramp_begin = dialog->editor_palette->var;
   do_editor_rgbhsv();
 }
 
@@ -325,5 +391,15 @@ void do_editor_get_undo()
     dialog->editor_palette->do_callback();
     gui->palette->do_callback();
   }
+}
+
+void do_editor_rgb_ramp()
+{
+  ramp_started = 1;
+}
+
+void do_editor_hsv_ramp()
+{
+  ramp_started = 2;
 }
 
