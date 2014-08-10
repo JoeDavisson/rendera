@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 // need to recompile program if this file changes
 
-static int seed;
+static int seed = 12345;
 
 static inline int rnd32(void)
 {

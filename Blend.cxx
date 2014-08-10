@@ -21,6 +21,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.h"
 
 int (*Blend::current)(int, int, int) = &trans;
+int Blend::ditherx;
+int Blend::dithery;
+
+static int dither_matrix[64] =
+{
+  1, 49, 13, 61, 4, 52, 16, 64,
+  33, 17, 45, 29, 36, 20, 48, 32,
+  9, 57, 5, 53, 12, 60, 8, 56,
+  41, 25, 37, 21, 44, 28, 40, 24,
+  3, 51, 15, 63, 2, 50, 14, 62,
+  35, 19, 47, 31, 34, 18, 46, 30,
+  11, 59, 7, 55, 10, 58, 6, 54,
+  43, 27, 39, 23, 42, 26, 38, 22
+};
 
 void Blend::set(int mode)
 {
@@ -43,6 +57,12 @@ void Blend::set(int mode)
       break;
     case 5:
       current = alpha_sub;
+      break;
+    case 6:
+      current = dither_random;
+      break;
+    case 7:
+      current = dither_ordered;
       break;
     default:
       current = trans;
@@ -179,6 +199,25 @@ int Blend::alpha_add(int c1, int c2, int t)
 int Blend::alpha_sub(int c1, int c2, int t)
 {
   return makecola(getr(c1), getg(c1), getb(c1), 255 - ((255 - geta(c1)) * t) / 255);
+}
+
+int Blend::dither_random(int c1, int c2, int t)
+{
+  if((rnd32() & 255) >= t)
+    return makecola(getr(c2), getg(c2), getb(c2), geta(c1));
+  else
+    return c1;
+}
+
+int Blend::dither_ordered(int c1, int c2, int t)
+{
+  int x = Blend::ditherx & 7;
+  int y = Blend::dithery & 7;
+
+  if(dither_matrix[x + 8 * y] >= (t / 4))
+    return makecola(getr(c2), getg(c2), getb(c2), geta(c1));
+  else
+    return c1;
 }
 
 // hue 0-1535

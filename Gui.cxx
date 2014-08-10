@@ -302,6 +302,8 @@ Gui::Gui()
   blend->add("Colorize");
   blend->add("Alpha Add");
   blend->add("Alpha Subtract");
+  blend->add("Random Dither");
+  blend->add("Ordered Dither");
   blend->value(0);
   blend->callback((Fl_Callback *)check_blend);
   y1 += 24 + 8;
