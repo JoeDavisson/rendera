@@ -213,13 +213,13 @@ void do_editor_palette(Widget *widget, void *var)
     end = dialog->editor_palette->var;
     if(begin > end)
       SWAP(begin, end);
+    int num = end - begin;
 
     if(ramp_started == 1)
     {
       // rgb ramp
       int c1 = pal->data[begin];
       int c2 = pal->data[end];
-      int num = ABS(end - begin);
       double stepr = (double)(getr(c2) - getr(c1)) / num;
       double stepg = (double)(getg(c2) - getg(c1)) / num;
       double stepb = (double)(getb(c2) - getb(c1)) / num;
@@ -243,7 +243,6 @@ void do_editor_palette(Widget *widget, void *var)
       // hsv ramp
       int c1 = pal->data[begin];
       int c2 = pal->data[end];
-      int num = ABS(end - begin);
       int h1, s1, v1;
       int h2, s2, v2;
       Blend::rgb_to_hsv(getr(c1), getg(c1), getb(c1), &h1, &s1, &v1);
@@ -252,14 +251,17 @@ void do_editor_palette(Widget *widget, void *var)
       double steps = (double)(s2 - s1) / num;
       double stepv = (double)(v2 - v1) / num;
       int r, g, b;
+      double h = h1;
+      double s = s1;
+      double v = v1;
 
       for(i = begin; i < end; i++)
       {
-        Blend::hsv_to_rgb(h1, s1, v1, &r, &g, &b);
+        Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
         pal->data[i] = makecol(r, g, b);
-        h1 += steph;
-        s1 += steps;
-        v1 += stepv;
+        h += steph;
+        s += steps;
+        v += stepv;
       }
 
       dialog->editor_hsv_ramp->value(0);
@@ -269,6 +271,7 @@ void do_editor_palette(Widget *widget, void *var)
     ramp_started = 0;
     Palette::main->draw(dialog->editor_palette);
     Palette::main->draw(gui->palette);
+    return;
   }
 
   check_palette(widget, var);
