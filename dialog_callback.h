@@ -41,6 +41,10 @@ void do_editor_get_hsv();
 void do_editor_insert();
 void do_editor_delete();
 void do_editor_replace();
+void do_editor_store_undo();
+void do_editor_get_undo();
+
+static int undo;
 
 #endif
 

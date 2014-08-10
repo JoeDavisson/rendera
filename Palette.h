@@ -30,6 +30,7 @@ public:
   virtual ~Palette();
 
   void draw(Widget *);
+  void copy(Palette *);
   void set_default();
   void insert_color(int, int);
   void delete_color(int);
@@ -42,6 +43,7 @@ public:
   int max;
 
   static Palette *main;
+  static Palette *undo;
 };
 
 #endif

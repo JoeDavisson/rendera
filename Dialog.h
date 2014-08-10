@@ -54,7 +54,7 @@ public:
   Fl_Button *editor_insert;
   Fl_Button *editor_delete;
   Fl_Button *editor_replace;
-  Fl_Button *editor_begin_ramp;
+  Fl_Button *editor_undo;
   Fl_Button *editor_rgb_ramp;
   Fl_Button *editor_hsv_ramp;
   Widget *editor_palette;

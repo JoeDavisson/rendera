@@ -44,6 +44,7 @@ int main(int argc, char **argv)
   Map::main->clear(0);
   Brush::main = new Brush();
   Palette::main = new Palette();
+  Palette::undo = new Palette();
   Bitmap::clone_buffer = new Bitmap(8, 8);
   Bitmap::offset_buffer = new Bitmap(8, 8);
 

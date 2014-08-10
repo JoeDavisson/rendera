@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "rendera.h"
 
 Palette *Palette::main;
+Palette *Palette::undo;
 
 Palette::Palette()
 {
@@ -94,6 +95,16 @@ void Palette::draw(Widget *widget)
   }
 
   widget->redraw();
+}
+
+void Palette::copy(Palette *dest)
+{
+  int i;
+
+  for(i = 0; i < 256; i++)
+    dest->data[i] = data[i];
+
+  dest->max = max;
 }
 
 void Palette::set_default()

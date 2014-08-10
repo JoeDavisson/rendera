@@ -189,10 +189,12 @@ void show_editor()
   Palette::main->draw(dialog->editor_palette);
   do_editor_rgbhsv();
   dialog->editor->show();
+  undo = 0;
 }
 
 void hide_editor()
 {
+  Palette::main->fill_lookup();
   dialog->editor->hide();
 }
 
@@ -278,6 +280,7 @@ void do_editor_get_hsv()
 
 void do_editor_insert()
 {
+  do_editor_store_undo();
   Palette::main->insert_color(Brush::main->color, dialog->editor_palette->var);
   Palette::main->draw(dialog->editor_palette);
   Palette::main->draw(gui->palette);
@@ -287,6 +290,7 @@ void do_editor_insert()
 
 void do_editor_delete()
 {
+  do_editor_store_undo();
   Palette::main->delete_color(dialog->editor_palette->var);
   Palette::main->draw(dialog->editor_palette);
   Palette::main->draw(gui->palette);
@@ -296,10 +300,30 @@ void do_editor_delete()
 
 void do_editor_replace()
 {
+  do_editor_store_undo();
   Palette::main->replace_color(Brush::main->color, dialog->editor_palette->var);
   Palette::main->draw(dialog->editor_palette);
   Palette::main->draw(gui->palette);
   dialog->editor_palette->do_callback();
   gui->palette->do_callback();
+}
+
+void do_editor_store_undo()
+{
+  Palette::main->copy(Palette::undo);
+  undo = 1;
+}
+
+void do_editor_get_undo()
+{
+  if(undo)
+  {
+    Palette::undo->copy(Palette::main);
+    undo = 0;
+    Palette::main->draw(dialog->editor_palette);
+    Palette::main->draw(gui->palette);
+    dialog->editor_palette->do_callback();
+    gui->palette->do_callback();
+  }
 }
 

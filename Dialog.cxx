@@ -73,7 +73,8 @@ Dialog::Dialog()
   editor_delete->callback((Fl_Callback *)do_editor_delete);
   editor_replace = new Fl_Button(256, 96, 96, 24, "Replace");
   editor_replace->callback((Fl_Callback *)do_editor_replace);
-  editor_begin_ramp = new Fl_Button(256, 168, 96, 24, "Begin Ramp");
+  editor_undo = new Fl_Button(256, 152, 96, 24, "Undo");
+  editor_undo->callback((Fl_Callback *)do_editor_get_undo);
   editor_rgb_ramp = new Fl_Button(256, 208, 96, 24, "RGB Ramp");
   editor_hsv_ramp = new Fl_Button(256, 248, 96, 24, "HSV Ramp");
   editor_palette = new Widget(editor, 368, 16, 192, 192, "Palette", 24, 24, (Fl_Callback *)do_editor_palette);
