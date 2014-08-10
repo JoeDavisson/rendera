@@ -234,6 +234,9 @@ void do_editor_palette(Widget *widget, void *var)
         g += stepg;
         b += stepb;
       }
+
+      dialog->editor_rgb_ramp->value(0);
+      dialog->editor_rgb_ramp->redraw();
     }
     else if(ramp_started == 2)
     {
@@ -258,6 +261,9 @@ void do_editor_palette(Widget *widget, void *var)
         s1 += steps;
         v1 += stepv;
       }
+
+      dialog->editor_hsv_ramp->value(0);
+      dialog->editor_hsv_ramp->redraw();
     }
 
     ramp_started = 0;
@@ -395,11 +401,21 @@ void do_editor_get_undo()
 
 void do_editor_rgb_ramp()
 {
-  ramp_started = 1;
+  if(!ramp_started)
+  {
+    dialog->editor_rgb_ramp->value(1);
+    dialog->editor_rgb_ramp->redraw();
+    ramp_started = 1;
+  }
 }
 
 void do_editor_hsv_ramp()
 {
-  ramp_started = 2;
+  if(!ramp_started)
+  {
+    dialog->editor_hsv_ramp->value(1);
+    dialog->editor_hsv_ramp->redraw();
+    ramp_started = 2;
+  }
 }
 
