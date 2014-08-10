@@ -53,6 +53,7 @@ Gui::Gui()
 
   // menu
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
+  menubar->add("File/New", 0, (Fl_Callback *)show_new_image, 0, 0);
   menubar->add("File/Load", 0, (Fl_Callback *)load, 0, 0);
   menubar->add("File/Save", 0, (Fl_Callback *)save, 0, FL_MENU_DIVIDER);
   menubar->add("File/Quit", 0, (Fl_Callback *)quit, 0, 0);

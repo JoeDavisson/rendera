@@ -447,9 +447,9 @@ void View::zoom_in(int x, int y)
     return;
 
   zoom *= 2;
-  if(zoom > 32)
+  if(zoom > 64)
   {
-    zoom = 32;
+    zoom = 64;
   }
   else
   {
