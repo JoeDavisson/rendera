@@ -21,15 +21,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef OCTREE_H
 #define OCTREE_H
 
-struct octree_t
+struct _octree
 {
   int value;
-  struct octree_t *parent;
-  struct octree_t *next[8];
+  struct _octree *parent;
+  struct _octree *next[8];
 };
 
-void octree_add(int, int, int, int);
-void octree_delete(int, int, int);
-int octree_read(int, int, int);
+static void octree_add(struct _octree *octree, int x, int y, int z, int value)
+{
+}
+
+static void octree_delete(struct _octree *octree, int x, int y, int z)
+{
+}
+
+static int octree_read(struct _octree *octree, int x, int y, int z)
+{
+  return 0;
+}
 
 #endif

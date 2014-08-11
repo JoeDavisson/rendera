@@ -40,7 +40,7 @@ public:
 
   int *data;
   unsigned char *lookup;
-  struct octree_t *octree;
+  struct _octree *octree;
   int max;
 
   static Palette *main;

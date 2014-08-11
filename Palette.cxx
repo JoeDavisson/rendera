@@ -27,7 +27,7 @@ Palette::Palette()
 {
   data = new int[256];
   lookup = new unsigned char[16777216];
-  octree = new struct octree_t;
+  octree = new struct _octree;
   set_default();
   fill_lookup();
 }
