@@ -46,6 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/fl_ask.H>
 
 #include "common.h"
+#include "octree.h"
 #include "Blend.h"
 #include "Bitmap.h"
 #include "Map.h"

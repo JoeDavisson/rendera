@@ -27,6 +27,7 @@ Palette::Palette()
 {
   data = new int[256];
   lookup = new unsigned char[16777216];
+  octree = new struct octree_t;
   set_default();
   fill_lookup();
 }
@@ -48,6 +49,8 @@ void Palette::draw(Widget *widget)
 
   if(max <= 4)
     step = 48;
+  else if(max <= 9)
+    step = 32;
   else if(max <= 16)
     step = 24;
   else if(max <= 36)
@@ -76,7 +79,7 @@ void Palette::draw(Widget *widget)
     {
       widget->bitmap->rect(x, y, x + step, y + step, makecol(160, 160, 160), 0);
       widget->bitmap->line(x, y, x + step - 1, y + step - 1, makecol(160, 160, 160), 0);
-      widget->bitmap->line(95 - x, y, 95 - (x + step - 1), y + step - 1, makecol(160, 160, 160), 0);
+      widget->bitmap->line(w - 1 - x, y, w - 1 - (x + step - 1), y + step - 1, makecol(160, 160, 160), 0);
     }
   }
 
@@ -113,8 +116,11 @@ void Palette::set_default()
   int h, s, v;
   int index = 0;
 
+//  int sat[12] = { 255, 255, 255, 255, 255, 255, 192, 160, 128, 96, 64, 32 };
+//  int val[12] = { 64, 96, 128, 160, 192, 255, 255, 255, 255, 255, 255, 255 };
+
   int sat[12] = { 255, 255, 255, 255, 255, 255, 192, 160, 128, 96, 64, 32 };
-  int val[12] = { 64, 96, 128, 160, 192, 255, 255, 255, 255, 255, 255, 255 };
+  int val[12] = { 96, 128, 160, 192, 224, 255, 255, 255, 255, 255, 255, 255 };
 
   for(v = 10; v >= 0; v--)
   {
