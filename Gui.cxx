@@ -202,8 +202,8 @@ Gui::Gui()
   y1 += 48 + 8;
   pixelart_pattern = new Widget(pixelart, 8, y1, 96, 192, "Pattern", "data/patterns.png", 32, 32, (Fl_Callback *)check_pixelart_pattern);
   y1 += 192 + 8;
-  pixelart_lock = new ToggleButton(pixelart, 8, y1, 44, 44, "Lock Pattern", "data/lock.png", (Fl_Callback *)pixelart_lock);
-  pixelart_invert = new ToggleButton(pixelart, 8 + 44 + 8, y1, 44, 44, "Invert Pattern", "data/invert.png", (Fl_Callback *)pixelart_invert);
+  pixelart_lock = new ToggleButton(pixelart, 8, y1, 44, 44, "Lock Pattern", "data/lock.png", (Fl_Callback *)check_pixelart_lock);
+  pixelart_invert = new ToggleButton(pixelart, 8 + 44 + 8, y1, 44, 44, "Invert Pattern", "data/invert.png", (Fl_Callback *)check_pixelart_invert);
   pixelart->resizable(0);
   pixelart->end();
 
