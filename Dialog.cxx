@@ -28,6 +28,9 @@ Dialog::Dialog()
   progress_bar = new Fl_Progress(8, 8, 256, 64);
   progress_bar->minimum(0);
   progress_bar->maximum(100);
+  progress_bar->color(0);
+  progress_bar->selection_color(0x88CC8800);
+  progress_bar->labelcolor(0xFFFFFF00);
   progress->set_modal();
   progress->end();
 

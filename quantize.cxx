@@ -318,6 +318,9 @@ void quantize(Bitmap *src, int size)
     }
 
     dialog->progress_bar->value(value);
+    char percent[16];
+    sprintf(percent, "%d%%", (int)value);
+    dialog->progress_bar->label(percent);
     Fl::check();
     value += step;
   }
