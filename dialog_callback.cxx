@@ -23,6 +23,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 extern Gui *gui;
 extern Dialog *dialog;
 
+void show_progress()
+{
+  dialog->progress->show();
+}
+
+void hide_progress()
+{
+  dialog->progress->hide();
+}
+
 void show_about()
 {
   dialog->about->show();

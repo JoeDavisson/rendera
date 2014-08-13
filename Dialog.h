@@ -29,6 +29,9 @@ public:
   Dialog();
   virtual ~Dialog();
 
+  Fl_Double_Window *progress;
+  Fl_Progress *progress_bar;
+
   Fl_Double_Window *about;
   Widget *about_logo;
   Fl_Button *about_ok;

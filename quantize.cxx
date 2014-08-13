@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define SHIFT 12
 
 extern Gui *gui;
+extern Dialog *dialog;
 
 // qsort callback to sort palette by luminance
 static int comp_lum(const void *a, const void *b)
@@ -153,11 +154,14 @@ static inline float error24(const int c1, const int c2, const float f1,
 static inline int merge24(const int c1, const int c2, const float f1,
                           const float f2)
 {
-  const float div = 1.0 / (f1 + f2);
+//  const float div = 1.0f / (f1 + f2);
 
-  const int r = (float)(f1 * getr(c1) + f2 * getr(c2)) * div;
-  const int g = (float)(f1 * getg(c1) + f2 * getg(c2)) * div;
-  const int b = (float)(f1 * getb(c1) + f2 * getb(c2)) * div;
+  const int r = (f1 * getr(c1) + f2 * getr(c2)) / (f1 + f2);
+  const int g = (f1 * getg(c1) + f2 * getg(c2)) / (f1 + f2);
+  const int b = (f1 * getb(c1) + f2 * getb(c2)) / (f1 + f2);
+  //const int r = (f1 * getr(c1) + f2 * getr(c2)) * div;
+  //const int g = (f1 * getg(c1) + f2 * getg(c2)) * div;
+  //const int b = (f1 * getb(c1) + f2 * getb(c2)) * div;
 
   return makecol_notrans(r, g, b);
 }
@@ -261,6 +265,11 @@ void quantize(Bitmap *src, int size)
     }
   }
 
+  float value = 0;
+  dialog->progress_bar->value(0);
+  float step = 100.0 / (count - rep);
+  show_progress();
+
   while(count > rep)
   {
     // find lowest value in error matrix
@@ -307,7 +316,13 @@ void quantize(Bitmap *src, int size)
       }
       pos += (1 << SHIFT);
     }
+
+    dialog->progress_bar->value(value);
+    Fl::check();
+    value += step;
   }
+
+  hide_progress();
 
   // build palette
   int index = 0;

@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+void show_progress();
+void hide_progress();
 void show_about();
 void hide_about();
 void show_new_image();

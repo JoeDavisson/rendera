@@ -23,6 +23,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // callbacks are in dialog_callback.cxx
 Dialog::Dialog()
 {
+  // progress
+  progress = new Fl_Double_Window(272, 80, "Progress");
+  progress_bar = new Fl_Progress(8, 8, 256, 64);
+  progress_bar->minimum(0);
+  progress_bar->maximum(100);
+  progress->set_modal();
+  progress->end();
+
   // about
   about = new Fl_Double_Window(336, 112, "About");
   about_logo = new Widget(about, 8, 8, 320, 64, "Logo", "data/logo_large.png", 0, 0, 0);
