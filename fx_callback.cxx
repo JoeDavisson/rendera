@@ -75,6 +75,7 @@ void normalize()
         b_high = b;
     }
   }
+
   if(!(r_high - r_low))
     r_high++;
   if(!(g_high - g_low))
@@ -86,6 +87,8 @@ void normalize()
   double r_scale = 255.0 / (r_high - r_low);
   double g_scale = 255.0 / (g_high - g_low);
   double b_scale = 255.0 / (b_high - b_low);
+
+  show_progress((float)bmp->h / 64);
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -100,8 +103,13 @@ void normalize()
     }
 
     if(!(y % 64))
+    {
       gui->view->draw_main(1);
+      update_progress();
+    }
   }
+
+  hide_progress();
 }
 
 void show_equalize()
@@ -155,6 +163,8 @@ void equalize()
 
   double scale = 255.0 / size;
 
+  show_progress((float)bmp->h / 64);
+
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
     for(x = overscroll; x < bmp->w - overscroll; x++)
@@ -172,8 +182,13 @@ void equalize()
     }
 
     if(!(y % 64))
+    {
       gui->view->draw_main(1);
+      update_progress();
+    }
   }
+
+  hide_progress();
 
   delete[] list_r;
   delete[] list_g;
@@ -255,6 +270,8 @@ void value_stretch()
   }
   double scale = 255.0 / size;
 
+  show_progress((float)bmp->h / 64);
+
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
     for(x = overscroll; x < bmp->w - overscroll; x++)
@@ -280,8 +297,13 @@ void value_stretch()
     }
 
     if(!(y % 64))
+    {
       gui->view->draw_main(1);
+      update_progress();
+    }
   }
+
+  hide_progress();
 
   delete[] list_r;
   delete[] list_g;
@@ -327,6 +349,8 @@ void saturate()
 
   double scale = 255.0 / size;
 
+  show_progress((float)bmp->h / 64);
+
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
     for(x = overscroll; x < bmp->w - overscroll; x++)
@@ -348,8 +372,13 @@ void saturate()
     }
 
     if(!(y % 64))
+    {
       gui->view->draw_main(1);
+      update_progress();
+    }
   }
+
+  hide_progress();
 
   delete[] list_s;
 }
@@ -395,6 +424,8 @@ void rotate_hue(int amount)
 
   int hh = amount * 4.277;
 
+  show_progress((float)bmp->h / 64);
+
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
     for(x = overscroll; x < bmp->w - overscroll; x++)
@@ -416,12 +447,18 @@ void rotate_hue(int amount)
     }
 
     if(!(y % 64))
+    {
       gui->view->draw_main(1);
+      update_progress();
+    }
   }
+
+  hide_progress();
 }
 
 void cancel_rotate_hue()
 {
+  hide_progress();
   fx->rotate_hue->hide();
 }
 
@@ -436,6 +473,8 @@ void invert()
 {
   int x, y;
 
+  show_progress((float)bmp->h / 64);
+
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
     for(x = overscroll; x < bmp->w - overscroll; x++)
@@ -445,8 +484,13 @@ void invert()
     }
 
     if(!(y % 64))
+    {
       gui->view->draw_main(1);
+      update_progress();
+    }
   }
+
+  hide_progress();
 }
 
 // restore
@@ -504,6 +548,8 @@ void restore()
   double ba = (256.0 / (256 - bb)) / sqrt(256.0 / (bb + 1));
 
   // begin restore
+  show_progress((float)bmp->h / 64);
+
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
     for(x = overscroll; x < bmp->w - overscroll; x++)
@@ -526,12 +572,18 @@ void restore()
     }
 
     if(!(y % 64))
+    {
       gui->view->draw_main(1);
+      update_progress();
+    }
   }
+
+  hide_progress();
 }
 
 void cancel_restore()
 {
+  hide_progress();
   fx->restore->hide();
 }
 
@@ -576,6 +628,8 @@ void remove_dust(int amount)
   int r, g, b;
   int test, avg;
 
+  show_progress((float)bmp->h / 64);
+
   for(y = (overscroll + 1); y < bmp->h - (overscroll + 1); y++)
   {
     for(x = (overscroll + 1); x < bmp->w - (overscroll + 1); x++)
@@ -605,12 +659,18 @@ void remove_dust(int amount)
     }
 
     if(!(y % 64))
+    {
       gui->view->draw_main(1);
+      update_progress();
+    }
   }
+
+  hide_progress();
 }
 
 void cancel_remove_dust()
 {
+  hide_progress();
   fx->remove_dust->hide();
 }
 
@@ -624,6 +684,8 @@ void show_colorize()
 void colorize()
 {
   int x, y;
+
+  show_progress((float)bmp->h / 64);
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -648,8 +710,13 @@ void colorize()
     }
 
     if(!(y % 64))
+    {
       gui->view->draw_main(1);
+      update_progress();
+    }
   }
+
+  hide_progress();
 }
 
 void show_correct()
@@ -661,6 +728,8 @@ void show_correct()
 void correct()
 {
   int x, y;
+
+  show_progress((float)bmp->h / 64);
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -694,7 +763,12 @@ void correct()
     }
 
     if(!(y % 64))
+    {
       gui->view->draw_main(1);
+      update_progress();
+    }
   }
+
+  hide_progress();
 }
 
