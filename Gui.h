@@ -101,6 +101,7 @@ public:
   Field *crop_y;
   Field *crop_w;
   Field *crop_h;
+  Fl_Button *crop_do;
 
   // right
   Widget *pal_preview;

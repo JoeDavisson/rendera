@@ -42,7 +42,8 @@ void check_clone(Widget *, void *);
 void check_mirror(Widget *, void *);
 void check_origin(Widget *, void *);
 void check_constrain(Widget *, void *);
-void check_crop();
+void check_crop_do();
+void check_crop_values();
 void check_rgba();
 void check_indexed();
 

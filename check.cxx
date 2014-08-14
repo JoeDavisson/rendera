@@ -477,7 +477,11 @@ void check_constrain(Widget *widget, void *var)
   gui->view->tool->stroke->constrain = *(int *)var;
 }
 
-void check_crop()
+void check_crop_do()
+{
+}
+
+void check_crop_values()
 {
   char s[8];
 
