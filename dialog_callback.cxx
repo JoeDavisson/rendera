@@ -23,9 +23,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 extern Gui *gui;
 extern Dialog *dialog;
 
-void show_progress()
+void show_progress(float step)
 {
+  progress_value = 0;
+  progress_step = 100.0 / step;
   dialog->progress->show();
+}
+
+void update_progress()
+{
+  dialog->progress_bar->value(progress_value);
+  char percent[16];
+  sprintf(percent, "%d%%", (int)progress_value);
+  dialog->progress_bar->label(percent);
+  Fl::check();
+  progress_value += progress_step;
 }
 
 void hide_progress()

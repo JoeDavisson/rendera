@@ -23,7 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-void show_progress();
+void show_progress(float);
+void update_progress();
 void hide_progress();
 void show_about();
 void hide_about();
@@ -51,6 +52,8 @@ void do_editor_hsv_ramp();
 static int undo;
 static int ramp_begin;
 static int ramp_started;
+static float progress_value;
+static float progress_step;
 
 #endif
 

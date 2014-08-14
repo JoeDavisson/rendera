@@ -265,10 +265,7 @@ void quantize(Bitmap *src, int size)
     }
   }
 
-  float value = 0;
-  dialog->progress_bar->value(0);
-  float step = 100.0 / (count - rep);
-  show_progress();
+  show_progress(count - rep);
 
   while(count > rep)
   {
@@ -317,12 +314,7 @@ void quantize(Bitmap *src, int size)
       pos += (1 << SHIFT);
     }
 
-    dialog->progress_bar->value(value);
-    char percent[16];
-    sprintf(percent, "%d%%", (int)value);
-    dialog->progress_bar->label(percent);
-    Fl::check();
-    value += step;
+    update_progress();
   }
 
   hide_progress();
