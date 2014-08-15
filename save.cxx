@@ -8,6 +8,8 @@
 #include <setjmp.h>
 #include <vector>
 
+extern Dialog *dialog;
+
 static int file_exists(const char *s)
 {
   FILE *temp = fopen(s, "r");
@@ -253,6 +255,15 @@ void save_png(const char *fn)
 
 void save_jpg(const char *fn)
 {
+  show_jpeg_quality();
+
+  int quality = atoi(dialog->jpeg_quality_amount->value());
+  if(quality < 1)
+    quality = 1;
+  if(quality > 100)
+    quality = 100;
+printf("quality = %d\n", quality);
+
   FILE *out = fopen(fn, "wb");
   if(!out)
     return;
@@ -268,7 +279,6 @@ void save_jpg(const char *fn)
   int overscroll = Bitmap::main->overscroll;
   int w = bmp->w - overscroll * 2;
   int h = bmp->h - overscroll * 2;
-
 
 //  linebuf = new JSAMPLE[w * 3];
 //  if(!linebuf)
@@ -291,8 +301,8 @@ void save_jpg(const char *fn)
   cinfo.input_components = 3;
   cinfo.in_color_space = JCS_RGB;
   jpeg_set_defaults(&cinfo);
-//FIXME need quality dialog
-  jpeg_set_quality(&cinfo, 100, TRUE);
+
+  jpeg_set_quality(&cinfo, quality, TRUE);
 
   jpeg_start_compress(&cinfo, TRUE);
 

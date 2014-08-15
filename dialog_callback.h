@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+void jpeg_quality_close_callback(Fl_Widget *, void *);
+void show_jpeg_quality();
 void show_progress(float);
 void update_progress();
 void hide_progress();

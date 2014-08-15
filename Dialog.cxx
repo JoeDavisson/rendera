@@ -23,6 +23,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // callbacks are in dialog_callback.cxx
 Dialog::Dialog()
 {
+  // JPEG quality
+  jpeg_quality = new Fl_Double_Window(256, 144, "JPEG Quality");
+  jpeg_quality->callback(jpeg_quality_close_callback);
+  jpeg_quality_amount = new Field(jpeg_quality, 120, 32, 72, 24, "Quality:", 0);
+  jpeg_quality_amount->value("95");
+  new Separator(jpeg_quality, 16, 86, 226, 2, "");
+  jpeg_quality_ok = new Fl_Button(176, 104, 64, 24, "OK");
+  // no callback for ok button, see show_jpeg_quality called from save.cxx
+  jpeg_quality->set_modal();
+  jpeg_quality->end();
+
   // progress
   progress = new Fl_Double_Window(272, 80, "Progress");
   progress_bar = new Fl_Progress(8, 8, 256, 64);

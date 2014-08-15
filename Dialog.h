@@ -29,6 +29,10 @@ public:
   Dialog();
   virtual ~Dialog();
 
+  Fl_Double_Window *jpeg_quality;
+  Field *jpeg_quality_amount;
+  Fl_Button *jpeg_quality_ok;
+
   Fl_Double_Window *progress;
   Fl_Progress *progress_bar;
 

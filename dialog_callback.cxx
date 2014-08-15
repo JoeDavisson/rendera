@@ -36,6 +36,46 @@ static int file_exists(const char *s)
   return 0;
 }
 
+void jpeg_quality_close_callback(Fl_Widget *widget, void *)
+{
+  // needed to prevent quality dialog from being closed
+  // by the window manager
+}
+
+void show_jpeg_quality()
+{
+  dialog->jpeg_quality->show();
+
+  while(1)
+  {
+    Fl_Widget *action = Fl::readqueue();
+
+    if(!action)
+      Fl::wait();
+    else if(action == dialog->jpeg_quality_ok)
+    {
+      char s[8];
+      int q = atoi(dialog->jpeg_quality_amount->value());
+
+      if(q < 1)
+      {
+        snprintf(s, sizeof(s), "%d", 1);
+        dialog->jpeg_quality_amount->value(s);
+      }
+      else if(q > 100)
+      {
+        snprintf(s, sizeof(s), "%d", 100);
+        dialog->jpeg_quality_amount->value(s);
+      }
+      else
+      {
+        dialog->jpeg_quality->hide();
+        break;
+      }
+    }
+  }
+}
+
 void show_progress(float step)
 {
   progress_value = 0;
