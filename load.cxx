@@ -45,7 +45,7 @@ void load(Fl_Widget *, void *)
     p--;
   }
   
-  FILE *in = fl_fopen(fn, "rb");
+  FILE *in = fopen(fn, "rb");
   if(!in)
   {
     delete fc;
@@ -149,7 +149,7 @@ void load_jpg(const char *fn, Bitmap *bitmap, int overscroll)
   JSAMPARRAY linebuf;
   int row_stride;
 
-  FILE *in = fl_fopen(fn, "rb");
+  FILE *in = fopen(fn, "rb");
   if(!in)
     return;
 
@@ -222,7 +222,7 @@ void load_jpg(const char *fn, Bitmap *bitmap, int overscroll)
 
 void load_bmp(const char *fn, Bitmap *bitmap, int overscroll)
 {
-  FILE *in = fl_fopen(fn, "rb");
+  FILE *in = fopen(fn, "rb");
   if(!in)
     return;
 
@@ -337,7 +337,7 @@ void load_bmp(const char *fn, Bitmap *bitmap, int overscroll)
 
 void load_tga(const char *fn, Bitmap *bitmap, int overscroll)
 {
-  FILE *in = fl_fopen(fn, "rb");
+  FILE *in = fopen(fn, "rb");
   if(!in)
     return;
 
@@ -443,7 +443,7 @@ void load_tga(const char *fn, Bitmap *bitmap, int overscroll)
 
 void load_png(const char *fn, Bitmap *bitmap, int overscroll)
 {
-  FILE *in = fl_fopen(fn, "rb");
+  FILE *in = fopen(fn, "rb");
   if(!in)
     return;
 

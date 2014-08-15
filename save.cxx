@@ -73,7 +73,7 @@ void save(Fl_Widget *, void *)
 
 void save_bmp(const char *fn)
 {
-  FILE *out = fl_fopen(fn, "wb");
+  FILE *out = fopen(fn, "wb");
   if(!out)
     return;
 
@@ -134,7 +134,7 @@ void save_bmp(const char *fn)
 
 void save_tga(const char *fn)
 {
-  FILE *out = fl_fopen(fn, "wb");
+  FILE *out = fopen(fn, "wb");
   if(!out)
     return;
 
@@ -184,7 +184,7 @@ void save_tga(const char *fn)
 
 void save_png(const char *fn)
 {
-  FILE *out = fl_fopen(fn, "wb");
+  FILE *out = fopen(fn, "wb");
   if(!out)
     return;
 
@@ -253,7 +253,7 @@ void save_png(const char *fn)
 
 void save_jpg(const char *fn)
 {
-  FILE *out = fl_fopen(fn, "wb");
+  FILE *out = fopen(fn, "wb");
   if(!out)
     return;
 

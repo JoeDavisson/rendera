@@ -61,7 +61,7 @@ Gui::Gui()
   menubar->add("Mode/RGBA", 0, (Fl_Callback *)check_rgba, 0, FL_MENU_TOGGLE);
   menubar->add("Mode/Indexed", 0, (Fl_Callback *)check_indexed, 0, FL_MENU_TOGGLE);
   menubar->add("Palette/Load", 0, (Fl_Callback *)show_load_palette, 0, 0);
-  menubar->add("Palette/Save", 0, 0, 0, FL_MENU_DIVIDER);
+  menubar->add("Palette/Save", 0, (Fl_Callback *)show_save_palette, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Editor...", 0, (Fl_Callback *)show_editor, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Create From Image", 0, (Fl_Callback *)show_create_palette, 0, 0);
   menubar->add("Effects/Normalize", 0, (Fl_Callback *)show_normalize, 0, 0);

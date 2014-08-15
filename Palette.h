@@ -37,6 +37,7 @@ public:
   void replace_color(int, int);
   void fill_lookup();
   void load(const char *);
+  void save(const char *);
 
   int *data;
   unsigned char *lookup;

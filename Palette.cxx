@@ -224,7 +224,7 @@ void Palette::load(const char *fn)
 {
   max = 0;
 
-  FILE *in = fl_fopen(fn, "r");
+  FILE *in = fopen(fn, "r");
   if(!in)
   {
     return;
@@ -268,7 +268,31 @@ void Palette::load(const char *fn)
       break;
   }
 
+  fclose(in);
   max = index;
   fill_lookup();
+}
+
+// uses GIMP .gpl palette format
+void Palette::save(const char *fn)
+{
+  FILE *out = fopen(fn, "w");
+  if(!out)
+  {
+    return;
+  }
+
+  fprintf(out, "GIMP Palette\n");
+  fprintf(out, "#\n");
+
+  int i;
+
+  for(i = 0; i < max; i++)
+  {
+    int c = data[i];
+    fprintf(out, "%d %d %d\n", getr(c), getg(c), getb(c));
+  }
+
+  fclose(out);
 }
 

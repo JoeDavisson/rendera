@@ -23,6 +23,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 extern Gui *gui;
 extern Dialog *dialog;
 
+static int file_exists(const char *s)
+{
+  FILE *temp = fopen(s, "r");
+
+  if(temp)
+  {
+    fclose(temp);
+    return 1;
+  }
+
+  return 0;
+}
+
 void show_progress(float step)
 {
   progress_value = 0;
@@ -191,12 +204,14 @@ void show_load_palette()
     return;
   }
 
-  FILE *in = fl_fopen(fn, "r");
+  FILE *in = fopen(fn, "r");
   if(!in)
   {
     delete fc;
     return;
   }
+
+  fclose(in);
 
   Palette::main->load(fn);
   Palette::main->draw(gui->palette);
@@ -206,6 +221,58 @@ void show_load_palette()
   delete fc;
 }
 
+void show_save_palette()
+{
+  Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
+  fc->title("Save Palette");
+  fc->filter("GIMP Palette\t*.gpl\n");
+  fc->options(Fl_Native_File_Chooser::PREVIEW);
+  fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  fc->show();
+
+  const char *fn = fc->filename();
+
+  // get file extension
+  char ext[16];
+  char *p = (char *)fn + strlen(fn) - 1;
+
+  while(p >= fn)
+  {
+    if(*p == '.')
+    {
+      strcpy(ext, p);
+      break;
+    }
+
+    p--;
+  }
+
+  if(file_exists(fn))
+  {
+    fl_message_title("Replace File?");
+    if(fl_choice("Replace File?", "No", "Yes", NULL) == 0)
+      return;
+  }
+
+  if(strcasecmp(ext, ".gpl") != 0)
+  {
+    delete fc;
+    return;
+  }
+
+  FILE *out = fopen(fn, "w");
+  if(!out)
+  {
+    delete fc;
+    return;
+  }
+
+  fclose(out);
+
+  Palette::main->save(fn);
+
+  delete fc;
+}
 void show_editor()
 {
   Palette::main->draw(dialog->editor_palette);
