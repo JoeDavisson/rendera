@@ -785,8 +785,7 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 
 void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
                                          int dx, int dy, int dw, int dh,
-                                         int overx, int overy, int bgr_order,
-                                         int indexed)
+                                         int overx, int overy)
 {
   const int ax = ((float)dw / sw) * 256;
   const int ay = ((float)dh / sh) * 256;
@@ -839,48 +838,26 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
 
   int x, y;
 
-  if(indexed)
+  for(y = 0; y < dh; y++)
   {
-    for(y = 0; y < dh; y++)
-    {
-      const int y1 = sy + ((y * by) >> 8);
-      int *s = dest->row[dy + y] + dx;
+    const int y1 = sy + ((y * by) >> 8);
+    int *s = dest->row[dy + y] + dx;
 
-      for(x = 0; x < dw; x++)
-      {
-        const int x1 = sx + ((x * bx) >> 8);
-        int c = *(row[y1] + x1);
-        if(geta(c) < 128)
-          *s++ = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
-        else
-          *s++ = convert_format(Palette::main->data[Palette::main->lookup[c & 0xFFFFFF]], bgr_order);
-      }
+    for(x = 0; x < dw; x++)
+    {
+      const int x1 = sx + ((x * bx) >> 8);
+      //const int c = *(row[y1] + x1);
+//      *s++ = (blend_fast_solid(((x >> 4) & 1) ^ ((y >> 4) & 1)
+//                              ? 0xA0A0A0 : 0x606060, c, 255 - geta(c)) & 0xFFFFFF) | (geta(c) << 24);
+      *s++ = *(row[y1] + x1);
     }
   }
-  else
-  {
-    for(y = 0; y < dh; y++)
-    {
-      const int y1 = sy + ((y * by) >> 8);
-      int *s = dest->row[dy + y] + dx;
-
-      for(x = 0; x < dw; x++)
-      {
-        const int x1 = sx + ((x * bx) >> 8);
-        const int c = *(row[y1] + x1);
-        *s++ = convert_format(blend_fast_solid(((x >> 4) & 1) ^ ((y >> 4) & 1)
-                                               ? 0xA0A0A0 : 0x606060,
-                                               c, 255 - geta(c)), bgr_order);
-      }
-    }
-  }
-
 }
 
 // fast integer-based bilinear stretch (produces minor artifacts)
 void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
                                            int dx, int dy, int dw, int dh,
-                                           int overx, int overy, int bgr_order)
+                                           int overx, int overy)
 {
   const int ax = ((float)dw / sw) * 256;
   const int ay = ((float)dh / sh) * 256;
@@ -986,7 +963,7 @@ void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
         g += (((*c[i] & 0xFF00) * f[i]) >> 8) & 0xFF00;
       }
 
-      *d++ = convert_format(rb | g | 0xFF000000, bgr_order);
+      *d++ = rb | g | 0xFF000000;
 
       c[0] -= u1;
       c[1] -= u2;
@@ -999,8 +976,7 @@ void Bitmap::integer_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
 // Bresenham algorithm
 void Bitmap::fast_stretch(Bitmap *dest,
                           int xs1, int ys1, int xs2, int ys2,
-                          int xd1, int yd1, int xd2, int yd2,
-                          int bgr_order)
+                          int xd1, int yd1, int xd2, int yd2)
 {
   xs2 += xs1;
   xs2--;
@@ -1041,7 +1017,7 @@ void Bitmap::fast_stretch(Bitmap *dest,
 
     for(d_1 = 0; d_1 <= dx_1; d_1++)
     {
-      *p = convert_format(*q, bgr_order);
+      *p = *q;
 
       while(e_1 >= 0)
       {
@@ -1061,6 +1037,44 @@ void Bitmap::fast_stretch(Bitmap *dest,
 
     yd1 += sx;
     e += dy;
+  }
+}
+
+// convert to truecolor
+void Bitmap::convert_truecolor(int bgr_order)
+{
+  int x, y;
+  int i = 0;
+
+  for(y = 0; y < h; y++)
+  {
+    for(x = 0; x < w; x++)
+    {
+      data[i] = convert_format(blend_fast_solid(((x >> 4) & 1) ^ ((y >> 4) & 1)
+                               ? 0xA0A0A0 : 0x606060, data[i],
+                               255 - geta(data[i])), bgr_order);
+      i++;
+    }
+  }
+//    data[i] = convert_format(data[i], bgr_order) | 0xFF000000;
+}
+
+// convert to indexed
+void Bitmap::convert_indexed(int bgr_order)
+{
+  int x, y;
+  int i = 0;
+
+  for(y = 0; y < h; y++)
+  {
+    for(x = 0; x < w; x++)
+    {
+      if(geta(data[i]) < 128)
+        data[i] = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
+      else
+        data[i] = convert_format(Palette::main->data[Palette::main->lookup[data[i] & 0xFFFFFF]], bgr_order);
+      i++;
+    }
   }
 }
 

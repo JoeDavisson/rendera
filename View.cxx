@@ -282,7 +282,17 @@ void View::draw_main(int refresh)
 
   backbuf->clear(makecol(128, 128, 128));
 
-  Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh, 0, 0, dw, dh, overx, overy, bgr_order, mode);
+  Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh, 0, 0, dw, dh, overx, overy);
+
+  switch(mode)
+  {
+    case 0:
+      backbuf->convert_truecolor(bgr_order);
+      break;
+    case 1:
+      backbuf->convert_indexed(bgr_order);
+      break;
+  }
 
   if(grid)
     draw_grid();
@@ -379,7 +389,17 @@ void View::begin_move()
 
   backbuf->clear(makecol(128, 128, 128));
   Bitmap::main->point_stretch(backbuf, 0, 0, Bitmap::main->w, Bitmap::main->h,
-                          px, py, pw, ph, 0, 0, bgr_order, mode);
+                          px, py, pw, ph, 0, 0);
+
+  switch(mode)
+  {
+    case 0:
+      backbuf->convert_truecolor(bgr_order);
+      break;
+    case 1:
+      backbuf->convert_indexed(bgr_order);
+      break;
+  }
 
   lastbx = bx;
   lastby = by;
