@@ -40,6 +40,72 @@ static void quit()
     exit(0);
 }
 
+static void print_hires_data()
+{
+  int x, y, i, j;
+  Bitmap *bmp = Bitmap::main;
+  int overscroll = Bitmap::main->overscroll;
+  if((bmp->w / 8) * bmp->h > 1000)
+    return;
+
+  for(y = overscroll; y < bmp->h - overscroll; y += 8)
+  {
+    for(x = overscroll; x < bmp->w - overscroll; x += 8)
+    {
+      printf("\n    ");
+
+      for(j = 0; j < 8; j++)
+      {
+        int data = 0;
+        for(i = 0; i < 8; i++)
+        {
+          if((bmp->getpixel(x + i, y + j) & 0xFFFFFF) == 0xFFFFFF)
+            data |= (1 << (7 - i));
+        }
+
+        printf("%d, ", data);
+      }
+    }
+  }
+
+  printf("\n");
+}
+
+static void print_linear_data()
+{
+  int x, y, i;
+  Bitmap *bmp = Bitmap::main;
+  int overscroll = Bitmap::main->overscroll;
+  if((bmp->w / 8) * bmp->h > 1000)
+    return;
+
+  printf("\n    ");
+  int count = 0;
+  for(y = overscroll; y < bmp->h - overscroll; y++)
+  {
+    for(x = overscroll; x < bmp->w - overscroll; x += 8)
+    {
+      int data = 0;
+      for(i = 0; i < 8; i++)
+      {
+        if((bmp->getpixel(x + i, y) & 0xFFFFFF) == 0xFFFFFF)
+          data |= (1 << (7 - i));
+      }
+
+      printf("%d, ", data);
+
+      count++;
+      if(count >= 8)
+      {
+        count = 0;
+        printf("\n    ");
+      }
+    }
+  }
+
+  printf("\n");
+}
+
 // callbacks are in check.cxx
 Gui::Gui()
 {
@@ -56,6 +122,8 @@ Gui::Gui()
   menubar->add("File/New", 0, (Fl_Callback *)show_new_image, 0, 0);
   menubar->add("File/Load", 0, (Fl_Callback *)load, 0, 0);
   menubar->add("File/Save", 0, (Fl_Callback *)save, 0, FL_MENU_DIVIDER);
+ // menubar->add("File/Print Hires Data", 0, (Fl_Callback *)print_hires_data, 0, FL_MENU_DIVIDER);
+//  menubar->add("File/Print Linear Data", 0, (Fl_Callback *)print_linear_data, 0, FL_MENU_DIVIDER);
   menubar->add("File/Quit", 0, (Fl_Callback *)quit, 0, 0);
   menubar->add("Edit/Undo", 0, (Fl_Callback *)undo_pop, 0, 0);
   menubar->add("Mode/RGBA", 0, (Fl_Callback *)check_rgba, 0, FL_MENU_TOGGLE);
@@ -77,7 +145,7 @@ Gui::Gui()
   menubar->add("Help/About...", 0, (Fl_Callback *)show_about, 0, 0);
 
   set_menu_item("Mode/RGBA");
-  clear_menu_item("Mode/Indexed");
+//  clear_menu_item("Mode/Indexed");
 
   // top_left
   top_left = new Fl_Group(0, menubar->h(), 112, 40);
