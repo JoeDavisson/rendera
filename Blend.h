@@ -36,16 +36,13 @@ public:
   static int force_lum(int, int);
   static int alpha_add(int, int, int);
   static int alpha_sub(int, int, int);
-  static int dither_random(int, int, int);
-  static int dither_ordered(int, int, int);
+  static int smooth(int, int, int);
   static void hsv_to_rgb(int, int, int, int *, int *, int *);
   static void rgb_to_hsv(int, int, int, int *, int *, int *);
 
-  // pointer to current blender
   static int (*current)(int, int, int);
-
-  // xy locations for dithering
-  static int ditherx, dithery;
+  static int xpos, ypos;
+  static Bitmap *bmp;
 };
 
 #endif

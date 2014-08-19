@@ -21,20 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.h"
 
 int (*Blend::current)(int, int, int) = &trans;
-int Blend::ditherx;
-int Blend::dithery;
-
-static int dither_matrix[64] =
-{
-  1, 49, 13, 61, 4, 52, 16, 64,
-  33, 17, 45, 29, 36, 20, 48, 32,
-  9, 57, 5, 53, 12, 60, 8, 56,
-  41, 25, 37, 21, 44, 28, 40, 24,
-  3, 51, 15, 63, 2, 50, 14, 62,
-  35, 19, 47, 31, 34, 18, 46, 30,
-  11, 59, 7, 55, 10, 58, 6, 54,
-  43, 27, 39, 23, 42, 26, 38, 22
-};
+int Blend::xpos;
+int Blend::ypos;
+Bitmap *Blend::bmp;
 
 void Blend::set(int mode)
 {
@@ -59,10 +48,7 @@ void Blend::set(int mode)
       current = alpha_sub;
       break;
     case 6:
-      current = dither_random;
-      break;
-    case 7:
-      current = dither_ordered;
+      current = smooth;
       break;
     default:
       current = trans;
@@ -201,23 +187,72 @@ int Blend::alpha_sub(int c1, int c2, int t)
   return makecola(getr(c1), getg(c1), getb(c1), 255 - ((255 - geta(c1)) * t) / 255);
 }
 
-int Blend::dither_random(int c1, int c2, int t)
+int Blend::smooth(int c1, int c2, int t)
 {
-  if((rnd32() & 255) >= t)
-    return makecola(getr(c2), getg(c2), getb(c2), geta(c1));
-  else
-    return c1;
-}
+  int x = xpos;
+  int y = ypos;
+  int c[9];
 
-int Blend::dither_ordered(int c1, int c2, int t)
-{
-  int x = Blend::ditherx & 7;
-  int y = Blend::dithery & 7;
+  c[0] = Blend::bmp->getpixel(x - 1, y - 1);
+  c[1] = Blend::bmp->getpixel(x, y - 1);
+  c[2] = Blend::bmp->getpixel(x + 1, y - 1);
+  c[3] = Blend::bmp->getpixel(x - 1, y);
+  c[4] = Blend::bmp->getpixel(x, y);
+  c[5] = Blend::bmp->getpixel(x + 1, y);
+  c[6] = Blend::bmp->getpixel(x - 1, y + 1);
+  c[7] = Blend::bmp->getpixel(x, y + 1);
+  c[8] = Blend::bmp->getpixel(x + 1, y + 1);
 
-  if(dither_matrix[x + 8 * y] >= (t / 4))
-    return makecola(getr(c2), getg(c2), getb(c2), geta(c1));
-  else
-    return c1;
+  int r = 0;
+  int g = 0;
+  int b = 0;
+  int a = 0;
+
+  r += getr(c[0]) * 1;
+  r += getr(c[1]) * 2;
+  r += getr(c[2]) * 1;
+  r += getr(c[3]) * 2;
+  r += getr(c[4]) * 3;
+  r += getr(c[5]) * 2;
+  r += getr(c[6]) * 1;
+  r += getr(c[7]) * 2;
+  r += getr(c[8]) * 1;
+  r /= 15;
+
+  g += getg(c[0]) * 1;
+  g += getg(c[1]) * 2;
+  g += getg(c[2]) * 1;
+  g += getg(c[3]) * 2;
+  g += getg(c[4]) * 3;
+  g += getg(c[5]) * 2;
+  g += getg(c[6]) * 1;
+  g += getg(c[7]) * 2;
+  g += getg(c[8]) * 1;
+  g /= 15;
+
+  b += getb(c[0]) * 1;
+  b += getb(c[1]) * 2;
+  b += getb(c[2]) * 1;
+  b += getb(c[3]) * 2;
+  b += getb(c[4]) * 3;
+  b += getb(c[5]) * 2;
+  b += getb(c[6]) * 1;
+  b += getb(c[7]) * 2;
+  b += getb(c[8]) * 1;
+  b /= 15;
+
+  a += geta(c[0]) * 1;
+  a += geta(c[1]) * 2;
+  a += geta(c[2]) * 1;
+  a += geta(c[3]) * 2;
+  a += geta(c[4]) * 3;
+  a += geta(c[5]) * 2;
+  a += geta(c[6]) * 1;
+  a += geta(c[7]) * 2;
+  a += geta(c[8]) * 1;
+  a /= 15;
+
+  return Blend::trans_all(c1, makecola(r, g, b, a), t);
 }
 
 // hue 0-1535

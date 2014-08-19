@@ -29,12 +29,21 @@ public:
   Paint();
   virtual ~Paint();
 
-  virtual void render();
+  virtual void render_begin_normal(View *);
+  virtual void render_begin_smooth(View *);
+  virtual void render_begin(View *);
+  virtual int render_callback_normal(View *);
+  virtual int render_callback_smooth(View *);
+  virtual int render_callback(View *);
 
   virtual void push(View *);
   virtual void drag(View *);
   virtual void release(View *);
   virtual void move(View *);
+
+private:
+  int render_pos, render_end, render_count;
+  float soft_trans, soft_step;
 };
 
 #endif

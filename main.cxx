@@ -47,16 +47,14 @@ int main(int argc, char **argv)
   Palette::undo = new Palette();
   Bitmap::clone_buffer = new Bitmap(8, 8);
   Bitmap::offset_buffer = new Bitmap(8, 8);
+  Blend::bmp = Bitmap::main;
 
   dialog = new Dialog();
   fx = new FX();
 
   Tool::paint = new Paint();
-  Tool::airbrush = new Airbrush();
-  Tool::pixelart = new PixelArt();
-  Tool::stump = new Stump();
-  Tool::crop = new Crop();
   Tool::getcolor = new GetColor();
+  Tool::crop = new Crop();
   Tool::offset = new Offset();
 
   gui = new Gui();

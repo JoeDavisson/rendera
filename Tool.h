@@ -58,11 +58,8 @@ public:
 
   // static vars
   static Tool *paint;
-  static Tool *airbrush;
-  static Tool *pixelart;
-  static Tool *stump;
-  static Tool *crop;
   static Tool *getcolor;
+  static Tool *crop;
   static Tool *offset;
 
   static Tool *current;

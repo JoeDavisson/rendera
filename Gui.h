@@ -46,9 +46,6 @@ public:
   Fl_Group *top_right;
   Fl_Group *tools;
   Fl_Group *paint;
-  Fl_Group *airbrush;
-  Fl_Group *pixelart;
-  Fl_Group *stump;
   Fl_Group *crop;
   Fl_Group *getcolor;
   Fl_Group *offset;
@@ -77,25 +74,8 @@ public:
   Widget *paint_size;
   Widget *paint_stroke;
   Widget *paint_shape;
-
-  Widget *airbrush_brush;
-  Widget *airbrush_size;
-  Widget *airbrush_stroke;
-  Widget *airbrush_shape;
-  Widget *airbrush_edge;
-  Widget *airbrush_smooth;
-
-  Widget *pixelart_brush;
-  Widget *pixelart_stroke;
-  Widget *pixelart_pattern;
-  ToggleButton *pixelart_lock;
-  ToggleButton *pixelart_invert;
-
-  Widget *stump_brush;
-  Widget *stump_size;
-  Widget *stump_stroke;
-  Widget *stump_shape;
-  Widget *stump_amount;
+  Widget *paint_edge;
+  Widget *paint_smooth;
 
   Field *crop_x;
   Field *crop_y;

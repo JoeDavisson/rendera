@@ -21,11 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "rendera.h"
 
 Tool *Tool::paint;
-Tool *Tool::airbrush;
-Tool *Tool::pixelart;
-Tool *Tool::stump;
-Tool *Tool::crop;
 Tool *Tool::getcolor;
+Tool *Tool::crop;
 Tool *Tool::offset;
 
 Tool *Tool::current;

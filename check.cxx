@@ -156,165 +156,21 @@ void check_paint_stroke(Widget *widget, void *var)
   gui->view->tool->stroke->type = *(int *)var;
 }
 
-void check_airbrush_size(Widget *widget, void *var)
-{
-  Brush *brush = Brush::main;
-
-  int size = brush_sizes[*(int *)var];
-  int shape = gui->airbrush_shape->var;
-
-  brush->make(shape, size);
-  gui->airbrush_brush->bitmap->clear(makecol(255, 255, 255));
-  int i;
-  for(i = 0; i < Brush::main->solid_count; i++)
-    gui->airbrush_brush->bitmap->setpixel_solid(48 + brush->solidx[i], 48 + brush->solidy[i], makecol(0, 0, 0), 0);
-  gui->airbrush_brush->redraw();
-}
-
-void check_airbrush_shape(Widget *widget, void *var)
-{
-  gui->airbrush_size->do_callback();
-}
-
-void check_airbrush_stroke(Widget *widget, void *var)
-{
-  gui->view->tool->stroke->type = *(int *)var;
-}
-
-void check_airbrush_edge(Widget *widget, void *var)
+void check_paint_edge(Widget *widget, void *var)
 {
   Brush::main->edge = *(int *)var;
 }
 
-void check_airbrush_smooth(Widget *widget, void *var)
+void check_paint_smooth(Widget *widget, void *var)
 {
   Brush::main->smooth = *(int *)var;
-}
-
-void check_pixelart_brush(Widget *widget, void *var)
-{
-  int xpos = *(int *)var % 6;
-  int ypos = *(int *)var / 6;
-  xpos *= 16;
-  ypos *= 16;
-  int x, y;
-
-  Map *map = new Map(96, 96);
-  map->clear(0);
-
-  for(y = 0; y < 16; y++)
-  {
-    for(x = 0; x < 16; x++)
-    {
-      if(widget->bitmap->getpixel(xpos + x, ypos + y) == makecol(0, 0, 0))
-      {
-        map->setpixel(41 + x, 41 + y, 255);
-      }
-    }
-  }
-
-  Brush::main->solid_count = 0;
-  Brush::main->hollow_count = 0;
-
-  for(y = 0; y < 96; y++)
-  {
-    for(x = 0; x < 96; x++)
-    {
-      if(map->getpixel(x, y))
-      {
-        Brush::main->solidx[Brush::main->solid_count] = x - 48;
-        Brush::main->solidy[Brush::main->solid_count] = y - 48;
-        Brush::main->hollowx[Brush::main->hollow_count] = x - 48;
-        Brush::main->hollowy[Brush::main->hollow_count] = y - 48;
-        Brush::main->solid_count++;
-        Brush::main->hollow_count++;
-      }
-    }
-  }
-
-  Brush::main->size = 16;
-
-  delete map;
-
-//  gui->paint_brush->bitmap->clear(makecol(255, 255, 255));
-//  int i;
-//  for(i = 0; i < Brush::main->solid_count; i++)
-//    gui->paint_brush->bitmap->setpixel_solid(48 + brush->solidx[i], 48 + brush->solidy[i], makecol(0, 0, 0), 0);
-}
-
-void check_pixelart_stroke(Widget *widget, void *var)
-{
-  gui->view->tool->stroke->type = *(int *)var;
-}
-
-void check_pixelart_pattern(Widget *widget, void *var)
-{
-  int x, y;
-  int xpos = *(int *)var % 3;
-  int ypos = *(int *)var / 3;
-
-  xpos *= 32;
-  ypos *= 32;
-
-  for(y = 0; y < 8; y++)
-  {
-    for(x = 0; x < 8; x++)
-    {
-      PixelArt::pattern->setpixel(x, y, widget->bitmap->getpixel(xpos + x * 4, ypos + y * 4), 0);
-    }
-  }
-}
-
-void check_pixelart_lock(Widget *widget, void *var)
-{
-  PixelArt::lock = *(int *)var;  
-}
-
-void check_pixelart_invert(Widget *widget, void *var)
-{
-  PixelArt::invert = *(int *)var;  
-}
-
-void check_stump_size(Widget *widget, void *var)
-{
-  Brush *brush = Brush::main;
-
-  int size = brush_sizes[*(int *)var];
-  int shape = gui->stump_shape->var;
-
-  brush->make(shape, size);
-  gui->stump_brush->bitmap->clear(makecol(255, 255, 255));
-  int i;
-  for(i = 0; i < Brush::main->solid_count; i++)
-    gui->stump_brush->bitmap->setpixel_solid(48 + brush->solidx[i], 48 + brush->solidy[i], makecol(0, 0, 0), 0);
-  gui->stump_brush->redraw();
-}
-
-void check_stump_shape(Widget *widget, void *var)
-{
-  gui->stump_size->do_callback();
-}
-
-void check_stump_stroke(Widget *widget, void *var)
-{
-  gui->view->tool->stroke->type = *(int *)var;
-}
-
-void check_stump_amount(Widget *widget, void *var)
-{ 
-  gui->view->tool->amount = 255 - *(int *)var * 2.685;
-  if(gui->view->tool->amount > 252)
-    gui->view->tool->amount = 252;
 }
 
 void check_tool(Widget *widget, void *var)
 {
   gui->paint->hide();
-  gui->airbrush->hide();
-  gui->pixelart->hide();
-  gui->stump->hide();
-  gui->crop->hide();
   gui->getcolor->hide();
+  gui->crop->hide();
   gui->offset->hide();
 
   switch(*(int *)var)
@@ -326,33 +182,14 @@ void check_tool(Widget *widget, void *var)
       gui->paint->show();
       break;
     case 1:
-      gui->view->tool = Tool::airbrush;
-      gui->airbrush_brush->do_callback();
-      gui->airbrush_shape->do_callback();
-      gui->airbrush->show();
-      break;
-    case 2:
-      gui->view->tool = Tool::pixelart;
-      gui->pixelart_brush->do_callback();
-      gui->pixelart_pattern->do_callback();
-      gui->pixelart->show();
-      break;
-    case 3:
-      gui->view->tool = Tool::stump;
-      gui->stump_brush->do_callback();
-      gui->stump_shape->do_callback();
-      gui->stump_amount->do_callback();
-      gui->stump->show();
-      break;
-    case 4:
-      gui->view->tool = Tool::crop;
-      gui->crop->show();
-      break;
-    case 5:
       gui->view->tool = Tool::getcolor;
       gui->getcolor->show();
       break;
-    case 6:
+    case 2:
+      gui->view->tool = Tool::crop;
+      gui->crop->show();
+      break;
+    case 3:
       gui->view->tool = Tool::offset;
       gui->offset->show();
       break;

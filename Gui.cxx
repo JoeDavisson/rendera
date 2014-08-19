@@ -230,70 +230,13 @@ Gui::Gui()
   paint_stroke = new Widget(paint, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24, (Fl_Callback *)check_paint_stroke);
   y1 += 48 + 8;
   paint_shape = new Widget(paint, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24, (Fl_Callback *)check_paint_shape);
+  y1 += 24 + 8;
+  paint_edge = new Widget(paint, 8, y1, 96, 24, "Soft Edge", "data/soft_edge.png", 12, 24, (Fl_Callback *)check_paint_edge);
+  y1 += 24 + 8;
+  paint_smooth = new Widget(paint, 8, y1, 96, 48, "Coarse/Fine", "data/smooth.png", 48, 48, (Fl_Callback *)check_paint_smooth);
+  y1 += 48 + 8;
   paint->resizable(0);
   paint->end();
-
-  // airbrush
-  airbrush = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
-  airbrush->label("Airbrush");
-  airbrush->labelsize(12);
-  airbrush->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  airbrush->box(FL_UP_BOX);
-  y1 = 20;
-  airbrush_brush = new Widget(airbrush, 8, y1, 96, 96, "Brush Preview", 0, 0, 0);
-  airbrush_brush->bitmap->clear(makecol(255, 255, 255));
-  airbrush_brush->bitmap->setpixel_solid(48, 48, makecol(0, 0, 0), 0);
-  y1 += 96 + 8;
-  airbrush_size = new Widget(airbrush, 8, y1, 96, 24, "Size", "data/size.png", 6, 24, (Fl_Callback *)check_airbrush_size);
-  y1 += 24 + 8;
-  airbrush_stroke = new Widget(airbrush, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24, (Fl_Callback *)check_airbrush_stroke);
-  y1 += 48 + 8;
-  airbrush_shape = new Widget(airbrush, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24, (Fl_Callback *)check_airbrush_shape);
-  y1 += 24 + 8;
-  airbrush_edge = new Widget(airbrush, 8, y1, 96, 24, "Soft Edge", "data/soft_edge.png", 12, 24, (Fl_Callback *)check_airbrush_edge);
-  y1 += 24 + 8;
-  airbrush_smooth = new Widget(airbrush, 8, y1, 96, 48, "Coarse/Fine", "data/smooth.png", 48, 48, (Fl_Callback *)check_airbrush_smooth);
-  y1 += 48 + 8;
-  airbrush->resizable(0);
-  airbrush->end();
-
-  // pixelart
-  pixelart = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
-  pixelart->label("Pixel Art");
-  pixelart->labelsize(12);
-  pixelart->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  pixelart->box(FL_UP_BOX);
-  y1 = 20;
-  pixelart_brush = new Widget(pixelart, 8, y1, 96, 96, "Brush Shape", "data/tiny.png", 16, 16, (Fl_Callback *)check_pixelart_brush);
-  y1 += 96 + 8;
-  pixelart_stroke = new Widget(pixelart, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24, (Fl_Callback *)check_pixelart_stroke);
-  y1 += 48 + 8;
-  pixelart_pattern = new Widget(pixelart, 8, y1, 96, 192, "Pattern", "data/patterns.png", 32, 32, (Fl_Callback *)check_pixelart_pattern);
-  y1 += 192 + 8;
-  pixelart_lock = new ToggleButton(pixelart, 8, y1, 44, 44, "Lock Pattern", "data/lock.png", (Fl_Callback *)check_pixelart_lock);
-  pixelart_invert = new ToggleButton(pixelart, 8 + 44 + 8, y1, 44, 44, "Invert Pattern", "data/invert.png", (Fl_Callback *)check_pixelart_invert);
-  pixelart->resizable(0);
-  pixelart->end();
-
-  // stump
-  stump = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
-  stump->label("Blender");
-  stump->labelsize(12);
-  stump->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  stump->box(FL_UP_BOX);
-  y1 = 20;
-  stump_brush = new Widget(stump, 8, y1, 96, 96, "Brush Preview", 0, 0, 0);
-  stump_brush->bitmap->clear(makecol(255, 255, 255));
-  stump_brush->bitmap->setpixel_solid(48, 48, makecol(0, 0, 0), 0);
-  y1 += 96 + 8;
-  stump_size = new Widget(stump, 8, y1, 96, 24, "Size", "data/size.png", 6, 24, (Fl_Callback *)check_stump_size);
-  y1 += 24 + 8;
-  stump_stroke = new Widget(stump, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24, (Fl_Callback *)check_stump_stroke);
-  y1 += 48 + 8;
-  stump_shape = new Widget(stump, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24, (Fl_Callback *)check_stump_shape);
-  stump_amount = new Widget(stump, 8, y1, 96, 24, "Amount", "data/amount.png", 1, 24, (Fl_Callback *)check_stump_amount);
-  stump->resizable(0);
-  stump->end();
 
   // crop
   crop = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
@@ -374,8 +317,7 @@ Gui::Gui()
   blend->add("Colorize");
   blend->add("Alpha Add");
   blend->add("Alpha Subtract");
-  blend->add("Random Dither");
-  blend->add("Ordered Dither");
+  blend->add("Smooth");
   blend->value(0);
   blend->callback((Fl_Callback *)check_blend);
   y1 += 24 + 8;
@@ -400,11 +342,8 @@ Gui::Gui()
   group_left = new Fl_Group(0, top_right->h() + menubar->h(), 224, window->h() - (menubar->h() + top_right->h() + bottom->h()));
   group_left->add(tools);
   group_left->add(paint);
-  group_left->add(airbrush);
-  group_left->add(pixelart);
-  group_left->add(stump);
-  group_left->add(crop);
   group_left->add(getcolor);
+  group_left->add(crop);
   group_left->add(offset);
   group_left->end();
 
