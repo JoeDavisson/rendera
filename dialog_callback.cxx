@@ -339,7 +339,7 @@ void do_editor_palette(Widget *widget, void *var)
   {
     do_editor_store_undo();
     begin = ramp_begin;
-    end = dialog->editor_palette->var;
+    end = *(int *)var;
     if(begin > end)
       SWAP(begin, end);
     int num = end - begin;
@@ -405,7 +405,7 @@ void do_editor_palette(Widget *widget, void *var)
   }
 
   check_palette(widget, var);
-  ramp_begin = dialog->editor_palette->var;
+  ramp_begin = *(int *)var;
   do_editor_set_hsv();
   int h, s, v;
   int color = Brush::main->color;
@@ -481,7 +481,7 @@ void do_editor_insert()
   Palette::main->draw(dialog->editor_palette);
   Palette::main->draw(gui->palette);
   dialog->editor_palette->do_callback();
-  gui->palette->do_callback();
+//  gui->palette->do_callback();
 }
 
 void do_editor_delete()
@@ -491,7 +491,7 @@ void do_editor_delete()
   Palette::main->draw(dialog->editor_palette);
   Palette::main->draw(gui->palette);
   dialog->editor_palette->do_callback();
-  gui->palette->do_callback();
+//  gui->palette->do_callback();
 }
 
 void do_editor_replace()
@@ -501,7 +501,7 @@ void do_editor_replace()
   Palette::main->draw(dialog->editor_palette);
   Palette::main->draw(gui->palette);
   dialog->editor_palette->do_callback();
-  gui->palette->do_callback();
+//  gui->palette->do_callback();
 }
 
 void do_editor_store_undo()
