@@ -52,12 +52,8 @@ public:
   Fl_Button *create_palette_cancel;
 
   Fl_Double_Window *editor;
-  Widget *editor_r;
-  Widget *editor_g;
-  Widget *editor_b;
   Widget *editor_h;
-  Widget *editor_s;
-  Widget *editor_v;
+  Widget *editor_sv;
   Fl_Button *editor_insert;
   Fl_Button *editor_delete;
   Fl_Button *editor_replace;

@@ -316,7 +316,7 @@ void show_save_palette()
 void show_editor()
 {
   Palette::main->draw(dialog->editor_palette);
-  do_editor_rgbhsv();
+  do_editor_set_hsv();
   dialog->editor->show();
   undo = 0;
   ramp_begin = 0;
@@ -405,81 +405,68 @@ void do_editor_palette(Widget *widget, void *var)
 
   check_palette(widget, var);
   ramp_begin = dialog->editor_palette->var;
-  do_editor_rgbhsv();
+  do_editor_set_hsv();
 }
 
-void do_editor_rgbhsv()
+void do_editor_set_hsv()
 {
-  int i;
+  int x , y;
   int r = 0, g = 0, b = 0;
   int h = 0, s = 0, v = 0;
   int color = Brush::main->color;
 
   Blend::rgb_to_hsv(getr(color), getg(color), getb(color), &h, &s, &v);
 
-  dialog->editor_r->var = getr(color);
-  dialog->editor_g->var = getg(color);
-  dialog->editor_b->var = getb(color);
   dialog->editor_h->var = h / 6;
-  dialog->editor_s->var = s;
-  dialog->editor_v->var = v;
+  dialog->editor_sv->var = s + 256 * v;
 
-  dialog->editor_r->bitmap->clear(makecol(0, 0, 0));
-  dialog->editor_g->bitmap->clear(makecol(0, 0, 0));
-  dialog->editor_b->bitmap->clear(makecol(0, 0, 0));
   dialog->editor_h->bitmap->clear(makecol(0, 0, 0));
-  dialog->editor_s->bitmap->clear(makecol(0, 0, 0));
-  dialog->editor_v->bitmap->clear(makecol(0, 0, 0));
+  dialog->editor_sv->bitmap->clear(makecol(0, 0, 0));
 
-  for(i = 0; i < 256; i++)
+  for(y = 0; y < 256; y++)
   {
-    dialog->editor_r->bitmap->hline(0, i, 23, makecol(i, 0, 0), 0);
-    dialog->editor_g->bitmap->hline(0, i, 23, makecol(0, i, 0), 0);
-    dialog->editor_b->bitmap->hline(0, i, 23, makecol(0, 0, i), 0);
+    for(x = 0; x < 256; x++)
+    {
+      Blend::hsv_to_rgb(h, x, y, &r, &g, &b);
+      dialog->editor_sv->bitmap->setpixel_solid(x, y, makecol(r, g, b), 0);
+    }
 
-    Blend::hsv_to_rgb(i * 6, 255, 255, &r, &g, &b);
-    dialog->editor_h->bitmap->hline(0, i, 23, makecol(r, g, b), 0);
-    Blend::hsv_to_rgb(h, i, v, &r, &g, &b);
-    dialog->editor_s->bitmap->hline(0, i, 23, makecol(r, g, b), 0);
-    Blend::hsv_to_rgb(h, s, i, &r, &g, &b);
-    dialog->editor_v->bitmap->hline(0, i, 23, makecol(r, g, b), 0);
+    Blend::hsv_to_rgb(y * 6, 255, 255, &r, &g, &b);
+    dialog->editor_h->bitmap->hline(0, y, 23, makecol(r, g, b), 0);
   }
 
-  dialog->editor_r->redraw();
-  dialog->editor_g->redraw();
-  dialog->editor_b->redraw();
+  x = dialog->editor_sv->var & 255;
+  y = dialog->editor_sv->var / 256;
+  if(x < 4)
+    x = 4;
+  if(y < 4)
+    y = 4;
+  if(x > 251)
+    x = 251;
+  if(y > 251)
+    y = 251;
+
+  dialog->editor_sv->bitmap->xor_rect(x - 4, y - 4, x + 4, y + 4);
+
   dialog->editor_h->redraw();
-  dialog->editor_s->redraw();
-  dialog->editor_v->redraw();
+  dialog->editor_sv->redraw();
 
   dialog->editor_color->bitmap->clear(Brush::main->color);
   dialog->editor_color->redraw();
 }
 
-void do_editor_get_rgb()
-{
-  int r = dialog->editor_r->var;
-  int g = dialog->editor_g->var;
-  int b = dialog->editor_b->var;
-
-  Brush::main->color = makecol(r, g, b);
-
-  update_color(Brush::main->color);
-  do_editor_rgbhsv();
-}
-
 void do_editor_get_hsv()
 {
   int h = dialog->editor_h->var * 6;
-  int s = dialog->editor_s->var;
-  int v = dialog->editor_v->var;
+  int s = dialog->editor_sv->var & 255;
+  int v = dialog->editor_sv->var / 256;
   int r, g, b;
 
   Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
   Brush::main->color = makecol(r, g, b);
 
   update_color(Brush::main->color);
-  do_editor_rgbhsv();
+  do_editor_set_hsv();
 }
 
 void do_editor_insert()
