@@ -480,6 +480,7 @@ void do_editor_insert()
   Palette::main->insert_color(Brush::main->color, dialog->editor_palette->var);
   Palette::main->draw(dialog->editor_palette);
   Palette::main->draw(gui->palette);
+//  dialog->editor_palette->var = Palette::main->max;
   dialog->editor_palette->do_callback();
 //  gui->palette->do_callback();
 }
@@ -490,6 +491,8 @@ void do_editor_delete()
   Palette::main->delete_color(dialog->editor_palette->var);
   Palette::main->draw(dialog->editor_palette);
   Palette::main->draw(gui->palette);
+  if(dialog->editor_palette->var > Palette::main->max - 1)
+    dialog->editor_palette->var = Palette::main->max - 1;
   dialog->editor_palette->do_callback();
 //  gui->palette->do_callback();
 }
@@ -500,6 +503,7 @@ void do_editor_replace()
   Palette::main->replace_color(Brush::main->color, dialog->editor_palette->var);
   Palette::main->draw(dialog->editor_palette);
   Palette::main->draw(gui->palette);
+  dialog->editor_palette->var = Palette::main->max;
   dialog->editor_palette->do_callback();
 //  gui->palette->do_callback();
 }
