@@ -400,12 +400,20 @@ void do_editor_palette(Widget *widget, void *var)
     ramp_started = 0;
     Palette::main->draw(dialog->editor_palette);
     Palette::main->draw(gui->palette);
+
     return;
   }
 
   check_palette(widget, var);
   ramp_begin = dialog->editor_palette->var;
   do_editor_set_hsv();
+  int h, s, v;
+  int color = Brush::main->color;
+  Blend::rgb_to_hsv(getr(color), getg(color), getb(color), &h, &s, &v);
+  dialog->editor_h->var = h / 6;
+  dialog->editor_sv->var = s + 256 * v;
+  dialog->editor_h->redraw();
+  dialog->editor_sv->redraw();
 }
 
 void do_editor_set_hsv()
@@ -416,9 +424,6 @@ void do_editor_set_hsv()
   int color = Brush::main->color;
 
   Blend::rgb_to_hsv(getr(color), getg(color), getb(color), &h, &s, &v);
-
-  dialog->editor_h->var = h / 6;
-  dialog->editor_sv->var = s + 256 * v;
 
   dialog->editor_h->bitmap->clear(makecol(0, 0, 0));
   dialog->editor_sv->bitmap->clear(makecol(0, 0, 0));
