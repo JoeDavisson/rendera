@@ -42,6 +42,7 @@ void show_editor();
 void hide_editor();
 void do_editor_palette(Widget *, void *);
 void do_editor_set_hsv();
+void do_editor_set_hsv_sliders();
 void do_editor_get_hsv();
 void do_editor_insert();
 void do_editor_delete();
