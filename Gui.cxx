@@ -183,7 +183,7 @@ Gui::Gui()
   top_right->end();
 
   // bottom
-  bottom = new Fl_Group(224, window->h() - 40, window->w() - 224 - 112, 40);
+  bottom = new Fl_Group(176, window->h() - 40, window->w() - 288, 40);
   bottom->box(FL_UP_BOX);
   x1 = 8;
   wrap = new ToggleButton(bottom, x1, 8, 24, 24, "Wrap Edges", "data/wrap.png", (Fl_Callback *)check_wrap);
@@ -203,19 +203,19 @@ Gui::Gui()
   bottom->end();
 
   // tools
-  tools = new Fl_Group(0, top_right->h() + menubar->h(), 112, window->h() - (menubar->h() + top_right->h()));
+  tools = new Fl_Group(0, top_right->h() + menubar->h(), 64, window->h() - (menubar->h() + top_right->h()));
   tools->label("Tools");
   tools->labelsize(12);
   tools->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   tools->box(FL_UP_BOX);
   y1 = 20;
-  tool = new Widget(tools, 8, y1, 96, 96, "Tools", "data/tools.png", 96, 24, (Fl_Callback *)check_tool);
+  tool = new Widget(tools, 8, y1, 48, 192, "Tools", "data/tools.png", 48, 48, (Fl_Callback *)check_tool);
   y1 += 96 + 8;
   tools->resizable(0);
   tools->end();
 
   // paint
-  paint = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  paint = new Fl_Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
   paint->label("Paint");
   paint->labelsize(12);
   paint->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
@@ -239,7 +239,7 @@ Gui::Gui()
   paint->end();
 
   // crop
-  crop = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  crop = new Fl_Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
   crop->label("Crop");
   crop->labelsize(12);
   crop->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
@@ -264,7 +264,7 @@ Gui::Gui()
   crop->end();
 
   // getcolor
-  getcolor = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  getcolor = new Fl_Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
   getcolor->label("Get Color");
   getcolor->labelsize(12);
   getcolor->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
@@ -273,7 +273,7 @@ Gui::Gui()
   getcolor->end();
 
   // offset
-  offset = new Fl_Group(112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  offset = new Fl_Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
   offset->label("Offset");
   offset->labelsize(12);
   offset->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
@@ -288,16 +288,13 @@ Gui::Gui()
   right->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   right->box(FL_UP_BOX);
 
-  // invisible palette file preview widget
+  // invisible palette file preview widget for file previews
   pal_preview = new Widget(right, 0, 0, 96, 96, "", 6, 6, 0);
   pal_preview->hide();
   
   y1 = 20;
   palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 6, 6, (Fl_Callback *)check_palette);
   y1 += 96 + 8;
-//  plus = new Button(right, 8, y1, 44, 16, "Insert Color", "data/plus.png", (Fl_Callback *)check_plus);
-//  minus = new Button(right, 8 + 44 + 8, y1, 44, 16, "Delete Color", "data/minus.png", (Fl_Callback *)check_minus);
-//  y1 += 16 + 8;
   hue = new Widget(right, 8, y1, 96, 96, "Hue", 1, 1, (Fl_Callback *)check_hue);
   y1 += 96 + 8;
   color = new Widget(right, 8, y1, 96, 48, "Color", 0, 0, 0);
@@ -308,7 +305,6 @@ Gui::Gui()
   y1 += 24 + 8;
   trans = new Widget(right, 8, y1, 96, 24, "Transparency", "data/transparency.png", 1, 24, (Fl_Callback *)check_trans);
   y1 += 24 + 8;
-//  blend = new Widget(right, 8, y1, 96, 24, "Blending Mode", "data/blend.png", 24, 24, (Fl_Callback *)check_blend);
   blend = new Fl_Choice(8, y1, 96, 24, "");
   blend->resize(right->x() + 8, right->y() + y1, 96, 24);
   blend->add("Normal");
@@ -325,7 +321,7 @@ Gui::Gui()
   right->end();
 
   // middle
-  middle = new Fl_Group(224, top_right->h() + menubar->h(), window->w() - 224 - 112, window->h() - (menubar->h() + top_right->h() + bottom->h()));
+  middle = new Fl_Group(176, top_right->h() + menubar->h(), window->w() - 288, window->h() - (menubar->h() + top_right->h() + bottom->h()));
   middle->box(FL_FLAT_BOX);
   view = new View(middle, 0, 0, middle->w(), middle->h(), "View");
   middle->resizable(view);
@@ -339,7 +335,7 @@ Gui::Gui()
   group_top->end();
 
   // container for left panels
-  group_left = new Fl_Group(0, top_right->h() + menubar->h(), 224, window->h() - (menubar->h() + top_right->h() + bottom->h()));
+  group_left = new Fl_Group(0, top_right->h() + menubar->h(), 176, window->h() - (menubar->h() + top_right->h() + bottom->h()));
   group_left->add(tools);
   group_left->add(paint);
   group_left->add(getcolor);
