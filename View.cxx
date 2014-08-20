@@ -122,10 +122,14 @@ int View::handle(int event)
     case FL_ENTER:
       switch(gui->tool->var)
       {
-        case 2:
-        case 3:
-        case 4:
+        case 1:
           window()->cursor(FL_CURSOR_CROSS);
+          break;
+        case 2:
+          window()->cursor(FL_CURSOR_CROSS);
+          break;
+        case 3:
+          window()->cursor(FL_CURSOR_HAND);
           break;
         default:
           window()->cursor(FL_CURSOR_DEFAULT);

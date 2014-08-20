@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
+extern Gui *gui;
+
 static int inbox(int x, int y, int x1, int y1, int x2, int y2)
 {
   if(x1 > x2)
@@ -47,7 +49,11 @@ void GetColor::push(View *view)
                        Bitmap::main->cr, Bitmap::main->cb))
   {
     int c = Bitmap::main->getpixel(view->imgx, view->imgy);
-    update_color(c);
+
+    if(gui->view->mode == 1)
+      update_color(Palette::main->data[Palette::main->lookup[c & 0xFFFFFF]]);
+    else
+      update_color(c);
   }
 }
 
