@@ -262,7 +262,7 @@ void save_jpg(const char *fn)
     quality = 1;
   if(quality > 100)
     quality = 100;
-printf("quality = %d\n", quality);
+//printf("quality = %d\n", quality);
 
   FILE *out = fopen(fn, "wb");
   if(!out)
