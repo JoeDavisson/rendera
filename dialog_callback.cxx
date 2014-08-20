@@ -437,6 +437,7 @@ void do_editor_set_hsv()
 
   x = dialog->editor_sv->var & 255;
   y = dialog->editor_sv->var / 256;
+
   if(x < 4)
     x = 4;
   if(y < 4)

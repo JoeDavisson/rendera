@@ -86,12 +86,10 @@ public:
   // right
   Widget *pal_preview;
   Widget *palette;
-  Button *plus;
-  Button *minus;
   Widget *hue;
-  Widget *sat;
-  Widget *val;
-  Widget *color;
+  Widget *satval;
+//  Widget *val;
+//  Widget *color;
   Widget *trans;
 //  Widget *blend;
   Fl_Choice *blend;

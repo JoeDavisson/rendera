@@ -23,8 +23,7 @@ void update_color(int c)
   int mx = 48 + 40 * cosf(angle);
   int my = 48 + 40 * sinf(angle);
   gui->hue->var = mx + 96 * my;
-  gui->sat->var = s / 2.685;
-  gui->val->var = v / 2.685;
+  gui->satval->var = (int)(s / 2.684) + 96 * (int)(v / 2.684);
 
   gui->hue->do_callback();
 
@@ -206,8 +205,8 @@ void check_color(Widget *widget, void *var)
 
   float mouse_angle = atan2f(my - 48, mx - 48);
   int h = ((int)(mouse_angle * 244.46) + 1536) % 1536;
-  int s = gui->sat->var * 2.685;
-  int v = gui->val->var * 2.685;
+  int s = (gui->satval->var % 96) * 2.685;
+  int v = (gui->satval->var / 96) * 2.685;
 
   int r, g, b;
 
@@ -226,9 +225,8 @@ void check_color(Widget *widget, void *var)
   int py[4];
 
   gui->hue->bitmap->clear((Fl::get_color(FL_BACKGROUND_COLOR) >> 8) | 0xFF000000);
-  gui->sat->bitmap->clear(0xFF000000);
-  gui->val->bitmap->clear(0xFF000000);
-  gui->color->bitmap->clear(0xFF000000);
+  gui->satval->bitmap->clear(0xFF000000);
+//  gui->color->bitmap->clear(0xFF000000);
 
   for(i = 1; i < 1536; i++)
   {
@@ -248,20 +246,36 @@ void check_color(Widget *widget, void *var)
   int y2 = 48 + 20 * sinf(mouse_angle);
   gui->hue->bitmap->xor_line(x1, y1, x2, y2);
 
-  for(i = 0; i < 96; i++)
+  int x, y;
+
+  for(y = 0; y < 96; y++)
   {
-    Blend::hsv_to_rgb(h, i * 2.685, v, &r, &g, &b);
-    gui->sat->bitmap->vline(0, i, 23, makecol(r, g, b), 0);
-    Blend::hsv_to_rgb(h, s, i * 2.685, &r, &g, &b);
-    gui->val->bitmap->vline(0, i, 23, makecol(r, g, b), 0);
+    for(x = 0; x < 96; x++)
+    {
+      Blend::hsv_to_rgb(h, x * 2.685, y * 2.685, &r, &g, &b);
+      gui->satval->bitmap->setpixel_solid(x, y, makecol(r, g, b), 0);
+    }
   }
 
-  gui->hue->redraw();
-  gui->sat->redraw();
-  gui->val->redraw();
+  x = (gui->satval->var % 96);
+  y = (gui->satval->var / 96);
 
-  gui->color->bitmap->rectfill(0, 0, gui->color->bitmap->w, gui->color->bitmap->h, Brush::main->color, 0);
-  gui->color->redraw();
+  if(x < 4)
+    x = 4;
+  if(y < 4)
+    y = 4;
+  if(x > 91)
+    x = 91;
+  if(y > 91)
+    y = 91;
+
+  gui->satval->bitmap->xor_rect(x - 4, y - 4, x + 4, y + 4);
+
+  gui->hue->redraw();
+  gui->satval->redraw();
+
+//  gui->color->bitmap->rectfill(0, 0, gui->color->bitmap->w, gui->color->bitmap->h, Brush::main->color, 0);
+//  gui->color->redraw();
 }
 
 void check_hue(Widget *widget, void *var)
@@ -269,12 +283,7 @@ void check_hue(Widget *widget, void *var)
   check_color(0, 0);
 }
 
-void check_sat(Widget *widget, void *var)
-{
-  check_color(0, 0);
-}
-
-void check_val(Widget *widget, void *var)
+void check_satval(Widget *widget, void *var)
 {
   check_color(0, 0);
 }
