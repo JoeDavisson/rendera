@@ -411,6 +411,7 @@ void Paint::release(View *view)
   }
 
   view->draw_main(1);
+  Fl::flush();
 }
 
 void Paint::move(View *view)
@@ -437,7 +438,12 @@ void Paint::move(View *view)
       stroke->make_blitrect(stroke->x1, stroke->y1, stroke->x2, stroke->y2, view->ox, view->oy, 96, view->zoom);
       view->draw_main(0);
       stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+
+      // active must be 1 or the whole viewport will redraw
+      active = 1;
       view->redraw();
+      Fl::flush();
+      active = 0;
       break;
   }
 }
