@@ -157,9 +157,10 @@ void Crop::drag(View *view)
   }
   else if(started == 2)
   {
+    Map::main->rect(beginx, beginy, lastx, lasty, 0);
+
     if(drag_started == 1)
     {
-      Map::main->rect(beginx, beginy, lastx, lasty, 0);
 
       int dx = view->imgx - view->oldimgx;
       int dy = view->imgy - view->oldimgy;
