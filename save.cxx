@@ -128,7 +128,7 @@ void save_bmp(const char *fn)
     fwrite(&linebuf[0], 1, w * 3, out);
   }
 
-//  delete[] linebuf;
+  delete[] linebuf;
   fclose(out);
 }
 
@@ -177,7 +177,7 @@ void save_tga(const char *fn)
     fwrite(&linebuf[0], 1, w * 3, out);
   }
 
-//  delete[] linebuf;
+  delete[] linebuf;
   fclose(out);
 }
 
@@ -245,7 +245,7 @@ void save_png(const char *fn)
   png_write_end(png_ptr, info_ptr);
 
   png_destroy_write_struct(&png_ptr, &info_ptr);
-//  delete[] linebuf;
+  delete[] linebuf;
   fclose(out);
 }
 
@@ -258,7 +258,6 @@ void save_jpg(const char *fn)
     quality = 1;
   if(quality > 100)
     quality = 100;
-//printf("quality = %d\n", quality);
 
   FILE *out = fopen(fn, "wb");
   if(!out)
@@ -276,13 +275,15 @@ void save_jpg(const char *fn)
   int w = bmp->w - overscroll * 2;
   int h = bmp->h - overscroll * 2;
 
+//  if((out = fopen(fn, "wb")) == NULL)
+//  {
+//    return;
+//  }
+
   linebuf = new JSAMPLE[w * 3];
   if(!linebuf)
-    return;
-
-  if((out = fopen(fn, "wb")) == NULL)
   {
-    delete[] linebuf;
+    fclose(out);
     return;
   }
 
@@ -326,7 +327,7 @@ void save_jpg(const char *fn)
   jpeg_finish_compress(&cinfo);
   jpeg_destroy_compress(&cinfo);
 
-//  delete[] linebuf;
+  delete[] linebuf;
   fclose(out);
 }
 
