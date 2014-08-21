@@ -123,7 +123,8 @@ void Crop::drag(View *view)
   {
     Map::main->rect(beginx, beginy, lastx, lasty, 0);
 
-    if(inbox(view->imgx, view->imgy, beginx, beginy, lastx, lasty))
+    if(inbox(view->imgx, view->imgy, beginx, beginy, lastx, lasty)
+       && resize_started == 0)
     {
       int dx = view->imgx - view->oldimgx;
       int dy = view->imgy - view->oldimgy;
@@ -147,7 +148,7 @@ void Crop::drag(View *view)
         resize_started = 0;
       }
     }
-    else if(!drag_started && resize_started)
+    else if(drag_started == 0 && resize_started)
     {
       switch(side)
       {
