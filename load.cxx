@@ -6,7 +6,6 @@
 
 #include <jpeglib.h>
 #include <setjmp.h>
-#include <vector>
 
 extern Gui *gui;
 
@@ -299,8 +298,7 @@ void load_bmp(const char *fn, Bitmap *bitmap, int overscroll)
   bitmap = new Bitmap(w, h, overscroll,
                       makecol(255, 255, 255), makecol(128, 128, 128));
 
-//  unsigned char *linebuf = new unsigned char[w * mul + pad];
-  std::vector<unsigned char>linebuf(w * mul + pad);
+  unsigned char *linebuf = new unsigned char[w * mul + pad];
 
   int x, y;
 
@@ -309,8 +307,8 @@ void load_bmp(const char *fn, Bitmap *bitmap, int overscroll)
     int y1 = negy ? h - 1 - y : y;
     y1 += overscroll;
 
-//    if(fread(linebuf, 1, w * mul + pad, in) != (unsigned)(w * mul + pad))
-    if(fread(&linebuf[0], 1, w * mul + pad, in) != (unsigned)(w * mul + pad))
+    if(fread(linebuf, 1, w * mul + pad, in) != (unsigned)(w * mul + pad))
+//    if(fread(&linebuf[0], 1, w * mul + pad, in) != (unsigned)(w * mul + pad))
     {
       fclose(in);
 //      delete[] linebuf;
@@ -396,8 +394,7 @@ void load_tga(const char *fn, Bitmap *bitmap, int overscroll)
   bitmap = new Bitmap(w, h, overscroll,
                       makecol(255, 255, 255), makecol(128, 128, 128));
 
-  std::vector<unsigned char>linebuf(w * depth);
-  //unsigned char *linebuf = new unsigned char[w * depth];
+  unsigned char *linebuf = new unsigned char[w * depth];
 
   int x, y;
 
@@ -501,8 +498,7 @@ void load_png(const char *fn, Bitmap *bitmap, int overscroll)
   int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
   int depth = rowbytes / w;
 
-//  png_bytep linebuf = new png_byte[rowbytes];
-  std::vector<png_byte>linebuf(rowbytes);
+  png_bytep linebuf = new png_byte[rowbytes];
 
   int x, y;
 

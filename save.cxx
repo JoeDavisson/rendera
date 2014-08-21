@@ -6,7 +6,6 @@
 
 #include <jpeglib.h>
 #include <setjmp.h>
-#include <vector>
 
 extern Dialog *dialog;
 
@@ -107,8 +106,7 @@ void save_bmp(const char *fn)
   write_uint32(0, out);
 
   int *p = bmp->row[overscroll] + overscroll;
-  std::vector<unsigned char>linebuf(w * 3 + pad);
-//  unsigned char *linebuf = new unsigned char[w * 3 + pad];
+  unsigned char *linebuf = new unsigned char[w * 3 + pad];
 
   int x, y;
 
@@ -159,8 +157,7 @@ void save_tga(const char *fn)
   write_uint8(32, out);
 
   int *p = bmp->row[overscroll] + overscroll;
-  //unsigned char *linebuf = new unsigned char[w * 3];
-  std::vector<unsigned char>linebuf(w * 3);
+  unsigned char *linebuf = new unsigned char[w * 3];
 
   int x, y;
 
@@ -226,8 +223,7 @@ void save_png(const char *fn)
                PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
   png_write_info(png_ptr, info_ptr);
 
-  //png_bytep linebuf = new png_byte[w * 3];
-  std::vector<png_byte>linebuf(w * 3);
+  png_bytep linebuf = new png_byte[w * 3];
 
   int x, y;
 
@@ -272,7 +268,7 @@ void save_jpg(const char *fn)
 
   struct jpeg_error_mgr jerr;
   JSAMPROW row_pointer[1];
-//  JSAMPLE *linebuf;
+  JSAMPLE *linebuf;
   int row_stride;
 
   Bitmap *bmp = Bitmap::main;
@@ -280,14 +276,13 @@ void save_jpg(const char *fn)
   int w = bmp->w - overscroll * 2;
   int h = bmp->h - overscroll * 2;
 
-//  linebuf = new JSAMPLE[w * 3];
-//  if(!linebuf)
-//    return;
-  std::vector<JSAMPLE>linebuf(w * 3);
+  linebuf = new JSAMPLE[w * 3];
+  if(!linebuf)
+    return;
 
   if((out = fopen(fn, "wb")) == NULL)
   {
-//    delete[] linebuf;
+    delete[] linebuf;
     return;
   }
 
