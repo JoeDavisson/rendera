@@ -99,6 +99,42 @@ void Crop::push(View *view)
       view->oy = 0;
       view->draw_main(1);
     }
+    else if(drag_started == 0 && resize_started == 0)
+    {
+      if(inbox(view->imgx, view->imgy, beginx, beginy, lastx, lasty))
+      {
+        drag_started = 1;
+      }
+      else
+      {
+        if(view->imgx < beginx)
+        {
+          side = 0;
+          offset = ABS(view->imgx - beginx);
+          resize_started = 1;
+        }
+        else if(view->imgx > lastx)
+        {
+          side = 1;
+          offset = ABS(view->imgx - lastx);
+          resize_started = 1;
+        }
+        else if(view->imgy < beginy)
+        {
+          side = 2;
+          offset = ABS(view->imgy - beginy);
+          resize_started = 1;
+        }
+        else if(view->imgy > lasty)
+        {
+          side = 3;
+          offset = ABS(view->imgy - lasty);
+          resize_started = 1;
+        }
+
+        resize_started = 1;
+      }
+    }
   }
 }
 
@@ -121,11 +157,10 @@ void Crop::drag(View *view)
   }
   else if(started == 2)
   {
-    Map::main->rect(beginx, beginy, lastx, lasty, 0);
-
-    if(inbox(view->imgx, view->imgy, beginx, beginy, lastx, lasty)
-       && resize_started == 0)
+    if(drag_started == 1)
     {
+      Map::main->rect(beginx, beginy, lastx, lasty, 0);
+
       int dx = view->imgx - view->oldimgx;
       int dy = view->imgy - view->oldimgy;
 
@@ -143,12 +178,9 @@ void Crop::drag(View *view)
         beginy += dy;
         lastx += dx;
         lasty += dy;
-
-        drag_started = 1;
-        resize_started = 0;
       }
     }
-    else if(drag_started == 0 && resize_started)
+    else if(resize_started == 1)
     {
       switch(side)
       {
@@ -164,33 +196,6 @@ void Crop::drag(View *view)
         case 3:
           lasty = view->imgy - offset;
           break;
-      }
-    }
-    else
-    {
-      if(view->imgx < beginx)
-      {
-        side = 0;
-        offset = ABS(view->imgx - beginx);
-        resize_started = 1;
-      }
-      else if(view->imgx > lastx)
-      {
-        side = 1;
-        offset = ABS(view->imgx - lastx);
-        resize_started = 1;
-      }
-      else if(view->imgy < beginy)
-      {
-        side = 2;
-        offset = ABS(view->imgy - beginy);
-        resize_started = 1;
-      }
-      else if(view->imgy > lasty)
-      {
-        side = 3;
-        offset = ABS(view->imgy - lasty);
-        resize_started = 1;
       }
     }
   }
