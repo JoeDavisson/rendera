@@ -78,13 +78,13 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
 
   bgr_order = 0;
   // try to detect pixelformat (almost always RGB or BGR)
-#ifdef LINUX
+#ifdef linux
   if(fl_visual->visual->blue_mask == 0xFF)
     bgr_order = 1;
 #endif
 
   backbuf = new Bitmap(Fl::w(), Fl::h());
-#ifdef LINUX
+#ifdef linux
   image = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
                        (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
 #else
@@ -632,7 +632,7 @@ void View::draw()
     if(blitw < 1 || blith < 1)
       return;
 
-#ifdef LINUX
+#ifdef linux
     XPutImage(fl_display, fl_window, fl_gc, image,
               blitx, blity, x() + blitx, y() + blity, blitw, blith);
 #else
@@ -644,7 +644,7 @@ void View::draw()
   }
   else
   {
-#ifdef LINUX
+#ifdef linux
     XPutImage(fl_display, fl_window, fl_gc, image, 0, 0, x(), y(), w(), h());
 #else
     fl_push_clip(x(), y(), w(), h());

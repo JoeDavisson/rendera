@@ -48,12 +48,5 @@ AC_TYPE_UINT8_T
 # Checks for library functions.
 AC_CHECK_FUNCS([pow sqrt strcasecmp])
 
-# Check operating system
-case $host_os in
-  linux*)
-    CXXFLAGS="$CXXFLAGS -DLINUX"
-    ;;
-esac
-
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

@@ -50,7 +50,7 @@ public:
   void scroll(int, int);
 
   Fl_Group *group;
-#ifdef LINUX
+#ifdef linux
   XImage *image;
 #else
   Fl_RGB_Image *image;
