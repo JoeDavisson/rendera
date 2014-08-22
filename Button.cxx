@@ -20,7 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-Button::Button(Fl_Group *g, int x, int y, int w, int h, const char *label, const char *filename, Fl_Callback *cb)
+Button::Button(Fl_Group *g, int x, int y, int w, int h,
+               const char *label, const char *filename, Fl_Callback *cb)
 : Fl_Button(x, y, w, h, label)
 {
   var = 0;
@@ -42,6 +43,8 @@ void Button::draw()
     image->draw(x() + 1, y() + 1);
   else
     image->draw(x(), y());
-  fl_draw_box(value() ? FL_DOWN_FRAME : FL_UP_FRAME, x(), y(), w(), h(), FL_BLACK);
+
+  fl_draw_box(value() ? FL_DOWN_FRAME : FL_UP_FRAME,
+              x(), y(), w(), h(), FL_BLACK);
 }
 

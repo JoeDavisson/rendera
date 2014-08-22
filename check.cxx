@@ -139,9 +139,16 @@ void check_paint_size(Widget *widget, void *var)
 
   brush->make(shape, size);
   gui->paint_brush->bitmap->clear(makecol(255, 255, 255));
+
   int i;
+
   for(i = 0; i < Brush::main->solid_count; i++)
-    gui->paint_brush->bitmap->setpixel_solid(48 + brush->solidx[i], 48 + brush->solidy[i], makecol(0, 0, 0), 0);
+  {
+    gui->paint_brush->bitmap->setpixel_solid(48 + brush->solidx[i],
+                                             48 + brush->solidy[i],
+                                             makecol(0, 0, 0), 0);
+  }
+
   gui->paint_brush->redraw();
 }
 

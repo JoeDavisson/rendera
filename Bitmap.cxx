@@ -62,7 +62,7 @@ Bitmap::Bitmap(int width, int height)
     row[i] = &data[width * i];
 }
 
-Bitmap::Bitmap(int width, int height, int overscroll, int insideColor, int outsideColor)
+Bitmap::Bitmap(int width, int height, int overscroll, int inside_color, int outside_color)
 {
   width += overscroll * 2;
   height += overscroll * 2;
@@ -87,8 +87,8 @@ Bitmap::Bitmap(int width, int height, int overscroll, int insideColor, int outsi
     row[i] = &data[width * i];
 
   set_clip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
-  clear(outsideColor);
-  rectfill(cl, ct, cr, cb, insideColor, 0);
+  clear(outside_color);
+  rectfill(cl, ct, cr, cb, inside_color, 0);
 }
 
 Bitmap::~Bitmap()
@@ -602,10 +602,15 @@ void Bitmap::setpixel_clone(int x, int y, int c2, int t)
 
   Stroke *stroke = gui->view->tool->stroke;
 
-  if(x1 >= stroke->x1 && x1 <= stroke->x2 && y1 >= stroke->y1 && y1 <= stroke->y2)
+  if(x1 >= stroke->x1 && x1 <= stroke->x2 &&
+     y1 >= stroke->y1 && y1 <= stroke->y2)
+  {
     c2 = Bitmap::clone_buffer->getpixel(x1 - stroke->x1, y1 - stroke->y1);
+  }
   else
+  {
     c2 = getpixel(x1, y1);
+  }
 
   *c1 = Blend::current(*c1, c2, t);
 }
@@ -660,10 +665,15 @@ void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
 
   Stroke *stroke = gui->view->tool->stroke;
 
-  if(x1 >= stroke->x1 && x1 <= stroke->x2 && y1 >= stroke->y1 && y1 <= stroke->y2)
+  if(x1 >= stroke->x1 && x1 <= stroke->x2 &&
+     y1 >= stroke->y1 && y1 <= stroke->y2)
+  {
     c2 = Bitmap::clone_buffer->getpixel(x1 - stroke->x1, y1 - stroke->y1);
+  }
   else
+  {
     c2 = getpixel(x1, y1);
+  }
 
   *c1 = Blend::current(*c1, c2, t);
 }
@@ -846,9 +856,6 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
     for(x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 8);
-      //const int c = *(row[y1] + x1);
-//      *s++ = (blend_fast_solid(((x >> 4) & 1) ^ ((y >> 4) & 1)
-//                              ? 0xA0A0A0 : 0x606060, c, 255 - geta(c)) & 0xFFFFFF) | (geta(c) << 24);
       *s++ = *(row[y1] + x1);
     }
   }
