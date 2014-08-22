@@ -1056,7 +1056,6 @@ void Bitmap::convert_truecolor(int bgr_order)
       i++;
     }
   }
-//    data[i] = convert_format(data[i], bgr_order) | 0xFF000000;
 }
 
 // convert to indexed

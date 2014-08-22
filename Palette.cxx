@@ -115,9 +115,6 @@ void Palette::set_default()
   int h, s, v;
   int index = 0;
 
-//  int sat[12] = { 255, 255, 255, 255, 255, 255, 192, 160, 128, 96, 64, 32 };
-//  int val[12] = { 64, 96, 128, 160, 192, 255, 255, 255, 255, 255, 255, 255 };
-
   int sat[12] = { 255, 255, 255, 255, 255, 255, 192, 160, 128, 96, 64, 32 };
   int val[12] = { 96, 128, 160, 192, 224, 255, 255, 255, 255, 255, 255, 255 };
 
@@ -172,6 +169,7 @@ void Palette::replace_color(int color, int index)
   data[index] = color;
 }
 
+// generate a 16M reverse-lookup table for indexed mode
 void Palette::fill_lookup()
 {
   int r, g, b;
@@ -189,6 +187,7 @@ void Palette::fill_lookup()
         int c = makecol_notrans(r, g, b);
         int smallest = 0xFFFFFF;
         use = 0;
+
         for(z = 0; z < max; z++)
         {
           int d = diff24(c, data[z]);
@@ -212,7 +211,6 @@ void Palette::fill_lookup()
       }
     }
   }
-
 
   // then put exact matches back in
   for(z = 0; z < max; z++)

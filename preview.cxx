@@ -11,7 +11,9 @@ Fl_Image *preview_png(const char *fn, unsigned char *header, int len)
 
   load_png(fn, Bitmap::preview, 0);
 
-  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data, Bitmap::preview->w, Bitmap::preview->h, 4, 0);
+  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data,
+                                         Bitmap::preview->w, Bitmap::preview->h,
+                                         4, 0);
 
   return image;
 }
@@ -23,7 +25,9 @@ Fl_Image *preview_jpg(const char *fn, unsigned char *header, int len)
 
   load_jpg(fn, Bitmap::preview, 0);
 
-  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data, Bitmap::preview->w, Bitmap::preview->h, 4, 0);
+  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data,
+                                         Bitmap::preview->w, Bitmap::preview->h,
+                                         4, 0);
 
   return image;
 }
@@ -35,7 +39,9 @@ Fl_Image *preview_bmp(const char *fn, unsigned char *header, int len)
 
   load_bmp(fn, Bitmap::preview, 0);
 
-  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data, Bitmap::preview->w, Bitmap::preview->h, 4, 0);
+  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data,
+                                         Bitmap::preview->w, Bitmap::preview->h,
+                                         4, 0);
 
   return image;
 }
@@ -62,7 +68,9 @@ Fl_Image *preview_tga(const char *fn, unsigned char *header, int len)
 
   load_tga(fn, Bitmap::preview, 0);
 
-  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data, Bitmap::preview->w, Bitmap::preview->h, 4, 0);
+  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data,
+                                         Bitmap::preview->w, Bitmap::preview->h,
+                                         4, 0);
 
   return image;
 }
@@ -95,7 +103,9 @@ Fl_Image *preview_pal(const char *fn, unsigned char *header, int len)
 
   pal->draw(gui->pal_preview);
 
-  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)gui->pal_preview->bitmap->data, 96, 96, 4, 0);
+  Fl_RGB_Image *image =
+    new Fl_RGB_Image((unsigned char *)gui->pal_preview->bitmap->data,
+                     96, 96, 4, 0);
 
   delete pal;
   return image;

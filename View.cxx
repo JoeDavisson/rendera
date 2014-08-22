@@ -302,7 +302,10 @@ void View::draw_main(int refresh)
     draw_grid();
 
   if(refresh)
+  {
     redraw();
+    Fl::flush();
+  }
 }
 
 void View::draw_grid()

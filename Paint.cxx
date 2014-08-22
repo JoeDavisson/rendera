@@ -255,7 +255,9 @@ int Paint::render_callback_normal(View *view)
     return 0;
   }
 
-  stroke->make_blitrect(stroke->x1, stroke->y1, stroke->x2, stroke->y2, view->ox, view->oy, 1, view->zoom);
+  stroke->make_blitrect(stroke->x1, stroke->y1,
+                        stroke->x2, stroke->y2,
+                        view->ox, view->oy, 1, view->zoom);
   return 1;
 }
 
@@ -310,13 +312,16 @@ int Paint::render_callback_smooth(View *view)
       }
 
       Bitmap::main->setpixel(x, y, brush->color,
-        sdist(x, y, stroke->edgecachex[z], stroke->edgecachey[z], brush->edge, brush->trans));
+        sdist(x, y, stroke->edgecachex[z],
+              stroke->edgecachey[z], brush->edge, brush->trans));
 
       p++;
     }
   }
 
-  stroke->make_blitrect(stroke->x1, render_pos, stroke->x2, render_end, view->ox, view->oy, 1, view->zoom);
+  stroke->make_blitrect(stroke->x1, render_pos,
+                        stroke->x2, render_end,
+                        view->ox, view->oy, 1, view->zoom);
 
   render_pos += 64;
 
@@ -357,7 +362,6 @@ void Paint::push(View *view)
         if(Fl::get_key(FL_Escape))
           break;
         view->draw_main(1);
-        Fl::flush();
       }
       active = 0;
       Blend::set(0);
@@ -404,14 +408,12 @@ void Paint::release(View *view)
       if(Fl::get_key(FL_Escape))
         break;
       view->draw_main(1);
-      Fl::flush();
     }
     active = 0;
     Blend::set(0);
   }
 
   view->draw_main(1);
-  Fl::flush();
 }
 
 void Paint::move(View *view)
@@ -421,7 +423,8 @@ void Paint::move(View *view)
     case 3:
       if(active)
       {
-        stroke->polyline(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
+        stroke->polyline(view->imgx, view->imgy,
+                         view->ox, view->oy, view->zoom);
         view->draw_main(0);
         stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
         view->redraw();
@@ -431,11 +434,16 @@ void Paint::move(View *view)
     case 2:
     case 4:
     case 6:
-      Map::main->rectfill(view->oldimgx - 48, view->oldimgy - 48, view->oldimgx + 48, view->oldimgy + 48, 0);
-      Map::main->rectfill(view->imgx - 48, view->imgy - 48, view->imgx + 48, view->imgy + 48, 0);
+      Map::main->rectfill(view->oldimgx - 48, view->oldimgy - 48,
+                          view->oldimgx + 48, view->oldimgy + 48, 0);
+      Map::main->rectfill(view->imgx - 48, view->imgy - 48,
+                          view->imgx + 48, view->imgy + 48, 0);
       stroke->draw_brush(view->imgx, view->imgy, 255);
-      stroke->size(view->imgx - 48, view->imgy - 48, view->imgx + 48, view->imgy + 48);
-      stroke->make_blitrect(stroke->x1, stroke->y1, stroke->x2, stroke->y2, view->ox, view->oy, 96, view->zoom);
+      stroke->size(view->imgx - 48, view->imgy - 48,
+                   view->imgx + 48, view->imgy + 48);
+      stroke->make_blitrect(stroke->x1, stroke->y1,
+                            stroke->x2, stroke->y2,
+                            view->ox, view->oy, 96, view->zoom);
       view->draw_main(0);
       stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
 

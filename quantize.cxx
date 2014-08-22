@@ -46,6 +46,7 @@ static void stretch_palette(int current, int target)
   c[0] = c[1] = &Palette::main->data[0];
 
   int x = 0;
+
   do
   {
     float uu = (x * ax);
@@ -65,6 +66,7 @@ static void stretch_palette(int current, int target)
 
     float r = 0, g = 0, b = 0;
     int i = 0;
+
     do
     {
       r += (float)getr(*c[i]) * f[i];
@@ -144,24 +146,19 @@ static int limit_colors(float *list, int *colors)
 }
 
 // compute quantization error
-static inline float error24(const int c1, const int c2, const float f1,
-                            const float f2)
+static inline float error24(const int c1, const int c2,
+                            const float f1, const float f2)
 {
   return ((f1 * f2) / (f1 + f2)) * diff24(c1, c2);
 }
 
 // merge two colors
-static inline int merge24(const int c1, const int c2, const float f1,
-                          const float f2)
+static inline int merge24(const int c1, const int c2,
+                          const float f1, const float f2)
 {
-//  const float div = 1.0f / (f1 + f2);
-
   const int r = (f1 * getr(c1) + f2 * getr(c2)) / (f1 + f2);
   const int g = (f1 * getg(c1) + f2 * getg(c2)) / (f1 + f2);
   const int b = (f1 * getb(c1) + f2 * getb(c2)) / (f1 + f2);
-  //const int r = (f1 * getr(c1) + f2 * getr(c2)) * div;
-  //const int g = (f1 * getg(c1) + f2 * getg(c2)) * div;
-  //const int b = (f1 * getb(c1) + f2 * getb(c2)) * div;
 
   return makecol_notrans(r, g, b);
 }
@@ -193,6 +190,7 @@ void quantize(Bitmap *src, int size)
   // build histogram
   float inc = 1.0 / ((src->w - overscroll * 2) * (src->h - overscroll * 2));
   int count = 0;
+
   for(j = overscroll; j < src->h - overscroll; j++)
   {
     for(i = overscroll; i < src->w - overscroll; i++)

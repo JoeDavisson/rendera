@@ -66,10 +66,14 @@ void Offset::drag(View *view)
   while(y >= h)
     y -= h;
   
-  Bitmap::offset_buffer->blit(Bitmap::main, 0, 0, x + overscroll, y + overscroll, w - x, h - y);
-  Bitmap::offset_buffer->blit(Bitmap::main, w - x, 0, overscroll, y + overscroll, x, h - y);
-  Bitmap::offset_buffer->blit(Bitmap::main, 0, h - y, x + overscroll, overscroll, w - x, y);
-  Bitmap::offset_buffer->blit(Bitmap::main, w - x, h - y, overscroll, overscroll, x, y);
+  Bitmap::offset_buffer->blit(Bitmap::main, 0, 0,
+                              x + overscroll, y + overscroll, w - x, h - y);
+  Bitmap::offset_buffer->blit(Bitmap::main, w - x, 0,
+                              overscroll, y + overscroll, x, h - y);
+  Bitmap::offset_buffer->blit(Bitmap::main, 0, h - y,
+                              x + overscroll, overscroll, w - x, y);
+  Bitmap::offset_buffer->blit(Bitmap::main, w - x, h - y,
+                              overscroll, overscroll, x, y);
 
   view->draw_main(1);
 }
