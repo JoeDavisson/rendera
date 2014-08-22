@@ -20,10 +20,14 @@
 *.out
 *.app
 
+# Tarballs
+*.tar.gz
+
 # build dir (by convention)
 /_build/
 
 # autotoolery
+/.deps/
 /INSTALL
 /Makefile
 /Makefile.in
@@ -32,14 +36,21 @@
 /build-aux/
 /compile
 /config.guess
+/config.h
 /config.h.in
+/config.log
+/config.status
 /config.sub
 /configure
 /depcomp
 /install-sh
+/libtool
 /ltmain.sh
 /m4/
 /missing
+/paths.h
+/rendera
+/stamp-h1
 
 # emacs temp files
 *~
