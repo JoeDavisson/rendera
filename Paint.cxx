@@ -446,12 +446,7 @@ void Paint::move(View *view)
                             view->ox, view->oy, 96, view->zoom);
       view->draw_main(0);
       stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
-
-      // active must be 1 or the whole viewport will redraw
-      active = 1;
       view->redraw();
-      Fl::flush();
-      active = 0;
       break;
   }
 }

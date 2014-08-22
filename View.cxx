@@ -305,10 +305,7 @@ void View::draw_main(int refresh)
     draw_grid();
 
   if(refresh)
-  {
     redraw();
-    Fl::flush();
-  }
 }
 
 void View::draw_grid()
@@ -418,7 +415,6 @@ void View::begin_move()
 
   backbuf->xor_rect(bx, by, bx + bw - 1, by + bh - 1);
   redraw();
-  Fl::flush();
 }
 
 void View::move()
@@ -466,7 +462,6 @@ void View::move()
   backbuf->xor_rect(bx, by, bx + bw - 1, by + bh - 1);
 
   redraw();
-  Fl::flush();
 
   lastbx = bx;
   lastby = by;
