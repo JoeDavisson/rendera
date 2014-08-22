@@ -31,7 +31,8 @@ static void begin()
   bmp = Bitmap::main;
   overscroll = Bitmap::main->overscroll;
 
-  undo_push(overscroll, overscroll, bmp->w - overscroll * 2, bmp->h - overscroll * 2, 0);
+  undo_push(overscroll, overscroll,
+            bmp->w - overscroll * 2, bmp->h - overscroll * 2, 0);
 }
 
 // normalize
@@ -202,6 +203,7 @@ void show_value_stretch()
   value_stretch();
 }
 
+// equalizes while retaining the overall color cast of an image
 void value_stretch()
 {
   int *list_r = new int[256];
@@ -317,6 +319,8 @@ void show_saturate()
   saturate();
 }
 
+// equalize saturation
+// in some cases can restore color saturation to a faded image
 void saturate()
 {
   int *list_s = new int[256];
@@ -514,6 +518,9 @@ void hide_restore()
   fx->restore->hide();
 }
 
+// this algorithm assumes a picture both has a color cast and is faded
+// in most cases (with a good scan) can restore nearly all the color
+// to a faded photograph
 void restore()
 {
   int x, y;
@@ -725,6 +732,11 @@ void show_correct()
   correct();
 }
 
+// corrects uneven dye fading in photographs (especially when there is a severe
+// color cast, such as when one of the dyes have faded almost completety)
+//
+// sometimes works better before or after the restore filter depending on
+// the image
 void correct()
 {
   int x, y;

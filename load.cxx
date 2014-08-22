@@ -179,7 +179,7 @@ void load_jpg(const char *fn, Bitmap *bitmap, int overscroll)
 
   delete bitmap;
   bitmap = new Bitmap(w, h, overscroll,
-               makecol(255, 255, 255), makecol(128, 128, 128));
+                      makecol(255, 255, 255), makecol(128, 128, 128));
   int x;
   int *p = bitmap->row[overscroll] + overscroll;
 
@@ -188,6 +188,7 @@ void load_jpg(const char *fn, Bitmap *bitmap, int overscroll)
     while(cinfo.output_scanline < cinfo.output_height)
     {
       jpeg_read_scanlines(&cinfo, linebuf, 1);
+
       for(x = 0; x < row_stride; x += 3)
       {
         *p++ = makecol(linebuf[0][x] & 0xFF,
@@ -203,6 +204,7 @@ void load_jpg(const char *fn, Bitmap *bitmap, int overscroll)
     while(cinfo.output_scanline < cinfo.output_height)
     {
       jpeg_read_scanlines(&cinfo, linebuf, 1);
+
       for(x = 0; x < row_stride; x += 1)
       {
         *p++ = makecol(linebuf[0][x] & 0xFF,
@@ -230,13 +232,15 @@ void load_bmp(const char *fn, Bitmap *bitmap, int overscroll)
 
   unsigned char buffer[64];
 
-  if(fread(buffer, 1, sizeof(BITMAPFILEHEADER), in) != (unsigned)sizeof(BITMAPFILEHEADER))
+  if(fread(buffer, 1, sizeof(BITMAPFILEHEADER), in) !=
+     (unsigned)sizeof(BITMAPFILEHEADER))
   {
     fclose(in);
     return;
   }
 
   unsigned char *p = buffer;
+
   bh.bfType = parse_uint16(p);
   bh.bfSize = parse_uint32(p);
   bh.bfReserved1 = parse_uint16(p);
@@ -342,7 +346,8 @@ void load_tga(const char *fn, Bitmap *bitmap, int overscroll)
 
   unsigned char buffer[64];
 
-  if(fread(buffer, 1, sizeof(TARGA_HEADER), in) != (unsigned)sizeof(TARGA_HEADER))
+  if(fread(buffer, 1, sizeof(TARGA_HEADER), in) !=
+     (unsigned)sizeof(TARGA_HEADER))
   {
     fclose(in);
     return;
@@ -423,6 +428,7 @@ void load_tga(const char *fn, Bitmap *bitmap, int overscroll)
       delete[] linebuf;
       return;
     }
+
     for(x = xstart; x != xend; x += negx ? -1 : 1)
     {
       *(bitmap->row[y + overscroll] + x + overscroll) =

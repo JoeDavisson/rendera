@@ -115,8 +115,6 @@ Gui::Gui()
   window = new Fl_Double_Window(800, 600, "Rendera");
   window->callback(close_callback);
 
-  //group_main = new Fl_Group(0, 0, window->w(), window->h());
-
   // menu
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
   menubar->add("File/New", 0, (Fl_Callback *)show_new_image, 0, 0);
@@ -145,7 +143,6 @@ Gui::Gui()
   menubar->add("Help/About...", 0, (Fl_Callback *)show_about, 0, 0);
 
   set_menu_item("Mode/RGBA");
-//  clear_menu_item("Mode/Indexed");
 
   // top_left
   top_left = new Fl_Group(0, menubar->h(), 112, 40);
@@ -301,8 +298,6 @@ Gui::Gui()
 // / y1 += 48 + 8;
   satval = new Widget(right, 8, y1, 96, 96, "Saturation/Value", 1, 1, (Fl_Callback *)check_satval);
   y1 += 96 + 8;
-//  val = new Widget(right, 8, y1, 96, 24, "Value", 1, 24, (Fl_Callback *)check_val);
-//  y1 += 24 + 8;
   trans = new Widget(right, 8, y1, 96, 24, "Transparency", "data/transparency.png", 1, 24, (Fl_Callback *)check_trans);
   y1 += 24 + 8;
   blend = new Fl_Choice(8, y1, 96, 24, "");

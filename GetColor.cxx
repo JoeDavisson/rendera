@@ -46,7 +46,7 @@ GetColor::~GetColor()
 void GetColor::push(View *view)
 {
   if(inbox(view->imgx, view->imgy, Bitmap::main->cl, Bitmap::main->ct,
-                       Bitmap::main->cr, Bitmap::main->cb))
+                                   Bitmap::main->cr, Bitmap::main->cb))
   {
     int c = Bitmap::main->getpixel(view->imgx, view->imgy);
 

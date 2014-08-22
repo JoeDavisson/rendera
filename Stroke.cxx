@@ -133,7 +133,8 @@ void Stroke::size_linear(int bx, int by, int x, int y)
   }
 }
 
-void Stroke::make_blitrect(int x1, int y1, int x2, int y2, int ox, int oy, int size, float zoom)
+void Stroke::make_blitrect(int x1, int y1, int x2, int y2,
+                           int ox, int oy, int size, float zoom)
 {
   int r = (size + 1) / 2 + 1;
 

@@ -85,9 +85,11 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
 
   backbuf = new Bitmap(Fl::w(), Fl::h());
 #ifdef LINUX
-  image = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0, (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
+  image = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
+                       (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
 #else
-  image = new Fl_RGB_Image((unsigned char *)backbuf->data, Fl::w(), Fl::h(), 4, 0);
+  image = new Fl_RGB_Image((unsigned char *)backbuf->data,
+                           Fl::w(), Fl::h(), 4, 0);
 #endif
   take_focus();
   resize(group->x() + x, group->y() + y, w, h);
@@ -157,7 +159,7 @@ int View::handle(int event)
 
           break;
         case 2:
-          if(/*tool->started == 0 && */moving == 0)
+          if(moving == 0)
           {
             begin_move();
             moving = 1;
@@ -203,7 +205,7 @@ int View::handle(int event)
       oldimgy = imgy;
       return 1;
     case FL_MOUSEWHEEL:
-      if(moving/* || tool->started*/)
+      if(moving)
         break;
 
       if(Fl::event_dy() >= 0)
@@ -286,7 +288,8 @@ void View::draw_main(int refresh)
 
   backbuf->clear(makecol(128, 128, 128));
 
-  Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh, 0, 0, dw, dh, overx, overy);
+  Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh,
+                              0, 0, dw, dh, overx, overy);
 
   switch(mode)
   {
@@ -396,7 +399,7 @@ void View::begin_move()
 
   backbuf->clear(makecol(128, 128, 128));
   Bitmap::main->point_stretch(backbuf, 0, 0, Bitmap::main->w, Bitmap::main->h,
-                          px, py, pw, ph, 0, 0);
+                              px, py, pw, ph, 0, 0);
 
   switch(mode)
   {
@@ -434,6 +437,7 @@ void View::move()
 
   ox = (bx - px) / ((float)pw / (Bitmap::main->w));
   oy = (by - py) / ((float)ph / (Bitmap::main->h));
+
   if(ox < 0)
     ox = 0;
   if(oy < 0)
@@ -445,12 +449,14 @@ void View::move()
     bw = pw;
     ox = 0;
   }
+
   if(bh > ph)
   {
     by = py;
     bh = ph;
     oy = 0;
   }
+
   if(bw < 1)
     bw = 1;
   if(bh < 1)
@@ -474,6 +480,7 @@ void View::zoom_in(int x, int y)
     return;
 
   zoom *= 2;
+
   if(zoom > 64)
   {
     zoom = 64;
@@ -482,6 +489,7 @@ void View::zoom_in(int x, int y)
   {
     ox += x / zoom;
     oy += y / zoom;
+
     if(ox > Bitmap::main->w - w() / zoom)
       ox = Bitmap::main->w - w() / zoom;
     if(oy > Bitmap::main->h - h() / zoom)
@@ -493,8 +501,10 @@ void View::zoom_in(int x, int y)
   }
 
   draw_main(1);
+
   if(tool->started)
     tool->stroke->preview(backbuf, ox, oy, zoom);
+
   check_zoom();
 }
 
@@ -505,6 +515,7 @@ void View::zoom_out(int x, int y)
 
   float oldzoom = zoom;
   zoom /= 2;
+
   if(zoom < .125)
   {
     zoom = .125;
@@ -524,8 +535,10 @@ void View::zoom_out(int x, int y)
   }
 
   draw_main(1);
+
   if(tool->started)
     tool->stroke->preview(backbuf, ox, oy, zoom);
+
   check_zoom();
 }
 
@@ -625,7 +638,8 @@ void View::draw()
       return;
 
 #ifdef LINUX
-    XPutImage(fl_display, fl_window, fl_gc, image, blitx, blity, x() + blitx, y() + blity, blitw, blith);
+    XPutImage(fl_display, fl_window, fl_gc, image,
+              blitx, blity, x() + blitx, y() + blity, blitw, blith);
 #else
     fl_push_clip(x() + blitx, y() + blity, blitw, blith);
     image->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);

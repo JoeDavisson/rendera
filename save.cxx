@@ -275,11 +275,6 @@ void save_jpg(const char *fn)
   int w = bmp->w - overscroll * 2;
   int h = bmp->h - overscroll * 2;
 
-//  if((out = fopen(fn, "wb")) == NULL)
-//  {
-//    return;
-//  }
-
   linebuf = new JSAMPLE[w * 3];
   if(!linebuf)
   {

@@ -20,7 +20,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-ToggleButton::ToggleButton(Fl_Group *g, int x, int y, int w, int h, const char *label, const char *filename, Fl_Callback *cb)
+ToggleButton::ToggleButton(Fl_Group *g, int x, int y, int w, int h,
+                           const char *label, const char *filename,
+                           Fl_Callback *cb)
 : Fl_Button(x, y, w, h, label)
 {
   var = 0;
