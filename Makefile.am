@@ -25,6 +25,8 @@ rendera_SOURCES =     \
   FX.h                \
   Field.cxx           \
   Field.h             \
+  File.cxx            \
+  File.h              \
   GetColor.cxx        \
   GetColor.h          \
   Gui.cxx             \
@@ -56,16 +58,10 @@ rendera_SOURCES =     \
   dialog_callback.h   \
   fx_callback.cxx     \
   fx_callback.h       \
-  load.cxx            \
-  load.h              \
   main.cxx            \
-  preview.cxx         \
-  preview.h           \
   quantize.cxx        \
   quantize.h          \
   rendera.h           \
-  save.cxx            \
-  save.h              \
   undo.cxx            \
   undo.h
 
