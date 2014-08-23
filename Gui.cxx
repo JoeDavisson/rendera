@@ -130,16 +130,16 @@ Gui::Gui()
   menubar->add("Palette/Save", 0, (Fl_Callback *)show_save_palette, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Editor...", 0, (Fl_Callback *)show_editor, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Create From Image", 0, (Fl_Callback *)show_create_palette, 0, 0);
-  menubar->add("Effects/Normalize", 0, (Fl_Callback *)show_normalize, 0, 0);
-  menubar->add("Effects/Equalize", 0, (Fl_Callback *)show_equalize, 0, 0);
-  menubar->add("Effects/Value Stretch", 0, (Fl_Callback *)show_value_stretch, 0, 0);
-  menubar->add("Effects/Saturate", 0, (Fl_Callback *)show_saturate, 0, 0);
-  menubar->add("Effects/Rotate Hue...", 0, (Fl_Callback *)show_rotate_hue, 0, 0);
-  menubar->add("Effects/Invert", 0, (Fl_Callback *)show_invert, 0, 0);
-  menubar->add("Effects/Restore...", 0, (Fl_Callback *)show_restore, 0, 0);
-  menubar->add("Effects/Correction Matrix", 0, (Fl_Callback *)show_correct, 0, 0);
-  menubar->add("Effects/Remove Dust...", 0, (Fl_Callback *)show_remove_dust, 0, 0);
-  menubar->add("Effects/Colorize", 0, (Fl_Callback *)show_colorize, 0, 0);
+  menubar->add("Effects/Normalize", 0, (Fl_Callback *)FX::showNormalize, 0, 0);
+  menubar->add("Effects/Equalize", 0, (Fl_Callback *)FX::showEqualize, 0, 0);
+  menubar->add("Effects/Value Stretch", 0, (Fl_Callback *)FX::showValueStretch, 0, 0);
+  menubar->add("Effects/Saturate", 0, (Fl_Callback *)FX::showSaturate, 0, 0);
+  menubar->add("Effects/Rotate Hue...", 0, (Fl_Callback *)FX::showRotateHue, 0, 0);
+  menubar->add("Effects/Invert", 0, (Fl_Callback *)FX::showInvert, 0, 0);
+  menubar->add("Effects/Restore...", 0, (Fl_Callback *)FX::showRestore, 0, 0);
+  menubar->add("Effects/Correction Matrix", 0, (Fl_Callback *)FX::showCorrect, 0, 0);
+  menubar->add("Effects/Remove Dust...", 0, (Fl_Callback *)FX::showRemoveDust, 0, 0);
+  menubar->add("Effects/Colorize", 0, (Fl_Callback *)FX::showColorize, 0, 0);
   menubar->add("Help/About...", 0, (Fl_Callback *)show_about, 0, 0);
 
   set_menu_item("Mode/RGBA");

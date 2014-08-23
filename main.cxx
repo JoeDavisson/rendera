@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "rendera.h"
 
 Dialog *dialog;
-FX *fx;
 Gui *gui;
 
 int main(int argc, char **argv)
@@ -50,7 +49,6 @@ int main(int argc, char **argv)
   Blend::bmp = Bitmap::main;
 
   dialog = new Dialog();
-  fx = new FX();
 
   Tool::paint = new Paint();
   Tool::getcolor = new GetColor();
@@ -65,6 +63,7 @@ int main(int argc, char **argv)
   gui->palette->do_callback();
   check_zoom();
 
+  FX::init();
   undo_init();
 
   return Fl::run();

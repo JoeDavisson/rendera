@@ -56,8 +56,6 @@ rendera_SOURCES =     \
   common.h            \
   dialog_callback.cxx \
   dialog_callback.h   \
-  fx_callback.cxx     \
-  fx_callback.h       \
   main.cxx            \
   quantize.cxx        \
   quantize.h          \
