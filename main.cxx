@@ -28,11 +28,11 @@ int main(int argc, char **argv)
 {
   Fl::visual(FL_DOUBLE | FL_RGB);
   Fl::background(192, 192, 192);
-  Fl_Shared_Image::add_handler(preview_jpg);
-  Fl_Shared_Image::add_handler(preview_png);
-  Fl_Shared_Image::add_handler(preview_bmp);
-  Fl_Shared_Image::add_handler(preview_tga);
-  Fl_Shared_Image::add_handler(preview_pal);
+  Fl_Shared_Image::add_handler(File::previewJPG);
+  Fl_Shared_Image::add_handler(File::previewPNG);
+  Fl_Shared_Image::add_handler(File::previewBMP);
+  Fl_Shared_Image::add_handler(File::previewTGA);
+  Fl_Shared_Image::add_handler(File::previewGPL);
   fl_message_hotspot(0);
 //  Fl_File_Icon::load_system_icons();
 
