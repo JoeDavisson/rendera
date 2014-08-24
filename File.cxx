@@ -169,7 +169,7 @@ void File::load(Fl_Widget *, void *)
 
   Gui::view->zoom_fit(Gui::view->fit);
   Gui::view->draw_main(1);
-  undo_reset();
+  Undo::reset();
 }
 
 void File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)

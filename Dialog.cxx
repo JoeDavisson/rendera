@@ -327,7 +327,7 @@ void Dialog::hideCreatePalette()
 
   create_palette->hide();
 
-  quantize(Bitmap::main, colors);
+  Quantize::pca(Bitmap::main, colors);
 }
 
 void Dialog::cancelCreatePalette()

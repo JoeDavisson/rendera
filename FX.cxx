@@ -47,7 +47,7 @@ static void begin()
   bmp = Bitmap::main;
   overscroll = Bitmap::main->overscroll;
 
-  undo_push(overscroll, overscroll,
+  Undo::push(overscroll, overscroll,
             bmp->w - overscroll * 2, bmp->h - overscroll * 2, 0);
 }
 

@@ -22,11 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #define MAX_UNDO 32
 
-Bitmap *undo_stack[MAX_UNDO];
-int undo_resized[MAX_UNDO];
-int undo_current;
+static Bitmap *undo_stack[MAX_UNDO];
+static int undo_resized[MAX_UNDO];
+static int undo_current;
 
-void undo_init()
+void Undo::init()
 {
   int i;
 
@@ -39,7 +39,7 @@ void undo_init()
   undo_current = MAX_UNDO - 1;
 }
 
-void undo_reset()
+void Undo::reset()
 {
   int i;
 
@@ -54,7 +54,7 @@ void undo_reset()
   undo_current = MAX_UNDO - 1;
 }
 
-void undo_push(int x, int y, int w, int h, int resized)
+void Undo::push(int x, int y, int w, int h, int resized)
 {
   int i;
 
@@ -85,7 +85,7 @@ void undo_push(int x, int y, int w, int h, int resized)
   undo_current--;
 }
 
-void undo_pop()
+void Undo::pop()
 {
   if(undo_current >= MAX_UNDO - 1)
     return;

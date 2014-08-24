@@ -195,7 +195,7 @@ void Gui::init()
  // menubar->add("File/Print Hires Data", 0, (Fl_Callback *)print_hires_data, 0, FL_MENU_DIVIDER);
 //  menubar->add("File/Print Linear Data", 0, (Fl_Callback *)print_linear_data, 0, FL_MENU_DIVIDER);
   menubar->add("File/Quit", 0, (Fl_Callback *)quit, 0, 0);
-  menubar->add("Edit/Undo", 0, (Fl_Callback *)undo_pop, 0, 0);
+  menubar->add("Edit/Undo", 0, (Fl_Callback *)Undo::pop, 0, 0);
   menubar->add("Mode/RGBA", 0, (Fl_Callback *)checkRGBA, 0, FL_MENU_TOGGLE);
   menubar->add("Mode/Indexed", 0, (Fl_Callback *)checkIndexed, 0, FL_MENU_TOGGLE);
   menubar->add("Palette/Load", 0, (Fl_Callback *)Dialog::showLoadPalette, 0, 0);

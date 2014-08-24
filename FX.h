@@ -26,25 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class FX
 {
 public:
-  static Fl_Double_Window *rotate_hue;
-  static Field *rotate_hue_amount;
-  static Fl_Check_Button *rotate_hue_preserve;
-  static Fl_Button *rotate_hue_ok;
-  static Fl_Button *rotate_hue_cancel;
-
-  static Fl_Double_Window *restore;
-  static Fl_Check_Button *restore_normalize;
-  static Fl_Check_Button *restore_invert;
-  static Fl_Check_Button *restore_correct;
-  static Fl_Button *restore_ok;
-  static Fl_Button *restore_cancel;
-
-  static Fl_Double_Window *remove_dust;
-  static Field *remove_dust_amount;
-  static Fl_Check_Button *remove_dust_invert;
-  static Fl_Button *remove_dust_ok;
-  static Fl_Button *remove_dust_cancel;
-
   static void init();
 
   static void showNormalize();
@@ -82,6 +63,25 @@ public:
 
   static void showCorrect();
   static void doCorrect();
+
+  static Fl_Double_Window *rotate_hue;
+  static Field *rotate_hue_amount;
+  static Fl_Check_Button *rotate_hue_preserve;
+  static Fl_Button *rotate_hue_ok;
+  static Fl_Button *rotate_hue_cancel;
+
+  static Fl_Double_Window *restore;
+  static Fl_Check_Button *restore_normalize;
+  static Fl_Check_Button *restore_invert;
+  static Fl_Check_Button *restore_correct;
+  static Fl_Button *restore_ok;
+  static Fl_Button *restore_cancel;
+
+  static Fl_Double_Window *remove_dust;
+  static Field *remove_dust_amount;
+  static Fl_Check_Button *remove_dust_invert;
+  static Fl_Button *remove_dust_ok;
+  static Fl_Button *remove_dust_cancel;
 };
 
 #endif

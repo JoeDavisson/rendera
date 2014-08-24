@@ -30,7 +30,6 @@ int main(int argc, char **argv)
   Fl_Shared_Image::add_handler(File::previewTGA);
   Fl_Shared_Image::add_handler(File::previewGPL);
   fl_message_hotspot(0);
-//  Fl_File_Icon::load_system_icons();
 
   Bitmap::main = new Bitmap(640, 480, 64,
                             makecol(255, 255, 255), makecol(128, 128, 128));
@@ -51,7 +50,7 @@ int main(int argc, char **argv)
   Tool::offset = new Offset();
 
   FX::init();
-  undo_init();
+  Undo::init();
   Dialog::init();
   Gui::init();
 

@@ -53,11 +53,11 @@ rendera_SOURCES =     \
   Widget.h            \
   common.h            \
   main.cxx            \
-  quantize.cxx        \
-  quantize.h          \
+  Quantize.cxx        \
+  Quantize.h          \
   rendera.h           \
-  undo.cxx            \
-  undo.h
+  Undo.cxx            \
+  Undo.h
 
 
 DISTCLEANFILES = paths.h

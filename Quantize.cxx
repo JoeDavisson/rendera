@@ -161,7 +161,7 @@ static inline int merge24(const int c1, const int c2,
 }
 
 // pairwise-clustering algorithm
-void quantize(Bitmap *src, int size)
+void Quantize::pca(Bitmap *src, int size)
 {
   // popularity histogram
   float *list = new float[16777216];

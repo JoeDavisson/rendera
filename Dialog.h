@@ -26,6 +26,36 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Dialog
 {
 public:
+  static void init();
+  static void jpegQualityCloseCallback(Fl_Widget *, void *);
+  static void showJpegQuality();
+  static void showProgress(float);
+  static void updateProgress();
+  static void hideProgress();
+  static void showAbout();
+  static void hideAbout();
+  static void showNewImage();
+  static void hideNewImage();
+  static void cancelNewImage();
+  static void showCreatePalette();
+  static void hideCreatePalette();
+  static void cancelCreatePalette();
+  static void showLoadPalette();
+  static void showSavePalette();
+  static void showEditor();
+  static void hideEditor();
+  static void doEditorPalette(Widget *, void *);
+  static void doEditorSetHsv();
+  static void doEditorSetHsvSliders();
+  static void doEditorGetHsv();
+  static void doEditorInsert();
+  static void doEditorDelete();
+  static void doEditorReplace();
+  static void doEditorStoreUndo();
+  static void doEditorGetUndo();
+  static void doEditorRgbRamp();
+  static void doEditorHsvRamp();
+
   static Fl_Double_Window *jpeg_quality;
   static Field *jpeg_quality_amount;
   static Fl_Button *jpeg_quality_ok;
@@ -60,36 +90,6 @@ public:
   static Widget *editor_palette;
   static Widget *editor_color;
   static Fl_Button *editor_done;
-
-  static void init();
-  static void jpegQualityCloseCallback(Fl_Widget *, void *);
-  static void showJpegQuality();
-  static void showProgress(float);
-  static void updateProgress();
-  static void hideProgress();
-  static void showAbout();
-  static void hideAbout();
-  static void showNewImage();
-  static void hideNewImage();
-  static void cancelNewImage();
-  static void showCreatePalette();
-  static void hideCreatePalette();
-  static void cancelCreatePalette();
-  static void showLoadPalette();
-  static void showSavePalette();
-  static void showEditor();
-  static void hideEditor();
-  static void doEditorPalette(Widget *, void *);
-  static void doEditorSetHsv();
-  static void doEditorSetHsvSliders();
-  static void doEditorGetHsv();
-  static void doEditorInsert();
-  static void doEditorDelete();
-  static void doEditorReplace();
-  static void doEditorStoreUndo();
-  static void doEditorGetUndo();
-  static void doEditorRgbRamp();
-  static void doEditorHsvRamp();
 };
 
 #endif
