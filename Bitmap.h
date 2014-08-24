@@ -62,10 +62,7 @@ public:
   void point_stretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, int);
   void point_stretch_indexed(Bitmap *, Palette *, int, int, int, int, int, int, int, int, int, int, int);
   void integer_stretch(Bitmap *, int, int, int, int, int, int, int, int, int, int);
-//  void stretch_line(Bitmap *, int, int, int, int, int, int);
   void fast_stretch(Bitmap *, int, int, int, int, int, int, int, int);
-//  void convert_truecolor(int);
-//  void convert_indexed(int);
 
   static Bitmap *main;
   static Bitmap *preview;

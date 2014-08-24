@@ -1127,42 +1127,4 @@ void Bitmap::fast_stretch(Bitmap *dest,
     e += dy;
   }
 }
-/*
-// convert to truecolor
-void Bitmap::convert_truecolor(int bgr_order)
-{
-  int x, y;
-  int i = 0;
-
-  for(y = 0; y < h; y++)
-  {
-    for(x = 0; x < w; x++)
-    {
-      data[i] = convert_format(blend_fast_solid(((x >> 4) & 1) ^ ((y >> 4) & 1)
-                               ? 0xA0A0A0 : 0x606060, data[i],
-                               255 - geta(data[i])), bgr_order);
-      i++;
-    }
-  }
-}
-
-// convert to indexed
-void Bitmap::convert_indexed(int bgr_order)
-{
-  int x, y;
-  int i = 0;
-
-  for(y = 0; y < h; y++)
-  {
-    for(x = 0; x < w; x++)
-    {
-      if(geta(data[i]) < 128)
-        data[i] = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
-      else
-        data[i] = convert_format(Palette::main->data[Palette::main->lookup[data[i] & 0xFFFFFF]], bgr_order);
-      i++;
-    }
-  }
-}
-*/
 
