@@ -20,9 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-Dialog *dialog;
-Gui *gui;
-
 int main(int argc, char **argv)
 {
   Fl::visual(FL_DOUBLE | FL_RGB);
@@ -48,23 +45,21 @@ int main(int argc, char **argv)
   Bitmap::offset_buffer = new Bitmap(8, 8);
   Blend::bmp = Bitmap::main;
 
-  dialog = new Dialog();
-
   Tool::paint = new Paint();
   Tool::getcolor = new GetColor();
   Tool::crop = new Crop();
   Tool::offset = new Offset();
 
-  gui = new Gui();
-
-  // initialize some things
-  Palette::main->draw(gui->palette);
-  gui->tool->do_callback();
-  gui->palette->do_callback();
-  check_zoom();
-
   FX::init();
   undo_init();
+  Dialog::init();
+  Gui::init();
+
+  // initialize some things
+  Palette::main->draw(Gui::palette);
+  Gui::tool->do_callback();
+  Gui::palette->do_callback();
+  Gui::checkZoom();
 
   return Fl::run();
 }

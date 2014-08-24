@@ -20,7 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-extern Gui *gui;
 static Bitmap *bmp;
 static int overscroll;
 
@@ -149,7 +148,7 @@ void FX::doNormalize()
   double g_scale = 255.0 / (g_high - g_low);
   double b_scale = 255.0 / (b_high - b_low);
 
-  show_progress((float)bmp->h / 64);
+  Dialog::showProgress((float)bmp->h / 64);
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -165,12 +164,12 @@ void FX::doNormalize()
 
     if(!(y % 64))
     {
-      gui->view->draw_main(1);
-      update_progress();
+      Gui::view->draw_main(1);
+      Dialog::updateProgress();
     }
   }
 
-  hide_progress();
+  Dialog::hideProgress();
 }
 
 void FX::showEqualize()
@@ -224,7 +223,7 @@ void FX::doEqualize()
 
   double scale = 255.0 / size;
 
-  show_progress((float)bmp->h / 64);
+  Dialog::showProgress((float)bmp->h / 64);
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -244,12 +243,12 @@ void FX::doEqualize()
 
     if(!(y % 64))
     {
-      gui->view->draw_main(1);
-      update_progress();
+      Gui::view->draw_main(1);
+      Dialog::updateProgress();
     }
   }
 
-  hide_progress();
+  Dialog::hideProgress();
 
   delete[] list_r;
   delete[] list_g;
@@ -332,7 +331,7 @@ void FX::doValueStretch()
   }
   double scale = 255.0 / size;
 
-  show_progress((float)bmp->h / 64);
+  Dialog::showProgress((float)bmp->h / 64);
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -360,12 +359,12 @@ void FX::doValueStretch()
 
     if(!(y % 64))
     {
-      gui->view->draw_main(1);
-      update_progress();
+      Gui::view->draw_main(1);
+      Dialog::updateProgress();
     }
   }
 
-  hide_progress();
+  Dialog::hideProgress();
 
   delete[] list_r;
   delete[] list_g;
@@ -413,7 +412,7 @@ void FX::doSaturate()
 
   double scale = 255.0 / size;
 
-  show_progress((float)bmp->h / 64);
+  Dialog::showProgress((float)bmp->h / 64);
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -437,12 +436,12 @@ void FX::doSaturate()
 
     if(!(y % 64))
     {
-      gui->view->draw_main(1);
-      update_progress();
+      Gui::view->draw_main(1);
+      Dialog::updateProgress();
     }
   }
 
-  hide_progress();
+  Dialog::hideProgress();
 
   delete[] list_s;
 }
@@ -488,7 +487,7 @@ void FX::doRotateHue(int amount)
 
   int hh = amount * 4.277;
 
-  show_progress((float)bmp->h / 64);
+  Dialog::showProgress((float)bmp->h / 64);
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -512,17 +511,17 @@ void FX::doRotateHue(int amount)
 
     if(!(y % 64))
     {
-      gui->view->draw_main(1);
-      update_progress();
+      Gui::view->draw_main(1);
+      Dialog::updateProgress();
     }
   }
 
-  hide_progress();
+  Dialog::hideProgress();
 }
 
 void FX::cancelRotateHue()
 {
-  hide_progress();
+  Dialog::hideProgress();
   rotate_hue->hide();
 }
 
@@ -537,7 +536,7 @@ void FX::doInvert()
 {
   int x, y;
 
-  show_progress((float)bmp->h / 64);
+  Dialog::showProgress((float)bmp->h / 64);
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -549,12 +548,12 @@ void FX::doInvert()
 
     if(!(y % 64))
     {
-      gui->view->draw_main(1);
-      update_progress();
+      Gui::view->draw_main(1);
+      Dialog::updateProgress();
     }
   }
 
-  hide_progress();
+  Dialog::hideProgress();
 }
 
 // restore
@@ -615,7 +614,7 @@ void FX::doRestore()
   double ba = (256.0 / (256 - bb)) / sqrt(256.0 / (bb + 1));
 
   // begin restore
-  show_progress((float)bmp->h / 64);
+  Dialog::showProgress((float)bmp->h / 64);
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -640,17 +639,17 @@ void FX::doRestore()
 
     if(!(y % 64))
     {
-      gui->view->draw_main(1);
-      update_progress();
+      Gui::view->draw_main(1);
+      Dialog::updateProgress();
     }
   }
 
-  hide_progress();
+  Dialog::hideProgress();
 }
 
 void FX::cancelRestore()
 {
-  hide_progress();
+  Dialog::hideProgress();
   restore->hide();
 }
 
@@ -695,7 +694,7 @@ void FX::doRemoveDust(int amount)
   int r, g, b;
   int test, avg;
 
-  show_progress((float)bmp->h / 64);
+  Dialog::showProgress((float)bmp->h / 64);
 
   for(y = (overscroll + 1); y < bmp->h - (overscroll + 1); y++)
   {
@@ -727,17 +726,17 @@ void FX::doRemoveDust(int amount)
 
     if(!(y % 64))
     {
-      gui->view->draw_main(1);
-      update_progress();
+      Gui::view->draw_main(1);
+      Dialog::updateProgress();
     }
   }
 
-  hide_progress();
+  Dialog::hideProgress();
 }
 
 void FX::cancelRemoveDust()
 {
-  hide_progress();
+  Dialog::hideProgress();
   remove_dust->hide();
 }
 
@@ -752,7 +751,7 @@ void FX::doColorize()
 {
   int x, y;
 
-  show_progress((float)bmp->h / 64);
+  Dialog::showProgress((float)bmp->h / 64);
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -778,12 +777,12 @@ void FX::doColorize()
 
     if(!(y % 64))
     {
-      gui->view->draw_main(1);
-      update_progress();
+      Gui::view->draw_main(1);
+      Dialog::updateProgress();
     }
   }
 
-  hide_progress();
+  Dialog::hideProgress();
 }
 
 void FX::showCorrect()
@@ -801,7 +800,7 @@ void FX::doCorrect()
 {
   int x, y;
 
-  show_progress((float)bmp->h / 64);
+  Dialog::showProgress((float)bmp->h / 64);
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -836,11 +835,11 @@ void FX::doCorrect()
 
     if(!(y % 64))
     {
-      gui->view->draw_main(1);
-      update_progress();
+      Gui::view->draw_main(1);
+      Dialog::updateProgress();
     }
   }
 
-  hide_progress();
+  Dialog::hideProgress();
 }
 

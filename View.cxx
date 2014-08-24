@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-extern Gui *gui;
-
 static inline void grid_setpixel(const Bitmap *bmp, const int x, const int y,
                                  const int c, const int t)
 {
@@ -122,7 +120,7 @@ int View::handle(int event)
     case FL_UNFOCUS:
       return 1;
     case FL_ENTER:
-      switch(gui->tool->var)
+      switch(Gui::tool->var)
       {
         case 1:
           window()->cursor(FL_CURSOR_CROSS);
@@ -503,7 +501,7 @@ void View::zoom_in(int x, int y)
   if(tool->started)
     tool->stroke->preview(backbuf, ox, oy, zoom);
 
-  check_zoom();
+  Gui::checkZoom();
 }
 
 void View::zoom_out(int x, int y)
@@ -537,7 +535,7 @@ void View::zoom_out(int x, int y)
   if(tool->started)
     tool->stroke->preview(backbuf, ox, oy, zoom);
 
-  check_zoom();
+  Gui::checkZoom();
 }
 
 void View::zoom_fit(int fitting)
@@ -565,7 +563,7 @@ void View::zoom_fit(int fitting)
 
   fit = 1;
   draw_main(1);
-  check_zoom();
+  Gui::checkZoom();
 }
 
 void View::zoom_one()
@@ -575,7 +573,7 @@ void View::zoom_one()
   ox = 0;
   oy = 0;
   draw_main(1);
-  check_zoom();
+  Gui::checkZoom();
 }
 
 void View::scroll(int dir, int amount)

@@ -51,11 +51,7 @@ rendera_SOURCES =     \
   View.h              \
   Widget.cxx          \
   Widget.h            \
-  check.cxx           \
-  check.h             \
   common.h            \
-  dialog_callback.cxx \
-  dialog_callback.h   \
   main.cxx            \
   quantize.cxx        \
   quantize.h          \

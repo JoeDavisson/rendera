@@ -207,7 +207,7 @@ void Crop::drag(View *view)
   view->draw_main(1);
   stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
   view->redraw();
-  check_crop_values();
+  Gui::checkCropValues();
 }
 
 void Crop::release(View *view)

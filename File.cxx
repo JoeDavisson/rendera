@@ -27,9 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <jpeglib.h>
 #include <setjmp.h>
 
-extern Gui *gui;
-extern Dialog *dialog;
-
 #ifndef WINDOWS
 // bmp structures
 #pragma pack(1)
@@ -170,8 +167,8 @@ void File::load(Fl_Widget *, void *)
   delete Map::main;
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
 
-  gui->view->zoom_fit(gui->view->fit);
-  gui->view->draw_main(1);
+  Gui::view->zoom_fit(Gui::view->fit);
+  Gui::view->draw_main(1);
   undo_reset();
 }
 
@@ -797,9 +794,9 @@ void File::savePNG(const char *fn)
 
 void File::saveJPG(const char *fn)
 {
-  show_jpeg_quality();
+  Dialog::showJpegQuality();
 
-  int quality = atoi(dialog->jpeg_quality_amount->value());
+  int quality = atoi(Dialog::jpeg_quality_amount->value());
   if(quality < 1)
     quality = 1;
   if(quality > 100)
@@ -969,10 +966,10 @@ Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int len)
   if(pal->max == 0)
     return 0;
 
-  pal->draw(gui->pal_preview);
+  pal->draw(Gui::pal_preview);
 
   Fl_RGB_Image *image =
-    new Fl_RGB_Image((unsigned char *)gui->pal_preview->bitmap->data,
+    new Fl_RGB_Image((unsigned char *)Gui::pal_preview->bitmap->data,
                      96, 96, 4, 0);
 
   delete pal;

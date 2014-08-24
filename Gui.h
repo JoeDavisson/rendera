@@ -26,88 +26,109 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Gui
 {
 public:
-  Gui();
-  virtual ~Gui();
+  static void init();
+  static void setMenuItem(const char *);
+  static void clearMenuItem(const char *);
 
-  void set_menu_item(const char *);
-  void clear_menu_item(const char *);
+  static void updateColor(int);
+  static void checkPalette(Widget *, void *);
+  static void checkZoomIn(Button *, void *);
+  static void checkZoomOut(Button *, void *);
+  static void checkZoomFit(ToggleButton *, void *);
+  static void checkZoomOne(Button *, void *);
+  static void checkZoom();
+  static void checkGrid(ToggleButton *, void *);
+  static void checkGridX(Field *, void *);
+  static void checkGridY(Field *, void *);
+  static void checkPaintSize(Widget *, void *);
+  static void checkPaintShape(Widget *, void *);
+  static void checkPaintStroke(Widget *, void *);
+  static void checkPaintEdge(Widget *, void *);
+  static void checkPaintSmooth(Widget *, void *);
+  static void checkTool(Widget *, void *);
+  static void checkColor(Widget *, void *);
+  static void checkHue(Widget *, void *);
+  static void checkSatVal(Widget *, void *);
+  static void checkTrans(Widget *, void *);
+  static void checkBlend(Widget *, void *);
+  static void checkWrap(Widget *, void *);
+  static void checkClone(Widget *, void *);
+  static void checkMirror(Widget *, void *);
+  static void checkOrigin(Widget *, void *);
+  static void checkConstrain(Widget *, void *);
+  static void checkCropDo();
+  static void checkCropValues();
+  static void checkRGBA();
+  static void checkIndexed();
 
   // window
-  Fl_Double_Window *window;
+  static Fl_Double_Window *window;
   //Fl_Group *group_main;
-  Fl_Menu_Bar *menubar;
+  static Fl_Menu_Bar *menubar;
 
   // containers
-  Fl_Group *group_top;
-  Fl_Group *group_left;
+  static Fl_Group *group_top;
+  static Fl_Group *group_left;
 
   // panels
-  Fl_Group *top_left;
-  Fl_Group *top_right;
-  Fl_Group *tools;
-  Fl_Group *paint;
-  Fl_Group *crop;
-  Fl_Group *getcolor;
-  Fl_Group *offset;
-  Fl_Group *right;
-  Fl_Group *bottom;
-  Fl_Group *middle;
+  static Fl_Group *top_left;
+  static Fl_Group *top_right;
+  static Fl_Group *tools;
+  static Fl_Group *paint;
+  static Fl_Group *crop;
+  static Fl_Group *getcolor;
+  static Fl_Group *offset;
+  static Fl_Group *right;
+  static Fl_Group *bottom;
+  static Fl_Group *middle;
 
   // top left
-  Widget *logo;
+  static Widget *logo;
 
   //top right
-  ToggleButton *zoom_fit;
-  Button *zoom_one;
-  Button *zoom_in;
-  Button *zoom_out;
-  Field *zoom;
-  ToggleButton *grid;
-  Field *gridx;
-  Field *gridy;
+  static ToggleButton *zoom_fit;
+  static Button *zoom_one;
+  static Button *zoom_in;
+  static Button *zoom_out;
+  static Field *zoom;
+  static ToggleButton *grid;
+  static Field *gridx;
+  static Field *gridy;
 
   // tools
-  Widget *tool;
+  static Widget *tool;
 
   // options
-  Widget *paint_brush;
-  Widget *paint_size;
-  Widget *paint_stroke;
-  Widget *paint_shape;
-  Widget *paint_edge;
-  Widget *paint_smooth;
+  static Widget *paint_brush;
+  static Widget *paint_size;
+  static Widget *paint_stroke;
+  static Widget *paint_shape;
+  static Widget *paint_edge;
+  static Widget *paint_smooth;
 
-  Field *crop_x;
-  Field *crop_y;
-  Field *crop_w;
-  Field *crop_h;
-  Fl_Button *crop_do;
+  static Field *crop_x;
+  static Field *crop_y;
+  static Field *crop_w;
+  static Field *crop_h;
+  static Fl_Button *crop_do;
 
   // right
-  Widget *pal_preview;
-  Widget *palette;
-  Widget *hue;
-  Widget *satval;
-//  Widget *val;
-//  Widget *color;
-  Widget *trans;
-//  Widget *blend;
-  Fl_Choice *blend;
+  static Widget *pal_preview;
+  static Widget *palette;
+  static Widget *hue;
+  static Widget *satval;
+  static Widget *trans;
+  static Fl_Choice *blend;
 
   // bottom
-  ToggleButton *wrap;
-  ToggleButton *clone;
-  Widget *mirror;
-  Widget *origin;
-  Widget *constrain;
+  static ToggleButton *wrap;
+  static ToggleButton *clone;
+  static Widget *mirror;
+  static Widget *origin;
+  static Widget *constrain;
 
   // view
-  View *view;
-
-  // bitmaps
-  Bitmap *bitmap_brush;
-  Bitmap *bitmap_palette;
-  Bitmap *bitmap_view;
+  static View *view;
 };
 
 #endif

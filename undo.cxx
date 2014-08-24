@@ -22,8 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #define MAX_UNDO 32
 
-extern Gui *gui;
-
 Bitmap *undo_stack[MAX_UNDO];
 int undo_resized[MAX_UNDO];
 int undo_current;
@@ -101,8 +99,8 @@ void undo_pop()
                               undo_stack[undo_current]->h, 64,
                               makecol(255, 255, 255),
                               makecol(128, 128, 128));
-    gui->view->ox = 0;
-    gui->view->oy = 0;
+    Gui::view->ox = 0;
+    Gui::view->oy = 0;
   }
 
   undo_stack[undo_current]->blit(Bitmap::main, 0, 0,
@@ -111,6 +109,6 @@ void undo_pop()
                                  undo_stack[undo_current]->w,
                                  undo_stack[undo_current]->h);
 
-  gui->view->draw_main(1);
+  Gui::view->draw_main(1);
 }
 

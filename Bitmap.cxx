@@ -22,8 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #define XOR_VALUE(x, y) ( ((x & 1) ^ (y & 1)) ? 0x00FFFFFF : 0x00808080)
 
-extern Gui *gui;
-
 Bitmap *Bitmap::main;
 Bitmap *Bitmap::preview;
 Bitmap *Bitmap::clone_buffer;
@@ -600,7 +598,7 @@ void Bitmap::setpixel_clone(int x, int y, int c2, int t)
       break;
   }
 
-  Stroke *stroke = gui->view->tool->stroke;
+  Stroke *stroke = Gui::view->tool->stroke;
 
   if(x1 >= stroke->x1 && x1 <= stroke->x2 &&
      y1 >= stroke->y1 && y1 <= stroke->y2)
@@ -663,7 +661,7 @@ void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
   while(y1 > cb)
     y1 -= ch;
 
-  Stroke *stroke = gui->view->tool->stroke;
+  Stroke *stroke = Gui::view->tool->stroke;
 
   if(x1 >= stroke->x1 && x1 <= stroke->x2 &&
      y1 >= stroke->y1 && y1 <= stroke->y2)

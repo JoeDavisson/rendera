@@ -66,14 +66,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Field.h"
 #include "Separator.h"
 #include "quantize.h"
-#include "check.h"
-//#include "preview.h"
-#include "dialog_callback.h"
 #include "Dialog.h"
 #include "FX.h"
 #include "File.h"
-//#include "load.h"
-//#include "save.h"
 #include "Gui.h"
 
 #define MIN(x, y)          (((x) < (y)) ? (x) : (y))

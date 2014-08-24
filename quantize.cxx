@@ -22,9 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #define SHIFT 12
 
-extern Gui *gui;
-extern Dialog *dialog;
-
 // qsort callback to sort palette by luminance
 static int comp_lum(const void *a, const void *b)
 {
@@ -263,7 +260,7 @@ void quantize(Bitmap *src, int size)
     }
   }
 
-  show_progress(count - rep);
+  Dialog::showProgress(count - rep);
 
   while(count > rep)
   {
@@ -312,10 +309,10 @@ void quantize(Bitmap *src, int size)
       pos += (1 << SHIFT);
     }
 
-    update_progress();
+    Dialog::updateProgress();
   }
 
-  hide_progress();
+  Dialog::hideProgress();
 
   // build palette
   int index = 0;
@@ -344,8 +341,8 @@ void quantize(Bitmap *src, int size)
   delete[] list;
 
   // redraw palette widget
-  Palette::main->draw(gui->palette);
-  gui->palette->redraw();
+  Palette::main->draw(Gui::palette);
+  Gui::palette->redraw();
   Palette::main->fill_lookup();
 }
 
