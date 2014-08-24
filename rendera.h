@@ -47,6 +47,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/fl_ask.H>
 
 #include "common.h"
+
+/*
+#include "Palette.h"
 #include "Bitmap.h"
 #include "Blend.h"
 #include "Map.h"
@@ -60,7 +63,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "GetColor.h"
 #include "Crop.h"
 #include "Widget.h"
-#include "Palette.h"
 #include "Button.h"
 #include "ToggleButton.h"
 #include "Field.h"
@@ -70,6 +72,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "FX.h"
 #include "File.h"
 #include "Gui.h"
+*/
 
 #define MIN(x, y)          (((x) < (y)) ? (x) : (y))
 #define MAX(x, y)          (((x) > (y)) ? (x) : (y))

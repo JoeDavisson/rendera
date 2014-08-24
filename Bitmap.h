@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef BITMAP_H
 #define BITMAP_H
 
+class Palette;
+
 #include "rendera.h"
 
 class Bitmap
@@ -57,12 +59,13 @@ public:
   void clip(int *, int *, int *, int *);
   void set_clip(int, int, int, int);
   void blit(Bitmap *, int, int, int, int, int, int);
-  void point_stretch(Bitmap *, int, int, int, int, int, int, int, int, int, int);
+  void point_stretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, int);
+  void point_stretch_indexed(Bitmap *, Palette *, int, int, int, int, int, int, int, int, int, int, int);
   void integer_stretch(Bitmap *, int, int, int, int, int, int, int, int, int, int);
 //  void stretch_line(Bitmap *, int, int, int, int, int, int);
   void fast_stretch(Bitmap *, int, int, int, int, int, int, int, int);
-  void convert_truecolor(int);
-  void convert_indexed(int);
+//  void convert_truecolor(int);
+//  void convert_indexed(int);
 
   static Bitmap *main;
   static Bitmap *preview;

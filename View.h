@@ -21,14 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef VIEW_H
 #define VIEW_H
 
-#include "rendera.h"
-
-// FIXME these forward declarations kinda suck
+class Bitmap;
 class Tool;
-class Paint;
-class Crop;
-class GetColor;
-class Offset;
+
+#include "rendera.h"
 
 class View : public Fl_Widget
 {

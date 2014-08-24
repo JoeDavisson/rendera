@@ -18,7 +18,11 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "rendera.h"
+#include "GetColor.h"
+#include "Bitmap.h"
+#include "Palette.h"
+#include "View.h"
+#include "Gui.h"
 
 static int inbox(int x, int y, int x1, int y1, int x2, int y2)
 {

@@ -18,7 +18,10 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "rendera.h"
+#include "Palette.h"
+#include "Widget.h"
+#include "Bitmap.h"
+#include "Blend.h"
 
 Palette *Palette::main;
 Palette *Palette::undo;

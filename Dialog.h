@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef DIALOG_H
 #define DIALOG_H
 
+class Field;
+class Widget;
+
 #include "rendera.h"
 
 class Dialog

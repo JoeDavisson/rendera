@@ -18,7 +18,13 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "rendera.h"
+#include "Paint.h"
+#include "Bitmap.h"
+#include "Map.h"
+#include "Blend.h"
+#include "Brush.h"
+#include "Stroke.h"
+#include "View.h"
 
 static inline int is_edge(Map *map, const int x, const int y)
 {

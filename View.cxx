@@ -18,7 +18,13 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "rendera.h"
+#include "View.h"
+#include "Bitmap.h"
+#include "Palette.h"
+#include "Tool.h"
+#include "Gui.h"
+#include "Widget.h"
+#include "Stroke.h"
 
 static inline void grid_setpixel(const Bitmap *bmp, const int x, const int y,
                                  const int c, const int t)
@@ -286,16 +292,16 @@ void View::draw_main(int refresh)
 
   backbuf->clear(makecol(128, 128, 128));
 
-  Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh,
-                              0, 0, dw, dh, overx, overy);
-
   switch(mode)
   {
     case 0:
-      backbuf->convert_truecolor(bgr_order);
+      Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh,
+                                  0, 0, dw, dh, overx, overy, bgr_order);
       break;
     case 1:
-      backbuf->convert_indexed(bgr_order);
+      Bitmap::main->point_stretch_indexed(backbuf, Palette::main,
+                                          ox, oy, sw, sh,
+                                          0, 0, dw, dh, overx, overy, bgr_order);
       break;
   }
 
@@ -396,16 +402,18 @@ void View::begin_move()
   // warp mouse here... (unsupported in fltk)
 
   backbuf->clear(makecol(128, 128, 128));
-  Bitmap::main->point_stretch(backbuf, 0, 0, Bitmap::main->w, Bitmap::main->h,
-                              px, py, pw, ph, 0, 0);
 
   switch(mode)
   {
     case 0:
-      backbuf->convert_truecolor(bgr_order);
+      Bitmap::main->point_stretch(backbuf,
+                                  0, 0, Bitmap::main->w, Bitmap::main->h,
+                                  px, py, pw, ph, 0, 0, bgr_order);
       break;
     case 1:
-      backbuf->convert_indexed(bgr_order);
+      Bitmap::main->point_stretch_indexed(backbuf, Palette::main, 0, 0,
+                                          Bitmap::main->w, Bitmap::main->h,
+                                          px, py, pw, ph, 0, 0, bgr_order);
       break;
   }
 

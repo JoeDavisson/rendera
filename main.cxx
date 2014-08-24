@@ -19,6 +19,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include "rendera.h"
+#include "Bitmap.h"
+#include "Map.h"
+#include "Palette.h"
+#include "Blend.h"
+#include "Brush.h"
+#include "FX.h"
+#include "Undo.h"
+#include "Dialog.h"
+#include "Gui.h"
+#include "Tool.h"
+#include "Paint.h"
+#include "GetColor.h"
+#include "Crop.h"
+#include "Offset.h"
+#include "File.h"
+#include "Widget.h"
 
 int main(int argc, char **argv)
 {

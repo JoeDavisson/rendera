@@ -18,7 +18,23 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "rendera.h"
+#include "Gui.h"
+#include "Bitmap.h"
+#include "Blend.h"
+#include "Brush.h"
+#include "Palette.h"
+#include "Widget.h"
+#include "Button.h"
+#include "ToggleButton.h"
+#include "Field.h"
+#include "View.h"
+#include "Undo.h"
+#include "Dialog.h"
+#include "File.h"
+#include "FX.h"
+#include "Separator.h"
+#include "Tool.h"
+#include "Stroke.h"
 
 // window
 Fl_Double_Window *Gui::window;

@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include "Blend.h"
+#include "Bitmap.h"
 
 int (*Blend::current)(int, int, int) = &trans;
 int Blend::xpos;

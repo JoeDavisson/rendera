@@ -18,7 +18,16 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "rendera.h"
+#include "FX.h"
+#include "Bitmap.h"
+#include "Blend.h"
+#include "Brush.h"
+#include "Dialog.h"
+#include "Field.h"
+#include "Separator.h"
+#include "Gui.h"
+#include "View.h"
+#include "Undo.h"
 
 static Bitmap *bmp;
 static int overscroll;

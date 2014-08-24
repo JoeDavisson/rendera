@@ -18,7 +18,11 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "rendera.h"
+#include "Offset.h"
+#include "Tool.h"
+#include "Bitmap.h"
+#include "View.h"
+#include "Stroke.h"
 
 Offset::Offset()
 {

@@ -18,7 +18,7 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "rendera.h"
+#include "Field.h"
 
 Field::Field(Fl_Group *g, int x, int y, int w, int h,
              const char *text, Fl_Callback *cb)

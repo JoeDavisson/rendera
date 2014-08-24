@@ -18,7 +18,13 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "rendera.h"
+#include "Bitmap.h"
+#include "Blend.h"
+#include "Palette.h"
+#include "Gui.h"
+#include "Stroke.h"
+#include "View.h"
+#include "Tool.h"
 
 #define XOR_VALUE(x, y) ( ((x & 1) ^ (y & 1)) ? 0x00FFFFFF : 0x00808080)
 
@@ -791,9 +797,10 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
   }
 }
 
-void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
-                                         int dx, int dy, int dw, int dh,
-                                         int overx, int overy)
+void Bitmap::point_stretch(Bitmap *dest,
+                           int sx, int sy, int sw, int sh,
+                           int dx, int dy, int dw, int dh,
+                           int overx, int overy, int bgr_order)
 {
   const int ax = ((float)dw / sw) * 256;
   const int ay = ((float)dh / sh) * 256;
@@ -854,7 +861,83 @@ void Bitmap::point_stretch(Bitmap *dest, int sx, int sy, int sw, int sh,
     for(x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 8);
-      *s++ = *(row[y1] + x1);
+      const int c = *(row[y1] + x1);
+      *s++ = convert_format(blend_fast_solid(((x >> 4) & 1) ^ ((y >> 4) & 1)
+                            ? 0xA0A0A0 : 0x606060, c,
+                            255 - geta(c)), bgr_order);
+    }
+  }
+}
+
+void Bitmap::point_stretch_indexed(Bitmap *dest, Palette *pal,
+                                   int sx, int sy, int sw, int sh,
+                                   int dx, int dy, int dw, int dh,
+                                   int overx, int overy, int bgr_order)
+{
+  const int ax = ((float)dw / sw) * 256;
+  const int ay = ((float)dh / sh) * 256;
+  const int bx = ((float)sw / dw) * 256;
+  const int by = ((float)sh / dh) * 256;
+
+  dw -= overx;
+  dh -= overy;
+
+  if(dx < dest->cl)
+  {
+    const int d = dest->cl - dx;
+    dx = dest->cl;
+    dw -= d;
+    sx += (d * ax) >> 8;
+    sw -= (d * ax) >> 8;
+  }
+
+  if(dx + dw > dest->cr)
+  {
+    const int d = dx + dw - dest->cr;
+    dw -= d;
+    sw -= (d * ax) >> 8;
+  }
+
+  if(dy < dest->ct)
+  {
+    const int d = dest->ct - dy;
+    dy = dest->ct;
+    dh -= d;
+    sy += (d * ay) >> 8;
+    sh -= (d * ay) >> 8;
+  }
+
+  if(dy + dh > dest->cb)
+  {
+    const int d = dy + dh - dest->cb;
+    dh -= d;
+    sh -= (d * ay) >> 8;
+  }
+
+  dw -= (dw - ((sw * ax) >> 8));
+  dh -= (dh - ((sh * ay) >> 8));
+
+  if(sw < 1 || sh < 1)
+    return;
+
+  if(dw < 1 || dh < 1)
+    return;
+
+  int x, y;
+
+  for(y = 0; y < dh; y++)
+  {
+    const int y1 = sy + ((y * by) >> 8);
+    int *s = dest->row[dy + y] + dx;
+
+    for(x = 0; x < dw; x++)
+    {
+      const int x1 = sx + ((x * bx) >> 8);
+      const int c = *(row[y1] + x1);
+      if(geta(c) < 128)
+        *s++ = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
+      else
+        *s++ = convert_format(pal->data[pal->lookup[c & 0xFFFFFF]], bgr_order);
     }
   }
 }
@@ -1044,7 +1127,7 @@ void Bitmap::fast_stretch(Bitmap *dest,
     e += dy;
   }
 }
-
+/*
 // convert to truecolor
 void Bitmap::convert_truecolor(int bgr_order)
 {
@@ -1081,4 +1164,5 @@ void Bitmap::convert_indexed(int bgr_order)
     }
   }
 }
+*/
 

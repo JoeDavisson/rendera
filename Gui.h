@@ -21,6 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef GUI_H
 #define GUI_H
 
+class Widget;
+class Button;
+class ToggleButton;
+class Field;
+class View;
+
 #include "rendera.h"
 
 class Gui
