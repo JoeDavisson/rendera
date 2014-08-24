@@ -36,16 +36,33 @@ static int comp_lum(const void *a, const void *b)
   return getl(c1) - getl(c2);
 }
 
-// 1D bilinear filter to stretch a palette
-// FIXME add gamma correction
-static void stretch_palette(int current, int target)
+// compute quantization error
+static inline float error24(const int c1, const int c2,
+                            const float f1, const float f2)
 {
-  int *temp = new int[256];
+  return ((f1 * f2) / (f1 + f2)) * diff24(c1, c2);
+}
+
+// merge two colors
+static inline int merge24(const int c1, const int c2,
+                          const float f1, const float f2)
+{
+  const int r = (f1 * getr(c1) + f2 * getr(c2)) / (f1 + f2);
+  const int g = (f1 * getg(c1) + f2 * getg(c2)) / (f1 + f2);
+  const int b = (f1 * getb(c1) + f2 * getb(c2)) / (f1 + f2);
+
+  return makecol_notrans(r, g, b);
+}
+
+// 1D bilinear filter to stretch a palette
+static void stretch_palette(int *data, int current, int target)
+{
+  int *temp = new int[target];
 
   float ax = (float)(current - 1) / (float)(target - 1);
 
   int *c[2];
-  c[0] = c[1] = &Palette::main->data[0];
+  c[0] = c[1] = &data[0];
 
   int x = 0;
 
@@ -87,9 +104,7 @@ static void stretch_palette(int current, int target)
   while(x < target);
 
   for(x = 0; x < target; x++)
-    Palette::main->data[x] = temp[x];
-
-  Palette::main->max = target;
+    data[x] = temp[x];
 
   delete[] temp;
 }
@@ -147,25 +162,7 @@ static int limit_colors(float *list, int *colors)
   return count;
 }
 
-// compute quantization error
-static inline float error24(const int c1, const int c2,
-                            const float f1, const float f2)
-{
-  return ((f1 * f2) / (f1 + f2)) * diff24(c1, c2);
-}
-
-// merge two colors
-static inline int merge24(const int c1, const int c2,
-                          const float f1, const float f2)
-{
-  const int r = (f1 * getr(c1) + f2 * getr(c2)) / (f1 + f2);
-  const int g = (f1 * getg(c1) + f2 * getg(c2)) / (f1 + f2);
-  const int b = (f1 * getb(c1) + f2 * getb(c2)) / (f1 + f2);
-
-  return makecol_notrans(r, g, b);
-}
-
-// pairwise-clustering algorithm
+// pairwise clustering algorithm
 void Quantize::pca(Bitmap *src, int size)
 {
   // popularity histogram
@@ -338,7 +335,10 @@ void Quantize::pca(Bitmap *src, int size)
 
   // stretch palette
   if(Palette::main->max != size)
-    stretch_palette(Palette::main->max, size);
+  {
+    stretch_palette(Palette::main->data, Palette::main->max, size);
+    Palette::main->max = size;
+  }
 
   // free memory
   delete[] err;
