@@ -373,6 +373,7 @@ void Gui::init()
   trans = new Widget(right, 8, y1, 96, 24, "Transparency", "data/transparency.png", 1, 24, (Fl_Callback *)checkTrans);
   y1 += 24 + 8;
   blend = new Fl_Choice(8, y1, 96, 24, "");
+  blend->textsize(10);
   blend->resize(right->x() + 8, right->y() + y1, 96, 24);
   blend->add("Normal");
   blend->add("Darken");
