@@ -44,17 +44,16 @@ int main(int argc, char **argv)
   Bitmap::offset_buffer = new Bitmap(8, 8);
   Blend::bmp = Bitmap::main;
 
-  Tool::paint = new Paint();
-  Tool::getcolor = new GetColor();
-  Tool::crop = new Crop();
-  Tool::offset = new Offset();
-
   FX::init();
   Undo::init();
   Dialog::init();
   Gui::init();
 
-  // initialize some things
+  Tool::paint = new Paint();
+  Tool::getcolor = new GetColor();
+  Tool::crop = new Crop();
+  Tool::offset = new Offset();
+
   Palette::main->draw(Gui::palette);
   Gui::tool->do_callback();
   Gui::palette->do_callback();
