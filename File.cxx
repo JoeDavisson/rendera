@@ -29,14 +29,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Field.h"
 #include "Widget.h"
 
-#ifdef WINDOWS
+#ifdef _WIN32
 #define HAVE_BOOLEAN
 #endif
 
 #include <jpeglib.h>
 #include <setjmp.h>
 
-#ifndef WINDOWS
+#ifndef _WIN32
 // bmp structures
 #pragma pack(1)
 typedef struct
