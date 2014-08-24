@@ -48,32 +48,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "common.h"
 
-/*
-#include "Palette.h"
-#include "Bitmap.h"
-#include "Blend.h"
-#include "Map.h"
-#include "Undo.h"
-#include "Stroke.h"
-#include "View.h"
-#include "Brush.h"
-#include "Tool.h"
-#include "Paint.h"
-#include "Offset.h"
-#include "GetColor.h"
-#include "Crop.h"
-#include "Widget.h"
-#include "Button.h"
-#include "ToggleButton.h"
-#include "Field.h"
-#include "Separator.h"
-#include "Quantize.h"
-#include "Dialog.h"
-#include "FX.h"
-#include "File.h"
-#include "Gui.h"
-*/
-
 #define MIN(x, y)          (((x) < (y)) ? (x) : (y))
 #define MAX(x, y)          (((x) > (y)) ? (x) : (y))
 #define MID(a, b, c)       (MAX(a, MIN(b, c)))
