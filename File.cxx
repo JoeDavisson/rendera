@@ -705,11 +705,11 @@ void File::saveTGA(const char *fn)
   write_uint16(0, out);
   write_uint16(w, out);
   write_uint16(h, out);
-  write_uint8(24, out);
+  write_uint8(32, out);
   write_uint8(32, out);
 
   int *p = bmp->row[overscroll] + overscroll;
-  unsigned char *linebuf = new unsigned char[w * 3];
+  unsigned char *linebuf = new unsigned char[w * 4];
 
   int x, y;
 
@@ -721,12 +721,13 @@ void File::saveTGA(const char *fn)
       linebuf[xx + 0] = (*p >> 16) & 0xff;
       linebuf[xx + 1] = (*p >> 8) & 0xff;
       linebuf[xx + 2] = *p & 0xff;
+      linebuf[xx + 3] = (*p >> 24) & 0xff;
       p++;
-      xx += 3;
+      xx += 4;
     }
     p += overscroll * 2;
 
-    fwrite(&linebuf[0], 1, w * 3, out);
+    fwrite(&linebuf[0], 1, w * 4, out);
   }
 
   delete[] linebuf;
