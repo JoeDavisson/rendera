@@ -64,19 +64,19 @@ int Blend::invert(int c1, int c2, int t)
 
 int Blend::trans(int c1, int c2, int t)
 {
-  int r = ((getr(c1) * t) + (getr(c2) * (255 - t))) / 255;
-  int g = ((getg(c1) * t) + (getg(c2) * (255 - t))) / 255;
-  int b = ((getb(c1) * t) + (getb(c2) * (255 - t))) / 255;
+  int r = getr(c2) + (t * (getr(c1) - getr(c2))) / 255;
+  int g = getg(c2) + (t * (getg(c1) - getg(c2))) / 255;
+  int b = getb(c2) + (t * (getb(c1) - getb(c2))) / 255;
 
   return makecola(r, g, b, geta(c1));
 }
 
 int Blend::trans_all(int c1, int c2, int t)
 {
-  int r = ((getr(c1) * t) + (getr(c2) * (255 - t))) / 255;
-  int g = ((getg(c1) * t) + (getg(c2) * (255 - t))) / 255;
-  int b = ((getb(c1) * t) + (getb(c2) * (255 - t))) / 255;
-  int a = ((geta(c1) * t) + (geta(c2) * (255 - t))) / 255;
+  int r = getr(c2) + (t * (getr(c1) - getr(c2))) / 255;
+  int g = getg(c2) + (t * (getg(c1) - getg(c2))) / 255;
+  int b = getb(c2) + (t * (getb(c1) - getb(c2))) / 255;
+  int a = geta(c2) + (t * (geta(c1) - geta(c2))) / 255;
 
   return makecola(r, g, b, a);
 }
