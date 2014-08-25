@@ -561,9 +561,20 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
     int xx = 0;
     for(x = 0; x < w; x++)
     {
-      *p++ = makecol(linebuf[xx + 0] & 0xFF,
-                     linebuf[xx + 1] & 0xFF,
-                     linebuf[xx + 2] & 0xFF);
+      if(depth == 3)
+      {
+        *p++ = makecol(linebuf[xx + 0] & 0xFF,
+                       linebuf[xx + 1] & 0xFF,
+                       linebuf[xx + 2] & 0xFF);
+      }
+      else if(depth == 4)
+      {
+        *p++ = makecola(linebuf[xx + 0] & 0xFF,
+                        linebuf[xx + 1] & 0xFF,
+                        linebuf[xx + 2] & 0xFF,
+                        linebuf[xx + 3] & 0xFF);
+      }
+
       xx += depth;
     }
     p += overscroll * 2;
