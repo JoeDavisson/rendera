@@ -471,10 +471,21 @@ void File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
 
     for(x = xstart; x != xend; x += negx ? -1 : 1)
     {
-      *(bitmap->row[y + overscroll] + x + overscroll) =
-                     makecol((linebuf[x * depth + 2] & 0xFF),
-                             (linebuf[x * depth + 1] & 0xFF),
-                             (linebuf[x * depth + 0] & 0xFF));
+      if(depth == 3)
+      {
+        *(bitmap->row[y + overscroll] + x + overscroll) =
+                       makecol((linebuf[x * depth + 2] & 0xFF),
+                               (linebuf[x * depth + 1] & 0xFF),
+                               (linebuf[x * depth + 0] & 0xFF));
+      }
+      else if(depth == 4)
+      {
+        *(bitmap->row[y + overscroll] + x + overscroll) =
+                       makecola((linebuf[x * depth + 2] & 0xFF),
+                                (linebuf[x * depth + 1] & 0xFF),
+                                (linebuf[x * depth + 0] & 0xFF),
+                                (linebuf[x * depth + 3] & 0xFF));
+      }
     }
   }
 
@@ -541,6 +552,7 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
 
   int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
   int depth = rowbytes / w;
+//FIXME cancel if not 24 or 32 bit
 
   png_bytep linebuf = new png_byte[rowbytes];
 
@@ -783,11 +795,11 @@ void File::savePNG(const char *fn)
 
   png_init_io(png_ptr, out);
   png_set_IHDR(png_ptr, info_ptr, w, h, 8,
-               PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+               PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE,
                PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
   png_write_info(png_ptr, info_ptr);
 
-  png_bytep linebuf = new png_byte[w * 3];
+  png_bytep linebuf = new png_byte[w * 4];
 
   int x, y;
 
@@ -795,11 +807,12 @@ void File::savePNG(const char *fn)
   {
     int *p = bmp->row[y + overscroll] + overscroll;
     // copy row
-    for(x = 0; x < w * 3; x += 3)
+    for(x = 0; x < w * 4; x += 4)
     {
       linebuf[x + 0] = getr(*p); 
       linebuf[x + 1] = getg(*p); 
       linebuf[x + 2] = getb(*p); 
+      linebuf[x + 3] = geta(*p); 
       p++;
     }
 
