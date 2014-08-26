@@ -60,9 +60,11 @@ rendera_SOURCES =     \
   Undo.h
 
 
-DISTCLEANFILES = paths.h
+nodist_rendera_SOURCES = paths.h
 BUILT_SOURCES = paths.h
-paths.h :
+CLEANFILES = paths.h
+# DISTCLEANFILES = paths.h
+paths.h : Makefile
 	echo '#ifndef PATHS_H' >$@
 	echo '#define PATHS_H' >>$@
 	echo >>$@
