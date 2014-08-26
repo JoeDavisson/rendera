@@ -129,6 +129,7 @@ static int brush_sizes[16] =
   32, 40, 48, 56, 64, 72, 80, 88
 };
 
+/*
 static void print_hires_data()
 {
   int x, y, i, j;
@@ -194,6 +195,7 @@ static void print_linear_data()
 
   printf("\n");
 }
+*/
 
 void Gui::init()
 {

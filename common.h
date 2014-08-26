@@ -21,67 +21,65 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef COMMON_H
 #define COMMON_H
 
-// need to recompile program if this file changes
+extern int seed;
 
-static int seed = 12345;
-
-static inline int rnd32(void)
+inline int rnd32(void)
 {
   seed = (seed << 17) ^ (seed >> 13) ^ (seed << 5);
   return seed;
 }
 
-static inline int makecol(const int r, const int g, const int b)
+inline int makecol(const int r, const int g, const int b)
 {
   return r | g << 8 | b << 16 | 0xFF000000;
 }
 
-static inline int makecola(const int r, const int g, const int b, const int a)
+inline int makecola(const int r, const int g, const int b, const int a)
 {
   return r | g << 8 | b << 16 | a << 24;
 }
 
-static inline int makecol_notrans(const int r, const int g, const int b)
+inline int makecol_notrans(const int r, const int g, const int b)
 {
   return r | g << 8 | b << 16;
 }
 
-static inline int geta(const int c)
+inline int geta(const int c)
 {
   return (c >> 24) & 255;
 }
 
-static inline int getr(const int c)
+inline int getr(const int c)
 {
   return c & 255;
 }
 
-static inline int getg(const int c)
+inline int getg(const int c)
 {
   return (c >> 8) & 255;
 }
 
-static inline int getb(const int c)
+inline int getb(const int c)
 {
   return (c >> 16) & 255;
 }
 
-static inline int getv(const int c)
+inline int getv(const int c)
 {
   return (getr(c) + getg(c) + getb(c)) / 3;
 }
 
-static inline int getl(const int c)
+inline int getl(const int c)
 {
   return ((54 * getr(c)) + (182 * getg(c)) + (19 * getb(c))) / 255;
 }
 
-static inline int SCALE(const int a, const int b)
+inline int SCALE(const int a, const int b)
 {
   return (a * (255 - b) / 255) + b;
 }
 
-static inline int diff24(const int c1, const int c2)
+inline int diff24(const int c1, const int c2)
 {
   const int r = getr(c1) - getr(c2);
   const int g = getg(c1) - getg(c2);
@@ -90,7 +88,7 @@ static inline int diff24(const int c1, const int c2)
   return r * r + g * g + b * b;
 }
 
-static inline int blend_fast_solid(const int c1, const int c2, const int t)
+inline int blend_fast_solid(const int c1, const int c2, const int t)
 {
   const int rb =
     (((((c1 & 0xFF00FF) - (c2 & 0xFF00FF)) * t) >> 8) + c2) & 0xFF00FF;
@@ -99,7 +97,7 @@ static inline int blend_fast_solid(const int c1, const int c2, const int t)
   return rb | g | 0xFF000000;
 }
 
-static inline int blend_fast_xor(const int c1, const int t)
+inline int blend_fast_xor(const int c1, const int t)
 {
   const int c2 = c1 ^ 0x00FFFFFF;
   const int rb =
@@ -109,7 +107,7 @@ static inline int blend_fast_xor(const int c1, const int t)
   return rb | g | 0xFF000000;
 }
 
-static inline int convert_format(int c, int bgr_order)
+inline int convert_format(int c, int bgr_order)
 {
   if(bgr_order)
     return makecol(getb(c), getg(c), getr(c));
@@ -117,7 +115,7 @@ static inline int convert_format(int c, int bgr_order)
     return c;
 }
 
-static inline uint8_t parse_uint8(unsigned char *&buffer)
+inline uint8_t parse_uint8(unsigned char *&buffer)
 {
   uint8_t num = buffer[0];
 
@@ -125,7 +123,7 @@ static inline uint8_t parse_uint8(unsigned char *&buffer)
   return num;
 }
 
-static uint16_t parse_uint16(unsigned char *&buffer)
+inline uint16_t parse_uint16(unsigned char *&buffer)
 {
   uint16_t num;
 
@@ -139,7 +137,7 @@ static uint16_t parse_uint16(unsigned char *&buffer)
   return num;
 }
 
-static uint32_t parse_uint32(unsigned char *&buffer)
+inline uint32_t parse_uint32(unsigned char *&buffer)
 {
   uint32_t num;
 
@@ -153,12 +151,12 @@ static uint32_t parse_uint32(unsigned char *&buffer)
   return num;
 }
 
-static void write_uint8(uint8_t num, FILE *out)
+inline void write_uint8(uint8_t num, FILE *out)
 {
   fputc(num, out);
 }
 
-static void write_uint16(uint16_t num, FILE *out)
+inline void write_uint16(uint16_t num, FILE *out)
 {
 //  #if BYTE_ORDER == BIG_ENDIAN
 //  fputc((num >> 8) & 0xff, out);
@@ -169,7 +167,7 @@ static void write_uint16(uint16_t num, FILE *out)
 //  #endif
 }
 
-static void write_uint32(uint32_t num, FILE *out)
+inline void write_uint32(uint32_t num, FILE *out)
 {
 //  #if BYTE_ORDER == BIG_ENDIAN
 //  fputc((num >> 24) & 0xff, out);
