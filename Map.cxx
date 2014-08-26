@@ -136,10 +136,10 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
   int x, y;
   int ex, ey;
 
-  long long int a = w / 2;
-  long long int b = h / 2;
-  long long int a2, b2;
-  long long int s, t;
+  int64_t a = w / 2;
+  int64_t b = h / 2;
+  int64_t a2, b2;
+  int64_t s, t;
 
   if(x1 > x2)
     SWAP(x1, x2);
@@ -229,10 +229,10 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
   int x, y;
   int ex, ey;
 
-  long long int a = w / 2;
-  long long int b = h / 2;
-  long long int a2, b2;
-  long long int s, t;
+  int64_t a = w / 2;
+  int64_t b = h / 2;
+  int64_t a2, b2;
+  int64_t s, t;
 
   if(x1 > x2)
     SWAP(x1, x2);
