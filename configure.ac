@@ -39,11 +39,21 @@ AC_CHECK_LIB([X11],[XInitThreads],,
 # Checks for header files.
 AC_CHECK_HEADERS([stdint.h stdlib.h])
 
+
 # Checks for typedefs, structures, and compiler characteristics.
+
 AC_C_INLINE
+
+AC_TYPE_UINT8_T
 AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
-AC_TYPE_UINT8_T
+AC_TYPE_UINT64_T
+
+AC_TYPE_INT8_T
+AC_TYPE_INT16_T
+AC_TYPE_INT32_T
+AC_TYPE_INT64_T
+
 
 # Checks for library functions.
 AC_CHECK_FUNCS([pow sqrt strcasecmp])
