@@ -41,6 +41,8 @@ public:
   static int smooth(int, int, int);
   static void hsv_to_rgb(int, int, int, int *, int *, int *);
   static void rgb_to_hsv(int, int, int, int *, int *, int *);
+  static void yuv_to_rgb(int, int, int, int *, int *, int *);
+  static void rgb_to_yuv(int, int, int, int *, int *, int *);
 
   static int (*current)(int, int, int);
   static int xpos, ypos;
