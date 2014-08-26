@@ -57,7 +57,7 @@ void Blend::set(int mode)
   }
 }
 
-int Blend::invert(int c1, int c2, int t)
+int Blend::invert(int c1, int /* c2 */, int /* t */)
 {
   return makecol(255 - getr(c1), 255 - getg(c1), 255 - getb(c1));
 }
@@ -187,17 +187,17 @@ int Blend::force_lum(int c, int dest_lum)
   return makecola(n[0], n[1], n[2], a);
 }
 
-int Blend::alpha_add(int c1, int c2, int t)
+int Blend::alpha_add(int c1, int /* c2 */, int t)
 {
   return makecola(getr(c1), getg(c1), getb(c1), (geta(c1) * t) / 255);
 }
 
-int Blend::alpha_sub(int c1, int c2, int t)
+int Blend::alpha_sub(int c1, int /* c2 */, int t)
 {
   return makecola(getr(c1), getg(c1), getb(c1), 255 - ((255 - geta(c1)) * t) / 255);
 }
 
-int Blend::smooth(int c1, int c2, int t)
+int Blend::smooth(int c1, int /* c2 */, int t)
 {
   int x = xpos;
   int y = ypos;

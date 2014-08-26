@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "File.h"
 #include "Widget.h"
 
-int main(int argc, char **argv)
+int main(int /* argc */, char** /* argv */)
 {
   Fl::visual(FL_DOUBLE | FL_RGB);
   Fl::background(192, 192, 192);

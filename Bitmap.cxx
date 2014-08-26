@@ -230,9 +230,7 @@ void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
   if(y1 == y2)
     return;
 
-  int x, y;
-
-  for(y = y1 + 1; y < y2; y++)
+  for( int y = y1 + 1; y < y2; y++)
   {
     *(row[y] + x1) = Blend::current(*(row[y] + x1), c, t);
     *(row[y] + x2) = Blend::current(*(row[y] + x2), c, t);

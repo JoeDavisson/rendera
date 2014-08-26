@@ -38,7 +38,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   bitmap = new Bitmap(png_image->w(), png_image->h());
   image = new Fl_RGB_Image((unsigned char *)bitmap->data, w, h, 4, 0);
 
-  int i;
+  /* int i; */
   int index = 0;
 
   int xx, yy;

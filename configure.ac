@@ -12,6 +12,7 @@ LT_INIT([dlopen])
 
 # Checks for programs.
 AC_PROG_CXX
+# AX_CXX_COMPILE_STDCXX_11
 # AC_PROG_CC
 
 
