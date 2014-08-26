@@ -136,6 +136,7 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
   int x, y;
   int ex, ey;
 
+  // need 64-bit values here, 32-bit will overflow on very large ovals
   int64_t a = w / 2;
   int64_t b = h / 2;
   int64_t a2, b2;
@@ -205,6 +206,7 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
         y--;
       }
     }
+
     setpixel(x1 + x + ex, y1 + y + ey, c);
     setpixel(x1 - x, y1 + y + ey, c);
     setpixel(x1 - x, y1 - y, c);
@@ -229,6 +231,7 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
   int x, y;
   int ex, ey;
 
+  // need 64-bit values here, 32-bit will overflow on very large ovals
   int64_t a = w / 2;
   int64_t b = h / 2;
   int64_t a2, b2;
@@ -298,6 +301,7 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
         y--;
       }
     }
+
     hline(x1 - x, y1 + y + ey, x1 + x + ex, c);
     hline(x1 - x, y1 - y, x1 + x + ex, c);
   }
@@ -547,6 +551,7 @@ void Map::polyfill(int *polycachex, int *polycachey, int polycount, int x1, int 
   for(y = y1; y < y2; y++)
   {
     unsigned char *p = row[y] + x1;
+
     for(x = x1; x < x2; x++)
     {
       int inside = 0;
@@ -554,6 +559,7 @@ void Map::polyfill(int *polycachex, int *polycachey, int polycount, int x1, int 
       int *py1 = &polycachey[0];
       int *px2 = &polycachex[1];
       int *py2 = &polycachey[1];
+
       for(i = 0; i < polycount - 1; i++)
       {
         if(*py1 <= y)
@@ -566,13 +572,16 @@ void Map::polyfill(int *polycachex, int *polycachey, int polycount, int x1, int 
           if((*py2 <= y) && (isleft(px1, py1, px2, py2, &x, &y) < 0))
             inside++;
         }
+
         px1++;
         py1++;
         px2++;
         py2++;
       }
+
       if(inside & 1)
         *p = c;
+
       p++;
     }
   }
