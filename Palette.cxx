@@ -89,6 +89,7 @@ void Palette::draw(Widget *widget)
   }
 
   int i = 0;
+
   for(y = 0; y < div; y++)
   {
     for(x = 0; x < div; x++)
@@ -97,7 +98,9 @@ void Palette::draw(Widget *widget)
         break;
       int x1 = x * step;
       int y1 = y * step;
-      widget->bitmap->rectfill(x1, y1, x1 + step - 1, y1 + step - 1, data[i], 0);
+
+      widget->bitmap->rectfill(x1, y1, x1 + step - 1, y1 + step - 1,
+                               data[i], 0);
       i++;
     }
   }
@@ -121,14 +124,24 @@ void Palette::set_default()
   int h, s, v;
   int index = 0;
 
-  int sat[12] = { 255, 255, 255, 255, 255, 255, 192, 160, 128, 96, 64, 32 };
-  int val[12] = { 96, 128, 160, 192, 224, 255, 255, 255, 255, 255, 255, 255 };
+  int sat[6] = { 255, 255, 255, 192, 128, 96 };
+  int val[6] = { 96, 128, 192, 255, 255, 255 };
 
-  for(v = 10; v >= 0; v--)
+  for(v = 5; v >= 0; v--)
   {
     for(h = 0; h < 12; h++)
     {
       Blend::hsv_to_rgb(h * 128, sat[v], val[v], &r, &g, &b);
+
+      data[index++] = makecol(r, g, b);
+    }
+  }
+
+  for(v = 4; v >= 0; v--)
+  {
+    for(h = 0; h < 12; h++)
+    {
+      Blend::hsv_to_rgb(h * 128, sat[v] / 2, val[v], &r, &g, &b);
 
       data[index++] = makecol(r, g, b);
     }
