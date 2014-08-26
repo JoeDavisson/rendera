@@ -121,7 +121,7 @@ void Palette::copy(Palette *dest)
 void Palette::set_default()
 {
   int r, g, b;
-  int h, s, v;
+  int h, /* s, */ v;
   int index = 0;
 
   int sat[6] = { 255, 255, 255, 192, 128, 96 };
@@ -254,7 +254,7 @@ void Palette::load(const char *fn)
   char line[256];
   int ch;
   int len = 0;
-  int i, j;
+  int i /*, j */;
 
   while(1)
   {

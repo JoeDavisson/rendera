@@ -259,8 +259,8 @@ void Stroke::begin(int x, int y, int ox, int oy, float zoom)
   Map *map = Map::main;
 
   int r = brush->size / 2;
-  int inc = brush->size & 1;
-  int i;
+  /* int inc = brush->size & 1; */
+  /* int i; */
 
   lastx = x;
   lasty = y;
@@ -293,9 +293,9 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
   Map *map = Map::main;
 
   int r = brush->size / 2;
-  int inc = brush->size & 1;
+  /* int inc = brush->size & 1; */
   int w, h;
-  int i;
+  /* int i; */
 
   if(x - r - 1 < x1)
     x1 = x - r - 1;
@@ -447,9 +447,14 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
   lasty = y;
 }
 
-void Stroke::end(int xx, int yy, int ox, int oy, float zoom)
+void
+Stroke::end( int /* xx */,
+             int /* yy */,
+             int /* ox */,
+             int /* oy */,
+             float /* zoom */)
 {
-  Brush *brush = Brush::main;
+  /* Brush *brush = Brush::main; */
   Map *map = Map::main;
 
   int w, h;

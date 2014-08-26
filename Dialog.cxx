@@ -170,7 +170,7 @@ void Dialog::init()
   editor->end(); 
 }
 
-void Dialog::jpegQualityCloseCallback(Fl_Widget *widget, void *)
+void Dialog::jpegQualityCloseCallback(Fl_Widget */* widget */, void *)
 {
   // needed to prevent quality dialog from being closed
   // by the window manager

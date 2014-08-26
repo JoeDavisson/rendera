@@ -2,8 +2,8 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-#AM_CXXFLAGS = -Wno-unused -Wall -Wextra -Werror -pedantic-errors # -rdynamic
-AM_CXXFLAGS = -Wall -Wno-unused -fmax-errors=5
+#AM_CXXFLAGS = -Wall -Wno-unused -fmax-errors=5
+AM_CXXFLAGS = -Wall -Wextra # -Werror -pedantic-errors # -rdynamic
 
 
 bin_PROGRAMS = rendera

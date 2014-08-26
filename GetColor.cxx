@@ -64,11 +64,11 @@ void GetColor::drag(View *view)
   push(view);
 }
 
-void GetColor::release(View *view)
+void GetColor::release(View * /* view */)
 {
 }
 
-void GetColor::move(View *view)
+void GetColor::move(View * /* view */)
 {
 }
 

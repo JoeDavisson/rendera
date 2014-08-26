@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <jpeglib.h>
 #include <setjmp.h>
+#include <cstring>
 
 #ifndef _WIN32
 // bmp structures
@@ -114,6 +115,17 @@ static void jpg_exit(j_common_ptr cinfo)
   longjmp(myerr->setjmp_buffer, 1);
 }
 
+
+namespace
+{
+  boolean _is_jpeg_header( void const*hdr )
+  {
+    static unsigned char const arr[2] = { 0xff, 0xd8 } ;
+    return ( 0 == memcmp( arr, hdr , 2 ) );
+  }
+}
+
+
 void File::load(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
@@ -159,7 +171,7 @@ void File::load(Fl_Widget *, void *)
 
   if(png_sig_cmp(header, 0, 8) == 0)
     File::loadPNG(fn, Bitmap::main, 64);
-  else if(memcmp(header, (const unsigned char[2]){ 0xff, 0xd8 }, 2) == 0)
+  else if( _is_jpeg_header( header ) )
     File::loadJPG(fn, Bitmap::main, 64);
   else if(memcmp(header, "BM", 2) == 0)
     File::loadBMP(fn, Bitmap::main, 64);
@@ -214,8 +226,8 @@ void File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
 
   int w = row_stride / bytes;
   int h = cinfo.output_height;
-  int aw = w + overscroll * 2;
-  int ah = h + overscroll * 2;
+  /* int aw = w + overscroll * 2; */
+  /* int ah = h + overscroll * 2; */
 
   delete bitmap;
   bitmap = new Bitmap(w, h, overscroll,
@@ -267,7 +279,7 @@ void File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
   if(!in)
     return;
 
-  BITMAPFILEHEADER bh;
+  /* BITMAPFILEHEADER bh; */
   BITMAPINFOHEADER bm;
 
   unsigned char buffer[64];
@@ -281,11 +293,11 @@ void File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
 
   unsigned char *p = buffer;
 
-  bh.bfType = parse_uint16(p);
-  bh.bfSize = parse_uint32(p);
-  bh.bfReserved1 = parse_uint16(p);
-  bh.bfReserved2 = parse_uint16(p);
-  bh.bfOffBits = parse_uint32(p);
+  /* bh.bfType = parse_uint16(p); */
+  /* bh.bfSize = parse_uint32(p); */
+  /* bh.bfReserved1 = parse_uint16(p); */
+  /* bh.bfReserved2 = parse_uint16(p); */
+  /* bh.bfOffBits = parse_uint32(p); */
 
   if(fread(buffer, 1, sizeof(BITMAPINFOHEADER), in) != (unsigned)sizeof(BITMAPINFOHEADER))
   {
@@ -335,8 +347,8 @@ void File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
   w = ABS(w);
   h = ABS(h);
 
-  int aw = w + overscroll * 2;
-  int ah = h + overscroll * 2;
+  /* int aw = w + overscroll * 2; */
+  /* int ah = h + overscroll * 2; */
 
   delete bitmap;
   bitmap = new Bitmap(w, h, overscroll,
@@ -431,8 +443,8 @@ void File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
   int w = header.w;
   int h = header.h;
 
-  int aw = w + overscroll * 2;
-  int ah = h + overscroll * 2;
+  /* int aw = w + overscroll * 2; */
+  /* int ah = h + overscroll * 2; */
 
   delete bitmap;
   bitmap = new Bitmap(w, h, overscroll,
@@ -543,10 +555,10 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
   int w = png_get_image_width(png_ptr, info_ptr);
   int h = png_get_image_height(png_ptr, info_ptr);
 
-  png_byte color_type = png_get_color_type(png_ptr, info_ptr);
-  png_byte bpp = png_get_bit_depth(png_ptr, info_ptr);
+  /* png_byte color_type = png_get_color_type(png_ptr, info_ptr); */
+  /* png_byte bpp = png_get_bit_depth(png_ptr, info_ptr); */
 
-  int passes = png_set_interlace_handling(png_ptr);
+  /* int passes = png_set_interlace_handling(png_ptr); */
 
   png_read_update_info(png_ptr, info_ptr);
 
@@ -558,8 +570,8 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
 
   int x, y;
 
-  int aw = w + overscroll * 2;
-  int ah = h + overscroll * 2;
+  /* int aw = w + overscroll * 2; */
+  /* int ah = h + overscroll * 2; */
 
   delete bitmap;
   bitmap = new Bitmap(w, h, overscroll,
@@ -845,7 +857,7 @@ void File::saveJPG(const char *fn)
   struct jpeg_error_mgr jerr;
   JSAMPROW row_pointer[1];
   JSAMPLE *linebuf;
-  int row_stride;
+  /* int row_stride; */
 
   Bitmap *bmp = Bitmap::main;
   int overscroll = Bitmap::main->overscroll;
@@ -874,9 +886,9 @@ void File::saveJPG(const char *fn)
 
   jpeg_start_compress(&cinfo, TRUE);
 
-  row_stride = w * 3;
+  /* row_stride = w * 3; */
 
-  int x, y;
+  int x/* , y */;
 
   int *p = bmp->row[overscroll] + overscroll;
 
@@ -903,7 +915,7 @@ void File::saveJPG(const char *fn)
   fclose(out);
 }
 
-Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int len)
+Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int /* len */)
 {
   if(png_sig_cmp(header, 0, 8) != 0)
     return 0;
@@ -917,10 +929,9 @@ Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int len)
   return image;
 }
 
-Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int len)
+Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int /* len */)
 {
-  if(memcmp(header, (const unsigned char[2]){ 0xff, 0xd8 }, 2) != 0)
-    return 0;
+  if( ! _is_jpeg_header( header ) ) return 0 ;
 
   loadJPG(fn, Bitmap::preview, 0);
 
@@ -931,7 +942,7 @@ Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int len)
   return image;
 }
 
-Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int len)
+Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int /* len */)
 {
   if(memcmp(header, "BM", 2) != 0)
     return 0;
@@ -945,7 +956,7 @@ Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int len)
   return image;
 }
 
-Fl_Image *File::previewTGA(const char *fn, unsigned char *header, int len)
+Fl_Image *File::previewTGA(const char *fn, unsigned char */* header */, int /* len */)
 {
   // get file extension
   char ext[16];
@@ -974,7 +985,7 @@ Fl_Image *File::previewTGA(const char *fn, unsigned char *header, int len)
   return image;
 }
 
-Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int len)
+Fl_Image *File::previewGPL(const char *fn, unsigned char */* header */, int /* len */)
 {
   // get file extension
   char ext[16];

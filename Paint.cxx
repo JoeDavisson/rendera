@@ -109,10 +109,10 @@ Paint::~Paint()
 {
 }
 
-void Paint::render_begin_normal(View *view)
+void Paint::render_begin_normal(View * /* view */)
 {
   Brush *brush = Brush::main;
-  Map *map = Map::main;
+  /* Map *map = Map::main; */
 
   soft_trans = 255;
   float j = (float)(3 << brush->edge);
@@ -125,10 +125,9 @@ void Paint::render_begin_normal(View *view)
   render_end = j;
 }
 
-void Paint::render_begin_smooth(View *view)
+void Paint::render_begin_smooth(View * /* view */)
 {
   Brush *brush = Brush::main;
-  Map *map = Map::main;
 
   int x, y;
 
@@ -141,7 +140,7 @@ void Paint::render_begin_smooth(View *view)
   {
     for(x = stroke->x1; x <= stroke->x2; x++)
     {
-      if(map->getpixel(x, y) && is_edge(map, x, y))
+      if((Map::main)->getpixel(x, y) && is_edge((Map::main), x, y))
       {
         stroke->edgecachex[render_count] = x;
         stroke->edgecachey[render_count] = y;
@@ -343,7 +342,7 @@ int Paint::render_callback_smooth(View *view)
 int Paint::render_callback(View *view)
 {
   Brush *brush = Brush::main;
-  Map *map = Map::main;
+  /* Map *map = Map::main; */
 
   if(brush->edge == 0)
     return 0;
