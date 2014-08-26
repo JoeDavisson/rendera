@@ -18,8 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef INLINE_H
+#define INLINE_H
 
 extern int seed;
 

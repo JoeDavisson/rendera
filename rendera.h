@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <stdlib.h>
 #include <stdint.h>
 #include <math.h>
-#include <png.h>
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
@@ -47,8 +46,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/fl_ask.H>
 
-#include "common.h"
+// include commonly-used inline functions for all modules
+#include "inline.h"
 
+// macros
 #define MIN(x, y)          (((x) < (y)) ? (x) : (y))
 #define MAX(x, y)          (((x) > (y)) ? (x) : (y))
 #define MID(a, b, c)       (MAX(a, MIN(b, c)))
