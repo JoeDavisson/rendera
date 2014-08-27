@@ -22,6 +22,9 @@ AC_PROG_CXX
 
 # Checks for libraries.
 
+AC_CHECK_LIB([dl],[dlsym],[],
+  [AC_MSG_ERROR([libdl missing])])
+
 AC_CHECK_LIB([fltk],[fl_system],[],
   [AC_MSG_ERROR([libfltk missing])])
 
@@ -67,12 +70,12 @@ AC_CHECK_FUNCS([pow sqrt strcasecmp])
 
 dnl Checks for symbol declarations
 
-AC_CHECK_DECLS(
-[fl_decode_uri],
-[],
-[AC_MSG_ERROR([fl_decode_uri decl missing])],
-[[#include "FL/filename.H"]],
-)
+dnl AC_CHECK_DECLS(
+dnl [fl_decode_uri],
+dnl [],
+dnl [AC_MSG_ERROR([fl_decode_uri decl missing])],
+dnl [[#include "FL/filename.H"]],
+dnl )
 
 
 AC_CONFIG_FILES([Makefile])

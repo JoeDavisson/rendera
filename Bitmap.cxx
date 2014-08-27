@@ -454,15 +454,15 @@ void Bitmap::setpixelClone(int x, int y, int c2, int t)
   switch(Bitmap::clone_mirror)
   {
     case 0:
-      x1 = x1;
-      y1 = y1;
+      /* x1 = x1; */
+      /* y1 = y1; */
       break;
     case 1:
       x1 = (w1 - x1) - (w1 - Bitmap::clone_x * 2);
-      y1 = y1;
+      /* y1 = y1; */
       break;
     case 2:
-      x1 = x1;
+      /* x1 = x1; */
       y1 = (h1 - y1) - (h1 - Bitmap::clone_y * 2);
       break;
     case 3:
@@ -508,15 +508,15 @@ void Bitmap::setpixelWrapClone(int x, int y, int c2, int t)
   switch(Bitmap::clone_mirror)
   {
     case 0:
-      x1 = x1;
-      y1 = y1;
+      /* x1 = x1; */
+      /* y1 = y1; */
       break;
     case 1:
       x1 = (w1 - x1) - (w1 - Bitmap::clone_x * 2);
-      y1 = y1;
+      /* y1 = y1; */
       break;
     case 2:
-      x1 = x1;
+      /* x1 = x1; */
       y1 = (h1 - y1) - (h1 - Bitmap::clone_y * 2);
       break;
     case 3:
