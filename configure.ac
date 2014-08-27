@@ -1,7 +1,11 @@
 # rendera/configure.ac
 
 AC_PREREQ([2.68])
-AC_INIT([rendera], [0.1.0-snapshot], [rubicks00@gmail.com])
+AC_INIT([Rendera],
+        [0.1.0-snapshot],
+        [joe_7@sbcglobal.net],
+        [rendera],
+        [https://github.com/Mortis69/rendera])
 AC_LANG_PUSH([C++])
 AC_CONFIG_SRCDIR([rendera.h])
 AC_CONFIG_HEADERS([config.h])
