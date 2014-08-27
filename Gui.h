@@ -29,113 +29,112 @@ class View;
 
 #include "rendera.h"
 
-class Gui
+namespace Gui
 {
-public:
-  static void init();
-  static void setMenuItem(const char *);
-  static void clearMenuItem(const char *);
+  void init();
+  void setMenuItem(const char *);
+  void clearMenuItem(const char *);
 
-  static void updateColor(int);
-  static void checkPalette(Widget *, void *);
-  static void checkZoomIn(Button *, void *);
-  static void checkZoomOut(Button *, void *);
-  static void checkZoomFit(ToggleButton *, void *);
-  static void checkZoomOne(Button *, void *);
-  static void checkZoom();
-  static void checkGrid(ToggleButton *, void *);
-  static void checkGridX(Field *, void *);
-  static void checkGridY(Field *, void *);
-  static void checkPaintSize(Widget *, void *);
-  static void checkPaintShape(Widget *, void *);
-  static void checkPaintStroke(Widget *, void *);
-  static void checkPaintEdge(Widget *, void *);
-  static void checkPaintSmooth(Widget *, void *);
-  static void checkTool(Widget *, void *);
-  static void checkColor(Widget *, void *);
-  static void checkHue(Widget *, void *);
-  static void checkSatVal(Widget *, void *);
-  static void checkTrans(Widget *, void *);
-  static void checkBlend(Widget *, void *);
-  static void checkWrap(Widget *, void *);
-  static void checkClone(Widget *, void *);
-  static void checkMirror(Widget *, void *);
-  static void checkOrigin(Widget *, void *);
-  static void checkConstrain(Widget *, void *);
-  static void checkCropDo();
-  static void checkCropValues();
-  static void checkRGBA();
-  static void checkIndexed();
+  void updateColor(int);
+  void checkPalette(Widget *, void *);
+  void checkZoomIn(Button *, void *);
+  void checkZoomOut(Button *, void *);
+  void checkZoomFit(ToggleButton *, void *);
+  void checkZoomOne(Button *, void *);
+  void checkZoom();
+  void checkGrid(ToggleButton *, void *);
+  void checkGridX(Field *, void *);
+  void checkGridY(Field *, void *);
+  void checkPaintSize(Widget *, void *);
+  void checkPaintShape(Widget *, void *);
+  void checkPaintStroke(Widget *, void *);
+  void checkPaintEdge(Widget *, void *);
+  void checkPaintSmooth(Widget *, void *);
+  void checkTool(Widget *, void *);
+  void checkColor(Widget *, void *);
+  void checkHue(Widget *, void *);
+  void checkSatVal(Widget *, void *);
+  void checkTrans(Widget *, void *);
+  void checkBlend(Widget *, void *);
+  void checkWrap(Widget *, void *);
+  void checkClone(Widget *, void *);
+  void checkMirror(Widget *, void *);
+  void checkOrigin(Widget *, void *);
+  void checkConstrain(Widget *, void *);
+  void checkCropDo();
+  void checkCropValues();
+  void checkRGBA();
+  void checkIndexed();
 
   // window
-  static Fl_Double_Window *window;
+  extern Fl_Double_Window *window;
   //Fl_Group *group_main;
-  static Fl_Menu_Bar *menubar;
+  extern Fl_Menu_Bar *menubar;
 
   // containers
-  static Fl_Group *group_top;
-  static Fl_Group *group_left;
+  extern Fl_Group *group_top;
+  extern Fl_Group *group_left;
 
   // panels
-  static Fl_Group *top_left;
-  static Fl_Group *top_right;
-  static Fl_Group *tools;
-  static Fl_Group *paint;
-  static Fl_Group *crop;
-  static Fl_Group *getcolor;
-  static Fl_Group *offset;
-  static Fl_Group *right;
-  static Fl_Group *bottom;
-  static Fl_Group *middle;
+  extern Fl_Group *top_left;
+  extern Fl_Group *top_right;
+  extern Fl_Group *tools;
+  extern Fl_Group *paint;
+  extern Fl_Group *crop;
+  extern Fl_Group *getcolor;
+  extern Fl_Group *offset;
+  extern Fl_Group *right;
+  extern Fl_Group *bottom;
+  extern Fl_Group *middle;
 
   // top left
-  static Widget *logo;
+  extern Widget *logo;
 
   //top right
-  static ToggleButton *zoom_fit;
-  static Button *zoom_one;
-  static Button *zoom_in;
-  static Button *zoom_out;
-  static Field *zoom;
-  static ToggleButton *grid;
-  static Field *gridx;
-  static Field *gridy;
+  extern ToggleButton *zoom_fit;
+  extern Button *zoom_one;
+  extern Button *zoom_in;
+  extern Button *zoom_out;
+  extern Field *zoom;
+  extern ToggleButton *grid;
+  extern Field *gridx;
+  extern Field *gridy;
 
   // tools
-  static Widget *tool;
+  extern Widget *tool;
 
   // options
-  static Widget *paint_brush;
-  static Widget *paint_size;
-  static Widget *paint_stroke;
-  static Widget *paint_shape;
-  static Widget *paint_edge;
-  static Widget *paint_smooth;
+  extern Widget *paint_brush;
+  extern Widget *paint_size;
+  extern Widget *paint_stroke;
+  extern Widget *paint_shape;
+  extern Widget *paint_edge;
+  extern Widget *paint_smooth;
 
-  static Field *crop_x;
-  static Field *crop_y;
-  static Field *crop_w;
-  static Field *crop_h;
-  static Fl_Button *crop_do;
+  extern Field *crop_x;
+  extern Field *crop_y;
+  extern Field *crop_w;
+  extern Field *crop_h;
+  extern Fl_Button *crop_do;
 
   // right
-  static Widget *pal_preview;
-  static Widget *palette;
-  static Widget *hue;
-  static Widget *satval;
-  static Widget *trans;
-  static Fl_Choice *blend;
+  extern Widget *pal_preview;
+  extern Widget *palette;
+  extern Widget *hue;
+  extern Widget *satval;
+  extern Widget *trans;
+  extern Fl_Choice *blend;
 
   // bottom
-  static ToggleButton *wrap;
-  static ToggleButton *clone;
-  static Widget *mirror;
-  static Widget *origin;
-  static Widget *constrain;
+  extern ToggleButton *wrap;
+  extern ToggleButton *clone;
+  extern Widget *mirror;
+  extern Widget *origin;
+  extern Widget *constrain;
 
   // view
-  static View *view;
-};
+  extern View *view;
+}
 
 #endif
 

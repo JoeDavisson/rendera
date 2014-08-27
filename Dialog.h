@@ -26,74 +26,73 @@ class Widget;
 
 #include "rendera.h"
 
-class Dialog
+namespace Dialog
 {
-public:
-  static void init();
-  static void jpegQualityCloseCallback(Fl_Widget *, void *);
-  static void showJpegQuality();
-  static void showProgress(float);
-  static void updateProgress();
-  static void hideProgress();
-  static void showAbout();
-  static void hideAbout();
-  static void showNewImage();
-  static void hideNewImage();
-  static void cancelNewImage();
-  static void showCreatePalette();
-  static void hideCreatePalette();
-  static void cancelCreatePalette();
-  static void showLoadPalette();
-  static void showSavePalette();
-  static void showEditor();
-  static void hideEditor();
-  static void doEditorPalette(Widget *, void *);
-  static void doEditorSetHsv();
-  static void doEditorSetHsvSliders();
-  static void doEditorGetHsv();
-  static void doEditorInsert();
-  static void doEditorDelete();
-  static void doEditorReplace();
-  static void doEditorStoreUndo();
-  static void doEditorGetUndo();
-  static void doEditorRgbRamp();
-  static void doEditorHsvRamp();
+  void init();
+  void jpegQualityCloseCallback(Fl_Widget *, void *);
+  void showJpegQuality();
+  void showProgress(float);
+  void updateProgress();
+  void hideProgress();
+  void showAbout();
+  void hideAbout();
+  void showNewImage();
+  void hideNewImage();
+  void cancelNewImage();
+  void showCreatePalette();
+  void hideCreatePalette();
+  void cancelCreatePalette();
+  void showLoadPalette();
+  void showSavePalette();
+  void showEditor();
+  void hideEditor();
+  void doEditorPalette(Widget *, void *);
+  void doEditorSetHsv();
+  void doEditorSetHsvSliders();
+  void doEditorGetHsv();
+  void doEditorInsert();
+  void doEditorDelete();
+  void doEditorReplace();
+  void doEditorStoreUndo();
+  void doEditorGetUndo();
+  void doEditorRgbRamp();
+  void doEditorHsvRamp();
 
-  static Fl_Double_Window *jpeg_quality;
-  static Field *jpeg_quality_amount;
-  static Fl_Button *jpeg_quality_ok;
+  extern Fl_Double_Window *jpeg_quality;
+  extern Field *jpeg_quality_amount;
+  extern Fl_Button *jpeg_quality_ok;
 
-  static Fl_Double_Window *progress;
-  static Fl_Progress *progress_bar;
+  extern Fl_Double_Window *progress;
+  extern Fl_Progress *progress_bar;
 
-  static Fl_Double_Window *about;
-  static Widget *about_logo;
-  static Fl_Button *about_ok;
+  extern Fl_Double_Window *about;
+  extern Widget *about_logo;
+  extern Fl_Button *about_ok;
 
-  static Fl_Double_Window *new_image;
-  static Field *new_image_width;
-  static Field *new_image_height;
-  static Fl_Button *new_image_ok;
-  static Fl_Button *new_image_cancel;
+  extern Fl_Double_Window *new_image;
+  extern Field *new_image_width;
+  extern Field *new_image_height;
+  extern Fl_Button *new_image_ok;
+  extern Fl_Button *new_image_cancel;
 
-  static Fl_Double_Window *create_palette;
-  static Field *create_palette_colors;
-  static Fl_Button *create_palette_ok;
-  static Fl_Button *create_palette_cancel;
+  extern Fl_Double_Window *create_palette;
+  extern Field *create_palette_colors;
+  extern Fl_Button *create_palette_ok;
+  extern Fl_Button *create_palette_cancel;
 
-  static Fl_Double_Window *editor;
-  static Widget *editor_h;
-  static Widget *editor_sv;
-  static Fl_Button *editor_insert;
-  static Fl_Button *editor_delete;
-  static Fl_Button *editor_replace;
-  static Fl_Button *editor_undo;
-  static Fl_Button *editor_rgb_ramp;
-  static Fl_Button *editor_hsv_ramp;
-  static Widget *editor_palette;
-  static Widget *editor_color;
-  static Fl_Button *editor_done;
-};
+  extern Fl_Double_Window *editor;
+  extern Widget *editor_h;
+  extern Widget *editor_sv;
+  extern Fl_Button *editor_insert;
+  extern Fl_Button *editor_delete;
+  extern Fl_Button *editor_replace;
+  extern Fl_Button *editor_undo;
+  extern Fl_Button *editor_rgb_ramp;
+  extern Fl_Button *editor_hsv_ramp;
+  extern Widget *editor_palette;
+  extern Widget *editor_color;
+  extern Fl_Button *editor_done;
+}
 
 #endif
 

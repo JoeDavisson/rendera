@@ -23,14 +23,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "rendera.h"
 
-class Undo
+namespace Undo
 {
-public:
-  static void init();
-  static void reset();
-  static void push(int, int, int, int, int);
-  static void pop();
-};
+  void init();
+  void reset();
+  void push(int, int, int, int, int);
+  void pop();
+}
 
 #endif
 
