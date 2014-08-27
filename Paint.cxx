@@ -48,7 +48,9 @@ static inline int fdist(const int x1, const int y1, const int x2, const int y2)
   return dx * dx + dy * dy;
 }
 
-static inline int sdist(const int x1, const int y1, const int x2, const int y2, const int edge, const int trans)
+static inline int sdist(const int x1, const int y1,
+                        const int x2, const int y2,
+                        const int edge, const int trans)
 {
   float d = sqrtf(fdist(x1, y1, x2, y2));
   float s = (255 - trans) / (((3 << edge) >> 1) + 1);
