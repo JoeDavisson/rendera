@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "File.h"
 #include "Widget.h"
 
+// for fast random number generator in inline.h
 int seed = 12345;
 
 int main(int /* argc */, char** /* argv */)

@@ -109,10 +109,9 @@ Paint::~Paint()
 {
 }
 
-void Paint::render_begin_normal(View * /* view */)
+void Paint::render_begin_normal(View *)
 {
   Brush *brush = Brush::main;
-  /* Map *map = Map::main; */
 
   soft_trans = 255;
   float j = (float)(3 << brush->edge);
@@ -125,7 +124,7 @@ void Paint::render_begin_normal(View * /* view */)
   render_end = j;
 }
 
-void Paint::render_begin_smooth(View * /* view */)
+void Paint::render_begin_smooth(View *)
 {
   Brush *brush = Brush::main;
 
@@ -342,7 +341,6 @@ int Paint::render_callback_smooth(View *view)
 int Paint::render_callback(View *view)
 {
   Brush *brush = Brush::main;
-  /* Map *map = Map::main; */
 
   if(brush->edge == 0)
     return 0;
@@ -359,7 +357,7 @@ void Paint::push(View *view)
   {
     if(view->dclick)
     {
-      stroke->end(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
+      stroke->end();
       Blend::set(Brush::main->blend);
       render_begin(view);
       while(render_callback(view))
@@ -405,7 +403,7 @@ void Paint::release(View *view)
 {
   if(active && stroke->type != 3)
   {
-    stroke->end(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
+    stroke->end();
     Blend::set(Brush::main->blend);
     render_begin(view);
     while(render_callback(view))

@@ -94,7 +94,7 @@ void Dialog::init()
   jpeg_quality_amount->value("95");
   new Separator(jpeg_quality, 2, 40, 196, 2, "");
   jpeg_quality_ok = new Fl_Button(128, 48, 64, 24, "OK");
-  // no callback for ok button, see show_jpeg_quality called from save.cxx
+  // no callback for ok button, see show_jpeg_quality called from File.cxx
   jpeg_quality->set_modal();
   jpeg_quality->end();
 

@@ -227,8 +227,6 @@ void File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
 
   int w = row_stride / bytes;
   int h = cinfo.output_height;
-  /* int aw = w + overscroll * 2; */
-  /* int ah = h + overscroll * 2; */
 
   delete bitmap;
   bitmap = new Bitmap(w, h, overscroll,
@@ -348,9 +346,6 @@ void File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
   w = ABS(w);
   h = ABS(h);
 
-  /* int aw = w + overscroll * 2; */
-  /* int ah = h + overscroll * 2; */
-
   delete bitmap;
   bitmap = new Bitmap(w, h, overscroll,
                       makecol(255, 255, 255), makecol(128, 128, 128));
@@ -443,9 +438,6 @@ void File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
 
   int w = header.w;
   int h = header.h;
-
-  /* int aw = w + overscroll * 2; */
-  /* int ah = h + overscroll * 2; */
 
   delete bitmap;
   bitmap = new Bitmap(w, h, overscroll,
@@ -558,7 +550,6 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
 
   /* png_byte color_type = png_get_color_type(png_ptr, info_ptr); */
   /* png_byte bpp = png_get_bit_depth(png_ptr, info_ptr); */
-
   /* int passes = png_set_interlace_handling(png_ptr); */
 
   png_read_update_info(png_ptr, info_ptr);
@@ -570,9 +561,6 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
   png_bytep linebuf = new png_byte[rowbytes];
 
   int x, y;
-
-  /* int aw = w + overscroll * 2; */
-  /* int ah = h + overscroll * 2; */
 
   delete bitmap;
   bitmap = new Bitmap(w, h, overscroll,
@@ -858,7 +846,6 @@ void File::saveJPG(const char *fn)
   struct jpeg_error_mgr jerr;
   JSAMPROW row_pointer[1];
   JSAMPLE *linebuf;
-  /* int row_stride; */
 
   Bitmap *bmp = Bitmap::main;
   int overscroll = Bitmap::main->overscroll;
@@ -887,9 +874,7 @@ void File::saveJPG(const char *fn)
 
   jpeg_start_compress(&cinfo, TRUE);
 
-  /* row_stride = w * 3; */
-
-  int x/* , y */;
+  int x;
 
   int *p = bmp->row[overscroll] + overscroll;
 
@@ -916,7 +901,7 @@ void File::saveJPG(const char *fn)
   fclose(out);
 }
 
-Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int /* len */)
+Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
 {
   if(png_sig_cmp(header, 0, 8) != 0)
     return 0;
@@ -930,7 +915,7 @@ Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int /* len */)
   return image;
 }
 
-Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int /* len */)
+Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int)
 {
   if( ! _is_jpeg_header( header ) ) return 0 ;
 
@@ -943,7 +928,7 @@ Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int /* len */)
   return image;
 }
 
-Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int /* len */)
+Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int)
 {
   if(memcmp(header, "BM", 2) != 0)
     return 0;
@@ -957,7 +942,7 @@ Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int /* len */)
   return image;
 }
 
-Fl_Image *File::previewTGA(const char *fn, unsigned char */* header */, int /* len */)
+Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
 {
   // get file extension
   char ext[16];
@@ -986,7 +971,7 @@ Fl_Image *File::previewTGA(const char *fn, unsigned char */* header */, int /* l
   return image;
 }
 
-Fl_Image *File::previewGPL(const char *fn, unsigned char */* header */, int /* len */)
+Fl_Image *File::previewGPL(const char *fn, unsigned char *, int)
 {
   // get file extension
   char ext[16];

@@ -23,8 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Map.h"
 #include "Brush.h"
 
-// brushstroke routines common to most painting tools
-
 static void keep_square(int x1, int y1, int *x2, int *y2)
 {
   int px = (*x2 >= x1) ? 1 : 0;
@@ -259,8 +257,6 @@ void Stroke::begin(int x, int y, int ox, int oy, float zoom)
   Map *map = Map::main;
 
   int r = brush->size / 2;
-  /* int inc = brush->size & 1; */
-  /* int i; */
 
   lastx = x;
   lasty = y;
@@ -293,9 +289,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
   Map *map = Map::main;
 
   int r = brush->size / 2;
-  /* int inc = brush->size & 1; */
   int w, h;
-  /* int i; */
 
   if(x - r - 1 < x1)
     x1 = x - r - 1;
@@ -447,14 +441,8 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
   lasty = y;
 }
 
-void
-Stroke::end( int /* xx */,
-             int /* yy */,
-             int /* ox */,
-             int /* oy */,
-             float /* zoom */)
+void Stroke::end()
 {
-  /* Brush *brush = Brush::main; */
   Map *map = Map::main;
 
   int w, h;

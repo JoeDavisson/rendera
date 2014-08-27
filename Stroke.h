@@ -42,7 +42,7 @@ public:
   void draw_brush_oval(int, int, int, int, int);
   void begin(int, int, int, int, float);
   void draw(int, int, int, int, float);
-  void end(int, int, int, int, float);
+  void end();
   void polyline(int, int, int, int, float);
   void preview(Bitmap *,int, int, float);
 

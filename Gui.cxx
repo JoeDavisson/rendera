@@ -510,25 +510,25 @@ void Gui::checkPalette(Widget *widget, void *var)
   updateColor(c);
 }
 
-void Gui::checkZoomIn(Button */* button */, void */* var */)
+void Gui::checkZoomIn(Button *, void *)
 {
   view->zoom_in(view->w() / 2, view->h() / 2);
   checkZoom();
 }
 
-void Gui::checkZoomOut(Button */* button */, void */* var */)
+void Gui::checkZoomOut(Button *, void *)
 {
   view->zoom_out(view->w() / 2, view->h() / 2);
   checkZoom();
 }
 
-void Gui::checkZoomFit(ToggleButton */* button */, void *var)
+void Gui::checkZoomFit(ToggleButton *, void *var)
 {
   view->zoom_fit(*(int *)var);
   checkZoom();
 }
 
-void Gui::checkZoomOne(Button */* button */, void */* var */)
+void Gui::checkZoomOne(Button *, void *)
 {
   zoom_fit->var = 0;
   zoom_fit->redraw();
@@ -544,13 +544,13 @@ void Gui::checkZoom()
   zoom->redraw();
 }
 
-void Gui::checkGrid(ToggleButton */* button */, void *var)
+void Gui::checkGrid(ToggleButton *, void *var)
 {
   view->grid = *(int *)var;
   view->draw_main(1);
 }
 
-void Gui::checkGridX(Field *field, void */* var */)
+void Gui::checkGridX(Field *field, void *)
 {
   int num = atoi(field->value());
   if(num < 1)
@@ -564,7 +564,7 @@ void Gui::checkGridX(Field *field, void */* var */)
   view->draw_main(1);
 }
 
-void Gui::checkGridY(Field *field, void */* var */)
+void Gui::checkGridY(Field *field, void *)
 {
   int num = atoi(field->value());
   if(num < 1)
@@ -578,7 +578,7 @@ void Gui::checkGridY(Field *field, void */* var */)
   view->draw_main(1);
 }
 
-void Gui::checkPaintSize(Widget */* widget */, void *var)
+void Gui::checkPaintSize(Widget *, void *var)
 {
   Brush *brush = Brush::main;
 
@@ -600,27 +600,27 @@ void Gui::checkPaintSize(Widget */* widget */, void *var)
   paint_brush->redraw();
 }
 
-void Gui::checkPaintShape(Widget */* widget */, void */* var */)
+void Gui::checkPaintShape(Widget *, void *)
 {
   paint_size->do_callback();
 }
 
-void Gui::checkPaintStroke(Widget */* widget */, void *var)
+void Gui::checkPaintStroke(Widget *, void *var)
 {
   view->tool->stroke->type = *(int *)var;
 }
 
-void Gui::checkPaintEdge(Widget */* widget */, void *var)
+void Gui::checkPaintEdge(Widget *, void *var)
 {
   Brush::main->edge = *(int *)var;
 }
 
-void Gui::checkPaintSmooth(Widget */* widget */, void *var)
+void Gui::checkPaintSmooth(Widget *, void *var)
 {
   Brush::main->smooth = *(int *)var;
 }
 
-void Gui::checkTool(Widget */* widget */, void *var)
+void Gui::checkTool(Widget *, void *var)
 {
   paint->hide();
   getcolor->hide();
@@ -650,7 +650,7 @@ void Gui::checkTool(Widget */* widget */, void *var)
   }
 }
 
-void Gui::checkColor(Widget */* widget */, void */* var */)
+void Gui::checkColor(Widget *, void *)
 {
   int pos = hue->var;
   int mx = pos % 96;
@@ -669,12 +669,6 @@ void Gui::checkColor(Widget */* widget */, void */* var */)
   Brush::main->blend = blend->value();
 
   int i;
-  /* int lastx1 = 48 + 40; */
-  /* int lasty1 = 48; */
-  /* int lastx2 = 48 + 20; */
-  /* int lasty2 = 48; */
-  /* int px[4]; */
-  /* int py[4]; */
 
   hue->bitmap->clear((Fl::get_color(FL_BACKGROUND_COLOR) >> 8) | 0xFF000000);
   satval->bitmap->clear(0xFF000000);
@@ -686,6 +680,7 @@ void Gui::checkColor(Widget */* widget */, void */* var */)
     int y1 = 48 + 40 * sinf(angle);
     int x2 = 48 + 20 * cosf(angle);
     int y2 = 48 + 20 * sinf(angle);
+
     Blend::hsv_to_rgb(i, 255, 255, &r, &g, &b);
     hue->bitmap->line(x1, y1, x2, y2, makecol(r, g, b), 0);
     hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makecol(r, g, b), 0);
@@ -695,6 +690,7 @@ void Gui::checkColor(Widget */* widget */, void */* var */)
   int y1 = 48 + 40 * sinf(mouse_angle);
   int x2 = 48 + 20 * cosf(mouse_angle);
   int y2 = 48 + 20 * sinf(mouse_angle);
+
   hue->bitmap->xor_line(x1, y1, x2, y2);
 
   int x, y;
@@ -726,47 +722,47 @@ void Gui::checkColor(Widget */* widget */, void */* var */)
   satval->redraw();
 }
 
-void Gui::checkHue(Widget */* widget */, void */* var */)
+void Gui::checkHue(Widget *, void *)
 {
   checkColor(0, 0);
 }
 
-void Gui::checkSatVal(Widget */* widget */, void */* var */)
+void Gui::checkSatVal(Widget *, void *)
 {
   checkColor(0, 0);
 }
 
-void Gui::checkTrans(Widget */* widget */, void */* var */)
+void Gui::checkTrans(Widget *, void *)
 {
   checkColor(0, 0);
 }
 
-void Gui::checkBlend(Widget */* widget */, void */* var */)
+void Gui::checkBlend(Widget *, void *)
 {
   checkColor(0, 0);
 }
 
-void Gui::checkWrap(Widget */* widget */, void *var)
+void Gui::checkWrap(Widget *, void *var)
 {
   Bitmap::wrap = *(int *)var;
 }
 
-void Gui::checkClone(Widget */* widget */, void *var)
+void Gui::checkClone(Widget *, void *var)
 {
   Bitmap::clone = *(int *)var;
 }
 
-void Gui::checkMirror(Widget */* widget */, void *var)
+void Gui::checkMirror(Widget *, void *var)
 {
   Bitmap::clone_mirror = *(int *)var;
 }
 
-void Gui::checkOrigin(Widget */* widget */, void *var)
+void Gui::checkOrigin(Widget *, void *var)
 {
   view->tool->stroke->origin = *(int *)var;
 }
 
-void Gui::checkConstrain(Widget */* widget */, void *var)
+void Gui::checkConstrain(Widget *, void *var)
 {
   view->tool->stroke->constrain = *(int *)var;
 }

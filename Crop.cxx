@@ -216,7 +216,7 @@ void Crop::drag(View *view)
   Gui::checkCropValues();
 }
 
-void Crop::release(View * /* view */)
+void Crop::release(View *)
 {
   if(started == 1)
   {
@@ -227,7 +227,7 @@ void Crop::release(View * /* view */)
   resize_started = 0;
 }
 
-void Crop::move(View * /* view */)
+void Crop::move(View *)
 {
 }
 

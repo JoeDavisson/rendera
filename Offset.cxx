@@ -82,11 +82,11 @@ void Offset::drag(View *view)
   view->draw_main(1);
 }
 
-void Offset::release(View * /* view */)
+void Offset::release(View *)
 {
 }
 
-void Offset::move(View * /* view */)
+void Offset::move(View *)
 {
 }
 

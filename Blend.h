@@ -25,29 +25,28 @@ class Bitmap;
 
 #include "rendera.h"
 
-class Blend
+namespace Blend
 {
-public:
-  static void set(int);
-  static int invert(int, int, int);
-  static int trans(int, int, int);
-  static int trans_all(int, int, int);
-  static int add(int, int, int);
-  static int sub(int, int, int);
-  static int colorize(int, int, int);
-  static int force_lum(int, int);
-  static int alpha_add(int, int, int);
-  static int alpha_sub(int, int, int);
-  static int smooth(int, int, int);
-  static void hsv_to_rgb(int, int, int, int *, int *, int *);
-  static void rgb_to_hsv(int, int, int, int *, int *, int *);
-  static void yuv_to_rgb(int, int, int, int *, int *, int *);
-  static void rgb_to_yuv(int, int, int, int *, int *, int *);
+  void set(int);
+  int invert(int, int, int);
+  int trans(int, int, int);
+  int trans_all(int, int, int);
+  int add(int, int, int);
+  int sub(int, int, int);
+  int colorize(int, int, int);
+  int force_lum(int, int);
+  int alpha_add(int, int, int);
+  int alpha_sub(int, int, int);
+  int smooth(int, int, int);
+  void hsv_to_rgb(int, int, int, int *, int *, int *);
+  void rgb_to_hsv(int, int, int, int *, int *, int *);
+  void yuv_to_rgb(int, int, int, int *, int *, int *);
+  void rgb_to_yuv(int, int, int, int *, int *, int *);
 
-  static int (*current)(int, int, int);
-  static int xpos, ypos;
-  static Bitmap *bmp;
-};
+  extern int (*current)(int, int, int);
+  extern int xpos, ypos;
+  extern Bitmap *bmp;
+}
 
 #endif
 

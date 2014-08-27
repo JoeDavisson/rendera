@@ -503,7 +503,6 @@ void FX::doRotateHue(int amount)
     for(x = overscroll; x < bmp->w - overscroll; x++)
     {
       int c = bmp->getpixel(x, y);
-      //int l = getl(c);
 
       r = getr(c);
       g = getg(c);

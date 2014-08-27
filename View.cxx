@@ -110,8 +110,7 @@ int View::handle(int event)
   imgx = mousex / zoom + ox;
   imgy = mousey / zoom + oy;
 
-  //int button = Fl::event_button();
-  // do is this way to prevent multiple button presses
+  // do it this way to prevent multiple button presses
   button1 = Fl::event_button1() ? 1 : 0;
   button2 = Fl::event_button2() ? 2 : 0;
   button3 = Fl::event_button3() ? 4 : 0;
