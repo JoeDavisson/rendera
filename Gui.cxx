@@ -506,7 +506,7 @@ void Gui::checkPalette(Widget *widget, void *var)
     widget->var = pos;
   }
 
-  int c = widget->bitmap->getpixel(x * step, y * step);
+  int c = widget->bitmap->getpixel(x * step + 1, y * step + 1);
   updateColor(c);
 }
 

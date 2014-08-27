@@ -99,8 +99,9 @@ void Palette::draw(Widget *widget)
       int x1 = x * step;
       int y1 = y * step;
 
-      widget->bitmap->rectfill(x1, y1, x1 + step - 1, y1 + step - 1,
-                               data[i], 0);
+      widget->bitmap->rectfill(x1, y1, x1 + step - 1, y1 + step - 1, data[i], 0);
+      widget->bitmap->hline(x1, y1, x1 + step - 1, makecol(0, 0, 0), 128);
+      widget->bitmap->vline(y1 + 1, x1, y1 + step - 1, makecol(0, 0, 0), 128);
       i++;
     }
   }
@@ -137,6 +138,7 @@ void Palette::set_default()
     }
   }
 
+/*
   for(v = 4; v >= 0; v--)
   {
     for(h = 0; h < 12; h++)
@@ -146,7 +148,7 @@ void Palette::set_default()
       data[index++] = makecol(r, g, b);
     }
   }
-
+*/
   for(v = 0; v < 12; v++)
   {
     data[index++] = makecol(v * 23.19, v * 23.19, v * 23.19);
