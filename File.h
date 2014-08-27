@@ -25,27 +25,26 @@ class Bitmap;
 
 #include "rendera.h"
 
-class File
+namespace File
 {
-public:
-  static void load(Fl_Widget *, void *);
-  static void loadJPG(const char *, Bitmap *, int);
-  static void loadBMP(const char *, Bitmap *, int);
-  static void loadTGA(const char *, Bitmap *, int);
-  static void loadPNG(const char *, Bitmap *, int);
+  void load(Fl_Widget *, void *);
+  void loadJPG(const char *, Bitmap *, int);
+  void loadBMP(const char *, Bitmap *, int);
+  void loadTGA(const char *, Bitmap *, int);
+  void loadPNG(const char *, Bitmap *, int);
 
-  static void save(Fl_Widget *, void *);
-  static void saveBMP(const char *);
-  static void saveTGA(const char *);
-  static void savePNG(const char *);
-  static void saveJPG(const char *);
+  void save(Fl_Widget *, void *);
+  void saveBMP(const char *);
+  void saveTGA(const char *);
+  void savePNG(const char *);
+  void saveJPG(const char *);
 
-  static Fl_Image *previewJPG(const char *, unsigned char *, int);
-  static Fl_Image *previewPNG(const char *, unsigned char *, int);
-  static Fl_Image *previewBMP(const char *, unsigned char *, int);
-  static Fl_Image *previewTGA(const char *, unsigned char *, int);
-  static Fl_Image *previewGPL(const char *, unsigned char *, int);
-};
+  Fl_Image *previewJPG(const char *, unsigned char *, int);
+  Fl_Image *previewPNG(const char *, unsigned char *, int);
+  Fl_Image *previewBMP(const char *, unsigned char *, int);
+  Fl_Image *previewTGA(const char *, unsigned char *, int);
+  Fl_Image *previewGPL(const char *, unsigned char *, int);
+}
 
 #endif
 
