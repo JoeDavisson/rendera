@@ -25,66 +25,65 @@ class Field;
 
 #include "rendera.h"
 
-class FX
+namespace FX
 {
-public:
-  static void init();
+  void init();
 
-  static void showNormalize();
-  static void doNormalize();
+  void showNormalize();
+  void doNormalize();
 
-  static void showEqualize();
-  static void doEqualize();
+  void showEqualize();
+  void doEqualize();
 
-  static void showValueStretch();
-  static void doValueStretch();
+  void showValueStretch();
+  void doValueStretch();
 
-  static void showSaturate();
-  static void doSaturate();
+  void showSaturate();
+  void doSaturate();
 
-  static void showRotateHue();
-  static void hideRotateHue();
-  static void doRotateHue(int);
-  static void cancelRotateHue();
+  void showRotateHue();
+  void hideRotateHue();
+  void doRotateHue(int);
+  void cancelRotateHue();
 
-  static void showInvert();
-  static void doInvert();
+  void showInvert();
+  void doInvert();
 
-  static void showRestore();
-  static void hideRestore();
-  static void doRestore();
-  static void cancelRestore();
+  void showRestore();
+  void hideRestore();
+  void doRestore();
+  void cancelRestore();
 
-  static void showRemoveDust();
-  static void hideRemoveDust();
-  static void doRemoveDust(int);
-  static void cancelRemoveDust();
+  void showRemoveDust();
+  void hideRemoveDust();
+  void doRemoveDust(int);
+  void cancelRemoveDust();
 
-  static void showColorize();
-  static void doColorize();
+  void showColorize();
+  void doColorize();
 
-  static void showCorrect();
-  static void doCorrect();
+  void showCorrect();
+  void doCorrect();
 
-  static Fl_Double_Window *rotate_hue;
-  static Field *rotate_hue_amount;
-  static Fl_Check_Button *rotate_hue_preserve;
-  static Fl_Button *rotate_hue_ok;
-  static Fl_Button *rotate_hue_cancel;
+  extern Fl_Double_Window *rotate_hue;
+  extern Field *rotate_hue_amount;
+  extern Fl_Check_Button *rotate_hue_preserve;
+  extern Fl_Button *rotate_hue_ok;
+  extern Fl_Button *rotate_hue_cancel;
 
-  static Fl_Double_Window *restore;
-  static Fl_Check_Button *restore_normalize;
-  static Fl_Check_Button *restore_invert;
-  static Fl_Check_Button *restore_correct;
-  static Fl_Button *restore_ok;
-  static Fl_Button *restore_cancel;
+  extern Fl_Double_Window *restore;
+  extern Fl_Check_Button *restore_normalize;
+  extern Fl_Check_Button *restore_invert;
+  extern Fl_Check_Button *restore_correct;
+  extern Fl_Button *restore_ok;
+  extern Fl_Button *restore_cancel;
 
-  static Fl_Double_Window *remove_dust;
-  static Field *remove_dust_amount;
-  static Fl_Check_Button *remove_dust_invert;
-  static Fl_Button *remove_dust_ok;
-  static Fl_Button *remove_dust_cancel;
-};
+  extern Fl_Double_Window *remove_dust;
+  extern Field *remove_dust_amount;
+  extern Fl_Check_Button *remove_dust_invert;
+  extern Fl_Button *remove_dust_ok;
+  extern Fl_Button *remove_dust_cancel;
+}
 
 #endif
 

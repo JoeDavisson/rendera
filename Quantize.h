@@ -25,10 +25,9 @@ class Bitmap;
 
 #include "rendera.h"
 
-class Quantize
+namespace Quantize
 {
-public:
-  static void pca(Bitmap *, int);
-};
+  void pca(Bitmap *, int);
+}
 
 #endif
