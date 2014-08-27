@@ -38,8 +38,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <setjmp.h>
 #include <cstring>
 
-#ifndef _WIN32
-// bmp structures
 #pragma pack(1)
 typedef struct
 {
@@ -49,7 +47,7 @@ typedef struct
   uint16_t bfReserved2;
   uint32_t bfOffBits;
 }
-BITMAPFILEHEADER;
+BMP_FILE_HEADER;
 
 #pragma pack(1)
 typedef struct
@@ -66,8 +64,7 @@ typedef struct
   uint32_t biClrUsed;
   uint32_t biClrImportant;
 }
-BITMAPINFOHEADER;
-#endif
+BMP_INFO_HEADER;
 
 #pragma pack(1)
 typedef struct
@@ -116,16 +113,11 @@ static void jpg_exit(j_common_ptr cinfo)
   longjmp(myerr->setjmp_buffer, 1);
 }
 
-
-namespace
+static int is_jpeg_header(const unsigned char *header)
 {
-  boolean _is_jpeg_header( void const*hdr )
-  {
-    static unsigned char const arr[2] = { 0xff, 0xd8 } ;
-    return ( 0 == memcmp( arr, hdr , 2 ) );
-  }
+  const unsigned char id[2] = { 0xFF, 0xD8 };
+  return memcmp(header, id, 2) == 0 ? 1 : 0;
 }
-
 
 void File::load(Fl_Widget *, void *)
 {
@@ -172,7 +164,7 @@ void File::load(Fl_Widget *, void *)
 
   if(png_sig_cmp(header, 0, 8) == 0)
     File::loadPNG(fn, Bitmap::main, 64);
-  else if( _is_jpeg_header( header ) )
+  else if(is_jpeg_header(header))
     File::loadJPG(fn, Bitmap::main, 64);
   else if(memcmp(header, "BM", 2) == 0)
     File::loadBMP(fn, Bitmap::main, 64);
@@ -278,13 +270,12 @@ void File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
   if(!in)
     return;
 
-  /* BITMAPFILEHEADER bh; */
-  BITMAPINFOHEADER bm;
+  BMP_INFO_HEADER bm;
 
   unsigned char buffer[64];
 
-  if(fread(buffer, 1, sizeof(BITMAPFILEHEADER), in) !=
-     (unsigned)sizeof(BITMAPFILEHEADER))
+  if(fread(buffer, 1, sizeof(BMP_FILE_HEADER), in) !=
+     (unsigned)sizeof(BMP_FILE_HEADER))
   {
     fclose(in);
     return;
@@ -298,7 +289,7 @@ void File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
   /* bh.bfReserved2 = parse_uint16(p); */
   /* bh.bfOffBits = parse_uint32(p); */
 
-  if(fread(buffer, 1, sizeof(BITMAPINFOHEADER), in) != (unsigned)sizeof(BITMAPINFOHEADER))
+  if(fread(buffer, 1, sizeof(BMP_INFO_HEADER), in) != (unsigned)sizeof(BMP_INFO_HEADER))
   {
     fclose(in);
     return;
@@ -660,7 +651,7 @@ void File::saveBMP(const char *fn)
   int h = bmp->h - overscroll * 2;
   int pad = w % 4;
 
-  // BITMAPFILEHEADER
+  // BMP_FILE_HEADER
   write_uint8('B', out);
   write_uint8('M', out);
   write_uint32(14 + 40 + ((w + pad) * h) * 3, out);
@@ -668,7 +659,7 @@ void File::saveBMP(const char *fn)
   write_uint16(0, out);
   write_uint32(14 + 40, out);
 
-  // BITMAPINFOHEADER
+  // BMP_INFO_HEADER
   write_uint32(40, out);
   write_uint32(w, out);
   write_uint32(-h, out);
@@ -917,7 +908,8 @@ Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
 
 Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int)
 {
-  if( ! _is_jpeg_header( header ) ) return 0 ;
+  if(!is_jpeg_header(header))
+    return 0;
 
   loadJPG(fn, Bitmap::preview, 0);
 
