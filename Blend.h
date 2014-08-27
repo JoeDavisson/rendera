@@ -40,8 +40,6 @@ namespace Blend
   int smooth(int, int, int);
   void hsv_to_rgb(int, int, int, int *, int *, int *);
   void rgb_to_hsv(int, int, int, int *, int *, int *);
-  void yuv_to_rgb(int, int, int, int *, int *, int *);
-  void rgb_to_yuv(int, int, int, int *, int *, int *);
 
   extern int (*current)(int, int, int);
   extern int xpos, ypos;

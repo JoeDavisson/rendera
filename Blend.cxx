@@ -138,20 +138,11 @@ int Blend::colorize(int c1, int c2, int t)
 // forces a color to a similar one with the specified luminance
 int Blend::force_lum(int c, int dest_lum)
 {
-/*
-  int y, u, v;
-  int r, g, b;
-
-  rgb_to_yuv(getr(c), getg(c), getb(c), &y, &u, &v);
-  yuv_to_rgb(dest_lum, u, v, &r, &g, &b);
-
-  return makecola(r, g, b, geta(c));
-*/
   int i;
-  int n[3];
   int src_lum = getl(c);
   int a = geta(c);
 
+  int n[3];
   n[0] = getr(c);
   n[1] = getg(c);
   n[2] = getb(c);
@@ -351,36 +342,5 @@ void Blend::rgb_to_hsv(int r, int g, int b, int *h, int *s, int *v)
     if(*h < 0)
       *h += 1536;
   }
-}
-
-void Blend::yuv_to_rgb(int y, int u, int v, int *r, int *g, int *b)
-{
-  int c = y - 16;
-  int d = u - 128;
-  int e = v - 128;
-
-  *r = ((298 * c           + 409 * e + 128) >> 8);
-  *g = ((298 * c - 100 * d - 208 * e + 128) >> 8);
-  *b = ((298 * c + 516 * d           + 128) >> 8);
-
-  if(*r < 0)
-    *r = 0;
-  if(*r > 255)
-    *r = 255;
-  if(*g < 0)
-    *g = 0;
-  if(*g > 255)
-    *g = 255;
-  if(*b < 0)
-    *b = 0;
-  if(*b > 255)
-    *b = 255;
-}
-
-void Blend::rgb_to_yuv(int r, int g, int b, int *y, int *u, int *v)
-{
-  *y = ( (  66 * r + 129 * g +  25 * b + 128) >> 8) +  16;
-  *u = ( ( -38 * r -  74 * g + 112 * b + 128) >> 8) + 128;
-  *v = ( ( 112 * r -  94 * g -  18 * b + 128) >> 8) + 128;
 }
 
