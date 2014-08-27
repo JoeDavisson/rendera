@@ -113,10 +113,10 @@ static void jpg_exit(j_common_ptr cinfo)
   longjmp(myerr->setjmp_buffer, 1);
 }
 
-static int is_jpeg_header(const unsigned char *header)
+static boolean is_jpeg_header(const unsigned char *header)
 {
   const unsigned char id[2] = { 0xFF, 0xD8 };
-  return memcmp(header, id, 2) == 0 ? 1 : 0;
+  return (memcmp(header, id, 2) == 0);
 }
 
 void File::load(Fl_Widget *, void *)
