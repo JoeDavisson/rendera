@@ -39,6 +39,8 @@ rendera_SOURCES =     \
   Paint.h             \
   Palette.cxx         \
   Palette.h           \
+  Quantize.cxx        \
+  Quantize.h          \
   Separator.cxx       \
   Separator.h         \
   Stroke.cxx          \
@@ -47,17 +49,15 @@ rendera_SOURCES =     \
   ToggleButton.h      \
   Tool.cxx            \
   Tool.h              \
+  Undo.cxx            \
+  Undo.h              \
   View.cxx            \
   View.h              \
   Widget.cxx          \
   Widget.h            \
-  common.h            \
+  inline.h            \
   main.cxx            \
-  Quantize.cxx        \
-  Quantize.h          \
-  rendera.h           \
-  Undo.cxx            \
-  Undo.h
+  rendera.h
 
 
 nodist_rendera_SOURCES = paths.h
