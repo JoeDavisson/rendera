@@ -113,46 +113,8 @@ static void jpg_exit(j_common_ptr cinfo)
   longjmp(myerr->setjmp_buffer, 1);
 }
 
-static int is_png(unsigned char *header)
+static void get_extension(const char *fn, char *ext)
 {
-  return (png_sig_cmp((png_bytep)header, 0, 8) == 0) ? 1 : 0;
-}
-
-static int is_jpeg(unsigned char *header)
-{
-  const unsigned char id[2] = { 0xFF, 0xD8 };
-  return (memcmp(header, id, 2) == 0) ? 1 : 0;
-}
-
-static int is_bmp(unsigned char *header)
-{
-  return (memcmp(header, "BM", 2) == 0) ? 1 : 0;
-}
-
-static int is_gpl(unsigned char *header)
-{
-  return (memcmp(header, "GIMP Palette", 12) == 0) ? 1 : 0;
-}
-
-// tga has no real header, will have to trust the file extension
-static int is_tga(char *ext)
-{
-  return (memcmp(ext, ".tga", 2) == 0) ? 1 : 0;
-}
-
-void File::load(Fl_Widget *, void *)
-{
-  Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
-  fc->title("Load Image");
-  fc->filter("PNG Image\t*.png\nJPEG Image\t*.{jpg,jpeg}\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
-  fc->options(Fl_Native_File_Chooser::PREVIEW);
-  fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
-  fc->show();
-
-  const char *fn = fc->filename();
-
-  // get file extension
-  char ext[16];
   char *p = (char *)fn + strlen(fn) - 1;
 
   while(p >= fn)
@@ -165,6 +127,47 @@ void File::load(Fl_Widget *, void *)
 
     p--;
   }
+}
+
+static int is_png(const unsigned char *header)
+{
+  return (png_sig_cmp((png_bytep)header, 0, 8) == 0) ? 1 : 0;
+}
+
+static int is_jpeg(const unsigned char *header)
+{
+  const unsigned char id[2] = { 0xFF, 0xD8 };
+  return (memcmp(header, id, 2) == 0) ? 1 : 0;
+}
+
+static int is_bmp(const unsigned char *header)
+{
+  return (memcmp(header, "BM", 2) == 0) ? 1 : 0;
+}
+
+// tga has no real header, will have to trust the file extension
+static int is_tga(const char *fn)
+{
+  char ext[16];
+  get_extension(fn, ext);
+  return (memcmp(ext, ".tga", 2) == 0) ? 1 : 0;
+}
+
+static int is_gpl(const unsigned char *header)
+{
+  return (memcmp(header, "GIMP Palette", 12) == 0) ? 1 : 0;
+}
+
+void File::load(Fl_Widget *, void *)
+{
+  Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
+  fc->title("Load Image");
+  fc->filter("PNG Image\t*.png\nJPEG Image\t*.{jpg,jpeg}\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
+  fc->options(Fl_Native_File_Chooser::PREVIEW);
+  fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
+  fc->show();
+
+  const char *fn = fc->filename();
   
   FILE *in = fopen(fn, "rb");
   if(!in)
@@ -189,7 +192,7 @@ void File::load(Fl_Widget *, void *)
     File::loadJPG(fn, Bitmap::main, 64);
   else if(is_bmp(header))
     File::loadBMP(fn, Bitmap::main, 64);
-  else if(is_tga(ext))
+  else if(is_tga(fn))
     File::loadTGA(fn, Bitmap::main, 64);
   else
   {
@@ -626,20 +629,8 @@ void File::save(Fl_Widget *, void *)
 
   const char *fn = fc->filename();
 
-  // get file extension
   char ext[16];
-  char *p = (char *)fn + strlen(fn) - 1;
-
-  while(p >= fn)
-  {
-    if(*p == '.')
-    {
-      strcpy(ext, p);
-      break;
-    }
-
-    p--;
-  }
+  get_extension(fn, ext);
 
   if(file_exists(fn))
   {
@@ -693,6 +684,8 @@ void File::saveBMP(const char *fn)
   write_uint16(24, out);
   write_uint32(0, out);
   write_uint32(0, out);
+// FIXME eventually the program will set the dpi for use here
+//       defaulting to 300 for now
   write_uint32(300 * 39.370079 + .5, out);
   write_uint32(300 * 39.370079 + .5, out);
   write_uint32(0, out);
@@ -706,6 +699,7 @@ void File::saveBMP(const char *fn)
   for(y = 0; y < h; y++)
   {
     int xx = 0;
+
     for(x = 0; x < w; x++)
     {
       linebuf[xx + 0] = (*p >> 16) & 0xff;
@@ -714,6 +708,7 @@ void File::saveBMP(const char *fn)
       p++;
       xx += 3;
     }
+
     for(x = 0; x < pad; x++)
       linebuf[xx++] = 0;
     p += overscroll * 2;
@@ -824,7 +819,7 @@ void File::savePNG(const char *fn)
   for(y = 0; y < h; y++)
   {
     int *p = bmp->row[y + overscroll] + overscroll;
-    // copy row
+
     for(x = 0; x < w * 4; x += 4)
     {
       linebuf[x + 0] = getr(*p); 
@@ -897,7 +892,6 @@ void File::saveJPG(const char *fn)
 
   while(cinfo.next_scanline < cinfo.image_height)
   {
-    // copy row
     for(x = 0; x < w * 3; x += 3)
     {
       linebuf[x + 0] = getr(*p); 
@@ -962,22 +956,7 @@ Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int)
 
 Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
 {
-  // get file extension
-  char ext[16];
-  char *p = (char *)fn + strlen(fn) - 1;
-
-  while(p >= fn)
-  {
-    if(*p == '.')
-    {
-      strcpy(ext, p);
-      break;
-    }
-
-    p--;
-  }
-
-  if(!is_tga(ext))
+  if(!is_tga(fn))
     return 0;
 
   loadTGA(fn, Bitmap::preview, 0);
@@ -991,25 +970,6 @@ Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
 
 Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int)
 {
-/*
-  // get file extension
-  char ext[16];
-  char *p = (char *)fn + strlen(fn) - 1;
-
-  while(p >= fn)
-  {
-    if(*p == '.')
-    {
-      strcpy(ext, p);
-      break;
-    }
-
-    p--;
-  }
-
-  if(strcasecmp(ext, ".gpl") != 0)
-    return 0;
-*/
   if(!is_gpl(header))
     return 0;
 
