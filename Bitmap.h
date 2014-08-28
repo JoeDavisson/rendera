@@ -44,7 +44,6 @@ public:
   void line(int, int, int, int, int, int);
   void rect(int, int, int, int, int, int);
   void rectfill(int, int, int, int, int, int);
-  void quad(int *, int *, int, int);
   void xor_line(int, int, int, int);
   void xor_hline(int, int, int);
   void xor_rect(int, int, int, int);
@@ -61,7 +60,6 @@ public:
   void blit(Bitmap *, int, int, int, int, int, int);
   void point_stretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, int);
   void point_stretch_indexed(Bitmap *, Palette *, int, int, int, int, int, int, int, int, int, int, int);
-  void integer_stretch(Bitmap *, int, int, int, int, int, int, int, int, int, int);
   void fast_stretch(Bitmap *, int, int, int, int, int, int, int, int);
 
   static Bitmap *main;
