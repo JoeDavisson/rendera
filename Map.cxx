@@ -25,7 +25,7 @@ Map *Map::main;
 namespace
 {
   // helper for polyfill
-  static inline int isleft(const int *x1, const int *y1, const int *x2,
+  inline int isleft(const int *x1, const int *y1, const int *x2,
                            const int *y2, const int *x3, const int *y3)
   {
     return ((*x2 - *x1) * (*y3 - *y1) - (*x3 - *x1) * (*y2 - *y1));

@@ -43,7 +43,6 @@ public:
   void rectfill(int, int, int, int, int);
   void hline(int, int, int, int);
   void vline(int, int, int, int);
-  void quad(int *, int *, int);
   void polyfill(int *, int *, int, int, int, int, int, int);
 
   static Map *main;

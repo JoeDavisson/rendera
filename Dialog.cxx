@@ -66,23 +66,26 @@ Widget *Dialog::editor_palette;
 Widget *Dialog::editor_color;
 Fl_Button *Dialog::editor_done;
 
-static int undo;
-static int ramp_begin;
-static int ramp_started;
-static float progress_value;
-static float progress_step;
-
-static int file_exists(const char *s)
+namespace
 {
-  FILE *temp = fopen(s, "r");
+  int undo;
+  int ramp_begin;
+  int ramp_started;
+  float progress_value;
+  float progress_step;
 
-  if(temp)
+  int file_exists(const char *s)
   {
-    fclose(temp);
-    return 1;
-  }
+    FILE *temp = fopen(s, "r");
 
-  return 0;
+    if(temp)
+    {
+      fclose(temp);
+      return 1;
+    }
+
+    return 0;
+  }
 }
 
 void Dialog::init()

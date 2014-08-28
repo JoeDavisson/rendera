@@ -26,39 +26,41 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Widget.h"
 #include "Stroke.h"
 
-static inline void grid_setpixel(const Bitmap *bmp, const int x, const int y,
-                                 const int c, const int t)
+namespace
 {
-  if(x < 0 || y < 0 || x >= bmp->w || y >= bmp->h)
-    return;
-
-  int *p = bmp->row[y] + x;
-  *p = blend_fast_solid(*p, c, t);
-}
-
-static inline void grid_hline(Bitmap *bmp, int x1, int y, int x2,
-                              const int c, const int t)
-{
-  if(y < 0 || y >= bmp->h)
-    return;
-
-  if(x1 < 0)
-    x1 = 0;
-  if(x1 > bmp->w - 1)
-    x1 = bmp->w - 1;
-  if(x2 < 0)
-    x2 = 0;
-  if(x2 > bmp->w - 1)
-    x2 = bmp->w - 1;
-
-  int *p = bmp->row[y] + x1;
-
-  int x;
-
-  for(x = x1; x <= x2; x++)
+  inline void grid_setpixel(const Bitmap *bmp, const int x, const int y,
+                                   const int c, const int t)
   {
+    if(x < 0 || y < 0 || x >= bmp->w || y >= bmp->h)
+      return;
+
+    int *p = bmp->row[y] + x;
     *p = blend_fast_solid(*p, c, t);
-    p++;
+  }
+
+  inline void grid_hline(Bitmap *bmp, int x1, int y, int x2,
+                                const int c, const int t)
+  {
+    if(y < 0 || y >= bmp->h)
+      return;
+
+    if(x1 < 0)
+      x1 = 0;
+    if(x1 > bmp->w - 1)
+      x1 = bmp->w - 1;
+    if(x2 < 0)
+      x2 = 0;
+    if(x2 > bmp->w - 1)
+      x2 = bmp->w - 1;
+
+    int *p = bmp->row[y] + x1;
+    int x;
+
+    for(x = x1; x <= x2; x++)
+    {
+      *p = blend_fast_solid(*p, c, t);
+      p++;
+    }
   }
 }
 

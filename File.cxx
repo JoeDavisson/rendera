@@ -38,124 +38,127 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <setjmp.h>
 #include <cstring>
 
-#pragma pack(1)
-typedef struct
+namespace
 {
-  uint16_t bfType;
-  uint32_t bfSize;
-  uint16_t bfReserved1;
-  uint16_t bfReserved2;
-  uint32_t bfOffBits;
-}
-BMP_FILE_HEADER;
-
-#pragma pack(1)
-typedef struct
-{
-  uint32_t biSize;
-  uint32_t biWidth;
-  uint32_t biHeight;
-  uint16_t biPlanes;
-  uint16_t biBitCount;
-  uint32_t biCompression;
-  uint32_t biSizeImage;
-  uint32_t biXPelsPerMeter;
-  uint32_t biYPelsPerMeter;
-  uint32_t biClrUsed;
-  uint32_t biClrImportant;
-}
-BMP_INFO_HEADER;
-
-#pragma pack(1)
-typedef struct
-{
-  uint8_t id_length;
-  uint8_t color_map_type;
-  uint8_t data_type;
-  uint16_t color_map_origin;
-  uint16_t color_map_length;
-  uint8_t color_map_depth;
-  uint16_t x;
-  uint16_t y;
-  uint16_t w;
-  uint16_t h;
-  uint8_t bpp;
-  uint8_t descriptor;
-}
-TARGA_HEADER;
-
-static int file_exists(const char *s)
-{
-  FILE *temp = fopen(s, "r");
-
-  if(temp)
+  #pragma pack(1)
+  typedef struct
   {
-    fclose(temp);
-    return 1;
+    uint16_t bfType;
+    uint32_t bfSize;
+    uint16_t bfReserved1;
+    uint16_t bfReserved2;
+    uint32_t bfOffBits;
   }
+  BMP_FILE_HEADER;
 
-  return 0;
-}
-
-// jpeg structures
-struct my_error_mgr
-{
-  struct jpeg_error_mgr pub;
-  jmp_buf setjmp_buffer;
-};
-
-typedef struct my_error_mgr *my_error_ptr;
-
-static void jpg_exit(j_common_ptr cinfo)
-{
-  my_error_ptr myerr = (my_error_ptr)cinfo->err;
-  (*cinfo->err->output_message)(cinfo);
-  longjmp(myerr->setjmp_buffer, 1);
-}
-
-static void get_extension(const char *fn, char *ext)
-{
-  char *p = (char *)fn + strlen(fn) - 1;
-
-  while(p >= fn)
+  #pragma pack(1)
+  typedef struct
   {
-    if(*p == '.')
+    uint32_t biSize;
+    uint32_t biWidth;
+    uint32_t biHeight;
+    uint16_t biPlanes;
+    uint16_t biBitCount;
+    uint32_t biCompression;
+    uint32_t biSizeImage;
+    uint32_t biXPelsPerMeter;
+    uint32_t biYPelsPerMeter;
+    uint32_t biClrUsed;
+    uint32_t biClrImportant;
+  }
+  BMP_INFO_HEADER;
+
+  #pragma pack(1)
+  typedef struct
+  {
+    uint8_t id_length;
+    uint8_t color_map_type;
+    uint8_t data_type;
+    uint16_t color_map_origin;
+    uint16_t color_map_length;
+    uint8_t color_map_depth;
+    uint16_t x;
+    uint16_t y;
+    uint16_t w;
+    uint16_t h;
+    uint8_t bpp;
+    uint8_t descriptor;
+  }
+  TARGA_HEADER;
+
+  int file_exists(const char *s)
+  {
+    FILE *temp = fopen(s, "r");
+
+    if(temp)
     {
-      strcpy(ext, p);
-      break;
+      fclose(temp);
+      return 1;
     }
 
-    p--;
+    return 0;
   }
-}
 
-static int is_png(const unsigned char *header)
-{
-  return (png_sig_cmp((png_bytep)header, 0, 8) == 0) ? 1 : 0;
-}
+  // jpeg structures
+  struct my_error_mgr
+  {
+    struct jpeg_error_mgr pub;
+    jmp_buf setjmp_buffer;
+  };
 
-static int is_jpeg(const unsigned char *header)
-{
-  const unsigned char id[2] = { 0xFF, 0xD8 };
-  return (memcmp(header, id, 2) == 0) ? 1 : 0;
-}
+  typedef struct my_error_mgr *my_error_ptr;
 
-static int is_bmp(const unsigned char *header)
-{
-  return (memcmp(header, "BM", 2) == 0) ? 1 : 0;
-}
+  void jpg_exit(j_common_ptr cinfo)
+  {
+    my_error_ptr myerr = (my_error_ptr)cinfo->err;
+    (*cinfo->err->output_message)(cinfo);
+    longjmp(myerr->setjmp_buffer, 1);
+  }
 
-// tga has no real header, will have to trust the file extension
-static int is_tga(const char *fn)
-{
-  char ext[16];
-  get_extension(fn, ext);
-  return (memcmp(ext, ".tga", 2) == 0) ? 1 : 0;
-}
+  void get_extension(const char *fn, char *ext)
+  {
+    char *p = (char *)fn + strlen(fn) - 1;
 
-static int is_gpl(const unsigned char *header)
-{
-  return (memcmp(header, "GIMP Palette", 12) == 0) ? 1 : 0;
+    while(p >= fn)
+    {
+      if(*p == '.')
+      {
+        strcpy(ext, p);
+        break;
+      }
+
+      p--;
+    }
+  }
+
+  bool is_png(const unsigned char *header)
+  {
+    return (png_sig_cmp((png_bytep)header, 0, 8) == 0);
+  }
+
+  bool is_jpeg(const unsigned char *header)
+  {
+    const unsigned char id[2] = { 0xFF, 0xD8 };
+    return (memcmp(header, id, 2) == 0);
+  }
+
+  bool is_bmp(const unsigned char *header)
+  {
+    return (memcmp(header, "BM", 2) == 0);
+  }
+
+  // tga has no real header, will have to trust the file extension
+  bool is_tga(const char *fn)
+  {
+    char ext[16];
+    get_extension(fn, ext);
+    return (memcmp(ext, ".tga", 2) == 0);
+  }
+
+  bool is_gpl(const unsigned char *header)
+  {
+    return (memcmp(header, "GIMP Palette", 12) == 0);
+  }
 }
 
 void File::load(Fl_Widget *, void *)
@@ -313,7 +316,8 @@ void File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
   /* bh.bfReserved2 = parse_uint16(p); */
   /* bh.bfOffBits = parse_uint32(p); */
 
-  if(fread(buffer, 1, sizeof(BMP_INFO_HEADER), in) != (unsigned)sizeof(BMP_INFO_HEADER))
+  if(fread(buffer, 1, sizeof(BMP_INFO_HEADER), in)
+     != (unsigned)sizeof(BMP_INFO_HEADER))
   {
     fclose(in);
     return;
@@ -973,19 +977,19 @@ Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int)
   if(!is_gpl(header))
     return 0;
 
-  Palette *pal = new Palette();
+  Palette *temp_pal = new Palette();
 
-  pal->load(fn);
-  if(pal->max == 0)
+  temp_pal->load(fn);
+  if(temp_pal->max == 0)
     return 0;
 
-  pal->draw(Gui::pal_preview);
+  temp_pal->draw(Gui::pal_preview);
 
   Fl_RGB_Image *image =
     new Fl_RGB_Image((unsigned char *)Gui::pal_preview->bitmap->data,
                      96, 96, 4, 0);
 
-  delete pal;
+  delete temp_pal;
   return image;
 }
 

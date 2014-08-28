@@ -29,9 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.h"
 #include "Undo.h"
 
-static Bitmap *bmp;
-static int overscroll;
-
 Fl_Double_Window *FX::rotate_hue;
 Field *FX::rotate_hue_amount;
 Fl_Check_Button *FX::rotate_hue_preserve;
@@ -51,16 +48,21 @@ Fl_Check_Button *FX::remove_dust_invert;
 Fl_Button *FX::remove_dust_ok;
 Fl_Button *FX::remove_dust_cancel;
 
-static void begin()
+namespace
 {
-  bmp = Bitmap::main;
-  overscroll = Bitmap::main->overscroll;
+  Bitmap *bmp;
+  int overscroll;
 
-  Undo::push(overscroll, overscroll,
-            bmp->w - overscroll * 2, bmp->h - overscroll * 2, 0);
+  void begin()
+  {
+    bmp = Bitmap::main;
+    overscroll = Bitmap::main->overscroll;
+
+    Undo::push(overscroll, overscroll,
+              bmp->w - overscroll * 2, bmp->h - overscroll * 2, 0);
+  }
 }
 
-// callbacks are in fx_callback.cxx
 void FX::init()
 {
   rotate_hue = new Fl_Double_Window(240, 104, "Rotate Hue");

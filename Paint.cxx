@@ -26,79 +26,82 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.h"
 #include "View.h"
 
-static inline int is_edge(Map *map, const int x, const int y)
+namespace
 {
-  if(x < 1 || x >= map->w - 1 || y < 1 || y >= map->h - 1)
-    return 0;
-
-  if( *(map->row[y - 1] + x) &&
-      *(map->row[y] + x - 1) &&
-      *(map->row[y] + x + 1) &&
-      *(map->row[y + 1] + x) )
-    return 0;
-  else
-    return 1;
-}
-
-static inline int fdist(const int x1, const int y1, const int x2, const int y2)
-{
-  const int dx = (x1 - x2);
-  const int dy = (y1 - y2);
-
-  return dx * dx + dy * dy;
-}
-
-static inline int sdist(const int x1, const int y1,
-                        const int x2, const int y2,
-                        const int edge, const int trans)
-{
-  float d = sqrtf(fdist(x1, y1, x2, y2));
-  float s = (255 - trans) / (((3 << edge) >> 1) + 1);
-
-  if(s < 1)
-    s = 1;
-
-  int temp = 255;
-
-  temp -= s * d;
-  if(temp < trans)
-    temp = trans;
-
-  return temp;
-}
-
-static inline void shrink_block(unsigned char *s0, unsigned char *s1,
-                                unsigned char *s2, unsigned char *s3)
-{
-  const int z = (*s0 << 0) + (*s1 << 1) + (*s2 << 2) + (*s3 << 3);
-
-  switch(z)
+  inline bool is_edge(Map *map, const int x, const int y)
   {
-    case 0:
-    case 15:
-      return;
-    case 7:
-      *s1 = 0;
-      *s2 = 0;
-      return;
-    case 11:
-      *s0 = 0;
-      *s3 = 0;
-      return;
-    case 13:
-      *s0 = 0;
-      *s3 = 0;
-      return;
-    case 14:
-      *s1 = 0;
-      *s2 = 0;
-      return;
+    if(x < 1 || x >= map->w - 1 || y < 1 || y >= map->h - 1)
+      return 0;
+
+    if( *(map->row[y - 1] + x) &&
+        *(map->row[y] + x - 1) &&
+        *(map->row[y] + x + 1) &&
+        *(map->row[y + 1] + x) )
+      return 0;
+    else
+      return 1;
   }
 
-  *s0 = 0;
-  *s1 = 0;
-  *s2 = 0;
-  *s3 = 0;
+  inline int fdist(const int x1, const int y1, const int x2, const int y2)
+  {
+    const int dx = (x1 - x2);
+    const int dy = (y1 - y2);
+
+    return dx * dx + dy * dy;
+  }
+
+  inline int sdist(const int x1, const int y1,
+                   const int x2, const int y2,
+                   const int edge, const int trans)
+  {
+    float d = sqrtf(fdist(x1, y1, x2, y2));
+    float s = (255 - trans) / (((3 << edge) >> 1) + 1);
+
+    if(s < 1)
+      s = 1;
+
+    int temp = 255;
+
+    temp -= s * d;
+    if(temp < trans)
+      temp = trans;
+
+    return temp;
+  }
+
+  inline void shrink_block(unsigned char *s0, unsigned char *s1,
+                           unsigned char *s2, unsigned char *s3)
+  {
+    const int z = (*s0 << 0) + (*s1 << 1) + (*s2 << 2) + (*s3 << 3);
+
+    switch(z)
+    {
+      case 0:
+      case 15:
+        return;
+      case 7:
+        *s1 = 0;
+        *s2 = 0;
+        return;
+      case 11:
+        *s0 = 0;
+        *s3 = 0;
+        return;
+      case 13:
+        *s0 = 0;
+        *s3 = 0;
+        return;
+      case 14:
+        *s1 = 0;
+        *s2 = 0;
+        return;
+    }
+
+    *s0 = 0;
+    *s1 = 0;
+    *s2 = 0;
+    *s3 = 0;
+  }
 }
 
 // The paintbrush uses two distinct algorithms, marching squares (faster)

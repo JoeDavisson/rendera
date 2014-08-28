@@ -24,17 +24,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.h"
 #include "Gui.h"
 
-static int inbox(int x, int y, int x1, int y1, int x2, int y2)
+namespace
 {
-  if(x1 > x2)
-    SWAP(x1, x2);
-  if(y1 > y2)
-    SWAP(y1, y2);
+  bool inbox(int x, int y, int x1, int y1, int x2, int y2)
+  {
+    if(x1 > x2)
+      SWAP(x1, x2);
+    if(y1 > y2)
+      SWAP(y1, y2);
 
-  if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
-    return 1;
-  else
-    return 0;
+    if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
+      return 1;
+    else
+      return 0;
+  }
 }
 
 GetColor::GetColor()

@@ -23,48 +23,51 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Map.h"
 #include "Brush.h"
 
-static void keep_square(int x1, int y1, int *x2, int *y2)
+namespace
 {
-  int px = (*x2 >= x1) ? 1 : 0;
-  int py = (*y2 >= y1) ? 2 : 0;
-
-  int dx = x1 - *x2;
-  int dy = y1 - *y2;
-
-  if(abs(dy) > abs(dx))
+  void keep_square(int x1, int y1, int *x2, int *y2)
   {
-    switch(px + py)
+    int px = (*x2 >= x1) ? 1 : 0;
+    int py = (*y2 >= y1) ? 2 : 0;
+
+    int dx = x1 - *x2;
+    int dy = y1 - *y2;
+
+    if(abs(dy) > abs(dx))
     {
-      case 0:
-        *x2 = x1 - dy;
-        break;
-      case 1:
-        *x2 = x1 + dy;
-        break;
-      case 2:
-        *x2 = x1 + dy;
-        break;
-      case 3:
-        *x2 = x1 - dy;
-        break;
+      switch(px + py)
+      {
+        case 0:
+          *x2 = x1 - dy;
+          break;
+        case 1:
+          *x2 = x1 + dy;
+          break;
+        case 2:
+          *x2 = x1 + dy;
+          break;
+        case 3:
+          *x2 = x1 - dy;
+          break;
+      }
     }
-  }
-  else
-  {
-    switch (px + py)
+    else
     {
-      case 0:
-        *y2 = y1 - dx;
-        break;
-      case 1:
-        *y2 = y1 + dx;
-        break;
-      case 2:
-        *y2 = y1 + dx;
-        break;
-      case 3:
-        *y2 = y1 - dx;
-        break;
+      switch (px + py)
+      {
+        case 0:
+          *y2 = y1 - dx;
+          break;
+        case 1:
+          *y2 = y1 + dx;
+          break;
+        case 2:
+          *y2 = y1 + dx;
+          break;
+        case 3:
+          *y2 = y1 - dx;
+          break;
+      }
     }
   }
 }

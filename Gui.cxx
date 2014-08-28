@@ -105,97 +105,32 @@ Widget *Gui::constrain;
 // view
 View *Gui::view;
 
-// prevent escape from closing main window
-static void close_callback(Fl_Widget *widget, void *)
+namespace
 {
-  if((Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT)
-    && Fl::event_key() == FL_Escape)
-    return;
-  else
-    widget->hide();
-}
-
-// quit program
-static void quit()
-{
-  fl_message_title("Quit");
-  if(fl_choice("Are You Sure?", "No", "Yes", NULL) == 1)
-    exit(0);
-}
-
-static int brush_sizes[16] =
-{
-  1, 2, 3, 4, 8, 12, 16, 24,
-  32, 40, 48, 56, 64, 72, 80, 88
-};
-
-/*
-static void print_hires_data()
-{
-  int x, y, i, j;
-  Bitmap *bmp = Bitmap::main;
-  int overscroll = Bitmap::main->overscroll;
-  if((bmp->w / 8) * bmp->h > 1000)
-    return;
-
-  for(y = overscroll; y < bmp->h - overscroll; y += 8)
+  // prevent escape from closing main window
+  void close_callback(Fl_Widget *widget, void *)
   {
-    for(x = overscroll; x < bmp->w - overscroll; x += 8)
-    {
-      printf("\n    ");
-
-      for(j = 0; j < 8; j++)
-      {
-        int data = 0;
-        for(i = 0; i < 8; i++)
-        {
-          if((bmp->getpixel(x + i, y + j) & 0xFFFFFF) == 0xFFFFFF)
-            data |= (1 << (7 - i));
-        }
-
-        printf("%d, ", data);
-      }
-    }
+    if((Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT)
+      && Fl::event_key() == FL_Escape)
+      return;
+    else
+      widget->hide();
   }
 
-  printf("\n");
-}
-
-static void print_linear_data()
-{
-  int x, y, i;
-  Bitmap *bmp = Bitmap::main;
-  int overscroll = Bitmap::main->overscroll;
-  if((bmp->w / 8) * bmp->h > 1000)
-    return;
-
-  printf("\n    ");
-  int count = 0;
-  for(y = overscroll; y < bmp->h - overscroll; y++)
+  // quit program
+  void quit()
   {
-    for(x = overscroll; x < bmp->w - overscroll; x += 8)
-    {
-      int data = 0;
-      for(i = 0; i < 8; i++)
-      {
-        if((bmp->getpixel(x + i, y) & 0xFFFFFF) == 0xFFFFFF)
-          data |= (1 << (7 - i));
-      }
-
-      printf("%d, ", data);
-
-      count++;
-      if(count >= 8)
-      {
-        count = 0;
-        printf("\n    ");
-      }
-    }
+    fl_message_title("Quit");
+    if(fl_choice("Are You Sure?", "No", "Yes", NULL) == 1)
+      exit(0);
   }
 
-  printf("\n");
+  int brush_sizes[16] =
+  {
+    1, 2, 3, 4, 8, 12, 16, 24,
+    32, 40, 48, 56, 64, 72, 80, 88
+  };
 }
-*/
 
 void Gui::init()
 {
@@ -210,8 +145,6 @@ void Gui::init()
   menubar->add("File/New", 0, (Fl_Callback *)Dialog::showNewImage, 0, 0);
   menubar->add("File/Load", 0, (Fl_Callback *)File::load, 0, 0);
   menubar->add("File/Save", 0, (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
- // menubar->add("File/Print Hires Data", 0, (Fl_Callback *)print_hires_data, 0, FL_MENU_DIVIDER);
-//  menubar->add("File/Print Linear Data", 0, (Fl_Callback *)print_linear_data, 0, FL_MENU_DIVIDER);
   menubar->add("File/Quit", 0, (Fl_Callback *)quit, 0, 0);
   menubar->add("Edit/Undo", 0, (Fl_Callback *)Undo::pop, 0, 0);
   menubar->add("Mode/RGBA", 0, (Fl_Callback *)checkRGBA, 0, FL_MENU_TOGGLE);

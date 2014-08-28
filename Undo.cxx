@@ -25,9 +25,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #define MAX_UNDO 32
 
-static Bitmap *undo_stack[MAX_UNDO];
-static int undo_resized[MAX_UNDO];
-static int undo_current;
+namespace
+{
+  Bitmap *undo_stack[MAX_UNDO];
+  int undo_resized[MAX_UNDO];
+  int undo_current;
+}
 
 void Undo::init()
 {

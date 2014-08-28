@@ -27,139 +27,144 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #define SHIFT 12
 
-// qsort callback to sort palette by luminance
-static int comp_lum(const void *a, const void *b)
+namespace
 {
-  int c1 = *(int *)a;
-  int c2 = *(int *)b;
-
-  return getl(c1) - getl(c2);
-}
-
-// compute quantization error
-static inline float error24(const int c1, const int c2,
-                            const float f1, const float f2)
-{
-  return ((f1 * f2) / (f1 + f2)) * diff24(c1, c2);
-}
-
-// merge two colors
-static inline int merge24(const int c1, const int c2,
-                          const float f1, const float f2)
-{
-  const int r = (f1 * getr(c1) + f2 * getr(c2)) / (f1 + f2);
-  const int g = (f1 * getg(c1) + f2 * getg(c2)) / (f1 + f2);
-  const int b = (f1 * getb(c1) + f2 * getb(c2)) / (f1 + f2);
-
-  return makecol_notrans(r, g, b);
-}
-
-// 1D bilinear filter to stretch a palette
-static void stretch_palette(int *data, int current, int target)
-{
-  int *temp = new int[target];
-
-  float ax = (float)(current - 1) / (float)(target - 1);
-
-  int *c[2];
-  c[0] = c[1] = &data[0];
-
-  int x = 0;
-
-  do
+  // qsort callback to sort palette by luminance
+  int comp_lum(const void *a, const void *b)
   {
-    float uu = (x * ax);
-    int u1 = uu;
-    if(u1 > current - 1)
-      u1 = current - 1;
-    int u2 = (u1 < (current - 1) ? u1 + 1 : u1);
-    float u = uu - u1;
+    int c1 = *(int *)a;
+    int c2 = *(int *)b;
 
-    c[0] += u1;
-    c[1] += u2;
+    return getl(c1) - getl(c2);
+  }
 
-    float f[2];
+  // compute quantization error
+  inline float error24(const int c1, const int c2,
+                       const float f1, const float f2)
+  {
+    return ((f1 * f2) / (f1 + f2)) * diff24(c1, c2);
+  }
 
-    f[0] = (1.0 - u);
-    f[1] = u;
+  // merge two colors
+  inline int merge24(const int c1, const int c2,
+                     const float f1, const float f2)
+  {
+    const int r = (f1 * getr(c1) + f2 * getr(c2)) / (f1 + f2);
+    const int g = (f1 * getg(c1) + f2 * getg(c2)) / (f1 + f2);
+    const int b = (f1 * getb(c1) + f2 * getb(c2)) / (f1 + f2);
 
-    float r = 0, g = 0, b = 0;
-    int i = 0;
+    return makecol_notrans(r, g, b);
+  }
+
+  // 1D bilinear filter to stretch a palette
+  void stretch_palette(int *data, int current, int target)
+  {
+    int *temp = new int[target];
+
+    float ax = (float)(current - 1) / (float)(target - 1);
+
+    int *c[2];
+    c[0] = c[1] = &data[0];
+
+    int x = 0;
 
     do
     {
-      r += (float)getr(*c[i]) * f[i];
-      g += (float)getg(*c[i]) * f[i];
-      b += (float)getb(*c[i]) * f[i];
-      i++;
-    }
-    while(i < 2);
+      float uu = (x * ax);
 
-    temp[x] = makecol_notrans((int)r, (int)g, (int)b);
+      int u1 = uu;
+      if(u1 > current - 1)
+        u1 = current - 1;
 
-    c[0] -= u1;
-    c[1] -= u2;
-    x++;
-  }
-  while(x < target);
+      int u2 = (u1 < (current - 1) ? u1 + 1 : u1);
+      float u = uu - u1;
 
-  for(x = 0; x < target; x++)
-    data[x] = temp[x];
+      c[0] += u1;
+      c[1] += u2;
 
-  delete[] temp;
-}
+      float f[2];
 
-// limit colors being clustered to a reasonable number
-static int limit_colors(float *list, int *colors)
-{
-  int r, g, b;
-  int i, j, k;
-  int step = 16;
-  int count = 0;
+      f[0] = (1.0 - u);
+      f[1] = u;
 
-  for(b = 0; b <= 256 - step; b += step)
-  {
-    for(g = 0; g <= 256 - step; g += step)
-    {
-      for(r = 0; r <= 256 - step; r += step)
+      float r = 0, g = 0, b = 0;
+      int i = 0;
+
+      do
       {
-        float rr = 0;
-        float gg = 0;
-        float bb = 0;
-        float div = 0;
+        r += (float)getr(*c[i]) * f[i];
+        g += (float)getg(*c[i]) * f[i];
+        b += (float)getb(*c[i]) * f[i];
+        i++;
+      }
+      while(i < 2);
 
-        for(k = 0; k < step; k++)
+      temp[x] = makecol_notrans((int)r, (int)g, (int)b);
+
+      c[0] -= u1;
+      c[1] -= u2;
+      x++;
+    }
+    while(x < target);
+
+    for(x = 0; x < target; x++)
+      data[x] = temp[x];
+
+    delete[] temp;
+  }
+
+  // limit colors being clustered to a reasonable number
+  int limit_colors(float *list, int *colors)
+  {
+    int r, g, b;
+    int i, j, k;
+    int step = 16;
+    int count = 0;
+
+    for(b = 0; b <= 256 - step; b += step)
+    {
+      for(g = 0; g <= 256 - step; g += step)
+      {
+        for(r = 0; r <= 256 - step; r += step)
         {
-          for(j = 0; j < step; j++)
-          {
-            for(i = 0; i < step; i++)
-            {
-              int c = makecol_notrans(r + i, g + j, b + k);
-              float d = list[c];
+          float rr = 0;
+          float gg = 0;
+          float bb = 0;
+          float div = 0;
 
-              rr += d * getr(c);
-              gg += d * getg(c);
-              bb += d * getb(c);
-              div += d;
-              list[c] = 0;
+          for(k = 0; k < step; k++)
+          {
+            for(j = 0; j < step; j++)
+            {
+              for(i = 0; i < step; i++)
+              {
+                int c = makecol_notrans(r + i, g + j, b + k);
+                float d = list[c];
+
+                rr += d * getr(c);
+                gg += d * getg(c);
+                bb += d * getb(c);
+                div += d;
+                list[c] = 0;
+              }
             }
           }
-        }
 
-        if(div > 0)
-        {
-          rr /= div;
-          gg /= div;
-          bb /= div;
-          colors[count] = makecol_notrans((int)rr, (int)gg, (int)bb);
-          list[colors[count]] = div;
-          count++;
+          if(div > 0)
+          {
+            rr /= div;
+            gg /= div;
+            bb /= div;
+            colors[count] = makecol_notrans((int)rr, (int)gg, (int)bb);
+            list[colors[count]] = div;
+            count++;
+          }
         }
       }
     }
-  }
 
-  return count;
+    return count;
+  }
 }
 
 // pairwise clustering algorithm

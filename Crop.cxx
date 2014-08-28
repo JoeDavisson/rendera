@@ -26,34 +26,37 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.h"
 #include "Gui.h"
 
-static int inbox(int x, int y, int x1, int y1, int x2, int y2)
+namespace
 {
-  if(x1 > x2)
-    SWAP(x1, x2);
-  if(y1 > y2)
-    SWAP(y1, y2);
+  bool inbox(int x, int y, int x1, int y1, int x2, int y2)
+  {
+    if(x1 > x2)
+      SWAP(x1, x2);
+    if(y1 > y2)
+      SWAP(y1, y2);
 
-  if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
-    return 1;
-  else
-    return 0;
+    if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
+      return 1;
+    else
+      return 0;
 }
 
-static void absrect(int *x1, int *y1, int *x2, int *y2)
-{
-  if(*x1 > *x2)
-    SWAP(*x1, *x2);
-  if(*y1 > *y2)
-    SWAP(*y1, *y2);
+  void absrect(int *x1, int *y1, int *x2, int *y2)
+  {
+    if(*x1 > *x2)
+      SWAP(*x1, *x2);
+    if(*y1 > *y2)
+      SWAP(*y1, *y2);
 
-  if(*x1 < Bitmap::main->cl)
-    *x1 = Bitmap::main->cl;
-  if(*y1 < Bitmap::main->ct)
-    *y1 = Bitmap::main->ct;
-  if(*x2 > Bitmap::main->cr)
-    *x2 = Bitmap::main->cr;
-  if(*y2 > Bitmap::main->cb)
-    *y2 = Bitmap::main->cb;
+    if(*x1 < Bitmap::main->cl)
+      *x1 = Bitmap::main->cl;
+    if(*y1 < Bitmap::main->ct)
+      *y1 = Bitmap::main->ct;
+    if(*x2 > Bitmap::main->cr)
+      *x2 = Bitmap::main->cr;
+    if(*y2 > Bitmap::main->cb)
+      *y2 = Bitmap::main->cb;
+  }
 }
 
 Crop::Crop()
