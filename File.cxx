@@ -113,10 +113,31 @@ static void jpg_exit(j_common_ptr cinfo)
   longjmp(myerr->setjmp_buffer, 1);
 }
 
-static int is_jpeg_header(const unsigned char *header)
+static int is_png(unsigned char *header)
+{
+  return (png_sig_cmp((png_bytep)header, 0, 8) == 0) ? 1 : 0;
+}
+
+static int is_jpeg(unsigned char *header)
 {
   const unsigned char id[2] = { 0xFF, 0xD8 };
   return (memcmp(header, id, 2) == 0) ? 1 : 0;
+}
+
+static int is_bmp(unsigned char *header)
+{
+  return (memcmp(header, "BM", 2) == 0) ? 1 : 0;
+}
+
+static int is_gpl(unsigned char *header)
+{
+  return (memcmp(header, "GIMP Palette", 12) == 0) ? 1 : 0;
+}
+
+// tga has no real header, will have to trust the file extension
+static int is_tga(char *ext)
+{
+  return (memcmp(ext, ".tga", 2) == 0) ? 1 : 0;
 }
 
 void File::load(Fl_Widget *, void *)
@@ -162,13 +183,13 @@ void File::load(Fl_Widget *, void *)
 
   fclose(in);
 
-  if(png_sig_cmp(header, 0, 8) == 0)
+  if(is_png(header))
     File::loadPNG(fn, Bitmap::main, 64);
-  else if(is_jpeg_header(header))
+  else if(is_jpeg(header))
     File::loadJPG(fn, Bitmap::main, 64);
-  else if(memcmp(header, "BM", 2) == 0)
+  else if(is_bmp(header))
     File::loadBMP(fn, Bitmap::main, 64);
-  else if(strcasecmp(ext, ".tga") == 0)
+  else if(is_tga(ext))
     File::loadTGA(fn, Bitmap::main, 64);
   else
   {
@@ -503,7 +524,7 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
     return;
   }
 
-  if(png_sig_cmp(header, 0, 8) != 0)
+  if(!is_png(header))
   {
     fclose(in);
     return;
@@ -513,6 +534,7 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
   png_infop info_ptr;
 
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+
   if(!png_ptr)
   {
     fclose(in);
@@ -520,6 +542,7 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
   }
 
   info_ptr = png_create_info_struct(png_ptr);
+
   if(!info_ptr)
   {
     fclose(in);
@@ -562,7 +585,9 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
   for(y = 0; y < h; y++)
   {
     png_read_row(png_ptr, linebuf, (png_bytep)0); 
+
     int xx = 0;
+
     for(x = 0; x < w; x++)
     {
       if(depth == 3)
@@ -581,6 +606,7 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
 
       xx += depth;
     }
+
     p += overscroll * 2;
   }
 
@@ -894,7 +920,7 @@ void File::saveJPG(const char *fn)
 
 Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
 {
-  if(png_sig_cmp(header, 0, 8) != 0)
+  if(!is_png(header))
     return 0;
 
   loadPNG(fn, Bitmap::preview, 0);
@@ -908,7 +934,7 @@ Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
 
 Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int)
 {
-  if(!is_jpeg_header(header))
+  if(!is_jpeg(header))
     return 0;
 
   loadJPG(fn, Bitmap::preview, 0);
@@ -922,7 +948,7 @@ Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int)
 
 Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int)
 {
-  if(memcmp(header, "BM", 2) != 0)
+  if(!is_bmp(header))
     return 0;
 
   loadBMP(fn, Bitmap::preview, 0);
@@ -951,7 +977,7 @@ Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
     p--;
   }
 
-  if(strcasecmp(ext, ".tga") != 0)
+  if(!is_tga(ext))
     return 0;
 
   loadTGA(fn, Bitmap::preview, 0);
@@ -963,8 +989,9 @@ Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
   return image;
 }
 
-Fl_Image *File::previewGPL(const char *fn, unsigned char *, int)
+Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int)
 {
+/*
   // get file extension
   char ext[16];
   char *p = (char *)fn + strlen(fn) - 1;
@@ -981,6 +1008,9 @@ Fl_Image *File::previewGPL(const char *fn, unsigned char *, int)
   }
 
   if(strcasecmp(ext, ".gpl") != 0)
+    return 0;
+*/
+  if(!is_gpl(header))
     return 0;
 
   Palette *pal = new Palette();
