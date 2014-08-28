@@ -122,12 +122,13 @@ void Palette::copy(Palette *dest)
 void Palette::set_default()
 {
   int r, g, b;
-  int h, /* s, */ v;
+  int h, v;
   int index = 0;
 
-  int sat[5] = { 255, 255, 255, 128, 64 };
-  int val[5] = { 64, 128, 255, 255, 255 };
+  const int sat[5] = { 255, 255, 255, 128, 64 };
+  const int val[5] = { 64, 128, 255, 255, 255 };
 
+  // colors
   for(v = 4; v >= 0; v--)
   {
     for(h = 0; h < 12; h++)
@@ -138,17 +139,7 @@ void Palette::set_default()
     }
   }
 
-/*
-  for(v = 4; v >= 0; v--)
-  {
-    for(h = 0; h < 12; h++)
-    {
-      Blend::hsv_to_rgb(h * 128, sat[v] / 2, val[v], &r, &g, &b);
-
-      data[index++] = makecol(r, g, b);
-    }
-  }
-*/
+  // grays
   for(v = 0; v < 12; v++)
   {
     data[index++] = makecol(v * 23.19, v * 23.19, v * 23.19);
