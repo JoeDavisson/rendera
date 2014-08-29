@@ -412,7 +412,7 @@ void FX::doSaturate()
       int g = getg(c);
       int b = getb(c);
       int h, s, v;
-      Blend::rgb_to_hsv(r, g, b, &h, &s, &v);
+      Blend::rgbToHsv(r, g, b, &h, &s, &v);
 
       list_s[s]++;
     }
@@ -435,14 +435,14 @@ void FX::doSaturate()
       int b = getb(c);
       int l = getl(c);
       int h, s, v;
-      Blend::rgb_to_hsv(r, g, b, &h, &s, &v);
+      Blend::rgbToHsv(r, g, b, &h, &s, &v);
       int temp = s;
       s = list_s[s] * scale;
       if(s < temp)
         s = temp;
-      Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
+      Blend::hsvToRgb(h, s, v, &r, &g, &b);
 
-      bmp->setpixel(x, y, Blend::force_lum(makecol(r, g, b), l), 0);
+      bmp->setpixel(x, y, Blend::forceLuminance(makecol(r, g, b), l), 0);
     }
 
     if(!(y % 64))
@@ -509,11 +509,11 @@ void FX::doRotateHue(int amount)
       r = getr(c);
       g = getg(c);
       b = getb(c);
-      Blend::rgb_to_hsv(r, g, b, &h, &s, &v);
+      Blend::rgbToHsv(r, g, b, &h, &s, &v);
       h += hh;
       if(h >= 1536)
         h -= 1536;
-      Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
+      Blend::hsvToRgb(h, s, v, &r, &g, &b);
       c = makecol(r, g, b);
 
       bmp->setpixel(x, y, c, 0);
@@ -772,15 +772,15 @@ void FX::doColorize()
       int g = getg(c1);
       int b = getb(c1);
       int h, s, v;
-      Blend::rgb_to_hsv(r, g, b, &h, &s, &v);
+      Blend::rgbToHsv(r, g, b, &h, &s, &v);
       int sat = s;
       if(sat < 64)
         sat = 64;
       r = getr(Brush::main->color);
       g = getg(Brush::main->color);
       b = getb(Brush::main->color);
-      Blend::rgb_to_hsv(r, g, b, &h, &s, &v);
-      Blend::hsv_to_rgb(h, (sat * s) / (sat + s), v, &r, &g, &b);
+      Blend::rgbToHsv(r, g, b, &h, &s, &v);
+      Blend::hsvToRgb(h, (sat * s) / (sat + s), v, &r, &g, &b);
       int c2 = makecol(r, g, b);
       bmp->setpixel(x, y, Blend::colorize(c1, c2, 0), 0);
     }
@@ -824,7 +824,7 @@ void FX::doCorrect()
 
       // only change hue
       int h, s, v;
-      Blend::rgb_to_hsv(r, g, b, &h, &s, &v);
+      Blend::rgbToHsv(r, g, b, &h, &s, &v);
       int sat = s;
       int val = v;
 
@@ -837,10 +837,10 @@ void FX::doCorrect()
       ga = MAX(MIN(ga, 255), 0);
       ba = MAX(MIN(ba, 255), 0);
 
-      Blend::rgb_to_hsv(ra, ga, ba, &h, &s, &v);
-      Blend::hsv_to_rgb(h, sat, val, &ra, &ga, &ba);
+      Blend::rgbToHsv(ra, ga, ba, &h, &s, &v);
+      Blend::hsvToRgb(h, sat, val, &ra, &ga, &ba);
 
-      bmp->setpixel(x, y, Blend::force_lum(makecol(ra, ga, ba), l), 0);
+      bmp->setpixel(x, y, Blend::forceLuminance(makecol(ra, ga, ba), l), 0);
     }
 
     if(!(y % 64))

@@ -21,8 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef INLINE_H
 #define INLINE_H
 
+// fast random number seed
 extern int seed;
 
+// fast random number approximation
 inline int rnd32(void)
 {
   seed = (seed << 17) ^ (seed >> 13) ^ (seed << 5);
@@ -69,15 +71,10 @@ inline int getv(const int c)
   return (getr(c) + getg(c) + getb(c)) / 3;
 }
 
-// rec 709
-//inline int getl(const int c)
-//{
-//  return ((54 * getr(c)) + (182 * getg(c)) + (19 * getb(c))) / 255;
-//}
-
+// rough luminance approximation (good enough for colorize)
 inline int getl(const int c)
 {
-  return (76 * getr(c)) + (150 * getg(c)) + (29 * getb(c)) / 255;
+  return ((getr(c) << 1) + (getg(c) << 2) + (getb(c) << 0)) >> 3;
 }
 
 inline int SCALE(const int a, const int b)

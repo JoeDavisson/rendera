@@ -34,12 +34,12 @@ namespace Blend
   int add(int, int, int);
   int sub(int, int, int);
   int colorize(int, int, int);
-  int force_lum(int, int);
+  int forceLuminance(int, int);
   int alpha_add(int, int, int);
   int alpha_sub(int, int, int);
   int smooth(int, int, int);
-  void hsv_to_rgb(int, int, int, int *, int *, int *);
-  void rgb_to_hsv(int, int, int, int *, int *, int *);
+  void rgbToHsv(int, int, int, int *, int *, int *);
+  void hsvToRgb(int, int, int, int *, int *, int *);
 
   extern int (*current)(int, int, int);
   extern int xpos, ypos;

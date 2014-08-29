@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // window
 Fl_Double_Window *Gui::window;
 
+// main menu
 Fl_Menu_Bar *Gui::menubar;
 
 // containers
@@ -398,7 +399,7 @@ void Gui::updateColor(int c)
 
   int h, s, v;
 
-  Blend::rgb_to_hsv(r, g, b, &h, &s, &v);
+  Blend::rgbToHsv(r, g, b, &h, &s, &v);
 
   float angle = ((3.14159 * 2) / 1536) * h;
   int mx = 48 + 40 * cosf(angle);
@@ -596,7 +597,7 @@ void Gui::checkColor(Widget *, void *)
 
   int r, g, b;
 
-  Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
+  Blend::hsvToRgb(h, s, v, &r, &g, &b);
   Brush::main->color = makecol(r, g, b);
   Brush::main->trans = trans->var * 2.685;
   Brush::main->blend = blend->value();
@@ -614,7 +615,7 @@ void Gui::checkColor(Widget *, void *)
     int x2 = 48 + 20 * cosf(angle);
     int y2 = 48 + 20 * sinf(angle);
 
-    Blend::hsv_to_rgb(i, 255, 255, &r, &g, &b);
+    Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
     hue->bitmap->line(x1, y1, x2, y2, makecol(r, g, b), 0);
     hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makecol(r, g, b), 0);
   }
@@ -632,7 +633,7 @@ void Gui::checkColor(Widget *, void *)
   {
     for(x = 0; x < 96; x++)
     {
-      Blend::hsv_to_rgb(h, x * 2.685, y * 2.685, &r, &g, &b);
+      Blend::hsvToRgb(h, x * 2.685, y * 2.685, &r, &g, &b);
       satval->bitmap->setpixel_solid(x, y, makecol(r, g, b), 0);
     }
   }

@@ -109,11 +109,11 @@ int Blend::sub(int c1, int c2, int t)
   int b = getb(c2);
   int h = 0, s = 0, v = 0;
 
-  rgb_to_hsv(r, g, b, &h, &s, &v);
+  rgbToHsv(r, g, b, &h, &s, &v);
   h += 768;
   if(h >= 1536)
         h -= 1536;
-  hsv_to_rgb(h, s, v, &r, &g, &b);
+  hsvToRgb(h, s, v, &r, &g, &b);
   c2 = makecol(r, g, b);
 
   t = 255 - t;
@@ -132,50 +132,51 @@ int Blend::colorize(int c1, int c2, int t)
 {
   int c3 = trans(c1, c2, t);
 
-  return force_lum(c3, getl(c1));
+  return forceLuminance(c3, getl(c1));
 }
 
-// forces a color to a similar one with the specified luminance
-int Blend::force_lum(int c, int dest_lum)
+// forces a color to a similar one with the specified luminance,
+// brute-force and very slow, but ensures that the luminance never changes,
+// so an image may be recolored indefinately with no artifacts
+int Blend::forceLuminance(int c, int dest)
 {
-  int i;
-  int src_lum = getl(c);
-  int a = geta(c);
-
+  int src = getl(c);
   int n[3];
+  int i;
+
   n[0] = getr(c);
   n[1] = getg(c);
   n[2] = getb(c);
 
-  while(src_lum < dest_lum)
+  while(src < dest)
   {
     for(i = 0; i < 3; i++)
     {
       if(n[i] < 255)
       {
         n[i]++;
-        src_lum = getl(makecola(n[0], n[1], n[2], a));
-        if(src_lum == dest_lum)
+        src = getl(makecola(n[0], n[1], n[2], geta(c)));
+        if(src == dest)
           break;
       }
     }
   }
 
-  while(src_lum > dest_lum)
+  while(src > dest)
   {
     for(i = 0; i < 3; i++)
     {
       if(n[i] > 0)
       {
         n[i]--;
-        src_lum = getl(makecola(n[0], n[1], n[2], a));
-        if(src_lum == dest_lum)
+        src = getl(makecola(n[0], n[1], n[2], geta(c)));
+        if(src == dest)
           break;
       }
     }
   }
 
-  return makecola(n[0], n[1], n[2], a);
+  return makecola(n[0], n[1], n[2], geta(c));
 }
 
 int Blend::alpha_add(int c1, int, int t)
@@ -188,6 +189,7 @@ int Blend::alpha_sub(int c1, int, int t)
   return makecola(getr(c1), getg(c1), getb(c1), 255 - ((255 - geta(c1)) * t) / 255);
 }
 
+// cheap and fake "gaussian blur" :)
 int Blend::smooth(int c1, int, int t)
 {
   int x = xpos;
@@ -256,12 +258,47 @@ int Blend::smooth(int c1, int, int t)
   return Blend::trans_all(c1, makecola(r, g, b, a), t);
 }
 
+// RGB<->HSV conversions use the following ranges:
 // hue 0-1535
 // sat 0-255
 // val 0-255
-void Blend::hsv_to_rgb(int h, int s, int v, int *r, int *g, int *b)
+// the additional hue resolution ensures that no information is lost so an
+// image's hue may be rotated indefinately with no loss of information
+
+void Blend::rgbToHsv(int r, int g, int b, int *h, int *s, int *v)
 {
-  if(!s)
+  int max = MAX(r, MAX(g, b));
+  int min = MIN(r, MIN(g, b));
+  int delta = max - min;
+
+  *v = max;
+
+  if(max)
+    *s = (delta * 255) / max;
+  else
+    *s = 0;
+
+  if(*s == 0)
+  {
+    *h = 0;
+  }
+  else
+  {
+    if(r == max)
+      *h = ((g - b) * 255) / delta;
+    else if(g == max)
+      *h = 512 + ((b - r) * 255) / delta;
+    else if(b == max)
+      *h = 1024 + ((r - g) * 255) / delta;
+
+    if(*h < 0)
+      *h += 1536;
+  }
+}
+
+void Blend::hsvToRgb(int h, int s, int v, int *r, int *g, int *b)
+{
+  if(s == 0)
   {
     *r = *g = *b = v;
     return;
@@ -307,40 +344,6 @@ void Blend::hsv_to_rgb(int h, int s, int v, int *r, int *g, int *b)
       *g = x;
       *b = y;
       break;
-  }
-}
-
-// hue 0-1535
-// sat 0-255
-// val 0-255
-void Blend::rgb_to_hsv(int r, int g, int b, int *h, int *s, int *v)
-{
-  int max = MAX(r, MAX(g, b));
-  int min = MIN(r, MIN(g, b));
-  int delta = max - min;
-
-  *v = max;
-
-  if(max)
-    *s = (delta * 255) / max;
-  else
-    *s = 0;
-
-  if(!*s)
-  {
-    *h = 0;
-  }
-  else
-  {
-    if(r == max)
-      *h = ((g - b) * 255) / delta;
-    else if(g == max)
-      *h = 512 + ((b - r) * 255) / delta;
-    else if(b == max)
-      *h = 1024 + ((r - g) * 255) / delta;
-
-    if(*h < 0)
-      *h += 1536;
   }
 }
 

@@ -512,8 +512,8 @@ void Dialog::doEditorPalette(Widget *widget, void *var)
       int c2 = pal->data[end];
       int h1, s1, v1;
       int h2, s2, v2;
-      Blend::rgb_to_hsv(getr(c1), getg(c1), getb(c1), &h1, &s1, &v1);
-      Blend::rgb_to_hsv(getr(c2), getg(c2), getb(c2), &h2, &s2, &v2);
+      Blend::rgbToHsv(getr(c1), getg(c1), getb(c1), &h1, &s1, &v1);
+      Blend::rgbToHsv(getr(c2), getg(c2), getb(c2), &h2, &s2, &v2);
       double steph = (double)(h2 - h1) / num;
       double steps = (double)(s2 - s1) / num;
       double stepv = (double)(v2 - v1) / num;
@@ -524,7 +524,7 @@ void Dialog::doEditorPalette(Widget *widget, void *var)
 
       for(i = begin; i < end; i++)
       {
-        Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
+        Blend::hsvToRgb(h, s, v, &r, &g, &b);
         pal->data[i] = makecol(r, g, b);
         h += steph;
         s += steps;
@@ -555,7 +555,7 @@ void Dialog::doEditorSetHsv()
   int h = 0, s = 0, v = 0;
   int color = Brush::main->color;
 
-  Blend::rgb_to_hsv(getr(color), getg(color), getb(color), &h, &s, &v);
+  Blend::rgbToHsv(getr(color), getg(color), getb(color), &h, &s, &v);
 
   editor_h->bitmap->clear(makecol(0, 0, 0));
   editor_sv->bitmap->clear(makecol(0, 0, 0));
@@ -564,11 +564,11 @@ void Dialog::doEditorSetHsv()
   {
     for(x = 0; x < 256; x++)
     {
-      Blend::hsv_to_rgb(h, x, y, &r, &g, &b);
+      Blend::hsvToRgb(h, x, y, &r, &g, &b);
       editor_sv->bitmap->setpixel_solid(x, y, makecol(r, g, b), 0);
     }
 
-    Blend::hsv_to_rgb(y * 6, 255, 255, &r, &g, &b);
+    Blend::hsvToRgb(y * 6, 255, 255, &r, &g, &b);
     editor_h->bitmap->hline(0, y, 23, makecol(r, g, b), 0);
   }
 
@@ -597,7 +597,7 @@ void Dialog::doEditorSetHsvSliders()
 {
   int h, s, v;
   int color = Brush::main->color;
-  Blend::rgb_to_hsv(getr(color), getg(color), getb(color), &h, &s, &v);
+  Blend::rgbToHsv(getr(color), getg(color), getb(color), &h, &s, &v);
   editor_h->var = h / 6;
   editor_sv->var = s + 256 * v;
   editor_h->redraw();
@@ -611,7 +611,7 @@ void Dialog::doEditorGetHsv()
   int v = editor_sv->var / 256;
   int r, g, b;
 
-  Blend::hsv_to_rgb(h, s, v, &r, &g, &b);
+  Blend::hsvToRgb(h, s, v, &r, &g, &b);
   Brush::main->color = makecol(r, g, b);
 
   Gui::updateColor(Brush::main->color);

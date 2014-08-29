@@ -133,7 +133,7 @@ void Palette::set_default()
   {
     for(h = 0; h < 12; h++)
     {
-      Blend::hsv_to_rgb(h * 128, sat[v], val[v], &r, &g, &b);
+      Blend::hsvToRgb(h * 128, sat[v], val[v], &r, &g, &b);
 
       data[index++] = makecol(r, g, b);
     }
