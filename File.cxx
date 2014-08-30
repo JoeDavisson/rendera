@@ -190,13 +190,13 @@ void File::load(Fl_Widget *, void *)
   fclose(in);
 
   if(is_png(header))
-    File::loadPNG(fn, Bitmap::main, 64);
+    File::loadPNG((const char *)fn, Bitmap::main, 64);
   else if(is_jpeg(header))
-    File::loadJPG(fn, Bitmap::main, 64);
+    File::loadJPG((const char *)fn, Bitmap::main, 64);
   else if(is_bmp(header))
-    File::loadBMP(fn, Bitmap::main, 64);
+    File::loadBMP((const char *)fn, Bitmap::main, 64);
   else if(is_tga(fn))
-    File::loadTGA(fn, Bitmap::main, 64);
+    File::loadTGA((const char *)fn, Bitmap::main, 64);
   else
   {
     delete fc;
@@ -624,6 +624,8 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
 
 void File::save(Fl_Widget *, void *)
 {
+  const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
+
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
   fc->title("Save Image");
   fc->filter("PNG Image\t*.png\nJPEG Image\t*.jpg\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
@@ -631,10 +633,13 @@ void File::save(Fl_Widget *, void *)
   fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc->show();
 
-  const char *fn = fc->filename();
+  char *fn = new char[1024];
+  strcpy(fn, fc->filename());
+  int ext = fc->filter_value();
+  fl_filename_setext(fn, sizeof(fn), ext_string[ext]);
 
-  char ext[16];
-  get_extension(fn, ext);
+//  char ext[16];
+//  get_extension(fn, ext);
 
   if(file_exists(fn))
   {
@@ -643,18 +648,20 @@ void File::save(Fl_Widget *, void *)
       return;
   }
   
-  if(strcasecmp(ext, ".png") == 0)
-    File::savePNG(fn);
-  else if(strcasecmp(ext, ".jpg") == 0)
-    File::saveJPG(fn);
-  else if(strcasecmp(ext, ".bmp") == 0)
-    File::saveBMP(fn);
-  else if(strcasecmp(ext, ".tga") == 0)
-    File::saveTGA(fn);
-  else
+  switch(ext)
   {
-    delete fc;
-    return;
+    case 0:
+      File::savePNG(fn);
+      break;
+    case 1:
+      File::saveJPG(fn);
+      break;
+    case 2:
+      File::saveBMP(fn);
+      break;
+    case 3:
+      File::saveTGA(fn);
+      break;
   }
 
   delete fc;

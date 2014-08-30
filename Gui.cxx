@@ -151,7 +151,7 @@ void Gui::init()
   menubar->add("Palette/Load", 0, (Fl_Callback *)Dialog::showLoadPalette, 0, 0);
   menubar->add("Palette/Save", 0, (Fl_Callback *)Dialog::showSavePalette, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Editor...", 0, (Fl_Callback *)Dialog::showEditor, 0, FL_MENU_DIVIDER);
-  menubar->add("Palette/Create From Image", 0, (Fl_Callback *)Dialog::showCreatePalette, 0, 0);
+  menubar->add("Palette/Create From Image...", 0, (Fl_Callback *)Dialog::showCreatePalette, 0, 0);
   menubar->add("Effects/Normalize", 0, (Fl_Callback *)FX::showNormalize, 0, 0);
   menubar->add("Effects/Equalize", 0, (Fl_Callback *)FX::showEqualize, 0, 0);
   menubar->add("Effects/Value Stretch", 0, (Fl_Callback *)FX::showValueStretch, 0, 0);
