@@ -27,6 +27,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #define SHIFT 12
 
+extern int *fix_gamma;
+extern int *unfix_gamma;
+
 namespace
 {
   // qsort callback to sort palette by luminance
@@ -92,12 +95,16 @@ namespace
 
       do
       {
-        r += (float)getr(*c[i]) * f[i];
-        g += (float)getg(*c[i]) * f[i];
-        b += (float)getb(*c[i]) * f[i];
+        r += (float)fix_gamma[getr(*c[i])] * f[i];
+        g += (float)fix_gamma[getg(*c[i])] * f[i];
+        b += (float)fix_gamma[getb(*c[i])] * f[i];
         i++;
       }
       while(i < 2);
+
+      r = unfix_gamma[(int)r];
+      g = unfix_gamma[(int)g];
+      b = unfix_gamma[(int)b];
 
       temp[x] = makecol_notrans((int)r, (int)g, (int)b);
 
