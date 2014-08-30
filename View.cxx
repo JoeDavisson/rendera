@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gui.h"
 #include "Widget.h"
 #include "Stroke.h"
+#include "File.h"
 
 namespace
 {
@@ -250,6 +251,39 @@ int View::handle(int event)
         case FL_Up:
           scroll(3, 64);
           break;
+      }
+      return 1;
+    case FL_DND_ENTER:
+      return 1;
+    case FL_DND_LEAVE:
+      return 1;
+    case FL_DND_DRAG:
+      return 1;
+    case FL_DND_RELEASE:
+      return 1;
+    case FL_PASTE:
+      if(strncasecmp(Fl::event_text(), "file://", 7) == 0)
+      {
+        char fn[256];
+
+        // remove "file://" from path
+        strcpy(fn, Fl::event_text() + 7);
+
+        // convert to utf-8 (e.g. %20 becomes space)
+        fl_decode_uri(fn);
+
+        // strip newline
+        unsigned int i;
+        for(i = 0; i < strlen(fn); i++)
+        {
+          if(fn[i] == '\r')
+            fn[i] = '\0';
+          if(fn[i] == '\n')
+            fn[i] = '\0';
+        }
+
+        // try to load the file
+        File::loadFile(fn);
       }
       return 1;
   }

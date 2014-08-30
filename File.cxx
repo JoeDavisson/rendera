@@ -197,6 +197,42 @@ void File::load(Fl_Widget *, void *)
   Undo::reset();
 }
 
+void File::loadFile(const char *fn)
+{
+  FILE *in = fopen(fn, "rb");
+  if(!in)
+    return;
+
+  unsigned char header[8];
+  if(fread(&header, 1, 8, in) != 8)
+  {
+    fclose(in);
+    return;
+  }
+
+  fclose(in);
+
+  if(is_png(header))
+    File::loadPNG((const char *)fn, Bitmap::main, 64);
+  else if(is_jpeg(header))
+    File::loadJPG((const char *)fn, Bitmap::main, 64);
+  else if(is_bmp(header))
+    File::loadBMP((const char *)fn, Bitmap::main, 64);
+  else if(is_tga(fn))
+    File::loadTGA((const char *)fn, Bitmap::main, 64);
+  else
+  {
+    return;
+  }
+
+  delete Map::main;
+  Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
+
+  Gui::view->zoom_fit(Gui::view->fit);
+  Gui::view->draw_main(1);
+  Undo::reset();
+}
+
 void File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
 {
   struct jpeg_decompress_struct cinfo;
