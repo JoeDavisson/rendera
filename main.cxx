@@ -39,6 +39,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // for fast random number generator in inline.h
 int seed = 12345;
 
+int *fix_gamma;
+int *unfix_gamma;
+
 int main(int /* argc */, char** /* argv */)
 {
   Fl::visual(FL_DOUBLE | FL_RGB);
@@ -49,6 +52,16 @@ int main(int /* argc */, char** /* argv */)
   Fl_Shared_Image::add_handler(File::previewTGA);
   Fl_Shared_Image::add_handler(File::previewGPL);
   fl_message_hotspot(0);
+
+  // gamma correction tables
+  fix_gamma = new int[256];
+  unfix_gamma = new int[65536];
+
+  int i;
+  for(i = 0; i < 65536; i++)
+    unfix_gamma[i] = pow((double)i / 65535, (1.0 / 2.2)) * 255;
+  for(i = 0; i < 256; i++)
+    fix_gamma[i] = pow((double)i / 255, 2.2) * 65535;
 
   Bitmap::main = new Bitmap(640, 480, 64,
                             makecol(255, 255, 255), makecol(128, 128, 128));

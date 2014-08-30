@@ -30,6 +30,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.h"
 #include "Undo.h"
 
+extern int *fix_gamma;
+extern int *unfix_gamma;
+
 Fl_Double_Window *FX::rotate_hue;
 Field *FX::rotate_hue_amount;
 Fl_Check_Button *FX::rotate_hue_preserve;
@@ -48,6 +51,11 @@ Field *FX::remove_dust_amount;
 Fl_Check_Button *FX::remove_dust_invert;
 Fl_Button *FX::remove_dust_ok;
 Fl_Button *FX::remove_dust_cancel;
+
+Fl_Double_Window *FX::apply_palette;
+Fl_Check_Button *FX::apply_palette_dither;
+Fl_Button *FX::apply_palette_ok;
+Fl_Button *FX::apply_palette_cancel;
 
 namespace
 {
@@ -104,6 +112,16 @@ void FX::init()
   remove_dust_cancel->callback((Fl_Callback *)cancelRemoveDust);
   remove_dust->set_modal();
   remove_dust->end();
+
+  apply_palette = new Fl_Double_Window(200, 72, "Apply Palette");
+  apply_palette_dither = new Fl_Check_Button(48, 8, 16, 16, "Dithering");
+  new Separator(apply_palette, 2, 32, 196, 2, "");
+  apply_palette_ok = new Fl_Button(56, 40, 64, 24, "OK");
+  apply_palette_ok->callback((Fl_Callback *)hideApplyPalette);
+  apply_palette_cancel = new Fl_Button(128, 40, 64, 24, "Cancel");
+  apply_palette_cancel->callback((Fl_Callback *)cancelApplyPalette);
+  apply_palette->set_modal();
+  apply_palette->end();
 }
 
 // normalize
@@ -856,11 +874,22 @@ void FX::doCorrect()
 
 void FX::showApplyPalette()
 {
-  begin();
-  doApplyPalette();
+  apply_palette->show();
 }
 
-void FX::doApplyPalette()
+void FX::hideApplyPalette()
+{
+  begin();
+
+  if(apply_palette_dither->value())
+    doApplyPaletteDither();
+  else
+    doApplyPaletteNormal();
+
+  apply_palette->hide();
+}
+
+void FX::doApplyPaletteNormal()
 {
   int x, y;
 
@@ -882,5 +911,94 @@ void FX::doApplyPalette()
   }
 
   Dialog::hideProgress();
+}
+
+void FX::doApplyPaletteDither()
+{
+  int x, y;
+  int i, j;
+  Bitmap *bmp = Bitmap::main;
+
+  int e[3], v[3], n[3], last[3];
+  int *buf[3], *prev[3];
+
+  for(i = 0; i < 3; i++)
+  {
+    buf[i] = new int[bmp->w];
+    prev[i] = new int[bmp->w];
+
+    for(j = 0; j < bmp->w; j++)
+    {
+      *(buf[i] + j) = 0;
+      *(prev[i] + j) = 0;
+    }
+
+    last[i] = 0;
+  }
+
+  Dialog::showProgress((float)bmp->h / 64);
+
+  for(y = overscroll; y < bmp->h - overscroll; y++)
+  {
+    int *p = bmp->row[y] + overscroll;
+    for(x = overscroll; x < bmp->w - overscroll; x++)
+    {
+      v[0] = fix_gamma[getr(*p)];
+      v[1] = fix_gamma[getg(*p)];
+      v[2] = fix_gamma[getb(*p)];
+
+      for(i = 0; i < 3; i++)
+      {
+        n[i] = v[i] + last[i] + prev[i][x];
+        n[i] = MAX(MIN(n[i], 65535), 0);
+      }
+
+      const int r = unfix_gamma[n[0]];
+      const int g = unfix_gamma[n[1]];
+      const int b = unfix_gamma[n[2]];
+
+      int a = geta(*p);
+      *p = Palette::main->data[Palette::main->lookup[makecol(r, g, b) & 0xFFFFFF]] | (a << 24);
+
+      v[0] = fix_gamma[getr(*p)];
+      v[1] = fix_gamma[getg(*p)];
+      v[2] = fix_gamma[getb(*p)];
+
+      for(i = 0; i < 3; i++)
+      {
+        e[i] = n[i] - v[i];
+        last[i] = (e[i] * 7) / 16;
+        buf[i][x - 1] += (e[i] * 3) / 16;
+        buf[i][x] += (e[i] * 5) / 16;
+        buf[i][x + 1] += (e[i] * 1) / 16;
+      }
+
+      p++;
+    }
+
+    for(i = 0; i < 3; i++)
+    {
+      for(j = overscroll; j < bmp->w - overscroll; j++)
+      {
+        *(prev[i] + j) = *(buf[i] + j);
+        *(buf[i] + j) = 0;
+      }
+      last[i] = 0;
+    }
+
+    if(!(y % 64))
+    {
+      Gui::view->draw_main(1);
+      Dialog::updateProgress();
+    }
+  }
+
+  Dialog::hideProgress();
+}
+
+void FX::cancelApplyPalette()
+{
+  Dialog::hideProgress();
+  apply_palette->hide();
 }
 

@@ -66,7 +66,10 @@ namespace FX
   void doCorrect();
 
   void showApplyPalette();
-  void doApplyPalette();
+  void hideApplyPalette();
+  void doApplyPaletteNormal();
+  void doApplyPaletteDither();
+  void cancelApplyPalette();
 
   extern Fl_Double_Window *rotate_hue;
   extern Field *rotate_hue_amount;
@@ -86,6 +89,11 @@ namespace FX
   extern Fl_Check_Button *remove_dust_invert;
   extern Fl_Button *remove_dust_ok;
   extern Fl_Button *remove_dust_cancel;
+
+  extern Fl_Double_Window *apply_palette;
+  extern Fl_Check_Button *apply_palette_dither;
+  extern Fl_Button *apply_palette_ok;
+  extern Fl_Button *apply_palette_cancel;
 }
 
 #endif

@@ -162,7 +162,7 @@ void Gui::init()
   menubar->add("Effects/Correction Matrix", 0, (Fl_Callback *)FX::showCorrect, 0, 0);
   menubar->add("Effects/Remove Dust...", 0, (Fl_Callback *)FX::showRemoveDust, 0, 0);
   menubar->add("Effects/Colorize", 0, (Fl_Callback *)FX::showColorize, 0, 0);
-  menubar->add("Effects/Apply Palette", 0, (Fl_Callback *)FX::showApplyPalette, 0, 0);
+  menubar->add("Effects/Apply Palette...", 0, (Fl_Callback *)FX::showApplyPalette, 0, 0);
   menubar->add("Help/About...", 0, (Fl_Callback *)Dialog::showAbout, 0, 0);
 
   // top_left
