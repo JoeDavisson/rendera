@@ -638,9 +638,6 @@ void File::save(Fl_Widget *, void *)
   int ext = fc->filter_value();
   fl_filename_setext(fn, sizeof(fn), ext_string[ext]);
 
-//  char ext[16];
-//  get_extension(fn, ext);
-
   if(file_exists(fn))
   {
     fl_message_title("Replace File?");
