@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX.h"
 #include "Bitmap.h"
+#include "Palette.h"
 #include "Blend.h"
 #include "Brush.h"
 #include "Dialog.h"
@@ -841,6 +842,36 @@ void FX::doCorrect()
       Blend::hsvToRgb(h, sat, val, &ra, &ga, &ba);
 
       bmp->setpixel(x, y, Blend::forceLuminance(makecol(ra, ga, ba), l), 0);
+    }
+
+    if(!(y % 64))
+    {
+      Gui::view->draw_main(1);
+      Dialog::updateProgress();
+    }
+  }
+
+  Dialog::hideProgress();
+}
+
+void FX::showApplyPalette()
+{
+  begin();
+  doApplyPalette();
+}
+
+void FX::doApplyPalette()
+{
+  int x, y;
+
+  Dialog::showProgress((float)bmp->h / 64);
+
+  for(y = overscroll; y < bmp->h - overscroll; y++)
+  {
+    for(x = overscroll; x < bmp->w - overscroll; x++)
+    {
+      int c = bmp->getpixel(x, y);
+      bmp->setpixel(x, y, Palette::main->data[Palette::main->lookup[c & 0xFFFFFF]], 0);
     }
 
     if(!(y % 64))

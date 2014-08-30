@@ -63,8 +63,6 @@ namespace Gui
   void checkConstrain(Widget *, void *);
   void checkCropDo();
   void checkCropValues();
-  void checkRGBA();
-  void checkIndexed();
 
   // window
   extern Fl_Double_Window *window;

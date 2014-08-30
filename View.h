@@ -70,7 +70,6 @@ public:
   int button1, button2, button3;
   int dclick;
   int shift;
-  int mode;
 protected:
   virtual void draw();
 };

@@ -54,11 +54,7 @@ void GetColor::push(View *view)
                                    Bitmap::main->cr, Bitmap::main->cb))
   {
     int c = Bitmap::main->getpixel(view->imgx, view->imgy);
-
-    if(Gui::view->mode == 1)
-      Gui::updateColor(Palette::main->data[Palette::main->lookup[c & 0xFFFFFF]]);
-    else
-      Gui::updateColor(c);
+    Gui::updateColor(c);
   }
 }
 

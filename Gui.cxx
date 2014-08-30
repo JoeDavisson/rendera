@@ -148,8 +148,6 @@ void Gui::init()
   menubar->add("File/Save", 0, (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
   menubar->add("File/Quit", 0, (Fl_Callback *)quit, 0, 0);
   menubar->add("Edit/Undo", 0, (Fl_Callback *)Undo::pop, 0, 0);
-  menubar->add("Mode/RGBA", 0, (Fl_Callback *)checkRGBA, 0, FL_MENU_TOGGLE);
-  menubar->add("Mode/Indexed", 0, (Fl_Callback *)checkIndexed, 0, FL_MENU_TOGGLE);
   menubar->add("Palette/Load", 0, (Fl_Callback *)Dialog::showLoadPalette, 0, 0);
   menubar->add("Palette/Save", 0, (Fl_Callback *)Dialog::showSavePalette, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Editor...", 0, (Fl_Callback *)Dialog::showEditor, 0, FL_MENU_DIVIDER);
@@ -164,9 +162,8 @@ void Gui::init()
   menubar->add("Effects/Correction Matrix", 0, (Fl_Callback *)FX::showCorrect, 0, 0);
   menubar->add("Effects/Remove Dust...", 0, (Fl_Callback *)FX::showRemoveDust, 0, 0);
   menubar->add("Effects/Colorize", 0, (Fl_Callback *)FX::showColorize, 0, 0);
+  menubar->add("Effects/Apply Palette", 0, (Fl_Callback *)FX::showApplyPalette, 0, 0);
   menubar->add("Help/About...", 0, (Fl_Callback *)Dialog::showAbout, 0, 0);
-
-  setMenuItem("Mode/RGBA");
 
   // top_left
   top_left = new Fl_Group(0, menubar->h(), 112, 40);
@@ -732,21 +729,5 @@ void Gui::checkCropValues()
   snprintf(s, sizeof(s), "%d", h);
   crop_h->value(s);
   crop_h->redraw();
-}
-
-void Gui::checkRGBA()
-{
-  setMenuItem("Mode/RGBA");
-  clearMenuItem("Mode/Indexed");
-  view->mode = 0;
-  view->draw_main(1);
-}
-
-void Gui::checkIndexed()
-{
-  clearMenuItem("Mode/RGBA");
-  setMenuItem("Mode/Indexed");
-  view->mode = 1;
-  view->draw_main(1);
 }
 

@@ -65,6 +65,9 @@ namespace FX
   void showCorrect();
   void doCorrect();
 
+  void showApplyPalette();
+  void doApplyPalette();
+
   extern Fl_Double_Window *rotate_hue;
   extern Field *rotate_hue_amount;
   extern Fl_Check_Button *rotate_hue_preserve;

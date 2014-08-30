@@ -59,7 +59,6 @@ public:
   void set_clip(int, int, int, int);
   void blit(Bitmap *, int, int, int, int, int, int);
   void point_stretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, int);
-  void point_stretch_indexed(Bitmap *, Palette *, int, int, int, int, int, int, int, int, int, int, int);
   void fast_stretch(Bitmap *, int, int, int, int, int, int, int, int);
 
   static Bitmap *main;
