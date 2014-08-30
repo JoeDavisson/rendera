@@ -115,22 +115,6 @@ namespace
     longjmp(myerr->setjmp_buffer, 1);
   }
 
-  void get_extension(const char *fn, char *ext)
-  {
-    char *p = (char *)fn + strlen(fn) - 1;
-
-    while(p >= fn)
-    {
-      if(*p == '.')
-      {
-        strcpy(ext, p);
-        break;
-      }
-
-      p--;
-    }
-  }
-
   bool is_png(const unsigned char *header)
   {
     return (png_sig_cmp((png_bytep)header, 0, 8) == 0);
@@ -150,9 +134,9 @@ namespace
   // tga has no real header, will have to trust the file extension
   bool is_tga(const char *fn)
   {
-    char ext[16];
-    get_extension(fn, ext);
-    return (memcmp(ext, ".tga", 2) == 0);
+    const char *ext;
+    ext = fl_filename_ext(fn);
+    return (strcmp(ext, ".tga") == 0);
   }
 
   bool is_gpl(const unsigned char *header)
@@ -240,7 +224,7 @@ void File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
   jpeg_start_decompress(&cinfo);
   row_stride = cinfo.output_width * cinfo.output_components;
   linebuf = (*cinfo.mem->alloc_sarray)
-    ((j_common_ptr)&cinfo, JPOOL_IMAGE, row_stride, 1);
+              ((j_common_ptr)&cinfo, JPOOL_IMAGE, row_stride, 1);
 
   int bytes = cinfo.out_color_components;
 
@@ -633,7 +617,7 @@ void File::save(Fl_Widget *, void *)
   fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc->show();
 
-  char *fn = new char[1024];
+  char fn[256];
   strcpy(fn, fc->filename());
   int ext = fc->filter_value();
   fl_filename_setext(fn, sizeof(fn), ext_string[ext]);
