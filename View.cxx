@@ -161,7 +161,6 @@ int View::handle(int event)
           }
 
           tool->push(this);
-
           break;
         case 2:
           if(moving == 0)
@@ -438,7 +437,12 @@ void View::begin_move()
   lastbh = bh;
 
   backbuf->xor_rect(bx, by, bx + bw - 1, by + bh - 1);
+
+  int temp = tool->active;
+  tool->active = 0;
   redraw();
+  Fl::flush();
+  tool->active = temp;
 }
 
 void View::move()
@@ -485,7 +489,12 @@ void View::move()
   backbuf->xor_rect(lastbx, lastby, lastbx + lastbw - 1, lastby + lastbh - 1);
   backbuf->xor_rect(bx, by, bx + bw - 1, by + bh - 1);
 
+//  redraw();
+  int temp = tool->active;
+  tool->active = 0;
   redraw();
+  Fl::flush();
+  tool->active = temp;
 
   lastbx = bx;
   lastby = by;

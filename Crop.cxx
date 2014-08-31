@@ -127,18 +127,19 @@ void Crop::drag(View *view)
 {
   if(started == 1)
   {
-    absrect(&beginx, &beginy, &lastx, &lasty);
+//    absrect(&beginx, &beginy, &lastx, &lasty);
     Map::main->rect(beginx, beginy, lastx, lasty, 0);
-    absrect(&beginx, &beginy, &view->imgx, &view->imgy);
+//    absrect(&beginx, &beginy, &view->imgx, &view->imgy);
     Map::main->rect(beginx, beginy, view->imgx, view->imgy, 255);
     stroke->size(beginx, beginy, view->imgx, view->imgy);
 
     lastx = view->imgx;
     lasty = view->imgy;
 
-    view->draw_main(1);
+    view->draw_main(0);
     stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
     view->redraw();
+    Fl::flush();
   }
   else if(started == 2)
   {
@@ -190,7 +191,7 @@ void Crop::drag(View *view)
   Gui::checkCropValues();
 }
 
-void Crop::release(View *)
+void Crop::release(View *view)
 {
   if(started == 1)
   {
@@ -199,6 +200,8 @@ void Crop::release(View *)
 
   drag_started = 0;
   resize_started = 0;
+  absrect(&beginx, &beginy, &lastx, &lasty);
+  redraw(view);
 }
 
 void Crop::move(View *)
@@ -237,7 +240,7 @@ void Crop::done(View *view)
 void Crop::redraw(View *view)
 {
   active = 0;
-  absrect(&beginx, &beginy, &lastx, &lasty);
+//  absrect(&beginx, &beginy, &lastx, &lasty);
   Map::main->rect(beginx, beginy, lastx, lasty, 255);
   stroke->size(beginx, beginy, lastx, lasty);
   view->draw_main(0);

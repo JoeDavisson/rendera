@@ -711,8 +711,8 @@ void Gui::checkCropValues()
 
   int x = view->tool->beginx - overscroll;
   int y = view->tool->beginy - overscroll;
-  int w = (view->tool->lastx - view->tool->beginx) + 1;
-  int h = (view->tool->lasty - view->tool->beginy) + 1;
+  int w = ABS(view->tool->lastx - view->tool->beginx) + 1;
+  int h = ABS(view->tool->lasty - view->tool->beginy) + 1;
 
   snprintf(s, sizeof(s), "%d", x);
   crop_x->value(s);
