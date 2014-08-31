@@ -80,11 +80,11 @@ void Palette::draw(Widget *widget)
     for(x = 0; x < w; x += step)
     {
       widget->bitmap->rect(x, y, x + step, y + step,
-                           makecol(160, 160, 160), 0);
+                           makecol(96, 96, 96), 0);
       widget->bitmap->line(x, y, x + step - 1, y + step - 1,
-                           makecol(160, 160, 160), 0);
+                           makecol(96, 96, 96), 0);
       widget->bitmap->line(w - 1 - x, y, w - 1 - (x + step - 1), y + step - 1,
-                           makecol(160, 160, 160), 0);
+                           makecol(96, 96, 96), 0);
     }
   }
 
