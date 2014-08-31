@@ -90,3 +90,11 @@ void Offset::move(View *)
 {
 }
 
+void Offset::done(View *)
+{
+}
+
+void Offset::redraw(View *)
+{
+}
+

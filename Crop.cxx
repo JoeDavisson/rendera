@@ -80,35 +80,11 @@ void Crop::push(View *view)
     lastx = view->imgx;
     lasty = view->imgy;
     started = 1;
+    active = 1;
   }
   else if(started == 2)
   {
-    if(view->dclick && inbox(view->imgx, view->imgy,
-                             beginx, beginy, lastx, lasty))
-    {
-      stroke->max(); 
-      undo(1);
-      started = 0;
-      absrect(&beginx, &beginy, &lastx, &lasty);
-      int w = lastx - beginx + 1;
-      int h = lasty - beginy + 1;
-      if(w < 1)
-        w = 1;
-      if(h < 1)
-        h = 1;
-      Bitmap *temp = new Bitmap(w, h);
-      Bitmap::main->blit(temp, beginx, beginy, 0, 0, w, h);
-      delete Bitmap::main;
-      Bitmap::main = new Bitmap(w, h, 64,
-                                makecol(255, 255, 255), makecol(128, 128, 128));
-      temp->blit(Bitmap::main, 0, 0, Bitmap::main->overscroll, Bitmap::main->overscroll, w, h);
-      delete temp;
-      view->zoom = 1;
-      view->ox = 0;
-      view->oy = 0;
-      view->draw_main(1);
-    }
-    else if(drag_started == 0 && resize_started == 0)
+    if(drag_started == 0 && resize_started == 0)
     {
       if(inbox(view->imgx, view->imgy, beginx, beginy, lastx, lasty))
       {
@@ -210,12 +186,7 @@ void Crop::drag(View *view)
     }
   }
 
-  absrect(&beginx, &beginy, &lastx, &lasty);
-  Map::main->rect(beginx, beginy, lastx, lasty, 255);
-  stroke->size(beginx, beginy, lastx, lasty);
-  view->draw_main(1);
-  stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
-  view->redraw();
+  redraw(view);
   Gui::checkCropValues();
 }
 
@@ -232,5 +203,47 @@ void Crop::release(View *)
 
 void Crop::move(View *)
 {
+}
+
+void Crop::done(View *view)
+{
+  if(started == 0)
+    return;
+
+  stroke->max(); 
+  undo(1);
+  started = 0;
+  active = 0;
+  absrect(&beginx, &beginy, &lastx, &lasty);
+  int w = lastx - beginx + 1;
+  int h = lasty - beginy + 1;
+  if(w < 1)
+    w = 1;
+  if(h < 1)
+    h = 1;
+  Bitmap *temp = new Bitmap(w, h);
+  Bitmap::main->blit(temp, beginx, beginy, 0, 0, w, h);
+  delete Bitmap::main;
+  Bitmap::main = new Bitmap(w, h, 64,
+                            makecol(255, 255, 255), makecol(128, 128, 128));
+  temp->blit(Bitmap::main, 0, 0, Bitmap::main->overscroll, Bitmap::main->overscroll, w, h);
+  delete temp;
+  view->zoom = 1;
+  view->ox = 0;
+  view->oy = 0;
+  view->draw_main(1);
+}
+
+void Crop::redraw(View *view)
+{
+  active = 0;
+  absrect(&beginx, &beginy, &lastx, &lasty);
+  Map::main->rect(beginx, beginy, lastx, lasty, 255);
+  stroke->size(beginx, beginy, lastx, lasty);
+  view->draw_main(0);
+  stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+  view->redraw();
+  Fl::flush();
+  active = 1;
 }
 

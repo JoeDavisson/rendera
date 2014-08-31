@@ -47,9 +47,10 @@ namespace Dialog
   void showEditor();
   void hideEditor();
   void doEditorPalette(Widget *, void *);
-  void doEditorSetHsv();
+  void doEditorSetHsv(bool);
   void doEditorSetHsvSliders();
-  void doEditorGetHsv();
+  void doEditorGetH();
+  void doEditorGetSV();
   void doEditorInsert();
   void doEditorDelete();
   void doEditorReplace();

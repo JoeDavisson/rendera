@@ -700,7 +700,7 @@ void Gui::checkConstrain(Widget *, void *var)
 
 void Gui::checkCropDo()
 {
-  // for the crop button, unimplemented
+  view->tool->done(view);
 }
 
 void Gui::checkCropValues()

@@ -459,3 +459,17 @@ void Paint::move(View *view)
   }
 }
 
+void Paint::done(View *)
+{
+}
+
+void Paint::redraw(View *view)
+{
+  active = 0;
+  view->draw_main(0);
+  stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+  view->redraw();
+  Fl::flush();
+  active = 1;
+}
+

@@ -43,6 +43,8 @@ public:
   virtual void drag(View *);
   virtual void release(View *);
   virtual void move(View *);
+  virtual void done(View *);
+  virtual void redraw(View *);
 
 private:
   int render_pos, render_end, render_count;

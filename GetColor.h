@@ -36,6 +36,8 @@ public:
   virtual void drag(View *);
   virtual void release(View *);
   virtual void move(View *);
+  virtual void done(View *);
+  virtual void redraw(View *);
 };
 
 #endif

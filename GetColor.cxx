@@ -71,3 +71,11 @@ void GetColor::move(View *)
 {
 }
 
+void GetColor::done(View *)
+{
+}
+
+void GetColor::redraw(View *)
+{
+}
+

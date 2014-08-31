@@ -73,6 +73,7 @@ namespace
   int ramp_started;
   float progress_value;
   float progress_step;
+  int oldsvx, oldsvy;
 
   int file_exists(const char *s)
   {
@@ -150,8 +151,8 @@ void Dialog::init()
 
   // palette editor
   editor = new Fl_Double_Window(608, 312, "Palette Editor");
-  editor_h = new Widget(editor, 8, 8, 24, 256, "Hue", 24, 1, (Fl_Callback *)doEditorGetHsv);
-  editor_sv = new Widget(editor, 40, 8, 256, 256, "Saturation/Value", 1, 1, (Fl_Callback *)doEditorGetHsv);
+  editor_h = new Widget(editor, 8, 8, 24, 256, "Hue", 24, 1, (Fl_Callback *)doEditorGetH);
+  editor_sv = new Widget(editor, 40, 8, 256, 256, "Saturation/Value", 1, 1, (Fl_Callback *)doEditorGetSV);
   editor_insert = new Fl_Button(304, 8, 96, 24, "Insert");
   editor_insert->callback((Fl_Callback *)doEditorInsert);
   editor_delete = new Fl_Button(304, 48, 96, 24, "Delete");
@@ -454,7 +455,7 @@ void Dialog::showEditor()
 {
   Palette::main->draw(editor_palette);
   doEditorSetHsvSliders();
-  doEditorSetHsv();
+  doEditorSetHsv(1);
   editor->show();
   undo = 0;
   ramp_begin = 0;
@@ -545,10 +546,10 @@ void Dialog::doEditorPalette(Widget *widget, void *var)
   Gui::checkPalette(widget, var);
   ramp_begin = *(int *)var;
   doEditorSetHsvSliders();
-  doEditorSetHsv();
+  doEditorSetHsv(1);
 }
 
-void Dialog::doEditorSetHsv()
+void Dialog::doEditorSetHsv(bool redraw)
 {
   int x , y;
   int r = 0, g = 0, b = 0;
@@ -557,19 +558,27 @@ void Dialog::doEditorSetHsv()
 
   Blend::rgbToHsv(getr(color), getg(color), getb(color), &h, &s, &v);
 
-  editor_h->bitmap->clear(makecol(0, 0, 0));
-  editor_sv->bitmap->clear(makecol(0, 0, 0));
-
-  for(y = 0; y < 256; y++)
+  if(redraw)
   {
-    for(x = 0; x < 256; x++)
-    {
-      Blend::hsvToRgb(h, x, y, &r, &g, &b);
-      editor_sv->bitmap->setpixel_solid(x, y, makecol(r, g, b), 0);
-    }
+    editor_h->bitmap->clear(makecol(0, 0, 0));
+    editor_sv->bitmap->clear(makecol(0, 0, 0));
 
-    Blend::hsvToRgb(y * 6, 255, 255, &r, &g, &b);
-    editor_h->bitmap->hline(0, y, 23, makecol(r, g, b), 0);
+    for(y = 0; y < 256; y++)
+    {
+      for(x = 0; x < 256; x++)
+      {
+        Blend::hsvToRgb(h, x, y, &r, &g, &b);
+        editor_sv->bitmap->setpixel_solid(x, y, makecol(r, g, b), 0);
+      }
+
+      Blend::hsvToRgb(y * 6, 255, 255, &r, &g, &b);
+      editor_h->bitmap->hline(0, y, 23, makecol(r, g, b), 0);
+    }
+  }
+  else
+  {
+    // erase previous box if not redrawing entire thing
+    editor_sv->bitmap->xor_rect(oldsvx - 4, oldsvy - 4, oldsvx + 4, oldsvy + 4);
   }
 
   x = editor_sv->var & 255;
@@ -585,6 +594,8 @@ void Dialog::doEditorSetHsv()
     y = 251;
 
   editor_sv->bitmap->xor_rect(x - 4, y - 4, x + 4, y + 4);
+  oldsvx = x;
+  oldsvy = y;
 
   editor_h->redraw();
   editor_sv->redraw();
@@ -604,7 +615,7 @@ void Dialog::doEditorSetHsvSliders()
   editor_sv->redraw();
 }
 
-void Dialog::doEditorGetHsv()
+void Dialog::doEditorGetH()
 {
   int h = editor_h->var * 6;
   int s = editor_sv->var & 255;
@@ -615,7 +626,21 @@ void Dialog::doEditorGetHsv()
   Brush::main->color = makecol(r, g, b);
 
   Gui::updateColor(Brush::main->color);
-  doEditorSetHsv();
+  doEditorSetHsv(1);
+}
+
+void Dialog::doEditorGetSV()
+{
+  int h = editor_h->var * 6;
+  int s = editor_sv->var & 255;
+  int v = editor_sv->var / 256;
+  int r, g, b;
+
+  Blend::hsvToRgb(h, s, v, &r, &g, &b);
+  Brush::main->color = makecol(r, g, b);
+
+  Gui::updateColor(Brush::main->color);
+  doEditorSetHsv(0);
 }
 
 void Dialog::doEditorInsert()

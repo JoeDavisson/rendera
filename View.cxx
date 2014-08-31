@@ -221,6 +221,9 @@ int View::handle(int event)
       {
         zoom_in(mousex, mousey);
       }
+
+      if(tool->active)
+        tool->redraw(this);
       return 1;
     case FL_KEYDOWN:
       if(Fl::event_key() == FL_Escape)
@@ -630,7 +633,10 @@ void View::scroll(int dir, int amount)
       break;
   }
 
-  draw_main(1);
+  if(tool->active)
+    tool->redraw(this);
+  else
+    draw_main(1);
 }
 
 void View::draw()
