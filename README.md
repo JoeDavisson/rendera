@@ -15,6 +15,7 @@ Feature List:
 -Photographic restoration filters
 -High-quality color quantization and dithering
 -Grid
+-Drag N' Drop file loading (careful, doesn't prompt yet)
 
 File Support:
 -PNG (32-bit)
