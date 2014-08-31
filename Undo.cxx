@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Undo.h"
 #include "Bitmap.h"
+#include "Map.h"
 #include "Gui.h"
 #include "View.h"
 
@@ -105,6 +106,9 @@ void Undo::pop()
                               undo_stack[undo_current]->h, 64,
                               makecol(255, 255, 255),
                               makecol(128, 128, 128));
+    delete Map::main;
+    Map::main = new Map(undo_stack[undo_current]->w,
+                        undo_stack[undo_current]->h);
     Gui::view->ox = 0;
     Gui::view->oy = 0;
   }
