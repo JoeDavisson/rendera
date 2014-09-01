@@ -45,11 +45,11 @@ namespace
   Fl_Menu_Bar *menubar;
 
   // containers
-  Fl_Group *group_top;
+  //Fl_Group *group_top;
   Fl_Group *group_left;
 
   // panels
-  Fl_Group *top_left;
+  //Fl_Group *top_left;
   Fl_Group *top_right;
   Fl_Group *tools;
   Fl_Group *paint;
@@ -61,7 +61,7 @@ namespace
   Fl_Group *middle;
 
   // top left
-  Widget *logo;
+  //Widget *logo;
 
   //top right
   ToggleButton *zoom_fit;
@@ -170,14 +170,15 @@ void Gui::init()
   menubar->add("Help/About...", 0, (Fl_Callback *)Dialog::showAbout, 0, 0);
 
   // top_left
-  top_left = new Fl_Group(0, menubar->h(), 112, 40);
-  top_left->box(FL_UP_BOX);
-  logo = new Widget(top_left, 8, 8, 96, 24, "", "data/logo.png", 0, 0, 0);
-  top_left->resizable(0);
-  top_left->end();
+  //top_left = new Fl_Group(0, menubar->h(), 112, 40);
+  //top_left->box(FL_UP_BOX);
+  //logo = new Widget(top_left, 8, 8, 96, 24, "", "data/logo.png", 0, 0, 0);
+  //top_left->resizable(0);
+  //top_left->end();
 
   // top right
-  top_right = new Fl_Group(top_left->w(), menubar->h(), window->w() - top_left->w(), 40);
+  //top_right = new Fl_Group(top_left->w(), menubar->h(), window->w() - top_left->w(), 40);
+  top_right = new Fl_Group(0, menubar->h(), window->w(), 40);
   top_right->box(FL_UP_BOX);
   x1 = 8;
   zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24, "Fit In Window", "data/zoom_fit.png", (Fl_Callback *)checkZoomFit);
@@ -344,11 +345,12 @@ void Gui::init()
   middle->end();
 
   // container for top panels
-  group_top = new Fl_Group(0, menubar->h(), window->w() - top_left->w(), 40);
-  group_top->add(top_left);
-  group_top->add(top_right);
-  group_top->resizable(top_right);
-  group_top->end();
+  //group_top = new Fl_Group(0, menubar->h(), window->w() - top_left->w(), 40);
+  //group_top = new Fl_Group(0, menubar->h(), window->w(), 40);
+  //group_top->add(top_left);
+  //group_top->add(top_right);
+  //group_top->resizable(top_right);
+  //group_top->end();
 
   // container for left panels
   group_left = new Fl_Group(0, top_right->h() + menubar->h(), 176, window->h() - (menubar->h() + top_right->h() + bottom->h()));
