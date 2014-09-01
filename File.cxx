@@ -871,11 +871,7 @@ void File::saveJPG(const char *fn)
 {
   Dialog::showJpegQuality();
 
-  int quality = atoi(Dialog::jpeg_quality_amount->value());
-  if(quality < 1)
-    quality = 1;
-  if(quality > 100)
-    quality = 100;
+  int quality = Dialog::getJpegQualityValue();
 
   FILE *out = fopen(fn, "wb");
   if(!out)

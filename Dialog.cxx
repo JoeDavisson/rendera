@@ -31,43 +31,43 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.h"
 #include "Quantize.h"
 
-Fl_Double_Window *Dialog::jpeg_quality;
-Field *Dialog::jpeg_quality_amount;
-Fl_Button *Dialog::jpeg_quality_ok;
-
-Fl_Double_Window *Dialog::progress;
-Fl_Progress *Dialog::progress_bar;
-
-Fl_Double_Window *Dialog::about;
-Widget *Dialog::about_logo;
-Fl_Button *Dialog::about_ok;
-
-Fl_Double_Window *Dialog::new_image;
-Field *Dialog::new_image_width;
-Field *Dialog::new_image_height;
-Fl_Button *Dialog::new_image_ok;
-Fl_Button *Dialog::new_image_cancel;
-
-Fl_Double_Window *Dialog::create_palette;
-Field *Dialog::create_palette_colors;
-Fl_Button *Dialog::create_palette_ok;
-Fl_Button *Dialog::create_palette_cancel;
-
-Fl_Double_Window *Dialog::editor;
-Widget *Dialog::editor_h;
-Widget *Dialog::editor_sv;
-Fl_Button *Dialog::editor_insert;
-Fl_Button *Dialog::editor_delete;
-Fl_Button *Dialog::editor_replace;
-Fl_Button *Dialog::editor_undo;
-Fl_Button *Dialog::editor_rgb_ramp;
-Fl_Button *Dialog::editor_hsv_ramp;
-Widget *Dialog::editor_palette;
-Widget *Dialog::editor_color;
-Fl_Button *Dialog::editor_done;
-
 namespace
 {
+  Fl_Double_Window *jpeg_quality;
+  Field *jpeg_quality_amount;
+  Fl_Button *jpeg_quality_ok;
+
+  Fl_Double_Window *progress;
+  Fl_Progress *progress_bar;
+
+  Fl_Double_Window *about;
+  Widget *about_logo;
+  Fl_Button *about_ok;
+
+  Fl_Double_Window *new_image;
+  Field *new_image_width;
+  Field *new_image_height;
+  Fl_Button *new_image_ok;
+  Fl_Button *new_image_cancel;
+
+  Fl_Double_Window *create_palette;
+  Field *create_palette_colors;
+  Fl_Button *create_palette_ok;
+  Fl_Button *create_palette_cancel;
+
+  Fl_Double_Window *editor;
+  Widget *editor_h;
+  Widget *editor_sv;
+  Fl_Button *editor_insert;
+  Fl_Button *editor_delete;
+  Fl_Button *editor_replace;
+  Fl_Button *editor_undo;
+  Fl_Button *editor_rgb_ramp;
+  Fl_Button *editor_hsv_ramp;
+  Widget *editor_palette;
+  Widget *editor_color;
+  Fl_Button *editor_done;
+
   int undo;
   int ramp_begin;
   int ramp_started;
@@ -174,7 +174,7 @@ void Dialog::init()
   editor->end(); 
 }
 
-void Dialog::jpegQualityCloseCallback(Fl_Widget */* widget */, void *)
+void Dialog::jpegQualityCloseCallback(Fl_Widget *, void *)
 {
   // needed to prevent quality dialog from being closed
   // by the window manager
@@ -189,7 +189,9 @@ void Dialog::showJpegQuality()
     Fl_Widget *action = Fl::readqueue();
 
     if(!action)
+    {
       Fl::wait();
+    }
     else if(action == jpeg_quality_ok)
     {
       char s[8];
@@ -212,6 +214,18 @@ void Dialog::showJpegQuality()
       }
     }
   }
+}
+
+int Dialog::getJpegQualityValue()
+{
+  int quality = atoi(jpeg_quality_amount->value());
+
+  if(quality < 1)
+    quality = 1;
+  if(quality > 100)
+    quality = 100;
+
+  return quality;
 }
 
 void Dialog::showProgress(float step)

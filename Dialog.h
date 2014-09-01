@@ -30,6 +30,7 @@ namespace Dialog
 {
   void init();
   void jpegQualityCloseCallback(Fl_Widget *, void *);
+  int getJpegQualityValue();
   void showJpegQuality();
   void showProgress(float);
   void updateProgress();
@@ -58,41 +59,6 @@ namespace Dialog
   void doEditorGetUndo();
   void doEditorRgbRamp();
   void doEditorHsvRamp();
-
-  extern Fl_Double_Window *jpeg_quality;
-  extern Field *jpeg_quality_amount;
-  extern Fl_Button *jpeg_quality_ok;
-
-  extern Fl_Double_Window *progress;
-  extern Fl_Progress *progress_bar;
-
-  extern Fl_Double_Window *about;
-  extern Widget *about_logo;
-  extern Fl_Button *about_ok;
-
-  extern Fl_Double_Window *new_image;
-  extern Field *new_image_width;
-  extern Field *new_image_height;
-  extern Fl_Button *new_image_ok;
-  extern Fl_Button *new_image_cancel;
-
-  extern Fl_Double_Window *create_palette;
-  extern Field *create_palette_colors;
-  extern Fl_Button *create_palette_ok;
-  extern Fl_Button *create_palette_cancel;
-
-  extern Fl_Double_Window *editor;
-  extern Widget *editor_h;
-  extern Widget *editor_sv;
-  extern Fl_Button *editor_insert;
-  extern Fl_Button *editor_delete;
-  extern Fl_Button *editor_replace;
-  extern Fl_Button *editor_undo;
-  extern Fl_Button *editor_rgb_ramp;
-  extern Fl_Button *editor_hsv_ramp;
-  extern Widget *editor_palette;
-  extern Widget *editor_color;
-  extern Fl_Button *editor_done;
 }
 
 #endif

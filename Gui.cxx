@@ -275,8 +275,8 @@ void Gui::init()
   crop_h = new Field(crop, 24, y1, 72, 24, "H:", 0);
   crop_h->deactivate();
   y1 += 24 + 6;
-  crop_do = new Fl_Button(8, y1, 96, 48, "Crop");
-  crop_do->resize(crop->x() + 8, crop->y() + y1, 96, 48);
+  crop_do = new Fl_Button(crop->x() + 16, crop->y() + y1, 72, 32, "Crop");
+//  crop_do->resize(crop->x() + 8, crop->y() + y1, 96, 48);
   crop_do->callback((Fl_Callback *)checkCropDo);
   crop->resizable(0);
   crop->end();
