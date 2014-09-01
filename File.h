@@ -40,6 +40,9 @@ namespace File
   void savePNG(const char *);
   void saveJPG(const char *);
 
+  void loadPalette();
+  void savePalette();
+
   Fl_Image *previewJPG(const char *, unsigned char *, int);
   Fl_Image *previewPNG(const char *, unsigned char *, int);
   Fl_Image *previewBMP(const char *, unsigned char *, int);

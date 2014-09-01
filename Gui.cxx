@@ -147,8 +147,8 @@ void Gui::init()
   menubar->add("File/Save", 0, (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
   menubar->add("File/Quit", 0, (Fl_Callback *)quit, 0, 0);
   menubar->add("Edit/Undo", 0, (Fl_Callback *)Undo::pop, 0, 0);
-  menubar->add("Palette/Load", 0, (Fl_Callback *)Dialog::showLoadPalette, 0, 0);
-  menubar->add("Palette/Save", 0, (Fl_Callback *)Dialog::showSavePalette, 0, FL_MENU_DIVIDER);
+  menubar->add("Palette/Load", 0, (Fl_Callback *)File::loadPalette, 0, 0);
+  menubar->add("Palette/Save", 0, (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Editor...", 0, (Fl_Callback *)Dialog::showEditor, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Create From Image...", 0, (Fl_Callback *)Dialog::showCreatePalette, 0, 0);
   menubar->add("Effects/Normalize", 0, (Fl_Callback *)FX::showNormalize, 0, 0);

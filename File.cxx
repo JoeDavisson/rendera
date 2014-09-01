@@ -89,6 +89,8 @@ namespace
   Widget *pal_preview = new Widget(new Fl_Group(0, 0, 96, 96),
                                    0, 0, 96, 96, "", 6, 6, 0);
 
+  const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
+
   int file_exists(const char *s)
   {
     FILE *temp = fopen(s, "r");
@@ -647,8 +649,6 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
 
 void File::save(Fl_Widget *, void *)
 {
-  const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
-
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
   fc->title("Save Image");
   fc->filter("PNG Image\t*.png\nJPEG Image\t*.jpg\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
@@ -1006,16 +1006,73 @@ Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int)
   if(temp_pal->max == 0)
     return 0;
 
-//  Widget *pal_preview = new Widget(0, 0, 96, 96, "", 6, 6, 0);
-
   temp_pal->draw(pal_preview);
 
   Fl_RGB_Image *image =
     new Fl_RGB_Image((unsigned char *)pal_preview->bitmap->data,
                      96, 96, 4, 0);
 
-//  delete pal_preview;
   delete temp_pal;
   return image;
+}
+
+void File::loadPalette()
+{
+  Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
+  fc->title("Load Palette");
+  fc->filter("GIMP Palette\t*.gpl\n");
+  fc->options(Fl_Native_File_Chooser::PREVIEW);
+  fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
+  fc->show();
+
+  const char *fn = fc->filename();
+  
+  FILE *in = fopen(fn, "r");
+  if(!in)
+  {
+    delete fc;
+    return;
+  }
+
+  unsigned char header[12];
+  if(fread(&header, 1, 12, in) != 12)
+  {
+    fclose(in);
+    delete fc;
+    return;
+  }
+
+  fclose(in);
+
+  if(is_gpl(header))
+  {
+    Palette::main->load((const char*)fn);
+    Gui::drawPalette();
+    delete fc;
+  }
+}
+
+void File::savePalette()
+{
+  Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
+  fc->title("Save Palette");
+  fc->filter("GIMP Palette\t*.gpl\n");
+  fc->options(Fl_Native_File_Chooser::PREVIEW);
+  fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  fc->show();
+
+  char fn[256];
+  strcpy(fn, fc->filename());
+  fl_filename_setext(fn, sizeof(fn), ".gpl");
+
+  if(file_exists(fn))
+  {
+    fl_message_title("Replace File?");
+    if(fl_choice("Replace File?", "No", "Yes", NULL) == 0)
+      return;
+  }
+  
+  Palette::main->save(fn);
+  delete fc;
 }
 

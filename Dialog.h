@@ -43,8 +43,6 @@ namespace Dialog
   void showCreatePalette();
   void hideCreatePalette();
   void cancelCreatePalette();
-  void showLoadPalette();
-  void showSavePalette();
   void showEditor();
   void hideEditor();
   void doEditorPalette(Widget *, void *);

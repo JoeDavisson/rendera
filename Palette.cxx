@@ -247,7 +247,7 @@ void Palette::load(const char *fn)
   char line[256];
   int ch;
   int len = 0;
-  int i /*, j */;
+  int i;
 
   while(1)
   {
