@@ -195,7 +195,10 @@ int View::handle(int event)
       if(moving)
       {
         moving = 0;
-        draw_main(1);
+        if(tool->active)
+          tool->redraw(this);
+        else
+          draw_main(1);
       }
 
       if(tool->started)
