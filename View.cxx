@@ -230,8 +230,7 @@ int View::handle(int event)
     case FL_KEYDOWN:
       if(Fl::event_key() == FL_Escape)
       {
-        if(tool->stroke->type == 3)
-          tool->active = 0;
+        tool->active = 0;
         tool->started = 0;
         draw_main(1);
         break;

@@ -55,6 +55,7 @@ void GetColor::push(View *view)
   {
     int c = Bitmap::main->getpixel(view->imgx, view->imgy);
     Gui::updateColor(c);
+    Gui::updateGetColor(c);
   }
 }
 

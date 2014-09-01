@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.h"
 #include "View.h"
 #include "Stroke.h"
+#include "Gui.h"
 
 Offset::Offset()
 {
@@ -79,10 +80,12 @@ void Offset::drag(View *view)
                               overscroll, overscroll, x, y);
 
   view->draw_main(1);
+  Gui::checkOffsetValues(dx, dy);
 }
 
 void Offset::release(View *)
 {
+  Gui::checkOffsetValues(0, 0);
 }
 
 void Offset::move(View *)

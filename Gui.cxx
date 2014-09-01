@@ -84,11 +84,16 @@ namespace
   Widget *paint_edge;
   Widget *paint_smooth;
 
+  Widget *getcolor_color;
+
   Field *crop_x;
   Field *crop_y;
   Field *crop_w;
   Field *crop_h;
   Fl_Button *crop_do;
+
+  Field *offset_x;
+  Field *offset_y;
 
   // right
   Widget *palette;
@@ -292,6 +297,8 @@ void Gui::init()
   getcolor->labelsize(12);
   getcolor->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   getcolor->box(FL_UP_BOX);
+  y1 = 20;
+  getcolor_color = new Widget(getcolor, 8, y1, 96, 96, "Color", 0, 0, 0);
   getcolor->resizable(0);
   getcolor->end();
 
@@ -301,6 +308,13 @@ void Gui::init()
   offset->labelsize(12);
   offset->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   offset->box(FL_UP_BOX);
+  y1 = 20;
+  offset_x = new Field(offset, 24, y1, 72, 24, "X:", 0);
+  offset_x->deactivate();
+  y1 += 24 + 6;
+  offset_y = new Field(offset, 24, y1, 72, 24, "Y:", 0);
+  offset_y->deactivate();
+  y1 += 24 + 6;
   offset->resizable(0);
   offset->end();
 
@@ -374,6 +388,8 @@ void Gui::init()
   drawPalette();
   tool->do_callback();
   checkZoom();
+  checkCropValues(0, 0, 0, 0);
+  checkOffsetValues(0, 0);
 }
 
 void Gui::setMenuItem(const char *s)
@@ -413,6 +429,12 @@ void Gui::updateColor(int c)
   hue->do_callback();
 
   Brush::main->color = c;
+}
+
+void Gui::updateGetColor(int c)
+{
+  getcolor_color->bitmap->clear(c);
+  getcolor_color->redraw();
 }
 
 void Gui::checkPalette(Widget *widget, void *var)
@@ -593,6 +615,9 @@ void Gui::checkTool(Widget *, void *var)
       offset->show();
       break;
   }
+
+  view->tool->active = 0;
+  view->tool->started = 0;
 }
 
 void Gui::checkColor(Widget *, void *)
@@ -717,16 +742,9 @@ void Gui::checkCropDo()
   view->tool->done(view);
 }
 
-void Gui::checkCropValues()
+void Gui::checkCropValues(int x, int y, int w, int h)
 {
   char s[8];
-
-  int overscroll = Bitmap::main->overscroll;
-
-  int x = view->tool->beginx - overscroll;
-  int y = view->tool->beginy - overscroll;
-  int w = ABS(view->tool->lastx - view->tool->beginx) + 1;
-  int h = ABS(view->tool->lasty - view->tool->beginy) + 1;
 
   snprintf(s, sizeof(s), "%d", x);
   crop_x->value(s);
@@ -743,6 +761,19 @@ void Gui::checkCropValues()
   snprintf(s, sizeof(s), "%d", h);
   crop_h->value(s);
   crop_h->redraw();
+}
+
+void Gui::checkOffsetValues(int x, int y)
+{
+  char s[8];
+
+  snprintf(s, sizeof(s), "%d", x);
+  offset_x->value(s);
+  offset_x->redraw();
+
+  snprintf(s, sizeof(s), "%d", y);
+  offset_y->value(s);
+  offset_y->redraw();
 }
 
 View *Gui::getView()

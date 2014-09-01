@@ -36,6 +36,7 @@ namespace Gui
   void clearMenuItem(const char *);
 
   void updateColor(int);
+  void updateGetColor(int);
   void checkPalette(Widget *, void *);
   void drawPalette();
   void checkZoomIn(Button *, void *);
@@ -63,7 +64,8 @@ namespace Gui
   void checkOrigin(Widget *, void *);
   void checkConstrain(Widget *, void *);
   void checkCropDo();
-  void checkCropValues();
+  void checkCropValues(int, int, int, int);
+  void checkOffsetValues(int, int);
 
   View *getView();
   int getTool();

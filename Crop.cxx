@@ -188,7 +188,14 @@ void Crop::drag(View *view)
   }
 
   redraw(view);
-  Gui::checkCropValues();
+
+  int overscroll = Bitmap::main->overscroll;
+  int x = beginx - overscroll;
+  int y = beginy - overscroll;
+  int w = ABS(lastx - beginx) + 1;
+  int h = ABS(lasty - beginy) + 1;
+
+  Gui::checkCropValues(x, y, w, h);
 }
 
 void Crop::release(View *view)
@@ -202,6 +209,14 @@ void Crop::release(View *view)
   resize_started = 0;
   absrect(&beginx, &beginy, &lastx, &lasty);
   redraw(view);
+
+  int overscroll = Bitmap::main->overscroll;
+  int x = beginx - overscroll;
+  int y = beginy - overscroll;
+  int w = ABS(lastx - beginx) + 1;
+  int h = ABS(lasty - beginy) + 1;
+
+  Gui::checkCropValues(x, y, w, h);
 }
 
 void Crop::move(View *)
@@ -234,6 +249,7 @@ void Crop::done(View *view)
   view->ox = 0;
   view->oy = 0;
   view->draw_main(1);
+  Gui::checkCropValues(0, 0, 0, 0);
 }
 
 void Crop::redraw(View *view)
