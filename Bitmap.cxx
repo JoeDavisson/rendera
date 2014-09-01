@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.h"
 #include "Palette.h"
 #include "Stroke.h"
+#include "Gui.h"
 #include "View.h"
 #include "Tool.h"
 
@@ -389,7 +390,7 @@ void Bitmap::xor_rectfill(int x1, int y1, int x2, int y2)
 void Bitmap::setpixel(int x, int y, int c2, int t)
 {
   int mode = Bitmap::wrap | (Bitmap::clone << 1);
-  Blend::setTarget(main, x, y);
+  Blend::setTarget(Bitmap::main, x, y);
 
   switch(mode)
   {
@@ -470,7 +471,7 @@ void Bitmap::setpixel_clone(int x, int y, int c2, int t)
       break;
   }
 
-  Stroke *stroke = Tool::current->stroke;
+  Stroke *stroke = Gui::getView()->tool->stroke;
 
   if(x1 >= stroke->x1 && x1 <= stroke->x2 &&
      y1 >= stroke->y1 && y1 <= stroke->y2)
@@ -533,7 +534,7 @@ void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
   while(y1 > cb)
     y1 -= ch;
 
-  Stroke *stroke = Tool::current->stroke;
+  Stroke *stroke = Gui::getView()->tool->stroke;
 
   if(x1 >= stroke->x1 && x1 <= stroke->x2 &&
      y1 >= stroke->y1 && y1 <= stroke->y2)

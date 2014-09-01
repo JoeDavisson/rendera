@@ -28,8 +28,6 @@ Tool *Tool::getcolor;
 Tool *Tool::crop;
 Tool *Tool::offset;
 
-Tool *Tool::current;
-
 Tool::Tool()
 {
   stroke = new Stroke();

@@ -65,13 +65,11 @@ public:
   int active;
   int amount;
 
-  // static vars
+  // extended tools
   static Tool *paint;
   static Tool *getcolor;
   static Tool *crop;
   static Tool *offset;
-
-  static Tool *current;
 };
 
 #endif
