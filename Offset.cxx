@@ -34,8 +34,7 @@ Offset::~Offset()
 
 void Offset::push(View *view)
 {
-  stroke->max();
-  undo(0);
+  undo(1);
 
   int w = Bitmap::main->cw;
   int h = Bitmap::main->ch;

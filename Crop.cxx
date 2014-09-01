@@ -213,7 +213,6 @@ void Crop::done(View *view)
   if(started == 0)
     return;
 
-  stroke->max(); 
   undo(1);
   started = 0;
   active = 0;

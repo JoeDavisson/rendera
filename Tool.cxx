@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include "Tool.h"
+#include "Bitmap.h"
 #include "Stroke.h"
 #include "Undo.h"
 
@@ -48,6 +49,14 @@ void Tool::reset()
 
 void Tool::undo(int resized)
 {
+  if(resized)
+  {
+    stroke->x1 = Bitmap::main->cl;
+    stroke->y1 = Bitmap::main->ct;
+    stroke->x2 = Bitmap::main->cr;
+    stroke->y2 = Bitmap::main->cb;
+  }
+
   Undo::push(stroke->x1,
              stroke->y1,
              stroke->x2 - stroke->x1 + 1,

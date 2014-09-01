@@ -103,21 +103,28 @@ void Undo::pop()
   {
     delete Bitmap::main;
     Bitmap::main = new Bitmap(undo_stack[undo_current]->w,
-                              undo_stack[undo_current]->h, 64,
+                              undo_stack[undo_current]->h,
+                              64,
                               makecol(255, 255, 255),
                               makecol(128, 128, 128));
     delete Map::main;
-    Map::main = new Map(undo_stack[undo_current]->w,
-                        undo_stack[undo_current]->h);
+    Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
+    undo_stack[undo_current]->blit(Bitmap::main, 0, 0,
+                                   Bitmap::main->overscroll,
+                                   Bitmap::main->overscroll,
+                                   undo_stack[undo_current]->w,
+                                   undo_stack[undo_current]->h);
   }
-
-  undo_stack[undo_current]->blit(Bitmap::main, 0, 0,
-                                 undo_stack[undo_current]->x,
-                                 undo_stack[undo_current]->y,
-                                 undo_stack[undo_current]->w,
-                                 undo_stack[undo_current]->h);
+  else
+  {
+    undo_stack[undo_current]->blit(Bitmap::main, 0, 0, 
+                                   undo_stack[undo_current]->x,
+                                   undo_stack[undo_current]->y,
+                                   undo_stack[undo_current]->w,
+                                   undo_stack[undo_current]->h);
+  }
 
   Gui::getView()->draw_main(1);
 }
