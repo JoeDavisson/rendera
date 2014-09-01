@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gui.h"
 #include "View.h"
 
-#define MAX_UNDO 32
+#define MAX_UNDO 10
 
 namespace
 {
