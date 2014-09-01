@@ -39,8 +39,9 @@ public:
   int stepx;
   int stepy;
   Fl_Group *group;
-  Fl_RGB_Image *image;
-  Bitmap *bitmap;
+  Fl_RGB_Image *image, *image2;
+  Bitmap *bitmap, *bitmap2;
+  bool use_highlight;
 protected:
   virtual void draw();
 };

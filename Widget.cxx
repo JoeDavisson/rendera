@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Widget.h"
 #include "Bitmap.h"
+#include "Blend.h"
 
 // load a PNG image from a file
 Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
@@ -56,9 +57,16 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
 
   delete png_image;
 
+
+  bitmap2 = new Bitmap(w, h);
+  image2 = new Fl_RGB_Image((unsigned char *)bitmap2->data, w, h, 4, 0);
+  bitmap->blit(bitmap2, 0, 0, 0, 0, w, h);
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
-  redraw();
+  use_highlight = 1;
+
+  // shade
+  bitmap->rectfill(0, 0, w - 1, h - 1, makecol(128, 128, 128), 192);
 }
 
 // use a blank bitmap
@@ -76,6 +84,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   image = new Fl_RGB_Image((unsigned char *)bitmap->data, w, h, 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
+  use_highlight = 0;
 }
 
 Widget::~Widget()
@@ -118,7 +127,10 @@ int Widget::handle(int event)
 
 void Widget::draw()
 {
-  image->draw(x(), y());
+  if(use_highlight && (stepx <= 1 || stepy <= 1))
+    image2->draw(x(), y());
+  else
+    image->draw(x(), y());
     
   fl_draw_box(FL_DOWN_FRAME, x(), y(), w(), h(), FL_BLACK);
 
@@ -135,8 +147,12 @@ void Widget::draw()
 
   fl_push_clip(x() + offsetx, y() + offsety, stepx, stepy);
 
-  image->draw(x() + offsetx, y() + offsety, stepx, stepy,
-              offsetx + 1, offsety + 1);
+  if(use_highlight)
+    image2->draw(x() + offsetx, y() + offsety, stepx, stepy,
+                offsetx + 1, offsety + 1);
+  else
+    image->draw(x() + offsetx, y() + offsety, stepx, stepy,
+                offsetx + 1, offsety + 1);
 
   fl_pop_clip();
 
