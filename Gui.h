@@ -37,6 +37,7 @@ namespace Gui
 
   void updateColor(int);
   void checkPalette(Widget *, void *);
+  void drawPalette();
   void checkZoomIn(Button *, void *);
   void checkZoomOut(Button *, void *);
   void checkZoomFit(ToggleButton *, void *);
@@ -64,74 +65,8 @@ namespace Gui
   void checkCropDo();
   void checkCropValues();
 
-  // window
-  extern Fl_Double_Window *window;
-  //Fl_Group *group_main;
-  extern Fl_Menu_Bar *menubar;
-
-  // containers
-  extern Fl_Group *group_top;
-  extern Fl_Group *group_left;
-
-  // panels
-  extern Fl_Group *top_left;
-  extern Fl_Group *top_right;
-  extern Fl_Group *tools;
-  extern Fl_Group *paint;
-  extern Fl_Group *crop;
-  extern Fl_Group *getcolor;
-  extern Fl_Group *offset;
-  extern Fl_Group *right;
-  extern Fl_Group *bottom;
-  extern Fl_Group *middle;
-
-  // top left
-  extern Widget *logo;
-
-  //top right
-  extern ToggleButton *zoom_fit;
-  extern Button *zoom_one;
-  extern Button *zoom_in;
-  extern Button *zoom_out;
-  extern Field *zoom;
-  extern ToggleButton *grid;
-  extern Field *gridx;
-  extern Field *gridy;
-
-  // tools
-  extern Widget *tool;
-
-  // options
-  extern Widget *paint_brush;
-  extern Widget *paint_size;
-  extern Widget *paint_stroke;
-  extern Widget *paint_shape;
-  extern Widget *paint_edge;
-  extern Widget *paint_smooth;
-
-  extern Field *crop_x;
-  extern Field *crop_y;
-  extern Field *crop_w;
-  extern Field *crop_h;
-  extern Fl_Button *crop_do;
-
-  // right
-  extern Widget *pal_preview;
-  extern Widget *palette;
-  extern Widget *hue;
-  extern Widget *satval;
-  extern Widget *trans;
-  extern Fl_Choice *blend;
-
-  // bottom
-  extern ToggleButton *wrap;
-  extern ToggleButton *clone;
-  extern Widget *mirror;
-  extern Widget *origin;
-  extern Widget *constrain;
-
-  // view
-  extern View *view;
+  View *getView();
+  int getTool();
 }
 
 #endif

@@ -33,32 +33,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 extern int *fix_gamma;
 extern int *unfix_gamma;
 
-Fl_Double_Window *FX::rotate_hue;
-Field *FX::rotate_hue_amount;
-Fl_Check_Button *FX::rotate_hue_preserve;
-Fl_Button *FX::rotate_hue_ok;
-Fl_Button *FX::rotate_hue_cancel;
-
-Fl_Double_Window *FX::restore;
-Fl_Check_Button *FX::restore_normalize;
-Fl_Check_Button *FX::restore_invert;
-Fl_Check_Button *FX::restore_correct;
-Fl_Button *FX::restore_ok;
-Fl_Button *FX::restore_cancel;
-
-Fl_Double_Window *FX::remove_dust;
-Field *FX::remove_dust_amount;
-Fl_Check_Button *FX::remove_dust_invert;
-Fl_Button *FX::remove_dust_ok;
-Fl_Button *FX::remove_dust_cancel;
-
-Fl_Double_Window *FX::apply_palette;
-Fl_Check_Button *FX::apply_palette_dither;
-Fl_Button *FX::apply_palette_ok;
-Fl_Button *FX::apply_palette_cancel;
-
 namespace
 {
+  Fl_Double_Window *rotate_hue;
+  Field *rotate_hue_amount;
+  Fl_Check_Button *rotate_hue_preserve;
+  Fl_Button *rotate_hue_ok;
+  Fl_Button *rotate_hue_cancel;
+
+  Fl_Double_Window *restore;
+  Fl_Check_Button *restore_normalize;
+  Fl_Check_Button *restore_invert;
+  Fl_Check_Button *restore_correct;
+  Fl_Button *restore_ok;
+  Fl_Button *restore_cancel;
+
+  Fl_Double_Window *remove_dust;
+  Field *remove_dust_amount;
+  Fl_Check_Button *remove_dust_invert;
+  Fl_Button *remove_dust_ok;
+  Fl_Button *remove_dust_cancel;
+
+  Fl_Double_Window *apply_palette;
+  Fl_Check_Button *apply_palette_dither;
+  Fl_Button *apply_palette_ok;
+  Fl_Button *apply_palette_cancel;
+
   Bitmap *bmp;
   int overscroll;
 
@@ -194,7 +194,7 @@ void FX::doNormalize()
 
     if(!(y % 64))
     {
-      Gui::view->draw_main(1);
+      Gui::getView()->draw_main(1);
       Dialog::updateProgress();
     }
   }
@@ -273,7 +273,7 @@ void FX::doEqualize()
 
     if(!(y % 64))
     {
-      Gui::view->draw_main(1);
+      Gui::getView()->draw_main(1);
       Dialog::updateProgress();
     }
   }
@@ -389,7 +389,7 @@ void FX::doValueStretch()
 
     if(!(y % 64))
     {
-      Gui::view->draw_main(1);
+      Gui::getView()->draw_main(1);
       Dialog::updateProgress();
     }
   }
@@ -466,7 +466,7 @@ void FX::doSaturate()
 
     if(!(y % 64))
     {
-      Gui::view->draw_main(1);
+      Gui::getView()->draw_main(1);
       Dialog::updateProgress();
     }
   }
@@ -540,7 +540,7 @@ void FX::doRotateHue(int amount)
 
     if(!(y % 64))
     {
-      Gui::view->draw_main(1);
+      Gui::getView()->draw_main(1);
       Dialog::updateProgress();
     }
   }
@@ -577,7 +577,7 @@ void FX::doInvert()
 
     if(!(y % 64))
     {
-      Gui::view->draw_main(1);
+      Gui::getView()->draw_main(1);
       Dialog::updateProgress();
     }
   }
@@ -668,7 +668,7 @@ void FX::doRestore()
 
     if(!(y % 64))
     {
-      Gui::view->draw_main(1);
+      Gui::getView()->draw_main(1);
       Dialog::updateProgress();
     }
   }
@@ -755,7 +755,7 @@ void FX::doRemoveDust(int amount)
 
     if(!(y % 64))
     {
-      Gui::view->draw_main(1);
+      Gui::getView()->draw_main(1);
       Dialog::updateProgress();
     }
   }
@@ -806,7 +806,7 @@ void FX::doColorize()
 
     if(!(y % 64))
     {
-      Gui::view->draw_main(1);
+      Gui::getView()->draw_main(1);
       Dialog::updateProgress();
     }
   }
@@ -864,7 +864,7 @@ void FX::doCorrect()
 
     if(!(y % 64))
     {
-      Gui::view->draw_main(1);
+      Gui::getView()->draw_main(1);
       Dialog::updateProgress();
     }
   }
@@ -905,7 +905,7 @@ void FX::doApplyPaletteNormal()
 
     if(!(y % 64))
     {
-      Gui::view->draw_main(1);
+      Gui::getView()->draw_main(1);
       Dialog::updateProgress();
     }
   }
@@ -988,7 +988,7 @@ void FX::doApplyPaletteDither()
 
     if(!(y % 64))
     {
-      Gui::view->draw_main(1);
+      Gui::getView()->draw_main(1);
       Dialog::updateProgress();
     }
   }

@@ -86,6 +86,9 @@ namespace
   }
   TARGA_HEADER;
 
+  Widget *pal_preview = new Widget(new Fl_Group(0, 0, 96, 96),
+                                   0, 0, 96, 96, "", 6, 6, 0);
+
   int file_exists(const char *s)
   {
     FILE *temp = fopen(s, "r");
@@ -192,8 +195,8 @@ void File::load(Fl_Widget *, void *)
   delete Map::main;
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
 
-  Gui::view->zoom_fit(Gui::view->fit);
-  Gui::view->draw_main(1);
+  Gui::getView()->zoom_fit(Gui::getView()->fit);
+  Gui::getView()->draw_main(1);
   Undo::reset();
 }
 
@@ -228,8 +231,8 @@ void File::loadFile(const char *fn)
   delete Map::main;
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
 
-  Gui::view->zoom_fit(Gui::view->fit);
-  Gui::view->draw_main(1);
+  Gui::getView()->zoom_fit(Gui::getView()->fit);
+  Gui::getView()->draw_main(1);
   Undo::reset();
 }
 
@@ -1003,12 +1006,15 @@ Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int)
   if(temp_pal->max == 0)
     return 0;
 
-  temp_pal->draw(Gui::pal_preview);
+//  Widget *pal_preview = new Widget(0, 0, 96, 96, "", 6, 6, 0);
+
+  temp_pal->draw(pal_preview);
 
   Fl_RGB_Image *image =
-    new Fl_RGB_Image((unsigned char *)Gui::pal_preview->bitmap->data,
+    new Fl_RGB_Image((unsigned char *)pal_preview->bitmap->data,
                      96, 96, 4, 0);
 
+//  delete pal_preview;
   delete temp_pal;
   return image;
 }

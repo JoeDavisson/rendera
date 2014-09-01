@@ -21,40 +21,54 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.h"
 #include "Bitmap.h"
 
-int (*Blend::current)(int, int, int) = &trans;
-int Blend::xpos;
-int Blend::ypos;
-Bitmap *Blend::bmp;
+namespace
+{
+  int (*current_blend)(int, int, int) = &Blend::trans;
+  Bitmap *bmp;
+  int xpos, ypos;
+}
 
 void Blend::set(int mode)
 {
   switch(mode)
   {
     case 0:
-      current = trans;
+      current_blend = trans;
       break;
     case 1:
-      current = sub;
+      current_blend = sub;
       break;
     case 2:
-      current = add;
+      current_blend = add;
       break;
     case 3:
-      current = colorize;
+      current_blend = colorize;
       break;
     case 4:
-      current = alpha_add;
+      current_blend = alpha_add;
       break;
     case 5:
-      current = alpha_sub;
+      current_blend = alpha_sub;
       break;
     case 6:
-      current = smooth;
+      current_blend = smooth;
       break;
     default:
-      current = trans;
+      current_blend = trans;
       break;
   }
+}
+
+void Blend::setTarget(Bitmap *b, int x, int y)
+{
+  bmp = b;
+  xpos = x;
+  ypos = y;
+}
+
+int Blend::current(int c1, int c2, int t)
+{
+  return (*current_blend)(c1, c2, t);
 }
 
 int Blend::invert(int c1, int, int)
@@ -196,15 +210,15 @@ int Blend::smooth(int c1, int, int t)
   int y = ypos;
   int c[9];
 
-  c[0] = Blend::bmp->getpixel(x - 1, y - 1);
-  c[1] = Blend::bmp->getpixel(x, y - 1);
-  c[2] = Blend::bmp->getpixel(x + 1, y - 1);
-  c[3] = Blend::bmp->getpixel(x - 1, y);
-  c[4] = Blend::bmp->getpixel(x, y);
-  c[5] = Blend::bmp->getpixel(x + 1, y);
-  c[6] = Blend::bmp->getpixel(x - 1, y + 1);
-  c[7] = Blend::bmp->getpixel(x, y + 1);
-  c[8] = Blend::bmp->getpixel(x + 1, y + 1);
+  c[0] = bmp->getpixel(x - 1, y - 1);
+  c[1] = bmp->getpixel(x, y - 1);
+  c[2] = bmp->getpixel(x + 1, y - 1);
+  c[3] = bmp->getpixel(x - 1, y);
+  c[4] = bmp->getpixel(x, y);
+  c[5] = bmp->getpixel(x + 1, y);
+  c[6] = bmp->getpixel(x - 1, y + 1);
+  c[7] = bmp->getpixel(x, y + 1);
+  c[8] = bmp->getpixel(x + 1, y + 1);
 
   int r = 0;
   int g = 0;

@@ -109,8 +109,8 @@ void Undo::pop()
     delete Map::main;
     Map::main = new Map(undo_stack[undo_current]->w,
                         undo_stack[undo_current]->h);
-    Gui::view->ox = 0;
-    Gui::view->oy = 0;
+    Gui::getView()->ox = 0;
+    Gui::getView()->oy = 0;
   }
 
   undo_stack[undo_current]->blit(Bitmap::main, 0, 0,
@@ -119,6 +119,6 @@ void Undo::pop()
                                  undo_stack[undo_current]->w,
                                  undo_stack[undo_current]->h);
 
-  Gui::view->draw_main(1);
+  Gui::getView()->draw_main(1);
 }
 

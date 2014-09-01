@@ -74,22 +74,16 @@ int main(int /* argc */, char** /* argv */)
   Palette::undo = new Palette();
   Bitmap::clone_buffer = new Bitmap(8, 8);
   Bitmap::offset_buffer = new Bitmap(8, 8);
-  Blend::bmp = Bitmap::main;
-
-  FX::init();
-  Undo::init();
-  Dialog::init();
-  Gui::init();
 
   Tool::paint = new Paint();
   Tool::getcolor = new GetColor();
   Tool::crop = new Crop();
   Tool::offset = new Offset();
 
-  Palette::main->draw(Gui::palette);
-  Gui::tool->do_callback();
-  Gui::palette->do_callback();
-  Gui::checkZoom();
+  FX::init();
+  Undo::init();
+  Dialog::init();
+  Gui::init();
 
   return Fl::run();
 }

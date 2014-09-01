@@ -28,6 +28,8 @@ class Bitmap;
 namespace Blend
 {
   void set(int);
+  void setTarget(Bitmap *, int, int);
+  int current(int, int, int);
   int invert(int, int, int);
   int trans(int, int, int);
   int trans_all(int, int, int);
@@ -40,10 +42,6 @@ namespace Blend
   int smooth(int, int, int);
   void rgbToHsv(int, int, int, int *, int *, int *);
   void hsvToRgb(int, int, int, int *, int *, int *);
-
-  extern int (*current)(int, int, int);
-  extern int xpos, ypos;
-  extern Bitmap *bmp;
 }
 
 #endif

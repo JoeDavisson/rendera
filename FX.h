@@ -70,30 +70,6 @@ namespace FX
   void doApplyPaletteNormal();
   void doApplyPaletteDither();
   void cancelApplyPalette();
-
-  extern Fl_Double_Window *rotate_hue;
-  extern Field *rotate_hue_amount;
-  extern Fl_Check_Button *rotate_hue_preserve;
-  extern Fl_Button *rotate_hue_ok;
-  extern Fl_Button *rotate_hue_cancel;
-
-  extern Fl_Double_Window *restore;
-  extern Fl_Check_Button *restore_normalize;
-  extern Fl_Check_Button *restore_invert;
-  extern Fl_Check_Button *restore_correct;
-  extern Fl_Button *restore_ok;
-  extern Fl_Button *restore_cancel;
-
-  extern Fl_Double_Window *remove_dust;
-  extern Field *remove_dust_amount;
-  extern Fl_Check_Button *remove_dust_invert;
-  extern Fl_Button *remove_dust_ok;
-  extern Fl_Button *remove_dust_cancel;
-
-  extern Fl_Double_Window *apply_palette;
-  extern Fl_Check_Button *apply_palette_dither;
-  extern Fl_Button *apply_palette_ok;
-  extern Fl_Button *apply_palette_cancel;
 }
 
 #endif

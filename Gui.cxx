@@ -36,78 +36,77 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Tool.h"
 #include "Stroke.h"
 
-// window
-Fl_Double_Window *Gui::window;
-
-// main menu
-Fl_Menu_Bar *Gui::menubar;
-
-// containers
-Fl_Group *Gui::group_top;
-Fl_Group *Gui::group_left;
-
-// panels
-Fl_Group *Gui::top_left;
-Fl_Group *Gui::top_right;
-Fl_Group *Gui::tools;
-Fl_Group *Gui::paint;
-Fl_Group *Gui::crop;
-Fl_Group *Gui::getcolor;
-Fl_Group *Gui::offset;
-Fl_Group *Gui::right;
-Fl_Group *Gui::bottom;
-Fl_Group *Gui::middle;
-
-// top left
-Widget *Gui::logo;
-
-//top right
-ToggleButton *Gui::zoom_fit;
-Button *Gui::zoom_one;
-Button *Gui::zoom_in;
-Button *Gui::zoom_out;
-Field *Gui::zoom;
-ToggleButton *Gui::grid;
-Field *Gui::gridx;
-Field *Gui::gridy;
-
-// tools
-Widget *Gui::tool;
-
-// options
-Widget *Gui::paint_brush;
-Widget *Gui::paint_size;
-Widget *Gui::paint_stroke;
-Widget *Gui::paint_shape;
-Widget *Gui::paint_edge;
-Widget *Gui::paint_smooth;
-
-Field *Gui::crop_x;
-Field *Gui::crop_y;
-Field *Gui::crop_w;
-Field *Gui::crop_h;
-Fl_Button *Gui::crop_do;
-
-// right
-Widget *Gui::pal_preview;
-Widget *Gui::palette;
-Widget *Gui::hue;
-Widget *Gui::satval;
-Widget *Gui::trans;
-Fl_Choice *Gui::blend;
-
-// bottom
-ToggleButton *Gui::wrap;
-ToggleButton *Gui::clone;
-Widget *Gui::mirror;
-Widget *Gui::origin;
-Widget *Gui::constrain;
-
-// view
-View *Gui::view;
-
 namespace
 {
+  // window
+  Fl_Double_Window *window;
+
+  // main menu
+  Fl_Menu_Bar *menubar;
+
+  // containers
+  Fl_Group *group_top;
+  Fl_Group *group_left;
+
+  // panels
+  Fl_Group *top_left;
+  Fl_Group *top_right;
+  Fl_Group *tools;
+  Fl_Group *paint;
+  Fl_Group *crop;
+  Fl_Group *getcolor;
+  Fl_Group *offset;
+  Fl_Group *right;
+  Fl_Group *bottom;
+  Fl_Group *middle;
+
+  // top left
+  Widget *logo;
+
+  //top right
+  ToggleButton *zoom_fit;
+  Button *zoom_one;
+  Button *zoom_in;
+  Button *zoom_out;
+  Field *zoom;
+  ToggleButton *grid;
+  Field *gridx;
+  Field *gridy;
+
+  // tools
+  Widget *tool;
+
+  // options
+  Widget *paint_brush;
+  Widget *paint_size;
+  Widget *paint_stroke;
+  Widget *paint_shape;
+  Widget *paint_edge;
+  Widget *paint_smooth;
+
+  Field *crop_x;
+  Field *crop_y;
+  Field *crop_w;
+  Field *crop_h;
+  Fl_Button *crop_do;
+
+  // right
+  Widget *palette;
+  Widget *hue;
+  Widget *satval;
+  Widget *trans;
+  Fl_Choice *blend;
+
+  // bottom
+  ToggleButton *wrap;
+  ToggleButton *clone;
+  Widget *mirror;
+  Widget *origin;
+  Widget *constrain;
+
+  // view
+  View *view;
+
   // prevent escape from closing main window
   void close_callback(Fl_Widget *widget, void *)
   {
@@ -305,11 +304,6 @@ void Gui::init()
   right->labelsize(12);
   right->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   right->box(FL_UP_BOX);
-
-  // invisible palette file preview widget for file previews
-  pal_preview = new Widget(right, 0, 0, 96, 96, "", 6, 6, 0);
-  pal_preview->hide();
-  
   y1 = 20;
   palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 6, 6, (Fl_Callback *)checkPalette);
   y1 += 96 + 8;
@@ -365,9 +359,14 @@ void Gui::init()
   window->end();
   window->show();
 
+  // misc init
   Fl_Tooltip::enable(1);
   Fl_Tooltip::color(fl_rgb_color(192, 224, 248));
   Fl_Tooltip::textcolor(FL_BLACK);
+
+  drawPalette();
+  tool->do_callback();
+  checkZoom();
 }
 
 void Gui::setMenuItem(const char *s)
@@ -439,6 +438,14 @@ void Gui::checkPalette(Widget *widget, void *var)
 
   int c = widget->bitmap->getpixel(x * step + 1, y * step + 1);
   updateColor(c);
+}
+
+void Gui::drawPalette()
+{
+  Palette::main->draw(palette);
+  palette->var = 0;
+  palette->redraw();
+  palette->do_callback();
 }
 
 void Gui::checkZoomIn(Button *, void *)
@@ -729,5 +736,15 @@ void Gui::checkCropValues()
   snprintf(s, sizeof(s), "%d", h);
   crop_h->value(s);
   crop_h->redraw();
+}
+
+View *Gui::getView()
+{
+  return view;
+}
+
+int Gui::getTool()
+{
+  return tool->var;
 }
 

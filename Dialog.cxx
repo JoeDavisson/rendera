@@ -315,10 +315,10 @@ void Dialog::hideNewImage()
   delete Map::main;
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
 
-  Gui::view->ox = 0;
-  Gui::view->oy = 0;
-  Gui::view->zoom_fit(0);
-  Gui::view->draw_main(1);
+  Gui::getView()->ox = 0;
+  Gui::getView()->oy = 0;
+  Gui::getView()->zoom_fit(0);
+  Gui::getView()->draw_main(1);
 }
 
 void Dialog::cancelNewImage()
@@ -405,10 +405,7 @@ void Dialog::showLoadPalette()
 
   fclose(in);
 
-  Palette::main->load(fn);
-  Palette::main->draw(Gui::palette);
-  Gui::palette->var = 0;
-  Gui::palette->redraw();
+  Gui::drawPalette();
 
   delete fc;
 }
@@ -552,7 +549,7 @@ void Dialog::doEditorPalette(Widget *widget, void *var)
 
     ramp_started = 0;
     Palette::main->draw(editor_palette);
-    Palette::main->draw(Gui::palette);
+    Gui::drawPalette();
 
     return;
   }
@@ -662,7 +659,7 @@ void Dialog::doEditorInsert()
   doEditorStoreUndo();
   Palette::main->insert_color(Brush::main->color, editor_palette->var);
   Palette::main->draw(editor_palette);
-  Palette::main->draw(Gui::palette);
+  Gui::drawPalette();
   editor_palette->do_callback();
 }
 
@@ -671,7 +668,7 @@ void Dialog::doEditorDelete()
   doEditorStoreUndo();
   Palette::main->delete_color(editor_palette->var);
   Palette::main->draw(editor_palette);
-  Palette::main->draw(Gui::palette);
+  Gui::drawPalette();
   if(editor_palette->var > Palette::main->max - 1)
     editor_palette->var = Palette::main->max - 1;
   editor_palette->do_callback();
@@ -682,7 +679,7 @@ void Dialog::doEditorReplace()
   doEditorStoreUndo();
   Palette::main->replace_color(Brush::main->color, editor_palette->var);
   Palette::main->draw(editor_palette);
-  Palette::main->draw(Gui::palette);
+  Gui::drawPalette();
   editor_palette->do_callback();
 }
 
@@ -699,9 +696,8 @@ void Dialog::doEditorGetUndo()
     Palette::undo->copy(Palette::main);
     undo = 0;
     Palette::main->draw(editor_palette);
-    Palette::main->draw(Gui::palette);
+    Gui::drawPalette();
     editor_palette->do_callback();
-    Gui::palette->do_callback();
   }
 }
 

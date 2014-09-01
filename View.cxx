@@ -127,7 +127,7 @@ int View::handle(int event)
     case FL_UNFOCUS:
       return 1;
     case FL_ENTER:
-      switch(Gui::tool->var)
+      switch(Gui::getTool())
       {
         case 1:
           window()->cursor(FL_CURSOR_CROSS);
