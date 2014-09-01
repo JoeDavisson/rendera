@@ -58,7 +58,7 @@ Bitmap::Bitmap(int width, int height)
   h = height;
   overscroll = 0;
 
-  set_clip(0, 0, w - 1, h - 1);
+  setClip(0, 0, w - 1, h - 1);
 
   int i;
 
@@ -90,7 +90,7 @@ Bitmap::Bitmap(int width, int height, int overscroll, int inside_color, int outs
   for(i = 0; i < height; i++)
     row[i] = &data[width * i];
 
-  set_clip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
+  setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
   clear(outside_color);
   rectfill(cl, ct, cr, cb, inside_color, 0);
 }
@@ -171,7 +171,7 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
 
     while(x1 != x2)
     {
-      setpixel_solid(x1, y1, c, t);
+      setpixelSolid(x1, y1, c, t);
 
       if(e >= 0)
       {
@@ -191,7 +191,7 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
 
     while(y1 != y2)
     {
-      setpixel_solid(x1, y1, c, t);
+      setpixelSolid(x1, y1, c, t);
 
       if(e >= 0)
       {
@@ -204,7 +204,7 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
     }
   }
 
-  setpixel_solid(x1, y1, c, t);
+  setpixelSolid(x1, y1, c, t);
 }
 
 void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
@@ -257,7 +257,7 @@ void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c, int t)
     hline(x1, y1, x2, c, t);
 }
 
-void Bitmap::xor_line(int x1, int y1, int x2, int y2)
+void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 {
   int dx, dy, inx, iny, e;
 
@@ -313,7 +313,7 @@ void Bitmap::xor_line(int x1, int y1, int x2, int y2)
   *(row[y1] + x1) ^= XOR_VALUE(x1, y1);
 }
 
-void Bitmap::xor_hline(int x1, int y, int x2)
+void Bitmap::xorHline(int x1, int y, int x2)
 {
   if(x1 > x2)
     SWAP(x1, x2);
@@ -333,7 +333,7 @@ void Bitmap::xor_hline(int x1, int y, int x2)
     *p++ ^= XOR_VALUE(x1, y);
 }
 
-void Bitmap::xor_rect(int x1, int y1, int x2, int y2)
+void Bitmap::xorRect(int x1, int y1, int x2, int y2)
 {
   if(x1 > x2)
     SWAP(x1, x2);
@@ -351,8 +351,8 @@ void Bitmap::xor_rect(int x1, int y1, int x2, int y2)
 
   clip(&x1, &y1, &x2, &y2);
 
-  xor_hline(x1, y1, x2);
-  xor_hline(x1, y2, x2);
+  xorHline(x1, y1, x2);
+  xorHline(x1, y2, x2);
   if(y1 == y2)
     return;
 
@@ -365,7 +365,7 @@ void Bitmap::xor_rect(int x1, int y1, int x2, int y2)
   }
 }
 
-void Bitmap::xor_rectfill(int x1, int y1, int x2, int y2)
+void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
 {
   if(x1 > x2)
     SWAP(x1, x2);
@@ -384,7 +384,7 @@ void Bitmap::xor_rectfill(int x1, int y1, int x2, int y2)
   clip(&x1, &y1, &x2, &y2);
 
   for(; y1 <= y2; y1++)
-    xor_hline(x1, y1, x2);
+    xorHline(x1, y1, x2);
 }
 
 void Bitmap::setpixel(int x, int y, int c2, int t)
@@ -395,24 +395,24 @@ void Bitmap::setpixel(int x, int y, int c2, int t)
   switch(mode)
   {
     case 0:
-      setpixel_solid(x, y, c2, t);
+      setpixelSolid(x, y, c2, t);
       break;
     case 1:
-      setpixel_wrap(x, y, c2, t);
+      setpixelWrap(x, y, c2, t);
       break;
     case 2:
-      setpixel_clone(x, y, c2, t);
+      setpixelClone(x, y, c2, t);
       break;
     case 3:
-      setpixel_wrap_clone(x, y, c2, t);
+      setpixelWrapClone(x, y, c2, t);
       break;
     default:
-      setpixel_solid(x, y, c2, t);
+      setpixelSolid(x, y, c2, t);
       break;
   }
 }
 
-void Bitmap::setpixel_solid(int x, int y, int c2, int t)
+void Bitmap::setpixelSolid(int x, int y, int c2, int t)
 {
   if(x < cl || x > cr || y < ct || y > cb)
     return;
@@ -422,7 +422,7 @@ void Bitmap::setpixel_solid(int x, int y, int c2, int t)
   *c1 = Blend::current(*c1, c2, t);
 }
 
-void Bitmap::setpixel_wrap(int x, int y, int c2, int t)
+void Bitmap::setpixelWrap(int x, int y, int c2, int t)
 {
   while(x < cl)
     x += cw;
@@ -438,7 +438,7 @@ void Bitmap::setpixel_wrap(int x, int y, int c2, int t)
   *c1 = Blend::current(*c1, c2, t);
 }
 
-void Bitmap::setpixel_clone(int x, int y, int c2, int t)
+void Bitmap::setpixelClone(int x, int y, int c2, int t)
 {
   if(x < cl || x > cr || y < ct || y > cb)
     return;
@@ -486,7 +486,7 @@ void Bitmap::setpixel_clone(int x, int y, int c2, int t)
   *c1 = Blend::current(*c1, c2, t);
 }
 
-void Bitmap::setpixel_wrap_clone(int x, int y, int c2, int t)
+void Bitmap::setpixelWrapClone(int x, int y, int c2, int t)
 {
   while(x < cl)
     x += cw;
@@ -563,20 +563,6 @@ int Bitmap::getpixel(int x, int y)
   return *(row[y] + x);
 }
 
-int Bitmap::getpixel_wrap(int x, int y)
-{
-  while(x < cl)
-    x += cw;
-  while(x > cr)
-    x -= cw;
-  while(y < ct)
-  y += ch;
-  while(y > cb)
-    y -= ch;
-
-  return *(row[y] + x);
-}
-
 void Bitmap::clip(int *x1, int *y1, int *x2, int *y2)
 {
   if(*x1 < cl)
@@ -589,7 +575,7 @@ void Bitmap::clip(int *x1, int *y1, int *x2, int *y2)
     *y2 = cb;
 }
 
-void Bitmap::set_clip(int x1, int y1, int x2, int y2)
+void Bitmap::setClip(int x1, int y1, int x2, int y2)
 {
   cl = x1;
   ct = y1;
@@ -664,7 +650,7 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
   }
 }
 
-void Bitmap::point_stretch(Bitmap *dest,
+void Bitmap::pointStretch(Bitmap *dest,
                            int sx, int sy, int sw, int sh,
                            int dx, int dy, int dw, int dh,
                            int overx, int overy, int bgr_order)
@@ -736,9 +722,9 @@ void Bitmap::point_stretch(Bitmap *dest,
   }
 }
 
-void Bitmap::fast_stretch(Bitmap *dest,
+void Bitmap::fastStretch(Bitmap *dest,
                           int xs1, int ys1, int xs2, int ys2,
-                          int xd1, int yd1, int xd2, int yd2)
+                          int xd1, int yd1, int xd2, int yd2, int bgr_order)
 {
   xs2 += xs1;
   xs2--;
@@ -779,7 +765,7 @@ void Bitmap::fast_stretch(Bitmap *dest,
 
     for(d_1 = 0; d_1 <= dx_1; d_1++)
     {
-      *p = *q;
+      *p = convert_format(*q, bgr_order);
 
       while(e_1 >= 0)
       {

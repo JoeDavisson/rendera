@@ -45,10 +45,10 @@ void Blend::set(int mode)
       current_blend = colorize;
       break;
     case 4:
-      current_blend = alpha_add;
+      current_blend = alphaAdd;
       break;
     case 5:
-      current_blend = alpha_sub;
+      current_blend = alphaSub;
       break;
     case 6:
       current_blend = smooth;
@@ -85,7 +85,7 @@ int Blend::trans(int c1, int c2, int t)
   return makecola(r, g, b, geta(c1));
 }
 
-int Blend::trans_all(int c1, int c2, int t)
+int Blend::transAll(int c1, int c2, int t)
 {
   int r = getr(c2) + (t * (getr(c1) - getr(c2))) / 255;
   int g = getg(c2) + (t * (getg(c1) - getg(c2))) / 255;
@@ -193,12 +193,12 @@ int Blend::forceLuminance(int c, int dest)
   return makecola(n[0], n[1], n[2], geta(c));
 }
 
-int Blend::alpha_add(int c1, int, int t)
+int Blend::alphaAdd(int c1, int, int t)
 {
   return makecola(getr(c1), getg(c1), getb(c1), (geta(c1) * t) / 255);
 }
 
-int Blend::alpha_sub(int c1, int, int t)
+int Blend::alphaSub(int c1, int, int t)
 {
   return makecola(getr(c1), getg(c1), getb(c1), 255 - ((255 - geta(c1)) * t) / 255);
 }
@@ -269,7 +269,7 @@ int Blend::smooth(int c1, int, int t)
   a += geta(c[8]) * 1;
   a /= 15;
 
-  return Blend::trans_all(c1, makecola(r, g, b, a), t);
+  return Blend::transAll(c1, makecola(r, g, b, a), t);
 }
 
 // RGB<->HSV conversions use the following ranges:

@@ -317,8 +317,8 @@ void Dialog::hideNewImage()
 
   Gui::getView()->ox = 0;
   Gui::getView()->oy = 0;
-  Gui::getView()->zoom_fit(0);
-  Gui::getView()->draw_main(1);
+  Gui::getView()->zoomFit(0);
+  Gui::getView()->drawMain(1);
 }
 
 void Dialog::cancelNewImage()
@@ -377,7 +377,7 @@ void Dialog::showEditor()
 
 void Dialog::hideEditor()
 {
-  Palette::main->fill_lookup();
+  Palette::main->fillLookup();
   editor->hide();
 }
 
@@ -481,7 +481,7 @@ void Dialog::doEditorSetHsv(bool redraw)
       for(x = 0; x < 256; x++)
       {
         Blend::hsvToRgb(h, x, y, &r, &g, &b);
-        editor_sv->bitmap->setpixel_solid(x, y, makecol(r, g, b), 0);
+        editor_sv->bitmap->setpixelSolid(x, y, makecol(r, g, b), 0);
       }
 
       Blend::hsvToRgb(y * 6, 255, 255, &r, &g, &b);
@@ -491,7 +491,7 @@ void Dialog::doEditorSetHsv(bool redraw)
   else
   {
     // erase previous box if not redrawing entire thing
-    editor_sv->bitmap->xor_rect(oldsvx - 4, oldsvy - 4, oldsvx + 4, oldsvy + 4);
+    editor_sv->bitmap->xorRect(oldsvx - 4, oldsvy - 4, oldsvx + 4, oldsvy + 4);
   }
 
   x = editor_sv->var & 255;
@@ -506,7 +506,7 @@ void Dialog::doEditorSetHsv(bool redraw)
   if(y > 251)
     y = 251;
 
-  editor_sv->bitmap->xor_rect(x - 4, y - 4, x + 4, y + 4);
+  editor_sv->bitmap->xorRect(x - 4, y - 4, x + 4, y + 4);
   oldsvx = x;
   oldsvy = y;
 
@@ -559,7 +559,7 @@ void Dialog::doEditorGetSV()
 void Dialog::doEditorInsert()
 {
   doEditorStoreUndo();
-  Palette::main->insert_color(Brush::main->color, editor_palette->var);
+  Palette::main->insertColor(Brush::main->color, editor_palette->var);
   Palette::main->draw(editor_palette);
   Gui::drawPalette();
   editor_palette->do_callback();
@@ -568,7 +568,7 @@ void Dialog::doEditorInsert()
 void Dialog::doEditorDelete()
 {
   doEditorStoreUndo();
-  Palette::main->delete_color(editor_palette->var);
+  Palette::main->deleteColor(editor_palette->var);
   Palette::main->draw(editor_palette);
   Gui::drawPalette();
   if(editor_palette->var > Palette::main->max - 1)
@@ -579,7 +579,7 @@ void Dialog::doEditorDelete()
 void Dialog::doEditorReplace()
 {
   doEditorStoreUndo();
-  Palette::main->replace_color(Brush::main->color, editor_palette->var);
+  Palette::main->replaceColor(Brush::main->color, editor_palette->var);
   Palette::main->draw(editor_palette);
   Gui::drawPalette();
   editor_palette->do_callback();

@@ -251,7 +251,7 @@ void Gui::init()
   y1 = 20;
   paint_brush = new Widget(paint, 8, y1, 96, 96, "Brush Preview", 0, 0, 0);
   paint_brush->bitmap->clear(makecol(255, 255, 255));
-  paint_brush->bitmap->setpixel_solid(48, 48, makecol(0, 0, 0), 0);
+  paint_brush->bitmap->setpixelSolid(48, 48, makecol(0, 0, 0), 0);
   y1 += 96 + 8;
   paint_size = new Widget(paint, 8, y1, 96, 24, "Size", "data/size.png", 6, 24, (Fl_Callback *)checkPaintSize);
   y1 += 24 + 8;
@@ -479,19 +479,19 @@ void Gui::drawPalette()
 
 void Gui::checkZoomIn(Button *, void *)
 {
-  view->zoom_in(view->w() / 2, view->h() / 2);
+  view->zoomIn(view->w() / 2, view->h() / 2);
   checkZoom();
 }
 
 void Gui::checkZoomOut(Button *, void *)
 {
-  view->zoom_out(view->w() / 2, view->h() / 2);
+  view->zoomOut(view->w() / 2, view->h() / 2);
   checkZoom();
 }
 
 void Gui::checkZoomFit(ToggleButton *, void *var)
 {
-  view->zoom_fit(*(int *)var);
+  view->zoomFit(*(int *)var);
   checkZoom();
 }
 
@@ -499,7 +499,7 @@ void Gui::checkZoomOne(Button *, void *)
 {
   zoom_fit->var = 0;
   zoom_fit->redraw();
-  view->zoom_one();
+  view->zoomOne();
   checkZoom();
 }
 
@@ -514,7 +514,7 @@ void Gui::checkZoom()
 void Gui::checkGrid(ToggleButton *, void *var)
 {
   view->grid = *(int *)var;
-  view->draw_main(1);
+  view->drawMain(1);
 }
 
 void Gui::checkGridX(Field *field, void *)
@@ -528,7 +528,7 @@ void Gui::checkGridX(Field *field, void *)
   snprintf(s, sizeof(s), "%d", num);
   field->value(s);
   view->gridx = num;
-  view->draw_main(1);
+  view->drawMain(1);
 }
 
 void Gui::checkGridY(Field *field, void *)
@@ -542,7 +542,7 @@ void Gui::checkGridY(Field *field, void *)
   snprintf(s, sizeof(s), "%d", num);
   field->value(s);
   view->gridy = num;
-  view->draw_main(1);
+  view->drawMain(1);
 }
 
 void Gui::checkPaintSize(Widget *, void *var)
@@ -559,7 +559,7 @@ void Gui::checkPaintSize(Widget *, void *var)
 
   for(i = 0; i < Brush::main->solid_count; i++)
   {
-    paint_brush->bitmap->setpixel_solid(48 + brush->solidx[i],
+    paint_brush->bitmap->setpixelSolid(48 + brush->solidx[i],
                                              48 + brush->solidy[i],
                                              makecol(0, 0, 0), 0);
   }
@@ -661,7 +661,7 @@ void Gui::checkColor(Widget *, void *)
   int x2 = 48 + 20 * cosf(mouse_angle);
   int y2 = 48 + 20 * sinf(mouse_angle);
 
-  hue->bitmap->xor_line(x1, y1, x2, y2);
+  hue->bitmap->xorLine(x1, y1, x2, y2);
 
   int x, y;
 
@@ -670,7 +670,7 @@ void Gui::checkColor(Widget *, void *)
     for(x = 0; x < 96; x++)
     {
       Blend::hsvToRgb(h, x * 2.685, y * 2.685, &r, &g, &b);
-      satval->bitmap->setpixel_solid(x, y, makecol(r, g, b), 0);
+      satval->bitmap->setpixelSolid(x, y, makecol(r, g, b), 0);
     }
   }
 
@@ -686,7 +686,7 @@ void Gui::checkColor(Widget *, void *)
   if(y > 91)
     y = 91;
 
-  satval->bitmap->xor_rect(x - 4, y - 4, x + 4, y + 4);
+  satval->bitmap->xorRect(x - 4, y - 4, x + 4, y + 4);
 
   hue->redraw();
   satval->redraw();

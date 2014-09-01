@@ -197,8 +197,8 @@ void File::load(Fl_Widget *, void *)
   delete Map::main;
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
 
-  Gui::getView()->zoom_fit(Gui::getView()->fit);
-  Gui::getView()->draw_main(1);
+  Gui::getView()->zoomFit(Gui::getView()->fit);
+  Gui::getView()->drawMain(1);
   Undo::reset();
 }
 
@@ -233,8 +233,8 @@ void File::loadFile(const char *fn)
   delete Map::main;
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
 
-  Gui::getView()->zoom_fit(Gui::getView()->fit);
-  Gui::getView()->draw_main(1);
+  Gui::getView()->zoomFit(Gui::getView()->fit);
+  Gui::getView()->drawMain(1);
   Undo::reset();
 }
 

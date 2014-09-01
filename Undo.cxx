@@ -126,6 +126,6 @@ void Undo::pop()
                                    undo_stack[undo_current]->h);
   }
 
-  Gui::getView()->draw_main(1);
+  Gui::getView()->drawMain(1);
 }
 

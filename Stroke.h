@@ -32,13 +32,13 @@ public:
   virtual ~Stroke();
 
   void clip();
-  void size_linear(int, int, int, int);
-  void make_blitrect(int, int, int, int, int, int, int, float);
+  void sizeLinear(int, int, int, int);
+  void makeBlitrect(int, int, int, int, int, int, int, float);
   void size(int, int, int, int);
-  void draw_brush(int, int, int);
-  void draw_brush_line(int, int, int, int, int);
-  void draw_brush_rect(int, int, int, int, int);
-  void draw_brush_oval(int, int, int, int, int);
+  void drawBrush(int, int, int);
+  void drawBrushLine(int, int, int, int, int);
+  void drawBrushRect(int, int, int, int, int);
+  void drawBrushOval(int, int, int, int, int);
   void begin(int, int, int, int, float);
   void draw(int, int, int, int, float);
   void end();

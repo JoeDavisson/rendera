@@ -359,6 +359,6 @@ void Quantize::pca(Bitmap *src, int size)
 
   // redraw palette widget
   Gui::drawPalette();
-  Palette::main->fill_lookup();
+  Palette::main->fillLookup();
 }
 

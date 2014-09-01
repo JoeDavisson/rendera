@@ -32,12 +32,12 @@ public:
   Paint();
   virtual ~Paint();
 
-  virtual void render_begin_normal(View *);
-  virtual void render_begin_smooth(View *);
-  virtual void render_begin(View *);
-  virtual int render_callback_normal(View *);
-  virtual int render_callback_smooth(View *);
-  virtual int render_callback(View *);
+  virtual void renderBeginNormal(View *);
+  virtual void renderBeginSmooth(View *);
+  virtual void renderBegin(View *);
+  virtual int renderCallbackNormal(View *);
+  virtual int renderCallbackSmooth(View *);
+  virtual int renderCallback(View *);
 
   virtual void push(View *);
   virtual void drag(View *);

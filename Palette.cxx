@@ -30,8 +30,8 @@ Palette::Palette()
 {
   data = new int[256];
   lookup = new unsigned char[16777216];
-  set_default();
-  fill_lookup();
+  setDefault();
+  fillLookup();
 }
 
 Palette::~Palette()
@@ -119,7 +119,7 @@ void Palette::copy(Palette *dest)
   dest->max = max;
 }
 
-void Palette::set_default()
+void Palette::setDefault()
 {
   int r, g, b;
   int h, v;
@@ -148,7 +148,7 @@ void Palette::set_default()
   max = index;
 }
 
-void Palette::insert_color(int color, int index)
+void Palette::insertColor(int color, int index)
 {
   if(max >= 256)
     return;
@@ -163,7 +163,7 @@ void Palette::insert_color(int color, int index)
   data[index] = color;
 }
 
-void Palette::delete_color(int index)
+void Palette::deleteColor(int index)
 {
   if(max <= 1)
     return;
@@ -176,13 +176,13 @@ void Palette::delete_color(int index)
   max--;
 }
 
-void Palette::replace_color(int color, int index)
+void Palette::replaceColor(int color, int index)
 {
   data[index] = color;
 }
 
 // generate a 16M reverse-lookup table for indexed mode
-void Palette::fill_lookup()
+void Palette::fillLookup()
 {
   int r, g, b;
   int i, j, k;
@@ -280,7 +280,7 @@ void Palette::load(const char *fn)
 
   fclose(in);
   max = index;
-  fill_lookup();
+  fillLookup();
 }
 
 // uses GIMP .gpl palette format

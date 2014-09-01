@@ -33,11 +33,11 @@ public:
 
   void draw(Widget *);
   void copy(Palette *);
-  void set_default();
-  void insert_color(int, int);
-  void delete_color(int);
-  void replace_color(int, int);
-  void fill_lookup();
+  void setDefault();
+  void insertColor(int, int);
+  void deleteColor(int);
+  void replaceColor(int, int);
+  void fillLookup();
   void load(const char *);
   void save(const char *);
 

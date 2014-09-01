@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  inline void grid_setpixel(const Bitmap *bmp, const int x, const int y,
+  inline void gridSetpixel(const Bitmap *bmp, const int x, const int y,
                                    const int c, const int t)
   {
     if(x < 0 || y < 0 || x >= bmp->w || y >= bmp->h)
@@ -39,7 +39,7 @@ namespace
     *p = blend_fast_solid(*p, c, t);
   }
 
-  inline void grid_hline(Bitmap *bmp, int x1, int y, int x2,
+  inline void gridHline(Bitmap *bmp, int x1, int y, int x2,
                                 const int c, const int t)
   {
     if(y < 0 || y >= bmp->h)
@@ -165,7 +165,7 @@ int View::handle(int event)
         case 2:
           if(moving == 0)
           {
-            begin_move();
+            beginMove();
             moving = 1;
             break;
           }
@@ -198,7 +198,7 @@ int View::handle(int event)
         if(tool->active)
           tool->redraw(this);
         else
-          draw_main(1);
+          drawMain(1);
       }
 
       if(tool->started)
@@ -217,11 +217,11 @@ int View::handle(int event)
 
       if(Fl::event_dy() >= 0)
       {
-        zoom_out(mousex, mousey);
+        zoomOut(mousex, mousey);
       }
       else
       {
-        zoom_in(mousex, mousey);
+        zoomIn(mousex, mousey);
       }
 
       if(tool->active)
@@ -232,7 +232,7 @@ int View::handle(int event)
       {
         tool->active = 0;
         tool->started = 0;
-        draw_main(1);
+        drawMain(1);
         break;
       }
 
@@ -299,12 +299,12 @@ void View::resize(int x, int y, int w, int h)
   Fl_Widget::resize(x, y, w, h);
 
   if(fit)
-    zoom_fit(1);
+    zoomFit(1);
 
-  draw_main(0);
+  drawMain(0);
 }
 
-void View::draw_main(int refresh)
+void View::drawMain(int refresh)
 {
   int sw = w() / zoom;
   int sh = h() / zoom;
@@ -330,10 +330,10 @@ void View::draw_main(int refresh)
 
   backbuf->clear(makecol(128, 128, 128));
 
-  Bitmap::main->point_stretch(backbuf, ox, oy, sw, sh,
+  Bitmap::main->pointStretch(backbuf, ox, oy, sw, sh,
                               0, 0, dw, dh, overx, overy, bgr_order);
   if(grid)
-    draw_grid();
+    drawGrid();
 
   if(refresh)
   {
@@ -342,7 +342,7 @@ void View::draw_main(int refresh)
   }
 }
 
-void View::draw_grid()
+void View::drawGrid()
 {
   int x1, y1, x2, y2, d, i;
   int offx = 0, offy = 0;
@@ -370,16 +370,16 @@ void View::draw_grid()
   do
   {
     x1 = 0 - zx + (offx * zoom) + qx - (int)(ox * zoom) % zx;
-    grid_hline(backbuf, x1, y1, x2, makecol(255, 255, 255), d);
-    grid_hline(backbuf, x1, y1 + zy - 1, x2, makecol(0, 0, 0), d);
+    gridHline(backbuf, x1, y1, x2, makecol(255, 255, 255), d);
+    gridHline(backbuf, x1, y1 + zy - 1, x2, makecol(0, 0, 0), d);
     i = 0;
     do
     {
       x1 = 0 - zx + (offx * zoom) + qx - (int)(ox * zoom) % zx;
       do
       {
-        grid_setpixel(backbuf, x1, y1, makecol(255, 255, 255), d);
-        grid_setpixel(backbuf, x1 + zx - 1, y1, makecol(0, 0, 0), d);
+        gridSetpixel(backbuf, x1, y1, makecol(255, 255, 255), d);
+        gridSetpixel(backbuf, x1 + zx - 1, y1, makecol(0, 0, 0), d);
         x1 += zx;
       }
       while(x1 <= x2);
@@ -391,7 +391,7 @@ void View::draw_grid()
   while(y1 <= y2);
 }
 
-void View::begin_move()
+void View::beginMove()
 {
   int dx = x() - group->x();
   int dy = y() - group->y();
@@ -430,15 +430,19 @@ void View::begin_move()
 
   backbuf->clear(makecol(128, 128, 128));
 
-  Bitmap::main->point_stretch(backbuf,
-                              0, 0, Bitmap::main->w, Bitmap::main->h,
-                              px, py, pw, ph, 0, 0, bgr_order);
+  //Bitmap::main->pointStretch(backbuf,
+   //                           0, 0, Bitmap::main->w, Bitmap::main->h,
+  //                            px, py, pw, ph, 0, 0, bgr_order);
+  Bitmap::main->fastStretch(backbuf,
+                             0, 0, Bitmap::main->w, Bitmap::main->h,
+                             px, py, pw, ph, bgr_order);
+
   lastbx = bx;
   lastby = by;
   lastbw = bw;
   lastbh = bh;
 
-  backbuf->xor_rect(bx, by, bx + bw - 1, by + bh - 1);
+  backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
   int temp = tool->active;
   tool->active = 0;
@@ -488,8 +492,8 @@ void View::move()
   if(bh < 1)
     bh = 1;
 
-  backbuf->xor_rect(lastbx, lastby, lastbx + lastbw - 1, lastby + lastbh - 1);
-  backbuf->xor_rect(bx, by, bx + bw - 1, by + bh - 1);
+  backbuf->xorRect(lastbx, lastby, lastbx + lastbw - 1, lastby + lastbh - 1);
+  backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
 //  redraw();
   int temp = tool->active;
@@ -504,7 +508,7 @@ void View::move()
   lastbh = bh;
 }
 
-void View::zoom_in(int x, int y)
+void View::zoomIn(int x, int y)
 {
   if(fit)
     return;
@@ -530,7 +534,7 @@ void View::zoom_in(int x, int y)
       oy = 0;
   }
 
-  draw_main(1);
+  drawMain(1);
 
   if(tool->started)
     tool->stroke->preview(backbuf, ox, oy, zoom);
@@ -538,7 +542,7 @@ void View::zoom_in(int x, int y)
   Gui::checkZoom();
 }
 
-void View::zoom_out(int x, int y)
+void View::zoomOut(int x, int y)
 {
   if(fit)
     return;
@@ -564,7 +568,7 @@ void View::zoom_out(int x, int y)
       oy = 0;
   }
 
-  draw_main(1);
+  drawMain(1);
 
   if(tool->started)
     tool->stroke->preview(backbuf, ox, oy, zoom);
@@ -572,7 +576,7 @@ void View::zoom_out(int x, int y)
   Gui::checkZoom();
 }
 
-void View::zoom_fit(int fitting)
+void View::zoomFit(int fitting)
 {
   if(!fitting)
   {
@@ -580,7 +584,7 @@ void View::zoom_fit(int fitting)
     zoom = 1;
     ox = 0;
     oy = 0;
-    draw_main(1);
+    drawMain(1);
     return;
   }
 
@@ -596,17 +600,17 @@ void View::zoom_fit(int fitting)
   oy = 0;
 
   fit = 1;
-  draw_main(1);
+  drawMain(1);
   Gui::checkZoom();
 }
 
-void View::zoom_one()
+void View::zoomOne()
 {
   fit = 0;
   zoom = 1;
   ox = 0;
   oy = 0;
-  draw_main(1);
+  drawMain(1);
   Gui::checkZoom();
 }
 
@@ -647,7 +651,7 @@ void View::scroll(int dir, int amount)
   if(tool->active)
     tool->redraw(this);
   else
-    draw_main(1);
+    drawMain(1);
 }
 
 void View::draw()

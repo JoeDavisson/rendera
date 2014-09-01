@@ -32,13 +32,13 @@ namespace Blend
   int current(int, int, int);
   int invert(int, int, int);
   int trans(int, int, int);
-  int trans_all(int, int, int);
+  int transAll(int, int, int);
   int add(int, int, int);
   int sub(int, int, int);
   int colorize(int, int, int);
   int forceLuminance(int, int);
-  int alpha_add(int, int, int);
-  int alpha_sub(int, int, int);
+  int alphaAdd(int, int, int);
+  int alphaSub(int, int, int);
   int smooth(int, int, int);
   void rgbToHsv(int, int, int, int *, int *, int *);
   void hsvToRgb(int, int, int, int *, int *, int *);

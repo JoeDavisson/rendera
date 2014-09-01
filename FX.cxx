@@ -194,7 +194,7 @@ void FX::doNormalize()
 
     if(!(y % 64))
     {
-      Gui::getView()->draw_main(1);
+      Gui::getView()->drawMain(1);
       Dialog::updateProgress();
     }
   }
@@ -273,7 +273,7 @@ void FX::doEqualize()
 
     if(!(y % 64))
     {
-      Gui::getView()->draw_main(1);
+      Gui::getView()->drawMain(1);
       Dialog::updateProgress();
     }
   }
@@ -389,7 +389,7 @@ void FX::doValueStretch()
 
     if(!(y % 64))
     {
-      Gui::getView()->draw_main(1);
+      Gui::getView()->drawMain(1);
       Dialog::updateProgress();
     }
   }
@@ -466,7 +466,7 @@ void FX::doSaturate()
 
     if(!(y % 64))
     {
-      Gui::getView()->draw_main(1);
+      Gui::getView()->drawMain(1);
       Dialog::updateProgress();
     }
   }
@@ -540,7 +540,7 @@ void FX::doRotateHue(int amount)
 
     if(!(y % 64))
     {
-      Gui::getView()->draw_main(1);
+      Gui::getView()->drawMain(1);
       Dialog::updateProgress();
     }
   }
@@ -577,7 +577,7 @@ void FX::doInvert()
 
     if(!(y % 64))
     {
-      Gui::getView()->draw_main(1);
+      Gui::getView()->drawMain(1);
       Dialog::updateProgress();
     }
   }
@@ -668,7 +668,7 @@ void FX::doRestore()
 
     if(!(y % 64))
     {
-      Gui::getView()->draw_main(1);
+      Gui::getView()->drawMain(1);
       Dialog::updateProgress();
     }
   }
@@ -755,7 +755,7 @@ void FX::doRemoveDust(int amount)
 
     if(!(y % 64))
     {
-      Gui::getView()->draw_main(1);
+      Gui::getView()->drawMain(1);
       Dialog::updateProgress();
     }
   }
@@ -806,7 +806,7 @@ void FX::doColorize()
 
     if(!(y % 64))
     {
-      Gui::getView()->draw_main(1);
+      Gui::getView()->drawMain(1);
       Dialog::updateProgress();
     }
   }
@@ -864,7 +864,7 @@ void FX::doCorrect()
 
     if(!(y % 64))
     {
-      Gui::getView()->draw_main(1);
+      Gui::getView()->drawMain(1);
       Dialog::updateProgress();
     }
   }
@@ -905,7 +905,7 @@ void FX::doApplyPaletteNormal()
 
     if(!(y % 64))
     {
-      Gui::getView()->draw_main(1);
+      Gui::getView()->drawMain(1);
       Dialog::updateProgress();
     }
   }
@@ -958,7 +958,7 @@ void FX::doApplyPaletteDither()
       const int b = unfix_gamma[n[2]];
 
       int c = Palette::main->data[Palette::main->lookup[makecol(r, g, b) & 0xFFFFFF]];
-      bmp->setpixel_solid(x, y, makecol(getr(c), getg(c), getb(c)), 0);
+      bmp->setpixelSolid(x, y, makecol(getr(c), getg(c), getb(c)), 0);
 
       v[0] = fix_gamma[getr(*p)];
       v[1] = fix_gamma[getg(*p)];
@@ -988,7 +988,7 @@ void FX::doApplyPaletteDither()
 
     if(!(y % 64))
     {
-      Gui::getView()->draw_main(1);
+      Gui::getView()->drawMain(1);
       Dialog::updateProgress();
     }
   }

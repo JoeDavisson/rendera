@@ -136,7 +136,7 @@ void Crop::drag(View *view)
     lastx = view->imgx;
     lasty = view->imgy;
 
-    view->draw_main(0);
+    view->drawMain(0);
     stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
     view->redraw();
     Fl::flush();
@@ -248,7 +248,7 @@ void Crop::done(View *view)
   view->zoom = 1;
   view->ox = 0;
   view->oy = 0;
-  view->draw_main(1);
+  view->drawMain(1);
   Gui::checkCropValues(0, 0, 0, 0);
 }
 
@@ -258,7 +258,7 @@ void Crop::redraw(View *view)
 //  absrect(&beginx, &beginy, &lastx, &lasty);
   Map::main->rect(beginx, beginy, lastx, lasty, 255);
   stroke->size(beginx, beginy, lastx, lasty);
-  view->draw_main(0);
+  view->drawMain(0);
   stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
   view->redraw();
   Fl::flush();

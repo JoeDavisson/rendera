@@ -34,15 +34,15 @@ public:
 
   virtual int handle(int);
   virtual void resize(int, int, int, int);
-  void draw_move();
-  void draw_main(int);
-  void draw_grid();
-  void begin_move();
+  void drawMove();
+  void drawMain(int);
+  void drawGrid();
+  void beginMove();
   void move();
-  void zoom_in(int, int);
-  void zoom_out(int, int);
-  void zoom_fit(int);
-  void zoom_one();
+  void zoomIn(int, int);
+  void zoomOut(int, int);
+  void zoomFit(int);
+  void zoomOne();
   void scroll(int, int);
 
   Fl_Group *group;

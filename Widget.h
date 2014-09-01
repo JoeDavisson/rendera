@@ -35,6 +35,7 @@ public:
   virtual ~Widget();
 
   virtual int handle(int);
+
   int var;
   int stepx;
   int stepy;

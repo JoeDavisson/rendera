@@ -114,7 +114,7 @@ Paint::~Paint()
 {
 }
 
-void Paint::render_begin_normal(View *)
+void Paint::renderBeginNormal(View *)
 {
   Brush *brush = Brush::main;
 
@@ -129,7 +129,7 @@ void Paint::render_begin_normal(View *)
   render_end = j;
 }
 
-void Paint::render_begin_smooth(View *)
+void Paint::renderBeginSmooth(View *)
 {
   Brush *brush = Brush::main;
 
@@ -157,7 +157,7 @@ void Paint::render_begin_smooth(View *)
   render_pos = stroke->y1;
 }
 
-void Paint::render_begin(View *view)
+void Paint::renderBegin(View *view)
 {
   undo(0);
 
@@ -180,12 +180,12 @@ void Paint::render_begin(View *view)
   }
 
   if(brush->smooth)
-    render_begin_smooth(view);
+    renderBeginSmooth(view);
   else
-    render_begin_normal(view);
+    renderBeginNormal(view);
 }
 
-int Paint::render_callback_normal(View *view)
+int Paint::renderCallbackNormal(View *view)
 {
   Brush *brush = Brush::main;
   Map *map = Map::main;
@@ -264,13 +264,13 @@ int Paint::render_callback_normal(View *view)
     return 0;
   }
 
-  stroke->make_blitrect(stroke->x1, stroke->y1,
+  stroke->makeBlitrect(stroke->x1, stroke->y1,
                         stroke->x2, stroke->y2,
                         view->ox, view->oy, 1, view->zoom);
   return 1;
 }
 
-int Paint::render_callback_smooth(View *view)
+int Paint::renderCallbackSmooth(View *view)
 {
   Brush *brush = Brush::main;
   Map *map = Map::main;
@@ -328,7 +328,7 @@ int Paint::render_callback_smooth(View *view)
     }
   }
 
-  stroke->make_blitrect(stroke->x1, render_pos,
+  stroke->makeBlitrect(stroke->x1, render_pos,
                         stroke->x2, render_end,
                         view->ox, view->oy, 1, view->zoom);
 
@@ -343,7 +343,7 @@ int Paint::render_callback_smooth(View *view)
   return 1;
 }
 
-int Paint::render_callback(View *view)
+int Paint::renderCallback(View *view)
 {
   Brush *brush = Brush::main;
 
@@ -351,9 +351,9 @@ int Paint::render_callback(View *view)
     return 0;
 
   if(brush->smooth)
-    return render_callback_smooth(view);
+    return renderCallbackSmooth(view);
   else
-    return render_callback_normal(view);
+    return renderCallbackNormal(view);
 }
 
 void Paint::push(View *view)
@@ -364,17 +364,17 @@ void Paint::push(View *view)
     {
       stroke->end();
       Blend::set(Brush::main->blend);
-      render_begin(view);
-      while(render_callback(view))
+      renderBegin(view);
+      while(renderCallback(view))
       {
         if(Fl::get_key(FL_Escape))
           break;
-        view->draw_main(1);
+        view->drawMain(1);
       }
       active = 0;
       Blend::set(0);
       view->moving = 0;
-      view->draw_main(1);
+      view->drawMain(1);
       return;
     }
     else
@@ -398,7 +398,7 @@ void Paint::drag(View *view)
   if(stroke->type != 3)
   {
     stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
-    view->draw_main(0);
+    view->drawMain(0);
     stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
     view->redraw();
   }
@@ -410,18 +410,18 @@ void Paint::release(View *view)
   {
     stroke->end();
     Blend::set(Brush::main->blend);
-    render_begin(view);
-    while(render_callback(view))
+    renderBegin(view);
+    while(renderCallback(view))
     {
       if(Fl::get_key(FL_Escape))
         break;
-      view->draw_main(1);
+      view->drawMain(1);
     }
     active = 0;
     Blend::set(0);
   }
 
-  view->draw_main(1);
+  view->drawMain(1);
 }
 
 void Paint::move(View *view)
@@ -433,7 +433,7 @@ void Paint::move(View *view)
       {
         stroke->polyline(view->imgx, view->imgy,
                          view->ox, view->oy, view->zoom);
-        view->draw_main(0);
+        view->drawMain(0);
         stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
         view->redraw();
       }
@@ -446,13 +446,13 @@ void Paint::move(View *view)
                           view->oldimgx + 48, view->oldimgy + 48, 0);
       Map::main->rectfill(view->imgx - 48, view->imgy - 48,
                           view->imgx + 48, view->imgy + 48, 0);
-      stroke->draw_brush(view->imgx, view->imgy, 255);
+      stroke->drawBrush(view->imgx, view->imgy, 255);
       stroke->size(view->imgx - 48, view->imgy - 48,
                    view->imgx + 48, view->imgy + 48);
-      stroke->make_blitrect(stroke->x1, stroke->y1,
+      stroke->makeBlitrect(stroke->x1, stroke->y1,
                             stroke->x2, stroke->y2,
                             view->ox, view->oy, 96, view->zoom);
-      view->draw_main(0);
+      view->drawMain(0);
       stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
       view->redraw();
       break;
@@ -466,7 +466,7 @@ void Paint::done(View *)
 void Paint::redraw(View *view)
 {
   active = 0;
-  view->draw_main(0);
+  view->drawMain(0);
   stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
   view->redraw();
   Fl::flush();

@@ -79,7 +79,7 @@ void Offset::drag(View *view)
   Bitmap::offset_buffer->blit(Bitmap::main, w - x, h - y,
                               overscroll, overscroll, x, y);
 
-  view->draw_main(1);
+  view->drawMain(1);
   Gui::checkOffsetValues(dx, dy);
 }
 
