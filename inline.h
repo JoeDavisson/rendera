@@ -71,10 +71,9 @@ inline int getv(const int c)
   return (getr(c) + getg(c) + getb(c)) / 3;
 }
 
-// rough luminance approximation (good enough for colorize)
 inline int getl(const int c)
 {
-  return ((getr(c) << 1) + (getg(c) << 2) + (getb(c) << 0)) >> 3;
+  return ((76 * getr(c)) + (150 * getg(c)) + (29 * getb(c))) / 255;
 }
 
 inline int SCALE(const int a, const int b)

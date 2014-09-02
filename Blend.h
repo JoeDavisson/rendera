@@ -42,6 +42,8 @@ namespace Blend
   int smooth(int, int, int);
   void rgbToHsv(int, int, int, int *, int *, int *);
   void hsvToRgb(int, int, int, int *, int *, int *);
+  void rgbToYuv(int, int, int, int *, int *, int *);
+  void yuvToRgb(int, int, int, int *, int *, int *);
 }
 
 #endif
