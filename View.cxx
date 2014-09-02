@@ -304,6 +304,12 @@ void View::resize(int x, int y, int w, int h)
   drawMain(0);
 }
 
+void View::redraw()
+{
+  damage(FL_DAMAGE_ALL);
+  Fl::flush();
+}
+
 void View::drawMain(int refresh)
 {
   int sw = w() / zoom;
@@ -338,7 +344,6 @@ void View::drawMain(int refresh)
   if(refresh)
   {
     redraw();
-    Fl::flush();
   }
 }
 
@@ -447,7 +452,6 @@ void View::beginMove()
   int temp = tool->active;
   tool->active = 0;
   redraw();
-  Fl::flush();
   tool->active = temp;
 }
 
@@ -499,7 +503,6 @@ void View::move()
   int temp = tool->active;
   tool->active = 0;
   redraw();
-  Fl::flush();
   tool->active = temp;
 
   lastbx = bx;

@@ -34,6 +34,7 @@ public:
 
   virtual int handle(int);
   virtual void resize(int, int, int, int);
+  virtual void redraw();
   void drawMove();
   void drawMain(int);
   void drawGrid();
