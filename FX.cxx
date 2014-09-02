@@ -461,7 +461,7 @@ void FX::doSaturate()
         s = temp;
       Blend::hsvToRgb(h, s, v, &r, &g, &b);
 
-      bmp->setpixel(x, y, Blend::forceLuminance(makecol(r, g, b), l), 0);
+      bmp->setpixel(x, y, Blend::keepLum(makecol(r, g, b), l), 0);
     }
 
     if(!(y % 64))
@@ -859,7 +859,7 @@ void FX::doCorrect()
       Blend::rgbToHsv(ra, ga, ba, &h, &s, &v);
       Blend::hsvToRgb(h, sat, val, &ra, &ga, &ba);
 
-      bmp->setpixel(x, y, Blend::forceLuminance(makecol(ra, ga, ba), l), 0);
+      bmp->setpixel(x, y, Blend::keepLum(makecol(ra, ga, ba), l), 0);
     }
 
     if(!(y % 64))
