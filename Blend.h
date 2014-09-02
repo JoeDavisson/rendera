@@ -36,7 +36,7 @@ namespace Blend
   int add(int, int, int);
   int sub(int, int, int);
   int colorize(int, int, int);
-  int forceLuminance(int, int);
+  int keepLum(int, int);
   int alphaAdd(int, int, int);
   int alphaSub(int, int, int);
   int smooth(int, int, int);
