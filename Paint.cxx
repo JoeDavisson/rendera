@@ -469,7 +469,6 @@ void Paint::redraw(View *view)
   view->drawMain(0);
   stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
   view->redraw();
-  Fl::flush();
   active = 1;
 }
 

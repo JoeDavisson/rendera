@@ -139,7 +139,6 @@ void Crop::drag(View *view)
     view->drawMain(0);
     stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
     view->redraw();
-    Fl::flush();
   }
   else if(started == 2)
   {
@@ -261,7 +260,6 @@ void Crop::redraw(View *view)
   view->drawMain(0);
   stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
   view->redraw();
-  Fl::flush();
   active = 1;
 }
 
