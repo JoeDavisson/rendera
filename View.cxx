@@ -18,10 +18,6 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifdef linux
-#undef linux
-#endif
-
 #include "View.h"
 #include "Bitmap.h"
 #include "Blend.h"
