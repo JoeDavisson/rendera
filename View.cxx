@@ -161,6 +161,7 @@ int View::handle(int event)
             Bitmap::clone_x = imgx;
             Bitmap::clone_y = imgy;
             Bitmap::clone_moved = 1;
+            redraw();
             break;
           }
 
