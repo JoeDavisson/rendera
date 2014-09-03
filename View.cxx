@@ -30,6 +30,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
+  #ifdef linux
+    XImage *ximage;
+  #else
+    Fl_RGB_Image *image;
+  #endif
+
+  int oldx1 = 0;
+  int oldy1 = 0;
+
   inline void gridSetpixel(const Bitmap *bmp, const int x, const int y,
                                    const int c, const int t)
   {
@@ -65,8 +74,16 @@ namespace
     }
   }
 
-  int oldx1 = 0;
-  int oldy1 = 0;
+  void screenBlit(int sx, int sy, int dx, int dy, int w, int h)
+  {
+    #ifdef linux
+      XPutImage(fl_display, fl_window, fl_gc, ximage, sx, sy, dx, dy, w, h);
+    #else
+      fl_push_clip(dx, dy, w, h);
+      image->draw(dx, dy, w, h, sx, sy);
+      fl_pop_clip()
+    #endif
+  }
 }
 
 View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
@@ -86,21 +103,21 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
 
   tool = Tool::paint;
 
-  bgr_order = 0;
-  // try to detect pixelformat (almost always RGB or BGR)
-#ifdef linux
-  if(fl_visual->visual->blue_mask == 0xFF)
-    bgr_order = 1;
-#endif
-
   backbuf = new Bitmap(Fl::w(), Fl::h());
-#ifdef linux
-  image = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
-                       (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
-#else
-  image = new Fl_RGB_Image((unsigned char *)backbuf->data,
-                           Fl::w(), Fl::h(), 4, 0);
-#endif
+  bgr_order = 0;
+
+  #ifdef linux
+    // try to detect pixelformat (almost always RGB or BGR)
+    if(fl_visual->visual->blue_mask == 0xFF)
+      bgr_order = 1;
+
+    ximage = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
+                          (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
+  #else
+    image = new Fl_RGB_Image((unsigned char *)backbuf->data,
+                             Fl::w(), Fl::h(), 4, 0);
+  #endif
+
   take_focus();
   resize(group->x() + x, group->y() + y, w, h);
 }
@@ -449,19 +466,10 @@ void View::drawCloneCursor()
   backbuf->xorRectfill(x1 - 12, y1, x1 + 13, y1);
   backbuf->xorRectfill(x1, y1 - 12, x1, y1 + 13);
 
-#ifdef linux
-  XPutImage(fl_display, fl_window, fl_gc, image,
-            oldx1 - 12, oldy1 - 12, this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
-  XPutImage(fl_display, fl_window, fl_gc, image,
-            x1 - 12, y1 - 12, this->x() + x1 - 12, this->y() + y1 - 12, 26, 26);
-#else
-  fl_push_clip(this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
-  image->draw(this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26, oldx1 - 12, oldy1 - 12);
-  fl_pop_clip();
-  fl_push_clip(this->x() + x1 - 12, this->y() + y1 - 12, 26, 26);
-  image->draw(this->x() + x1 - 12, this->y() + y1 - 12, 26, 26, x1 - 12, y1 - 12);
-  fl_pop_clip();
-#endif
+  screenBlit(oldx1 - 12, oldy1 - 12,
+               this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
+  screenBlit(x1 - 12, y1 - 12,
+               this->x() + x1 - 12, this->y() + y1 - 12, 26, 26);
 
   oldx1 = x1;
   oldy1 = y1;
@@ -570,7 +578,6 @@ void View::move()
   backbuf->xorRect(lastbx, lastby, lastbx + lastbw - 1, lastby + lastbh - 1);
   backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
-//  redraw();
   int temp = tool->active;
   tool->active = 0;
   redraw();
@@ -748,34 +755,15 @@ void View::draw()
     if(blitw < 1 || blith < 1)
       return;
 
-#ifdef linux
-    XPutImage(fl_display, fl_window, fl_gc, image,
-              blitx, blity, x() + blitx, y() + blity, blitw, blith);
+    screenBlit(blitx, blity, x() + blitx, y() + blity, blitw, blith);
     if(Gui::getClone())
       drawCloneCursor();
-#else
-    fl_push_clip(x() + blitx, y() + blity, blitw, blith);
-    image->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
-    fl_pop_clip();
-    if(Gui::getClone())
-      drawCloneCursor();
-    image->uncache();
-#endif
   }
   else
   {
-#ifdef linux
-    XPutImage(fl_display, fl_window, fl_gc, image, 0, 0, x(), y(), w(), h());
+    screenBlit(0, 0, x(), y(), w(), h());
     if(Gui::getClone())
       drawCloneCursor();
-#else
-    fl_push_clip(x(), y(), w(), h());
-    image->draw(x(), y(), w(), h(), 0, 0);
-    fl_pop_clip();
-    if(Gui::getClone())
-      drawCloneCursor();
-    image->uncache();
-#endif
   }
 }
 
