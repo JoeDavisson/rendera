@@ -786,3 +786,8 @@ int Gui::getTool()
   return tool->var;
 }
 
+int Gui::getClone()
+{
+  return clone->var;
+}
+
