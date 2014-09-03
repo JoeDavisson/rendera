@@ -40,8 +40,8 @@ public:
   int stepx;
   int stepy;
   Fl_Group *group;
-  Fl_RGB_Image *image, *image2;
   Bitmap *bitmap, *bitmap2;
+  Fl_RGB_Image *image, *image2;
   bool use_highlight;
 protected:
   virtual void draw();

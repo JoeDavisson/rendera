@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef BUTTON_H
 #define BUTTON_H
 
+class Bitmap;
+
 #include "rendera.h"
 
 class Button : public Fl_Button
@@ -32,7 +34,8 @@ public:
 
   int var;
   Fl_Group *group;
-  Fl_PNG_Image *image;
+  Bitmap *bitmap;
+  Fl_RGB_Image *image;
 protected:
   virtual void draw();
 };

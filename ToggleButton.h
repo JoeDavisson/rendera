@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef TOGGLE_BUTTON_H
 #define TOGGLE_BUTTON_H
 
+class Bitmap;
+
 #include "rendera.h"
 
 class ToggleButton : public Fl_Button
@@ -34,7 +36,8 @@ public:
 
   int var;
   Fl_Group *group;
-  Fl_PNG_Image *image;
+  Bitmap *bitmap;
+  Fl_RGB_Image *image;
 protected:
   virtual void draw();
 };
