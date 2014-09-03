@@ -170,8 +170,8 @@ int View::handle(int event)
         case 2:
           if(moving == 0)
           {
-            beginMove();
             moving = 1;
+            beginMove();
             break;
           }
       } 
@@ -401,6 +401,9 @@ void View::drawGrid()
 
 void View::drawCloneCursor()
 {
+  if(moving)
+    return;
+
   int x = Bitmap::clone_x;
   int y = Bitmap::clone_y;
   int dx = Bitmap::clone_dx;
