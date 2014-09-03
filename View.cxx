@@ -448,25 +448,15 @@ void View::drawCloneCursor()
 
 #ifdef linux
   XPutImage(fl_display, fl_window, fl_gc, image,
-            oldx1 - 12, oldy1, this->x() + oldx1 - 12, this->y() + oldy1, 26, 1);
+            oldx1 - 12, oldy1 - 12, this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
   XPutImage(fl_display, fl_window, fl_gc, image,
-            oldx1, oldy1 - 12, this->x() + oldx1, this->y() + oldy1 - 12, 1, 26);
-  XPutImage(fl_display, fl_window, fl_gc, image,
-            x1 - 12, y1, this->x() + x1 - 12, this->y() + y1, 25, 1);
-  XPutImage(fl_display, fl_window, fl_gc, image,
-            x1, y1 - 12, this->x() + x1, this->y() + y1 - 12, 1, 25);
+            x1 - 12, y1 - 12, this->x() + x1 - 12, this->y() + y1 - 12, 26, 26);
 #else
-  fl_push_clip(this->x() + oldx1 - 12, this->y() + oldy1, 26, 1);
-  image->draw(this->x() + oldx1 - 12, this->y() + oldy1, 26, 1, oldx1 - 12, oldy1);
+  fl_push_clip(this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
+  image->draw(this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26, oldx1 - 12, oldy1 - 12);
   fl_pop_clip();
-  fl_push_clip(this->x() + oldx1, this->y() + oldy1 - 12, 1, 26);
-  image->draw(this->x() + oldx1, this->y() + oldy1 - 12, 1, 26, oldx1, oldy1 - 12);
-  fl_pop_clip();
-  fl_push_clip(this->x() + x1 - 12, this->y() + y1, 26, 1);
-  image->draw(this->x() + x1 - 12, this->y() + y1, 26, 1, x1 - 12, y1);
-  fl_pop_clip();
-  fl_push_clip(this->x() + x1, this->y() + y1 - 12, 1, 26);
-  image->draw(this->x() + x1, this->y() + y1 - 12, 1, 26, x1, y1 - 12);
+  fl_push_clip(this->x() + x1 - 12, this->y() + y1 - 12, 26, 26);
+  image->draw(this->x() + x1 - 12, this->y() + y1 - 12, 26, 26, x1 - 12, y1 - 12);
   fl_pop_clip();
 #endif
 
