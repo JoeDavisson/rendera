@@ -38,6 +38,7 @@ public:
   void drawMove();
   void drawMain(int);
   void drawGrid();
+  void drawCloneCursor();
   void beginMove();
   void move();
   void zoomIn(int, int);

@@ -53,6 +53,9 @@ void Blend::set(int mode)
     case 6:
       current_blend = smooth;
       break;
+    case 7:
+      current_blend = invert;
+      break;
     default:
       current_blend = trans;
       break;

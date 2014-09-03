@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "View.h"
 #include "Bitmap.h"
+#include "Blend.h"
 #include "Palette.h"
 #include "Tool.h"
 #include "Gui.h"
@@ -63,6 +64,9 @@ namespace
       p++;
     }
   }
+
+  int oldx1 = 0;
+  int oldy1 = 0;
 }
 
 View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
@@ -342,9 +346,7 @@ void View::drawMain(int refresh)
     drawGrid();
 
   if(refresh)
-  {
     redraw();
-  }
 }
 
 void View::drawGrid()
@@ -394,6 +396,66 @@ void View::drawGrid()
     while(i < zy);
   }
   while(y1 <= y2);
+}
+
+void View::drawCloneCursor()
+{
+  int x = Bitmap::clone_x;
+  int y = Bitmap::clone_y;
+  int dx = Bitmap::clone_dx;
+  int dy = Bitmap::clone_dy;
+  int mirror = Bitmap::clone_mirror;
+  int w = Bitmap::main->w - 1;
+  int h = Bitmap::main->h - 1;
+
+  int x1 = imgx - dx;
+  int y1 = imgy - dy;
+
+  if(tool->active)
+  {
+    switch(mirror)
+    {
+      case 0:
+        x1 = x1;
+        y1 = y1;
+        break;
+      case 1:
+        x1 = (w - x1) - (w - x * 2);
+        y1 = y1;
+        break;
+      case 2:
+        x1 = x1;
+        y1 = (h - y1) - (h - y * 2);
+        break;
+      case 3:
+        x1 = (w - x1) - (w - x * 2);
+        y1 = (h - y1) - (h - y * 2);
+        break;
+    }
+
+    x1 = (x1 - ox) * zoom;
+    y1 = (y1 - oy) * zoom;
+  }
+  else
+  {
+    x1 = (x - ox) * zoom;
+    y1 = (y - oy) * zoom;
+  }
+
+  backbuf->xorRectfill(x1 - 12, y1, x1 + 13, y1);
+  backbuf->xorRectfill(x1, y1 - 12, x1, y1 + 13);
+
+  XPutImage(fl_display, fl_window, fl_gc, image,
+            oldx1 - 12, oldy1, this->x() + oldx1 - 12, this->y() + oldy1, 26, 1);
+  XPutImage(fl_display, fl_window, fl_gc, image,
+            oldx1, oldy1 - 12, this->x() + oldx1, this->y() + oldy1 - 12, 1, 26);
+  XPutImage(fl_display, fl_window, fl_gc, image,
+            x1 - 12, y1, this->x() + x1 - 12, this->y() + y1, 25, 1);
+  XPutImage(fl_display, fl_window, fl_gc, image,
+            x1, y1 - 12, this->x() + x1, this->y() + y1 - 12, 1, 25);
+
+  oldx1 = x1;
+  oldy1 = y1;
 }
 
 void View::beginMove()
@@ -680,6 +742,8 @@ void View::draw()
 #ifdef linux
     XPutImage(fl_display, fl_window, fl_gc, image,
               blitx, blity, x() + blitx, y() + blity, blitw, blith);
+    if(Gui::getClone())
+      drawCloneCursor();
 #else
     fl_push_clip(x() + blitx, y() + blity, blitw, blith);
     image->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
@@ -691,6 +755,8 @@ void View::draw()
   {
 #ifdef linux
     XPutImage(fl_display, fl_window, fl_gc, image, 0, 0, x(), y(), w(), h());
+    if(Gui::getClone())
+      drawCloneCursor();
 #else
     fl_push_clip(x(), y(), w(), h());
     image->draw(x(), y(), w(), h(), 0, 0);
