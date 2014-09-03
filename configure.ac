@@ -25,8 +25,8 @@ AC_PROG_CXX
 AC_CHECK_LIB([fltk],[fl_system],[],
   [AC_MSG_ERROR([libfltk missing])])
 
-AC_CHECK_LIB([fltk_images],[fl_numericsort],[],
-  [AC_MSG_ERROR([libfltk_images missing])])
+#AC_CHECK_LIB([fltk_images],[fl_numericsort],[],
+#  [AC_MSG_ERROR([libfltk_images missing])])
 
 AC_CHECK_LIB([jpeg],[jpeg_start_output],[],
   [AC_MSG_ERROR([libjpeg missing])])

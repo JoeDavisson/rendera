@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Widget.h"
 #include "Bitmap.h"
 #include "Blend.h"
+#include "File.h"
 
 // load a PNG image from a file
 Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
@@ -35,38 +36,19 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   stepy = sy;
   group = g;
 
-  Fl_PNG_Image *png_image = new Fl_PNG_Image(filename);
-  bitmap = new Bitmap(png_image->w(), png_image->h());
-  image = new Fl_RGB_Image((unsigned char *)bitmap->data, w, h, 4, 0);
+  bitmap = new Bitmap(8, 8);
+  File::loadPNG(filename, bitmap, 0);
+  image = new Fl_RGB_Image((unsigned char *)bitmap->data, bitmap->w, bitmap->h, 4, 0);
 
-  int index = 0;
-  int xx, yy;
-  const unsigned char *p = png_image->array;
-
-  for(yy = 0; yy < png_image->h(); yy++)
-  {
-    for(xx = 0; xx < png_image->w(); xx++)
-    {
-      int r = *p++;
-      int g = *p++;
-      int b = *p++;
-
-      bitmap->data[index++] = makecol(r, g, b);
-    }
-  }
-
-  delete png_image;
-
-
-  bitmap2 = new Bitmap(w, h);
-  image2 = new Fl_RGB_Image((unsigned char *)bitmap2->data, w, h, 4, 0);
-  bitmap->blit(bitmap2, 0, 0, 0, 0, w, h);
-  resize(group->x() + x, group->y() + y, w, h);
+  bitmap2 = new Bitmap(bitmap->w, bitmap->h);
+  image2 = new Fl_RGB_Image((unsigned char *)bitmap2->data, bitmap2->w, bitmap2->h, 4, 0);
+  bitmap->blit(bitmap2, 0, 0, 0, 0, bitmap->w, bitmap->h);
+  resize(group->x() + x, group->y() + y, bitmap->w, bitmap->h);
   tooltip(label);
   use_highlight = 1;
 
   // shade
-  bitmap->rectfill(0, 0, w - 1, h - 1, makecol(128, 128, 128), 192);
+  bitmap->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1, makecol(128, 128, 128), 192);
 }
 
 // use a blank bitmap

@@ -19,6 +19,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include "ToggleButton.h"
+#include "Bitmap.h"
+#include "File.h"
 
 ToggleButton::ToggleButton(Fl_Group *g, int x, int y, int w, int h,
                            const char *label, const char *filename,
@@ -29,7 +31,9 @@ ToggleButton::ToggleButton(Fl_Group *g, int x, int y, int w, int h,
   if(cb)
     callback(cb, &var);
   group = g;
-  image = new Fl_PNG_Image(filename);
+  bitmap = new Bitmap(8, 8);
+  File::loadPNG(filename, bitmap, 0);
+  image = new Fl_RGB_Image((unsigned char *)bitmap->data, bitmap->w, bitmap->h, 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
 }
