@@ -18,6 +18,10 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#ifdef linux
+#undef linux
+#endif
+
 #include "View.h"
 #include "Bitmap.h"
 #include "Blend.h"
@@ -445,6 +449,7 @@ void View::drawCloneCursor()
   backbuf->xorRectfill(x1 - 12, y1, x1 + 13, y1);
   backbuf->xorRectfill(x1, y1 - 12, x1, y1 + 13);
 
+#ifdef linux
   XPutImage(fl_display, fl_window, fl_gc, image,
             oldx1 - 12, oldy1, this->x() + oldx1 - 12, this->y() + oldy1, 26, 1);
   XPutImage(fl_display, fl_window, fl_gc, image,
@@ -453,6 +458,20 @@ void View::drawCloneCursor()
             x1 - 12, y1, this->x() + x1 - 12, this->y() + y1, 25, 1);
   XPutImage(fl_display, fl_window, fl_gc, image,
             x1, y1 - 12, this->x() + x1, this->y() + y1 - 12, 1, 25);
+#else
+  fl_push_clip(this->x() + oldx1 - 12, this->y() + oldy1, 26, 1);
+  image->draw(this->x() + oldx1 - 12, this->y() + oldy1, 26, 1, oldx1 - 12, oldy1);
+  fl_pop_clip();
+  fl_push_clip(this->x() + oldx1, this->y() + oldy1 - 12, 1, 26);
+  image->draw(this->x() + oldx1, this->y() + oldy1 - 12, 1, 26, oldx1, oldy1 - 12);
+  fl_pop_clip();
+  fl_push_clip(this->x() + x1 - 12, this->y() + y1, 26, 1);
+  image->draw(this->x() + x1 - 12, this->y() + y1, 26, 1, x1 - 12, y1);
+  fl_pop_clip();
+  fl_push_clip(this->x() + x1, this->y() + y1 - 12, 1, 26);
+  image->draw(this->x() + x1, this->y() + y1 - 12, 1, 26, x1, y1 - 12);
+  fl_pop_clip();
+#endif
 
   oldx1 = x1;
   oldy1 = y1;
@@ -748,6 +767,8 @@ void View::draw()
     fl_push_clip(x() + blitx, y() + blity, blitw, blith);
     image->draw(x() + blitx, y() + blity, blitw, blith, blitx, blity);
     fl_pop_clip();
+    if(Gui::getClone())
+      drawCloneCursor();
     image->uncache();
 #endif
   }
@@ -761,6 +782,8 @@ void View::draw()
     fl_push_clip(x(), y(), w(), h());
     image->draw(x(), y(), w(), h(), 0, 0);
     fl_pop_clip();
+    if(Gui::getClone())
+      drawCloneCursor();
     image->uncache();
 #endif
   }
