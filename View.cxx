@@ -296,7 +296,7 @@ int View::handle(int event)
         strcpy(fn, Fl::event_text() + 7);
 
         // convert to utf-8 (e.g. %20 becomes space)
-        fl_decode_uri(fn);
+        File::decodeURI(fn);
 
         // strip newline
         unsigned int i;

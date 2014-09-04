@@ -48,6 +48,8 @@ namespace File
   Fl_Image *previewBMP(const char *, unsigned char *, int);
   Fl_Image *previewTGA(const char *, unsigned char *, int);
   Fl_Image *previewGPL(const char *, unsigned char *, int);
+
+  void decodeURI(char *);
 }
 
 #endif

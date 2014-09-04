@@ -1076,3 +1076,26 @@ void File::savePalette()
   delete fc;
 }
 
+void File::decodeURI(char *s)
+{
+  int i, j;
+  unsigned int c;
+  int len = strlen(s);
+
+  for(i = 0; i < len - 2; i++)
+  {
+    if(s[i] == '%')
+    {
+      if(sscanf(&s[i + 1], "%2X", &c) != 1)
+        break;
+
+      s[i] = c;
+
+      for(j = 0; j < len - (i + 2); j++)
+        s[i + 1 + j] = s[i + 3 + j];
+
+      len -= 2;
+    }
+  }
+}
+
