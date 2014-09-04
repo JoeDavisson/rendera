@@ -1,0 +1,48 @@
+language: cpp
+
+compiler:
+  - gcc
+  - clang
+
+before_install:
+  - uname -a
+  - lsb_release --all
+  - sudo apt-get --assume-yes update
+
+install:
+  - sudo apt-get --assume-yes install libX11-dev
+  - sudo apt-get --assume-yes install libfltk1.3-dev
+  - sudo apt-get --assume-yes install libfontconfig1-dev
+  - sudo apt-get --assume-yes install libglu1-mesa-dev
+  - sudo apt-get --assume-yes install libice-dev
+  - sudo apt-get --assume-yes install libjpeg-dev
+  - sudo apt-get --assume-yes install libjpeg62-dev
+  - sudo apt-get --assume-yes install libpng-dev
+  - sudo apt-get --assume-yes install libpng12-dev
+  - sudo apt-get --assume-yes install libx11-dev
+  - sudo apt-get --assume-yes install libxcursor-dev
+  - sudo apt-get --assume-yes install libxext-dev
+  - sudo apt-get --assume-yes install libxft-dev
+  - sudo apt-get --assume-yes install libxi-dev
+  - sudo apt-get --assume-yes install libxinerama-dev
+  - sudo apt-get --assume-yes install libxrender-dev
+  - sudo apt-get --assume-yes install libz-dev
+  - sudo apt-get --assume-yes install mesa-common-dev
+  - sudo apt-get --assume-yes install zlib1g-dev
+
+script:
+  - cd ${TRAVIS_BUILD_DIR}
+  - pwd
+  - mkdir -vp m4
+  - mkdir -vp _build
+  - cd _build
+  - autoreconf -ivf ..
+  - ../configure --prefix=`mktemp -t -d rendera-prefix-XXXXXXXX`
+  - make
+  - make check
+  - make distcheck
+
+matrix:
+  allow_failures:
+    - compiler: clang
+  fast_finish: true

@@ -51,6 +51,7 @@
 /paths.h
 /rendera
 /stamp-h1
+/test-driver
 
 # emacs temp files
 *~
