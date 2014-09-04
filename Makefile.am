@@ -60,6 +60,10 @@ rendera_SOURCES =     \
   rendera.h
 
 
+rendera_LDFLAGS = $(shell fltk-config --ldflags)
+rendera_CXXFLAGS = $(shell fltk-config --cxxflags)
+
+
 nodist_rendera_SOURCES = paths.h
 BUILT_SOURCES = paths.h
 CLEANFILES = paths.h
@@ -127,3 +131,9 @@ dist_pkgdata_DATA =     \
   data/zoom_in.png      \
   data/zoom_one.png     \
   data/zoom_out.png
+
+
+check_PROGRAMS = test_fltk_version
+test_fltk_version_SOURCES = test/fltk_version.cc
+
+TESTS = $(check_PROGRAMS)
