@@ -43,7 +43,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   bitmap2 = new Bitmap(bitmap->w, bitmap->h);
   image2 = new Fl_RGB_Image((unsigned char *)bitmap2->data, bitmap2->w, bitmap2->h, 4, 0);
   bitmap->blit(bitmap2, 0, 0, 0, 0, bitmap->w, bitmap->h);
-  resize(group->x() + x, group->y() + y, bitmap->w, bitmap->h);
+  resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
   use_highlight = 1;
 
