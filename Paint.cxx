@@ -372,7 +372,7 @@ void Paint::push(View *view)
         view->drawMain(1);
       }
       active = 0;
-      Blend::set(0);
+      Blend::set(Blend::TRANS);
       view->moving = 0;
       view->drawMain(1);
       return;
@@ -418,7 +418,7 @@ void Paint::release(View *view)
       view->drawMain(1);
     }
     active = 0;
-    Blend::set(0);
+    Blend::set(Blend::TRANS);
   }
 
   view->drawMain(1);

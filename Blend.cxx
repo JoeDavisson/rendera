@@ -32,28 +32,28 @@ void Blend::set(int mode)
 {
   switch(mode)
   {
-    case 0:
+    case TRANS:
       current_blend = trans;
       break;
-    case 1:
-      current_blend = sub;
+    case DARKEN:
+      current_blend = darken;
       break;
-    case 2:
-      current_blend = add;
+    case LIGHTEN:
+      current_blend = lighten;
       break;
-    case 3:
+    case COLORIZE:
       current_blend = colorize;
       break;
-    case 4:
+    case ALPHA_ADD:
       current_blend = alphaAdd;
       break;
-    case 5:
+    case ALPHA_SUB:
       current_blend = alphaSub;
       break;
-    case 6:
+    case SMOOTH:
       current_blend = smooth;
       break;
-    case 7:
+    case INVERT:
       current_blend = invert;
       break;
     default:
@@ -62,7 +62,7 @@ void Blend::set(int mode)
   }
 }
 
-void Blend::setTarget(Bitmap *b, int x, int y)
+void Blend::target(Bitmap *b, int x, int y)
 {
   bmp = b;
   xpos = x;
@@ -98,28 +98,7 @@ int Blend::transAll(int c1, int c2, int t)
   return makecola(r, g, b, a);
 }
 
-int Blend::add(int c1, int c2, int t)
-{
-  t = 255 - t;
-
-  int r = getr(c2);
-  int g = getg(c2);
-  int b = getb(c2);
-
-  c2 = makecol(r, g, b);
-
-  r = getr(c1) + (getr(c2) * t) / 255;
-  g = getg(c1) + (getg(c2) * t) / 255;
-  b = getb(c1) + (getb(c2) * t) / 255;
-
-  r = MIN(r, 255);
-  g = MIN(g, 255);
-  b = MIN(b, 255);
-
-  return makecola(r, g, b, geta(c1));
-}
-
-int Blend::sub(int c1, int c2, int t)
+int Blend::darken(int c1, int c2, int t)
 {
   int r = getr(c2);
   int g = getg(c2);
@@ -141,6 +120,27 @@ int Blend::sub(int c1, int c2, int t)
   r = MAX(r, 0);
   g = MAX(g, 0);
   b = MAX(b, 0);
+
+  return makecola(r, g, b, geta(c1));
+}
+
+int Blend::lighten(int c1, int c2, int t)
+{
+  t = 255 - t;
+
+  int r = getr(c2);
+  int g = getg(c2);
+  int b = getb(c2);
+
+  c2 = makecol(r, g, b);
+
+  r = getr(c1) + (getr(c2) * t) / 255;
+  g = getg(c1) + (getg(c2) * t) / 255;
+  b = getb(c1) + (getb(c2) * t) / 255;
+
+  r = MIN(r, 255);
+  g = MIN(g, 255);
+  b = MIN(b, 255);
 
   return makecola(r, g, b, geta(c1));
 }
@@ -208,13 +208,14 @@ int Blend::alphaSub(int c1, int, int t)
   return makecola(getr(c1), getg(c1), getb(c1), 255 - ((255 - geta(c1)) * t) / 255);
 }
 
-// cheap and fake "gaussian blur" :)
 int Blend::smooth(int c1, int, int t)
 {
+  static int matrix[9] = { 1, 2, 1, 2, 3, 2, 1, 2, 1 };
   int x = xpos;
   int y = ypos;
   int c[9];
 
+  // need to use getpixel here because of clipping
   c[0] = bmp->getpixel(x - 1, y - 1);
   c[1] = bmp->getpixel(x, y - 1);
   c[2] = bmp->getpixel(x + 1, y - 1);
@@ -230,48 +231,22 @@ int Blend::smooth(int c1, int, int t)
   int b = 0;
   int a = 0;
 
-  r += getr(c[0]) * 1;
-  r += getr(c[1]) * 2;
-  r += getr(c[2]) * 1;
-  r += getr(c[3]) * 2;
-  r += getr(c[4]) * 3;
-  r += getr(c[5]) * 2;
-  r += getr(c[6]) * 1;
-  r += getr(c[7]) * 2;
-  r += getr(c[8]) * 1;
+  int i;
+
+  for(i = 0; i < 9; i++)
+    r += getr(c[i]) * matrix[i];
   r /= 15;
 
-  g += getg(c[0]) * 1;
-  g += getg(c[1]) * 2;
-  g += getg(c[2]) * 1;
-  g += getg(c[3]) * 2;
-  g += getg(c[4]) * 3;
-  g += getg(c[5]) * 2;
-  g += getg(c[6]) * 1;
-  g += getg(c[7]) * 2;
-  g += getg(c[8]) * 1;
+  for(i = 0; i < 9; i++)
+    g += getg(c[i]) * matrix[i];
   g /= 15;
 
-  b += getb(c[0]) * 1;
-  b += getb(c[1]) * 2;
-  b += getb(c[2]) * 1;
-  b += getb(c[3]) * 2;
-  b += getb(c[4]) * 3;
-  b += getb(c[5]) * 2;
-  b += getb(c[6]) * 1;
-  b += getb(c[7]) * 2;
-  b += getb(c[8]) * 1;
+  for(i = 0; i < 9; i++)
+    b += getb(c[i]) * matrix[i];
   b /= 15;
 
-  a += geta(c[0]) * 1;
-  a += geta(c[1]) * 2;
-  a += geta(c[2]) * 1;
-  a += geta(c[3]) * 2;
-  a += geta(c[4]) * 3;
-  a += geta(c[5]) * 2;
-  a += geta(c[6]) * 1;
-  a += geta(c[7]) * 2;
-  a += geta(c[8]) * 1;
+  for(i = 0; i < 9; i++)
+    a += geta(c[i]) * matrix[i];
   a /= 15;
 
   return Blend::transAll(c1, makecola(r, g, b, a), t);

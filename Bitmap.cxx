@@ -390,7 +390,7 @@ void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
 void Bitmap::setpixel(int x, int y, int c2, int t)
 {
   int mode = Bitmap::wrap | (Bitmap::clone << 1);
-  Blend::setTarget(Bitmap::main, x, y);
+  Blend::target(Bitmap::main, x, y);
 
   switch(mode)
   {

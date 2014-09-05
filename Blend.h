@@ -27,14 +27,26 @@ class Bitmap;
 
 namespace Blend
 {
+  enum
+  {
+    TRANS,
+    DARKEN,
+    LIGHTEN,
+    COLORIZE,
+    ALPHA_ADD,
+    ALPHA_SUB,
+    SMOOTH,
+    INVERT
+  };
+ 
   void set(int);
-  void setTarget(Bitmap *, int, int);
+  void target(Bitmap *, int, int);
   int current(int, int, int);
   int invert(int, int, int);
   int trans(int, int, int);
   int transAll(int, int, int);
-  int add(int, int, int);
-  int sub(int, int, int);
+  int darken(int, int, int);
+  int lighten(int, int, int);
   int colorize(int, int, int);
   int keepLum(int, int);
   int alphaAdd(int, int, int);
