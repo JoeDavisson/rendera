@@ -803,8 +803,10 @@ void Bitmap::rotateStretch(Bitmap *dest, int xx, int yy,
   int hh = h / 2;
 
   // origin
-  int ox = xx + ww;
-  int oy = yy + hh;
+//  int ox = xx + ww;
+//  int oy = yy + hh;
+  int ox = xx;
+  int oy = yy;
 
   // project new corners
   int x0 = xx - ox;

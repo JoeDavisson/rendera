@@ -359,8 +359,7 @@ void View::drawMain(int refresh)
   backbuf->clear(makecol(128, 128, 128));
 
   Bitmap::main->pointStretch(backbuf, ox, oy, sw, sh,
-                              0, 0, dw, dh, overx, overy, bgr_order);
-//  Bitmap::main->rotateStretch(backbuf, ox, oy, 100, zoom, bgr_order);
+                             0, 0, dw, dh, overx, overy, bgr_order);
 
   if(grid)
     drawGrid();
