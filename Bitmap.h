@@ -59,7 +59,7 @@ public:
   void blit(Bitmap *, int, int, int, int, int, int);
   void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, int);
   void fastStretch(Bitmap *, int, int, int, int, int, int, int, int, int);
-  void rotateStretch(Bitmap *, int, int, float, float);
+  void rotateStretch(Bitmap *, int, int, float, float, int);
 
   static Bitmap *main;
   static Bitmap *preview;

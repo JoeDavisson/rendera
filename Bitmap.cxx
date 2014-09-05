@@ -788,15 +788,15 @@ void Bitmap::fastStretch(Bitmap *dest,
   }
 }
 
-void Bitmap::rotateStretch(Bitmap *dest,
-                           int xx, int yy, float angle, float scale)
+void Bitmap::rotateStretch(Bitmap *dest, int xx, int yy,
+                           float angle, float scale, int bgr_order)
 {
   // convert to radians
   angle *= M_PI / 180;
 
   // rotation
   int duCol = (int)(sin(angle) * scale * 256);
-  int dvCol = (int)(sin(angle + 90) * scale * 256);
+  int dvCol = (int)(sin(angle + 1.5707) * scale * 256);
   int duRow = -dvCol;
   int dvRow = duCol;
   int ww = w / 2;
@@ -845,7 +845,7 @@ void Bitmap::rotateStretch(Bitmap *dest,
 
   // draw
   duCol = (int)(sin(angle) / scale * 256);
-  dvCol = (int)(sin(angle + 90) / scale * 256);
+  dvCol = (int)(sin(angle + 1.5707) / scale * 256);
   duRow = -dvCol;
   dvRow = duCol;
 
@@ -883,7 +883,10 @@ void Bitmap::rotateStretch(Bitmap *dest,
       if(uu < 0 || uu >= w || vv < 0 || vv >= h)
         continue;
 
-      *p = *(row[vv] + uu);
+      int c = *(row[vv] + uu);
+      *p = convert_format(blend_fast_solid(((x >> 4) & 1) ^ ((y >> 4) & 1)
+                            ? 0xA0A0A0 : 0x606060, c,
+                            255 - geta(c)), bgr_order);
     }
   }
 }
