@@ -164,17 +164,8 @@ int Blend::keepLum(int c, int dest)
   n[0] = getg(c);
   n[2] = getb(c);
 
-  // preconversion to save iterations
-  int y, u, v;
-
-  rgbToYuv(n[1], n[0], n[2], &y, &u, &v);
-  yuvToRgb(dest, u, v, &n[1], &n[0], &n[2]);
-
   // iterate to find similar color with same luminance
-  // count is there to prevent an infinite loop, although it
-  // shouldn't ever happen
   int i;
-  int count = 0;
 
   while(src < dest)
   {
@@ -184,17 +175,11 @@ int Blend::keepLum(int c, int dest)
       {
         n[i]++;
         src = getl(makecol(n[1], n[0], n[2]));
-        if(src == dest)
-          break;
+        if(src >= dest)
+          return makecola(n[1], n[0], n[2], geta(c));
       }
     }
-
-    count++;
-    if(count > 255)
-      break;
   }
-
-  count = 0;
 
   while(src > dest)
   {
@@ -204,14 +189,10 @@ int Blend::keepLum(int c, int dest)
       {
         n[i]--;
         src = getl(makecol(n[1], n[0], n[2]));
-        if(src == dest)
-          break;
+        if(src <= dest)
+          return makecola(n[1], n[0], n[2], geta(c));
       }
     }
-
-    count++;
-    if(count > 255)
-      break;
   }
 
   return makecola(n[1], n[0], n[2], geta(c));
@@ -383,27 +364,5 @@ void Blend::hsvToRgb(int h, int s, int v, int *r, int *g, int *b)
       *b = y;
       break;
   }
-}
-
-// JPEG formula for YUV (really YCbCr..)
-void Blend::rgbToYuv(int r, int g, int b, int *y, int *u, int *v)
-{
-  *y = 0   + .299 * r + .587 * g + .114 * b;
-  *u = 128 - .168 * r - .331 * g +   .5 * b;
-  *v = 128 +   .5 * r - .418 * g - .081 * b;
-}
-
-void Blend::yuvToRgb(int y, int u, int v, int *r, int *g, int *b)
-{
-  u -= 128;
-  v -= 128;
-
-  *r = y             + 1.402 * v;
-  *g = y -  .344 * u -  .714 * v;
-  *b = y + 1.772 * u;
-
-  *r = MAX(0, MIN(*r, 255));
-  *g = MAX(0, MIN(*g, 255));
-  *b = MAX(0, MIN(*b, 255));
 }
 
