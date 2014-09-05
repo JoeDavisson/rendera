@@ -167,17 +167,23 @@ void File::load(Fl_Widget *, void *)
   fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
   fc->show();
 
-  const char *fn = fc->filename();
+  char fn[256];
+  strcpy(fn, fc->filename());
+  //const char *fn = fc->filename();
   delete fc;
 
   FILE *in = fopen(fn, "rb");
   if(!in)
+  {
+//    error_message();
     return;
+  }
 
   unsigned char header[8];
   if(fread(&header, 1, 8, in) != 8)
   {
     fclose(in);
+    error_message();
     return;
   }
 
@@ -185,7 +191,7 @@ void File::load(Fl_Widget *, void *)
 
   if(is_png(header))
   {
-    if(File::loadPNG((const char *)fn, Bitmap::main, overscroll) != 0)
+    if(File::loadPNG((const char *)fn, Bitmap::main, overscroll) < 0)
     {
       error_message();
       return;
@@ -193,7 +199,7 @@ void File::load(Fl_Widget *, void *)
   }
   else if(is_jpeg(header))
   {
-    if(File::loadJPG((const char *)fn, Bitmap::main, overscroll) != 0)
+    if(File::loadJPG((const char *)fn, Bitmap::main, overscroll) < 0)
     {
       error_message();
       return;
@@ -201,7 +207,7 @@ void File::load(Fl_Widget *, void *)
   }
   else if(is_bmp(header))
   {
-    if(File::loadBMP((const char *)fn, Bitmap::main, overscroll) != 0)
+    if(File::loadBMP((const char *)fn, Bitmap::main, overscroll) < 0)
     {
       error_message();
       return;
@@ -209,7 +215,7 @@ void File::load(Fl_Widget *, void *)
   }
   else if(is_tga(fn))
   {
-    if(File::loadTGA((const char *)fn, Bitmap::main, overscroll) != 0)
+    if(File::loadTGA((const char *)fn, Bitmap::main, overscroll) < 0)
     {
       error_message();
       return;
@@ -235,12 +241,16 @@ void File::loadFile(const char *fn)
 
   FILE *in = fopen(fn, "rb");
   if(!in)
+  {
+    error_message();
     return;
+  }
 
   unsigned char header[8];
   if(fread(&header, 1, 8, in) != 8)
   {
     fclose(in);
+    error_message();
     return;
   }
 
@@ -248,7 +258,7 @@ void File::loadFile(const char *fn)
 
   if(is_png(header))
   {
-    if(File::loadPNG((const char *)fn, Bitmap::main, overscroll) != 0)
+    if(File::loadPNG((const char *)fn, Bitmap::main, overscroll) < 0)
     {
       error_message();
       return;
@@ -256,7 +266,7 @@ void File::loadFile(const char *fn)
   }
   else if(is_jpeg(header))
   {
-    if(File::loadJPG((const char *)fn, Bitmap::main, overscroll) != 0)
+    if(File::loadJPG((const char *)fn, Bitmap::main, overscroll) < 0)
     {
       error_message();
       return;
@@ -264,7 +274,7 @@ void File::loadFile(const char *fn)
   }
   else if(is_bmp(header))
   {
-    if(File::loadBMP((const char *)fn, Bitmap::main, overscroll) != 0)
+    if(File::loadBMP((const char *)fn, Bitmap::main, overscroll) < 0)
     {
       error_message();
       return;
@@ -272,7 +282,7 @@ void File::loadFile(const char *fn)
   }
   else if(is_tga(fn))
   {
-    if(File::loadTGA((const char *)fn, Bitmap::main, overscroll) != 0)
+    if(File::loadTGA((const char *)fn, Bitmap::main, overscroll) < 0)
     {
       error_message();
       return;
@@ -735,28 +745,28 @@ void File::save(Fl_Widget *, void *)
   switch(ext)
   {
     case 0:
-      if(File::savePNG(fn) != 0)
+      if(File::savePNG(fn) < 0)
       {
         error_message();
         return;
       }
       break;
     case 1:
-      if(File::saveJPG(fn) != 0)
+      if(File::saveJPG(fn) < 0)
       {
         error_message();
         return;
       }
       break;
     case 2:
-      if(File::saveBMP(fn) != 0)
+      if(File::saveBMP(fn) < 0)
       {
         error_message();
         return;
       }
       break;
     case 3:
-      if(File::saveTGA(fn) != 0)
+      if(File::saveTGA(fn) < 0)
       {
         error_message();
         return;
@@ -822,7 +832,12 @@ int File::saveBMP(const char *fn)
       linebuf[xx++] = 0;
     p += overscroll * 2;
 
-    fwrite(&linebuf[0], 1, w * 3, out);
+    if(fwrite(&linebuf[0], 1, w * 3, out) != w * 3)
+    {
+      delete[] linebuf;
+      fclose(out);
+      return -1;
+    }
   }
 
   delete[] linebuf;
@@ -874,7 +889,12 @@ int File::saveTGA(const char *fn)
     }
     p += overscroll * 2;
 
-    fwrite(&linebuf[0], 1, w * 4, out);
+    if(fwrite(&linebuf[0], 1, w * 4, out) != w * 4)
+    {
+      delete[] linebuf;
+      fclose(out);
+      return -1;
+    }
   }
 
   delete[] linebuf;
@@ -1111,18 +1131,23 @@ void File::loadPalette()
   fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
   fc->show();
 
+  char fn[256];
+  strcpy(fn, fc->filename());
+  //const char *fn = fc->filename();
   delete fc;
-
-  const char *fn = fc->filename();
 
   FILE *in = fopen(fn, "r");
   if(!in)
+  {
+    error_message();
     return;
+  }
 
   unsigned char header[12];
   if(fread(&header, 1, 12, in) != 12)
   {
     fclose(in);
+    error_message();
     return;
   }
 
@@ -1130,7 +1155,11 @@ void File::loadPalette()
 
   if(is_gpl(header))
   {
-    Palette::main->load((const char*)fn);
+    if(Palette::main->load((const char*)fn) < 0)
+    {
+      error_message();
+      return;
+    }
     Gui::drawPalette();
   }
 }
@@ -1144,11 +1173,11 @@ void File::savePalette()
   fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc->show();
 
-  delete fc;
-
   char fn[256];
   strcpy(fn, fc->filename());
   fl_filename_setext(fn, sizeof(fn), ".gpl");
+
+  delete fc;
 
   if(file_exists(fn))
   {
@@ -1157,7 +1186,11 @@ void File::savePalette()
       return;
   }
   
-  Palette::main->save(fn);
+  if(Palette::main->save(fn) < 0)
+  {
+    error_message();
+    return;
+  }
 }
 
 void File::decodeURI(char *s)

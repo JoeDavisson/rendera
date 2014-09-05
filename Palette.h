@@ -38,8 +38,8 @@ public:
   void deleteColor(int);
   void replaceColor(int, int);
   void fillLookup();
-  void load(const char *);
-  void save(const char *);
+  int load(const char *);
+  int save(const char *);
 
   int *data;
   unsigned char *lookup;
