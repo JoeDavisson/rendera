@@ -21,10 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef RENDERA_H
 #define RENDERA_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <math.h>
+/* #include <stdio.h> */
+/* #include <stdlib.h> */
+/* #include <stdint.h> */
+/* #include <math.h> */
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>

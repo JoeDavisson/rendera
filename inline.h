@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef INLINE_H
 #define INLINE_H
 
+#include <stdint.h>
+
 // fast random number seed
 extern int seed;
 
