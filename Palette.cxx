@@ -291,9 +291,15 @@ int Palette::save(const char *fn)
     return -1;
 
   if(fprintf(out, "GIMP Palette\n") < 0)
+  {
+    fclose(out);
     return -1;
+  }
   if(fprintf(out, "#\n") < 0)
+  {
+    fclose(out);
     return -1;
+  }
 
   int i;
 
@@ -301,7 +307,10 @@ int Palette::save(const char *fn)
   {
     int c = data[i];
     if(fprintf(out, "%d %d %d\n", getr(c), getg(c), getb(c)) < 0)
+    {
+      fclose(out);
       return -1;
+    }
   }
 
   fclose(out);
