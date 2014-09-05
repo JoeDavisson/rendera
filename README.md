@@ -1,4 +1,4 @@
-Rendera
+Rendera [![Build Status](https://travis-ci.org/Mortis69/rendera.svg?branch=master)](https://travis-ci.org/Mortis69/rendera)
 =======
 
 Rendera is a painting program suitable for painting, photo-retouching and making seamless textures. Originally for Windows, it is being rewritten from scratch using C++/FLTK.
