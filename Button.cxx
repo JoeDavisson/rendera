@@ -27,11 +27,20 @@ Button::Button(Fl_Group *g, int x, int y, int w, int h,
 : Fl_Button(x, y, w, h, label)
 {
   var = 0;
+
   if(cb)
     callback(cb, &var);
+
   group = g;
   bitmap = new Bitmap(8, 8);
-  File::loadPNG(filename, bitmap, 0);
+
+  if(File::loadPNG(filename, bitmap, 0) < 0)
+  {
+    fl_message_title("Error");
+    fl_message("Could not load %s, exiting.", filename);
+    exit(1);
+  }
+
   image = new Fl_RGB_Image((unsigned char *)bitmap->data, bitmap->w, bitmap->h, 4, 0);
 
   resize(group->x() + x, group->y() + y, w, h);
