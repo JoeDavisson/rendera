@@ -91,6 +91,12 @@ namespace
 
   const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
 
+  void error_message()
+  {
+    fl_message_title("File Error");
+    fl_message("An error occured during the operation.");
+  }
+
   int file_exists(const char *s)
   {
     FILE *temp = fopen(s, "r");
@@ -152,6 +158,8 @@ namespace
 
 void File::load(Fl_Widget *, void *)
 {
+  int overscroll = Bitmap::main->overscroll;
+
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
   fc->title("Load Image");
   fc->filter("PNG Image\t*.png\nJPEG Image\t*.{jpg,jpeg}\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
@@ -160,39 +168,58 @@ void File::load(Fl_Widget *, void *)
   fc->show();
 
   const char *fn = fc->filename();
-  
+  delete fc;
+
   FILE *in = fopen(fn, "rb");
   if(!in)
-  {
-    delete fc;
     return;
-  }
 
   unsigned char header[8];
   if(fread(&header, 1, 8, in) != 8)
   {
     fclose(in);
-    delete fc;
     return;
   }
 
   fclose(in);
 
   if(is_png(header))
-    File::loadPNG((const char *)fn, Bitmap::main, 64);
+  {
+    if(File::loadPNG((const char *)fn, Bitmap::main, overscroll) != 0)
+    {
+      error_message();
+      return;
+    }
+  }
   else if(is_jpeg(header))
-    File::loadJPG((const char *)fn, Bitmap::main, 64);
+  {
+    if(File::loadJPG((const char *)fn, Bitmap::main, overscroll) != 0)
+    {
+      error_message();
+      return;
+    }
+  }
   else if(is_bmp(header))
-    File::loadBMP((const char *)fn, Bitmap::main, 64);
+  {
+    if(File::loadBMP((const char *)fn, Bitmap::main, overscroll) != 0)
+    {
+      error_message();
+      return;
+    }
+  }
   else if(is_tga(fn))
-    File::loadTGA((const char *)fn, Bitmap::main, 64);
+  {
+    if(File::loadTGA((const char *)fn, Bitmap::main, overscroll) != 0)
+    {
+      error_message();
+      return;
+    }
+  }
   else
   {
-    delete fc;
+    error_message();
     return;
   }
-
-  delete fc;
 
   delete Map::main;
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
@@ -204,6 +231,8 @@ void File::load(Fl_Widget *, void *)
 
 void File::loadFile(const char *fn)
 {
+  int overscroll = Bitmap::main->overscroll;
+
   FILE *in = fopen(fn, "rb");
   if(!in)
     return;
@@ -218,15 +247,40 @@ void File::loadFile(const char *fn)
   fclose(in);
 
   if(is_png(header))
-    File::loadPNG((const char *)fn, Bitmap::main, 64);
+  {
+    if(File::loadPNG((const char *)fn, Bitmap::main, overscroll) != 0)
+    {
+      error_message();
+      return;
+    }
+  }
   else if(is_jpeg(header))
-    File::loadJPG((const char *)fn, Bitmap::main, 64);
+  {
+    if(File::loadJPG((const char *)fn, Bitmap::main, overscroll) != 0)
+    {
+      error_message();
+      return;
+    }
+  }
   else if(is_bmp(header))
-    File::loadBMP((const char *)fn, Bitmap::main, 64);
+  {
+    if(File::loadBMP((const char *)fn, Bitmap::main, overscroll) != 0)
+    {
+      error_message();
+      return;
+    }
+  }
   else if(is_tga(fn))
-    File::loadTGA((const char *)fn, Bitmap::main, 64);
+  {
+    if(File::loadTGA((const char *)fn, Bitmap::main, overscroll) != 0)
+    {
+      error_message();
+      return;
+    }
+  }
   else
   {
+    error_message();
     return;
   }
 
@@ -238,7 +292,7 @@ void File::loadFile(const char *fn)
   Undo::reset();
 }
 
-void File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
+int File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
 {
   struct jpeg_decompress_struct cinfo;
   struct my_error_mgr jerr;
@@ -247,7 +301,7 @@ void File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
 
   FILE *in = fopen(fn, "rb");
   if(!in)
-    return;
+    return -1;
 
   cinfo.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = jpg_exit;
@@ -256,7 +310,7 @@ void File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
   {
     jpeg_destroy_decompress(&cinfo);
     fclose(in);
-    return;
+    return -1;
   }
 
   jpeg_create_decompress(&cinfo);
@@ -314,13 +368,15 @@ void File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
   jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
   fclose(in);
+
+  return 0;
 }
 
-void File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
+int File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
 {
   FILE *in = fopen(fn, "rb");
   if(!in)
-    return;
+    return -1;
 
   BMP_INFO_HEADER bm;
 
@@ -330,7 +386,7 @@ void File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
      (unsigned)sizeof(BMP_FILE_HEADER))
   {
     fclose(in);
-    return;
+    return -1;
   }
 
   unsigned char *p = buffer;
@@ -345,7 +401,7 @@ void File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
      != (unsigned)sizeof(BMP_INFO_HEADER))
   {
     fclose(in);
-    return;
+    return -1;
   }
 
   p = buffer;
@@ -368,7 +424,7 @@ void File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
   if(bits != 24)
   {
     fclose(in);
-    return;
+    return -1;
   }
 
   // skip additional header info if it exists
@@ -407,7 +463,7 @@ void File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
     {
       fclose(in);
       delete[] linebuf;
-      return;
+      return -1;
     }
     else
     {
@@ -426,13 +482,15 @@ void File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
 
   delete[] linebuf;
   fclose(in);
+
+  return 0;
 }
 
-void File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
+int File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
 {
   FILE *in = fopen(fn, "rb");
   if(!in)
-    return;
+    return -1;
 
   TARGA_HEADER header;
 
@@ -442,7 +500,7 @@ void File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
      (unsigned)sizeof(TARGA_HEADER))
   {
     fclose(in);
-    return;
+    return -1;
   }
 
   unsigned char *p = buffer;
@@ -463,13 +521,13 @@ void File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
   if(header.data_type != 2)
   {
     fclose(in);
-    return;
+    return -1;
   }
 
   if(header.bpp != 24 && header.bpp != 32)
   {
     fclose(in);
-    return;
+    return -1;
   }
 
   int depth = header.bpp / 8;
@@ -515,7 +573,7 @@ void File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
     {
       fclose(in);
       delete[] linebuf;
-      return;
+      return -1;
     }
 
     for(x = xstart; x != xend; x += negx ? -1 : 1)
@@ -540,26 +598,28 @@ void File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
 
   delete[] linebuf;
   fclose(in);
+
+  return 0;
 }
 
-void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
+int File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
 {
   FILE *in = fopen(fn, "rb");
   if(!in)
-    return;
+    return -1;
 
   unsigned char header[64];
 
   if(fread(header, 1, 8, in) != 8)
   {
     fclose(in);
-    return;
+    return -1;
   }
 
   if(!is_png(header))
   {
     fclose(in);
-    return;
+    return -1;
   }
 
   png_structp png_ptr;
@@ -570,7 +630,7 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
   if(!png_ptr)
   {
     fclose(in);
-    return;
+    return -1;
   }
 
   info_ptr = png_create_info_struct(png_ptr);
@@ -578,13 +638,13 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
   if(!info_ptr)
   {
     fclose(in);
-    return;
+    return -1;
   }
 
   if(setjmp(png_jmpbuf(png_ptr)))
   {
     fclose(in);
-    return;
+    return -1;
   }
 
   png_init_io(png_ptr, in);
@@ -645,6 +705,8 @@ void File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
   png_destroy_read_struct(&png_ptr, &info_ptr, 0);
   delete[] linebuf;
   fclose(in);
+
+  return 0;
 }
 
 void File::save(Fl_Widget *, void *)
@@ -661,6 +723,8 @@ void File::save(Fl_Widget *, void *)
   int ext = fc->filter_value();
   fl_filename_setext(fn, sizeof(fn), ext_string[ext]);
 
+  delete fc;
+
   if(file_exists(fn))
   {
     fl_message_title("Replace File?");
@@ -671,27 +735,41 @@ void File::save(Fl_Widget *, void *)
   switch(ext)
   {
     case 0:
-      File::savePNG(fn);
+      if(File::savePNG(fn) != 0)
+      {
+        error_message();
+        return;
+      }
       break;
     case 1:
-      File::saveJPG(fn);
+      if(File::saveJPG(fn) != 0)
+      {
+        error_message();
+        return;
+      }
       break;
     case 2:
-      File::saveBMP(fn);
+      if(File::saveBMP(fn) != 0)
+      {
+        error_message();
+        return;
+      }
       break;
     case 3:
-      File::saveTGA(fn);
+      if(File::saveTGA(fn) != 0)
+      {
+        error_message();
+        return;
+      }
       break;
   }
-
-  delete fc;
 }
 
-void File::saveBMP(const char *fn)
+int File::saveBMP(const char *fn)
 {
   FILE *out = fopen(fn, "wb");
   if(!out)
-    return;
+    return -1;
 
   Bitmap *bmp = Bitmap::main;
   int overscroll = Bitmap::main->overscroll;
@@ -749,13 +827,15 @@ void File::saveBMP(const char *fn)
 
   delete[] linebuf;
   fclose(out);
+
+  return 0;
 }
 
-void File::saveTGA(const char *fn)
+int File::saveTGA(const char *fn)
 {
   FILE *out = fopen(fn, "wb");
   if(!out)
-    return;
+    return -1;
 
   Bitmap *bmp = Bitmap::main;
   int overscroll = Bitmap::main->overscroll;
@@ -799,13 +879,15 @@ void File::saveTGA(const char *fn)
 
   delete[] linebuf;
   fclose(out);
+
+  return 0;
 }
 
-void File::savePNG(const char *fn)
+int File::savePNG(const char *fn)
 {
   FILE *out = fopen(fn, "wb");
   if(!out)
-    return;
+    return -1;
 
   png_structp png_ptr;
   png_infop info_ptr;
@@ -814,7 +896,7 @@ void File::savePNG(const char *fn)
   if(!png_ptr)
   {
     fclose(out);
-    return;
+    return -1;
   }
 
   info_ptr = png_create_info_struct(png_ptr);
@@ -822,14 +904,14 @@ void File::savePNG(const char *fn)
   {
     png_destroy_write_struct(&png_ptr, 0);
     fclose(out);
-    return;
+    return -1;
   }
 
   if(setjmp(png_jmpbuf(png_ptr)))
   {
     png_destroy_write_struct(&png_ptr, &info_ptr);
     fclose(out);
-    return;
+    return -1;
   }
 
   Bitmap *bmp = Bitmap::main;
@@ -868,9 +950,11 @@ void File::savePNG(const char *fn)
   png_destroy_write_struct(&png_ptr, &info_ptr);
   delete[] linebuf;
   fclose(out);
+
+  return 0;
 }
 
-void File::saveJPG(const char *fn)
+int File::saveJPG(const char *fn)
 {
   Dialog::showJpegQuality();
 
@@ -878,7 +962,7 @@ void File::saveJPG(const char *fn)
 
   FILE *out = fopen(fn, "wb");
   if(!out)
-    return;
+    return -1;
 
   struct jpeg_compress_struct cinfo;
 
@@ -895,7 +979,7 @@ void File::saveJPG(const char *fn)
   if(!linebuf)
   {
     fclose(out);
-    return;
+    return -1;
   }
 
   cinfo.err = jpeg_std_error(&jerr);
@@ -937,6 +1021,8 @@ void File::saveJPG(const char *fn)
 
   delete[] linebuf;
   fclose(out);
+
+  return 0;
 }
 
 Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
@@ -1025,20 +1111,18 @@ void File::loadPalette()
   fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
   fc->show();
 
+  delete fc;
+
   const char *fn = fc->filename();
-  
+
   FILE *in = fopen(fn, "r");
   if(!in)
-  {
-    delete fc;
     return;
-  }
 
   unsigned char header[12];
   if(fread(&header, 1, 12, in) != 12)
   {
     fclose(in);
-    delete fc;
     return;
   }
 
@@ -1048,7 +1132,6 @@ void File::loadPalette()
   {
     Palette::main->load((const char*)fn);
     Gui::drawPalette();
-    delete fc;
   }
 }
 
@@ -1060,6 +1143,8 @@ void File::savePalette()
   fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc->show();
+
+  delete fc;
 
   char fn[256];
   strcpy(fn, fc->filename());
@@ -1073,7 +1158,6 @@ void File::savePalette()
   }
   
   Palette::main->save(fn);
-  delete fc;
 }
 
 void File::decodeURI(char *s)

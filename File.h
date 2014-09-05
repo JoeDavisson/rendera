@@ -29,16 +29,16 @@ namespace File
 {
   void load(Fl_Widget *, void *);
   void loadFile(const char *);
-  void loadJPG(const char *, Bitmap *, int);
-  void loadBMP(const char *, Bitmap *, int);
-  void loadTGA(const char *, Bitmap *, int);
-  void loadPNG(const char *, Bitmap *, int);
+  int loadJPG(const char *, Bitmap *, int);
+  int loadBMP(const char *, Bitmap *, int);
+  int loadTGA(const char *, Bitmap *, int);
+  int loadPNG(const char *, Bitmap *, int);
 
   void save(Fl_Widget *, void *);
-  void saveBMP(const char *);
-  void saveTGA(const char *);
-  void savePNG(const char *);
-  void saveJPG(const char *);
+  int saveBMP(const char *);
+  int saveTGA(const char *);
+  int savePNG(const char *);
+  int saveJPG(const char *);
 
   void loadPalette();
   void savePalette();
