@@ -176,7 +176,7 @@ int Blend::keepLum(int c, int dest)
         n[i]++;
         src = getl(makecol(n[1], n[0], n[2]));
         if(src >= dest)
-          return makecola(n[1], n[0], n[2], geta(c));
+          break;
       }
     }
   }
@@ -190,7 +190,7 @@ int Blend::keepLum(int c, int dest)
         n[i]--;
         src = getl(makecol(n[1], n[0], n[2]));
         if(src <= dest)
-          return makecola(n[1], n[0], n[2], geta(c));
+          break;
       }
     }
   }
@@ -234,19 +234,16 @@ int Blend::smooth(int c1, int, int t)
   int i;
 
   for(i = 0; i < 9; i++)
+  {
     r += getr(c[i]) * matrix[i];
-  r /= 15;
-
-  for(i = 0; i < 9; i++)
     g += getg(c[i]) * matrix[i];
-  g /= 15;
-
-  for(i = 0; i < 9; i++)
     b += getb(c[i]) * matrix[i];
-  b /= 15;
-
-  for(i = 0; i < 9; i++)
     a += geta(c[i]) * matrix[i];
+  }
+
+  r /= 15;
+  g /= 15;
+  b /= 15;
   a /= 15;
 
   return Blend::transAll(c1, makecola(r, g, b, a), t);
@@ -256,9 +253,6 @@ int Blend::smooth(int c1, int, int t)
 // hue 0-1535
 // sat 0-255
 // val 0-255
-// the additional hue resolution ensures that no information is lost so an
-// image's hue may be rotated indefinately with no loss of information
-
 void Blend::rgbToHsv(int r, int g, int b, int *h, int *s, int *v)
 {
   int max = MAX(r, MAX(g, b));
