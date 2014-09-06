@@ -170,7 +170,7 @@ void Dialog::init()
   new Separator(editor, 2, 272, 604, 2, "");
   editor_done = new Fl_Button(504, 280, 96, 24, "Done");
   editor_done->callback((Fl_Callback *)hideEditor);
-//  editor->set_modal();
+  editor->set_modal();
   editor->end(); 
 }
 
