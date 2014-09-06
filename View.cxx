@@ -324,7 +324,7 @@ void View::resize(int x, int y, int w, int h)
   if(fit)
     zoomFit(1);
 
-  drawMain(0);
+  drawMain(1);
 }
 
 void View::redraw()
