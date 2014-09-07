@@ -158,8 +158,6 @@ namespace
 
 void File::load(Fl_Widget *, void *)
 {
-  int overscroll = Bitmap::main->overscroll;
-
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
   fc->title("Load Image");
   fc->filter("PNG Image\t*.png\nJPEG Image\t*.{jpg,jpeg}\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
@@ -169,15 +167,11 @@ void File::load(Fl_Widget *, void *)
 
   char fn[256];
   strcpy(fn, fc->filename());
-  //const char *fn = fc->filename();
   delete fc;
 
   FILE *in = fopen(fn, "rb");
   if(!in)
-  {
-//    error_message();
     return;
-  }
 
   unsigned char header[8];
   if(fread(&header, 1, 8, in) != 8)
@@ -191,7 +185,7 @@ void File::load(Fl_Widget *, void *)
 
   if(is_png(header))
   {
-    if(File::loadPNG((const char *)fn, Bitmap::main, overscroll) < 0)
+    if(!(Bitmap::main = File::loadPNG((const char *)fn, Bitmap::main->overscroll)))
     {
       error_message();
       return;
@@ -199,7 +193,7 @@ void File::load(Fl_Widget *, void *)
   }
   else if(is_jpeg(header))
   {
-    if(File::loadJPG((const char *)fn, Bitmap::main, overscroll) < 0)
+    if(!(Bitmap::main = File::loadJPG((const char *)fn, Bitmap::main->overscroll)))
     {
       error_message();
       return;
@@ -207,7 +201,7 @@ void File::load(Fl_Widget *, void *)
   }
   else if(is_bmp(header))
   {
-    if(File::loadBMP((const char *)fn, Bitmap::main, overscroll) < 0)
+    if(!(Bitmap::main = File::loadBMP((const char *)fn, Bitmap::main->overscroll)))
     {
       error_message();
       return;
@@ -215,7 +209,7 @@ void File::load(Fl_Widget *, void *)
   }
   else if(is_tga(fn))
   {
-    if(File::loadTGA((const char *)fn, Bitmap::main, overscroll) < 0)
+    if(!(Bitmap::main = File::loadTGA((const char *)fn, Bitmap::main->overscroll)))
     {
       error_message();
       return;
@@ -237,8 +231,6 @@ void File::load(Fl_Widget *, void *)
 
 void File::loadFile(const char *fn)
 {
-  int overscroll = Bitmap::main->overscroll;
-
   FILE *in = fopen(fn, "rb");
   if(!in)
   {
@@ -258,7 +250,7 @@ void File::loadFile(const char *fn)
 
   if(is_png(header))
   {
-    if(File::loadPNG((const char *)fn, Bitmap::main, overscroll) < 0)
+    if(!(Bitmap::main = File::loadPNG((const char *)fn, Bitmap::main->overscroll)))
     {
       error_message();
       return;
@@ -266,7 +258,7 @@ void File::loadFile(const char *fn)
   }
   else if(is_jpeg(header))
   {
-    if(File::loadJPG((const char *)fn, Bitmap::main, overscroll) < 0)
+    if(!(Bitmap::main = File::loadJPG((const char *)fn, Bitmap::main->overscroll)))
     {
       error_message();
       return;
@@ -274,7 +266,7 @@ void File::loadFile(const char *fn)
   }
   else if(is_bmp(header))
   {
-    if(File::loadBMP((const char *)fn, Bitmap::main, overscroll) < 0)
+    if(!(Bitmap::main = File::loadBMP((const char *)fn, Bitmap::main->overscroll)))
     {
       error_message();
       return;
@@ -282,7 +274,7 @@ void File::loadFile(const char *fn)
   }
   else if(is_tga(fn))
   {
-    if(File::loadTGA((const char *)fn, Bitmap::main, overscroll) < 0)
+    if(!(Bitmap::main = File::loadTGA((const char *)fn, Bitmap::main->overscroll)))
     {
       error_message();
       return;
@@ -302,7 +294,7 @@ void File::loadFile(const char *fn)
   Undo::reset();
 }
 
-int File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
+Bitmap *File::loadJPG(const char *fn, int overscroll)
 {
   struct jpeg_decompress_struct cinfo;
   struct my_error_mgr jerr;
@@ -311,7 +303,7 @@ int File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
 
   FILE *in = fopen(fn, "rb");
   if(!in)
-    return -1;
+    return 0;
 
   cinfo.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = jpg_exit;
@@ -320,7 +312,7 @@ int File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
   {
     jpeg_destroy_decompress(&cinfo);
     fclose(in);
-    return -1;
+    return 0;
   }
 
   jpeg_create_decompress(&cinfo);
@@ -336,11 +328,10 @@ int File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
   int w = row_stride / bytes;
   int h = cinfo.output_height;
 
-  delete bitmap;
-  bitmap = new Bitmap(w, h, overscroll,
+  Bitmap *temp = new Bitmap(w, h, overscroll,
                       makecol(255, 255, 255), makecol(128, 128, 128));
   int x;
-  int *p = bitmap->row[overscroll] + overscroll;
+  int *p = temp->row[overscroll] + overscroll;
 
   if(bytes == 3)
   {
@@ -379,14 +370,14 @@ int File::loadJPG(const char *fn, Bitmap *bitmap, int overscroll)
   jpeg_destroy_decompress(&cinfo);
   fclose(in);
 
-  return 0;
+  return temp;
 }
 
-int File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
+Bitmap *File::loadBMP(const char *fn, int overscroll)
 {
   FILE *in = fopen(fn, "rb");
   if(!in)
-    return -1;
+    return 0;
 
   BMP_INFO_HEADER bm;
 
@@ -396,7 +387,7 @@ int File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
      (unsigned)sizeof(BMP_FILE_HEADER))
   {
     fclose(in);
-    return -1;
+    return 0;
   }
 
   unsigned char *p = buffer;
@@ -411,7 +402,7 @@ int File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
      != (unsigned)sizeof(BMP_INFO_HEADER))
   {
     fclose(in);
-    return -1;
+    return 0;
   }
 
   p = buffer;
@@ -434,7 +425,7 @@ int File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
   if(bits != 24)
   {
     fclose(in);
-    return -1;
+    return 0;
   }
 
   // skip additional header info if it exists
@@ -456,9 +447,8 @@ int File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
   w = ABS(w);
   h = ABS(h);
 
-  delete bitmap;
-  bitmap = new Bitmap(w, h, overscroll,
-                      makecol(255, 255, 255), makecol(128, 128, 128));
+  Bitmap *temp = new Bitmap(w, h, overscroll,
+                            makecol(255, 255, 255), makecol(128, 128, 128));
 
   unsigned char *linebuf = new unsigned char[w * mul + pad];
 
@@ -473,7 +463,7 @@ int File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
     {
       fclose(in);
       delete[] linebuf;
-      return -1;
+      return 0;
     }
     else
     {
@@ -482,9 +472,9 @@ int File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
       {
         int x1 = negx ? w - 1 - x : x;
         x1 += overscroll;
-        *(bitmap->row[y1] + x1) = makecol(linebuf[xx + 2] & 0xFF,
-                                          linebuf[xx + 1] & 0xFF,
-                                          linebuf[xx + 0] & 0xFF);
+        *(temp->row[y1] + x1) = makecol(linebuf[xx + 2] & 0xFF,
+                                        linebuf[xx + 1] & 0xFF,
+                                        linebuf[xx + 0] & 0xFF);
         xx += mul;
       }
     }
@@ -493,14 +483,14 @@ int File::loadBMP(const char *fn, Bitmap *bitmap, int overscroll)
   delete[] linebuf;
   fclose(in);
 
-  return 0;
+  return temp;
 }
 
-int File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
+Bitmap *File::loadTGA(const char *fn, int overscroll)
 {
   FILE *in = fopen(fn, "rb");
   if(!in)
-    return -1;
+    return 0;
 
   TARGA_HEADER header;
 
@@ -510,7 +500,7 @@ int File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
      (unsigned)sizeof(TARGA_HEADER))
   {
     fclose(in);
-    return -1;
+    return 0;
   }
 
   unsigned char *p = buffer;
@@ -531,13 +521,13 @@ int File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
   if(header.data_type != 2)
   {
     fclose(in);
-    return -1;
+    return 0;
   }
 
   if(header.bpp != 24 && header.bpp != 32)
   {
     fclose(in);
-    return -1;
+    return 0;
   }
 
   int depth = header.bpp / 8;
@@ -551,9 +541,8 @@ int File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
   int w = header.w;
   int h = header.h;
 
-  delete bitmap;
-  bitmap = new Bitmap(w, h, overscroll,
-                      makecol(255, 255, 255), makecol(128, 128, 128));
+  Bitmap *temp = new Bitmap(w, h, overscroll,
+                            makecol(255, 255, 255), makecol(128, 128, 128));
 
   unsigned char *linebuf = new unsigned char[w * depth];
 
@@ -583,21 +572,21 @@ int File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
     {
       fclose(in);
       delete[] linebuf;
-      return -1;
+      return 0;
     }
 
     for(x = xstart; x != xend; x += negx ? -1 : 1)
     {
       if(depth == 3)
       {
-        *(bitmap->row[y + overscroll] + x + overscroll) =
+        *(temp->row[y + overscroll] + x + overscroll) =
                        makecol((linebuf[x * depth + 2] & 0xFF),
                                (linebuf[x * depth + 1] & 0xFF),
                                (linebuf[x * depth + 0] & 0xFF));
       }
       else if(depth == 4)
       {
-        *(bitmap->row[y + overscroll] + x + overscroll) =
+        *(temp->row[y + overscroll] + x + overscroll) =
                        makecola((linebuf[x * depth + 2] & 0xFF),
                                 (linebuf[x * depth + 1] & 0xFF),
                                 (linebuf[x * depth + 0] & 0xFF),
@@ -609,27 +598,27 @@ int File::loadTGA(const char *fn, Bitmap *bitmap, int overscroll)
   delete[] linebuf;
   fclose(in);
 
-  return 0;
+  return temp;
 }
 
-int File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
+Bitmap *File::loadPNG(const char *fn, int overscroll)
 {
   FILE *in = fopen(fn, "rb");
   if(!in)
-    return -1;
+    return 0;
 
   unsigned char header[64];
 
   if(fread(header, 1, 8, in) != 8)
   {
     fclose(in);
-    return -1;
+    return 0;
   }
 
   if(!is_png(header))
   {
     fclose(in);
-    return -1;
+    return 0;
   }
 
   png_structp png_ptr;
@@ -640,7 +629,7 @@ int File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
   if(!png_ptr)
   {
     fclose(in);
-    return -1;
+    return 0;
   }
 
   info_ptr = png_create_info_struct(png_ptr);
@@ -648,13 +637,13 @@ int File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
   if(!info_ptr)
   {
     fclose(in);
-    return -1;
+    return 0;
   }
 
   if(setjmp(png_jmpbuf(png_ptr)))
   {
     fclose(in);
-    return -1;
+    return 0;
   }
 
   png_init_io(png_ptr, in);
@@ -678,11 +667,10 @@ int File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
 
   int x, y;
 
-  delete bitmap;
-  bitmap = new Bitmap(w, h, overscroll,
-                      makecol(255, 255, 255), makecol(128, 128, 128));
+  Bitmap *temp = new Bitmap(w, h, overscroll,
+                            makecol(255, 255, 255), makecol(128, 128, 128));
 
-  int *p = bitmap->row[overscroll] + overscroll;
+  int *p = temp->row[overscroll] + overscroll;
 
   for(y = 0; y < h; y++)
   {
@@ -716,7 +704,7 @@ int File::loadPNG(const char *fn, Bitmap *bitmap, int overscroll)
   delete[] linebuf;
   fclose(in);
 
-  return 0;
+  return temp;
 }
 
 void File::save(Fl_Widget *, void *)
@@ -1050,7 +1038,8 @@ Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
   if(!is_png(header))
     return 0;
 
-  loadPNG(fn, Bitmap::preview, 0);
+  delete Bitmap::preview;
+  Bitmap::preview = loadPNG(fn, 0);
 
   Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data,
                                          Bitmap::preview->w, Bitmap::preview->h,
@@ -1064,7 +1053,8 @@ Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int)
   if(!is_jpeg(header))
     return 0;
 
-  loadJPG(fn, Bitmap::preview, 0);
+  delete Bitmap::preview;
+  Bitmap::preview = loadJPG(fn, 0);
 
   Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data,
                                          Bitmap::preview->w, Bitmap::preview->h,
@@ -1078,7 +1068,8 @@ Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int)
   if(!is_bmp(header))
     return 0;
 
-  loadBMP(fn, Bitmap::preview, 0);
+  delete Bitmap::preview;
+  Bitmap::preview = loadBMP(fn, 0);
 
   Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data,
                                          Bitmap::preview->w, Bitmap::preview->h,
@@ -1092,7 +1083,8 @@ Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
   if(!is_tga(fn))
     return 0;
 
-  loadTGA(fn, Bitmap::preview, 0);
+  delete Bitmap::preview;
+  Bitmap::preview = loadTGA(fn, 0);
 
   Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data,
                                          Bitmap::preview->w, Bitmap::preview->h,

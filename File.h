@@ -29,10 +29,10 @@ namespace File
 {
   void load(Fl_Widget *, void *);
   void loadFile(const char *);
-  int loadJPG(const char *, Bitmap *, int);
-  int loadBMP(const char *, Bitmap *, int);
-  int loadTGA(const char *, Bitmap *, int);
-  int loadPNG(const char *, Bitmap *, int);
+  Bitmap *loadJPG(const char *, int);
+  Bitmap *loadBMP(const char *, int);
+  Bitmap *loadTGA(const char *, int);
+  Bitmap *loadPNG(const char *, int);
 
   void save(Fl_Widget *, void *);
   int saveBMP(const char *);
