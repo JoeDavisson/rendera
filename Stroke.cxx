@@ -84,6 +84,14 @@ Stroke::Stroke()
   type = 0;
   origin = 0;
   constrain = 0;
+  x1 = 0;
+  y1 = 0;
+  x2 = 0;
+  y2 = 0;
+  blitx = 0;
+  blity = 0;
+  blitw = 0;
+  blith = 0;
 }
 
 Stroke::~Stroke()
