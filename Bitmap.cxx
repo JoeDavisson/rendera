@@ -26,8 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.h"
 #include "Tool.h"
 
-#define XOR_VALUE(x, y) ( ((x & 1) ^ (y & 1)) ? 0x00FFFFFF : 0x00808080)
-
 Bitmap *Bitmap::main;
 Bitmap *Bitmap::preview;
 Bitmap *Bitmap::clone_buffer;
@@ -41,6 +39,15 @@ int Bitmap::clone_y = 0;
 int Bitmap::clone_dx = 0;
 int Bitmap::clone_dy = 0;
 int Bitmap::clone_mirror = 0;
+
+namespace
+{
+  inline int xor_value(const int x, const int y)
+  {
+    static const int c[2] = { 0x00FFFFFF, 0x00808080 };
+    return c[(x & 1) ^ (y & 1)];
+  }
+}
 
 Bitmap::Bitmap(int width, int height)
 {
@@ -277,7 +284,7 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 
     while(x1 != x2)
     {
-      *(row[y1] + x1) ^= XOR_VALUE(x1, y1);
+      *(row[y1] + x1) ^= xor_value(x1, y1);
 
       if(e >= 0)
       {
@@ -297,7 +304,7 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 
     while(y1 != y2)
     {
-      *(row[y1] + x1) ^= XOR_VALUE(x1, y1);
+      *(row[y1] + x1) ^= xor_value(x1, y1);
 
       if(e >= 0)
       {
@@ -310,7 +317,7 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
     }
   }
 
-  *(row[y1] + x1) ^= XOR_VALUE(x1, y1);
+  *(row[y1] + x1) ^= xor_value(x1, y1);
 }
 
 void Bitmap::xorHline(int x1, int y, int x2)
@@ -330,7 +337,7 @@ void Bitmap::xorHline(int x1, int y, int x2)
   int *p = row[y] + x1;
 
   for(; x1 <= x2; x1++)
-    *p++ ^= XOR_VALUE(x1, y);
+    *p++ ^= xor_value(x1, y);
 }
 
 void Bitmap::xorRect(int x1, int y1, int x2, int y2)
@@ -360,8 +367,8 @@ void Bitmap::xorRect(int x1, int y1, int x2, int y2)
 
   for(; y1 < y2; y1++)
   {
-    *(row[y1] + x1) ^= XOR_VALUE(x1, y1);
-    *(row[y1] + x2) ^= XOR_VALUE(x1, y1);
+    *(row[y1] + x1) ^= xor_value(x1, y1);
+    *(row[y1] + x2) ^= xor_value(x1, y1);
   }
 }
 
@@ -639,12 +646,15 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 
   int sy1 = sy;
   int dy1 = dy;
+
   for(y = 0; y < hh; y++)
   {
     int *sx1 = sx + row[sy1];
     int *dx1 = dx + dest->row[dy1];
+
     for(x = 0; x < ww; x++, sx1++, dx1++)
      *dx1 = *sx1;
+
     sy1++;
     dy1++;
   }
@@ -715,6 +725,7 @@ void Bitmap::pointStretch(Bitmap *dest,
     {
       const int x1 = sx + ((x * bx) >> 8);
       const int c = *(row[y1] + x1);
+
       *s++ = convert_format(blend_fast_solid(((x >> 4) & 1) ^ ((y >> 4) & 1)
                             ? 0xA0A0A0 : 0x606060, c,
                             255 - geta(c)), bgr_order);
