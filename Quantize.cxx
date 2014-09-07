@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Dialog.h"
 #include "Widget.h"
 
-#define SHIFT 12
+#define MAX_COLORS 4096
 
 extern int *fix_gamma;
 extern int *unfix_gamma;
@@ -52,9 +52,11 @@ namespace
   inline int merge24(const int c1, const int c2,
                      const float f1, const float f2)
   {
-    const int r = (f1 * getr(c1) + f2 * getr(c2)) / (f1 + f2);
-    const int g = (f1 * getg(c1) + f2 * getg(c2)) / (f1 + f2);
-    const int b = (f1 * getb(c1) + f2 * getb(c2)) / (f1 + f2);
+    // reciprocate the divide
+    const float mul = 1.0f / (f1 + f2);
+    const int r = (f1 * getr(c1) + f2 * getr(c2)) * mul;
+    const int g = (f1 * getg(c1) + f2 * getg(c2)) * mul;
+    const int b = (f1 * getb(c1) + f2 * getb(c2)) * mul;
 
     return makecol_notrans(r, g, b);
   }
@@ -120,7 +122,7 @@ namespace
     delete[] temp;
   }
 
-  // limit colors being clustered to a reasonable number
+  // limit colors being clustered to a reasonable number (4096)
   int limit_colors(float *list, int *colors)
   {
     int r, g, b;
@@ -175,18 +177,22 @@ namespace
 }
 
 // pairwise clustering algorithm
+// slow/expensive but produces very high quality palettes
 void Quantize::pca(Bitmap *src, int size)
 {
   // popularity histogram
   float *list = new float[16777216];
 
   // color list
-  int *colors = new int[1 << SHIFT];
+  int *colors = new int[MAX_COLORS];
 
   // quantization error matrix
-  float *err = new float[(1 << SHIFT) * (1 << SHIFT)];
-
   int i, j;
+  float *err_data = new float[MAX_COLORS * MAX_COLORS];
+  float **err_row = new float *[MAX_COLORS];
+  for(i = 0; i < MAX_COLORS; i++)
+    err_row[i] = &err_data[MAX_COLORS * i];
+
   int max;
   int rep = size;
   int overscroll = src->overscroll;
@@ -195,7 +201,7 @@ void Quantize::pca(Bitmap *src, int size)
   for(i = 0; i < 16777216; i++)
     list[i] = 0;
 
-  for(i = 0; i < (1 << SHIFT); i++)
+  for(i = 0; i < MAX_COLORS; i++)
     colors[i] = -1;
 
   // build histogram
@@ -269,8 +275,8 @@ void Quantize::pca(Bitmap *src, int size)
   {
     for(i = 0; i < j; i++)
     {
-      err[i + (j << SHIFT)] = error24(colors[i], colors[j],
-                                      list[colors[i]], list[colors[j]]);
+      *(err_row[j] + i) = error24(colors[i], colors[j],
+                                  list[colors[i]], list[colors[j]]);
     }
   }
 
@@ -286,7 +292,7 @@ void Quantize::pca(Bitmap *src, int size)
     {
       if(colors[j] >= 0)
       {
-        float *pos = &err[(j << SHIFT)];
+        float *pos = err_row[j];
 
         for(i = 0; i < j; i++)
         {
@@ -311,7 +317,7 @@ void Quantize::pca(Bitmap *src, int size)
     count--;
 
     // recompute error matrix for new row
-    float *pos = &err[ii + (ii << SHIFT)];
+    float *pos = err_row[ii] + ii;
 
     for(j = ii; j < max; j++)
     {
@@ -320,7 +326,7 @@ void Quantize::pca(Bitmap *src, int size)
         *pos = error24(colors[ii], colors[j],
                        list[colors[ii]], list[colors[j]]);
       }
-      pos += (1 << SHIFT);
+      pos += MAX_COLORS;
     }
 
     Dialog::updateProgress();
@@ -353,7 +359,8 @@ void Quantize::pca(Bitmap *src, int size)
   }
 
   // free memory
-  delete[] err;
+  delete[] err_row;
+  delete[] err_data;
   delete[] colors;
   delete[] list;
 
