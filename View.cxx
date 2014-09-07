@@ -310,8 +310,7 @@ int View::handle(int event)
         }
 
         // try to load the file
-        if(File::loadFile(fn) < 0)
-          return 0;
+        File::loadFile(fn);
       }
       return 1;
   }
