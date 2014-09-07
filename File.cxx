@@ -229,13 +229,13 @@ void File::load(Fl_Widget *, void *)
   Undo::reset();
 }
 
-void File::loadFile(const char *fn)
+int File::loadFile(const char *fn)
 {
   FILE *in = fopen(fn, "rb");
   if(!in)
   {
     error_message();
-    return;
+    return -1;
   }
 
   unsigned char header[8];
@@ -243,7 +243,7 @@ void File::loadFile(const char *fn)
   {
     fclose(in);
     error_message();
-    return;
+    return -1;
   }
 
   fclose(in);
@@ -253,7 +253,7 @@ void File::loadFile(const char *fn)
     if(!(Bitmap::main = File::loadPNG((const char *)fn, Bitmap::main->overscroll)))
     {
       error_message();
-      return;
+      return -1;
     }
   }
   else if(is_jpeg(header))
@@ -261,7 +261,7 @@ void File::loadFile(const char *fn)
     if(!(Bitmap::main = File::loadJPG((const char *)fn, Bitmap::main->overscroll)))
     {
       error_message();
-      return;
+      return -1;
     }
   }
   else if(is_bmp(header))
@@ -269,7 +269,7 @@ void File::loadFile(const char *fn)
     if(!(Bitmap::main = File::loadBMP((const char *)fn, Bitmap::main->overscroll)))
     {
       error_message();
-      return;
+      return -1;
     }
   }
   else if(is_tga(fn))
@@ -277,13 +277,13 @@ void File::loadFile(const char *fn)
     if(!(Bitmap::main = File::loadTGA((const char *)fn, Bitmap::main->overscroll)))
     {
       error_message();
-      return;
+      return -1;
     }
   }
   else
   {
     error_message();
-    return;
+    return -1;
   }
 
   delete Map::main;
@@ -292,6 +292,8 @@ void File::loadFile(const char *fn)
   Gui::getView()->zoomFit(Gui::getView()->fit);
   Gui::getView()->drawMain(1);
   Undo::reset();
+
+  return 0;
 }
 
 Bitmap *File::loadJPG(const char *fn, int overscroll)

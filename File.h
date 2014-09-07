@@ -28,7 +28,7 @@ class Bitmap;
 namespace File
 {
   void load(Fl_Widget *, void *);
-  void loadFile(const char *);
+  int loadFile(const char *);
   Bitmap *loadJPG(const char *, int);
   Bitmap *loadBMP(const char *, int);
   Bitmap *loadTGA(const char *, int);
