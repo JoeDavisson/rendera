@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Map.h"
 #include "Brush.h"
 
+#define XOR_VALUE(x, y) ( ((x & 1) ^ (y & 1)) ? 0x00FFFFFF : 0x00808080)
+
 namespace
 {
   void keepSquare(int x1, int y1, int *x2, int *y2)
@@ -498,8 +500,6 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 {
   Map *map = Map::main;
 
-  int x, y;
-
   clip();
 
   ox *= zoom;
@@ -507,14 +507,15 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 
   float yy1 = (float)y1 * zoom;
   float yy2 = yy1 + zoom - 1;
+  int x, y;
 
-  for(y = y1; y <= y2; y++)
+  for(y = y1; y < y2; y++)
   {
     unsigned char *p = map->row[y] + x1;
     float xx1 = (float)x1 * zoom;
     float xx2 = xx1 + zoom - 1;
 
-    for(x = x1; x <= x2; x++)
+    for(x = x1; x < x2; x++)
     {
       if(*p++)
         backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
@@ -522,6 +523,7 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
       xx1 += zoom;
       xx2 += zoom;
     }
+
     yy1 += zoom;
     yy2 += zoom;
   }
