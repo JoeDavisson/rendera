@@ -1121,10 +1121,7 @@ void File::loadPalette()
 
   FILE *in = fopen(fn, "r");
   if(!in)
-  {
-    error_message();
     return;
-  }
 
   unsigned char header[12];
   if(fread(&header, 1, 12, in) != 12)
