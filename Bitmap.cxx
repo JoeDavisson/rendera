@@ -776,7 +776,9 @@ void Bitmap::fastStretch(Bitmap *dest,
 
     for(d_1 = 0; d_1 <= dx_1; d_1++)
     {
-      *p = convert_format(*q, bgr_order);
+      *p = convert_format(blend_fast_solid(((d_1 >> 4) & 1) ^ ((yd1 >> 4) & 1)
+                            ? 0xA0A0A0 : 0x606060, *q,
+                            255 - geta(*q)), bgr_order);
 
       while(e_1 >= 0)
       {
