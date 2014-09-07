@@ -233,16 +233,12 @@ void File::loadFile(const char *fn)
 {
   FILE *in = fopen(fn, "rb");
   if(!in)
-  {
-    error_message();
     return;
-  }
 
   unsigned char header[8];
   if(fread(&header, 1, 8, in) != 8)
   {
     fclose(in);
-    error_message();
     return;
   }
 
@@ -252,7 +248,6 @@ void File::loadFile(const char *fn)
   {
     if(!(Bitmap::main = File::loadPNG((const char *)fn, Bitmap::main->overscroll)))
     {
-      error_message();
       return;
     }
   }
@@ -260,7 +255,6 @@ void File::loadFile(const char *fn)
   {
     if(!(Bitmap::main = File::loadJPG((const char *)fn, Bitmap::main->overscroll)))
     {
-      error_message();
       return;
     }
   }
@@ -268,7 +262,6 @@ void File::loadFile(const char *fn)
   {
     if(!(Bitmap::main = File::loadBMP((const char *)fn, Bitmap::main->overscroll)))
     {
-      error_message();
       return;
     }
   }
@@ -276,13 +269,11 @@ void File::loadFile(const char *fn)
   {
     if(!(Bitmap::main = File::loadTGA((const char *)fn, Bitmap::main->overscroll)))
     {
-      error_message();
       return;
     }
   }
   else
   {
-    error_message();
     return;
   }
 
