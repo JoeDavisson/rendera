@@ -62,13 +62,41 @@ namespace
   Bitmap *bmp;
   int overscroll;
 
+  void push_undo()
+  {
+    bmp = Bitmap::main;
+    overscroll = bmp->overscroll;
+    Undo::push(overscroll, overscroll,
+              bmp->w - overscroll * 2, bmp->h - overscroll * 2, 0);
+  }
+
   void begin()
   {
     bmp = Bitmap::main;
-    overscroll = Bitmap::main->overscroll;
+    Dialog::showProgress(bmp->h / 64);
+  }
 
-    Undo::push(overscroll, overscroll,
-              bmp->w - overscroll * 2, bmp->h - overscroll * 2, 0);
+  void end()
+  {
+    Dialog::hideProgress();
+    Gui::getView()->drawMain(1);
+  }
+
+  int update(int y)
+  {
+    if(Fl::get_key(FL_Escape))
+    {
+      end();
+      return -1;
+    }
+
+    if(!(y % 64))
+    {
+      Gui::getView()->drawMain(1);
+      Dialog::updateProgress();
+    }
+
+    return 0;
   }
 }
 
@@ -127,7 +155,7 @@ void FX::init()
 // normalize
 void FX::showNormalize()
 {
-  begin();
+  push_undo();
   doNormalize();
 }
 
@@ -178,7 +206,7 @@ void FX::doNormalize()
   double g_scale = 255.0 / (g_high - g_low);
   double b_scale = 255.0 / (b_high - b_low);
 
-  Dialog::showProgress((float)bmp->h / 64);
+  begin();
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -192,19 +220,16 @@ void FX::doNormalize()
       bmp->setpixel(x, y, makecol(r, g, b), 0);
     }
 
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(1);
-      Dialog::updateProgress();
-    }
+    if(update(y) < 0)
+      return;
   }
 
-  Dialog::hideProgress();
+  end();
 }
 
 void FX::showEqualize()
 {
-  begin();
+  push_undo();
   doEqualize();
 }
 
@@ -253,7 +278,7 @@ void FX::doEqualize()
 
   double scale = 255.0 / size;
 
-  Dialog::showProgress((float)bmp->h / 64);
+  begin();
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -271,14 +296,11 @@ void FX::doEqualize()
       bmp->setpixel(x, y, makecol(r, g, b), 0);
     }
 
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(1);
-      Dialog::updateProgress();
-    }
+    if(update(y) < 0)
+      return;
   }
 
-  Dialog::hideProgress();
+  end();
 
   delete[] list_r;
   delete[] list_g;
@@ -288,7 +310,7 @@ void FX::doEqualize()
 // value stretch
 void FX::showValueStretch()
 {
-  begin();
+  push_undo();
   doValueStretch();
 }
 
@@ -361,7 +383,7 @@ void FX::doValueStretch()
   }
   double scale = 255.0 / size;
 
-  Dialog::showProgress((float)bmp->h / 64);
+  begin();
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -387,14 +409,11 @@ void FX::doValueStretch()
       bmp->setpixel(x, y, makecol(r, g, b), 0);
     }
 
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(1);
-      Dialog::updateProgress();
-    }
+    if(update(y) < 0)
+      return;
   }
 
-  Dialog::hideProgress();
+  end();
 
   delete[] list_r;
   delete[] list_g;
@@ -404,7 +423,7 @@ void FX::doValueStretch()
 // saturate
 void FX::showSaturate()
 {
-  begin();
+  push_undo();
   doSaturate();
 }
 
@@ -442,7 +461,7 @@ void FX::doSaturate()
 
   double scale = 255.0 / size;
 
-  Dialog::showProgress((float)bmp->h / 64);
+  begin();
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -464,14 +483,11 @@ void FX::doSaturate()
       bmp->setpixel(x, y, Blend::keepLum(makecol(r, g, b), l), 0);
     }
 
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(1);
-      Dialog::updateProgress();
-    }
+    if(update(y) < 0)
+      return;
   }
 
-  Dialog::hideProgress();
+  end();
 
   delete[] list_s;
 }
@@ -504,9 +520,10 @@ void FX::hideRotateHue()
   if(amount < 0)
     amount += 360;
 
-  begin();
-  doRotateHue(amount);
   rotate_hue->hide();
+
+  push_undo();
+  doRotateHue(amount);
 }
 
 void FX::doRotateHue(int amount)
@@ -517,7 +534,7 @@ void FX::doRotateHue(int amount)
 
   int hh = amount * 4.277;
 
-  Dialog::showProgress((float)bmp->h / 64);
+  begin();
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -538,26 +555,23 @@ void FX::doRotateHue(int amount)
       bmp->setpixel(x, y, c, 0);
     }
 
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(1);
-      Dialog::updateProgress();
-    }
+    if(update(y) < 0)
+      return;
   }
 
-  Dialog::hideProgress();
+  end();
 }
 
 void FX::cancelRotateHue()
 {
-  Dialog::hideProgress();
+  end();
   rotate_hue->hide();
 }
 
 // invert
 void FX::showInvert()
 {
-  begin();
+  push_undo();
   doInvert();
 }
 
@@ -565,7 +579,7 @@ void FX::doInvert()
 {
   int x, y;
 
-  Dialog::showProgress((float)bmp->h / 64);
+  begin();
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -575,14 +589,11 @@ void FX::doInvert()
       bmp->setpixel(x, y, Blend::invert(c, 0, 0), 0);
     }
 
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(1);
-      Dialog::updateProgress();
-    }
+    if(update(y) < 0)
+      return;
   }
 
-  Dialog::hideProgress();
+  end();
 }
 
 // restore
@@ -593,7 +604,9 @@ void FX::showRestore()
 
 void FX::hideRestore()
 {
-  begin();
+  restore->hide();
+  push_undo();
+
   if(restore_normalize->value())
     doNormalize();
   if(restore_invert->value())
@@ -603,7 +616,6 @@ void FX::hideRestore()
     doInvert();
   if(restore_correct->value())
     doCorrect();
-  restore->hide();
 }
 
 // this algorithm assumes a picture both has a color cast and is faded
@@ -643,7 +655,7 @@ void FX::doRestore()
   double ba = (256.0 / (256 - bb)) / sqrt(256.0 / (bb + 1));
 
   // begin restore
-  Dialog::showProgress((float)bmp->h / 64);
+  begin();
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -666,19 +678,16 @@ void FX::doRestore()
       bmp->setpixel(x, y, makecol(r, g, b), 0);
     }
 
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(1);
-      Dialog::updateProgress();
-    }
+    if(update(y) < 0)
+      return;
   }
 
-  Dialog::hideProgress();
+  end();
 }
 
 void FX::cancelRestore()
 {
-  Dialog::hideProgress();
+  end();
   restore->hide();
 }
 
@@ -707,7 +716,8 @@ void FX::hideRemoveDust()
     return;
   }
 
-  begin();
+  push_undo();
+
   if(remove_dust_invert->value())
     doInvert();
   doRemoveDust(amount);
@@ -723,7 +733,7 @@ void FX::doRemoveDust(int amount)
   int r, g, b;
   int test, avg;
 
-  Dialog::showProgress((float)bmp->h / 64);
+  begin();
 
   for(y = (overscroll + 1); y < bmp->h - (overscroll + 1); y++)
   {
@@ -753,26 +763,23 @@ void FX::doRemoveDust(int amount)
         bmp->setpixel(x, y, avg, 0);
     }
 
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(1);
-      Dialog::updateProgress();
-    }
+    if(update(y) < 0)
+      return;
   }
 
-  Dialog::hideProgress();
+  end();
 }
 
 void FX::cancelRemoveDust()
 {
-  Dialog::hideProgress();
+  end();
   remove_dust->hide();
 }
 
 // colorize
 void FX::showColorize()
 {
-  begin();
+  push_undo();
   doColorize();
 }
 
@@ -780,7 +787,7 @@ void FX::doColorize()
 {
   int x, y;
 
-  Dialog::showProgress((float)bmp->h / 64);
+  begin();
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -804,19 +811,16 @@ void FX::doColorize()
       bmp->setpixel(x, y, Blend::colorize(c1, c2, 0), 0);
     }
 
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(1);
-      Dialog::updateProgress();
-    }
+    if(update(y) < 0)
+      return;
   }
 
-  Dialog::hideProgress();
+  end();
 }
 
 void FX::showCorrect()
 {
-  begin();
+  push_undo();
   doCorrect();
 }
 
@@ -829,7 +833,7 @@ void FX::doCorrect()
 {
   int x, y;
 
-  Dialog::showProgress((float)bmp->h / 64);
+  begin();
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -862,14 +866,11 @@ void FX::doCorrect()
       bmp->setpixel(x, y, Blend::keepLum(makecol(ra, ga, ba), l), 0);
     }
 
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(1);
-      Dialog::updateProgress();
-    }
+    if(update(y) < 0)
+      return;
   }
 
-  Dialog::hideProgress();
+  end();
 }
 
 void FX::showApplyPalette()
@@ -879,21 +880,22 @@ void FX::showApplyPalette()
 
 void FX::hideApplyPalette()
 {
-  begin();
+  apply_palette->hide();
+
+  push_undo();
 
   if(apply_palette_dither->value())
     doApplyPaletteDither();
   else
     doApplyPaletteNormal();
 
-  apply_palette->hide();
 }
 
 void FX::doApplyPaletteNormal()
 {
   int x, y;
 
-  Dialog::showProgress((float)bmp->h / 64);
+  begin();
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -903,14 +905,11 @@ void FX::doApplyPaletteNormal()
       bmp->setpixel(x, y, Palette::main->data[Palette::main->lookup[c & 0xFFFFFF]], 0);
     }
 
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(1);
-      Dialog::updateProgress();
-    }
+    if(update(y) < 0)
+      return;
   }
 
-  Dialog::hideProgress();
+  end();
 }
 
 void FX::doApplyPaletteDither()
@@ -936,7 +935,7 @@ void FX::doApplyPaletteDither()
     last[i] = 0;
   }
 
-  Dialog::showProgress((float)bmp->h / 64);
+  begin();
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
   {
@@ -986,19 +985,16 @@ void FX::doApplyPaletteDither()
       last[i] = 0;
     }
 
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(1);
-      Dialog::updateProgress();
-    }
+    if(update(y) < 0)
+      return;
   }
 
-  Dialog::hideProgress();
+  end();
 }
 
 void FX::cancelApplyPalette()
 {
-  Dialog::hideProgress();
+  end();
   apply_palette->hide();
 }
 
