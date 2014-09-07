@@ -53,6 +53,9 @@ void Blend::set(int mode)
     case SMOOTH:
       current_blend = smooth;
       break;
+    case SMOOTH_COLOR:
+      current_blend = smoothColor;
+      break;
     case INVERT:
       current_blend = invert;
       break;
@@ -247,6 +250,45 @@ int Blend::smooth(int c1, int, int t)
   a /= 15;
 
   return Blend::transAll(c1, makecola(r, g, b, a), t);
+}
+
+int Blend::smoothColor(int c1, int, int t)
+{
+  static int matrix[9] = { 1, 2, 1, 2, 3, 2, 1, 2, 1 };
+  int x = xpos;
+  int y = ypos;
+  int c[9];
+
+  // need to use getpixel here because of clipping
+  c[0] = bmp->getpixel(x - 1, y - 1);
+  c[1] = bmp->getpixel(x, y - 1);
+  c[2] = bmp->getpixel(x + 1, y - 1);
+  c[3] = bmp->getpixel(x - 1, y);
+  c[4] = bmp->getpixel(x, y);
+  c[5] = bmp->getpixel(x + 1, y);
+  c[6] = bmp->getpixel(x - 1, y + 1);
+  c[7] = bmp->getpixel(x, y + 1);
+  c[8] = bmp->getpixel(x + 1, y + 1);
+
+  int r = 0;
+  int g = 0;
+  int b = 0;
+
+  int i;
+
+  for(i = 0; i < 9; i++)
+  {
+    r += getr(c[i]) * matrix[i];
+    g += getg(c[i]) * matrix[i];
+    b += getb(c[i]) * matrix[i];
+  }
+
+  r /= 15;
+  g /= 15;
+  b /= 15;
+
+  int c3 = Blend::trans(c1, makecol(r, g, b), t);
+  return keepLum(c3, getl(c1));
 }
 
 // RGB<->HSV conversions use the following ranges:

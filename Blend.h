@@ -36,6 +36,7 @@ namespace Blend
     ALPHA_ADD,
     ALPHA_SUB,
     SMOOTH,
+    SMOOTH_COLOR,
     INVERT
   };
  
@@ -52,6 +53,7 @@ namespace Blend
   int alphaAdd(int, int, int);
   int alphaSub(int, int, int);
   int smooth(int, int, int);
+  int smoothColor(int, int, int);
   void rgbToHsv(int, int, int, int *, int *, int *);
   void hsvToRgb(int, int, int, int *, int *, int *);
 }
