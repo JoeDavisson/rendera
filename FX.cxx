@@ -18,6 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <cmath>
+
 #include "FX.h"
 #include "Bitmap.h"
 #include "Palette.h"
@@ -650,9 +652,9 @@ void FX::doRestore()
   bb /= count;
 
   // adjustment factors
-  double ra = (256.0 / (256 - rr)) / sqrt(256.0 / (rr + 1));
-  double ga = (256.0 / (256 - gg)) / sqrt(256.0 / (gg + 1));
-  double ba = (256.0 / (256 - bb)) / sqrt(256.0 / (bb + 1));
+  double ra = (256.0 / (256 - rr)) / std::sqrt(256.0 / (rr + 1));
+  double ga = (256.0 / (256 - gg)) / std::sqrt(256.0 / (gg + 1));
+  double ba = (256.0 / (256 - bb)) / std::sqrt(256.0 / (bb + 1));
 
   // begin restore
   begin();

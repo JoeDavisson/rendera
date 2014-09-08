@@ -18,6 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <cmath>
+
 #include "rendera.h"
 #include "Bitmap.h"
 #include "Map.h"
@@ -59,9 +61,9 @@ int main(int /* argc */, char** /* argv */)
 
   int i;
   for(i = 0; i < 65536; i++)
-    unfix_gamma[i] = pow((double)i / 65535, (1.0 / 2.2)) * 255;
+    unfix_gamma[i] = std::pow((double)i / 65535, (1.0 / 2.2)) * 255;
   for(i = 0; i < 256; i++)
-    fix_gamma[i] = pow((double)i / 255, 2.2) * 65535;
+    fix_gamma[i] = std::pow((double)i / 255, 2.2) * 65535;
 
   Bitmap::main = new Bitmap(640, 480, 64,
                             makecol(255, 255, 255), makecol(128, 128, 128));

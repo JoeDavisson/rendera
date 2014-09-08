@@ -18,6 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <cmath>
+
 #include "Gui.h"
 #include "Bitmap.h"
 #include "Blend.h"
@@ -422,8 +424,8 @@ void Gui::updateColor(int c)
   Blend::rgbToHsv(r, g, b, &h, &s, &v);
 
   float angle = ((3.14159 * 2) / 1536) * h;
-  int mx = 48 + 40 * cosf(angle);
-  int my = 48 + 40 * sinf(angle);
+  int mx = 48 + 40 * std::cos(angle);
+  int my = 48 + 40 * std::cos(angle);
   hue->var = mx + 96 * my;
   satval->var = (int)(s / 2.684) + 96 * (int)(v / 2.684);
 
@@ -647,20 +649,20 @@ void Gui::checkColor(Widget *, void *)
   for(i = 1; i < 1536; i++)
   {
     float angle = ((3.14159 * 2) / 1536) * i;
-    int x1 = 48 + 40 * cosf(angle);
-    int y1 = 48 + 40 * sinf(angle);
-    int x2 = 48 + 20 * cosf(angle);
-    int y2 = 48 + 20 * sinf(angle);
+    int x1 = 48 + 40 * std::cos(angle);
+    int y1 = 48 + 40 * std::sin(angle);
+    int x2 = 48 + 20 * std::cos(angle);
+    int y2 = 48 + 20 * std::sin(angle);
 
     Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
     hue->bitmap->line(x1, y1, x2, y2, makecol(r, g, b), 0);
     hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makecol(r, g, b), 0);
   }
 
-  int x1 = 48 + 40 * cosf(mouse_angle);
-  int y1 = 48 + 40 * sinf(mouse_angle);
-  int x2 = 48 + 20 * cosf(mouse_angle);
-  int y2 = 48 + 20 * sinf(mouse_angle);
+  int x1 = 48 + 40 * std::cos(mouse_angle);
+  int y1 = 48 + 40 * std::sin(mouse_angle);
+  int x2 = 48 + 20 * std::cos(mouse_angle);
+  int y2 = 48 + 20 * std::sin(mouse_angle);
 
   hue->bitmap->xorLine(x1, y1, x2, y2);
 

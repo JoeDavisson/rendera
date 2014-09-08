@@ -31,13 +31,10 @@ install:
   - sudo apt-get --assume-yes install zlib1g-dev
 
 script:
-  - cd ${TRAVIS_BUILD_DIR}
-  - pwd
-  - mkdir -vp m4
-  - mkdir -vp _build
-  - cd _build
-  - autoreconf -ivf ..
-  - ../configure --prefix=`mktemp -t -d rendera-prefix-XXXXXXXX`
+  - mkdir -vp ${TRAVIS_BUILD_DIR}/m4
+  - cd `mktemp -t -d rendera-build-XXXXXX`
+  - autoreconf -ivf ${TRAVIS_BUILD_DIR}
+  - ${TRAVIS_BUILD_DIR}/configure --prefix=`mktemp -t -d rendera-prefix-XXXXXX`
   - make
   - make check
   - make distcheck
