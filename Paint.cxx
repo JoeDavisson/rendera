@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  inline bool is_edge(Map *map, const int x, const int y)
+  inline bool is_edge(Map *map, const int &x, const int &y)
   {
     if(x < 1 || x >= map->w - 1 || y < 1 || y >= map->h - 1)
       return 0;
@@ -42,7 +42,7 @@ namespace
       return 1;
   }
 
-  inline int fdist(const int x1, const int y1, const int x2, const int y2)
+  inline int fdist(const int &x1, const int &y1, const int &x2, const int &y2)
   {
     const int dx = (x1 - x2);
     const int dy = (y1 - y2);
@@ -50,9 +50,9 @@ namespace
     return dx * dx + dy * dy;
   }
 
-  inline int sdist(const int x1, const int y1,
-                   const int x2, const int y2,
-                   const int edge, const int trans)
+  inline int sdist(const int &x1, const int &y1,
+                   const int &x2, const int &y2,
+                   const int &edge, const int &trans)
   {
     float d = sqrtf(fdist(x1, y1, x2, y2));
     float s = (255 - trans) / (((3 << edge) >> 1) + 1);

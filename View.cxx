@@ -39,8 +39,8 @@ namespace
   int oldx1 = 0;
   int oldy1 = 0;
 
-  inline void gridSetpixel(const Bitmap *bmp, const int x, const int y,
-                                   const int c, const int t)
+  inline void gridSetpixel(const Bitmap *bmp, const int &x, const int &y,
+                           const int &c, const int &t)
   {
     if(x < 0 || y < 0 || x >= bmp->w || y >= bmp->h)
       return;
@@ -49,8 +49,8 @@ namespace
     *p = blend_fast_solid(*p, c, t);
   }
 
-  inline void gridHline(Bitmap *bmp, int x1, int y, int x2,
-                                const int c, const int t)
+  inline void gridHline(Bitmap *bmp, int x1, const int &y, int &x2,
+                        const int &c, const int &t)
   {
     if(y < 0 || y >= bmp->h)
       return;
