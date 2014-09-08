@@ -42,15 +42,15 @@ namespace
   }
 
   // compute quantization error
-  inline float error24(const int c1, const int c2,
-                       const float f1, const float f2)
+  inline float error24(const int &c1, const int &c2,
+                       const float &f1, const float &f2)
   {
     return ((f1 * f2) / (f1 + f2)) * diff24(c1, c2);
   }
 
   // merge two colors
-  inline int merge24(const int c1, const int c2,
-                     const float f1, const float f2)
+  inline int merge24(const int &c1, const int &c2,
+                     const float &f1, const float &f2)
   {
     // reciprocate the divide
     const float mul = 1.0f / (f1 + f2);
@@ -327,6 +327,16 @@ void Quantize::pca(Bitmap *src, int size)
                        list[colors[ii]], list[colors[j]]);
       }
       pos += MAX_COLORS;
+    }
+
+    // user cancelled operation
+    if(Fl::get_key(FL_Escape))
+    {
+      delete[] err_row;
+      delete[] err_data;
+      delete[] colors;
+      delete[] list;
+      return;
     }
 
     Dialog::updateProgress();

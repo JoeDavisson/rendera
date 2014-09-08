@@ -31,57 +31,57 @@ inline int rnd32(void)
   return seed;
 }
 
-inline int makecol(const int r, const int g, const int b)
+inline int makecol(const int &r, const int &g, const int &b)
 {
   return r | g << 8 | b << 16 | 0xFF000000;
 }
 
-inline int makecola(const int r, const int g, const int b, const int a)
+inline int makecola(const int &r, const int &g, const int &b, const int &a)
 {
   return r | g << 8 | b << 16 | a << 24;
 }
 
-inline int makecol_notrans(const int r, const int g, const int b)
+inline int makecol_notrans(const int &r, const int &g, const int &b)
 {
   return r | g << 8 | b << 16;
 }
 
-inline int geta(const int c)
+inline int geta(const int &c)
 {
   return (c >> 24) & 255;
 }
 
-inline int getr(const int c)
+inline int getr(const int &c)
 {
   return c & 255;
 }
 
-inline int getg(const int c)
+inline int getg(const int &c)
 {
   return (c >> 8) & 255;
 }
 
-inline int getb(const int c)
+inline int getb(const int &c)
 {
   return (c >> 16) & 255;
 }
 
-inline int getv(const int c)
+inline int getv(const int &c)
 {
   return (getr(c) + getg(c) + getb(c)) / 3;
 }
 
-inline int getl(const int c)
+inline int getl(const int &c)
 {
   return ((76 * getr(c)) + (150 * getg(c)) + (29 * getb(c))) / 255;
 }
 
-inline int SCALE(const int a, const int b)
+inline int scale_val(const int &a, const int &b)
 {
   return (a * (255 - b) / 255) + b;
 }
 
-inline int diff24(const int c1, const int c2)
+inline int diff24(const int &c1, const int &c2)
 {
   const int r = getr(c1) - getr(c2);
   const int g = getg(c1) - getg(c2);
@@ -90,7 +90,7 @@ inline int diff24(const int c1, const int c2)
   return r * r + g * g + b * b;
 }
 
-inline int blend_fast_solid(const int c1, const int c2, const int t)
+inline int blend_fast_solid(const int &c1, const int &c2, const int &t)
 {
   const int rb =
     (((((c1 & 0xFF00FF) - (c2 & 0xFF00FF)) * t) >> 8) + c2) & 0xFF00FF;
@@ -99,7 +99,7 @@ inline int blend_fast_solid(const int c1, const int c2, const int t)
   return rb | g | 0xFF000000;
 }
 
-inline int blend_fast_xor(const int c1, const int t)
+inline int blend_fast_xor(const int &c1, const int &t)
 {
   const int c2 = c1 ^ 0x00FFFFFF;
   const int rb =
@@ -109,7 +109,7 @@ inline int blend_fast_xor(const int c1, const int t)
   return rb | g | 0xFF000000;
 }
 
-inline int convert_format(int c, int bgr_order)
+inline int convert_format(const int &c, const int &bgr_order)
 {
   if(bgr_order)
     return makecol(getb(c), getg(c), getr(c));
@@ -153,12 +153,12 @@ inline uint32_t parse_uint32(unsigned char *&buffer)
   return num;
 }
 
-inline void write_uint8(uint8_t num, FILE *out)
+inline void write_uint8(const uint8_t &num, FILE *out)
 {
   fputc(num, out);
 }
 
-inline void write_uint16(uint16_t num, FILE *out)
+inline void write_uint16(const uint16_t &num, FILE *out)
 {
 //  #if BYTE_ORDER == BIG_ENDIAN
 //  fputc((num >> 8) & 0xff, out);
@@ -169,7 +169,7 @@ inline void write_uint16(uint16_t num, FILE *out)
 //  #endif
 }
 
-inline void write_uint32(uint32_t num, FILE *out)
+inline void write_uint32(const uint32_t &num, FILE *out)
 {
 //  #if BYTE_ORDER == BIG_ENDIAN
 //  fputc((num >> 24) & 0xff, out);
