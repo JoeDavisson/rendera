@@ -133,7 +133,10 @@ dist_pkgdata_DATA =     \
   data/zoom_out.png
 
 
-check_PROGRAMS = test_fltk_version
+check_PROGRAMS =    \
+  test_fltk_version \
+  test_endian
 test_fltk_version_SOURCES = test/fltk_version.cc
+test_endian_SOURCES = test/endian.cc
 
 TESTS = $(check_PROGRAMS)

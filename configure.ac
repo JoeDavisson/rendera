@@ -46,10 +46,9 @@ AC_CHECK_LIB([X11],[XInitThreads],[],
 
 dnl Checks for header files.
 
-dnl AC_CHECK_HEADERS([stdint.h stdlib.h])
-
-AC_CHECK_HEADER([stdint.h],[],[AC_MSG_ERROR([stdint.h missing])])
 AC_CHECK_HEADER([cstdlib],[],[AC_MSG_ERROR([cstdlib missing])])
+AC_CHECK_HEADER([endian.h],[],[AC_MSG_ERROR([endian.h missing])])
+AC_CHECK_HEADER([stdint.h],[],[AC_MSG_ERROR([stdint.h missing])])
 
 
 # Checks for typedefs, structures, and compiler characteristics.
