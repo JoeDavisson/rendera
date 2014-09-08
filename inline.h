@@ -99,16 +99,6 @@ inline int blend_fast_solid(const int &c1, const int &c2, const int &t)
   return rb | g | 0xFF000000;
 }
 
-inline int blend_fast_xor(const int &c1, const int &t)
-{
-  const int c2 = c1 ^ 0x00FFFFFF;
-  const int rb =
-    (((((c1 & 0xFF00FF) - (c2 & 0xFF00FF)) * t) >> 8) + c2) & 0xFF00FF;
-  const int g = (((((c1 & 0xFF00) - (c2 & 0xFF00)) * t) >> 8) + c2) & 0xFF00;
-
-  return rb | g | 0xFF000000;
-}
-
 inline int convert_format(const int &c, const int &bgr_order)
 {
   if(bgr_order)
