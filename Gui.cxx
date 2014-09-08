@@ -425,7 +425,7 @@ void Gui::updateColor(int c)
 
   float angle = ((3.14159 * 2) / 1536) * h;
   int mx = 48 + 40 * std::cos(angle);
-  int my = 48 + 40 * std::cos(angle);
+  int my = 48 + 40 * std::sin(angle);
   hue->var = mx + 96 * my;
   satval->var = (int)(s / 2.684) + 96 * (int)(v / 2.684);
 
