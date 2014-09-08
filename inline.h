@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <stdint.h>
 
+#include "endian.h"
+
 // fast random number seed
 extern int seed;
 
@@ -31,6 +33,38 @@ inline int rnd32(void)
 {
   seed = (seed << 17) ^ (seed >> 13) ^ (seed << 5);
   return seed;
+}
+
+struct rgba_t
+{
+#if 0
+    /*  */
+#elif ( BYTE_ORDER == LITTLE_ENDIAN )
+    uint8_t r ;
+    uint8_t g ;
+    uint8_t b ;
+    uint8_t a ;
+#elif ( BYTE_ORDER == BIG_ENDIAN )
+    uint8_t a ;
+    uint8_t b ;
+    uint8_t g ;
+    uint8_t r ;
+#else
+#  error "unsupported endianness"
+#endif
+};
+
+union un_rgba_t
+{
+    uint32_t uint32_ ;
+    rgba_t rgba_ ;
+};
+
+inline rgba_t get_rgba( uint32_t const&n )
+{
+    un_rgba_t u ;
+    u.uint32_ = n ;
+    return u.rgba_ ;
 }
 
 inline int makecol(const int &r, const int &g, const int &b)
