@@ -55,9 +55,9 @@ rendera_SOURCES =     \
   View.H              \
   Widget.cxx          \
   Widget.H            \
-  inline.H            \
-  main.cxx            \
-  rendera.H
+  Inline.H            \
+  Main.cxx            \
+  Rendera.H
 
 
 rendera_LDFLAGS = $(shell fltk-config --ldflags)

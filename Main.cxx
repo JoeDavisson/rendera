@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <cmath>
 
-#include "rendera.H"
+#include "Rendera.H"
 #include "Bitmap.H"
 #include "Map.H"
 #include "Palette.H"
@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // for fast random number generator in inline.h
 int seed = 12345;
 
+// gamma correction tables
 int *fix_gamma;
 int *unfix_gamma;
 
