@@ -136,7 +136,8 @@ dist_pkgdata_DATA =     \
 check_PROGRAMS =    \
   test_fltk_version \
   test_endian
-test_fltk_version_SOURCES = test/fltk_version.cc
-test_endian_SOURCES = test/endian.cc
+
+test_fltk_version_SOURCES = test/fltk_version.C
+test_endian_SOURCES = test/endian.C
 
 TESTS = $(check_PROGRAMS)
