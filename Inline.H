@@ -76,7 +76,7 @@ inline int make_rgba(const int &r, const int &g, const int &b, const int &a)
   return r | g << 8 | b << 16 | a << 24;
 }
 
-inline int make_rgb_notrans(const int &r, const int &g, const int &b)
+inline int make_rgb24(const int &r, const int &g, const int &b)
 {
   return r | g << 8 | b << 16;
 }

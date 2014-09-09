@@ -196,7 +196,7 @@ void Palette::fillLookup()
     {
       for(r = 0; r <= 256 - step; r += step)
       {
-        int c = make_rgb_notrans(r, g, b);
+        int c = make_rgb24(r, g, b);
         int smallest = 0xFFFFFF;
         use = 0;
 
@@ -216,7 +216,7 @@ void Palette::fillLookup()
           {
             for(i = r; i < r + step; i++)
             {
-              lookup[make_rgb_notrans(i, j, k)] = use;
+              lookup[make_rgb24(i, j, k)] = use;
             }
           }
         }

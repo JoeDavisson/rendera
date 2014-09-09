@@ -59,7 +59,7 @@ namespace
     const int g = (f1 * rgba1.g + f2 * rgba2.g) * mul;
     const int b = (f1 * rgba1.b + f2 * rgba2.b) * mul;
 
-    return make_rgb_notrans(r, g, b);
+    return make_rgb24(r, g, b);
   }
 
   // 1D bilinear filter to stretch a palette
@@ -109,7 +109,7 @@ namespace
       g = unfix_gamma[(int)g];
       b = unfix_gamma[(int)b];
 
-      temp[x] = make_rgb_notrans((int)r, (int)g, (int)b);
+      temp[x] = make_rgb24((int)r, (int)g, (int)b);
 
       c[0] -= u1;
       c[1] -= u2;
@@ -148,7 +148,7 @@ namespace
             {
               for(i = 0; i < step; i++)
               {
-                int c = make_rgb_notrans(r + i, g + j, b + k);
+                int c = make_rgb24(r + i, g + j, b + k);
                 float d = list[c];
 
                 rr += d * getr(c);
@@ -165,7 +165,7 @@ namespace
             rr /= div;
             gg /= div;
             bb /= div;
-            colors[count] = make_rgb_notrans((int)rr, (int)gg, (int)bb);
+            colors[count] = make_rgb24((int)rr, (int)gg, (int)bb);
             list[colors[count]] = div;
             count++;
           }
@@ -228,7 +228,7 @@ void Quantize::pca(Bitmap *src, int size)
       if(b >= 252)
         b = 255;
 
-      c = make_rgb_notrans(r, g, b);
+      c = make_rgb24(r, g, b);
 
       if(list[c] < inc)
         count++;
@@ -241,8 +241,8 @@ void Quantize::pca(Bitmap *src, int size)
   if(count < 2)
   {
     count = 2;
-    colors[0] = make_rgb_notrans(0, 0, 0);
-    colors[1] = make_rgb_notrans(255, 255, 255);
+    colors[0] = make_rgb24(0, 0, 0);
+    colors[1] = make_rgb24(255, 255, 255);
     list[colors[0]] = inc;
     list[colors[1]] = inc;
   }
