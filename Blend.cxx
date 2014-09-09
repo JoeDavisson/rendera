@@ -84,21 +84,22 @@ int Blend::invert(int c1, int, int)
 
 int Blend::trans(int c1, int c2, int t)
 {
-  int r = getr(c2) + (t * (getr(c1) - getr(c2))) / 255;
-  int g = getg(c2) + (t * (getg(c1) - getg(c2))) / 255;
-  int b = getb(c2) + (t * (getb(c1) - getb(c2))) / 255;
-
-  return makecola(r, g, b, geta(c1));
+  struct rgba_t rgba1 = get_rgba(c1);
+  struct rgba_t rgba2 = get_rgba(c2);
+  return makecola(rgba2.r + (t * (rgba1.r - rgba2.r)) / 255,
+                  rgba2.g + (t * (rgba1.g - rgba2.g)) / 255,
+                  rgba2.b + (t * (rgba1.b - rgba2.b)) / 255,
+                  rgba1.a);
 }
 
 int Blend::transAll(int c1, int c2, int t)
 {
-  int r = getr(c2) + (t * (getr(c1) - getr(c2))) / 255;
-  int g = getg(c2) + (t * (getg(c1) - getg(c2))) / 255;
-  int b = getb(c2) + (t * (getb(c1) - getb(c2))) / 255;
-  int a = geta(c2) + (t * (geta(c1) - geta(c2))) / 255;
-
-  return makecola(r, g, b, a);
+  struct rgba_t rgba1 = get_rgba(c1);
+  struct rgba_t rgba2 = get_rgba(c2);
+  return makecola(rgba2.r + (t * (rgba1.r - rgba2.r)) / 255,
+                  rgba2.g + (t * (rgba1.g - rgba2.g)) / 255,
+                  rgba2.b + (t * (rgba1.b - rgba2.b)) / 255,
+                  rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
 }
 
 int Blend::darken(int c1, int c2, int t)
@@ -159,16 +160,16 @@ int Blend::colorize(int c1, int c2, int t)
 // so an image may be re-colored indefinately with no artifacts
 int Blend::keepLum(int c, int dest)
 {
-  int src = getl(c);
-  int n[3];
-
   // these have to be in order of importance in the luminance calc: G, R, B
-  n[1] = getr(c);
-  n[0] = getg(c);
-  n[2] = getb(c);
+  struct rgba_t rgba = get_rgba(c);
+  int n[3];
+  n[1] = rgba.r;
+  n[0] = rgba.g;
+  n[2] = rgba.b;
 
   // iterate to find similar color with same luminance
   int i;
+  int src = getl_unpacked(n[1], n[0], n[2]);
 
   while(src < dest)
   {
@@ -177,7 +178,7 @@ int Blend::keepLum(int c, int dest)
       if(n[i] < 255)
       {
         n[i]++;
-        src = getl(makecol(n[1], n[0], n[2]));
+        src = getl_unpacked(n[1], n[0], n[2]);
         if(src >= dest)
           break;
       }
@@ -191,14 +192,14 @@ int Blend::keepLum(int c, int dest)
       if(n[i] > 0)
       {
         n[i]--;
-        src = getl(makecol(n[1], n[0], n[2]));
+        src = getl_unpacked(n[1], n[0], n[2]);
         if(src <= dest)
           break;
       }
     }
   }
 
-  return makecola(n[1], n[0], n[2], geta(c));
+  return makecola(n[1], n[0], n[2], rgba.a);
 }
 
 int Blend::alphaAdd(int c1, int, int t)

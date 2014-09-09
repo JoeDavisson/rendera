@@ -52,11 +52,12 @@ namespace
   inline int merge24(const int &c1, const int &c2,
                      const float &f1, const float &f2)
   {
-    // reciprocate the divide
+    const struct rgba_t rgba1 = get_rgba(c1);
+    const struct rgba_t rgba2 = get_rgba(c2);
     const float mul = 1.0f / (f1 + f2);
-    const int r = (f1 * getr(c1) + f2 * getr(c2)) * mul;
-    const int g = (f1 * getg(c1) + f2 * getg(c2)) * mul;
-    const int b = (f1 * getb(c1) + f2 * getb(c2)) * mul;
+    const int r = (f1 * rgba1.r + f2 * rgba2.r) * mul;
+    const int g = (f1 * rgba1.g + f2 * rgba2.g) * mul;
+    const int b = (f1 * rgba1.b + f2 * rgba2.b) * mul;
 
     return makecol_notrans(r, g, b);
   }

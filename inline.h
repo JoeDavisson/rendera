@@ -60,7 +60,7 @@ union un_rgba_t
     rgba_t rgba_ ;
 };
 
-inline rgba_t get_rgba( uint32_t const&n )
+inline rgba_t get_rgba( uint32_t const &n )
 {
     un_rgba_t u ;
     u.uint32_ = n ;
@@ -110,6 +110,11 @@ inline int getv(const int &c)
 inline int getl(const int &c)
 {
   return ((76 * getr(c)) + (150 * getg(c)) + (29 * getb(c))) / 255;
+}
+
+inline int getl_unpacked(const int &r, const int &g, const int &b)
+{
+  return (76 * r + 150 * g + 29 * b) / 255;
 }
 
 inline int scale_val(const int &a, const int &b)
