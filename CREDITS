@@ -1,0 +1,10 @@
+Joe Davisson <joe_7@sbcglobal.net>
+  -main program author
+  -user interface and graphics
+
+Rubicks <rubicks00@gmail.com>
+  -build system/related tests
+  -travis setup
+  -program organization/refactoring
+  -rgba_t related methods in inline.h
+
