@@ -3,8 +3,8 @@
 #include <iostream>
 #include <cassert>
 
-#include "rendera.H"
-#include "inline.H"
+#include "Rendera.H"
+#include "Inline.H"
 
 int
 main( int, char** )
