@@ -66,7 +66,7 @@ int main(int /* argc */, char** /* argv */)
     fix_gamma[i] = std::pow((double)i / 255, 2.2) * 65535;
 
   Bitmap::main = new Bitmap(640, 480, 64,
-                            makecol(255, 255, 255), makecol(128, 128, 128));
+                            make_rgb(255, 255, 255), make_rgb(128, 128, 128));
   Bitmap::preview = new Bitmap(8, 8);
 
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);

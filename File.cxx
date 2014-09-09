@@ -320,7 +320,7 @@ Bitmap *File::loadJPG(const char *fn, int overscroll)
   int h = cinfo.output_height;
 
   Bitmap *temp = new Bitmap(w, h, overscroll,
-                      makecol(255, 255, 255), makecol(128, 128, 128));
+                      make_rgb(255, 255, 255), make_rgb(128, 128, 128));
   int x;
   int *p = temp->row[overscroll] + overscroll;
 
@@ -332,7 +332,7 @@ Bitmap *File::loadJPG(const char *fn, int overscroll)
 
       for(x = 0; x < row_stride; x += 3)
       {
-        *p++ = makecol(linebuf[0][x] & 0xFF,
+        *p++ = make_rgb(linebuf[0][x] & 0xFF,
                        linebuf[0][x + 1] & 0xFF,
                        linebuf[0][x + 2] & 0xFF);
       }
@@ -348,7 +348,7 @@ Bitmap *File::loadJPG(const char *fn, int overscroll)
 
       for(x = 0; x < row_stride; x += 1)
       {
-        *p++ = makecol(linebuf[0][x] & 0xFF,
+        *p++ = make_rgb(linebuf[0][x] & 0xFF,
                        linebuf[0][x] & 0xFF,
                        linebuf[0][x] & 0xFF);
       }
@@ -439,7 +439,7 @@ Bitmap *File::loadBMP(const char *fn, int overscroll)
   h = ABS(h);
 
   Bitmap *temp = new Bitmap(w, h, overscroll,
-                            makecol(255, 255, 255), makecol(128, 128, 128));
+                            make_rgb(255, 255, 255), make_rgb(128, 128, 128));
 
   unsigned char *linebuf = new unsigned char[w * mul + pad];
 
@@ -463,7 +463,7 @@ Bitmap *File::loadBMP(const char *fn, int overscroll)
       {
         int x1 = negx ? w - 1 - x : x;
         x1 += overscroll;
-        *(temp->row[y1] + x1) = makecol(linebuf[xx + 2] & 0xFF,
+        *(temp->row[y1] + x1) = make_rgb(linebuf[xx + 2] & 0xFF,
                                         linebuf[xx + 1] & 0xFF,
                                         linebuf[xx + 0] & 0xFF);
         xx += mul;
@@ -533,7 +533,7 @@ Bitmap *File::loadTGA(const char *fn, int overscroll)
   int h = header.h;
 
   Bitmap *temp = new Bitmap(w, h, overscroll,
-                            makecol(255, 255, 255), makecol(128, 128, 128));
+                            make_rgb(255, 255, 255), make_rgb(128, 128, 128));
 
   unsigned char *linebuf = new unsigned char[w * depth];
 
@@ -571,14 +571,14 @@ Bitmap *File::loadTGA(const char *fn, int overscroll)
       if(depth == 3)
       {
         *(temp->row[y + overscroll] + x + overscroll) =
-                       makecol((linebuf[x * depth + 2] & 0xFF),
+                       make_rgb((linebuf[x * depth + 2] & 0xFF),
                                (linebuf[x * depth + 1] & 0xFF),
                                (linebuf[x * depth + 0] & 0xFF));
       }
       else if(depth == 4)
       {
         *(temp->row[y + overscroll] + x + overscroll) =
-                       makecola((linebuf[x * depth + 2] & 0xFF),
+                       make_rgba((linebuf[x * depth + 2] & 0xFF),
                                 (linebuf[x * depth + 1] & 0xFF),
                                 (linebuf[x * depth + 0] & 0xFF),
                                 (linebuf[x * depth + 3] & 0xFF));
@@ -659,7 +659,7 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
   int x, y;
 
   Bitmap *temp = new Bitmap(w, h, overscroll,
-                            makecol(255, 255, 255), makecol(128, 128, 128));
+                            make_rgb(255, 255, 255), make_rgb(128, 128, 128));
 
   int *p = temp->row[overscroll] + overscroll;
 
@@ -673,13 +673,13 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
     {
       if(depth == 3)
       {
-        *p++ = makecol(linebuf[xx + 0] & 0xFF,
+        *p++ = make_rgb(linebuf[xx + 0] & 0xFF,
                        linebuf[xx + 1] & 0xFF,
                        linebuf[xx + 2] & 0xFF);
       }
       else if(depth == 4)
       {
-        *p++ = makecola(linebuf[xx + 0] & 0xFF,
+        *p++ = make_rgba(linebuf[xx + 0] & 0xFF,
                         linebuf[xx + 1] & 0xFF,
                         linebuf[xx + 2] & 0xFF,
                         linebuf[xx + 3] & 0xFF);

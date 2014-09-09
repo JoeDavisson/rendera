@@ -310,7 +310,7 @@ void Dialog::hideNewImage()
   delete Bitmap::main;
   int overscroll = Bitmap::main->overscroll;
   Bitmap::main = new Bitmap(w, h, overscroll,
-                            makecol(255, 255, 255), makecol(128, 128, 128));
+                            make_rgb(255, 255, 255), make_rgb(128, 128, 128));
 
   delete Map::main;
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
@@ -410,7 +410,7 @@ void Dialog::doEditorPalette(Widget *widget, void *var)
 
       for(i = begin; i < end; i++)
       {
-        pal->data[i] = makecol(r, g, b);
+        pal->data[i] = make_rgb(r, g, b);
         r += stepr;
         g += stepg;
         b += stepb;
@@ -439,7 +439,7 @@ void Dialog::doEditorPalette(Widget *widget, void *var)
       for(i = begin; i < end; i++)
       {
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
-        pal->data[i] = makecol(r, g, b);
+        pal->data[i] = make_rgb(r, g, b);
         h += steph;
         s += steps;
         v += stepv;
@@ -473,19 +473,19 @@ void Dialog::doEditorSetHsv(bool redraw)
 
   if(redraw)
   {
-    editor_h->bitmap->clear(makecol(0, 0, 0));
-    editor_sv->bitmap->clear(makecol(0, 0, 0));
+    editor_h->bitmap->clear(make_rgb(0, 0, 0));
+    editor_sv->bitmap->clear(make_rgb(0, 0, 0));
 
     for(y = 0; y < 256; y++)
     {
       for(x = 0; x < 256; x++)
       {
         Blend::hsvToRgb(h, x, y, &r, &g, &b);
-        editor_sv->bitmap->setpixelSolid(x, y, makecol(r, g, b), 0);
+        editor_sv->bitmap->setpixelSolid(x, y, make_rgb(r, g, b), 0);
       }
 
       Blend::hsvToRgb(y * 6, 255, 255, &r, &g, &b);
-      editor_h->bitmap->hline(0, y, 23, makecol(r, g, b), 0);
+      editor_h->bitmap->hline(0, y, 23, make_rgb(r, g, b), 0);
     }
   }
   else
@@ -536,7 +536,7 @@ void Dialog::doEditorGetH()
   int r, g, b;
 
   Blend::hsvToRgb(h, s, v, &r, &g, &b);
-  Brush::main->color = makecol(r, g, b);
+  Brush::main->color = make_rgb(r, g, b);
 
   Gui::updateColor(Brush::main->color);
   doEditorSetHsv(1);
@@ -550,7 +550,7 @@ void Dialog::doEditorGetSV()
   int r, g, b;
 
   Blend::hsvToRgb(h, s, v, &r, &g, &b);
-  Brush::main->color = makecol(r, g, b);
+  Brush::main->color = make_rgb(r, g, b);
 
   Gui::updateColor(Brush::main->color);
   doEditorSetHsv(0);

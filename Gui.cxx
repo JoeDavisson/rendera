@@ -252,8 +252,8 @@ void Gui::init()
   paint->box(FL_UP_BOX);
   y1 = 20;
   paint_brush = new Widget(paint, 8, y1, 96, 96, "Brush Preview", 0, 0, 0);
-  paint_brush->bitmap->clear(makecol(255, 255, 255));
-  paint_brush->bitmap->setpixelSolid(48, 48, makecol(0, 0, 0), 0);
+  paint_brush->bitmap->clear(make_rgb(255, 255, 255));
+  paint_brush->bitmap->setpixelSolid(48, 48, make_rgb(0, 0, 0), 0);
   y1 += 96 + 8;
   paint_size = new Widget(paint, 8, y1, 96, 24, "Size", "data/size.png", 6, 24, (Fl_Callback *)checkPaintSize);
   y1 += 24 + 8;
@@ -556,7 +556,7 @@ void Gui::checkPaintSize(Widget *, void *var)
   int shape = paint_shape->var;
 
   brush->make(shape, size);
-  paint_brush->bitmap->clear(makecol(255, 255, 255));
+  paint_brush->bitmap->clear(make_rgb(255, 255, 255));
 
   int i;
 
@@ -564,7 +564,7 @@ void Gui::checkPaintSize(Widget *, void *var)
   {
     paint_brush->bitmap->setpixelSolid(48 + brush->solidx[i],
                                              48 + brush->solidy[i],
-                                             makecol(0, 0, 0), 0);
+                                             make_rgb(0, 0, 0), 0);
   }
 
   paint_brush->redraw();
@@ -637,7 +637,7 @@ void Gui::checkColor(Widget *, void *)
   int r, g, b;
 
   Blend::hsvToRgb(h, s, v, &r, &g, &b);
-  Brush::main->color = makecol(r, g, b);
+  Brush::main->color = make_rgb(r, g, b);
   Brush::main->trans = trans->var * 2.685;
   Brush::main->blend = blend->value();
 
@@ -655,8 +655,8 @@ void Gui::checkColor(Widget *, void *)
     int y2 = 48 + 20 * std::sin(angle);
 
     Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
-    hue->bitmap->line(x1, y1, x2, y2, makecol(r, g, b), 0);
-    hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makecol(r, g, b), 0);
+    hue->bitmap->line(x1, y1, x2, y2, make_rgb(r, g, b), 0);
+    hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, make_rgb(r, g, b), 0);
   }
 
   int x1 = 48 + 40 * std::cos(mouse_angle);
@@ -673,7 +673,7 @@ void Gui::checkColor(Widget *, void *)
     for(x = 0; x < 96; x++)
     {
       Blend::hsvToRgb(h, x * 2.685, y * 2.685, &r, &g, &b);
-      satval->bitmap->setpixelSolid(x, y, makecol(r, g, b), 0);
+      satval->bitmap->setpixelSolid(x, y, make_rgb(r, g, b), 0);
     }
   }
 

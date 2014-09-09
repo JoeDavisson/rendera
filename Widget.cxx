@@ -55,7 +55,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   use_highlight = 1;
 
   // shade
-  bitmap->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1, makecol(128, 128, 128), 192);
+  bitmap->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1, make_rgb(128, 128, 128), 192);
 }
 
 // use a blank bitmap
@@ -72,7 +72,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   stepy = sy;
   group = g;
   bitmap = new Bitmap(w, h);
-  bitmap->clear(makecol(255, 255, 255));
+  bitmap->clear(make_rgb(255, 255, 255));
   image = new Fl_RGB_Image((unsigned char *)bitmap->data, w, h, 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);

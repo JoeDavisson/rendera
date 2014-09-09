@@ -219,7 +219,7 @@ void FX::doNormalize()
       int g = (getg(c) - g_low) * g_scale;
       int b = (getb(c) - b_low) * b_scale;
 
-      bmp->setpixel(x, y, makecol(r, g, b), 0);
+      bmp->setpixel(x, y, make_rgb(r, g, b), 0);
     }
 
     if(update(y) < 0)
@@ -295,7 +295,7 @@ void FX::doEqualize()
       g = list_g[g] * scale;
       b = list_b[b] * scale;
 
-      bmp->setpixel(x, y, makecol(r, g, b), 0);
+      bmp->setpixel(x, y, make_rgb(r, g, b), 0);
     }
 
     if(update(y) < 0)
@@ -408,7 +408,7 @@ void FX::doValueStretch()
       g = MIN(MAX(g, 0), 255);
       b = MIN(MAX(b, 0), 255);
 
-      bmp->setpixel(x, y, makecol(r, g, b), 0);
+      bmp->setpixel(x, y, make_rgb(r, g, b), 0);
     }
 
     if(update(y) < 0)
@@ -482,7 +482,7 @@ void FX::doSaturate()
         s = temp;
       Blend::hsvToRgb(h, s, v, &r, &g, &b);
 
-      bmp->setpixel(x, y, Blend::keepLum(makecol(r, g, b), l), 0);
+      bmp->setpixel(x, y, Blend::keepLum(make_rgb(r, g, b), l), 0);
     }
 
     if(update(y) < 0)
@@ -552,7 +552,7 @@ void FX::doRotateHue(int amount)
       if(h >= 1536)
         h -= 1536;
       Blend::hsvToRgb(h, s, v, &r, &g, &b);
-      c = makecol(r, g, b);
+      c = make_rgb(r, g, b);
 
       bmp->setpixel(x, y, c, 0);
     }
@@ -677,7 +677,7 @@ void FX::doRestore()
       g = MAX(MIN(g, 255), 0);
       b = MAX(MIN(b, 255), 0);
 
-      bmp->setpixel(x, y, makecol(r, g, b), 0);
+      bmp->setpixel(x, y, make_rgb(r, g, b), 0);
     }
 
     if(update(y) < 0)
@@ -760,7 +760,7 @@ void FX::doRemoveDust(int amount)
         b += getb(c[i]);
       }
 
-      avg = makecol(r / 8, g / 8, b / 8);
+      avg = make_rgb(r / 8, g / 8, b / 8);
       if((getl(avg) - getl(test)) > amount)
         bmp->setpixel(x, y, avg, 0);
     }
@@ -809,7 +809,7 @@ void FX::doColorize()
       b = getb(Brush::main->color);
       Blend::rgbToHsv(r, g, b, &h, &s, &v);
       Blend::hsvToRgb(h, (sat * s) / (sat + s), v, &r, &g, &b);
-      int c2 = makecol(r, g, b);
+      int c2 = make_rgb(r, g, b);
       bmp->setpixel(x, y, Blend::colorize(c1, c2, 0), 0);
     }
 
@@ -865,7 +865,7 @@ void FX::doCorrect()
       Blend::rgbToHsv(ra, ga, ba, &h, &s, &v);
       Blend::hsvToRgb(h, sat, val, &ra, &ga, &ba);
 
-      bmp->setpixel(x, y, Blend::keepLum(makecol(ra, ga, ba), l), 0);
+      bmp->setpixel(x, y, Blend::keepLum(make_rgb(ra, ga, ba), l), 0);
     }
 
     if(update(y) < 0)
@@ -958,8 +958,8 @@ void FX::doApplyPaletteDither()
       const int g = unfix_gamma[n[1]];
       const int b = unfix_gamma[n[2]];
 
-      int c = Palette::main->data[Palette::main->lookup[makecol(r, g, b) & 0xFFFFFF]];
-      bmp->setpixelSolid(x, y, makecol(getr(c), getg(c), getb(c)), 0);
+      int c = Palette::main->data[Palette::main->lookup[make_rgb(r, g, b) & 0xFFFFFF]];
+      bmp->setpixelSolid(x, y, make_rgb(getr(c), getg(c), getb(c)), 0);
 
       v[0] = fix_gamma[getr(*p)];
       v[1] = fix_gamma[getg(*p)];

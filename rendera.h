@@ -21,11 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef RENDERA_H
 #define RENDERA_H
 
-/* #include <stdio.h> */
-/* #include <stdlib.h> */
-/* #include <stdint.h> */
-/* #include <math.h> */
-
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Double_Window.H>
@@ -33,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Menu_Item.H>
-//#include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Widget.H>

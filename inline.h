@@ -66,17 +66,17 @@ inline rgba_t get_rgba( uint32_t const &n )
   return u.rgba_ ;
 }
 
-inline int makecol(const int &r, const int &g, const int &b)
+inline int make_rgb(const int &r, const int &g, const int &b)
 {
   return r | g << 8 | b << 16 | 0xFF000000;
 }
 
-inline int makecola(const int &r, const int &g, const int &b, const int &a)
+inline int make_rgba(const int &r, const int &g, const int &b, const int &a)
 {
   return r | g << 8 | b << 16 | a << 24;
 }
 
-inline int makecol_notrans(const int &r, const int &g, const int &b)
+inline int make_rgb_notrans(const int &r, const int &g, const int &b)
 {
   return r | g << 8 | b << 16;
 }
@@ -132,7 +132,7 @@ inline int diff24(const int &c1, const int &c2)
   return r * r + g * g + b * b;
 }
 
-inline int blend_fast_solid(const int &c1, const int &c2, const int &t)
+inline int blend_fast(const int &c1, const int &c2, const int &t)
 {
   const int rb =
     (((((c1 & 0xFF00FF) - (c2 & 0xFF00FF)) * t) >> 8) + c2) & 0xFF00FF;
@@ -144,7 +144,7 @@ inline int blend_fast_solid(const int &c1, const int &c2, const int &t)
 inline int convert_format(const int &c, const int &bgr_order)
 {
   if(bgr_order)
-    return makecol(getb(c), getg(c), getr(c));
+    return make_rgb(getb(c), getg(c), getr(c));
   else
     return c;
 }

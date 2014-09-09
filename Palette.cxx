@@ -73,18 +73,18 @@ void Palette::draw(Widget *widget)
 
   int div = w / step;
 
-  widget->bitmap->clear(makecol(0, 0, 0));
+  widget->bitmap->clear(make_rgb(0, 0, 0));
 
   for(y = 0; y < w; y += step)
   {
     for(x = 0; x < w; x += step)
     {
       widget->bitmap->rect(x, y, x + step, y + step,
-                           makecol(96, 96, 96), 0);
+                           make_rgb(96, 96, 96), 0);
       widget->bitmap->line(x, y, x + step - 1, y + step - 1,
-                           makecol(96, 96, 96), 0);
+                           make_rgb(96, 96, 96), 0);
       widget->bitmap->line(w - 1 - x, y, w - 1 - (x + step - 1), y + step - 1,
-                           makecol(96, 96, 96), 0);
+                           make_rgb(96, 96, 96), 0);
     }
   }
 
@@ -100,8 +100,8 @@ void Palette::draw(Widget *widget)
       int y1 = y * step;
 
       widget->bitmap->rectfill(x1, y1, x1 + step - 1, y1 + step - 1, data[i], 0);
-      widget->bitmap->hline(x1, y1, x1 + step - 1, makecol(0, 0, 0), 128);
-      widget->bitmap->vline(y1 + 1, x1, y1 + step - 1, makecol(0, 0, 0), 128);
+      widget->bitmap->hline(x1, y1, x1 + step - 1, make_rgb(0, 0, 0), 128);
+      widget->bitmap->vline(y1 + 1, x1, y1 + step - 1, make_rgb(0, 0, 0), 128);
       i++;
     }
   }
@@ -135,14 +135,14 @@ void Palette::setDefault()
     {
       Blend::hsvToRgb(h * 128, sat[v], val[v], &r, &g, &b);
 
-      data[index++] = makecol(r, g, b);
+      data[index++] = make_rgb(r, g, b);
     }
   }
 
   // grays
   for(v = 0; v < 12; v++)
   {
-    data[index++] = makecol(v * 23.19, v * 23.19, v * 23.19);
+    data[index++] = make_rgb(v * 23.19, v * 23.19, v * 23.19);
   }
 
   max = index;
@@ -196,7 +196,7 @@ void Palette::fillLookup()
     {
       for(r = 0; r <= 256 - step; r += step)
       {
-        int c = makecol_notrans(r, g, b);
+        int c = make_rgb_notrans(r, g, b);
         int smallest = 0xFFFFFF;
         use = 0;
 
@@ -216,7 +216,7 @@ void Palette::fillLookup()
           {
             for(i = r; i < r + step; i++)
             {
-              lookup[makecol_notrans(i, j, k)] = use;
+              lookup[make_rgb_notrans(i, j, k)] = use;
             }
           }
         }
@@ -271,7 +271,7 @@ int Palette::load(const char *fn)
       continue;
 
     // add to palette
-    data[index++] = makecol(r, g, b);
+    data[index++] = make_rgb(r, g, b);
     if(index > 256)
       break;
   }

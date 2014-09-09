@@ -36,7 +36,7 @@ Brush::Brush()
   edge = 0;
   smooth = 0;
   blend = 0;
-  color = makecol(255, 0, 0);
+  color = make_rgb(255, 0, 0);
   trans = 0;
   make(shape, size);
 }
