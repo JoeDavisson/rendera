@@ -40,22 +40,22 @@ namespace Blend
     INVERT
   };
  
-  void set(int);
-  void target(Bitmap *, int, int);
-  int current(int, int, int);
-  int invert(int, int, int);
-  int trans(int, int, int);
-  int transAll(int, int, int);
-  int darken(int, int, int);
-  int lighten(int, int, int);
-  int colorize(int, int, int);
-  int keepLum(int, int);
-  int alphaAdd(int, int, int);
-  int alphaSub(int, int, int);
-  int smooth(int, int, int);
-  int smoothColor(int, int, int);
-  void rgbToHsv(int, int, int, int *, int *, int *);
-  void hsvToRgb(int, int, int, int *, int *, int *);
+  void set(const int &);
+  void target(Bitmap *, const int &, const int &);
+  int current(const int &, const int &, const int &);
+  int invert(const int &, const int &, const int &);
+  int trans(const int &, const int &, const int &);
+  int transAll(const int &, const int &, const int &);
+  int darken(const int &, const int &, const int &);
+  int lighten(const int &, const int &, const int &);
+  int colorize(const int &, const int &, const int &);
+  int keepLum(const int &, const int &);
+  int alphaAdd(const int &, const int &, const int &);
+  int alphaSub(const int &, const int &, const int &);
+  int smooth(const int &, const int &, const int &);
+  int smoothColor(const int &, const int &, const int &);
+  void rgbToHsv(const int &, const int &, const int &, int *, int *, int *);
+  void hsvToRgb(const int &, const int &, const int &, int *, int *, int *);
 }
 
 #endif

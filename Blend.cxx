@@ -23,12 +23,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  int (*current_blend)(int, int, int) = &Blend::trans;
+  int (*current_blend)(const int &, const int &, const int &) = &Blend::trans;
   Bitmap *bmp;
   int xpos, ypos;
 }
 
-void Blend::set(int mode)
+void Blend::set(const int &mode)
 {
   switch(mode)
   {
@@ -65,91 +65,87 @@ void Blend::set(int mode)
   }
 }
 
-void Blend::target(Bitmap *b, int x, int y)
+void Blend::target(Bitmap *b, const int &x, const int &y)
 {
   bmp = b;
   xpos = x;
   ypos = y;
 }
 
-int Blend::current(int c1, int c2, int t)
+int Blend::current(const int &c1, const int &c2, const int &t)
 {
   return (*current_blend)(c1, c2, t);
 }
 
-int Blend::invert(int c1, int, int)
+int Blend::invert(const int &c1, const int &, const int &)
 {
   return makecol(255 - getr(c1), 255 - getg(c1), 255 - getb(c1));
 }
 
-int Blend::trans(int c1, int c2, int t)
+int Blend::trans(const int &c1, const int &c2, const int &t)
 {
-  struct rgba_t rgba1 = get_rgba(c1);
-  struct rgba_t rgba2 = get_rgba(c2);
+  const struct rgba_t rgba1 = get_rgba(c1);
+  const struct rgba_t rgba2 = get_rgba(c2);
+
   return makecola(rgba2.r + (t * (rgba1.r - rgba2.r)) / 255,
                   rgba2.g + (t * (rgba1.g - rgba2.g)) / 255,
                   rgba2.b + (t * (rgba1.b - rgba2.b)) / 255,
                   rgba1.a);
 }
 
-int Blend::transAll(int c1, int c2, int t)
+int Blend::transAll(const int &c1, const int &c2, const int &t)
 {
-  struct rgba_t rgba1 = get_rgba(c1);
-  struct rgba_t rgba2 = get_rgba(c2);
+  const struct rgba_t rgba1 = get_rgba(c1);
+  const struct rgba_t rgba2 = get_rgba(c2);
+
   return makecola(rgba2.r + (t * (rgba1.r - rgba2.r)) / 255,
                   rgba2.g + (t * (rgba1.g - rgba2.g)) / 255,
                   rgba2.b + (t * (rgba1.b - rgba2.b)) / 255,
                   rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
 }
 
-int Blend::darken(int c1, int c2, int t)
+int Blend::darken(const int &c1, const int &c2, const int &t)
 {
-  int r = getr(c2);
-  int g = getg(c2);
-  int b = getb(c2);
+  const struct rgba_t rgba1 = get_rgba(c1);
+  const struct rgba_t rgba2 = get_rgba(c2);
+
+  int r, g, b;
   int h = 0, s = 0, v = 0;
 
-  rgbToHsv(r, g, b, &h, &s, &v);
+  rgbToHsv(rgba2.r, rgba2.g, rgba2.b, &h, &s, &v);
   h += 768;
   if(h >= 1536)
         h -= 1536;
   hsvToRgb(h, s, v, &r, &g, &b);
-  c2 = makecol(r, g, b);
 
-  t = 255 - t;
-  r = getr(c1) - getr(c2) * t / 255;
-  g = getg(c1) - getg(c2) * t / 255;
-  b = getb(c1) - getb(c2) * t / 255;
+  r = rgba1.r - r * (255 - t) / 255;
+  g = rgba1.g - g * (255 - t) / 255;
+  b = rgba1.b - b * (255 - t) / 255;
 
   r = MAX(r, 0);
   g = MAX(g, 0);
   b = MAX(b, 0);
 
-  return makecola(r, g, b, geta(c1));
+  return makecola(r, g, b, rgba1.a);
 }
 
-int Blend::lighten(int c1, int c2, int t)
+int Blend::lighten(const int &c1, const int &c2, const int &t)
 {
-  t = 255 - t;
+  const struct rgba_t rgba1 = get_rgba(c1);
+  const struct rgba_t rgba2 = get_rgba(c2);
 
-  int r = getr(c2);
-  int g = getg(c2);
-  int b = getb(c2);
-
-  c2 = makecol(r, g, b);
-
-  r = getr(c1) + (getr(c2) * t) / 255;
-  g = getg(c1) + (getg(c2) * t) / 255;
-  b = getb(c1) + (getb(c2) * t) / 255;
+  int r = rgba1.r + (rgba2.r * (255 - t)) / 255;
+  int g = rgba1.g + (rgba2.g * (255 - t)) / 255;
+  int b = rgba1.b + (rgba2.b * (255 - t)) / 255;
 
   r = MIN(r, 255);
   g = MIN(g, 255);
   b = MIN(b, 255);
 
-  return makecola(r, g, b, geta(c1));
+  return makecola(r, g, b, rgba1.a);
 }
 
-int Blend::colorize(int c1, int c2, int t)
+int Blend::colorize(const int &c1, const int &c2, const int &t)
 {
   int c3 = trans(c1, c2, t);
 
@@ -158,10 +154,10 @@ int Blend::colorize(int c1, int c2, int t)
 
 // forces a color to a similar one with the specified luminance,
 // so an image may be re-colored indefinately with no artifacts
-int Blend::keepLum(int c, int dest)
+int Blend::keepLum(const int &c, const int &dest)
 {
   // these have to be in order of importance in the luminance calc: G, R, B
-  struct rgba_t rgba = get_rgba(c);
+  const struct rgba_t rgba = get_rgba(c);
   int n[3];
   n[1] = rgba.r;
   n[0] = rgba.g;
@@ -202,17 +198,19 @@ int Blend::keepLum(int c, int dest)
   return makecola(n[1], n[0], n[2], rgba.a);
 }
 
-int Blend::alphaAdd(int c1, int, int t)
+int Blend::alphaAdd(const int &c1, const int &, const int &t)
 {
-  return makecola(getr(c1), getg(c1), getb(c1), (geta(c1) * t) / 255);
+  const struct rgba_t rgba = get_rgba(c1);
+  return makecola(rgba.r, rgba.g, rgba.b, (rgba.a * t) / 255);
 }
 
-int Blend::alphaSub(int c1, int, int t)
+int Blend::alphaSub(const int &c1, const int &, const int &t)
 {
-  return makecola(getr(c1), getg(c1), getb(c1), 255 - ((255 - geta(c1)) * t) / 255);
+  const struct rgba_t rgba = get_rgba(c1);
+  return makecola(rgba.r, rgba.g, rgba.b, 255 - ((255 - rgba.a) * t) / 255);
 }
 
-int Blend::smooth(int c1, int, int t)
+int Blend::smooth(const int &c1, const int &, const int &t)
 {
   static int matrix[9] = { 1, 2, 1, 2, 3, 2, 1, 2, 1 };
   int x = xpos;
@@ -239,10 +237,11 @@ int Blend::smooth(int c1, int, int t)
 
   for(i = 0; i < 9; i++)
   {
-    r += getr(c[i]) * matrix[i];
-    g += getg(c[i]) * matrix[i];
-    b += getb(c[i]) * matrix[i];
-    a += geta(c[i]) * matrix[i];
+    const struct rgba_t rgba = get_rgba(c[i]);
+    r += rgba.r * matrix[i];
+    g += rgba.g * matrix[i];
+    b += rgba.b * matrix[i];
+    a += rgba.a * matrix[i];
   }
 
   r /= 15;
@@ -253,7 +252,7 @@ int Blend::smooth(int c1, int, int t)
   return Blend::transAll(c1, makecola(r, g, b, a), t);
 }
 
-int Blend::smoothColor(int c1, int, int t)
+int Blend::smoothColor(const int &c1, const int &, const int &t)
 {
   static int matrix[9] = { 1, 2, 1, 2, 3, 2, 1, 2, 1 };
   int x = xpos;
@@ -279,9 +278,10 @@ int Blend::smoothColor(int c1, int, int t)
 
   for(i = 0; i < 9; i++)
   {
-    r += getr(c[i]) * matrix[i];
-    g += getg(c[i]) * matrix[i];
-    b += getb(c[i]) * matrix[i];
+    const struct rgba_t rgba = get_rgba(c[i]);
+    r += rgba.r * matrix[i];
+    g += rgba.g * matrix[i];
+    b += rgba.b * matrix[i];
   }
 
   r /= 15;
@@ -296,7 +296,7 @@ int Blend::smoothColor(int c1, int, int t)
 // hue 0-1535
 // sat 0-255
 // val 0-255
-void Blend::rgbToHsv(int r, int g, int b, int *h, int *s, int *v)
+void Blend::rgbToHsv(const int &r, const int &g, const int &b, int *h, int *s, int *v)
 {
   int max = MAX(r, MAX(g, b));
   int min = MIN(r, MIN(g, b));
@@ -327,7 +327,7 @@ void Blend::rgbToHsv(int r, int g, int b, int *h, int *s, int *v)
   }
 }
 
-void Blend::hsvToRgb(int h, int s, int v, int *r, int *g, int *b)
+void Blend::hsvToRgb(const int &h, const int &s, const int &v, int *r, int *g, int *b)
 {
   if(s == 0)
   {
