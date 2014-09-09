@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define INLINE_H
 
 #include <stdint.h>
-
 #include "endian.h"
 
 // fast random number seed
@@ -38,17 +37,17 @@ inline int rnd32(void)
 struct rgba_t
 {
 #if 0
-    /*  */
+  /*  */
 #elif ( BYTE_ORDER == LITTLE_ENDIAN )
-    uint8_t r ;
-    uint8_t g ;
-    uint8_t b ;
-    uint8_t a ;
+  uint8_t r ;
+  uint8_t g ;
+  uint8_t b ;
+  uint8_t a ;
 #elif ( BYTE_ORDER == BIG_ENDIAN )
-    uint8_t a ;
-    uint8_t b ;
-    uint8_t g ;
-    uint8_t r ;
+  uint8_t a ;
+  uint8_t b ;
+  uint8_t g ;
+  uint8_t r ;
 #else
 #  error "unsupported endianness"
 #endif
@@ -56,15 +55,15 @@ struct rgba_t
 
 union un_rgba_t
 {
-    uint32_t uint32_ ;
-    rgba_t rgba_ ;
+  uint32_t uint32_ ;
+  rgba_t rgba_ ;
 };
 
 inline rgba_t get_rgba( uint32_t const &n )
 {
-    un_rgba_t u ;
-    u.uint32_ = n ;
-    return u.rgba_ ;
+  un_rgba_t u ;
+  u.uint32_ = n ;
+  return u.rgba_ ;
 }
 
 inline int makecol(const int &r, const int &g, const int &b)
@@ -160,11 +159,15 @@ inline uint16_t parse_uint16(unsigned char *&buffer)
 {
   uint16_t num;
 
-//  #if BYTE_ORDER == BIG_ENDIAN
-//  num = buffer[1] | buffer[0] << 8;
-//  #else
+#if 0
+  /*  */
+#elif ( BYTE_ORDER == LITTLE_ENDIAN )
   num = buffer[0] | buffer[1] << 8;
-//  #endif
+#elif ( BYTE_ORDER == BIG_ENDIAN )
+  num = buffer[1] | buffer[0] << 8;
+#else
+#  error "unsupported endianness"
+#endif
 
   buffer += 2;
   return num;
@@ -174,11 +177,15 @@ inline uint32_t parse_uint32(unsigned char *&buffer)
 {
   uint32_t num;
 
-//  #if BYTE_ORDER == BIG_ENDIAN
-//  num = buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24;
-//  #else
+#if 0
+  /*  */
+#elif ( BYTE_ORDER == LITTLE_ENDIAN )
   num = buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24;
-//  #endif
+#elif ( BYTE_ORDER == BIG_ENDIAN )
+  num = buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24;
+#else
+#  error "unsupported endianness"
+#endif
 
   buffer += 4;
   return num;
@@ -191,28 +198,36 @@ inline void write_uint8(const uint8_t &num, FILE *out)
 
 inline void write_uint16(const uint16_t &num, FILE *out)
 {
-//  #if BYTE_ORDER == BIG_ENDIAN
-//  fputc((num >> 8) & 0xff, out);
-//  fputc(num & 0xff, out);
-//  #else
+#if 0
+  /*  */
+#elif ( BYTE_ORDER == LITTLE_ENDIAN )
   fputc(num & 0xff, out);
   fputc((num >> 8) & 0xff, out);
-//  #endif
+#elif ( BYTE_ORDER == BIG_ENDIAN )
+  fputc((num >> 8) & 0xff, out);
+  fputc(num & 0xff, out);
+#else
+#  error "unsupported endianness"
+#endif
 }
 
 inline void write_uint32(const uint32_t &num, FILE *out)
 {
-//  #if BYTE_ORDER == BIG_ENDIAN
-//  fputc((num >> 24) & 0xff, out);
-//  fputc((num >> 16) & 0xff, out);
-//  fputc((num >> 8) & 0xff, out);
-//  fputc(num & 0xff, out);
-//  #else
+#if 0
+  /*  */
+#elif ( BYTE_ORDER == LITTLE_ENDIAN )
   fputc(num & 0xff, out);
   fputc((num >> 8) & 0xff, out);
   fputc((num >> 16) & 0xff, out);
   fputc((num >> 24) & 0xff, out);
-//  #endif
+#elif ( BYTE_ORDER == BIG_ENDIAN )
+  fputc((num >> 24) & 0xff, out);
+  fputc((num >> 16) & 0xff, out);
+  fputc((num >> 8) & 0xff, out);
+  fputc(num & 0xff, out);
+#else
+#  error "unsupported endianness"
+#endif
 }
 
 #endif
