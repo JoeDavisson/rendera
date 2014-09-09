@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef FIELD_H
 #define FIELD_H
 
-#include "rendera.h"
+#include "rendera.H"
 
 class Field : public Fl_Int_Input
 {

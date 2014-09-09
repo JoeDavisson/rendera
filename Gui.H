@@ -27,7 +27,7 @@ class ToggleButton;
 class Field;
 class View;
 
-#include "rendera.h"
+#include "rendera.H"
 
 namespace Gui
 {

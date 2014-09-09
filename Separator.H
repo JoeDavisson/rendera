@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef SEPARATOR_H
 #define SEPARATOR_H
 
-#include "rendera.h"
+#include "rendera.H"
 
 class Separator : public Fl_Widget
 {

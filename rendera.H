@@ -41,7 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/fl_ask.H>
 
 // include commonly-used inline functions for all modules
-#include "inline.h"
+#include "inline.H"
 
 // macros
 #define MIN(x, y)          (((x) < (y)) ? (x) : (y))
