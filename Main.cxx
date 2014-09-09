@@ -45,8 +45,14 @@ int seed = 12345;
 int *fix_gamma;
 int *unfix_gamma;
 
-int main(int /* argc */, char** /* argv */)
+int main(int argc, char *argv[])
 {
+  if(argc > 2)
+  {
+    printf("Usage: %s <filename>\n", argv[0]);
+    return 0;
+  }
+
   Fl::visual(FL_DOUBLE | FL_RGB);
   Fl::background(192, 192, 192);
   Fl_Shared_Image::add_handler(File::previewJPG);
@@ -87,6 +93,15 @@ int main(int /* argc */, char** /* argv */)
   Undo::init();
   Dialog::init();
   Gui::init();
+
+  if(argc == 2)
+  {
+    if(File::loadFile(argv[1]) < 0)
+    {
+      fl_message_title("File Error");
+      fl_message("Could not load file from command line.");
+    }
+  }
 
   return Fl::run();
 }
