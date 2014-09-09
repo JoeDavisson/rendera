@@ -1,4 +1,4 @@
-/* rendera/test/endian.cc */
+/* rendera/test/endian.C */
 
 #include <iostream>
 #include <cassert>
@@ -9,18 +9,20 @@
 int
 main( int, char** )
 {
-    assert( 4 == sizeof( rgba_t ) );
-    assert( 4 == sizeof( un_rgba_t ) );
-    assert( 1 == sizeof( rgba_t::r ) );
-    assert( 1 == sizeof( rgba_t::g ) );
-    assert( 1 == sizeof( rgba_t::b ) );
-    assert( 1 == sizeof( rgba_t::a ) );
+  assert( 4 == sizeof( rgba_t ) );
+  assert( 4 == sizeof( un_rgba_t ) );
 
-    rgba_t rgba = get_rgba( 0x03020100 );
-    assert( 0 == rgba.r );
-    assert( 1 == rgba.g );
-    assert( 2 == rgba.b );
-    assert( 3 == rgba.a );
+  rgba_t rgba = get_rgba( 0x03020100 );
 
-    return 0 ;
+  assert( 1 == sizeof( rgba.r ) );
+  assert( 1 == sizeof( rgba.g ) );
+  assert( 1 == sizeof( rgba.b ) );
+  assert( 1 == sizeof( rgba.a ) );
+
+  assert( 0 == rgba.r );
+  assert( 1 == rgba.g );
+  assert( 2 == rgba.b );
+  assert( 3 == rgba.a );
+
+  return 0 ;
 }
