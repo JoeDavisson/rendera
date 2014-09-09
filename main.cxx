@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <cmath>
 
-#include "rendera.h"
+#include "rendera.H"
 #include "Bitmap.H"
 #include "Map.H"
 #include "Palette.H"

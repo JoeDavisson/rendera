@@ -52,12 +52,12 @@ rendera_SOURCES =     \
   Undo.cxx            \
   Undo.H              \
   View.cxx            \
-  View.h              \
+  View.H              \
   Widget.cxx          \
   Widget.H            \
-  inline.h            \
+  inline.H            \
   main.cxx            \
-  rendera.h
+  rendera.H
 
 
 rendera_LDFLAGS = $(shell fltk-config --ldflags)

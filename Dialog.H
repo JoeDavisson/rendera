@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Field;
 class Widget;
 
-#include "rendera.h"
+#include "rendera.H"
 
 namespace Dialog
 {

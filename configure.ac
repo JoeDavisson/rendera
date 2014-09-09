@@ -7,7 +7,7 @@ AC_INIT([Rendera],
         [rendera],
         [https://github.com/Mortis69/rendera])
 AC_LANG_PUSH([C++])
-AC_CONFIG_SRCDIR([rendera.h])
+AC_CONFIG_SRCDIR([rendera.H])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([subdir-objects])

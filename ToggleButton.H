@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 class Bitmap;
 
-#include "rendera.h"
+#include "rendera.H"
 
 class ToggleButton : public Fl_Button
 {
