@@ -10,51 +10,51 @@ bin_PROGRAMS = rendera
 
 rendera_SOURCES =     \
   Bitmap.cxx          \
-  Bitmap.h            \
+  Bitmap.H            \
   Blend.cxx           \
-  Blend.h             \
+  Blend.H             \
   Brush.cxx           \
-  Brush.h             \
+  Brush.H             \
   Button.cxx          \
-  Button.h            \
+  Button.H            \
   Crop.cxx            \
-  Crop.h              \
+  Crop.H              \
   Dialog.cxx          \
-  Dialog.h            \
+  Dialog.H            \
   FX.cxx              \
-  FX.h                \
+  FX.H                \
   Field.cxx           \
-  Field.h             \
+  Field.H             \
   File.cxx            \
-  File.h              \
+  File.H              \
   GetColor.cxx        \
-  GetColor.h          \
+  GetColor.H          \
   Gui.cxx             \
-  Gui.h               \
+  Gui.H               \
   Map.cxx             \
-  Map.h               \
+  Map.H               \
   Offset.cxx          \
-  Offset.h            \
+  Offset.H            \
   Paint.cxx           \
-  Paint.h             \
+  Paint.H             \
   Palette.cxx         \
-  Palette.h           \
+  Palette.H           \
   Quantize.cxx        \
-  Quantize.h          \
+  Quantize.H          \
   Separator.cxx       \
-  Separator.h         \
+  Separator.H         \
   Stroke.cxx          \
-  Stroke.h            \
+  Stroke.H            \
   ToggleButton.cxx    \
-  ToggleButton.h      \
+  ToggleButton.H      \
   Tool.cxx            \
-  Tool.h              \
+  Tool.H              \
   Undo.cxx            \
-  Undo.h              \
+  Undo.H              \
   View.cxx            \
   View.h              \
   Widget.cxx          \
-  Widget.h            \
+  Widget.H            \
   inline.h            \
   main.cxx            \
   rendera.h
