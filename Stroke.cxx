@@ -18,10 +18,10 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Stroke.h"
-#include "Bitmap.h"
-#include "Map.h"
-#include "Brush.h"
+#include "Stroke.H"
+#include "Bitmap.H"
+#include "Map.H"
+#include "Brush.H"
 
 #define XOR_VALUE(x, y) ( ((x & 1) ^ (y & 1)) ? 0x00FFFFFF : 0x00808080)
 

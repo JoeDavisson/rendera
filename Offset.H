@@ -18,19 +18,19 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef GETCOLOR_H
-#define GETCOLOR_H
+#ifndef OFFSET_H
+#define OFFSET_H
 
 class View;
 
 #include "rendera.h"
-#include "Tool.h"
+#include "Tool.H"
 
-class GetColor : public Tool
+class Offset : public Tool
 {
 public:
-  GetColor();
-  virtual ~GetColor();
+  Offset();
+  virtual ~Offset();
 
   virtual void push(View *);
   virtual void drag(View *);

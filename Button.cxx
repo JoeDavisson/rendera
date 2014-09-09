@@ -18,9 +18,9 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Button.h"
-#include "Bitmap.h"
-#include "File.h"
+#include "Button.H"
+#include "Bitmap.H"
+#include "File.H"
 
 Button::Button(Fl_Group *g, int x, int y, int w, int h,
                const char *label, const char *filename, Fl_Callback *cb)

@@ -18,19 +18,26 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef OFFSET_H
-#define OFFSET_H
+#ifndef PAINT_H
+#define PAINT_H
 
 class View;
 
 #include "rendera.h"
-#include "Tool.h"
+#include "Tool.H"
 
-class Offset : public Tool
+class Paint : public Tool
 {
 public:
-  Offset();
-  virtual ~Offset();
+  Paint();
+  virtual ~Paint();
+
+  virtual void renderBeginNormal(View *);
+  virtual void renderBeginSmooth(View *);
+  virtual void renderBegin(View *);
+  virtual int renderCallbackNormal(View *);
+  virtual int renderCallbackSmooth(View *);
+  virtual int renderCallback(View *);
 
   virtual void push(View *);
   virtual void drag(View *);
@@ -38,6 +45,10 @@ public:
   virtual void move(View *);
   virtual void done(View *);
   virtual void redraw(View *);
+
+private:
+  int render_pos, render_end, render_count;
+  float soft_trans, soft_step;
 };
 
 #endif

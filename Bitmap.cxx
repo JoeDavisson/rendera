@@ -20,13 +20,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <math.h>
 
-#include "Bitmap.h"
-#include "Blend.h"
-#include "Palette.h"
-#include "Stroke.h"
-#include "Gui.h"
-#include "View.h"
-#include "Tool.h"
+#include "Bitmap.H"
+#include "Blend.H"
+#include "Palette.H"
+#include "Stroke.H"
+#include "Gui.H"
+#include "View.H"
+#include "Tool.H"
 
 Bitmap *Bitmap::main;
 Bitmap *Bitmap::preview;

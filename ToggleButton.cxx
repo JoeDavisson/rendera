@@ -18,9 +18,9 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "ToggleButton.h"
-#include "Bitmap.h"
-#include "File.h"
+#include "ToggleButton.H"
+#include "Bitmap.H"
+#include "File.H"
 
 ToggleButton::ToggleButton(Fl_Group *g, int x, int y, int w, int h,
                            const char *label, const char *filename,

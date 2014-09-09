@@ -18,16 +18,16 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "File.h"
-#include "Bitmap.h"
-#include "Map.h"
-#include "Palette.h"
-#include "Gui.h"
-#include "View.h"
-#include "Undo.h"
-#include "Dialog.h"
-#include "Field.h"
-#include "Widget.h"
+#include "File.H"
+#include "Bitmap.H"
+#include "Map.H"
+#include "Palette.H"
+#include "Gui.H"
+#include "View.H"
+#include "Undo.H"
+#include "Dialog.H"
+#include "Field.H"
+#include "Widget.H"
 
 #ifdef _WIN32
 #define HAVE_BOOLEAN

@@ -20,13 +20,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <cmath>
 
-#include "Paint.h"
-#include "Bitmap.h"
-#include "Map.h"
-#include "Blend.h"
-#include "Brush.h"
-#include "Stroke.h"
-#include "View.h"
+#include "Paint.H"
+#include "Bitmap.H"
+#include "Map.H"
+#include "Blend.H"
+#include "Brush.H"
+#include "Stroke.H"
+#include "View.H"
 
 namespace
 {

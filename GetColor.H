@@ -18,19 +18,19 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef CROP_H
-#define CROP_H
+#ifndef GETCOLOR_H
+#define GETCOLOR_H
 
 class View;
 
 #include "rendera.h"
-#include "Tool.h"
+#include "Tool.H"
 
-class Crop : public Tool
+class GetColor : public Tool
 {
 public:
-  Crop();
-  virtual ~Crop();
+  GetColor();
+  virtual ~GetColor();
 
   virtual void push(View *);
   virtual void drag(View *);
@@ -38,12 +38,6 @@ public:
   virtual void move(View *);
   virtual void done(View *);
   virtual void redraw(View *);
-
-private:
-  int drag_started;
-  int resize_started;
-  int side;
-  int offset;
 };
 
 #endif

@@ -18,10 +18,10 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Tool.h"
-#include "Bitmap.h"
-#include "Stroke.h"
-#include "Undo.h"
+#include "Tool.H"
+#include "Bitmap.H"
+#include "Stroke.H"
+#include "Undo.H"
 
 Tool *Tool::paint;
 Tool *Tool::getcolor;

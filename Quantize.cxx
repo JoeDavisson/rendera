@@ -18,12 +18,12 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Quantize.h"
-#include "Bitmap.h"
-#include "Palette.h"
-#include "Gui.h"
-#include "Dialog.h"
-#include "Widget.h"
+#include "Quantize.H"
+#include "Bitmap.H"
+#include "Palette.H"
+#include "Gui.H"
+#include "Dialog.H"
+#include "Widget.H"
 
 #define MAX_COLORS 4096
 

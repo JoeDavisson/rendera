@@ -18,26 +18,19 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef PAINT_H
-#define PAINT_H
+#ifndef CROP_H
+#define CROP_H
 
 class View;
 
 #include "rendera.h"
-#include "Tool.h"
+#include "Tool.H"
 
-class Paint : public Tool
+class Crop : public Tool
 {
 public:
-  Paint();
-  virtual ~Paint();
-
-  virtual void renderBeginNormal(View *);
-  virtual void renderBeginSmooth(View *);
-  virtual void renderBegin(View *);
-  virtual int renderCallbackNormal(View *);
-  virtual int renderCallbackSmooth(View *);
-  virtual int renderCallback(View *);
+  Crop();
+  virtual ~Crop();
 
   virtual void push(View *);
   virtual void drag(View *);
@@ -47,8 +40,10 @@ public:
   virtual void redraw(View *);
 
 private:
-  int render_pos, render_end, render_count;
-  float soft_trans, soft_step;
+  int drag_started;
+  int resize_started;
+  int side;
+  int offset;
 };
 
 #endif

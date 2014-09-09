@@ -18,11 +18,11 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "GetColor.h"
-#include "Bitmap.h"
-#include "Palette.h"
-#include "View.h"
-#include "Gui.h"
+#include "GetColor.H"
+#include "Bitmap.H"
+#include "Palette.H"
+#include "View.H"
+#include "Gui.H"
 
 namespace
 {

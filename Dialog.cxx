@@ -18,18 +18,18 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Dialog.h"
-#include "Bitmap.h"
-#include "Brush.h"
-#include "Palette.h"
-#include "Blend.h"
-#include "Map.h"
-#include "Field.h"
-#include "Widget.h"
-#include "Separator.h"
-#include "Gui.h"
-#include "View.h"
-#include "Quantize.h"
+#include "Dialog.H"
+#include "Bitmap.H"
+#include "Brush.H"
+#include "Palette.H"
+#include "Blend.H"
+#include "Map.H"
+#include "Field.H"
+#include "Widget.H"
+#include "Separator.H"
+#include "Gui.H"
+#include "View.H"
+#include "Quantize.H"
 
 namespace
 {
