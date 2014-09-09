@@ -123,9 +123,11 @@ inline int scale_val(const int &a, const int &b)
 
 inline int diff24(const int &c1, const int &c2)
 {
-  const int r = getr(c1) - getr(c2);
-  const int g = getg(c1) - getg(c2);
-  const int b = getb(c1) - getb(c2);
+  const struct rgba_t rgba1 = get_rgba(c1);
+  const struct rgba_t rgba2 = get_rgba(c2);
+  const int r = rgba1.r - rgba2.r;
+  const int g = rgba1.g - rgba2.g;
+  const int b = rgba1.b - rgba2.b;
 
   return r * r + g * g + b * b;
 }
