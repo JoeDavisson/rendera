@@ -96,6 +96,7 @@ namespace
   // store previous directories
   char load_dir[256];
   char save_dir[256];
+  char pal_dir[256];
 
   void error_message()
   {
@@ -166,6 +167,7 @@ void File::init()
 {
   strcpy(load_dir, ".");
   strcpy(save_dir, ".");
+  strcpy(pal_dir, ".");
 }
 
 void File::load(Fl_Widget *, void *)
@@ -175,7 +177,6 @@ void File::load(Fl_Widget *, void *)
   fc->filter("PNG Image\t*.png\nJPEG Image\t*.{jpg,jpeg}\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
   fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
-
   fc->directory(load_dir);
 
   switch(fc->show())
@@ -745,7 +746,6 @@ void File::save(Fl_Widget *, void *)
   fc->filter("PNG Image\t*.png\nJPEG Image\t*.jpg\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
   fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-
   fc->directory(save_dir);
 
   switch(fc->show())
@@ -1164,11 +1164,21 @@ void File::loadPalette()
   fc->filter("GIMP Palette\t*.gpl\n");
   fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
-  fc->show();
+  fc->directory(pal_dir);
+
+  switch(fc->show())
+  {
+    case -1:
+    case 1:
+      delete fc;
+      return;
+    default:
+      getDirectory(pal_dir, fc->filename());
+      break;
+  }
 
   char fn[256];
   strcpy(fn, fc->filename());
-  //const char *fn = fc->filename();
   delete fc;
 
   FILE *in = fopen(fn, "r");
@@ -1203,7 +1213,18 @@ void File::savePalette()
   fc->filter("GIMP Palette\t*.gpl\n");
   fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-  fc->show();
+  fc->directory(pal_dir);
+
+  switch(fc->show())
+  {
+    case -1:
+    case 1:
+      delete fc;
+      return;
+    default:
+      getDirectory(pal_dir, fc->filename());
+      break;
+  }
 
   char fn[256];
   strcpy(fn, fc->filename());
