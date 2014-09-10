@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "Dialog.H"
 #include "Field.H"
+#include "Tool.H"
+#include "Stroke.H"
 #include "Widget.H"
 
 #ifdef _WIN32
@@ -252,6 +254,7 @@ void File::load(Fl_Widget *, void *)
   delete Map::main;
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
 
+  Gui::getView()->tool->stroke->clip();
   Gui::getView()->zoomFit(Gui::getView()->fit);
   Gui::getView()->drawMain(1);
   Undo::reset();
@@ -314,6 +317,7 @@ int File::loadFile(const char *fn)
   delete Map::main;
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
 
+  Gui::getView()->tool->stroke->clip();
   Gui::getView()->zoomFit(Gui::getView()->fit);
   Gui::getView()->drawMain(1);
   Undo::reset();

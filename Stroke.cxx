@@ -517,6 +517,12 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
   float yy2 = yy1 + zoom - 1;
   int x, y;
 
+  // prevent overun when zoomed out
+  if(x2 > map->w - 2)
+    x2 = map->w - 2;
+  if(y2 > map->h - 2)
+    y2 = map->h - 2;
+
   for(y = y1; y <= y2; y++)
   {
     unsigned char *p = map->row[y] + x1;
