@@ -307,8 +307,8 @@ void Dialog::hideNewImage()
 
   new_image->hide();
 
-  delete Bitmap::main;
   int overscroll = Bitmap::main->overscroll;
+  delete Bitmap::main;
   Bitmap::main = new Bitmap(w, h, overscroll,
                             make_rgb(255, 255, 255), make_rgb(128, 128, 128));
 

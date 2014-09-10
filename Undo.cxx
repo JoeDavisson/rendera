@@ -101,10 +101,11 @@ void Undo::pop()
 
   if(undo_resized[undo_current])
   {
+    int overscroll = Bitmap::main->overscroll;
     delete Bitmap::main;
     Bitmap::main = new Bitmap(undo_stack[undo_current]->w,
                               undo_stack[undo_current]->h,
-                              64,
+                              overscroll,
                               make_rgb(255, 255, 255),
                               make_rgb(128, 128, 128));
     delete Map::main;
