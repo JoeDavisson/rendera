@@ -34,6 +34,7 @@ inline int rnd32(void)
   return seed;
 }
 
+// stuff for extracting all RGBA values quickly (thanks Rubicks!)
 struct rgba_t
 {
 #if 0
@@ -59,6 +60,7 @@ union un_rgba_t
   rgba_t rgba_ ;
 };
 
+// get rgba values all at once
 inline rgba_t get_rgba( uint32_t const &n )
 {
   un_rgba_t u ;
@@ -66,61 +68,73 @@ inline rgba_t get_rgba( uint32_t const &n )
   return u.rgba_ ;
 }
 
+// make RGB color with no alpha
 inline int make_rgb(const int &r, const int &g, const int &b)
 {
   return r | g << 8 | b << 16 | 0xFF000000;
 }
 
+// make RGBA color
 inline int make_rgba(const int &r, const int &g, const int &b, const int &a)
 {
   return r | g << 8 | b << 16 | a << 24;
 }
 
+// make RGB color, 24-bits only
 inline int make_rgb24(const int &r, const int &g, const int &b)
 {
   return r | g << 8 | b << 16;
 }
 
-inline int geta(const int &c)
-{
-  return (c >> 24) & 255;
-}
-
+// get red channel
 inline int getr(const int &c)
 {
   return c & 255;
 }
 
+// get green channel
 inline int getg(const int &c)
 {
   return (c >> 8) & 255;
 }
 
+// get blue channel
 inline int getb(const int &c)
 {
   return (c >> 16) & 255;
 }
 
+// get alpha channel
+inline int geta(const int &c)
+{
+  return (c >> 24) & 255;
+}
+
+// get value
 inline int getv(const int &c)
 {
   return (getr(c) + getg(c) + getb(c)) / 3;
 }
 
+// get rec 601 luminance
 inline int getl(const int &c)
 {
   return ((76 * getr(c)) + (150 * getg(c)) + (29 * getb(c))) / 255;
 }
 
+// get rec 601 luminance from unpacked RGB values
 inline int getl_unpacked(const int &r, const int &g, const int &b)
 {
   return (76 * r + 150 * g + 29 * b) / 255;
 }
 
+// scales a gray value to a particular level
 inline int scale_val(const int &a, const int &b)
 {
   return (a * (255 - b) / 255) + b;
 }
 
+// 3D quadratic distance
 inline int diff24(const int &c1, const int &c2)
 {
   const struct rgba_t rgba1 = get_rgba(c1);
@@ -132,6 +146,7 @@ inline int diff24(const int &c1, const int &c2)
   return r * r + g * g + b * b;
 }
 
+// normal blend approximation (saves a multiply)
 inline int blend_fast(const int &c1, const int &c2, const int &t)
 {
   const int rb =
@@ -141,6 +156,9 @@ inline int blend_fast(const int &c1, const int &c2, const int &t)
   return rb | g | 0xFF000000;
 }
 
+// convert internal RGB format to whatever the graphics card needs
+// currently only supporting RGB/BGR as I don't think anything
+// else really exists
 inline int convert_format(const int &c, const int &bgr_order)
 {
   if(bgr_order)
@@ -149,6 +167,7 @@ inline int convert_format(const int &c, const int &bgr_order)
     return c;
 }
 
+// file access functions
 inline uint8_t parse_uint8(unsigned char *&buffer)
 {
   uint8_t num = buffer[0];
