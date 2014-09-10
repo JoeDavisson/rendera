@@ -205,9 +205,12 @@ void File::load(Fl_Widget *, void *)
 
   fclose(in);
 
+  int overscroll = Bitmap::main->overscroll;
+
   if(is_png(header))
   {
-    if(!(Bitmap::main = File::loadPNG((const char *)fn, Bitmap::main->overscroll)))
+    delete Bitmap::main;
+    if(!(Bitmap::main = File::loadPNG((const char *)fn, overscroll)))
     {
       error_message();
       return;
@@ -215,7 +218,8 @@ void File::load(Fl_Widget *, void *)
   }
   else if(is_jpeg(header))
   {
-    if(!(Bitmap::main = File::loadJPG((const char *)fn, Bitmap::main->overscroll)))
+    delete Bitmap::main;
+    if(!(Bitmap::main = File::loadJPG((const char *)fn, overscroll)))
     {
       error_message();
       return;
@@ -223,7 +227,8 @@ void File::load(Fl_Widget *, void *)
   }
   else if(is_bmp(header))
   {
-    if(!(Bitmap::main = File::loadBMP((const char *)fn, Bitmap::main->overscroll)))
+    delete Bitmap::main;
+    if(!(Bitmap::main = File::loadBMP((const char *)fn, overscroll)))
     {
       error_message();
       return;
@@ -231,7 +236,8 @@ void File::load(Fl_Widget *, void *)
   }
   else if(is_tga(fn))
   {
-    if(!(Bitmap::main = File::loadTGA((const char *)fn, Bitmap::main->overscroll)))
+    delete Bitmap::main;
+    if(!(Bitmap::main = File::loadTGA((const char *)fn, overscroll)))
     {
       error_message();
       return;
@@ -266,30 +272,36 @@ int File::loadFile(const char *fn)
 
   fclose(in);
 
+  int overscroll = Bitmap::main->overscroll;
+
   if(is_png(header))
   {
-    if(!(Bitmap::main = File::loadPNG((const char *)fn, Bitmap::main->overscroll)))
+    delete Bitmap::main;
+    if(!(Bitmap::main = File::loadPNG((const char *)fn, overscroll)))
     {
       return -1;
     }
   }
   else if(is_jpeg(header))
   {
-    if(!(Bitmap::main = File::loadJPG((const char *)fn, Bitmap::main->overscroll)))
+    delete Bitmap::main;
+    if(!(Bitmap::main = File::loadJPG((const char *)fn, overscroll)))
     {
       return -1;
     }
   }
   else if(is_bmp(header))
   {
-    if(!(Bitmap::main = File::loadBMP((const char *)fn, Bitmap::main->overscroll)))
+    delete Bitmap::main;
+    if(!(Bitmap::main = File::loadBMP((const char *)fn, overscroll)))
     {
       return -1;
     }
   }
   else if(is_tga(fn))
   {
-    if(!(Bitmap::main = File::loadTGA((const char *)fn, Bitmap::main->overscroll)))
+    delete Bitmap::main;
+    if(!(Bitmap::main = File::loadTGA((const char *)fn, overscroll)))
     {
       return -1;
     }
