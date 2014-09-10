@@ -89,6 +89,7 @@ int main(int argc, char *argv[])
   Tool::crop = new Crop();
   Tool::offset = new Offset();
 
+  File::init();
   FX::init();
   Undo::init();
   Dialog::init();

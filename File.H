@@ -27,6 +27,7 @@ class Bitmap;
 
 namespace File
 {
+  void init();
   void load(Fl_Widget *, void *);
   int loadFile(const char *);
   Bitmap *loadJPG(const char *, int);
@@ -50,6 +51,7 @@ namespace File
   Fl_Image *previewGPL(const char *, unsigned char *, int);
 
   void decodeURI(char *);
+  void getDirectory(char *, const char *);
 }
 
 #endif

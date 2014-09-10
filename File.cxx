@@ -91,6 +91,10 @@ namespace
 
   const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
 
+  // store previous directories
+  char load_dir[256];
+  char save_dir[256];
+
   void error_message()
   {
     fl_message_title("File Error");
@@ -156,6 +160,12 @@ namespace
   }
 }
 
+void File::init()
+{
+  strcpy(load_dir, ".");
+  strcpy(save_dir, ".");
+}
+
 void File::load(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
@@ -163,7 +173,19 @@ void File::load(Fl_Widget *, void *)
   fc->filter("PNG Image\t*.png\nJPEG Image\t*.{jpg,jpeg}\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
   fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
-  fc->show();
+
+  fc->directory(load_dir);
+
+  switch(fc->show())
+  {
+    case -1:
+    case 1:
+      delete fc;
+      return;
+    default:
+      getDirectory(load_dir, fc->filename());
+      break;
+  }
 
   char fn[256];
   strcpy(fn, fc->filename());
@@ -707,14 +729,26 @@ void File::save(Fl_Widget *, void *)
   fc->filter("PNG Image\t*.png\nJPEG Image\t*.jpg\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
   fc->options(Fl_Native_File_Chooser::PREVIEW);
   fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-  fc->show();
+
+  fc->directory(save_dir);
+
+  switch(fc->show())
+  {
+    case -1:
+    case 1:
+      delete fc;
+      return;
+    default:
+      getDirectory(save_dir, fc->filename());
+      break;
+  }
 
   char fn[256];
   strcpy(fn, fc->filename());
   int ext = fc->filter_value();
   fl_filename_setext(fn, sizeof(fn), ext_string[ext]);
 
-  delete fc;
+//  delete fc;
 
   if(file_exists(fn))
   {
@@ -1194,6 +1228,25 @@ void File::decodeURI(char *s)
         s[i + 1 + j] = s[i + 3 + j];
 
       len -= 2;
+    }
+  }
+}
+
+void File::getDirectory(char *dest, const char *src)
+{
+  strcpy(dest, src);
+
+  int i;
+  int len = strlen(dest);
+  if(len < 2)
+    return;
+
+  for(i = len - 1; i > 0; i--)
+  {
+    if(dest[i - 1] == '/')
+    {
+      dest[i] = '\0';
+      break;
     }
   }
 }
