@@ -32,11 +32,7 @@ public:
   Paint();
   virtual ~Paint();
 
-  virtual void renderBeginNormal(View *);
-  virtual void renderBeginSmooth(View *);
   virtual void renderBegin(View *);
-  virtual int renderCallbackNormal(View *);
-  virtual int renderCallbackSmooth(View *);
   virtual int renderCallback(View *);
 
   virtual void push(View *);

@@ -84,7 +84,6 @@ namespace
   Widget *paint_stroke;
   Widget *paint_shape;
   Widget *paint_edge;
-  Widget *paint_smooth;
 
   Widget *getcolor_color;
 
@@ -263,8 +262,6 @@ void Gui::init()
   y1 += 24 + 8;
   paint_edge = new Widget(paint, 8, y1, 96, 24, "Soft Edge", "data/soft_edge.png", 12, 24, (Fl_Callback *)checkPaintEdge);
   y1 += 24 + 8;
-  paint_smooth = new Widget(paint, 8, y1, 96, 48, "Coarse/Fine", "data/smooth.png", 48, 48, (Fl_Callback *)checkPaintSmooth);
-  y1 += 48 + 8;
   paint->resizable(0);
   paint->end();
 
@@ -583,11 +580,6 @@ void Gui::checkPaintStroke(Widget *, void *var)
 void Gui::checkPaintEdge(Widget *, void *var)
 {
   Brush::main->edge = *(int *)var;
-}
-
-void Gui::checkPaintSmooth(Widget *, void *var)
-{
-  Brush::main->smooth = *(int *)var;
 }
 
 void Gui::checkTool(Widget *, void *var)

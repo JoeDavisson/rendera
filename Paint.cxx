@@ -104,6 +104,39 @@ namespace
     *s2 = 0;
     *s3 = 0;
   }
+
+ inline void grow_block(unsigned char *s0, unsigned char *s1,
+                        unsigned char *s2, unsigned char *s3)
+  {
+    int z = (*s0 << 0) + (*s1 << 1) + (*s2 << 2) + (*s3 << 3);
+
+    switch (z)
+    {
+      case 0:
+      case 15:
+        return;
+      case 1:
+        *s1 = 1;
+        *s2 = 1;
+        return;
+      case 2:
+        *s0 = 1;
+        *s3 = 1;
+        return;
+      case 4:
+        *s0 = 1;
+        *s3 = 1;
+        return;
+      case 8:
+        *s1 = 1;
+        *s2 = 1;
+        return;
+    }
+    *s0 = 1;
+    *s1 = 1;
+    *s2 = 1;
+    *s3 = 1;
+  }
 }
 
 // The paintbrush uses two distinct algorithms, marching squares (faster)
@@ -116,50 +149,7 @@ Paint::~Paint()
 {
 }
 
-void Paint::renderBeginNormal(View *)
-{
-  Brush *brush = Brush::main;
-
-  soft_trans = 255;
-  float j = (float)(3 << brush->edge);
-  soft_step = (255 - brush->trans) / (((3 << brush->edge) >> 1) + 1);
-
-  if(soft_step < 1)
-    soft_step = 1;
-
-  render_pos = 0;
-  render_end = j;
-}
-
-void Paint::renderBeginSmooth(View *)
-{
-  Brush *brush = Brush::main;
-
-  int x, y;
-
-  if(brush->edge == 0)
-    return;
-
-  render_count = 0;
-
-  for(y = stroke->y1; y <= stroke->y2; y++)
-  {
-    for(x = stroke->x1; x <= stroke->x2; x++)
-    {
-      if((Map::main)->getpixel(x, y) && is_edge((Map::main), x, y))
-      {
-        stroke->edgecachex[render_count] = x;
-        stroke->edgecachey[render_count] = y;
-        render_count++;
-        render_count &= 0xFFFFF;
-      }
-    }
-  }
-
-  render_pos = stroke->y1;
-}
-
-void Paint::renderBegin(View *view)
+void Paint::renderBegin(View *)
 {
   undo(0);
 
@@ -181,16 +171,21 @@ void Paint::renderBegin(View *view)
     return;
   }
 
-  if(brush->smooth)
-    renderBeginSmooth(view);
-  else
-    renderBeginNormal(view);
+  soft_trans = 255;
+  float j = (float)(3 << brush->edge);
+  soft_step = (float)(255 - brush->trans) / (((3 << brush->edge) >> 1) + 1);
+
+  render_pos = 0;
+  render_end = j;
 }
 
-int Paint::renderCallbackNormal(View *view)
+int Paint::renderCallback(View *view)
 {
   Brush *brush = Brush::main;
   Map *map = Map::main;
+
+  if(brush->edge == 0)
+    return 0;
 
   int x, y;
 
@@ -270,92 +265,6 @@ int Paint::renderCallbackNormal(View *view)
                         stroke->x2, stroke->y2,
                         view->ox, view->oy, 1, view->zoom);
   return 1;
-}
-
-int Paint::renderCallbackSmooth(View *view)
-{
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
-
-  if(render_count < 2)
-  {
-    active = 0;
-    return 0;
-  }
-
-  int x, y;
-
-  render_end = render_pos + 64;
-
-  if(render_end > stroke->y2)
-    render_end = stroke->y2;
-
-  for(y = render_pos; y < render_end; y++)
-  {
-    unsigned char *p = map->row[y] + stroke->x1;
-
-    for(x = stroke->x1; x <= stroke->x2; x++)
-    {
-      if(*p == 0)
-      {
-        p++;
-        continue;
-      }
-
-      int *cx = &stroke->edgecachex[0];
-      int *cy = &stroke->edgecachey[0];
-      int temp1 = fdist(x, y, *cx++, *cy++);
-      int z = 0;
-      int i;
-
-      for(i = 1; i < render_count; i++)
-      {
-        const int dx = (x - *cx++);
-        const int dy = (y - *cy++);
-
-        const int temp2 = dx * dx + dy * dy;
-
-        if(temp2 < temp1)
-        {
-          z = i;
-          temp1 = temp2;
-        }
-      }
-
-      Bitmap::main->setpixel(x, y, brush->color,
-        sdist(x, y, stroke->edgecachex[z],
-              stroke->edgecachey[z], brush->edge, brush->trans));
-
-      p++;
-    }
-  }
-
-  stroke->makeBlitrect(stroke->x1, render_pos,
-                        stroke->x2, render_end,
-                        view->ox, view->oy, 1, view->zoom);
-
-  render_pos += 64;
-
-  if(render_pos > stroke->y2)
-  {
-    active = 0;
-    return 0;
-  }
-
-  return 1;
-}
-
-int Paint::renderCallback(View *view)
-{
-  Brush *brush = Brush::main;
-
-  if(brush->edge == 0)
-    return 0;
-
-  if(brush->smooth)
-    return renderCallbackSmooth(view);
-  else
-    return renderCallbackNormal(view);
 }
 
 void Paint::push(View *view)
