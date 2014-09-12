@@ -84,6 +84,7 @@ namespace
   Widget *paint_stroke;
   Widget *paint_shape;
   Widget *paint_edge;
+  Fl_Choice *paint_mode;
 
   Widget *getcolor_color;
 
@@ -261,6 +262,15 @@ void Gui::init()
   paint_shape = new Widget(paint, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24, (Fl_Callback *)checkPaintShape);
   y1 += 24 + 8;
   paint_edge = new Widget(paint, 8, y1, 96, 24, "Soft Edge", "data/soft_edge.png", 12, 24, (Fl_Callback *)checkPaintEdge);
+  y1 += 24 + 8;
+  paint_mode = new Fl_Choice(8, y1, 96, 24, "");
+  paint_mode->textsize(10);
+  paint_mode->resize(paint->x() + 8, paint->y() + y1, 96, 24);
+  paint_mode->add("Solid");
+  paint_mode->add("Soft (Coarse)");
+  paint_mode->add("Soft (Fine)");
+  paint_mode->value(0);
+//  paint_mode->callback((Fl_Callback *)checkPaintMode);
   y1 += 24 + 8;
   paint->resizable(0);
   paint->end();
@@ -786,3 +796,7 @@ int Gui::getClone()
   return clone->var;
 }
 
+int Gui::getPaintMode()
+{
+  return paint_mode->value();
+}

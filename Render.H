@@ -18,32 +18,24 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef BRUSH_H
-#define BRUSH_H
+#ifndef RENDER_H
+#define RENDER_H
+
+class View;
 
 #include "Rendera.H"
 
-class Brush
+namespace Render
 {
-public:
-  Brush();
-  virtual ~Brush();
-
-  void make(int, int);
-
-  int *solidx, *solidy;
-  int *hollowx, *hollowy;
-  int solid_count;
-  int hollow_count;
-  int size;
-  int shape;
-  int edge;
-  int color;
-  int trans;
-  int blend;
-
-  static Brush *main;
-};
+  enum
+  {
+    SOLID,
+    COARSE,
+    FINE
+  };
+ 
+  void begin();
+}
 
 #endif
 
