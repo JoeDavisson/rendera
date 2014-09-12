@@ -41,6 +41,8 @@ rendera_SOURCES =     \
   Palette.H           \
   Quantize.cxx        \
   Quantize.H          \
+  Render.cxx          \
+  Render.H            \
   Separator.cxx       \
   Separator.H         \
   Stroke.cxx          \

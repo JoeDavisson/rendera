@@ -38,125 +38,6 @@ Paint::~Paint()
 {
 }
 
-/*
-void Paint::renderBegin(View *)
-{
-  undo(0);
-
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
-
-  if(brush->edge == 0)
-  {
-    int x, y;
-    for(y = stroke->y1; y <= stroke->y2; y++)
-    {
-      for(x = stroke->x1; x <= stroke->x2; x++)
-      {
-        int c = map->getpixel(x, y);
-        if(c)
-          Bitmap::main->setpixel(x, y, brush->color, brush->trans);
-      }
-    }
-    return;
-  }
-
-  soft_trans = 255;
-  float j = (float)(3 << brush->edge);
-  soft_step = (float)(255 - brush->trans) / (((3 << brush->edge) >> 1) + 1);
-
-  render_pos = 0;
-  render_end = j;
-}
-
-int Paint::renderCallback(View *view)
-{
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
-
-  if(brush->edge == 0)
-    return 0;
-
-  int x, y;
-
-  int found = 0;
-  int i;
-  int end = render_pos + 64;
-  if(end > render_end)
-    end = render_end;
-
-  for(i = render_pos; i < end; i++)
-  {
-    for(y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
-    {
-      for(x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
-      {
-        unsigned char *s0 = map->row[y] + x;
-        unsigned char *s1 = map->row[y] + x + 1;
-        unsigned char *s2 = map->row[y + 1] + x;
-        unsigned char *s3 = map->row[y + 1] + x + 1;
-
-        *s0 &= 1;
-        *s1 &= 1;
-        *s2 &= 1;
-        *s3 &= 1;
-
-        if(*s0 | *s1 | *s2 | *s3)
-          found = 1;
-
-        unsigned char d0 = *s0;
-        unsigned char d1 = *s1;
-        unsigned char d2 = *s2;
-        unsigned char d3 = *s3;
-
-        shrink_block(s0, s1, s2, s3);
-
-        if(!*s0 && d0)
-          Bitmap::main->setpixel(x, y, brush->color, soft_trans);
-        if(!*s1 && d1)
-          Bitmap::main->setpixel(x + 1, y, brush->color, soft_trans);
-        if(!*s2 && d2)
-          Bitmap::main->setpixel(x, y + 1, brush->color, soft_trans);
-        if(!*s3 && d3)
-          Bitmap::main->setpixel(x + 1, y + 1, brush->color, soft_trans);
-      }
-    }
-
-    if(found == 0)
-      break;
-
-    soft_trans -= soft_step;
-    if(soft_trans < brush->trans)
-    {
-      soft_trans = brush->trans;
-      for(y = stroke->y1; y <= stroke->y2; y++)
-      {
-        for(x = stroke->x1; x <= stroke->x2; x++)
-        {
-          int c = map->getpixel(x, y);
-          if(c)
-            Bitmap::main->setpixel(x, y, brush->color, soft_trans);
-        }
-      }
-      active = 0;
-      return 0;
-    }
-  }
-
-  render_pos += 64;
-
-  if(found == 0 || render_pos >= render_end)
-  {
-    active = 0;
-    return 0;
-  }
-
-  stroke->makeBlitrect(stroke->x1, stroke->y1,
-                        stroke->x2, stroke->y2,
-                        view->ox, view->oy, 1, view->zoom);
-  return 1;
-}
-*/
 void Paint::push(View *view)
 {
   if(active && stroke->type == 3)
@@ -166,12 +47,6 @@ void Paint::push(View *view)
       stroke->end();
       Blend::set(Brush::main->blend);
       Render::begin();
-//      while(renderCallback(view))
-//      {
-//        if(Fl::get_key(FL_Escape))
-//          break;
-//        view->drawMain(1);
-//      }
       active = 0;
       Blend::set(Blend::TRANS);
       view->moving = 0;
@@ -212,13 +87,6 @@ void Paint::release(View *view)
     stroke->end();
     Blend::set(Brush::main->blend);
     Render::begin();
-
-//    {
-//      if(Fl::get_key(FL_Escape))
-//        break;
-//      view->drawMain(1);
-//    }
-
     active = 0;
     Blend::set(Blend::TRANS);
   }

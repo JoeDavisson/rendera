@@ -145,13 +145,13 @@ namespace
     *s3 = 1;
   }
 
-  int update(int y)
+  int update(int pos, int step)
   {
     if(Fl::get_key(FL_Escape))
       return -1;
 
-    if(!(y % 16))
-      Gui::getView()->drawMain(1);
+    if(!(pos % step))
+      view->drawMain(1);
 
     return 0;
   }
@@ -170,7 +170,7 @@ namespace
           bmp->setpixel(x, y, brush->color, brush->trans);
       }
 
-      if(update(y) < 0)
+      if(update(y, 32) < 0)
         break;
     }
   }
@@ -239,7 +239,72 @@ namespace
         }
       }
 
-      if(update(y) < 0)
+      if(update(i, 32) < 0)
+        break;
+    }
+  }
+
+  void render_fine()
+  {
+    int x, y;
+    int count = 0;
+
+    for(y = stroke->y1; y <= stroke->y2; y++)
+    {
+      for(x = stroke->x1; x <= stroke->x2; x++)
+      {
+        if((Map::main)->getpixel(x, y) && is_edge((Map::main), x, y))
+        {
+          stroke->edgecachex[count] = x;
+          stroke->edgecachey[count] = y;
+          count++;
+          count &= 0xFFFFF;
+        }
+      }
+    }
+
+    if(count < 2)
+      return;
+
+    for(y = stroke->y1; y < stroke->y2; y++)
+    {
+      unsigned char *p = map->row[y] + stroke->x1;
+
+      for(x = stroke->x1; x <= stroke->x2; x++)
+      {
+        if(*p == 0)
+        {
+          p++;
+          continue;
+        }
+
+        int *cx = &stroke->edgecachex[0];
+        int *cy = &stroke->edgecachey[0];
+        int temp1 = fdist(x, y, *cx++, *cy++);
+        int z = 0;
+        int i;
+
+        for(i = 1; i < count; i++)
+        {
+          const int dx = (x - *cx++);
+          const int dy = (y - *cy++);
+
+          const int temp2 = dx * dx + dy * dy;
+          if(temp2 < temp1)
+          {
+            z = i;
+            temp1 = temp2;
+          }
+        }
+
+        bmp->setpixel(x, y, brush->color, sdist(x, y,
+                      stroke->edgecachex[z], stroke->edgecachey[z],
+                      brush->edge, brush->trans));
+
+        p++;
+      }
+
+      if(update(y, 32) < 0)
         break;
     }
   }
@@ -252,6 +317,9 @@ void Render::begin()
   map = Map::main;
   brush = Brush::main;
   stroke = view->tool->stroke;
+  stroke->makeBlitrect(stroke->x1, stroke->y1,
+                        stroke->x2, stroke->y2,
+                        view->ox, view->oy, 1, view->zoom);
 
   view->tool->undo(0);
 
@@ -264,7 +332,10 @@ void Render::begin()
       render_coarse();
       break;
     case FINE:
+      render_fine();
       break;
   }
+
+  view->drawMain(1);
 }
 

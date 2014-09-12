@@ -267,10 +267,9 @@ void Gui::init()
   paint_mode->textsize(10);
   paint_mode->resize(paint->x() + 8, paint->y() + y1, 96, 24);
   paint_mode->add("Solid");
-  paint_mode->add("Soft (Coarse)");
-  paint_mode->add("Soft (Fine)");
+  paint_mode->add("Coarse");
+  paint_mode->add("Fine");
   paint_mode->value(0);
-//  paint_mode->callback((Fl_Callback *)checkPaintMode);
   y1 += 24 + 8;
   paint->resizable(0);
   paint->end();
