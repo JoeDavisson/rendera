@@ -409,7 +409,7 @@ namespace
     {
       for(x = stroke->x1; x <= stroke->x2; x++)
       {
-        if(!(rnd32() % (12 - (brush->edge + 2))))
+        if(!(rnd32() % (9 - (brush->edge))))
           map->setpixel(x, y, 0);
       }
     }
