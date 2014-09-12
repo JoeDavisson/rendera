@@ -32,7 +32,8 @@ namespace Render
     SOLID,
     COARSE,
     FINE,
-    WATERCOLOR
+    WATERCOLOR,
+    CHALK
   };
  
   void begin();

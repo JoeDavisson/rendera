@@ -401,6 +401,25 @@ namespace
     }
   }
 
+  void render_chalk()
+  {
+    int x, y;
+
+    for(y = stroke->y1; y <= stroke->y2; y++)
+    {
+      for(x = stroke->x1; x <= stroke->x2; x++)
+      {
+        if(!(rnd32() % (12 - (brush->edge + 2))))
+          map->setpixel(x, y, 0);
+      }
+    }
+
+    int temp = brush->edge;
+    brush->edge /= 4;
+    render_coarse();
+    brush->edge = temp;
+  }
+
   // end of namespace
 }
 
@@ -431,6 +450,9 @@ void Render::begin()
       break;
     case WATERCOLOR:
       render_watercolor();
+      break;
+    case CHALK:
+      render_chalk();
       break;
   }
 

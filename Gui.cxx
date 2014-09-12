@@ -270,6 +270,7 @@ void Gui::init()
   paint_mode->add("Coarse");
   paint_mode->add("Fine");
   paint_mode->add("Watercolor");
+  paint_mode->add("Chalk");
   paint_mode->value(0);
   y1 += 24 + 8;
   paint->resizable(0);
