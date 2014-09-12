@@ -31,7 +31,8 @@ namespace Render
   {
     SOLID,
     COARSE,
-    FINE
+    FINE,
+    WATERCOLOR
   };
  
   void begin();

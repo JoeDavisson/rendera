@@ -170,7 +170,7 @@ namespace
           bmp->setpixel(x, y, brush->color, brush->trans);
       }
 
-      if(update(y, 32) < 0)
+      if(update(y, 64) < 0)
         break;
     }
   }
@@ -239,7 +239,7 @@ namespace
         }
       }
 
-      if(update(i, 32) < 0)
+      if(update(i, 64) < 0)
         break;
     }
   }
@@ -304,10 +304,104 @@ namespace
         p++;
       }
 
-      if(update(y, 32) < 0)
+      if(update(y, 64) < 0)
         break;
     }
   }
+
+  void render_watercolor()
+  {
+    int x, y, i;
+    float soft_trans = brush->trans;
+    float j = (float)(3 << brush->edge);
+    float soft_step = (float)(255 - brush->trans) /
+                             (((3 << brush->edge) >> 1) + 1);
+    int found = 0;
+    int inc = 0;
+
+    stroke->x1 -= j;
+    stroke->y1 -= j;
+    stroke->x2 += j;
+    stroke->y2 += j;
+    stroke->clip();
+
+    stroke->makeBlitrect(stroke->x1, stroke->y1,
+                         stroke->x2, stroke->y2,
+                         view->ox, view->oy, j, view->zoom);
+
+    for(y = stroke->y1; y <= stroke->y2; y++)
+    {
+      for(x = stroke->x1; x <= stroke->x2; x++)
+      {
+        int c = map->getpixel(x, y);
+        if(c)
+          bmp->setpixel(x, y, brush->color, brush->trans);
+      }
+    }
+
+    for(i = 0; i < j; i++)
+    {
+      inc++;
+
+      for(y = stroke->y1 + (inc & 1); y < stroke->y2 - 1; y += 2)
+      {
+        for(x = stroke->x1 + (inc & 1); x < stroke->x2 - 1; x += 2)
+        {
+          int yy = y + !(rnd32() & 3);
+
+          unsigned char *s0 = map->row[yy] + x;
+          unsigned char *s1 = map->row[yy] + x + 1;
+          unsigned char *s2 = map->row[yy + 1] + x;
+          unsigned char *s3 = map->row[yy + 1] + x + 1;
+
+          *s0 &= 1;
+          *s1 &= 1;
+          *s2 &= 1;
+          *s3 &= 1;
+
+          if(*s0 | *s1 | *s2 | *s3)
+            found = 1;
+
+          unsigned char d0 = *s0;
+          unsigned char d1 = *s1;
+          unsigned char d2 = *s2;
+          unsigned char d3 = *s3;
+
+          grow_block(s0, s1, s2, s3);
+
+          if(*s0 & !(rnd32() & 15))
+          {
+            *s0 = 1;
+            *s1 = 1;
+            *s2 = 1;
+            *s3 = 1;
+            inc--;
+          }
+
+          if(*s0 && !d0)
+            bmp->setpixel(x, yy, brush->color, soft_trans);
+          if(*s1 && !d1)
+            bmp->setpixel(x + 1, yy, brush->color, soft_trans);
+          if(*s2 && !d2)
+            bmp->setpixel(x, yy + 1, brush->color, soft_trans);
+          if(*s3 && !d3)
+            bmp->setpixel(x + 1, yy + 1, brush->color, soft_trans);
+        }
+      }
+
+      if(found == 0)
+        break;
+
+      soft_trans += soft_step;
+      if(soft_trans > 255)
+        break;
+
+      if(update(i, 64) < 0)
+        break;
+    }
+  }
+
+  // end of namespace
 }
 
 void Render::begin()
@@ -317,9 +411,10 @@ void Render::begin()
   map = Map::main;
   brush = Brush::main;
   stroke = view->tool->stroke;
+
   stroke->makeBlitrect(stroke->x1, stroke->y1,
-                        stroke->x2, stroke->y2,
-                        view->ox, view->oy, 1, view->zoom);
+                       stroke->x2, stroke->y2,
+                       view->ox, view->oy, 1, view->zoom);
 
   view->tool->undo(0);
 
@@ -333,6 +428,9 @@ void Render::begin()
       break;
     case FINE:
       render_fine();
+      break;
+    case WATERCOLOR:
+      render_watercolor();
       break;
   }
 
