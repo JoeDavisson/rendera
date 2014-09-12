@@ -139,8 +139,6 @@ namespace
   }
 }
 
-// The paintbrush uses two distinct algorithms, marching squares (faster)
-// and one that uses distance calculations (slower).
 Paint::Paint()
 {
 }
