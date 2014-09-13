@@ -260,12 +260,13 @@ int View::handle(int event)
 
       switch(Fl::event_key())
       {
-        case 32:
-          Bitmap::clone_x = imgx;
-          Bitmap::clone_y = imgy;
-          Bitmap::clone_moved = 1;
-          redraw();
-          break;
+        // interferes with Fl_Choice
+        //case 32:
+        //  Bitmap::clone_x = imgx;
+        //  Bitmap::clone_y = imgy;
+        //  Bitmap::clone_moved = 1;
+        //  redraw();
+        //  break;
         case FL_Right:
           scroll(0, 64);
           break;

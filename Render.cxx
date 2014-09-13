@@ -160,6 +160,8 @@ namespace
   {
     int x, y;
 
+    view->tool->undo(0);
+
     for(y = stroke->y1; y <= stroke->y2; y++)
     {
       unsigned char *p = map->row[y] + stroke->x1;
@@ -183,6 +185,8 @@ namespace
     float soft_step = (float)(255 - brush->trans) /
                              (((3 << brush->edge) >> 1) + 1);
     int found = 0;
+
+    view->tool->undo(0);
 
     for(i = 0; i < j; i++)
     {
@@ -248,6 +252,8 @@ namespace
   {
     int x, y;
     int count = 0;
+
+    view->tool->undo(0);
 
     for(y = stroke->y1; y <= stroke->y2; y++)
     {
@@ -329,6 +335,8 @@ namespace
                          stroke->x2, stroke->y2,
                          view->ox, view->oy, j, view->zoom);
 
+    view->tool->undo(0);
+
     for(y = stroke->y1; y <= stroke->y2; y++)
     {
       for(x = stroke->x1; x <= stroke->x2; x++)
@@ -405,6 +413,8 @@ namespace
   {
     int x, y;
 
+    view->tool->undo(0);
+
     for(y = stroke->y1; y <= stroke->y2; y++)
     {
       for(x = stroke->x1; x <= stroke->x2; x++)
@@ -434,8 +444,6 @@ void Render::begin()
   stroke->makeBlitrect(stroke->x1, stroke->y1,
                        stroke->x2, stroke->y2,
                        view->ox, view->oy, 1, view->zoom);
-
-  view->tool->undo(0);
 
   switch(Gui::getPaintMode())
   {
