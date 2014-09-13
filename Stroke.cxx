@@ -104,22 +104,14 @@ Stroke::~Stroke()
 
 void Stroke::clip()
 {
-  if(x1 < 0)
-    x1 = 0;
-  if(y1 < 0)
-    y1 = 0;
-  if(x2 < 0)
-    x2 = 0;
-  if(y2 < 0)
-    y2 = 0;
-  if(x1 > Bitmap::main->w - 1)
-    x1 = Bitmap::main->w - 1;
-  if(y1 > Bitmap::main->h - 1)
-    y1 = Bitmap::main->h - 1;
-  if(x2 > Bitmap::main->w - 1)
-    x2 = Bitmap::main->w - 1;
-  if(y2 > Bitmap::main->h - 1)
-    y2 = Bitmap::main->h - 1;
+  if(x1 < Bitmap::main->cl)
+    x1 = Bitmap::main->cl;
+  if(y1 < Bitmap::main->ct)
+    y1 = Bitmap::main->ct;
+  if(x2 > Bitmap::main->cr)
+    x2 = Bitmap::main->cr;
+  if(y2 > Bitmap::main->cb)
+    y2 = Bitmap::main->cb;
 }
 
 void Stroke::sizeLinear(int bx, int by, int x, int y)
