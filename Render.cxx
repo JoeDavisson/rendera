@@ -160,8 +160,6 @@ namespace
   {
     int x, y;
 
-    view->tool->undo(0);
-
     for(y = stroke->y1; y <= stroke->y2; y++)
     {
       unsigned char *p = map->row[y] + stroke->x1;
@@ -185,8 +183,6 @@ namespace
     float soft_step = (float)(255 - brush->trans) /
                              (((3 << brush->edge) >> 1) + 1);
     int found = 0;
-
-    view->tool->undo(0);
 
     for(i = 0; i < j; i++)
     {
@@ -252,8 +248,6 @@ namespace
   {
     int x, y;
     int count = 0;
-
-    view->tool->undo(0);
 
     for(y = stroke->y1; y <= stroke->y2; y++)
     {
@@ -324,18 +318,6 @@ namespace
                              (((3 << brush->edge) >> 1) + 1);
     int found = 0;
     int inc = 0;
-
-    stroke->x1 -= j;
-    stroke->y1 -= j;
-    stroke->x2 += j;
-    stroke->y2 += j;
-    stroke->clip();
-
-    stroke->makeBlitrect(stroke->x1, stroke->y1,
-                         stroke->x2, stroke->y2,
-                         view->ox, view->oy, j, view->zoom);
-
-    view->tool->undo(0);
 
     for(y = stroke->y1; y <= stroke->y2; y++)
     {
@@ -413,8 +395,6 @@ namespace
   {
     int x, y;
 
-    view->tool->undo(0);
-
     for(y = stroke->y1; y <= stroke->y2; y++)
     {
       for(x = stroke->x1; x <= stroke->x2; x++)
@@ -441,9 +421,23 @@ void Render::begin()
   brush = Brush::main;
   stroke = view->tool->stroke;
 
+  int size = 1;
+
+  // kludge for watercolor since it grows outward
+  if(Gui::getPaintMode() == WATERCOLOR)
+    size = (3 << brush->edge);
+
+  stroke->x1 -= size;
+  stroke->y1 -= size;
+  stroke->x2 += size;
+  stroke->y2 += size;
+  stroke->clip();
+
   stroke->makeBlitrect(stroke->x1, stroke->y1,
                        stroke->x2, stroke->y2,
                        view->ox, view->oy, 1, view->zoom);
+
+  view->tool->undo(0);
 
   switch(Gui::getPaintMode())
   {

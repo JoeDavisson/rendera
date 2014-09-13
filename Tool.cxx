@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Stroke.H"
 #include "Undo.H"
+#include "Brush.H"
 
 Tool *Tool::paint;
 Tool *Tool::getcolor;
@@ -57,7 +58,7 @@ void Tool::undo(int resized)
 
   Undo::push(stroke->x1,
              stroke->y1,
-             stroke->x2 - stroke->x1 + 1,
-             stroke->y2 - stroke->y1 + 1, resized);
+             (stroke->x2 - stroke->x1) + 1,
+             (stroke->y2 - stroke->y1) + 1, resized);
 }
 
