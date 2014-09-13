@@ -526,6 +526,7 @@ void Gui::checkGrid(ToggleButton *, void *var)
 {
   view->grid = *(int *)var;
   view->drawMain(1);
+  view->redraw();
 }
 
 void Gui::checkGridX(Field *field, void *)

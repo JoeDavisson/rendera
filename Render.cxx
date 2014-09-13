@@ -237,6 +237,8 @@ namespace
               bmp->setpixel(x, y, brush->color, soft_trans);
           }
         }
+
+        return;
       }
 
       if(update(i, 64) < 0)
@@ -393,21 +395,109 @@ namespace
 
   void render_chalk()
   {
-    int x, y;
+    int x, y, i;
+    float soft_trans = 255;
+    float j = (float)(3 << brush->edge);
+    float soft_step = (float)(255 - brush->trans) /
+                             (((3 << brush->edge) >> 1) + 1);
+    int found = 0;
+    int t;
 
-    for(y = stroke->y1; y <= stroke->y2; y++)
+    for(i = 0; i < j; i++)
     {
-      for(x = stroke->x1; x <= stroke->x2; x++)
+      for(y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
       {
-        if(!(rnd32() % (9 - (brush->edge))))
-          map->setpixel(x, y, 0);
-      }
-    }
+        for(x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
+        {
+          unsigned char *s0 = map->row[y] + x;
+          unsigned char *s1 = map->row[y] + x + 1;
+          unsigned char *s2 = map->row[y + 1] + x;
+          unsigned char *s3 = map->row[y + 1] + x + 1;
 
-    int temp = brush->edge;
-    brush->edge /= 4;
-    render_coarse();
-    brush->edge = temp;
+          *s0 &= 1;
+          *s1 &= 1;
+          *s2 &= 1;
+          *s3 &= 1;
+
+          if(*s0 | *s1 | *s2 | *s3)
+            found = 1;
+
+          unsigned char d0 = *s0;
+          unsigned char d1 = *s1;
+          unsigned char d2 = *s2;
+          unsigned char d3 = *s3;
+
+          shrink_block(s0, s1, s2, s3);
+
+          if(!*s0 && d0)
+          {
+            t = (int)soft_trans + (rnd32() & 63) - 32;
+            if(t < 0)
+              t = 0;
+            if(t > 255)
+              t =255;
+            bmp->setpixel(x, y, brush->color, t);
+          }
+          if(!*s1 && d1)
+          {
+            t = (int)soft_trans + (rnd32() & 63) - 32;
+            if(t < 0)
+              t = 0;
+            if(t > 255)
+              t =255;
+            bmp->setpixel(x + 1, y, brush->color, t);
+          }
+          if(!*s2 && d2)
+          {
+            t = (int)soft_trans + (rnd32() & 63) - 32;
+            if(t < 0)
+              t = 0;
+            if(t > 255)
+              t =255;
+            bmp->setpixel(x, y + 1, brush->color, t);
+          }
+          if(!*s3 && d3)
+          {
+            t = (int)soft_trans + (rnd32() & 63) - 32;
+            if(t < 0)
+              t = 0;
+            if(t > 255)
+              t =255;
+            bmp->setpixel(x + 1, y + 1, brush->color, t);
+          }
+        }
+      }
+
+      if(found == 0)
+        break;
+
+      soft_trans -= soft_step;
+      if(soft_trans < brush->trans)
+      {
+        soft_trans = brush->trans;
+        for(y = stroke->y1; y <= stroke->y2; y++)
+        {
+          for(x = stroke->x1; x <= stroke->x2; x++)
+          {
+            int c = map->getpixel(x, y);
+            if(c)
+            {
+              t = (int)soft_trans + (rnd32() & 63) - 32;
+              if(t < 0)
+                t = 0;
+              if(t > 255)
+                t =255;
+              bmp->setpixel(x, y, brush->color, t);
+            }
+          }
+        }
+
+        return;
+      }
+
+      if(update(i, 64) < 0)
+        break;
+    }
   }
 
   // end of namespace
