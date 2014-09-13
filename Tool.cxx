@@ -56,9 +56,20 @@ void Tool::undo(int resized)
     stroke->y2 = Bitmap::main->cb;
   }
 
-  Undo::push(stroke->x1,
-             stroke->y1,
-             (stroke->x2 - stroke->x1) + 1,
-             (stroke->y2 - stroke->y1) + 1, resized);
+  int x1 = stroke->x1;
+  int y1 = stroke->y1;
+  int x2 = stroke->x2;
+  int y2 = stroke->y2;
+
+  if(x1 < Bitmap::main->cl)
+    x1 = Bitmap::main->cl;
+  if(y1 < Bitmap::main->ct)
+    y1 = Bitmap::main->ct;
+  if(x2 > Bitmap::main->cr)
+    x2 = Bitmap::main->cr;
+  if(y2 > Bitmap::main->cb)
+    y2 = Bitmap::main->cb;
+
+  Undo::push(x1, y1, (x2 - x1) + 1, (y2 - y1) + 1, resized);
 }
 
