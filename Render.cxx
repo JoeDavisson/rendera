@@ -225,6 +225,7 @@ namespace
         break;
 
       soft_trans -= soft_step;
+
       if(soft_trans < brush->trans)
       {
         soft_trans = brush->trans;
@@ -385,6 +386,7 @@ namespace
         break;
 
       soft_trans += soft_step;
+
       if(soft_trans > 255)
         break;
 
@@ -435,7 +437,7 @@ namespace
             if(t < 0)
               t = 0;
             if(t > 255)
-              t =255;
+              t = 255;
             bmp->setpixel(x, y, brush->color, t);
           }
           if(!*s1 && d1)
@@ -444,7 +446,7 @@ namespace
             if(t < 0)
               t = 0;
             if(t > 255)
-              t =255;
+              t = 255;
             bmp->setpixel(x + 1, y, brush->color, t);
           }
           if(!*s2 && d2)
@@ -453,7 +455,7 @@ namespace
             if(t < 0)
               t = 0;
             if(t > 255)
-              t =255;
+              t = 255;
             bmp->setpixel(x, y + 1, brush->color, t);
           }
           if(!*s3 && d3)
@@ -462,7 +464,7 @@ namespace
             if(t < 0)
               t = 0;
             if(t > 255)
-              t =255;
+              t = 255;
             bmp->setpixel(x + 1, y + 1, brush->color, t);
           }
         }
@@ -472,6 +474,7 @@ namespace
         break;
 
       soft_trans -= soft_step;
+
       if(soft_trans < brush->trans)
       {
         soft_trans = brush->trans;
@@ -486,7 +489,7 @@ namespace
               if(t < 0)
                 t = 0;
               if(t > 255)
-                t =255;
+                t = 255;
               bmp->setpixel(x, y, brush->color, t);
             }
           }
