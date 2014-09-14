@@ -56,9 +56,6 @@ void Blend::set(const int &mode)
     case SMOOTH_COLOR:
       current_blend = smoothColor;
       break;
-    case INVERT:
-      current_blend = invert;
-      break;
     default:
       current_blend = trans;
       break;
@@ -75,11 +72,6 @@ void Blend::target(Bitmap *b, const int &x, const int &y)
 int Blend::current(const int &c1, const int &c2, const int &t)
 {
   return (*current_blend)(c1, c2, t);
-}
-
-int Blend::invert(const int &c1, const int &, const int &)
-{
-  return make_rgb(255 - getr(c1), 255 - getg(c1), 255 - getb(c1));
 }
 
 int Blend::trans(const int &c1, const int &c2, const int &t)
@@ -290,6 +282,11 @@ int Blend::smoothColor(const int &c1, const int &, const int &t)
 
   int c3 = Blend::trans(c1, make_rgb(r, g, b), t);
   return keepLum(c3, getl(c1));
+}
+
+int Blend::invert(const int &c1, const int &, const int &)
+{
+  return make_rgb(255 - getr(c1), 255 - getg(c1), 255 - getb(c1));
 }
 
 // RGB<->HSV conversions use the following ranges:

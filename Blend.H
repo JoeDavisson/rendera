@@ -37,7 +37,6 @@ namespace Blend
     ALPHA_SUB,
     SMOOTH,
     SMOOTH_COLOR,
-    INVERT
   };
  
   void set(const int &);
@@ -54,6 +53,7 @@ namespace Blend
   int alphaSub(const int &, const int &, const int &);
   int smooth(const int &, const int &, const int &);
   int smoothColor(const int &, const int &, const int &);
+  int invert(const int &, const int &, const int &);
   void rgbToHsv(const int &, const int &, const int &, int *, int *, int *);
   void hsvToRgb(const int &, const int &, const int &, int *, int *, int *);
 }

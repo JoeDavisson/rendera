@@ -32,6 +32,41 @@ extern int *unfix_gamma;
 
 namespace
 {
+  // 18-bit color routines
+  inline int make_rgb18(const int &r, const int &g, const int &b)
+  {
+    return r | g << 6 | b << 12;
+  }
+
+  inline int getr18(const int &c)
+  {
+    return c & 0x3F;
+  }
+
+  inline int getg18(const int &c)
+  {
+    return (c >> 6) & 0x3F;
+  }
+
+  inline int getb18(const int &c)
+  {
+    return (c >> 12) & 0x3F;
+  }
+
+  inline int diff18(const int &c1, const int &c2)
+  {
+    const int r = getr18(c1) - getr18(c2);
+    const int g = getg18(c1) - getg18(c2);
+    const int b = getb18(c1) - getb18(c2);
+
+    return r * r + g * g + b * b;
+  }
+
+  inline int convert(const int &c1)
+  {
+    return make_rgb(getr18(c1) * 4.05, getg18(c1) * 4.05, getb18(c1) * 4.05);
+  }
+
   // qsort callback to sort palette by luminance
   int comp_lum(const void *a, const void *b)
   {
@@ -42,24 +77,22 @@ namespace
   }
 
   // compute quantization error
-  inline float error24(const int &c1, const int &c2,
-                       const float &f1, const float &f2)
+  inline float error18(const int &c1, const int &c2,
+                     const float &f1, const float &f2)
   {
-    return ((f1 * f2) / (f1 + f2)) * diff24(c1, c2);
+    return ((f1 * f2) / (f1 + f2)) * diff18(c1, c2);
   }
 
   // merge two colors
-  inline int merge24(const int &c1, const int &c2,
+  inline int merge18(const int &c1, const int &c2,
                      const float &f1, const float &f2)
   {
-    const struct rgba_t rgba1 = get_rgba(c1);
-    const struct rgba_t rgba2 = get_rgba(c2);
     const float mul = 1.0f / (f1 + f2);
-    const int r = (f1 * rgba1.r + f2 * rgba2.r) * mul;
-    const int g = (f1 * rgba1.g + f2 * rgba2.g) * mul;
-    const int b = (f1 * rgba1.b + f2 * rgba2.b) * mul;
+    const int r = (f1 * getr18(c1) + f2 * getr18(c1)) * mul;
+    const int g = (f1 * getg18(c1) + f2 * getg18(c2)) * mul;
+    const int b = (f1 * getb18(c1) + f2 * getb18(c2)) * mul;
 
-    return make_rgb24(r, g, b);
+    return make_rgb18(r, g, b);
   }
 
   // 1D bilinear filter to stretch a palette
@@ -128,14 +161,14 @@ namespace
   {
     int r, g, b;
     int i, j, k;
-    int step = 16;
+    int step = 4;
     int count = 0;
 
-    for(b = 0; b <= 256 - step; b += step)
+    for(b = 0; b <= 64 - step; b += step)
     {
-      for(g = 0; g <= 256 - step; g += step)
+      for(g = 0; g <= 64 - step; g += step)
       {
-        for(r = 0; r <= 256 - step; r += step)
+        for(r = 0; r <= 64 - step; r += step)
         {
           float rr = 0;
           float gg = 0;
@@ -148,12 +181,12 @@ namespace
             {
               for(i = 0; i < step; i++)
               {
-                int c = make_rgb24(r + i, g + j, b + k);
+                int c = make_rgb18(r + i, g + j, b + k);
                 float d = list[c];
 
-                rr += d * getr(c);
-                gg += d * getg(c);
-                bb += d * getb(c);
+                rr += d * (r + i);
+                gg += d * (g + j);
+                bb += d * (b + k);
                 div += d;
                 list[c] = 0;
               }
@@ -165,7 +198,7 @@ namespace
             rr /= div;
             gg /= div;
             bb /= div;
-            colors[count] = make_rgb24((int)rr, (int)gg, (int)bb);
+            colors[count] = make_rgb18((int)rr, (int)gg, (int)bb);
             list[colors[count]] = div;
             count++;
           }
@@ -176,13 +209,11 @@ namespace
     return count;
   }
 }
-
 // pairwise clustering algorithm
-// slow/expensive but produces very high quality palettes
 void Quantize::pca(Bitmap *src, int size)
 {
   // popularity histogram
-  float *list = new float[16777216];
+  float *list = new float[262144];
 
   // color list
   int *colors = new int[MAX_COLORS];
@@ -199,8 +230,8 @@ void Quantize::pca(Bitmap *src, int size)
   int overscroll = src->overscroll;
 
   // reset lists
-  for(i = 0; i < 16777216; i++)
-    list[i] = 0;
+  for(i = 0; i < 262144; i++)
+   list[i] = 0;
 
   for(i = 0; i < MAX_COLORS; i++)
     colors[i] = -1;
@@ -211,24 +242,12 @@ void Quantize::pca(Bitmap *src, int size)
 
   for(j = overscroll; j < src->h - overscroll; j++)
   {
+    int *p = src->row[j] + overscroll;
     for(i = overscroll; i < src->w - overscroll; i++)
     {
-      int c = src->getpixel(i, j);
-
       // reduce to 18-bit equivalent
-      int r = (getr(c) >> 2) << 2;
-      int g = (getg(c) >> 2) << 2;
-      int b = (getb(c) >> 2) << 2;
-
-      // correct lightest values
-      if(r >= 252)
-        r = 255;
-      if(g >= 252)
-        g = 255;
-      if(b >= 252)
-        b = 255;
-
-      c = make_rgb24(r, g, b);
+      const struct rgba_t rgba = get_rgba(*p++);
+      const int c = make_rgb18(rgba.r / 4.04, rgba.g / 4.04, rgba.b / 4.04);
 
       if(list[c] < inc)
         count++;
@@ -241,8 +260,8 @@ void Quantize::pca(Bitmap *src, int size)
   if(count < 2)
   {
     count = 2;
-    colors[0] = make_rgb24(0, 0, 0);
-    colors[1] = make_rgb24(255, 255, 255);
+    colors[0] = make_rgb18(0, 0, 0);
+    colors[1] = make_rgb18(0x3F, 0x3F, 0x3F);
     list[colors[0]] = inc;
     list[colors[1]] = inc;
   }
@@ -251,7 +270,7 @@ void Quantize::pca(Bitmap *src, int size)
   if(count <= rep)
   {
     count = 0;
-    for(i = 0; i < 16777216; i++)
+    for(i = 0; i < 262144; i++)
     {
       if(list[i] > 0)
       {
@@ -276,7 +295,7 @@ void Quantize::pca(Bitmap *src, int size)
   {
     for(i = 0; i < j; i++)
     {
-      *(err_row[j] + i) = error24(colors[i], colors[j],
+      *(err_row[j] + i) = error18(colors[i], colors[j],
                                   list[colors[i]], list[colors[j]]);
     }
   }
@@ -311,7 +330,7 @@ void Quantize::pca(Bitmap *src, int size)
     // compute quantization level and place in i, delete j
     float temp = list[colors[ii]];
 
-    colors[ii] = merge24(colors[ii], colors[jj],
+    colors[ii] = merge18(colors[ii], colors[jj],
                          list[colors[ii]], list[colors[jj]]);
     list[colors[ii]] = temp + list[colors[jj]];
     colors[jj] = -1;
@@ -324,7 +343,7 @@ void Quantize::pca(Bitmap *src, int size)
     {
       if(colors[j] >= 0)
       {
-        *pos = error24(colors[ii], colors[j],
+        *pos = error18(colors[ii], colors[j],
                        list[colors[ii]], list[colors[j]]);
       }
       pos += MAX_COLORS;
@@ -352,7 +371,7 @@ void Quantize::pca(Bitmap *src, int size)
   {
     if(colors[i] != -1)
     {
-      Palette::main->data[index] = colors[i];
+      Palette::main->data[index] = convert(colors[i]);
       index++;
     }
   }
