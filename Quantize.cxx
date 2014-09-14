@@ -88,7 +88,7 @@ namespace
                      const float &f1, const float &f2)
   {
     const float mul = 1.0f / (f1 + f2);
-    const int r = (f1 * getr18(c1) + f2 * getr18(c1)) * mul;
+    const int r = (f1 * getr18(c1) + f2 * getr18(c2)) * mul;
     const int g = (f1 * getg18(c1) + f2 * getg18(c2)) * mul;
     const int b = (f1 * getb18(c1) + f2 * getb18(c2)) * mul;
 
@@ -142,7 +142,7 @@ namespace
       g = unfix_gamma[(int)g];
       b = unfix_gamma[(int)b];
 
-      temp[x] = make_rgb24((int)r, (int)g, (int)b);
+      temp[x] = make_rgb((int)r, (int)g, (int)b);
 
       c[0] -= u1;
       c[1] -= u2;
