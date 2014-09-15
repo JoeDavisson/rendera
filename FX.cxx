@@ -961,6 +961,7 @@ void FX::doApplyPaletteDither()
       const int l = unfix_gamma[n[3]];
 
       int c = Palette::main->data[Palette::main->lookup[Blend::keepLum(make_rgb(r, g, b), l) & 0xFFFFFF]];
+      //int c = Palette::main->data[Palette::main->lookup[make_rgb(r, g, b) & 0xFFFFFF]];
       bmp->setpixelSolid(x, y, make_rgb(getr(c), getg(c), getb(c)), 0);
 
       v[0] = fix_gamma[getr(*p)];
@@ -973,10 +974,10 @@ void FX::doApplyPaletteDither()
       for(i = 0; i < 4; i++)
       {
         e[i] = n[i] - v[i];
-        last[i] = (e[i] * 7) / 32;
-        buf[i][x - 1] += (e[i] * 3) / 32;
-        buf[i][x] += (e[i] * 5) / 32;
-        buf[i][x + 1] += (e[i] * 1) / 32;
+        last[i] = (e[i] * 7) / 24;
+        buf[i][x - 1] += (e[i] * 3) / 24;
+        buf[i][x] += (e[i] * 5) / 24;
+        buf[i][x + 1] += (e[i] * 1) / 24;
       }
     }
 

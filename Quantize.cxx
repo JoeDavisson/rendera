@@ -53,13 +53,19 @@ namespace
     return (c >> 12) & 0x3F;
   }
 
+  inline int getl18(const int &c)
+  {
+    return ((19 * getr18(c)) + (36 * getg18(c)) + (8 * getb18(c))) / 63;
+  }
+
   inline int diff18(const int &c1, const int &c2)
   {
     const int r = getr18(c1) - getr18(c2);
     const int g = getg18(c1) - getg18(c2);
     const int b = getb18(c1) - getb18(c2);
+    const int l = getl18(c1) - getl18(c2);
 
-    return r * r + g * g + b * b;
+    return r * r + g * g + b * b + l * l;
   }
 
   inline int convert(const int &c1)
@@ -401,8 +407,8 @@ void Quantize::pca(Bitmap *src, int size)
   // stretch palette
   if(Palette::main->max != size)
   {
-    stretch_palette(Palette::main->data, Palette::main->max, size);
-    Palette::main->max = size;
+//    stretch_palette(Palette::main->data, Palette::main->max, size);
+//    Palette::main->max = size;
   }
 
   // free memory
