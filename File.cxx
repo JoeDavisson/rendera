@@ -589,14 +589,21 @@ Bitmap *File::loadTGA(const char *fn, int overscroll)
     negy = 0;
 
   int xstart = 0;
-  int xend = w - 1;
+  int xend = w;
   int ystart = 0;
-  int yend = h - 1;
+  int yend = h;
 
   if(negx)
-    SWAP(xstart, xend);
+  {
+    xstart = w - 1;
+    xend = -1;
+  }
+
   if(negy)
-    SWAP(ystart, yend);
+  {
+    ystart = h - 1;
+    yend = -1;
+  }
 
   for(y = ystart; y != yend; y += negy ? -1 : 1)
   {
@@ -613,16 +620,16 @@ Bitmap *File::loadTGA(const char *fn, int overscroll)
       {
         *(temp->row[y + overscroll] + x + overscroll) =
                        make_rgb((linebuf[x * depth + 2] & 0xFF),
-                               (linebuf[x * depth + 1] & 0xFF),
-                               (linebuf[x * depth + 0] & 0xFF));
+                                (linebuf[x * depth + 1] & 0xFF),
+                                (linebuf[x * depth + 0] & 0xFF));
       }
       else if(depth == 4)
       {
         *(temp->row[y + overscroll] + x + overscroll) =
                        make_rgba((linebuf[x * depth + 2] & 0xFF),
-                                (linebuf[x * depth + 1] & 0xFF),
-                                (linebuf[x * depth + 0] & 0xFF),
-                                (linebuf[x * depth + 3] & 0xFF));
+                                 (linebuf[x * depth + 1] & 0xFF),
+                                 (linebuf[x * depth + 0] & 0xFF),
+                                 (linebuf[x * depth + 3] & 0xFF));
       }
     }
   }
