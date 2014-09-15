@@ -240,6 +240,13 @@ void Quantize::pca(Bitmap *src, int size)
   float inc = 1.0 / ((src->w - overscroll * 2) * (src->h - overscroll * 2));
   int count = 0;
 
+  int r_high = 0;
+  int g_high = 0;
+  int b_high = 0;
+  int r_low = 0xFFFFFF;
+  int g_low = 0xFFFFFF;
+  int b_low = 0xFFFFFF;
+
   for(j = overscroll; j < src->h - overscroll; j++)
   {
     int *p = src->row[j] + overscroll;
@@ -247,6 +254,20 @@ void Quantize::pca(Bitmap *src, int size)
     {
       // reduce to 18-bit equivalent
       const struct rgba_t rgba = get_rgba(*p++);
+
+      if(rgba.r < r_low)
+        r_low = rgba.r;
+      if(rgba.r > r_high)
+        r_high = rgba.r;
+      if(rgba.g < g_low)
+        g_low = rgba.g;
+      if(rgba.g > g_high)
+        g_high = rgba.g;
+      if(rgba.b < b_low)
+        b_low = rgba.b;
+      if(rgba.b > b_high)
+        b_high = rgba.b;
+
       const int c = make_rgb18(rgba.r / 4.04, rgba.g / 4.04, rgba.b / 4.04);
 
       if(list[c] < inc)
@@ -264,6 +285,12 @@ void Quantize::pca(Bitmap *src, int size)
     colors[1] = make_rgb18(0x3F, 0x3F, 0x3F);
     list[colors[0]] = inc;
     list[colors[1]] = inc;
+  }
+  else
+  {
+    // preserve darkest and lightest colors
+    list[make_rgb18(r_low / 4.04, g_low / 4.04, b_low / 4.04)] = 100.0f;
+    list[make_rgb18(r_high / 4.04, g_high / 4.04, b_high / 4.04)] = 100.0f;
   }
 
   // skip if already enough colors
