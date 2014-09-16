@@ -27,9 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #define MAX_COLORS 4096
 
-extern int *fix_gamma;
-extern int *unfix_gamma;
-
 namespace
 {
   // 18-bit color routines
@@ -99,67 +96,6 @@ namespace
     const int b = (f1 * getb18(c1) + f2 * getb18(c2)) * mul;
 
     return make_rgb18(r, g, b);
-  }
-
-  // 1D bilinear filter to stretch a palette
-  void stretch_palette(int *data, int current, int target)
-  {
-    int *temp = new int[target];
-
-    float ax = (float)(current - 1) / (float)(target - 1);
-
-    int *c[2];
-    c[0] = c[1] = &data[0];
-
-    int x = 0;
-
-    do
-    {
-      float uu = (x * ax);
-
-      int u1 = uu;
-      if(u1 > current - 1)
-        u1 = current - 1;
-
-      int u2 = (u1 < (current - 1) ? u1 + 1 : u1);
-      float u = uu - u1;
-
-      c[0] += u1;
-      c[1] += u2;
-
-      float f[2];
-
-      f[0] = (1.0 - u);
-      f[1] = u;
-
-      float r = 0, g = 0, b = 0;
-      int i = 0;
-
-      do
-      {
-        r += (float)fix_gamma[getr(*c[i])] * f[i];
-        g += (float)fix_gamma[getg(*c[i])] * f[i];
-        b += (float)fix_gamma[getb(*c[i])] * f[i];
-        i++;
-      }
-      while(i < 2);
-
-      r = unfix_gamma[(int)r];
-      g = unfix_gamma[(int)g];
-      b = unfix_gamma[(int)b];
-
-      temp[x] = make_rgb((int)r, (int)g, (int)b);
-
-      c[0] -= u1;
-      c[1] -= u2;
-      x++;
-    }
-    while(x < target);
-
-    for(x = 0; x < target; x++)
-      data[x] = temp[x];
-
-    delete[] temp;
   }
 
   // limit colors being clustered to a reasonable number (4096)
@@ -246,8 +182,8 @@ void Quantize::pca(Bitmap *src, int size)
   float inc = 1.0 / ((src->w - overscroll * 2) * (src->h - overscroll * 2));
   int count = 0;
 
-  int lowest = make_rgb(255, 255, 255);
-  int highest = make_rgb(0, 0, 0);
+  int darkest = make_rgb(255, 255, 255);
+  int brightest = make_rgb(0, 0, 0);
 
   for(j = overscroll; j < src->h - overscroll; j++)
   {
@@ -256,10 +192,11 @@ void Quantize::pca(Bitmap *src, int size)
     {
       const struct rgba_t rgba = get_rgba(*p);
 
-      if(getl(*p) > getl(highest))
-        highest = *p;
-      if(getl(*p) < getl(lowest))
-        lowest = *p;
+      // find brightest/darkest colors
+      if(getl(*p) > getl(brightest))
+        brightest = *p;
+      if(getl(*p) < getl(darkest))
+        darkest = *p;
 
       // reduce to 18-bit equivalent
       const int c = make_rgb18(rgba.r / 4.04, rgba.g / 4.04, rgba.b / 4.04);
@@ -285,8 +222,13 @@ void Quantize::pca(Bitmap *src, int size)
   else
   {
     // preserve darkest and lightest colors
-    list[make_rgb18(getr(lowest) / 4.04, getg(lowest) / 4.04, getb(lowest) / 4.04)] = 100.0f;
-    list[make_rgb18(getr(highest) / 4.04, getg(highest) / 4.04, getb(highest) / 4.04)] = 100.0f;
+    list[make_rgb18(getr(darkest) / 4.04,
+                    getg(darkest) / 4.04,
+                    getb(darkest) / 4.04)] = 100.0f;
+
+    list[make_rgb18(getr(brightest) / 4.04,
+                    getg(brightest) / 4.04,
+                    getb(brightest) / 4.04)] = 100.0f;
   }
 
   // skip if already enough colors
@@ -345,6 +287,7 @@ void Quantize::pca(Bitmap *src, int size)
             ii = i;
             jj = j;
           }
+
           pos++;
         }
       }
@@ -369,6 +312,7 @@ void Quantize::pca(Bitmap *src, int size)
         *pos = error18(colors[ii], colors[j],
                        list[colors[ii]], list[colors[j]]);
       }
+
       pos += MAX_COLORS;
     }
 
@@ -403,13 +347,6 @@ void Quantize::pca(Bitmap *src, int size)
 
   // sort palette
   qsort(Palette::main->data, Palette::main->max, sizeof(int), comp_lum);
-
-  // stretch palette
-  if(Palette::main->max != size)
-  {
-//    stretch_palette(Palette::main->data, Palette::main->max, size);
-//    Palette::main->max = size;
-  }
 
   // free memory
   delete[] err_row;

@@ -960,10 +960,9 @@ void FX::doApplyPaletteDither()
       const int b = unfix_gamma[n[2]];
       const int l = unfix_gamma[n[3]];
 
-      int c = Palette::main->data[Palette::main->lookup[Blend::keepLum(make_rgb(r, g, b), l) & 0xFFFFFF]];
-      //int c = Palette::main->data[Palette::main->lookup[make_rgb(r, g, b) & 0xFFFFFF]];
-      bmp->setpixelSolid(x, y, make_rgb(getr(c), getg(c), getb(c)), 0);
-
+      const int c = Palette::main->data[Palette::main->lookup[Blend::keepLum(make_rgb(r, g, b), l) & 0xFFFFFF]];
+      struct rgba_t rgba = get_rgba(c);
+      *p = make_rgb(rgba.r, rgba.g, rgba.b);
       v[0] = fix_gamma[getr(*p)];
       v[1] = fix_gamma[getg(*p)];
       v[2] = fix_gamma[getb(*p)];
