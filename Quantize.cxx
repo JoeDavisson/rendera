@@ -29,48 +29,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  // 18-bit color routines
-  inline int make_rgb18(const int &r, const int &g, const int &b)
+  // color struct, stores RGB values as floats for increased clustering
+  // accuracy, also stores the frequency of the color in the image
+  struct color_t
   {
-    return r | g << 6 | b << 12;
+    float r, g, b, l;
+    float freq;
+    int active;
+  };
+
+  // create a color_t structure
+  inline void make_color(struct color_t *c,
+                         float r, float g, float b, float freq)
+  {
+    c->r = r;
+    c->g = g;
+    c->b = b;
+    c->freq = freq;
+    c->active = 1;
   }
 
-  inline int getr18(const int &c)
-  {
-    return c & 0x3F;
-  }
-
-  inline int getg18(const int &c)
-  {
-    return (c >> 6) & 0x3F;
-  }
-
-  inline int getb18(const int &c)
-  {
-    return (c >> 12) & 0x3F;
-  }
-
-  inline int getl18(const int &c)
-  {
-    return ((19 * getr18(c)) + (36 * getg18(c)) + (8 * getb18(c))) / 63;
-  }
-
-  inline int diff18(const int &c1, const int &c2)
-  {
-    const int r = getr18(c1) - getr18(c2);
-    const int g = getg18(c1) - getg18(c2);
-    const int b = getb18(c1) - getb18(c2);
-    const int l = getl18(c1) - getl18(c2);
-
-    return r * r + g * g + b * b + l * l;
-  }
-
-  inline int convert(const int &c1)
-  {
-    return make_rgb(getr18(c1) * 4.05, getg18(c1) * 4.05, getb18(c1) * 4.05);
-  }
-
-  // qsort callback to sort palette by luminance
+  // qsort callback to sort palette
   int comp_lum(const void *a, const void *b)
   {
     int c1 = *(int *)a;
@@ -80,37 +59,40 @@ namespace
   }
 
   // compute quantization error
-  inline float error18(const int &c1, const int &c2,
-                     const float &f1, const float &f2)
+  inline float error(struct color_t *c1, struct color_t *c2)
   {
-    return ((f1 * f2) / (f1 + f2)) * diff18(c1, c2);
+    const float r = c1->r - c2->r;
+    const float g = c1->g - c2->g;
+    const float b = c1->b - c2->b;
+
+    return ((c1->freq * c2->freq) / (c1->freq + c2->freq)) *
+            (r * r + g * g + b * b);
   }
 
   // merge two colors
-  inline int merge18(const int &c1, const int &c2,
-                     const float &f1, const float &f2)
+  inline void merge(struct color_t *c1, struct color_t *c2)
   {
-    const float mul = 1.0f / (f1 + f2);
-    const int r = (f1 * getr18(c1) + f2 * getr18(c2)) * mul;
-    const int g = (f1 * getg18(c1) + f2 * getg18(c2)) * mul;
-    const int b = (f1 * getb18(c1) + f2 * getb18(c2)) * mul;
+    const float mul = 1.0f / (c1->freq + c2->freq);
+    c1->r = (c1->freq * c1->r + c2->freq * c2->r) * mul;
+    c1->g = (c1->freq * c1->g + c2->freq * c2->g) * mul;
+    c1->b = (c1->freq * c1->b + c2->freq * c2->b) * mul;
 
-    return make_rgb18(r, g, b);
+    c1->freq += c2->freq;  
   }
 
-  // limit colors being clustered to a reasonable number (4096)
-  int limit_colors(float *list, int *colors)
+  // limit colors to a reasonable number (4096)
+  int limit_colors(float *histogram, color_t *colors)
   {
     int r, g, b;
     int i, j, k;
-    int step = 4;
+    int step = 16;
     int count = 0;
 
-    for(b = 0; b <= 64 - step; b += step)
+    for(b = 0; b <= 256 - step; b += step)
     {
-      for(g = 0; g <= 64 - step; g += step)
+      for(g = 0; g <= 256 - step; g += step)
       {
-        for(r = 0; r <= 64 - step; r += step)
+        for(r = 0; r <= 256 - step; r += step)
         {
           float rr = 0;
           float gg = 0;
@@ -123,14 +105,14 @@ namespace
             {
               for(i = 0; i < step; i++)
               {
-                int c = make_rgb18(r + i, g + j, b + k);
-                float d = list[c];
+                int c = make_rgb24(r + i, g + j, b + k);
+                float d = histogram[c];
+                histogram[c] = 0;
 
                 rr += d * (r + i);
                 gg += d * (g + j);
                 bb += d * (b + k);
                 div += d;
-                list[c] = 0;
               }
             }
           }
@@ -140,8 +122,7 @@ namespace
             rr /= div;
             gg /= div;
             bb /= div;
-            colors[count] = make_rgb18((int)rr, (int)gg, (int)bb);
-            list[colors[count]] = div;
+            make_color(&colors[count], rr, gg, bb, div);
             count++;
           }
         }
@@ -155,58 +136,43 @@ namespace
 void Quantize::pca(Bitmap *src, int size)
 {
   // popularity histogram
-  float *list = new float[262144];
+  float *histogram = new float[16777216];
 
   // color list
-  int *colors = new int[MAX_COLORS];
+  struct color_t *colors = new color_t[MAX_COLORS];
 
   // quantization error matrix
   int i, j;
-  float *err_data = new float[MAX_COLORS * MAX_COLORS];
-  float **err_row = new float *[MAX_COLORS];
-  for(i = 0; i < MAX_COLORS; i++)
-    err_row[i] = &err_data[MAX_COLORS * i];
+  float *err_data = new float[((MAX_COLORS + 1) * MAX_COLORS) / 2];
 
   int max;
   int rep = size;
   int overscroll = src->overscroll;
 
   // reset lists
-  for(i = 0; i < 262144; i++)
-   list[i] = 0;
+  for(i = 0; i < 16777216; i++)
+    histogram[i] = 0;
 
   for(i = 0; i < MAX_COLORS; i++)
-    colors[i] = -1;
+    colors[i].active = 0;
 
-  // build histogram
+  // build histogram, inc is the weight of 1 pixel in the image
   float inc = 1.0 / ((src->w - overscroll * 2) * (src->h - overscroll * 2));
   int count = 0;
-
-  int darkest = make_rgb(255, 255, 255);
-  int brightest = make_rgb(0, 0, 0);
 
   for(j = overscroll; j < src->h - overscroll; j++)
   {
     int *p = src->row[j] + overscroll;
+
     for(i = overscroll; i < src->w - overscroll; i++)
     {
-      const struct rgba_t rgba = get_rgba(*p);
+      // strip alpha channel
+      int c = *p++ & 0xFFFFFF;
 
-      // find brightest/darkest colors
-      if(getl(*p) > getl(brightest))
-        brightest = *p;
-      if(getl(*p) < getl(darkest))
-        darkest = *p;
-
-      // reduce to 18-bit equivalent
-      const int c = make_rgb18(rgba.r / 4.04, rgba.g / 4.04, rgba.b / 4.04);
-
-      if(list[c] < inc)
+      if(histogram[c] < inc)
         count++;
 
-      list[c] += inc;
-
-      p++;
+      histogram[c] += inc;
     }
   }
 
@@ -214,32 +180,20 @@ void Quantize::pca(Bitmap *src, int size)
   if(count < 2)
   {
     count = 2;
-    colors[0] = make_rgb18(0, 0, 0);
-    colors[1] = make_rgb18(0x3F, 0x3F, 0x3F);
-    list[colors[0]] = inc;
-    list[colors[1]] = inc;
-  }
-  else
-  {
-    // preserve darkest and lightest colors
-    list[make_rgb18(getr(darkest) / 4.04,
-                    getg(darkest) / 4.04,
-                    getb(darkest) / 4.04)] = 100.0f;
-
-    list[make_rgb18(getr(brightest) / 4.04,
-                    getg(brightest) / 4.04,
-                    getb(brightest) / 4.04)] = 100.0f;
+    make_color(&colors[0], 0, 0, 0, inc);
+    make_color(&colors[1], 255, 255, 255, inc);
   }
 
   // skip if already enough colors
   if(count <= rep)
   {
     count = 0;
-    for(i = 0; i < 262144; i++)
+    for(i = 0; i < 16777216; i++)
     {
-      if(list[i] > 0)
+      if(histogram[i] > 0)
       {
-        colors[count] = i;
+        rgba_t rgba = get_rgba(i);
+        make_color(&colors[count], rgba.r, rgba.g, rgba.b, histogram[i]);
         count++;
       }
     }
@@ -247,8 +201,11 @@ void Quantize::pca(Bitmap *src, int size)
   else
   {
     // limit color count to 4096
-    count = limit_colors(list, colors);
+    count = limit_colors(histogram, colors);
   }
+
+  // don't need histogram anymore
+  delete[] histogram;
 
   // set max
   max = count;
@@ -259,10 +216,7 @@ void Quantize::pca(Bitmap *src, int size)
   for(j = 0; j < max; j++)
   {
     for(i = 0; i < j; i++)
-    {
-      *(err_row[j] + i) = error18(colors[i], colors[j],
-                                  list[colors[i]], list[colors[j]]);
-    }
+      err_data[i + (j + 1) * j / 2] = error(&colors[i], &colors[j]);
   }
 
   Dialog::showProgress(count - rep);
@@ -271,58 +225,46 @@ void Quantize::pca(Bitmap *src, int size)
   {
     // find lowest value in error matrix
     int ii = 0, jj = 0;
-    float error = 999999;
+    float least_err = 999999;
 
     for(j = 0; j < max; j++)
     {
-      if(colors[j] >= 0)
+      if(colors[j].active)
       {
-        float *pos = err_row[j];
-
+        //float *pos = err_row[j];
         for(i = 0; i < j; i++)
         {
-          if((colors[i] >= 0) && (*pos < error))
+          float e = err_data[i + (j + 1) * j / 2];
+
+          if(colors[i].active && err_data[i + (j + 1) * j / 2] < least_err)
           {
-            error = *pos;
+            least_err = e;
             ii = i;
             jj = j;
           }
-
-          pos++;
         }
       }
     }
 
     // compute quantization level and place in i, delete j
-    float temp = list[colors[ii]];
+    float temp = colors[ii].freq;
 
-    colors[ii] = merge18(colors[ii], colors[jj],
-                         list[colors[ii]], list[colors[jj]]);
-    list[colors[ii]] = temp + list[colors[jj]];
-    colors[jj] = -1;
+    merge(&colors[ii], &colors[jj]);
+    colors[jj].active = 0;
     count--;
 
     // recompute error matrix for new row
-    float *pos = err_row[ii] + ii;
-
     for(j = ii; j < max; j++)
     {
-      if(colors[j] >= 0)
-      {
-        *pos = error18(colors[ii], colors[j],
-                       list[colors[ii]], list[colors[j]]);
-      }
-
-      pos += MAX_COLORS;
+      if(colors[j].active)
+        err_data[ii + (j + 1) * j / 2] = error(&colors[ii], &colors[j]);
     }
 
     // user cancelled operation
     if(Fl::get_key(FL_Escape))
     {
-      delete[] err_row;
       delete[] err_data;
       delete[] colors;
-      delete[] list;
       return;
     }
 
@@ -336,9 +278,10 @@ void Quantize::pca(Bitmap *src, int size)
 
   for(i = 0; i < max; i++)
   {
-    if(colors[i] != -1)
+    if(colors[i].active)
     {
-      Palette::main->data[index] = convert(colors[i]);
+      Palette::main->data[index] =
+        make_rgb((int)colors[i].r, (int)colors[i].g, (int)colors[i].b);
       index++;
     }
   }
@@ -349,10 +292,8 @@ void Quantize::pca(Bitmap *src, int size)
   qsort(Palette::main->data, Palette::main->max, sizeof(int), comp_lum);
 
   // free memory
-  delete[] err_row;
   delete[] err_data;
   delete[] colors;
-  delete[] list;
 
   // redraw palette widget
   Gui::drawPalette();

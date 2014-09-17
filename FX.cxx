@@ -920,10 +920,10 @@ void FX::doApplyPaletteDither()
   int i, j;
   Bitmap *bmp = Bitmap::main;
 
-  int e[4], v[4], n[4], last[4];
-  int *buf[4], *prev[4];
+  int e[3], v[3], n[3], last[3];
+  int *buf[3], *prev[3];
 
-  for(i = 0; i < 4; i++)
+  for(i = 0; i < 3; i++)
   {
     buf[i] = new int[bmp->w];
     prev[i] = new int[bmp->w];
@@ -947,9 +947,8 @@ void FX::doApplyPaletteDither()
       v[0] = fix_gamma[getr(*p)];
       v[1] = fix_gamma[getg(*p)];
       v[2] = fix_gamma[getb(*p)];
-      v[3] = fix_gamma[getl(*p)];
 
-      for(i = 0; i < 4; i++)
+      for(i = 0; i < 3; i++)
       {
         n[i] = v[i] + last[i] + prev[i][x];
         n[i] = MAX(MIN(n[i], 65535), 0);
@@ -958,19 +957,21 @@ void FX::doApplyPaletteDither()
       const int r = unfix_gamma[n[0]];
       const int g = unfix_gamma[n[1]];
       const int b = unfix_gamma[n[2]];
-      const int l = unfix_gamma[n[3]];
 
-      const int c = Palette::main->data[Palette::main->lookup[Blend::keepLum(make_rgb(r, g, b), l) & 0xFFFFFF]];
+      const int c = Palette::main->data[
+                      Palette::main->lookup[make_rgb(r, g, b) & 0xFFFFFF]];
+
       struct rgba_t rgba = get_rgba(c);
+
       *p = make_rgb(rgba.r, rgba.g, rgba.b);
+
       v[0] = fix_gamma[getr(*p)];
       v[1] = fix_gamma[getg(*p)];
       v[2] = fix_gamma[getb(*p)];
-      v[3] = fix_gamma[getl(*p)];
 
       p++;
 
-      for(i = 0; i < 4; i++)
+      for(i = 0; i < 3; i++)
       {
         e[i] = n[i] - v[i];
         last[i] = (e[i] * 7) / 24;
@@ -980,7 +981,7 @@ void FX::doApplyPaletteDither()
       }
     }
 
-    for(i = 0; i < 4; i++)
+    for(i = 0; i < 3; i++)
     {
       for(j = overscroll; j < bmp->w - overscroll; j++)
       {
