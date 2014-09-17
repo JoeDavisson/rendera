@@ -231,7 +231,6 @@ void Quantize::pca(Bitmap *src, int size)
     {
       if(colors[j].active)
       {
-        //float *pos = err_row[j];
         for(i = 0; i < j; i++)
         {
           float e = err_data[i + (j + 1) * j / 2];
