@@ -7,4 +7,5 @@ Rubicks <rubicks00@gmail.com>
   -travis setup
   -program organization/refactoring
   -rgba_t related methods in inline.h
+  -color quantization improvement ideas
 
