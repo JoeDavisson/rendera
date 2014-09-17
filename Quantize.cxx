@@ -33,7 +33,7 @@ namespace
   // accuracy, also stores the frequency of the color in the image
   struct color_t
   {
-    float r, g, b, l;
+    float r, g, b;
     float freq;
     int active;
   };
