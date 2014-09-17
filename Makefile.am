@@ -3,6 +3,7 @@
 ACLOCAL_AMFLAGS = -I m4
 
 #AM_CXXFLAGS = -Wall -Wno-unused -fmax-errors=5
+AM_CPPFLAGS = -I$(srcdir)/octree
 AM_CXXFLAGS = -Wall -Wextra -Werror -pedantic-errors # -rdynamic
 
 
@@ -137,9 +138,27 @@ dist_pkgdata_DATA =     \
 
 check_PROGRAMS =    \
   test_fltk_version \
-  test_endian
+  test_endian       \
+  test_octree
 
 test_fltk_version_SOURCES = test/fltk_version.C
 test_endian_SOURCES = test/endian.C
+test_octree_SOURCES = \
+  octree/array2d.h    \
+  octree/array.h      \
+  octree/numtraits.h  \
+  octree/octree.h     \
+  octree/octree.tcc   \
+  octree/point3d.h    \
+  octree/shareddata.h \
+  octree/tinyvector.h \
+  test/octree.C
+
+
+dist_doc_DATA =      \
+  README.md          \
+  octree/License.txt \
+  octree/Readme.txt
+
 
 TESTS = $(check_PROGRAMS)
