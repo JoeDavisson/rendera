@@ -35,14 +35,14 @@ struct node_t
 class Octree
 {
 public:
-  Octree(int, float);
+  Octree();
   virtual ~Octree();
 
-  add(int, float);
-  remove(int);
+  void add(int, float);
+  void remove(int);
 
   node_t *node;
-}
+};
 
 #endif
 

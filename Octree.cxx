@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Octree.H"
 
-void Octree::Octree()
+Octree::Octree()
 {
   node = new node_t[16777216];
 
@@ -29,19 +29,10 @@ void Octree::Octree()
 
   for(i = 0; i < 16777216; i++)
   {
-    node[i]->value = -1;
-    node[i]->child[0] = 8 * n + 1;
-    node[i]->child[1] = 8 * n + 2;
-    node[i]->child[2] = 8 * n + 3;
-    node[i]->child[3] = 8 * n + 4;
-    node[i]->child[4] = 8 * n + 5;
-    node[i]->child[5] = 8 * n + 6;
-    node[i]->child[6] = 8 * n + 7;
-    node[i]->child[7] = 8 * n + 8;
   }
 }
 
-void Octree::~Octree()
+Octree::~Octree()
 {
   delete[] node;
 }
