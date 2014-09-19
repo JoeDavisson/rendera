@@ -28,7 +28,7 @@ class Octree
 public:
   struct node_t
   {
-    int value;
+    float value;
     struct node_t *child[8];
   };
 
@@ -36,8 +36,8 @@ public:
   virtual ~Octree();
 
   void clear(struct node_t *);
-  void add(int, int, int, int);
-  int read(int, int, int);
+  void add(int, int, int, float);
+  float read(int, int, int);
   void remove(int, int, int);
 
   struct node_t *root;

@@ -905,7 +905,7 @@ void FX::doApplyPaletteNormal()
     for(x = overscroll; x < bmp->w - overscroll; x++)
     {
       int c = bmp->getpixel(x, y);
-      bmp->setpixel(x, y, Palette::main->data[Palette::main->lookup->read(getr(c), getg(c), getb(c))], 0);
+      bmp->setpixel(x, y, Palette::main->data[(int)Palette::main->lookup->read(getr(c), getg(c), getb(c))], 0);
     }
 
     if(update(y) < 0)
@@ -964,7 +964,7 @@ if(r > 255 || g > 255 || b > 255)
   exit(1);
 }
 
-      const int c = Palette::main->data[Palette::main->lookup->read(r, g, b)];
+      const int c = Palette::main->data[(int)Palette::main->lookup->read(r, g, b)];
 
       struct rgba_t rgba = get_rgba(c);
 
