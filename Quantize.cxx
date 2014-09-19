@@ -18,8 +18,11 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <cmath>
+
 #include "Quantize.H"
 #include "Bitmap.H"
+#include "Blend.H"
 #include "Palette.H"
 #include "Gui.H"
 #include "Dialog.H"
@@ -81,7 +84,7 @@ namespace
     c1->freq += c2->freq;  
   }
 
-  // averages the color cube down to 4096 colors to be clustered
+  // averages the color cube down to a maximum of 4096 colors
   int limit_colors(Octree *histogram, color_t *colors)
   {
     int r, g, b;
@@ -134,25 +137,27 @@ namespace
     return count;
   }
 }
+
 // pairwise clustering algorithm
 void Quantize::pca(Bitmap *src, int size)
 {
+  int i, j;
+
   // popularity histogram
   Octree *histogram = new Octree();
 
   // color list
   struct color_t *colors = new color_t[MAX_COLORS];
 
+  for(i = 0; i < MAX_COLORS; i++)
+    colors[i].active = 0;
+
   // quantization error matrix
-  int i, j;
   float *err_data = new float[((MAX_COLORS + 1) * MAX_COLORS) / 2];
 
   int max;
   int rep = size;
   int overscroll = src->overscroll;
-
-  for(i = 0; i < MAX_COLORS; i++)
-    colors[i].active = 0;
 
   // build histogram, inc is the weight of 1 pixel in the image
   float inc = 1.0 / ((src->w - overscroll * 2) * (src->h - overscroll * 2));
