@@ -44,7 +44,7 @@ void Octree::clear(struct node_t *node)
     if(node->child[i])
       clear(node->child[i]);
 
-  delete node;
+//  delete node;
 }
 
 void Octree::add(int r, int g, int b, float value)
@@ -79,7 +79,7 @@ float Octree::read(int r, int g, int b)
 {
   struct node_t *node = root;
   float value = 0;
-  int i, j;
+  int i;
 
   for(i = 7; i >= 0; i--)
   {
@@ -103,5 +103,30 @@ float Octree::read(int r, int g, int b)
 
 void Octree::remove(int r, int g, int b)
 {
+//FIXME this doesn't really delete the node
+  add(r, g, b, 0);
+//FIXME this crashes
+/*
+  struct node_t *node = root;
+  int i;
+
+  for(i = 7; i >= 0; i--)
+  {
+    int index = ((r & (1 << i)) ? 1 : 0) << 0 |
+                ((g & (1 << i)) ? 1 : 0) << 1 |
+                ((b & (1 << i)) ? 1 : 0) << 2;
+
+    if(node->child[index])
+    {
+      node = node->child[index];
+    }
+    else
+    {
+      break;
+    }
+  }
+
+  clear(node);
+*/
 }
 

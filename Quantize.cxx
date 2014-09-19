@@ -82,7 +82,7 @@ namespace
   }
 
   // limit colors to a reasonable number (4096)
-  int limit_colors(float *histogram, color_t *colors)
+  int limit_colors(Octree *histogram, color_t *colors)
   {
     int r, g, b;
     int i, j, k;
@@ -106,9 +106,11 @@ namespace
             {
               for(i = 0; i < step; i++)
               {
-                int c = make_rgb24(r + i, g + j, b + k);
-                float d = histogram[c];
-                histogram[c] = 0;
+                //int c = make_rgb24(r + i, g + j, b + k);
+                //float d = histogram[c];
+                //histogram[c] = 0;
+                float d = histogram->read(r + i, g + j, b + k);
+                histogram->remove(r + i, g + j, b + k);
 
                 rr += d * (r + i);
                 gg += d * (g + j);
@@ -137,7 +139,8 @@ namespace
 void Quantize::pca(Bitmap *src, int size)
 {
   // popularity histogram
-  float *histogram = new float[16777216];
+  //float *histogram = new float[16777216];
+  Octree *histogram = new Octree();
 
   // color list
   struct color_t *colors = new color_t[MAX_COLORS];
@@ -151,8 +154,8 @@ void Quantize::pca(Bitmap *src, int size)
   int overscroll = src->overscroll;
 
   // reset lists
-  for(i = 0; i < 16777216; i++)
-    histogram[i] = 0;
+//  for(i = 0; i < 16777216; i++)
+//    histogram[i] = 0;
 
   for(i = 0; i < MAX_COLORS; i++)
     colors[i].active = 0;
@@ -170,10 +173,15 @@ void Quantize::pca(Bitmap *src, int size)
       // strip alpha channel
       int c = *p++ & 0xFFFFFF;
 
-      if(histogram[c] < inc)
+      rgba_t rgba = get_rgba(c);
+      float freq = histogram->read(rgba.r, rgba.g, rgba.b);
+      if(freq < inc);
         count++;
+      //if(histogram[c] < inc)
+      //  count++;
 
-      histogram[c] += inc;
+      histogram->add(rgba.r, rgba.g, rgba.b, freq + inc);
+      //histogram[c] += inc;
     }
   }
 
@@ -191,10 +199,13 @@ void Quantize::pca(Bitmap *src, int size)
     count = 0;
     for(i = 0; i < 16777216; i++)
     {
-      if(histogram[i] > 0)
+      rgba_t rgba = get_rgba(i);
+      float freq = histogram->read(rgba.r, rgba.g, rgba.b);
+      //if(histogram[i] > 0)
+      if(freq > 0)
       {
         rgba_t rgba = get_rgba(i);
-        make_color(&colors[count], rgba.r, rgba.g, rgba.b, histogram[i]);
+        make_color(&colors[count], rgba.r, rgba.g, rgba.b, freq);
         count++;
       }
     }
@@ -206,7 +217,8 @@ void Quantize::pca(Bitmap *src, int size)
   }
 
   // don't need histogram anymore
-  delete[] histogram;
+  //delete[] histogram;
+  delete histogram;
 
   // set max
   max = count;
