@@ -36,8 +36,8 @@ public:
   virtual ~Octree();
 
   void clear(struct node_t *);
-  void add(int, int, int, float);
-  void add_overwrite(int, int, int, float);
+  void write(int, int, int, float);
+  void write_path(int, int, int, float);
   float read(int, int, int);
 
   struct node_t *root;

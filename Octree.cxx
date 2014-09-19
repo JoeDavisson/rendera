@@ -36,6 +36,7 @@ Octree::~Octree()
   clear(root);
 }
 
+// recursively delete octree node
 void Octree::clear(struct node_t *node)
 {
   int i;
@@ -47,8 +48,8 @@ void Octree::clear(struct node_t *node)
   delete node;
 }
 
-// this only writes the value at the leaf node
-void Octree::add(int r, int g, int b, float value)
+// writes value to leaf node
+void Octree::write(int r, int g, int b, float value)
 {
   struct node_t *node = root;
   int i, j;
@@ -77,9 +78,8 @@ void Octree::add(int r, int g, int b, float value)
   node->value = value;
 }
 
-// this version overwrites the values on the way
-// (used by palette lookup table so it can use a smaller octree)
-void Octree::add_overwrite(int r, int g, int b, float value)
+// sets entire path to value (used by palette lookup)
+void Octree::write_path(int r, int g, int b, float value)
 {
   struct node_t *node = root;
   int i, j;
@@ -106,6 +106,7 @@ void Octree::add_overwrite(int r, int g, int b, float value)
   }
 }
 
+// read value at leaf node
 float Octree::read(int r, int g, int b)
 {
   struct node_t *node = root;

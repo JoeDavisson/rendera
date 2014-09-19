@@ -214,14 +214,14 @@ void Palette::fillTable()
           }
         }
 
-        table->add_overwrite(r, g, b, use);
+        table->write_path(r, g, b, use);
       }
     }
   }
 
   // put exact matches back in
   for(i = 0; i < max; i++)
-    table->add_overwrite(getr(data[i]), getg(data[i]), getb(data[i]), i);
+    table->write_path(getr(data[i]), getg(data[i]), getb(data[i]), i);
 }
 
 // return palette index which corresponds to color

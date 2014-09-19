@@ -108,7 +108,7 @@ namespace
               {
                 float d = histogram->read(r + i, g + j, b + k);
                 if(d > 0)
-                  histogram->add(r + i, g + j, b + k, 0);
+                  histogram->write(r + i, g + j, b + k, 0);
 
                 rr += d * (r + i);
                 gg += d * (g + j);
@@ -169,7 +169,7 @@ void Quantize::pca(Bitmap *src, int size)
       if(freq < inc)
         count++;
 
-      histogram->add(rgba.r, rgba.g, rgba.b, freq + inc);
+      histogram->write(rgba.r, rgba.g, rgba.b, freq + inc);
     }
   }
 
