@@ -18,37 +18,30 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef PALETTE_H
-#define PALETTE_H
-
-class Widget;
-class Octree;
+#ifndef OCTREE_H
+#define OCTREE_H
 
 #include "Rendera.H"
 
-class Palette
+class Octree
 {
 public:
-  Palette();
-  virtual ~Palette();
+  struct node_t
+  {
+    int value;
+    struct node_t *child[8];
+  };
 
-  void draw(Widget *);
-  void copy(Palette *);
-  void setDefault();
-  void insertColor(int, int);
-  void deleteColor(int);
-  void replaceColor(int, int);
-  void fillLookup();
-  int load(const char *);
-  int save(const char *);
+  Octree();
+  virtual ~Octree();
 
-  int *data;
-  //unsigned char *lookup;
-  Octree *lookup;
-  int max;
+  void clear(struct node_t *);
+  void add(int, int, int, int);
+  int read(int, int, int);
+  void remove(int, int, int);
 
-  static Palette *main;
-  static Palette *undo;
+  struct node_t *root;
+  int count;
 };
 
 #endif

@@ -34,6 +34,8 @@ rendera_SOURCES =     \
   Gui.H               \
   Map.cxx             \
   Map.H               \
+  Octree.cxx          \
+  Octree.H            \
   Offset.cxx          \
   Offset.H            \
   Paint.cxx           \

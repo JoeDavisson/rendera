@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Widget.H"
 #include "Bitmap.H"
 #include "Blend.H"
+#include "Octree.H"
 
 Palette *Palette::main;
 Palette *Palette::undo;
@@ -29,8 +30,8 @@ Palette *Palette::undo;
 Palette::Palette()
 {
   data = new int[256];
-  lookup = new unsigned char[16777216];
   setDefault();
+  lookup = new Octree();
   fillLookup();
 }
 
@@ -181,15 +182,16 @@ void Palette::replaceColor(int color, int index)
   data[index] = color;
 }
 
-// generate a 16M reverse-lookup table for indexed mode
 void Palette::fillLookup()
 {
+  delete lookup;
+  lookup = new Octree();
+
   int r, g, b;
-  int i, j, k;
-  int use, z;
+  int use, i;
   int step = 4;
 
-  // fill lookup in 4x4x4 blocks to save time
+  // each 4x4 block of the color cube gets a palette entry
   for(b = 0; b <= 256 - step; b += step)
   {
     for(g = 0; g <= 256 - step; g += step)
@@ -200,33 +202,23 @@ void Palette::fillLookup()
         int smallest = 0xFFFFFF;
         use = 0;
 
-        for(z = 0; z < max; z++)
+        for(i = 0; i < max; i++)
         {
-          int d = diff24(c, data[z]);
+          int d = diff24(c, data[i]);
           if(d < smallest)
           {
             smallest = d;
-            use = z;
+            use = i;
           }
         }
-
-        for(k = b; k < b + step; k++)
-        {
-          for(j = g; j < g + step; j++)
-          {
-            for(i = r; i < r + step; i++)
-            {
-              lookup[make_rgb24(i, j, k)] = use;
-            }
-          }
-        }
+        lookup->add(r, g, b, use);
       }
     }
   }
 
-  // then put exact matches back in
-  for(z = 0; z < max; z++)
-    lookup[data[z] & 0xFFFFFF] = z;
+  // put exact palette colors in
+  for(i = 0; i < max; i++)
+    lookup->add(getr(data[i]), getg(data[i]), getb(data[i]), i);
 }
 
 // uses GIMP .gpl palette format

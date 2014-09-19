@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gui.H"
 #include "View.H"
 #include "Undo.H"
+#include "Octree.H"
 
 extern int *fix_gamma;
 extern int *unfix_gamma;
@@ -904,7 +905,7 @@ void FX::doApplyPaletteNormal()
     for(x = overscroll; x < bmp->w - overscroll; x++)
     {
       int c = bmp->getpixel(x, y);
-      bmp->setpixel(x, y, Palette::main->data[Palette::main->lookup[c & 0xFFFFFF]], 0);
+      bmp->setpixel(x, y, Palette::main->data[Palette::main->lookup->read(getr(c), getg(c), getb(c))], 0);
     }
 
     if(update(y) < 0)
@@ -957,9 +958,13 @@ void FX::doApplyPaletteDither()
       const int r = unfix_gamma[n[0]];
       const int g = unfix_gamma[n[1]];
       const int b = unfix_gamma[n[2]];
+if(r > 255 || g > 255 || b > 255)
+{
+  puts("error");
+  exit(1);
+}
 
-      const int c = Palette::main->data[
-                      Palette::main->lookup[make_rgb(r, g, b) & 0xFFFFFF]];
+      const int c = Palette::main->data[Palette::main->lookup->read(r, g, b)];
 
       struct rgba_t rgba = get_rgba(c);
 
