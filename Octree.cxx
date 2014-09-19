@@ -44,7 +44,7 @@ void Octree::clear(struct node_t *node)
     if(node->child[i])
       clear(node->child[i]);
 
-//  delete node;
+  delete node;
 }
 
 void Octree::add(int r, int g, int b, float value)
