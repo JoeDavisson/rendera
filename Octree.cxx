@@ -24,10 +24,11 @@ Octree::Octree()
 {
   root = new node_t;
   root->value = 0;
+
   int i;
+
   for(i = 0; i < 8; i++)
     root->child[i] = 0;
-  count = 0;
 }
 
 Octree::~Octree()
@@ -38,6 +39,7 @@ Octree::~Octree()
 void Octree::clear(struct node_t *node)
 {
   int i;
+
   for(i = 0; i < 8; i++)
     if(node->child[i])
       clear(node->child[i]);
@@ -47,8 +49,8 @@ void Octree::clear(struct node_t *node)
 
 void Octree::add(int r, int g, int b, int value)
 {
-  int i, j;
   struct node_t *node = root;
+  int i, j;
 
   for(i = 7; i >= 0; i--)
   {
@@ -61,6 +63,7 @@ void Octree::add(int r, int g, int b, int value)
       node->child[index] = new node_t;
       node = node->child[index];
       node->value = value;
+
       for(j = 0; j < 8; j++)
         node->child[j] = 0;
     }
@@ -73,9 +76,9 @@ void Octree::add(int r, int g, int b, int value)
 
 int Octree::read(int r, int g, int b)
 {
-  int i, j;
   struct node_t *node = root;
   int value = 0;
+  int i, j;
 
   for(i = 7; i >= 0; i--)
   {

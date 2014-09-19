@@ -41,7 +41,6 @@ public:
   void remove(int, int, int);
 
   struct node_t *root;
-  int count;
 };
 
 #endif
