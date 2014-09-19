@@ -107,6 +107,7 @@ namespace
               for(i = 0; i < step; i++)
               {
                 float d = histogram->read(r + i, g + j, b + k);
+
                 if(d > 0)
                   histogram->write(r + i, g + j, b + k, 0);
 
