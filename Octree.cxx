@@ -47,7 +47,39 @@ void Octree::clear(struct node_t *node)
   delete node;
 }
 
+// this only writes the value at the leaf node
 void Octree::add(int r, int g, int b, float value)
+{
+  struct node_t *node = root;
+  int i, j;
+
+  for(i = 7; i >= 0; i--)
+  {
+    int index = ((r & (1 << i)) ? 1 : 0) << 0 |
+                ((g & (1 << i)) ? 1 : 0) << 1 |
+                ((b & (1 << i)) ? 1 : 0) << 2;
+
+    if(!node->child[index])
+    {
+      node->child[index] = new node_t;
+      node = node->child[index];
+      node->value = 0;
+
+      for(j = 0; j < 8; j++)
+        node->child[j] = 0;
+    }
+    else
+    {
+      node = node->child[index];
+    }
+  }
+
+  node->value = value;
+}
+
+// this version overwrites the values on the way
+// (used by palette lookup table so it can use a smaller octree)
+void Octree::add_overwrite(int r, int g, int b, float value)
 {
   struct node_t *node = root;
   int i, j;
@@ -70,7 +102,6 @@ void Octree::add(int r, int g, int b, float value)
     else
     {
       node = node->child[index];
-      node->value = value;
     }
   }
 }
@@ -78,36 +109,6 @@ void Octree::add(int r, int g, int b, float value)
 float Octree::read(int r, int g, int b)
 {
   struct node_t *node = root;
-  float value = 0;
-  int i;
-
-  for(i = 7; i >= 0; i--)
-  {
-    int index = ((r & (1 << i)) ? 1 : 0) << 0 |
-                ((g & (1 << i)) ? 1 : 0) << 1 |
-                ((b & (1 << i)) ? 1 : 0) << 2;
-
-    if(node->child[index])
-    {
-      node = node->child[index];
-      value = node->value;
-    }
-    else
-    {
-      break;
-    }
-  }
-
-  return value;
-}
-
-void Octree::remove(int r, int g, int b)
-{
-//FIXME this doesn't really delete the node
-  add(r, g, b, 0);
-//FIXME this crashes
-/*
-  struct node_t *node = root;
   int i;
 
   for(i = 7; i >= 0; i--)
@@ -126,7 +127,6 @@ void Octree::remove(int r, int g, int b)
     }
   }
 
-  clear(node);
-*/
+  return node->value;
 }
 

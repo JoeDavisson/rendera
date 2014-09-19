@@ -38,13 +38,13 @@ public:
   void insertColor(int, int);
   void deleteColor(int);
   void replaceColor(int, int);
-  void fillLookup();
+  void fillTable();
+  int lookup(int);
   int load(const char *);
   int save(const char *);
 
   int *data;
-  //unsigned char *lookup;
-  Octree *lookup;
+  Octree *table;
   int max;
 
   static Palette *main;

@@ -37,8 +37,8 @@ public:
 
   void clear(struct node_t *);
   void add(int, int, int, float);
+  void add_overwrite(int, int, int, float);
   float read(int, int, int);
-  void remove(int, int, int);
 
   struct node_t *root;
 };

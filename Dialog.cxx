@@ -377,7 +377,7 @@ void Dialog::showEditor()
 
 void Dialog::hideEditor()
 {
-  Palette::main->fillLookup();
+  Palette::main->fillTable();
   editor->hide();
 }
 

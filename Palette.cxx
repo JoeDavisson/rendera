@@ -31,8 +31,8 @@ Palette::Palette()
 {
   data = new int[256];
   setDefault();
-  lookup = new Octree();
-  fillLookup();
+  table = new Octree();
+  fillTable();
 }
 
 Palette::~Palette()
@@ -182,16 +182,18 @@ void Palette::replaceColor(int color, int index)
   data[index] = color;
 }
 
-void Palette::fillLookup()
+// create palette lookup table
+void Palette::fillTable()
 {
-  delete lookup;
-  lookup = new Octree();
+  delete table;
+  table = new Octree();
 
   int r, g, b;
   int use, i;
   int step = 4;
 
   // each 4x4 block of the color cube gets a palette entry
+  // close enough and avoids a huge octree
   for(b = 0; b <= 256 - step; b += step)
   {
     for(g = 0; g <= 256 - step; g += step)
@@ -211,14 +213,23 @@ void Palette::fillLookup()
             use = i;
           }
         }
-        lookup->add(r, g, b, use);
+
+        table->add_overwrite(r, g, b, use);
       }
     }
   }
 
-  // put exact palette colors in
+  // put exact matches back in
   for(i = 0; i < max; i++)
-    lookup->add(getr(data[i]), getg(data[i]), getb(data[i]), i);
+    table->add_overwrite(getr(data[i]), getg(data[i]), getb(data[i]), i);
+}
+
+// return palette index which corresponds to color
+int Palette::lookup(int c)
+{
+  struct rgba_t rgba = get_rgba(c);
+
+  return table->read(rgba.r, rgba.g, rgba.b);
 }
 
 // uses GIMP .gpl palette format
@@ -270,7 +281,7 @@ int Palette::load(const char *fn)
 
   fclose(in);
   max = index;
-  fillLookup();
+  fillTable();
 
   return 0;
 }
