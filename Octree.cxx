@@ -49,16 +49,17 @@ void Octree::clear(struct node_t *node)
 }
 
 // writes value to leaf node
-void Octree::write(int r, int g, int b, float value)
+void Octree::write(const int &r, const int &g, const int &b,
+                   const float &value)
 {
   struct node_t *node = root;
   int i, j;
 
   for(i = 7; i >= 0; i--)
   {
-    int index = ((r & (1 << i)) ? 1 : 0) << 0 |
-                ((g & (1 << i)) ? 1 : 0) << 1 |
-                ((b & (1 << i)) ? 1 : 0) << 2;
+    const int index = ((r >> i) & 1) << 0 |
+                      ((g >> i) & 1) << 1 |
+                      ((b >> i) & 1) << 2;
 
     if(!node->child[index])
     {
@@ -79,16 +80,17 @@ void Octree::write(int r, int g, int b, float value)
 }
 
 // sets entire path to value (used by palette lookup)
-void Octree::write_path(int r, int g, int b, float value)
+void Octree::write_path(const int &r, const int &g, const int &b,
+                        const float &value)
 {
   struct node_t *node = root;
   int i, j;
 
   for(i = 7; i >= 0; i--)
   {
-    int index = ((r & (1 << i)) ? 1 : 0) << 0 |
-                ((g & (1 << i)) ? 1 : 0) << 1 |
-                ((b & (1 << i)) ? 1 : 0) << 2;
+    const int index = ((r >> i) & 1) << 0 |
+                      ((g >> i) & 1) << 1 |
+                      ((b >> i) & 1) << 2;
 
     if(!node->child[index])
     {
@@ -107,16 +109,16 @@ void Octree::write_path(int r, int g, int b, float value)
 }
 
 // read value at leaf node
-float Octree::read(int r, int g, int b)
+float Octree::read(const int &r, const int &g, const int &b)
 {
   struct node_t *node = root;
   int i;
 
   for(i = 7; i >= 0; i--)
   {
-    int index = ((r & (1 << i)) ? 1 : 0) << 0 |
-                ((g & (1 << i)) ? 1 : 0) << 1 |
-                ((b & (1 << i)) ? 1 : 0) << 2;
+    const int index = ((r >> i) & 1) << 0 |
+                      ((g >> i) & 1) << 1 |
+                      ((b >> i) & 1) << 2;
 
     if(node->child[index])
     {

@@ -18,11 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include <cmath>
-
 #include "Quantize.H"
 #include "Bitmap.H"
-#include "Blend.H"
 #include "Palette.H"
 #include "Gui.H"
 #include "Dialog.H"
@@ -136,6 +133,71 @@ namespace
 
     return count;
   }
+
+  // stretch a palette to obtain the exact number of colors desired
+  void stretch_palette(int *data, int current, int target)
+  {
+    int *temp = new int[target];
+    float ax = (float)(current - 1) / (float)(target - 1);
+    int *c[2];
+
+    c[0] = c[1] = &data[0];
+
+    int x = 0;
+
+    do
+    {
+      float uu = (x * ax);
+      int u1 = uu;
+
+      if(u1 > current - 1)
+        u1 = current - 1;
+
+      int u2 = (u1 < (current - 1) ? u1 + 1 : u1);
+      float u = uu - u1;
+
+      c[0] += u1;
+      c[1] += u2;
+
+      float f[2];
+
+      f[0] = (1.0 - u);
+      f[1] = u;
+
+      float r = 0, g = 0, b = 0;
+      int i = 0;
+
+      do
+      {
+//        r += (float)fix_gamma[getr(*c[i])] * f[i];
+//        g += (float)fix_gamma[getg(*c[i])] * f[i];
+//        b += (float)fix_gamma[getb(*c[i])] * f[i];
+        r += (float)getr(*c[i]) * f[i];
+        g += (float)getg(*c[i]) * f[i];
+        b += (float)getb(*c[i]) * f[i];
+        i++;
+      }
+      while(i < 2);
+
+//      r = unfix_gamma[(int)r];
+//      g = unfix_gamma[(int)g];
+//      b = unfix_gamma[(int)b];
+
+      temp[x] = make_rgb24((int)r, (int)g, (int)b);
+
+      c[0] -= u1;
+      c[1] -= u2;
+
+      x++;
+    }
+    while(x < target);
+
+    for(x = 0; x < target; x++)
+      data[x] = temp[x];
+
+    delete[] temp;
+  }
+
 }
 
 // pairwise clustering algorithm
@@ -295,6 +357,13 @@ void Quantize::pca(Bitmap *src, int size)
 
   // sort palette
   qsort(Palette::main->data, Palette::main->max, sizeof(int), comp_lum);
+
+  // stretch palette
+  if(Palette::main->max != size)
+  {
+    stretch_palette(Palette::main->data, Palette::main->max, size);
+    Palette::main->max = size;
+  }
 
   // free memory
   delete[] err_data;

@@ -36,9 +36,9 @@ public:
   virtual ~Octree();
 
   void clear(struct node_t *);
-  void write(int, int, int, float);
-  void write_path(int, int, int, float);
-  float read(int, int, int);
+  void write(const int &, const int &, const int &, const float &);
+  void write_path(const int &, const int &, const int &, const float &);
+  float read(const int &, const int &, const int &);
 
   struct node_t *root;
 };
