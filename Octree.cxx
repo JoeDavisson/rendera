@@ -121,13 +121,9 @@ float Octree::read(const int &r, const int &g, const int &b)
                       ((b >> i) & 1) << 2;
 
     if(node->child[index])
-    {
       node = node->child[index];
-    }
     else
-    {
       break;
-    }
   }
 
   return node->value;

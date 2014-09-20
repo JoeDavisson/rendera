@@ -974,10 +974,10 @@ void FX::doApplyPaletteDither()
       for(i = 0; i < 3; i++)
       {
         e[i] = n[i] - v[i];
-        last[i] = (e[i] * 7) / 24;
-        buf[i][x - 1] += (e[i] * 3) / 24;
-        buf[i][x] += (e[i] * 5) / 24;
-        buf[i][x + 1] += (e[i] * 1) / 24;
+        last[i] = (e[i] * 7) / 16;
+        buf[i][x - 1] += (e[i] * 3) / 16;
+        buf[i][x] += (e[i] * 5) / 16;
+        buf[i][x + 1] += (e[i] * 1) / 16;
       }
     }
 
