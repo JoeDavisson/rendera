@@ -169,19 +169,12 @@ namespace
 
       do
       {
-//        r += (float)fix_gamma[getr(*c[i])] * f[i];
-//        g += (float)fix_gamma[getg(*c[i])] * f[i];
-//        b += (float)fix_gamma[getb(*c[i])] * f[i];
         r += (float)getr(*c[i]) * f[i];
         g += (float)getg(*c[i]) * f[i];
         b += (float)getb(*c[i]) * f[i];
         i++;
       }
       while(i < 2);
-
-//      r = unfix_gamma[(int)r];
-//      g = unfix_gamma[(int)g];
-//      b = unfix_gamma[(int)b];
 
       temp[x] = make_rgb24((int)r, (int)g, (int)b);
 
@@ -197,7 +190,6 @@ namespace
 
     delete[] temp;
   }
-
 }
 
 // pairwise clustering algorithm
@@ -349,6 +341,7 @@ void Quantize::pca(Bitmap *src, int size)
     {
       Palette::main->data[index] =
         make_rgb((int)colors[i].r, (int)colors[i].g, (int)colors[i].b);
+
       index++;
     }
   }
