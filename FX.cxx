@@ -537,6 +537,10 @@ void FX::doRotateHue(int amount)
 
   int hh = amount * 4.277;
 
+  int preserve = 0;
+  if(rotate_hue_preserve->value())
+    preserve = 1;
+
   begin();
 
   for(y = overscroll; y < bmp->h - overscroll; y++)
@@ -544,6 +548,7 @@ void FX::doRotateHue(int amount)
     for(x = overscroll; x < bmp->w - overscroll; x++)
     {
       int c = bmp->getpixel(x, y);
+      int l = getl(c);
 
       r = getr(c);
       g = getg(c);
@@ -555,7 +560,10 @@ void FX::doRotateHue(int amount)
       Blend::hsvToRgb(h, s, v, &r, &g, &b);
       c = make_rgb(r, g, b);
 
-      bmp->setpixel(x, y, c, 0);
+      if(preserve)
+        bmp->setpixel(x, y, Blend::keepLum(c, l), 0);
+      else
+        bmp->setpixel(x, y, c, 0);
     }
 
     if(update(y) < 0)
