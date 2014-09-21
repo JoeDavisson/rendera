@@ -37,20 +37,7 @@ namespace Dialog
   void hideProgress();
   void newImage();
   void createPalette();
-  void showEditor();
-  void hideEditor();
-  void doEditorPalette(Widget *, void *);
-  void doEditorSetHsv(bool);
-  void doEditorSetHsvSliders();
-  void doEditorGetH();
-  void doEditorGetSV();
-  void doEditorInsert();
-  void doEditorDelete();
-  void doEditorReplace();
-  void doEditorStoreUndo();
-  void doEditorGetUndo();
-  void doEditorRgbRamp();
-  void doEditorHsvRamp();
+  void editor();
 }
 
 #endif

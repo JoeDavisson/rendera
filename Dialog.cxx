@@ -225,26 +225,288 @@ namespace CreatePalette
   }
 }
 
-namespace
+namespace Editor
 {
-  Fl_Double_Window *editor;
-  Widget *editor_h;
-  Widget *editor_sv;
-  Fl_Button *editor_insert;
-  Fl_Button *editor_delete;
-  Fl_Button *editor_replace;
-  Fl_Button *editor_undo;
-  Fl_Button *editor_rgb_ramp;
-  Fl_Button *editor_hsv_ramp;
-  Widget *editor_palette;
-  Widget *editor_color;
-  Fl_Button *editor_done;
+  Fl_Double_Window *dialog;
+  Widget *hue;
+  Widget *sat_val;
+  Fl_Button *insert;
+  Fl_Button *remove;
+  Fl_Button *replace;
+  Fl_Button *undo;
+  Fl_Button *rgb_ramp;
+  Fl_Button *hsv_ramp;
+  Widget *palette;
+  Widget *color;
+  Fl_Button *done;
 
-  int undo;
   int ramp_begin;
   int ramp_started;
+  int begin_undo;
   int oldsvx, oldsvy;
 
+  void storeUndo()
+  {
+    Palette::main->copy(Palette::undo);
+    begin_undo = 1;
+  }
+
+  void getUndo()
+  {
+    if(begin_undo)
+    {
+      begin_undo = 0;
+      Palette::undo->copy(Palette::main);
+      Palette::main->draw(palette);
+      Gui::drawPalette();
+      palette->do_callback();
+    }
+  }
+
+  void setHsv(bool redraw)
+  {
+    int x , y;
+    int r = 0, g = 0, b = 0;
+    int h = 0, s = 0, v = 0;
+    int c = Brush::main->color;
+
+    Blend::rgbToHsv(getr(c), getg(c), getb(c), &h, &s, &v);
+
+    if(redraw)
+    {
+      hue->bitmap->clear(make_rgb(0, 0, 0));
+      sat_val->bitmap->clear(make_rgb(0, 0, 0));
+
+      for(y = 0; y < 256; y++)
+      {
+        for(x = 0; x < 256; x++)
+        {
+          Blend::hsvToRgb(h, x, y, &r, &g, &b);
+          sat_val->bitmap->setpixelSolid(x, y, make_rgb(r, g, b), 0);
+        }
+
+        Blend::hsvToRgb(y * 6, 255, 255, &r, &g, &b);
+        hue->bitmap->hline(0, y, 23, make_rgb(r, g, b), 0);
+      }
+    }
+    else
+    {
+      // erase previous box if not redrawing entire thing
+      sat_val->bitmap->xorRect(oldsvx - 4, oldsvy - 4, oldsvx + 4, oldsvy + 4);
+    }
+
+    x = sat_val->var & 255;
+    y = sat_val->var / 256;
+
+    if(x < 4)
+      x = 4;
+    if(y < 4)
+      y = 4;
+    if(x > 251)
+      x = 251;
+    if(y > 251)
+      y = 251;
+
+    sat_val->bitmap->xorRect(x - 4, y - 4, x + 4, y + 4);
+    oldsvx = x;
+    oldsvy = y;
+
+    hue->redraw();
+    sat_val->redraw();
+
+    color->bitmap->clear(Brush::main->color);
+    color->redraw();
+  }
+
+  void setHsvSliders()
+  {
+    int h, s, v;
+    int color = Brush::main->color;
+    Blend::rgbToHsv(getr(color), getg(color), getb(color), &h, &s, &v);
+    hue->var = h / 6;
+    sat_val->var = s + 256 * v;
+    hue->redraw();
+    sat_val->redraw();
+  }
+
+  void checkPalette(Widget *widget, void *var)
+  {
+    int i;
+    int begin, end;
+    Palette *pal = Palette::main;
+
+    if(ramp_started > 0)
+    {
+      storeUndo();
+      begin = ramp_begin;
+      end = *(int *)var;
+      if(begin > end)
+        SWAP(begin, end);
+      int num = end - begin;
+
+      if(ramp_started == 1)
+      {
+        // rgb ramp
+        int c1 = pal->data[begin];
+        int c2 = pal->data[end];
+        double stepr = (double)(getr(c2) - getr(c1)) / num;
+        double stepg = (double)(getg(c2) - getg(c1)) / num;
+        double stepb = (double)(getb(c2) - getb(c1)) / num;
+        double r = getr(c1);
+        double g = getg(c1);
+        double b = getb(c1);
+
+        for(i = begin; i < end; i++)
+        {
+          pal->data[i] = make_rgb(r, g, b);
+          r += stepr;
+          g += stepg;
+          b += stepb;
+        }
+
+        rgb_ramp->value(0);
+        rgb_ramp->redraw();
+      }
+      else if(ramp_started == 2)
+      {
+        // hsv ramp
+        int c1 = pal->data[begin];
+        int c2 = pal->data[end];
+        int h1, s1, v1;
+        int h2, s2, v2;
+        Blend::rgbToHsv(getr(c1), getg(c1), getb(c1), &h1, &s1, &v1);
+        Blend::rgbToHsv(getr(c2), getg(c2), getb(c2), &h2, &s2, &v2);
+        double steph = (double)(h2 - h1) / num;
+        double steps = (double)(s2 - s1) / num;
+        double stepv = (double)(v2 - v1) / num;
+        int r, g, b;
+        double h = h1;
+        double s = s1;
+        double v = v1;
+
+        for(i = begin; i < end; i++)
+        {
+          Blend::hsvToRgb(h, s, v, &r, &g, &b);
+          pal->data[i] = make_rgb(r, g, b);
+          h += steph;
+          s += steps;
+          v += stepv;
+        }
+
+        hsv_ramp->value(0);
+        hsv_ramp->redraw();
+      }
+
+      ramp_started = 0;
+      Palette::main->draw(palette);
+      Gui::drawPalette();
+
+      return;
+    }
+
+    Gui::checkPalette(widget, var);
+    ramp_begin = *(int *)var;
+    setHsvSliders();
+    setHsv(1);
+  }
+
+  void getHue()
+  {
+    int h = hue->var * 6;
+    int s = sat_val->var & 255;
+    int v = sat_val->var / 256;
+    int r, g, b;
+
+    Blend::hsvToRgb(h, s, v, &r, &g, &b);
+    Brush::main->color = make_rgb(r, g, b);
+
+    Gui::updateColor(Brush::main->color);
+    setHsv(1);
+  }
+
+  void getSatVal()
+  {
+    int h = hue->var * 6;
+    int s = sat_val->var & 255;
+    int v = sat_val->var / 256;
+    int r, g, b;
+
+    Blend::hsvToRgb(h, s, v, &r, &g, &b);
+    Brush::main->color = make_rgb(r, g, b);
+
+    Gui::updateColor(Brush::main->color);
+    setHsv(0);
+  }
+
+  void insertColor()
+  {
+    storeUndo();
+    Palette::main->insertColor(Brush::main->color, palette->var);
+    Palette::main->draw(palette);
+    Gui::drawPalette();
+    palette->do_callback();
+  }
+
+  void removeColor()
+  {
+    storeUndo();
+    Palette::main->deleteColor(palette->var);
+    Palette::main->draw(palette);
+    Gui::drawPalette();
+    if(palette->var > Palette::main->max - 1)
+      palette->var = Palette::main->max - 1;
+    palette->do_callback();
+  }
+
+  void replaceColor()
+  {
+    storeUndo();
+    Palette::main->replaceColor(Brush::main->color, palette->var);
+    Palette::main->draw(palette);
+    Gui::drawPalette();
+    palette->do_callback();
+  }
+
+  void rgbRamp()
+  {
+    if(!ramp_started)
+    {
+      rgb_ramp->value(1);
+      rgb_ramp->redraw();
+      ramp_started = 1;
+    }
+  }
+
+  void hsvRamp()
+  {
+    if(!ramp_started)
+    {
+      hsv_ramp->value(1);
+      hsv_ramp->redraw();
+      ramp_started = 2;
+    }
+  }
+
+  void begin()
+  {
+    Palette::main->draw(palette);
+    setHsvSliders();
+    setHsv(1);
+    dialog->show();
+    begin_undo = 0;
+    ramp_begin = 0;
+    ramp_started = 0;
+  }
+
+  void end()
+  {
+    Palette::main->fillTable();
+    dialog->hide();
+  }
+}
+
+namespace
+{
   int file_exists(const char *s)
   {
     FILE *temp = fopen(s, "r");
@@ -317,28 +579,28 @@ void Dialog::init()
   CreatePalette::dialog->end(); 
 
   // palette editor
-  editor = new Fl_Double_Window(608, 312, "Palette Editor");
-  editor_h = new Widget(editor, 8, 8, 24, 256, "Hue", 24, 1, (Fl_Callback *)doEditorGetH);
-  editor_sv = new Widget(editor, 40, 8, 256, 256, "Saturation/Value", 1, 1, (Fl_Callback *)doEditorGetSV);
-  editor_insert = new Fl_Button(304, 8, 96, 24, "Insert");
-  editor_insert->callback((Fl_Callback *)doEditorInsert);
-  editor_delete = new Fl_Button(304, 48, 96, 24, "Delete");
-  editor_delete->callback((Fl_Callback *)doEditorDelete);
-  editor_replace = new Fl_Button(304, 88, 96, 24, "Replace");
-  editor_replace->callback((Fl_Callback *)doEditorReplace);
-  editor_undo = new Fl_Button(304, 144, 96, 24, "Undo");
-  editor_undo->callback((Fl_Callback *)doEditorGetUndo);
-  editor_rgb_ramp = new Fl_Button(304, 200, 96, 24, "RGB Ramp");
-  editor_rgb_ramp->callback((Fl_Callback *)doEditorRgbRamp);
-  editor_hsv_ramp = new Fl_Button(304, 240, 96, 24, "HSV Ramp");
-  editor_hsv_ramp->callback((Fl_Callback *)doEditorHsvRamp);
-  editor_palette = new Widget(editor, 408, 8, 192, 192, "Palette", 24, 24, (Fl_Callback *)doEditorPalette);
-  editor_color = new Widget(editor, 408, 208, 192, 56, "Color", 0, 0, 0);
-  new Separator(editor, 2, 272, 604, 2, "");
-  editor_done = new Fl_Button(504, 280, 96, 24, "Done");
-  editor_done->callback((Fl_Callback *)hideEditor);
-  editor->set_modal();
-  editor->end(); 
+  Editor::dialog = new Fl_Double_Window(608, 312, "Palette Editor");
+  Editor::hue = new Widget(Editor::dialog, 8, 8, 24, 256, "Hue", 24, 1, (Fl_Callback *)Editor::getHue);
+  Editor::sat_val = new Widget(Editor::dialog, 40, 8, 256, 256, "Saturation/Value", 1, 1, (Fl_Callback *)Editor::getSatVal);
+  Editor::insert = new Fl_Button(304, 8, 96, 24, "Insert");
+  Editor::insert->callback((Fl_Callback *)Editor::insertColor);
+  Editor::remove = new Fl_Button(304, 48, 96, 24, "Delete");
+  Editor::remove->callback((Fl_Callback *)Editor::removeColor);
+  Editor::replace = new Fl_Button(304, 88, 96, 24, "Replace");
+  Editor::replace->callback((Fl_Callback *)Editor::replaceColor);
+  Editor::undo = new Fl_Button(304, 144, 96, 24, "Undo");
+  Editor::undo->callback((Fl_Callback *)Editor::getUndo);
+  Editor::rgb_ramp = new Fl_Button(304, 200, 96, 24, "RGB Ramp");
+  Editor::rgb_ramp->callback((Fl_Callback *)Editor::rgbRamp);
+  Editor::hsv_ramp = new Fl_Button(304, 240, 96, 24, "HSV Ramp");
+  Editor::hsv_ramp->callback((Fl_Callback *)Editor::hsvRamp);
+  Editor::palette = new Widget(Editor::dialog, 408, 8, 192, 192, "Palette", 24, 24, (Fl_Callback *)Editor::checkPalette);
+  Editor::color = new Widget(Editor::dialog, 408, 208, 192, 56, "Color", 0, 0, 0);
+  new Separator(Editor::dialog, 2, 272, 604, 2, "");
+  Editor::done = new Fl_Button(504, 280, 96, 24, "Done");
+  Editor::done->callback((Fl_Callback *)Editor::end);
+  Editor::dialog->set_modal();
+  Editor::dialog->end(); 
 }
 
 void Dialog::about()
@@ -395,262 +657,8 @@ void Dialog::createPalette()
   CreatePalette::begin();
 }
 
-void Dialog::showEditor()
+void Dialog::editor()
 {
-  Palette::main->draw(editor_palette);
-  doEditorSetHsvSliders();
-  doEditorSetHsv(1);
-  editor->show();
-  undo = 0;
-  ramp_begin = 0;
-  ramp_started = 0;
-}
-
-void Dialog::hideEditor()
-{
-  Palette::main->fillTable();
-  editor->hide();
-}
-
-void Dialog::doEditorPalette(Widget *widget, void *var)
-{
-  int i;
-  int begin, end;
-  Palette *pal = Palette::main;
-
-  if(ramp_started > 0)
-  {
-    doEditorStoreUndo();
-    begin = ramp_begin;
-    end = *(int *)var;
-    if(begin > end)
-      SWAP(begin, end);
-    int num = end - begin;
-
-    if(ramp_started == 1)
-    {
-      // rgb ramp
-      int c1 = pal->data[begin];
-      int c2 = pal->data[end];
-      double stepr = (double)(getr(c2) - getr(c1)) / num;
-      double stepg = (double)(getg(c2) - getg(c1)) / num;
-      double stepb = (double)(getb(c2) - getb(c1)) / num;
-      double r = getr(c1);
-      double g = getg(c1);
-      double b = getb(c1);
-
-      for(i = begin; i < end; i++)
-      {
-        pal->data[i] = make_rgb(r, g, b);
-        r += stepr;
-        g += stepg;
-        b += stepb;
-      }
-
-      editor_rgb_ramp->value(0);
-      editor_rgb_ramp->redraw();
-    }
-    else if(ramp_started == 2)
-    {
-      // hsv ramp
-      int c1 = pal->data[begin];
-      int c2 = pal->data[end];
-      int h1, s1, v1;
-      int h2, s2, v2;
-      Blend::rgbToHsv(getr(c1), getg(c1), getb(c1), &h1, &s1, &v1);
-      Blend::rgbToHsv(getr(c2), getg(c2), getb(c2), &h2, &s2, &v2);
-      double steph = (double)(h2 - h1) / num;
-      double steps = (double)(s2 - s1) / num;
-      double stepv = (double)(v2 - v1) / num;
-      int r, g, b;
-      double h = h1;
-      double s = s1;
-      double v = v1;
-
-      for(i = begin; i < end; i++)
-      {
-        Blend::hsvToRgb(h, s, v, &r, &g, &b);
-        pal->data[i] = make_rgb(r, g, b);
-        h += steph;
-        s += steps;
-        v += stepv;
-      }
-
-      editor_hsv_ramp->value(0);
-      editor_hsv_ramp->redraw();
-    }
-
-    ramp_started = 0;
-    Palette::main->draw(editor_palette);
-    Gui::drawPalette();
-
-    return;
-  }
-
-  Gui::checkPalette(widget, var);
-  ramp_begin = *(int *)var;
-  doEditorSetHsvSliders();
-  doEditorSetHsv(1);
-}
-
-void Dialog::doEditorSetHsv(bool redraw)
-{
-  int x , y;
-  int r = 0, g = 0, b = 0;
-  int h = 0, s = 0, v = 0;
-  int color = Brush::main->color;
-
-  Blend::rgbToHsv(getr(color), getg(color), getb(color), &h, &s, &v);
-
-  if(redraw)
-  {
-    editor_h->bitmap->clear(make_rgb(0, 0, 0));
-    editor_sv->bitmap->clear(make_rgb(0, 0, 0));
-
-    for(y = 0; y < 256; y++)
-    {
-      for(x = 0; x < 256; x++)
-      {
-        Blend::hsvToRgb(h, x, y, &r, &g, &b);
-        editor_sv->bitmap->setpixelSolid(x, y, make_rgb(r, g, b), 0);
-      }
-
-      Blend::hsvToRgb(y * 6, 255, 255, &r, &g, &b);
-      editor_h->bitmap->hline(0, y, 23, make_rgb(r, g, b), 0);
-    }
-  }
-  else
-  {
-    // erase previous box if not redrawing entire thing
-    editor_sv->bitmap->xorRect(oldsvx - 4, oldsvy - 4, oldsvx + 4, oldsvy + 4);
-  }
-
-  x = editor_sv->var & 255;
-  y = editor_sv->var / 256;
-
-  if(x < 4)
-    x = 4;
-  if(y < 4)
-    y = 4;
-  if(x > 251)
-    x = 251;
-  if(y > 251)
-    y = 251;
-
-  editor_sv->bitmap->xorRect(x - 4, y - 4, x + 4, y + 4);
-  oldsvx = x;
-  oldsvy = y;
-
-  editor_h->redraw();
-  editor_sv->redraw();
-
-  editor_color->bitmap->clear(Brush::main->color);
-  editor_color->redraw();
-}
-
-void Dialog::doEditorSetHsvSliders()
-{
-  int h, s, v;
-  int color = Brush::main->color;
-  Blend::rgbToHsv(getr(color), getg(color), getb(color), &h, &s, &v);
-  editor_h->var = h / 6;
-  editor_sv->var = s + 256 * v;
-  editor_h->redraw();
-  editor_sv->redraw();
-}
-
-void Dialog::doEditorGetH()
-{
-  int h = editor_h->var * 6;
-  int s = editor_sv->var & 255;
-  int v = editor_sv->var / 256;
-  int r, g, b;
-
-  Blend::hsvToRgb(h, s, v, &r, &g, &b);
-  Brush::main->color = make_rgb(r, g, b);
-
-  Gui::updateColor(Brush::main->color);
-  doEditorSetHsv(1);
-}
-
-void Dialog::doEditorGetSV()
-{
-  int h = editor_h->var * 6;
-  int s = editor_sv->var & 255;
-  int v = editor_sv->var / 256;
-  int r, g, b;
-
-  Blend::hsvToRgb(h, s, v, &r, &g, &b);
-  Brush::main->color = make_rgb(r, g, b);
-
-  Gui::updateColor(Brush::main->color);
-  doEditorSetHsv(0);
-}
-
-void Dialog::doEditorInsert()
-{
-  doEditorStoreUndo();
-  Palette::main->insertColor(Brush::main->color, editor_palette->var);
-  Palette::main->draw(editor_palette);
-  Gui::drawPalette();
-  editor_palette->do_callback();
-}
-
-void Dialog::doEditorDelete()
-{
-  doEditorStoreUndo();
-  Palette::main->deleteColor(editor_palette->var);
-  Palette::main->draw(editor_palette);
-  Gui::drawPalette();
-  if(editor_palette->var > Palette::main->max - 1)
-    editor_palette->var = Palette::main->max - 1;
-  editor_palette->do_callback();
-}
-
-void Dialog::doEditorReplace()
-{
-  doEditorStoreUndo();
-  Palette::main->replaceColor(Brush::main->color, editor_palette->var);
-  Palette::main->draw(editor_palette);
-  Gui::drawPalette();
-  editor_palette->do_callback();
-}
-
-void Dialog::doEditorStoreUndo()
-{
-  Palette::main->copy(Palette::undo);
-  undo = 1;
-}
-
-void Dialog::doEditorGetUndo()
-{
-  if(undo)
-  {
-    Palette::undo->copy(Palette::main);
-    undo = 0;
-    Palette::main->draw(editor_palette);
-    Gui::drawPalette();
-    editor_palette->do_callback();
-  }
-}
-
-void Dialog::doEditorRgbRamp()
-{
-  if(!ramp_started)
-  {
-    editor_rgb_ramp->value(1);
-    editor_rgb_ramp->redraw();
-    ramp_started = 1;
-  }
-}
-
-void Dialog::doEditorHsvRamp()
-{
-  if(!ramp_started)
-  {
-    editor_hsv_ramp->value(1);
-    editor_hsv_ramp->redraw();
-    ramp_started = 2;
-  }
+  Editor::begin();
 }
 
