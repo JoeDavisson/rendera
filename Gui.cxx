@@ -51,7 +51,6 @@ namespace
   Fl_Group *group_left;
 
   // panels
-  //Fl_Group *top_left;
   Fl_Group *top_right;
   Fl_Group *tools;
   Fl_Group *paint;
@@ -61,9 +60,6 @@ namespace
   Fl_Group *right;
   Fl_Group *bottom;
   Fl_Group *middle;
-
-  // top left
-  //Widget *logo;
 
   //top right
   ToggleButton *zoom_fit;
@@ -175,15 +171,6 @@ void Gui::init()
   menubar->add("Effects/Apply Palette...", 0, (Fl_Callback *)FX::applyPalette, 0, 0);
   menubar->add("Help/About...", 0, (Fl_Callback *)Dialog::about, 0, 0);
 
-  // top_left
-  //top_left = new Fl_Group(0, menubar->h(), 112, 40);
-  //top_left->box(FL_UP_BOX);
-  //logo = new Widget(top_left, 8, 8, 96, 24, "", "data/logo.png", 0, 0, 0);
-  //top_left->resizable(0);
-  //top_left->end();
-
-  // top right
-  //top_right = new Fl_Group(top_left->w(), menubar->h(), window->w() - top_left->w(), 40);
   top_right = new Fl_Group(0, menubar->h(), window->w(), 40);
   top_right->box(FL_UP_BOX);
   x1 = 8;
@@ -295,7 +282,6 @@ void Gui::init()
   crop_h->deactivate();
   y1 += 24 + 6;
   crop_do = new Fl_Button(crop->x() + 16, crop->y() + y1, 72, 32, "Crop");
-//  crop_do->resize(crop->x() + 8, crop->y() + y1, 96, 48);
   crop_do->callback((Fl_Callback *)checkCropDo);
   crop->resizable(0);
   crop->end();
@@ -338,8 +324,6 @@ void Gui::init()
   y1 += 96 + 8;
   hue = new Widget(right, 8, y1, 96, 96, "Hue", 1, 1, (Fl_Callback *)checkHue);
   y1 += 96 + 8;
-//  color = new Widget(right, 8, y1, 96, 48, "Color", 0, 0, 0);
-// / y1 += 48 + 8;
   satval = new Widget(right, 8, y1, 96, 96, "Saturation/Value", 1, 1, (Fl_Callback *)checkSatVal);
   y1 += 96 + 8;
   trans = new Widget(right, 8, y1, 96, 24, "Transparency", "data/transparency.png", 1, 24, (Fl_Callback *)checkTrans);
@@ -367,14 +351,6 @@ void Gui::init()
   view = new View(middle, 0, 0, middle->w(), middle->h(), "View");
   middle->resizable(view);
   middle->end();
-
-  // container for top panels
-  //group_top = new Fl_Group(0, menubar->h(), window->w() - top_left->w(), 40);
-  //group_top = new Fl_Group(0, menubar->h(), window->w(), 40);
-  //group_top->add(top_left);
-  //group_top->add(top_right);
-  //group_top->resizable(top_right);
-  //group_top->end();
 
   // container for left panels
   group_left = new Fl_Group(0, top_right->h() + menubar->h(), 176, window->h() - (menubar->h() + top_right->h() + bottom->h()));
