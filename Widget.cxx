@@ -56,7 +56,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   use_highlight = 1;
 
   // shade
-  bitmap->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1, makeRgb(128, 128, 128), 192);
+  bitmap->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1, makeRgb(48, 48, 48), 160);
 }
 
 // use a blank bitmap
