@@ -40,8 +40,8 @@ namespace
   };
 
   // create a color_t structure
-  inline void make_color(struct color_t *c,
-                         float r, float g, float b, float freq)
+  inline void makeColor(struct color_t *c,
+                        float r, float g, float b, float freq)
   {
     c->r = r;
     c->g = g;
@@ -51,7 +51,7 @@ namespace
   }
 
   // qsort callback to sort palette
-  int comp_lum(const void *a, const void *b)
+  int compareLum(const void *a, const void *b)
   {
     int c1 = *(int *)a;
     int c2 = *(int *)b;
@@ -82,7 +82,7 @@ namespace
   }
 
   // averages the color cube down to a maximum of 4096 colors
-  int limit_colors(Octree *histogram, color_t *colors)
+  int limitColors(Octree *histogram, color_t *colors)
   {
     int r, g, b;
     int i, j, k;
@@ -124,7 +124,7 @@ namespace
             rr /= div;
             gg /= div;
             bb /= div;
-            make_color(&colors[count], rr, gg, bb, div);
+            makeColor(&colors[count], rr, gg, bb, div);
             count++;
           }
         }
@@ -135,7 +135,7 @@ namespace
   }
 
   // stretch a palette to obtain the exact number of colors desired
-  void stretch_palette(int *data, int current, int target)
+  void stretchPalette(int *data, int current, int target)
   {
     int *temp = new int[target];
     float ax = (float)(current - 1) / (float)(target - 1);
@@ -237,8 +237,8 @@ void Quantize::pca(Bitmap *src, int size)
   if(count < 2)
   {
     count = 2;
-    make_color(&colors[0], 0, 0, 0, inc);
-    make_color(&colors[1], 255, 255, 255, inc);
+    makeColor(&colors[0], 0, 0, 0, inc);
+    makeColor(&colors[1], 255, 255, 255, inc);
   }
 
   // skip if already enough colors
@@ -253,7 +253,7 @@ void Quantize::pca(Bitmap *src, int size)
 
       if(freq > 0)
       {
-        make_color(&colors[count], rgba.r, rgba.g, rgba.b, freq);
+        makeColor(&colors[count], rgba.r, rgba.g, rgba.b, freq);
         count++;
       }
     }
@@ -261,7 +261,7 @@ void Quantize::pca(Bitmap *src, int size)
   else
   {
     // limit color count to 4096
-    count = limit_colors(histogram, colors);
+    count = limitColors(histogram, colors);
   }
 
   // don't need histogram anymore
@@ -349,12 +349,12 @@ void Quantize::pca(Bitmap *src, int size)
   Palette::main->max = index;
 
   // sort palette
-  qsort(Palette::main->data, Palette::main->max, sizeof(int), comp_lum);
+  qsort(Palette::main->data, Palette::main->max, sizeof(int), compareLum);
 
   // stretch palette
   if(Palette::main->max != size)
   {
-    stretch_palette(Palette::main->data, Palette::main->max, size);
+    stretchPalette(Palette::main->data, Palette::main->max, size);
     Palette::main->max = size;
   }
 

@@ -214,14 +214,14 @@ void Palette::fillTable()
           }
         }
 
-        table->write_path(r, g, b, use);
+        table->writePath(r, g, b, use);
       }
     }
   }
 
   // put exact matches back in
   for(i = 0; i < max; i++)
-    table->write_path(getr(data[i]), getg(data[i]), getb(data[i]), i);
+    table->writePath(getr(data[i]), getg(data[i]), getb(data[i]), i);
 }
 
 // return palette index which corresponds to color

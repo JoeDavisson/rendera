@@ -25,7 +25,7 @@ Map *Map::main;
 namespace
 {
   // helper for polyfill
-  inline int isleft(const int *x1, const int *y1, const int *x2,
+  inline int isLeft(const int *x1, const int *y1, const int *x2,
                            const int *y2, const int &x3, const int &y3)
   {
     return ((*x2 - *x1) * (y3 - *y1) - (x3 - *x1) * (*y2 - *y1));
@@ -437,12 +437,12 @@ void Map::polyfill(int *polycachex, int *polycachey, int polycount, int x1, int 
       {
         if(*py1 <= y)
         {
-          if((*py2 > y) && (isleft(px1, py1, px2, py2, x, y) > 0))
+          if((*py2 > y) && (isLeft(px1, py1, px2, py2, x, y) > 0))
             inside++;
         }
         else
         {
-          if((*py2 <= y) && (isleft(px1, py1, px2, py2, x, y) < 0))
+          if((*py2 <= y) && (isLeft(px1, py1, px2, py2, x, y) < 0))
             inside++;
         }
 

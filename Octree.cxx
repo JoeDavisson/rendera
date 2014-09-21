@@ -80,7 +80,7 @@ void Octree::write(const int &r, const int &g, const int &b,
 }
 
 // sets entire path to value (used by palette lookup)
-void Octree::write_path(const int &r, const int &g, const int &b,
+void Octree::writePath(const int &r, const int &g, const int &b,
                         const float &value)
 {
   struct node_t *node = root;

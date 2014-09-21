@@ -37,7 +37,7 @@ namespace
   Stroke *stroke;
   View *view;
 
-  bool is_edge(Map *map, const int &x, const int &y)
+  bool isEdge(Map *map, const int &x, const int &y)
   {
     if(x < 1 || x >= map->w - 1 || y < 1 || y >= map->h - 1)
       return 0;
@@ -78,8 +78,8 @@ namespace
     return temp;
   }
 
-  inline void shrink_block(unsigned char *s0, unsigned char *s1,
-                           unsigned char *s2, unsigned char *s3)
+  inline void shrinkBlock(unsigned char *s0, unsigned char *s1,
+                          unsigned char *s2, unsigned char *s3)
   {
     const int z = (*s0 << 0) + (*s1 << 1) + (*s2 << 2) + (*s3 << 3);
 
@@ -112,7 +112,7 @@ namespace
     *s3 = 0;
   }
 
-  inline void grow_block(unsigned char *s0, unsigned char *s1,
+  inline void growBlock(unsigned char *s0, unsigned char *s1,
                         unsigned char *s2, unsigned char *s3)
   {
     int z = (*s0 << 0) + (*s1 << 1) + (*s2 << 2) + (*s3 << 3);
@@ -156,7 +156,7 @@ namespace
     return 0;
   }
 
-  void render_solid()
+  void renderSolid()
   {
     int x, y;
 
@@ -175,7 +175,7 @@ namespace
     }
   }
 
-  void render_coarse()
+  void renderCoarse()
   {
     int x, y, i;
     float soft_trans = 255;
@@ -208,7 +208,7 @@ namespace
           unsigned char d2 = *s2;
           unsigned char d3 = *s3;
 
-          shrink_block(s0, s1, s2, s3);
+          shrinkBlock(s0, s1, s2, s3);
 
           if(!*s0 && d0)
             bmp->setpixel(x, y, brush->color, soft_trans);
@@ -247,7 +247,7 @@ namespace
     }
   }
 
-  void render_fine()
+  void renderFine()
   {
     int x, y;
     int count = 0;
@@ -256,7 +256,7 @@ namespace
     {
       for(x = stroke->x1; x <= stroke->x2; x++)
       {
-        if((Map::main)->getpixel(x, y) && is_edge((Map::main), x, y))
+        if((Map::main)->getpixel(x, y) && isEdge((Map::main), x, y))
         {
           stroke->edgecachex[count] = x;
           stroke->edgecachey[count] = y;
@@ -312,7 +312,7 @@ namespace
     }
   }
 
-  void render_watercolor()
+  void renderWatercolor()
   {
     int x, y, i;
     float soft_trans = brush->trans;
@@ -360,7 +360,7 @@ namespace
           unsigned char d2 = *s2;
           unsigned char d3 = *s3;
 
-          grow_block(s0, s1, s2, s3);
+          growBlock(s0, s1, s2, s3);
 
           if(*s0 & !(rnd32() & 15))
           {
@@ -395,7 +395,7 @@ namespace
     }
   }
 
-  void render_chalk()
+  void renderChalk()
   {
     int x, y, i;
     float soft_trans = 255;
@@ -429,7 +429,7 @@ namespace
           unsigned char d2 = *s2;
           unsigned char d3 = *s3;
 
-          shrink_block(s0, s1, s2, s3);
+          shrinkBlock(s0, s1, s2, s3);
 
           if(!*s0 && d0)
           {
@@ -502,8 +502,6 @@ namespace
         break;
     }
   }
-
-  // end of namespace
 }
 
 void Render::begin()
@@ -535,19 +533,19 @@ void Render::begin()
   switch(Gui::getPaintMode())
   {
     case SOLID:
-      render_solid();
+      renderSolid();
       break;
     case COARSE:
-      render_coarse();
+      renderCoarse();
       break;
     case FINE:
-      render_fine();
+      renderFine();
       break;
     case WATERCOLOR:
-      render_watercolor();
+      renderWatercolor();
       break;
     case CHALK:
-      render_chalk();
+      renderChalk();
       break;
   }
 

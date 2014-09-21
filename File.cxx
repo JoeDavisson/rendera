@@ -88,35 +88,6 @@ namespace
   }
   TARGA_HEADER;
 
-  Widget *pal_preview = new Widget(new Fl_Group(0, 0, 96, 96),
-                                   0, 0, 96, 96, "", 6, 6, 0);
-
-  const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
-
-  // store previous directories
-  char load_dir[256];
-  char save_dir[256];
-  char pal_dir[256];
-
-  void error_message()
-  {
-    fl_message_title("File Error");
-    fl_message("An error occured during the operation.");
-  }
-
-  int file_exists(const char *s)
-  {
-    FILE *temp = fopen(s, "r");
-
-    if(temp)
-    {
-      fclose(temp);
-      return 1;
-    }
-
-    return 0;
-  }
-
   // jpeg structures
   struct my_error_mgr
   {
@@ -133,31 +104,61 @@ namespace
     longjmp(myerr->setjmp_buffer, 1);
   }
 
-  bool is_png(const unsigned char *header)
+  // palette preview widget
+  Widget *pal_preview = new Widget(new Fl_Group(0, 0, 96, 96),
+                                   0, 0, 96, 96, "", 6, 6, 0);
+
+  const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
+
+  // store previous directory paths
+  char load_dir[256];
+  char save_dir[256];
+  char pal_dir[256];
+
+  void errorMessage()
+  {
+    fl_message_title("File Error");
+    fl_message("An error occured during the operation.");
+  }
+
+  int fileExists(const char *s)
+  {
+    FILE *temp = fopen(s, "r");
+
+    if(temp)
+    {
+      fclose(temp);
+      return 1;
+    }
+
+    return 0;
+  }
+
+  bool isPng(const unsigned char *header)
   {
     return (png_sig_cmp((png_bytep)header, 0, 8) == 0);
   }
 
-  bool is_jpeg(const unsigned char *header)
+  bool isJpeg(const unsigned char *header)
   {
     const unsigned char id[2] = { 0xFF, 0xD8 };
     return (memcmp(header, id, 2) == 0);
   }
 
-  bool is_bmp(const unsigned char *header)
+  bool isBmp(const unsigned char *header)
   {
     return (memcmp(header, "BM", 2) == 0);
   }
 
-  // tga has no real header, will have to trust the file extension
-  bool is_tga(const char *fn)
+  // targa has no real header, will have to trust the file extension
+  bool isTarga(const char *fn)
   {
     const char *ext;
     ext = fl_filename_ext(fn);
     return (strcmp(ext, ".tga") == 0);
   }
 
-  bool is_gpl(const unsigned char *header)
+  bool isGimpPalette(const unsigned char *header)
   {
     return (memcmp(header, "GIMP Palette", 12) == 0);
   }
@@ -202,7 +203,7 @@ void File::load(Fl_Widget *, void *)
   if(fread(&header, 1, 8, in) != 8)
   {
     fclose(in);
-    error_message();
+    errorMessage();
     return;
   }
 
@@ -210,45 +211,45 @@ void File::load(Fl_Widget *, void *)
 
   int overscroll = Bitmap::main->overscroll;
 
-  if(is_png(header))
+  if(isPng(header))
   {
     delete Bitmap::main;
     if(!(Bitmap::main = File::loadPNG((const char *)fn, overscroll)))
     {
-      error_message();
+      errorMessage();
       return;
     }
   }
-  else if(is_jpeg(header))
+  else if(isJpeg(header))
   {
     delete Bitmap::main;
     if(!(Bitmap::main = File::loadJPG((const char *)fn, overscroll)))
     {
-      error_message();
+      errorMessage();
       return;
     }
   }
-  else if(is_bmp(header))
+  else if(isBmp(header))
   {
     delete Bitmap::main;
     if(!(Bitmap::main = File::loadBMP((const char *)fn, overscroll)))
     {
-      error_message();
+      errorMessage();
       return;
     }
   }
-  else if(is_tga(fn))
+  else if(isTarga(fn))
   {
     delete Bitmap::main;
     if(!(Bitmap::main = File::loadTGA((const char *)fn, overscroll)))
     {
-      error_message();
+      errorMessage();
       return;
     }
   }
   else
   {
-    error_message();
+    errorMessage();
     return;
   }
 
@@ -278,7 +279,7 @@ int File::loadFile(const char *fn)
 
   int overscroll = Bitmap::main->overscroll;
 
-  if(is_png(header))
+  if(isPng(header))
   {
     delete Bitmap::main;
     if(!(Bitmap::main = File::loadPNG((const char *)fn, overscroll)))
@@ -286,7 +287,7 @@ int File::loadFile(const char *fn)
       return -1;
     }
   }
-  else if(is_jpeg(header))
+  else if(isJpeg(header))
   {
     delete Bitmap::main;
     if(!(Bitmap::main = File::loadJPG((const char *)fn, overscroll)))
@@ -294,7 +295,7 @@ int File::loadFile(const char *fn)
       return -1;
     }
   }
-  else if(is_bmp(header))
+  else if(isBmp(header))
   {
     delete Bitmap::main;
     if(!(Bitmap::main = File::loadBMP((const char *)fn, overscroll)))
@@ -302,7 +303,7 @@ int File::loadFile(const char *fn)
       return -1;
     }
   }
-  else if(is_tga(fn))
+  else if(isTarga(fn))
   {
     delete Bitmap::main;
     if(!(Bitmap::main = File::loadTGA((const char *)fn, overscroll)))
@@ -654,7 +655,7 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
     return 0;
   }
 
-  if(!is_png(header))
+  if(!isPng(header))
   {
     fclose(in);
     return 0;
@@ -773,7 +774,7 @@ void File::save(Fl_Widget *, void *)
 
 //  delete fc;
 
-  if(file_exists(fn))
+  if(fileExists(fn))
   {
     fl_message_title("Replace File?");
     if(fl_choice("Replace File?", "No", "Yes", NULL) == 0)
@@ -785,28 +786,28 @@ void File::save(Fl_Widget *, void *)
     case 0:
       if(File::savePNG(fn) < 0)
       {
-        error_message();
+        errorMessage();
         return;
       }
       break;
     case 1:
       if(File::saveJPG(fn) < 0)
       {
-        error_message();
+        errorMessage();
         return;
       }
       break;
     case 2:
       if(File::saveBMP(fn) < 0)
       {
-        error_message();
+        errorMessage();
         return;
       }
       break;
     case 3:
       if(File::saveTGA(fn) < 0)
       {
-        error_message();
+        errorMessage();
         return;
       }
       break;
@@ -1085,7 +1086,7 @@ int File::saveJPG(const char *fn)
 
 Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
 {
-  if(!is_png(header))
+  if(!isPng(header))
     return 0;
 
   delete Bitmap::preview;
@@ -1100,7 +1101,7 @@ Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
 
 Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int)
 {
-  if(!is_jpeg(header))
+  if(!isJpeg(header))
     return 0;
 
   delete Bitmap::preview;
@@ -1115,7 +1116,7 @@ Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int)
 
 Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int)
 {
-  if(!is_bmp(header))
+  if(!isBmp(header))
     return 0;
 
   delete Bitmap::preview;
@@ -1130,7 +1131,7 @@ Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int)
 
 Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
 {
-  if(!is_tga(fn))
+  if(!isTarga(fn))
     return 0;
 
   delete Bitmap::preview;
@@ -1145,7 +1146,7 @@ Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
 
 Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int)
 {
-  if(!is_gpl(header))
+  if(!isGimpPalette(header))
     return 0;
 
   Palette *temp_pal = new Palette();
@@ -1196,17 +1197,17 @@ void File::loadPalette()
   if(fread(&header, 1, 12, in) != 12)
   {
     fclose(in);
-    error_message();
+    errorMessage();
     return;
   }
 
   fclose(in);
 
-  if(is_gpl(header))
+  if(isGimpPalette(header))
   {
     if(Palette::main->load((const char*)fn) < 0)
     {
-      error_message();
+      errorMessage();
       return;
     }
     Gui::drawPalette();
@@ -1239,7 +1240,7 @@ void File::savePalette()
 
   delete fc;
 
-  if(file_exists(fn))
+  if(fileExists(fn))
   {
     fl_message_title("Replace File?");
     if(fl_choice("Replace File?", "No", "Yes", NULL) == 0)
@@ -1248,7 +1249,7 @@ void File::savePalette()
   
   if(Palette::main->save(fn) < 0)
   {
-    error_message();
+    errorMessage();
     return;
   }
 }

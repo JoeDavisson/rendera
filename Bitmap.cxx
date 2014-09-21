@@ -44,7 +44,7 @@ int Bitmap::clone_mirror = 0;
 
 namespace
 {
-  inline int xor_value(const int x, const int y)
+  inline int xorValue(const int x, const int y)
   {
     static const int c[2] = { 0x00FFFFFF, 0x00808080 };
     return c[(x & 1) ^ (y & 1)];
@@ -286,7 +286,7 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 
     while(x1 != x2)
     {
-      *(row[y1] + x1) ^= xor_value(x1, y1);
+      *(row[y1] + x1) ^= xorValue(x1, y1);
 
       if(e >= 0)
       {
@@ -306,7 +306,7 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 
     while(y1 != y2)
     {
-      *(row[y1] + x1) ^= xor_value(x1, y1);
+      *(row[y1] + x1) ^= xorValue(x1, y1);
 
       if(e >= 0)
       {
@@ -319,7 +319,7 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
     }
   }
 
-  *(row[y1] + x1) ^= xor_value(x1, y1);
+  *(row[y1] + x1) ^= xorValue(x1, y1);
 }
 
 void Bitmap::xorHline(int x1, int y, int x2)
@@ -339,7 +339,7 @@ void Bitmap::xorHline(int x1, int y, int x2)
   int *p = row[y] + x1;
 
   for(; x1 <= x2; x1++)
-    *p++ ^= xor_value(x1, y);
+    *p++ ^= xorValue(x1, y);
 }
 
 void Bitmap::xorRect(int x1, int y1, int x2, int y2)
@@ -369,8 +369,8 @@ void Bitmap::xorRect(int x1, int y1, int x2, int y2)
 
   for(; y1 < y2; y1++)
   {
-    *(row[y1] + x1) ^= xor_value(x1, y1);
-    *(row[y1] + x2) ^= xor_value(x1, y1);
+    *(row[y1] + x1) ^= xorValue(x1, y1);
+    *(row[y1] + x2) ^= xorValue(x1, y1);
   }
 }
 
