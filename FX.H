@@ -29,47 +29,17 @@ namespace FX
 {
   void init();
 
-  void showNormalize();
-  void doNormalize();
-
-  void showEqualize();
-  void doEqualize();
-
-  void showValueStretch();
-  void doValueStretch();
-
-  void showSaturate();
-  void doSaturate();
-
-  void showRotateHue();
-  void hideRotateHue();
-  void doRotateHue(int);
-  void cancelRotateHue();
-
-  void showInvert();
-  void doInvert();
-
-  void showRestore();
-  void hideRestore();
-  void doRestore();
-  void cancelRestore();
-
-  void showRemoveDust();
-  void hideRemoveDust();
-  void doRemoveDust(int);
-  void cancelRemoveDust();
-
-  void showColorize();
-  void doColorize();
-
-  void showCorrect();
-  void doCorrect();
-
-  void showApplyPalette();
-  void hideApplyPalette();
-  void doApplyPaletteNormal();
-  void doApplyPaletteDither();
-  void cancelApplyPalette();
+  void normalize();
+  void equalize();
+  void valueStretch();
+  void saturate();
+  void rotateHue();
+  void invert();
+  void restore();
+  void correctionMatrix();
+  void removeDust();
+  void colorize();
+  void applyPalette();
 }
 
 #endif

@@ -162,17 +162,17 @@ void Gui::init()
   menubar->add("Palette/Save", 0, (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Editor...", 0, (Fl_Callback *)Dialog::editor, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Create From Image...", 0, (Fl_Callback *)Dialog::createPalette, 0, 0);
-  menubar->add("Effects/Normalize", 0, (Fl_Callback *)FX::showNormalize, 0, 0);
-  menubar->add("Effects/Equalize", 0, (Fl_Callback *)FX::showEqualize, 0, 0);
-  menubar->add("Effects/Value Stretch", 0, (Fl_Callback *)FX::showValueStretch, 0, 0);
-  menubar->add("Effects/Saturate", 0, (Fl_Callback *)FX::showSaturate, 0, 0);
-  menubar->add("Effects/Rotate Hue...", 0, (Fl_Callback *)FX::showRotateHue, 0, 0);
-  menubar->add("Effects/Invert", 0, (Fl_Callback *)FX::showInvert, 0, 0);
-  menubar->add("Effects/Restore...", 0, (Fl_Callback *)FX::showRestore, 0, 0);
-  menubar->add("Effects/Correction Matrix", 0, (Fl_Callback *)FX::showCorrect, 0, 0);
-  menubar->add("Effects/Remove Dust...", 0, (Fl_Callback *)FX::showRemoveDust, 0, 0);
-  menubar->add("Effects/Colorize", 0, (Fl_Callback *)FX::showColorize, 0, 0);
-  menubar->add("Effects/Apply Palette...", 0, (Fl_Callback *)FX::showApplyPalette, 0, 0);
+  menubar->add("Effects/Normalize", 0, (Fl_Callback *)FX::normalize, 0, 0);
+  menubar->add("Effects/Equalize", 0, (Fl_Callback *)FX::equalize, 0, 0);
+  menubar->add("Effects/Value Stretch", 0, (Fl_Callback *)FX::valueStretch, 0, 0);
+  menubar->add("Effects/Saturate", 0, (Fl_Callback *)FX::saturate, 0, 0);
+  menubar->add("Effects/Rotate Hue...", 0, (Fl_Callback *)FX::rotateHue, 0, 0);
+  menubar->add("Effects/Invert", 0, (Fl_Callback *)FX::invert, 0, 0);
+  menubar->add("Effects/Restore...", 0, (Fl_Callback *)FX::restore, 0, 0);
+  menubar->add("Effects/Correction Matrix", 0, (Fl_Callback *)FX::correctionMatrix, 0, 0);
+  menubar->add("Effects/Remove Dust...", 0, (Fl_Callback *)FX::removeDust, 0, 0);
+  menubar->add("Effects/Colorize", 0, (Fl_Callback *)FX::colorize, 0, 0);
+  menubar->add("Effects/Apply Palette...", 0, (Fl_Callback *)FX::applyPalette, 0, 0);
   menubar->add("Help/About...", 0, (Fl_Callback *)Dialog::about, 0, 0);
 
   // top_left
