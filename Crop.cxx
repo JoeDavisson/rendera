@@ -243,7 +243,7 @@ void Crop::done(View *view)
   int overscroll = Bitmap::main->overscroll;
   delete Bitmap::main;
   Bitmap::main = new Bitmap(w, h, overscroll,
-                            make_rgb(255, 255, 255), make_rgb(128, 128, 128));
+                            makeRgb(255, 255, 255), makeRgb(128, 128, 128));
   temp->blit(Bitmap::main, 0, 0, Bitmap::main->overscroll, Bitmap::main->overscroll, w, h);
   delete temp;
   view->zoom = 1;

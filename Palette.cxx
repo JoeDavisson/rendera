@@ -74,18 +74,18 @@ void Palette::draw(Widget *widget)
 
   int div = w / step;
 
-  widget->bitmap->clear(make_rgb(0, 0, 0));
+  widget->bitmap->clear(makeRgb(0, 0, 0));
 
   for(y = 0; y < w; y += step)
   {
     for(x = 0; x < w; x += step)
     {
       widget->bitmap->rect(x, y, x + step, y + step,
-                           make_rgb(96, 96, 96), 0);
+                           makeRgb(96, 96, 96), 0);
       widget->bitmap->line(x, y, x + step - 1, y + step - 1,
-                           make_rgb(96, 96, 96), 0);
+                           makeRgb(96, 96, 96), 0);
       widget->bitmap->line(w - 1 - x, y, w - 1 - (x + step - 1), y + step - 1,
-                           make_rgb(96, 96, 96), 0);
+                           makeRgb(96, 96, 96), 0);
     }
   }
 
@@ -101,8 +101,8 @@ void Palette::draw(Widget *widget)
       int y1 = y * step;
 
       widget->bitmap->rectfill(x1, y1, x1 + step - 1, y1 + step - 1, data[i], 0);
-      widget->bitmap->hline(x1, y1, x1 + step - 1, make_rgb(0, 0, 0), 128);
-      widget->bitmap->vline(y1 + 1, x1, y1 + step - 1, make_rgb(0, 0, 0), 128);
+      widget->bitmap->hline(x1, y1, x1 + step - 1, makeRgb(0, 0, 0), 128);
+      widget->bitmap->vline(y1 + 1, x1, y1 + step - 1, makeRgb(0, 0, 0), 128);
       i++;
     }
   }
@@ -136,14 +136,14 @@ void Palette::setDefault()
     {
       Blend::hsvToRgb(h * 128, sat[v], val[v], &r, &g, &b);
 
-      data[index++] = make_rgb(r, g, b);
+      data[index++] = makeRgb(r, g, b);
     }
   }
 
   // grays
   for(v = 0; v < 12; v++)
   {
-    data[index++] = make_rgb(v * 23.19, v * 23.19, v * 23.19);
+    data[index++] = makeRgb(v * 23.19, v * 23.19, v * 23.19);
   }
 
   max = index;
@@ -200,7 +200,7 @@ void Palette::fillTable()
     {
       for(r = 0; r <= 256 - step; r += step)
       {
-        int c = make_rgb24(r, g, b);
+        int c = makeRgb24(r, g, b);
         int smallest = 0xFFFFFF;
         use = 0;
 
@@ -274,7 +274,7 @@ int Palette::load(const char *fn)
       continue;
 
     // add to palette
-    data[index++] = make_rgb(r, g, b);
+    data[index++] = makeRgb(r, g, b);
     if(index > 256)
       break;
   }

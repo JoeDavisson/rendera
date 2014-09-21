@@ -197,7 +197,7 @@ namespace NewImage
     int overscroll = Bitmap::main->overscroll;
     delete Bitmap::main;
     Bitmap::main = new Bitmap(w, h, overscroll,
-                              make_rgb(255, 255, 255), make_rgb(128, 128, 128));
+                              makeRgb(255, 255, 255), makeRgb(128, 128, 128));
 
     delete Map::main;
     Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
@@ -338,19 +338,19 @@ namespace Editor
 
     if(redraw)
     {
-      hue->bitmap->clear(make_rgb(0, 0, 0));
-      sat_val->bitmap->clear(make_rgb(0, 0, 0));
+      hue->bitmap->clear(makeRgb(0, 0, 0));
+      sat_val->bitmap->clear(makeRgb(0, 0, 0));
 
       for(y = 0; y < 256; y++)
       {
         for(x = 0; x < 256; x++)
         {
           Blend::hsvToRgb(h, x, y, &r, &g, &b);
-          sat_val->bitmap->setpixelSolid(x, y, make_rgb(r, g, b), 0);
+          sat_val->bitmap->setpixelSolid(x, y, makeRgb(r, g, b), 0);
         }
 
         Blend::hsvToRgb(y * 6, 255, 255, &r, &g, &b);
-        hue->bitmap->hline(0, y, 23, make_rgb(r, g, b), 0);
+        hue->bitmap->hline(0, y, 23, makeRgb(r, g, b), 0);
       }
     }
     else
@@ -422,7 +422,7 @@ namespace Editor
 
         for(i = begin; i < end; i++)
         {
-          pal->data[i] = make_rgb(r, g, b);
+          pal->data[i] = makeRgb(r, g, b);
           r += stepr;
           g += stepg;
           b += stepb;
@@ -451,7 +451,7 @@ namespace Editor
         for(i = begin; i < end; i++)
         {
           Blend::hsvToRgb(h, s, v, &r, &g, &b);
-          pal->data[i] = make_rgb(r, g, b);
+          pal->data[i] = makeRgb(r, g, b);
           h += steph;
           s += steps;
           v += stepv;
@@ -482,7 +482,7 @@ namespace Editor
     int r, g, b;
 
     Blend::hsvToRgb(h, s, v, &r, &g, &b);
-    Brush::main->color = make_rgb(r, g, b);
+    Brush::main->color = makeRgb(r, g, b);
 
     Gui::updateColor(Brush::main->color);
     setHsv(1);
@@ -496,7 +496,7 @@ namespace Editor
     int r, g, b;
 
     Blend::hsvToRgb(h, s, v, &r, &g, &b);
-    Brush::main->color = make_rgb(r, g, b);
+    Brush::main->color = makeRgb(r, g, b);
 
     Gui::updateColor(Brush::main->color);
     setHsv(0);

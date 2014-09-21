@@ -362,7 +362,7 @@ Bitmap *File::loadJPG(const char *fn, int overscroll)
   int h = cinfo.output_height;
 
   Bitmap *temp = new Bitmap(w, h, overscroll,
-                      make_rgb(255, 255, 255), make_rgb(128, 128, 128));
+                      makeRgb(255, 255, 255), makeRgb(128, 128, 128));
   int x;
   int *p = temp->row[overscroll] + overscroll;
 
@@ -374,7 +374,7 @@ Bitmap *File::loadJPG(const char *fn, int overscroll)
 
       for(x = 0; x < row_stride; x += 3)
       {
-        *p++ = make_rgb(linebuf[0][x] & 0xFF,
+        *p++ = makeRgb(linebuf[0][x] & 0xFF,
                        linebuf[0][x + 1] & 0xFF,
                        linebuf[0][x + 2] & 0xFF);
       }
@@ -390,7 +390,7 @@ Bitmap *File::loadJPG(const char *fn, int overscroll)
 
       for(x = 0; x < row_stride; x += 1)
       {
-        *p++ = make_rgb(linebuf[0][x] & 0xFF,
+        *p++ = makeRgb(linebuf[0][x] & 0xFF,
                        linebuf[0][x] & 0xFF,
                        linebuf[0][x] & 0xFF);
       }
@@ -425,11 +425,11 @@ Bitmap *File::loadBMP(const char *fn, int overscroll)
 
   unsigned char *p = buffer;
 
-  /* bh.bfType = parse_uint16(p); */
-  /* bh.bfSize = parse_uint32(p); */
-  /* bh.bfReserved1 = parse_uint16(p); */
-  /* bh.bfReserved2 = parse_uint16(p); */
-  /* bh.bfOffBits = parse_uint32(p); */
+  /* bh.bfType = parseUint16(p); */
+  /* bh.bfSize = parseUint32(p); */
+  /* bh.bfReserved1 = parseUint16(p); */
+  /* bh.bfReserved2 = parseUint16(p); */
+  /* bh.bfOffBits = parseUint32(p); */
 
   if(fread(buffer, 1, sizeof(BMP_INFO_HEADER), in)
      != (unsigned)sizeof(BMP_INFO_HEADER))
@@ -439,17 +439,17 @@ Bitmap *File::loadBMP(const char *fn, int overscroll)
   }
 
   p = buffer;
-  bm.biSize = parse_uint32(p);
-  bm.biWidth = parse_uint32(p);
-  bm.biHeight = parse_uint32(p);
-  bm.biPlanes = parse_uint16(p);
-  bm.biBitCount = parse_uint16(p);
-  bm.biCompression = parse_uint32(p);
-  bm.biSizeImage = parse_uint32(p);
-  bm.biXPelsPerMeter = parse_uint32(p);
-  bm.biYPelsPerMeter = parse_uint32(p);
-  bm.biClrUsed = parse_uint32(p);
-  bm.biClrImportant = parse_uint32(p);
+  bm.biSize = parseUint32(p);
+  bm.biWidth = parseUint32(p);
+  bm.biHeight = parseUint32(p);
+  bm.biPlanes = parseUint16(p);
+  bm.biBitCount = parseUint16(p);
+  bm.biCompression = parseUint32(p);
+  bm.biSizeImage = parseUint32(p);
+  bm.biXPelsPerMeter = parseUint32(p);
+  bm.biYPelsPerMeter = parseUint32(p);
+  bm.biClrUsed = parseUint32(p);
+  bm.biClrImportant = parseUint32(p);
 
   int w = bm.biWidth;
   int h = bm.biHeight;
@@ -481,7 +481,7 @@ Bitmap *File::loadBMP(const char *fn, int overscroll)
   h = ABS(h);
 
   Bitmap *temp = new Bitmap(w, h, overscroll,
-                            make_rgb(255, 255, 255), make_rgb(128, 128, 128));
+                            makeRgb(255, 255, 255), makeRgb(128, 128, 128));
 
   unsigned char *linebuf = new unsigned char[w * mul + pad];
 
@@ -505,7 +505,7 @@ Bitmap *File::loadBMP(const char *fn, int overscroll)
       {
         int x1 = negx ? w - 1 - x : x;
         x1 += overscroll;
-        *(temp->row[y1] + x1) = make_rgb(linebuf[xx + 2] & 0xFF,
+        *(temp->row[y1] + x1) = makeRgb(linebuf[xx + 2] & 0xFF,
                                         linebuf[xx + 1] & 0xFF,
                                         linebuf[xx + 0] & 0xFF);
         xx += mul;
@@ -538,18 +538,18 @@ Bitmap *File::loadTGA(const char *fn, int overscroll)
 
   unsigned char *p = buffer;
 
-  header.id_length = parse_uint8(p);
-  header.color_map_type = parse_uint8(p);
-  header.data_type = parse_uint8(p);
-  header.color_map_origin = parse_uint16(p);
-  header.color_map_length = parse_uint16(p);
-  header.color_map_depth = parse_uint8(p);
-  header.x = parse_uint16(p);
-  header.y = parse_uint16(p);
-  header.w = parse_uint16(p);
-  header.h = parse_uint16(p);
-  header.bpp = parse_uint8(p);
-  header.descriptor = parse_uint8(p);
+  header.id_length = parseUint8(p);
+  header.color_map_type = parseUint8(p);
+  header.data_type = parseUint8(p);
+  header.color_map_origin = parseUint16(p);
+  header.color_map_length = parseUint16(p);
+  header.color_map_depth = parseUint8(p);
+  header.x = parseUint16(p);
+  header.y = parseUint16(p);
+  header.w = parseUint16(p);
+  header.h = parseUint16(p);
+  header.bpp = parseUint8(p);
+  header.descriptor = parseUint8(p);
 
   if(header.data_type != 2)
   {
@@ -575,7 +575,7 @@ Bitmap *File::loadTGA(const char *fn, int overscroll)
   int h = header.h;
 
   Bitmap *temp = new Bitmap(w, h, overscroll,
-                            make_rgb(255, 255, 255), make_rgb(128, 128, 128));
+                            makeRgb(255, 255, 255), makeRgb(128, 128, 128));
 
   unsigned char *linebuf = new unsigned char[w * depth];
 
@@ -620,14 +620,14 @@ Bitmap *File::loadTGA(const char *fn, int overscroll)
       if(depth == 3)
       {
         *(temp->row[y + overscroll] + x + overscroll) =
-                       make_rgb((linebuf[x * depth + 2] & 0xFF),
+                       makeRgb((linebuf[x * depth + 2] & 0xFF),
                                 (linebuf[x * depth + 1] & 0xFF),
                                 (linebuf[x * depth + 0] & 0xFF));
       }
       else if(depth == 4)
       {
         *(temp->row[y + overscroll] + x + overscroll) =
-                       make_rgba((linebuf[x * depth + 2] & 0xFF),
+                       makeRgba((linebuf[x * depth + 2] & 0xFF),
                                  (linebuf[x * depth + 1] & 0xFF),
                                  (linebuf[x * depth + 0] & 0xFF),
                                  (linebuf[x * depth + 3] & 0xFF));
@@ -708,7 +708,7 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
   int x, y;
 
   Bitmap *temp = new Bitmap(w, h, overscroll,
-                            make_rgb(255, 255, 255), make_rgb(128, 128, 128));
+                            makeRgb(255, 255, 255), makeRgb(128, 128, 128));
 
   int *p = temp->row[overscroll] + overscroll;
 
@@ -722,13 +722,13 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
     {
       if(depth == 3)
       {
-        *p++ = make_rgb(linebuf[xx + 0] & 0xFF,
+        *p++ = makeRgb(linebuf[xx + 0] & 0xFF,
                        linebuf[xx + 1] & 0xFF,
                        linebuf[xx + 2] & 0xFF);
       }
       else if(depth == 4)
       {
-        *p++ = make_rgba(linebuf[xx + 0] & 0xFF,
+        *p++ = makeRgba(linebuf[xx + 0] & 0xFF,
                         linebuf[xx + 1] & 0xFF,
                         linebuf[xx + 2] & 0xFF,
                         linebuf[xx + 3] & 0xFF);
@@ -827,27 +827,27 @@ int File::saveBMP(const char *fn)
   int pad = w % 4;
 
   // BMP_FILE_HEADER
-  write_uint8('B', out);
-  write_uint8('M', out);
-  write_uint32(14 + 40 + ((w + pad) * h) * 3, out);
-  write_uint16(0, out);
-  write_uint16(0, out);
-  write_uint32(14 + 40, out);
+  writeUint8('B', out);
+  writeUint8('M', out);
+  writeUint32(14 + 40 + ((w + pad) * h) * 3, out);
+  writeUint16(0, out);
+  writeUint16(0, out);
+  writeUint32(14 + 40, out);
 
   // BMP_INFO_HEADER
-  write_uint32(40, out);
-  write_uint32(w, out);
-  write_uint32(-h, out);
-  write_uint16(1, out);
-  write_uint16(24, out);
-  write_uint32(0, out);
-  write_uint32(0, out);
+  writeUint32(40, out);
+  writeUint32(w, out);
+  writeUint32(-h, out);
+  writeUint16(1, out);
+  writeUint16(24, out);
+  writeUint32(0, out);
+  writeUint32(0, out);
 // FIXME eventually the program will set the dpi for use here
 //       defaulting to 300 for now
-  write_uint32(300 * 39.370079 + .5, out);
-  write_uint32(300 * 39.370079 + .5, out);
-  write_uint32(0, out);
-  write_uint32(0, out);
+  writeUint32(300 * 39.370079 + .5, out);
+  writeUint32(300 * 39.370079 + .5, out);
+  writeUint32(0, out);
+  writeUint32(0, out);
 
   int *p = bmp->row[overscroll] + overscroll;
   unsigned char *linebuf = new unsigned char[w * 3 + pad];
@@ -896,18 +896,18 @@ int File::saveTGA(const char *fn)
   int w = bmp->w - overscroll * 2;
   int h = bmp->h - overscroll * 2;
 
-  write_uint8(0, out);
-  write_uint8(0, out);
-  write_uint8(2, out);
-  write_uint16(0, out);
-  write_uint16(0, out);
-  write_uint8(0, out);
-  write_uint16(0, out);
-  write_uint16(0, out);
-  write_uint16(w, out);
-  write_uint16(h, out);
-  write_uint8(32, out);
-  write_uint8(32, out);
+  writeUint8(0, out);
+  writeUint8(0, out);
+  writeUint8(2, out);
+  writeUint16(0, out);
+  writeUint16(0, out);
+  writeUint8(0, out);
+  writeUint16(0, out);
+  writeUint16(0, out);
+  writeUint16(w, out);
+  writeUint16(h, out);
+  writeUint8(32, out);
+  writeUint8(32, out);
 
   int *p = bmp->row[overscroll] + overscroll;
   unsigned char *linebuf = new unsigned char[w * 4];

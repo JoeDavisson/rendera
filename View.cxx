@@ -46,7 +46,7 @@ namespace
       return;
 
     int *p = bmp->row[y] + x;
-    *p = blend_fast(*p, c, t);
+    *p = blendFast(*p, c, t);
   }
 
   inline void gridHline(Bitmap *bmp, int x1, const int &y, int &x2,
@@ -69,7 +69,7 @@ namespace
 
     for(x = x1; x <= x2; x++)
     {
-      *p = blend_fast(*p, c, t);
+      *p = blendFast(*p, c, t);
       p++;
     }
   }
@@ -358,7 +358,7 @@ void View::drawMain(int refresh)
     overy = 0;
   }
 
-  backbuf->clear(make_rgb(128, 128, 128));
+  backbuf->clear(makeRgb(128, 128, 128));
 
   Bitmap::main->pointStretch(backbuf, ox, oy, sw, sh,
                              0, 0, dw, dh, overx, overy, bgr_order);
@@ -398,16 +398,16 @@ void View::drawGrid()
   do
   {
     x1 = 0 - zx + (offx * zoom) + qx - (int)(ox * zoom) % zx;
-    gridHline(backbuf, x1, y1, x2, make_rgb(255, 255, 255), d);
-    gridHline(backbuf, x1, y1 + zy - 1, x2, make_rgb(0, 0, 0), d);
+    gridHline(backbuf, x1, y1, x2, makeRgb(255, 255, 255), d);
+    gridHline(backbuf, x1, y1 + zy - 1, x2, makeRgb(0, 0, 0), d);
     i = 0;
     do
     {
       x1 = 0 - zx + (offx * zoom) + qx - (int)(ox * zoom) % zx;
       do
       {
-        gridSetpixel(backbuf, x1, y1, make_rgb(255, 255, 255), d);
-        gridSetpixel(backbuf, x1 + zx - 1, y1, make_rgb(0, 0, 0), d);
+        gridSetpixel(backbuf, x1, y1, makeRgb(255, 255, 255), d);
+        gridSetpixel(backbuf, x1 + zx - 1, y1, makeRgb(0, 0, 0), d);
         x1 += zx;
       }
       while(x1 <= x2);
@@ -515,7 +515,7 @@ void View::beginMove()
   // pos.y = by + bh / 2;
   // warp mouse here... (unsupported in fltk)
 
-  backbuf->clear(make_rgb(128, 128, 128));
+  backbuf->clear(makeRgb(128, 128, 128));
 
   //Bitmap::main->pointStretch(backbuf,
    //                           0, 0, Bitmap::main->w, Bitmap::main->h,

@@ -35,7 +35,7 @@ Brush::Brush()
   shape = 0;
   edge = 0;
   blend = 0;
-  color = make_rgb(255, 0, 0);
+  color = makeRgb(255, 0, 0);
   trans = 0;
   make(shape, size);
 }

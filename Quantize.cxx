@@ -176,7 +176,7 @@ namespace
       }
       while(i < 2);
 
-      temp[x] = make_rgb24((int)r, (int)g, (int)b);
+      temp[x] = makeRgb24((int)r, (int)g, (int)b);
 
       c[0] -= u1;
       c[1] -= u2;
@@ -340,7 +340,7 @@ void Quantize::pca(Bitmap *src, int size)
     if(colors[i].active)
     {
       Palette::main->data[index] =
-        make_rgb((int)colors[i].r, (int)colors[i].g, (int)colors[i].b);
+        makeRgb((int)colors[i].r, (int)colors[i].g, (int)colors[i].b);
 
       index++;
     }

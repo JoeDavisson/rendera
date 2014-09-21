@@ -728,7 +728,7 @@ void Bitmap::pointStretch(Bitmap *dest,
       const int x1 = sx + ((x * bx) >> 8);
       const int c = *(row[y1] + x1);
 
-      *s++ = convert_format(blend_fast(((x >> 4) & 1) ^ ((y >> 4) & 1)
+      *s++ = convertFormat(blendFast(((x >> 4) & 1) ^ ((y >> 4) & 1)
                             ? 0xA0A0A0 : 0x606060, c,
                             255 - geta(c)), bgr_order);
     }
@@ -778,7 +778,7 @@ void Bitmap::fastStretch(Bitmap *dest,
 
     for(d_1 = 0; d_1 <= dx_1; d_1++)
     {
-      *p = convert_format(blend_fast(((d_1 >> 4) & 1) ^ ((yd1 >> 4) & 1)
+      *p = convertFormat(blendFast(((d_1 >> 4) & 1) ^ ((yd1 >> 4) & 1)
                             ? 0xA0A0A0 : 0x606060, *q,
                             255 - geta(*q)), bgr_order);
 

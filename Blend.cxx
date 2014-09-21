@@ -79,7 +79,7 @@ int Blend::trans(const int &c1, const int &c2, const int &t)
   const struct rgba_t rgba1 = get_rgba(c1);
   const struct rgba_t rgba2 = get_rgba(c2);
 
-  return make_rgba(rgba2.r + (t * (rgba1.r - rgba2.r)) / 255,
+  return makeRgba(rgba2.r + (t * (rgba1.r - rgba2.r)) / 255,
                   rgba2.g + (t * (rgba1.g - rgba2.g)) / 255,
                   rgba2.b + (t * (rgba1.b - rgba2.b)) / 255,
                   rgba1.a);
@@ -90,7 +90,7 @@ int Blend::transAll(const int &c1, const int &c2, const int &t)
   const struct rgba_t rgba1 = get_rgba(c1);
   const struct rgba_t rgba2 = get_rgba(c2);
 
-  return make_rgba(rgba2.r + (t * (rgba1.r - rgba2.r)) / 255,
+  return makeRgba(rgba2.r + (t * (rgba1.r - rgba2.r)) / 255,
                   rgba2.g + (t * (rgba1.g - rgba2.g)) / 255,
                   rgba2.b + (t * (rgba1.b - rgba2.b)) / 255,
                   rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
@@ -118,7 +118,7 @@ int Blend::darken(const int &c1, const int &c2, const int &t)
   g = MAX(g, 0);
   b = MAX(b, 0);
 
-  return make_rgba(r, g, b, rgba1.a);
+  return makeRgba(r, g, b, rgba1.a);
 }
 
 int Blend::lighten(const int &c1, const int &c2, const int &t)
@@ -134,7 +134,7 @@ int Blend::lighten(const int &c1, const int &c2, const int &t)
   g = MIN(g, 255);
   b = MIN(b, 255);
 
-  return make_rgba(r, g, b, rgba1.a);
+  return makeRgba(r, g, b, rgba1.a);
 }
 
 int Blend::colorize(const int &c1, const int &c2, const int &t)
@@ -157,7 +157,7 @@ int Blend::keepLum(const int &c, const int &dest)
 
   // iterate to find similar color with same luminance
   int i;
-  int src = getl_unpacked(n[1], n[0], n[2]);
+  int src = getlUnpacked(n[1], n[0], n[2]);
 
   while(src < dest)
   {
@@ -166,7 +166,7 @@ int Blend::keepLum(const int &c, const int &dest)
       if(n[i] < 255)
       {
         n[i]++;
-        src = getl_unpacked(n[1], n[0], n[2]);
+        src = getlUnpacked(n[1], n[0], n[2]);
         if(src >= dest)
           break;
       }
@@ -180,26 +180,26 @@ int Blend::keepLum(const int &c, const int &dest)
       if(n[i] > 0)
       {
         n[i]--;
-        src = getl_unpacked(n[1], n[0], n[2]);
+        src = getlUnpacked(n[1], n[0], n[2]);
         if(src <= dest)
           break;
       }
     }
   }
 
-  return make_rgba(n[1], n[0], n[2], rgba.a);
+  return makeRgba(n[1], n[0], n[2], rgba.a);
 }
 
 int Blend::alphaAdd(const int &c1, const int &, const int &t)
 {
   const struct rgba_t rgba = get_rgba(c1);
-  return make_rgba(rgba.r, rgba.g, rgba.b, (rgba.a * t) / 255);
+  return makeRgba(rgba.r, rgba.g, rgba.b, (rgba.a * t) / 255);
 }
 
 int Blend::alphaSub(const int &c1, const int &, const int &t)
 {
   const struct rgba_t rgba = get_rgba(c1);
-  return make_rgba(rgba.r, rgba.g, rgba.b, 255 - ((255 - rgba.a) * t) / 255);
+  return makeRgba(rgba.r, rgba.g, rgba.b, 255 - ((255 - rgba.a) * t) / 255);
 }
 
 int Blend::smooth(const int &c1, const int &, const int &t)
@@ -241,7 +241,7 @@ int Blend::smooth(const int &c1, const int &, const int &t)
   b /= 15;
   a /= 15;
 
-  return Blend::transAll(c1, make_rgba(r, g, b, a), t);
+  return Blend::transAll(c1, makeRgba(r, g, b, a), t);
 }
 
 int Blend::smoothColor(const int &c1, const int &, const int &t)
@@ -280,13 +280,13 @@ int Blend::smoothColor(const int &c1, const int &, const int &t)
   g /= 15;
   b /= 15;
 
-  int c3 = Blend::trans(c1, make_rgb(r, g, b), t);
+  int c3 = Blend::trans(c1, makeRgb(r, g, b), t);
   return keepLum(c3, getl(c1));
 }
 
 int Blend::invert(const int &c1, const int &, const int &)
 {
-  return make_rgb(255 - getr(c1), 255 - getg(c1), 255 - getb(c1));
+  return makeRgb(255 - getr(c1), 255 - getg(c1), 255 - getb(c1));
 }
 
 // RGB<->HSV conversions use the following ranges:

@@ -69,19 +69,19 @@ inline rgba_t get_rgba( uint32_t const &n )
 }
 
 // make RGB color with no alpha
-inline int make_rgb(const int &r, const int &g, const int &b)
+inline int makeRgb(const int &r, const int &g, const int &b)
 {
   return r | g << 8 | b << 16 | 0xFF000000;
 }
 
 // make RGBA color
-inline int make_rgba(const int &r, const int &g, const int &b, const int &a)
+inline int makeRgba(const int &r, const int &g, const int &b, const int &a)
 {
   return r | g << 8 | b << 16 | a << 24;
 }
 
 // make RGB color, 24-bits only
-inline int make_rgb24(const int &r, const int &g, const int &b)
+inline int makeRgb24(const int &r, const int &g, const int &b)
 {
   return r | g << 8 | b << 16;
 }
@@ -123,13 +123,13 @@ inline int getl(const int &c)
 }
 
 // get rec 601 luminance from unpacked RGB values
-inline int getl_unpacked(const int &r, const int &g, const int &b)
+inline int getlUnpacked(const int &r, const int &g, const int &b)
 {
   return (76 * r + 150 * g + 29 * b) / 255;
 }
 
 // scales a gray value to a particular level
-inline int scale_val(const int &a, const int &b)
+inline int scaleVal(const int &a, const int &b)
 {
   return (a * (255 - b) / 255) + b;
 }
@@ -147,7 +147,7 @@ inline int diff24(const int &c1, const int &c2)
 }
 
 // normal blend approximation (saves a multiply)
-inline int blend_fast(const int &c1, const int &c2, const int &t)
+inline int blendFast(const int &c1, const int &c2, const int &t)
 {
   const int rb =
     (((((c1 & 0xFF00FF) - (c2 & 0xFF00FF)) * t) >> 8) + c2) & 0xFF00FF;
@@ -159,16 +159,16 @@ inline int blend_fast(const int &c1, const int &c2, const int &t)
 // convert internal RGB format to whatever the graphics card needs
 // currently only supporting RGB/BGR as I don't think anything
 // else really exists
-inline int convert_format(const int &c, const int &bgr_order)
+inline int convertFormat(const int &c, const int &bgr_order)
 {
   if(bgr_order)
-    return make_rgb(getb(c), getg(c), getr(c));
+    return makeRgb(getb(c), getg(c), getr(c));
   else
     return c;
 }
 
 // file access functions
-inline uint8_t parse_uint8(unsigned char *&buffer)
+inline uint8_t parseUint8(unsigned char *&buffer)
 {
   uint8_t num = buffer[0];
 
@@ -176,7 +176,7 @@ inline uint8_t parse_uint8(unsigned char *&buffer)
   return num;
 }
 
-inline uint16_t parse_uint16(unsigned char *&buffer)
+inline uint16_t parseUint16(unsigned char *&buffer)
 {
   uint16_t num;
 
@@ -194,7 +194,7 @@ inline uint16_t parse_uint16(unsigned char *&buffer)
   return num;
 }
 
-inline uint32_t parse_uint32(unsigned char *&buffer)
+inline uint32_t parseUint32(unsigned char *&buffer)
 {
   uint32_t num;
 
@@ -212,12 +212,12 @@ inline uint32_t parse_uint32(unsigned char *&buffer)
   return num;
 }
 
-inline void write_uint8(const uint8_t &num, FILE *out)
+inline void writeUint8(const uint8_t &num, FILE *out)
 {
   fputc(num, out);
 }
 
-inline void write_uint16(const uint16_t &num, FILE *out)
+inline void writeUint16(const uint16_t &num, FILE *out)
 {
 #if 0
   /*  */
@@ -232,7 +232,7 @@ inline void write_uint16(const uint16_t &num, FILE *out)
 #endif
 }
 
-inline void write_uint32(const uint32_t &num, FILE *out)
+inline void writeUint32(const uint32_t &num, FILE *out)
 {
 #if 0
   /*  */
