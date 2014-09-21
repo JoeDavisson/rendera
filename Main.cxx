@@ -55,11 +55,10 @@ int main(int argc, char *argv[])
 
   Fl::visual(FL_DOUBLE | FL_RGB);
   Fl::scheme("gtk+");
-//  Fl::get_system_colors();
   Fl::set_color(FL_BACKGROUND_COLOR, 64, 64, 64);
   Fl::set_color(FL_FOREGROUND_COLOR, 192, 192, 192);
   Fl::set_color(FL_BACKGROUND2_COLOR, 48, 48, 48);
-  Fl::set_color(FL_INACTIVE_COLOR, 192, 192, 192);
+  Fl::set_color(FL_INACTIVE_COLOR, 0, 0, 0);
   Fl::set_color(FL_SELECTION_COLOR, 192, 192, 192);
   Fl_Shared_Image::add_handler(File::previewJPG);
   Fl_Shared_Image::add_handler(File::previewPNG);
@@ -78,9 +77,7 @@ int main(int argc, char *argv[])
   for(i = 0; i < 256; i++)
     fix_gamma[i] = std::pow((double)i / 255, 2.2) * 65535;
 
-  Bitmap::main = new Bitmap(640, 480, 64,
-                            makeRgb(255, 255, 255),
-                            getFltkColor(FL_BACKGROUND2_COLOR));
+  Bitmap::main = new Bitmap(640, 480, 64);
   Bitmap::preview = new Bitmap(8, 8);
 
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);

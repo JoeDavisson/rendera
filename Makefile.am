@@ -107,30 +107,18 @@ paths.h : Makefile
 
 
 dist_pkgdata_DATA =     \
-  data/amount.png	\
-  data/blend.png	\
   data/clone.png	\
   data/constrain.png    \
-  data/display.png      \
-  data/edge.png         \
-  data/getvalue.png     \
   data/grid.png         \
   data/icon48x48.png    \
-  data/invert.png	\
-  data/lock.png         \
   data/logo.png         \
   data/logo_large.png   \
-  data/minus.png	\
   data/mirror.png	\
   data/origin.png	\
-  data/patterns.png     \
-  data/plus.png         \
   data/shape.png	\
   data/size.png         \
-  data/smooth.png	\
   data/soft_edge.png    \
   data/stroke.png	\
-  data/tiny.png         \
   data/tools.png	\
   data/transparency.png \
   data/wrap.png         \

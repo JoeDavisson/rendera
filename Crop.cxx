@@ -127,9 +127,7 @@ void Crop::drag(View *view)
 {
   if(started == 1)
   {
-//    absrect(&beginx, &beginy, &lastx, &lasty);
     Map::main->rect(beginx, beginy, lastx, lasty, 0);
-//    absrect(&beginx, &beginy, &view->imgx, &view->imgy);
     Map::main->rect(beginx, beginy, view->imgx, view->imgy, 255);
     stroke->size(beginx, beginy, view->imgx, view->imgy);
 
@@ -242,9 +240,7 @@ void Crop::done(View *view)
 
   int overscroll = Bitmap::main->overscroll;
   delete Bitmap::main;
-  Bitmap::main = new Bitmap(w, h, overscroll,
-                            makeRgb(255, 255, 255),
-                            getFltkColor(FL_BACKGROUND2_COLOR));
+  Bitmap::main = new Bitmap(w, h, overscroll);
   temp->blit(Bitmap::main, 0, 0, Bitmap::main->overscroll, Bitmap::main->overscroll, w, h);
   delete temp;
   view->zoom = 1;

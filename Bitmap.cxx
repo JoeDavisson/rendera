@@ -75,7 +75,7 @@ Bitmap::Bitmap(int width, int height)
     row[i] = &data[width * i];
 }
 
-Bitmap::Bitmap(int width, int height, int overscroll, int inside_color, int outside_color)
+Bitmap::Bitmap(int width, int height, int overscroll)
 {
   width += overscroll * 2;
   height += overscroll * 2;
@@ -100,16 +100,16 @@ Bitmap::Bitmap(int width, int height, int overscroll, int inside_color, int outs
     row[i] = &data[width * i];
 
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
-  clear(outside_color);
-  rectfill(cl, ct, cr, cb, inside_color, 0);
+  clear(getFltkColor(FL_BACKGROUND2_COLOR));
+  rectfill(cl, ct, cr, cb, makeRgb(0, 0, 0), 0);
 
   // draw page border
   setClip(0, 0, w - 1, h - 1);
 
   for(i = 0; i < 4; i++)
-    rect(overscroll - 1 - i, overscroll - 1 - i, w - overscroll + i, h - overscroll + i, makeRgb(64, 64, 64), 0);
-  rectfill(overscroll + 8, h - overscroll + 4, w - overscroll + 8, h - overscroll + 4 + 8, makeRgb(96, 96, 96), 0);
-  rectfill(w - overscroll + 4, overscroll + 4, w - overscroll + 4 + 8, h - overscroll + 4 + 8, makeRgb(96, 96, 96), 0);
+    rect(overscroll - 1 - i, overscroll - 1 - i, w - overscroll + i, h - overscroll + i, makeRgb(96, 96, 96), 0);
+  rectfill(overscroll + 4, h - overscroll + 4, w - overscroll + 4, h - overscroll + 4 + 7, makeRgb(64, 64, 64), 0);
+  rectfill(w - overscroll + 4, overscroll + 4, w - overscroll + 4 + 7, h - overscroll + 4 + 7, makeRgb(64, 64, 64), 0);
 
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
 }

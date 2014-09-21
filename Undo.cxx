@@ -105,9 +105,7 @@ void Undo::pop()
     delete Bitmap::main;
     Bitmap::main = new Bitmap(undo_stack[undo_current]->w,
                               undo_stack[undo_current]->h,
-                              overscroll,
-                              makeRgb(255, 255, 255),
-                              getFltkColor(FL_BACKGROUND2_COLOR));
+                              overscroll);
     delete Map::main;
     Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
     Gui::getView()->ox = 0;

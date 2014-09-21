@@ -196,9 +196,7 @@ namespace NewImage
 
     int overscroll = Bitmap::main->overscroll;
     delete Bitmap::main;
-    Bitmap::main = new Bitmap(w, h, overscroll,
-                              makeRgb(255, 255, 255),
-                              getFltkColor(FL_BACKGROUND2_COLOR));
+    Bitmap::main = new Bitmap(w, h, overscroll);
 
     delete Map::main;
     Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
