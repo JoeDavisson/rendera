@@ -173,7 +173,7 @@ void Gui::init()
   menubar->add("Effects/Apply Palette...", 0, (Fl_Callback *)FX::applyPalette, 0, 0);
   menubar->add("Help/About...", 0, (Fl_Callback *)Dialog::about, 0, 0);
 
-  top_right = new Group(0, menubar->h(), window->w(), 40);
+  top_right = new Group(0, menubar->h(), window->w(), 40, "");
   x1 = 8;
   zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24, "Fit In Window", "data/zoom_fit.png", (Fl_Callback *)checkZoomFit);
   x1 += 24 + 8;
@@ -200,7 +200,7 @@ void Gui::init()
   top_right->end();
 
   // bottom
-  bottom = new Group(176, window->h() - 40, window->w() - 288, 40);
+  bottom = new Group(176, window->h() - 40, window->w() - 288, 40, "");
   x1 = 8;
   wrap = new ToggleButton(bottom, x1, 8, 24, 24, "Wrap Edges", "data/wrap.png", (Fl_Callback *)checkWrap);
   x1 += 24 + 6;
@@ -219,10 +219,7 @@ void Gui::init()
   bottom->end();
 
   // tools
-  tools = new Group(0, top_right->h() + menubar->h(), 64, window->h() - (menubar->h() + top_right->h()));
-  tools->label("Tools");
-  tools->labelsize(12);
-  tools->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  tools = new Group(0, top_right->h() + menubar->h(), 64, window->h() - (menubar->h() + top_right->h()), "Tools");
   y1 = 20;
   tool = new Widget(tools, 8, y1, 48, 192, "Tools", "data/tools.png", 48, 48, (Fl_Callback *)checkTool);
   y1 += 96 + 8;
@@ -230,10 +227,7 @@ void Gui::init()
   tools->end();
 
   // paint
-  paint = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
-  paint->label("Paint");
-  paint->labelsize(12);
-  paint->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  paint = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "Paint");
   y1 = 20;
   paint_brush = new Widget(paint, 8, y1, 96, 96, "Brush Preview", 0, 0, 0);
   paint_brush->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
@@ -261,10 +255,7 @@ void Gui::init()
   paint->end();
 
   // crop
-  crop = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
-  crop->label("Crop");
-  crop->labelsize(12);
-  crop->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  crop = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "Crop");
   y1 = 20;
   crop_x = new Field(crop, 24, y1, 72, 24, "X:", 0);
   crop_x->deactivate();
@@ -284,20 +275,14 @@ void Gui::init()
   crop->end();
 
   // getcolor
-  getcolor = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
-  getcolor->label("Get Color");
-  getcolor->labelsize(12);
-  getcolor->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  getcolor = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "GetColor");
   y1 = 20;
   getcolor_color = new Widget(getcolor, 8, y1, 96, 96, "Color", 0, 0, 0);
   getcolor->resizable(0);
   getcolor->end();
 
   // offset
-  offset = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
-  offset->label("Offset");
-  offset->labelsize(12);
-  offset->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  offset = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "Offset");
   y1 = 20;
   offset_x = new Field(offset, 24, y1, 72, 24, "X:", 0);
   offset_x->deactivate();
@@ -309,10 +294,7 @@ void Gui::init()
   offset->end();
 
   // right
-  right = new Group(window->w() - 112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
-  right->label("Colors");
-  right->labelsize(12);
-  right->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  right = new Group(window->w() - 112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "Colors");
   y1 = 20;
   palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 6, 6, (Fl_Callback *)checkPalette);
   y1 += 96 + 8;

@@ -22,9 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "File.H"
 
-Group::Group(int x, int y, int w, int h)
-: Fl_Group(x, y, w, h)
+Group::Group(int x, int y, int w, int h, const char *l)
+: Fl_Group(x, y, w, h, l)
 {
+  labelsize(12);
+  labelcolor(FL_FOREGROUND_COLOR);
+  align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
   resize(x, y, w, h);
 }
 
@@ -34,9 +37,8 @@ Group::~Group()
 
 void Group::draw()
 {
-//  fl_draw_box(FL_FLAT_BOX, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
-//  fl_draw_box(FL_BORDER_FRAME, x(), y(), w(), h(), FL_BLACK);
   fl_draw_box(FL_UP_FRAME, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
   draw_children();
+  draw_label();
 }
 

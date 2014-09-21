@@ -28,7 +28,7 @@ class Bitmap;
 class Group : public Fl_Group
 {
 public:
-  Group(int, int, int, int);
+  Group(int, int, int, int, const char *);
   virtual ~Group();
 
   Bitmap *bitmap;
