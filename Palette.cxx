@@ -81,11 +81,11 @@ void Palette::draw(Widget *widget)
     for(x = 0; x < w; x += step)
     {
       widget->bitmap->rect(x, y, x + step, y + step,
-                           makeRgb(96, 96, 96), 0);
+                           makeRgb(64, 64, 64), 0);
       widget->bitmap->line(x, y, x + step - 1, y + step - 1,
-                           makeRgb(96, 96, 96), 0);
+                           makeRgb(64, 64, 64), 0);
       widget->bitmap->line(w - 1 - x, y, w - 1 - (x + step - 1), y + step - 1,
-                           makeRgb(96, 96, 96), 0);
+                           makeRgb(64, 64, 64), 0);
     }
   }
 

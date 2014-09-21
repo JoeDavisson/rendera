@@ -362,7 +362,8 @@ Bitmap *File::loadJPG(const char *fn, int overscroll)
   int h = cinfo.output_height;
 
   Bitmap *temp = new Bitmap(w, h, overscroll,
-                      makeRgb(255, 255, 255), makeRgb(128, 128, 128));
+                            makeRgb(255, 255, 255),
+                            getFltkColor(FL_BACKGROUND2_COLOR));
   int x;
   int *p = temp->row[overscroll] + overscroll;
 
@@ -481,7 +482,8 @@ Bitmap *File::loadBMP(const char *fn, int overscroll)
   h = ABS(h);
 
   Bitmap *temp = new Bitmap(w, h, overscroll,
-                            makeRgb(255, 255, 255), makeRgb(128, 128, 128));
+                            makeRgb(255, 255, 255),
+                            getFltkColor(FL_BACKGROUND2_COLOR));
 
   unsigned char *linebuf = new unsigned char[w * mul + pad];
 
@@ -575,7 +577,8 @@ Bitmap *File::loadTGA(const char *fn, int overscroll)
   int h = header.h;
 
   Bitmap *temp = new Bitmap(w, h, overscroll,
-                            makeRgb(255, 255, 255), makeRgb(128, 128, 128));
+                            makeRgb(255, 255, 255),
+                            getFltkColor(FL_BACKGROUND2_COLOR));
 
   unsigned char *linebuf = new unsigned char[w * depth];
 
@@ -708,7 +711,8 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
   int x, y;
 
   Bitmap *temp = new Bitmap(w, h, overscroll,
-                            makeRgb(255, 255, 255), makeRgb(128, 128, 128));
+                            makeRgb(255, 255, 255),
+                            getFltkColor(FL_BACKGROUND2_COLOR));
 
   int *p = temp->row[overscroll] + overscroll;
 

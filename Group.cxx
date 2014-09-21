@@ -18,25 +18,25 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Field.H"
+#include "Group.H"
+#include "Bitmap.H"
+#include "File.H"
 
-Field::Field(Fl_Group *g, int x, int y, int w, int h,
-             const char *text, Fl_Callback *cb)
-: Fl_Int_Input(x, y, w, h, 0)
+Group::Group(int x, int y, int w, int h)
+: Fl_Group(x, y, w, h)
 {
-  group = g;
-  var = 0;
-  if(cb)
-    callback(cb, &var);
-  maximum_size(3);
-  labelsize(12);
-  textsize(12);
-  label(text);
-  when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY);
-  resize(group->x() + x, group->y() + y, w, h);
+  resize(x, y, w, h);
 }
 
-Field::~Field()
+Group::~Group()
 {
+}
+
+void Group::draw()
+{
+//  fl_draw_box(FL_FLAT_BOX, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
+//  fl_draw_box(FL_BORDER_FRAME, x(), y(), w(), h(), FL_BLACK);
+  fl_draw_box(FL_UP_FRAME, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
+  draw_children();
 }
 

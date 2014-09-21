@@ -51,6 +51,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   image2 = new Fl_RGB_Image((unsigned char *)bitmap2->data, bitmap2->w, bitmap2->h, 4, 0);
   bitmap->blit(bitmap2, 0, 0, 0, 0, bitmap->w, bitmap->h);
   resize(group->x() + x, group->y() + y, w, h);
+  color(fl_rgb_color(96, 96, 96));
   tooltip(label);
   use_highlight = 1;
 
@@ -75,6 +76,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   bitmap->clear(makeRgb(255, 255, 255));
   image = new Fl_RGB_Image((unsigned char *)bitmap->data, w, h, 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
+  color(fl_rgb_color(96, 96, 96));
   tooltip(label);
   use_highlight = 0;
 }

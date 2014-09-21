@@ -30,6 +30,8 @@ rendera_SOURCES =     \
   File.H              \
   GetColor.cxx        \
   GetColor.H          \
+  Group.cxx           \
+  Group.H             \
   Gui.cxx             \
   Gui.H               \
   Map.cxx             \

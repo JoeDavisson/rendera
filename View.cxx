@@ -260,13 +260,6 @@ int View::handle(int event)
 
       switch(Fl::event_key())
       {
-        // interferes with Fl_Choice
-        //case 32:
-        //  Bitmap::clone_x = imgx;
-        //  Bitmap::clone_y = imgy;
-        //  Bitmap::clone_moved = 1;
-        //  redraw();
-        //  break;
         case FL_Right:
           scroll(0, 64);
           break;
@@ -358,7 +351,7 @@ void View::drawMain(int refresh)
     overy = 0;
   }
 
-  backbuf->clear(makeRgb(128, 128, 128));
+  backbuf->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
   Bitmap::main->pointStretch(backbuf, ox, oy, sw, sh,
                              0, 0, dw, dh, overx, overy, bgr_order);
@@ -515,11 +508,8 @@ void View::beginMove()
   // pos.y = by + bh / 2;
   // warp mouse here... (unsupported in fltk)
 
-  backbuf->clear(makeRgb(128, 128, 128));
+  backbuf->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
-  //Bitmap::main->pointStretch(backbuf,
-   //                           0, 0, Bitmap::main->w, Bitmap::main->h,
-  //                            px, py, pw, ph, 0, 0, bgr_order);
   Bitmap::main->fastStretch(backbuf,
                              0, 0, Bitmap::main->w, Bitmap::main->h,
                              px, py, pw, ph, bgr_order);

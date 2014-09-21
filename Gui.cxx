@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cmath>
 
 #include "Gui.H"
+#include "Group.H"
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Brush.H"
@@ -51,14 +52,14 @@ namespace
   Fl_Group *group_left;
 
   // panels
-  Fl_Group *top_right;
-  Fl_Group *tools;
-  Fl_Group *paint;
-  Fl_Group *crop;
-  Fl_Group *getcolor;
-  Fl_Group *offset;
-  Fl_Group *right;
-  Fl_Group *bottom;
+  Group *top_right;
+  Group *tools;
+  Group *paint;
+  Group *crop;
+  Group *getcolor;
+  Group *offset;
+  Group *right;
+  Group *bottom;
   Fl_Group *middle;
 
   //top right
@@ -149,6 +150,7 @@ void Gui::init()
 
   // menu
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
+  menubar->box(FL_THIN_UP_BOX);
   menubar->add("File/New", 0, (Fl_Callback *)Dialog::newImage, 0, 0);
   menubar->add("File/Load", 0, (Fl_Callback *)File::load, 0, 0);
   menubar->add("File/Save", 0, (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
@@ -171,8 +173,7 @@ void Gui::init()
   menubar->add("Effects/Apply Palette...", 0, (Fl_Callback *)FX::applyPalette, 0, 0);
   menubar->add("Help/About...", 0, (Fl_Callback *)Dialog::about, 0, 0);
 
-  top_right = new Fl_Group(0, menubar->h(), window->w(), 40);
-  top_right->box(FL_UP_BOX);
+  top_right = new Group(0, menubar->h(), window->w(), 40);
   x1 = 8;
   zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24, "Fit In Window", "data/zoom_fit.png", (Fl_Callback *)checkZoomFit);
   x1 += 24 + 8;
@@ -199,8 +200,7 @@ void Gui::init()
   top_right->end();
 
   // bottom
-  bottom = new Fl_Group(176, window->h() - 40, window->w() - 288, 40);
-  bottom->box(FL_UP_BOX);
+  bottom = new Group(176, window->h() - 40, window->w() - 288, 40);
   x1 = 8;
   wrap = new ToggleButton(bottom, x1, 8, 24, 24, "Wrap Edges", "data/wrap.png", (Fl_Callback *)checkWrap);
   x1 += 24 + 6;
@@ -219,11 +219,10 @@ void Gui::init()
   bottom->end();
 
   // tools
-  tools = new Fl_Group(0, top_right->h() + menubar->h(), 64, window->h() - (menubar->h() + top_right->h()));
+  tools = new Group(0, top_right->h() + menubar->h(), 64, window->h() - (menubar->h() + top_right->h()));
   tools->label("Tools");
   tools->labelsize(12);
   tools->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  tools->box(FL_UP_BOX);
   y1 = 20;
   tool = new Widget(tools, 8, y1, 48, 192, "Tools", "data/tools.png", 48, 48, (Fl_Callback *)checkTool);
   y1 += 96 + 8;
@@ -231,15 +230,14 @@ void Gui::init()
   tools->end();
 
   // paint
-  paint = new Fl_Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  paint = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
   paint->label("Paint");
   paint->labelsize(12);
   paint->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  paint->box(FL_UP_BOX);
   y1 = 20;
   paint_brush = new Widget(paint, 8, y1, 96, 96, "Brush Preview", 0, 0, 0);
-  paint_brush->bitmap->clear(makeRgb(255, 255, 255));
-  paint_brush->bitmap->setpixelSolid(48, 48, makeRgb(0, 0, 0), 0);
+  paint_brush->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
+  paint_brush->bitmap->setpixelSolid(48, 48, makeRgb(192, 192, 192), 0);
   y1 += 96 + 8;
   paint_size = new Widget(paint, 8, y1, 96, 24, "Size", "data/size.png", 6, 24, (Fl_Callback *)checkPaintSize);
   y1 += 24 + 8;
@@ -263,11 +261,10 @@ void Gui::init()
   paint->end();
 
   // crop
-  crop = new Fl_Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  crop = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
   crop->label("Crop");
   crop->labelsize(12);
   crop->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  crop->box(FL_UP_BOX);
   y1 = 20;
   crop_x = new Field(crop, 24, y1, 72, 24, "X:", 0);
   crop_x->deactivate();
@@ -287,22 +284,20 @@ void Gui::init()
   crop->end();
 
   // getcolor
-  getcolor = new Fl_Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  getcolor = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
   getcolor->label("Get Color");
   getcolor->labelsize(12);
   getcolor->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  getcolor->box(FL_UP_BOX);
   y1 = 20;
   getcolor_color = new Widget(getcolor, 8, y1, 96, 96, "Color", 0, 0, 0);
   getcolor->resizable(0);
   getcolor->end();
 
   // offset
-  offset = new Fl_Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  offset = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
   offset->label("Offset");
   offset->labelsize(12);
   offset->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  offset->box(FL_UP_BOX);
   y1 = 20;
   offset_x = new Field(offset, 24, y1, 72, 24, "X:", 0);
   offset_x->deactivate();
@@ -314,11 +309,10 @@ void Gui::init()
   offset->end();
 
   // right
-  right = new Fl_Group(window->w() - 112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
+  right = new Group(window->w() - 112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h());
   right->label("Colors");
   right->labelsize(12);
   right->align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
-  right->box(FL_UP_BOX);
   y1 = 20;
   palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 6, 6, (Fl_Callback *)checkPalette);
   y1 += 96 + 8;
@@ -540,15 +534,16 @@ void Gui::checkPaintSize(Widget *, void *var)
   int shape = paint_shape->var;
 
   brush->make(shape, size);
-  paint_brush->bitmap->clear(makeRgb(255, 255, 255));
+  paint_brush->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
   int i;
 
   for(i = 0; i < Brush::main->solid_count; i++)
   {
     paint_brush->bitmap->setpixelSolid(48 + brush->solidx[i],
-                                             48 + brush->solidy[i],
-                                             makeRgb(0, 0, 0), 0);
+                                       48 + brush->solidy[i],
+                                       getFltkColor(FL_FOREGROUND_COLOR),
+                                       0);
   }
 
   paint_brush->redraw();
@@ -622,8 +617,9 @@ void Gui::checkColor(Widget *, void *)
 
   int i;
 
-  hue->bitmap->clear((Fl::get_color(FL_BACKGROUND_COLOR) >> 8) | 0xFF000000);
-  satval->bitmap->clear(0xFF000000);
+  hue->bitmap->clear(blendFast(getFltkColor(FL_BACKGROUND_COLOR),
+                               makeRgb(0, 0, 0), 192));
+  satval->bitmap->clear(makeRgb(0, 0, 0));
 
   for(i = 1; i < 1536; i++)
   {

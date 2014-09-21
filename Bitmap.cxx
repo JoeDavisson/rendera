@@ -102,6 +102,16 @@ Bitmap::Bitmap(int width, int height, int overscroll, int inside_color, int outs
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
   clear(outside_color);
   rectfill(cl, ct, cr, cb, inside_color, 0);
+
+  // draw page border
+  setClip(0, 0, w - 1, h - 1);
+
+  for(i = 0; i < 4; i++)
+    rect(overscroll - 1 - i, overscroll - 1 - i, w - overscroll + i, h - overscroll + i, makeRgb(64, 64, 64), 0);
+  rectfill(overscroll + 8, h - overscroll + 4, w - overscroll + 8, h - overscroll + 4 + 8, makeRgb(96, 96, 96), 0);
+  rectfill(w - overscroll + 4, overscroll + 4, w - overscroll + 4 + 8, h - overscroll + 4 + 8, makeRgb(96, 96, 96), 0);
+
+  setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
 }
 
 Bitmap::~Bitmap()
