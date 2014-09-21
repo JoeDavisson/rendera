@@ -29,20 +29,14 @@ class Widget;
 namespace Dialog
 {
   void init();
-  void jpegQualityCloseCallback(Fl_Widget *, void *);
-  int getJpegQualityValue();
-  void showJpegQuality();
+  void about();
+  void jpegQuality();
+  int jpegQualityValue();
   void showProgress(float);
   void updateProgress();
   void hideProgress();
-  void showAbout();
-  void hideAbout();
-  void showNewImage();
-  void hideNewImage();
-  void cancelNewImage();
-  void showCreatePalette();
-  void hideCreatePalette();
-  void cancelCreatePalette();
+  void newImage();
+  void createPalette();
   void showEditor();
   void hideEditor();
   void doEditorPalette(Widget *, void *);

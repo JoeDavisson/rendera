@@ -1014,9 +1014,9 @@ int File::savePNG(const char *fn)
 
 int File::saveJPG(const char *fn)
 {
-  Dialog::showJpegQuality();
+  Dialog::jpegQuality();
 
-  int quality = Dialog::getJpegQualityValue();
+  int quality = Dialog::jpegQualityValue();
 
   FILE *out = fopen(fn, "wb");
   if(!out)

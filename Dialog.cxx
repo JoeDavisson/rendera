@@ -31,30 +31,202 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Quantize.H"
 
+namespace About
+{
+  // about
+  Fl_Double_Window *dialog;
+  Widget *logo;
+  Fl_Button *ok;
+
+  void begin()
+  {
+    dialog->show();
+  }
+
+  void end()
+  {
+    dialog->hide();
+  }
+}
+
+namespace JpegQuality
+{
+  Fl_Double_Window *dialog;
+  Field *amount;
+  Fl_Button *ok;
+
+  void closeCallback(Fl_Widget *, void *)
+  {
+    // needed to prevent dialog from being closed by window manager
+  }
+
+  void begin()
+  {
+    dialog->show();
+
+    while(1)
+    {
+      Fl_Widget *action = Fl::readqueue();
+
+      if(!action)
+      {
+        Fl::wait();
+      }
+      else if(action == ok)
+      {
+        char s[8];
+        int q = atoi(amount->value());
+
+        if(q < 1)
+        {
+          snprintf(s, sizeof(s), "%d", 1);
+          amount->value(s);
+        }
+        else if(q > 100)
+        {
+          snprintf(s, sizeof(s), "%d", 100);
+          amount->value(s);
+        }
+        else
+        {
+          dialog->hide();
+          break;
+        }
+      }
+    }
+  }
+}
+
+namespace Progress
+{
+  Fl_Double_Window *dialog;
+  Fl_Progress *bar;
+  float value;
+  float step;
+}
+
+namespace NewImage
+{
+  Fl_Double_Window *dialog;
+  Field *width;
+  Field *height;
+  Fl_Button *ok;
+  Fl_Button *cancel;
+
+  void begin()
+  {
+    char s[8];
+    snprintf(s, sizeof(s), "%d", Bitmap::main->w - Bitmap::main->overscroll * 2);
+    width->value(s);
+    snprintf(s, sizeof(s), "%d", Bitmap::main->h - Bitmap::main->overscroll * 2);
+    height->value(s);
+    dialog->show();
+  }
+
+  void end()
+  {
+    char s[8];
+
+    int w = atoi(width->value());
+    int h = atoi(height->value());
+
+    if(w < 1)
+    {
+      snprintf(s, sizeof(s), "%d", 1);
+      width->value(s);
+      return;
+    }
+
+    if(h < 1)
+    {
+      snprintf(s, sizeof(s), "%d", 1);
+      height->value(s);
+      return;
+    }
+
+    if(w > 10000)
+    {
+      snprintf(s, sizeof(s), "%d", 10000);
+      width->value(s);
+      return;
+    }
+
+    if(h > 10000)
+    {
+      snprintf(s, sizeof(s), "%d", 10000);
+      height->value(s);
+      return;
+    }
+
+    dialog->hide();
+
+    int overscroll = Bitmap::main->overscroll;
+    delete Bitmap::main;
+    Bitmap::main = new Bitmap(w, h, overscroll,
+                              make_rgb(255, 255, 255), make_rgb(128, 128, 128));
+
+    delete Map::main;
+    Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
+
+    Gui::getView()->ox = 0;
+    Gui::getView()->oy = 0;
+    Gui::getView()->zoomFit(0);
+    Gui::getView()->drawMain(1);
+  }
+
+  void quit()
+  {
+    dialog->hide();
+  }
+}
+
+namespace CreatePalette
+{
+  Fl_Double_Window *dialog;
+  Field *colors;
+  Fl_Button *ok;
+  Fl_Button *cancel;
+
+  void begin()
+  {
+    char s[8];
+    snprintf(s, sizeof(s), "%d", Palette::main->max);
+    colors->value(s);
+    dialog->show();
+  }
+
+  void end()
+  {
+    char s[8];
+
+    int c = atoi(colors->value());
+
+    if(c < 1)
+    {
+      snprintf(s, sizeof(s), "%d", 1);
+      colors->value(s);
+      return;
+    }
+
+    if(c > 256)
+    {
+      snprintf(s, sizeof(s), "%d", 256);
+      colors->value(s);
+      return;
+    }
+
+    dialog->hide();
+    Quantize::pca(Bitmap::main, c);
+  }
+
+  void quit()
+  {
+    dialog->hide();
+  }
+}
+
 namespace
 {
-  Fl_Double_Window *jpeg_quality;
-  Field *jpeg_quality_amount;
-  Fl_Button *jpeg_quality_ok;
-
-  Fl_Double_Window *progress;
-  Fl_Progress *progress_bar;
-
-  Fl_Double_Window *about;
-  Widget *about_logo;
-  Fl_Button *about_ok;
-
-  Fl_Double_Window *new_image;
-  Field *new_image_width;
-  Field *new_image_height;
-  Fl_Button *new_image_ok;
-  Fl_Button *new_image_cancel;
-
-  Fl_Double_Window *create_palette;
-  Field *create_palette_colors;
-  Fl_Button *create_palette_ok;
-  Fl_Button *create_palette_cancel;
-
   Fl_Double_Window *editor;
   Widget *editor_h;
   Widget *editor_sv;
@@ -71,8 +243,6 @@ namespace
   int undo;
   int ramp_begin;
   int ramp_started;
-  float progress_value;
-  float progress_step;
   int oldsvx, oldsvy;
 
   int file_exists(const char *s)
@@ -91,63 +261,60 @@ namespace
 
 void Dialog::init()
 {
+  // about
+  About::dialog = new Fl_Double_Window(336, 112, "About");
+  About::logo = new Widget(About::dialog, 8, 8, 320, 64, "Logo", "data/logo_large.png", 0, 0, 0);
+  About::ok = new Fl_Button(336 / 2 - 32, 80, 64, 24, "OK");
+  About::ok->callback((Fl_Callback *)About::end);
+  About::dialog->set_modal();
+  About::dialog->end(); 
+
   // JPEG quality
-  jpeg_quality = new Fl_Double_Window(200, 80, "JPEG Quality");
-  jpeg_quality->callback(jpegQualityCloseCallback);
-  jpeg_quality_amount = new Field(jpeg_quality, 80, 8, 72, 24, "Quality:", 0);
-  jpeg_quality_amount->value("95");
-  new Separator(jpeg_quality, 2, 40, 196, 2, "");
-  jpeg_quality_ok = new Fl_Button(128, 48, 64, 24, "OK");
-  // no callback for ok button, see show_jpeg_quality called from File.cxx
-  jpeg_quality->set_modal();
-  jpeg_quality->end();
+  JpegQuality::dialog = new Fl_Double_Window(200, 80, "JPEG Quality");
+  JpegQuality::dialog->callback(JpegQuality::closeCallback);
+  JpegQuality::amount = new Field(JpegQuality::dialog, 80, 8, 72, 24, "Quality:", 0);
+  JpegQuality::amount->value("95");
+  new Separator(JpegQuality::dialog, 2, 40, 196, 2, "");
+  JpegQuality::ok = new Fl_Button(128, 48, 64, 24, "OK");
+  JpegQuality::dialog->set_modal();
+  JpegQuality::dialog->end();
 
   // progress
-  progress = new Fl_Double_Window(272, 80, "Progress");
-  progress_bar = new Fl_Progress(8, 8, 256, 64);
-  progress_bar->minimum(0);
-  progress_bar->maximum(100);
-  progress_bar->color(0);
-  progress_bar->selection_color(0x88CC8800);
-  progress_bar->labelcolor(0xFFFFFF00);
-  progress->set_modal();
-  progress->end();
-
-  // about
-  about = new Fl_Double_Window(336, 112, "About");
-  about_logo = new Widget(about, 8, 8, 320, 64, "Logo", "data/logo_large.png", 0, 0, 0);
-  about_ok = new Fl_Button(336 / 2 - 32, 80, 64, 24, "OK");
-  about_ok->callback((Fl_Callback *)hideAbout);
-  about->set_modal();
-  about->end(); 
+  Progress::dialog = new Fl_Double_Window(272, 80, "Progress");
+  Progress::bar = new Fl_Progress(8, 8, 256, 64);
+  Progress::bar->minimum(0);
+  Progress::bar->maximum(100);
+  Progress::bar->color(0);
+  Progress::bar->selection_color(0x88CC8800);
+  Progress::bar->labelcolor(0xFFFFFF00);
+  Progress::dialog->set_modal();
+  Progress::dialog->end();
 
   // new image
-  new_image = new Fl_Double_Window(200, 112, "New Image");
-  new_image_width = new Field(new_image, 88, 8, 72, 24, "Width:", 0);
-  new_image_height = new Field(new_image, 88, 40, 72, 24, "Height:", 0);
-  new_image_width->maximum_size(8);
-  new_image_height->maximum_size(8);
-  new_image_width->value("640");
-  new_image_height->value("480");
-  new Separator(new_image, 2, 72, 196, 2, "");
-  new_image_ok = new Fl_Button(56, 80, 64, 24, "OK");
-  new_image_ok->callback((Fl_Callback *)hideNewImage);
-  new_image_cancel = new Fl_Button(128, 80, 64, 24, "Cancel");
-  new_image_cancel->callback((Fl_Callback *)cancelNewImage);
-  new_image->set_modal();
-  new_image->end(); 
+  NewImage::dialog = new Fl_Double_Window(200, 112, "New Image");
+  NewImage::width = new Field(NewImage::dialog, 88, 8, 72, 24, "Width:", 0);
+  NewImage::height = new Field(NewImage::dialog, 88, 40, 72, 24, "Height:", 0);
+  NewImage::width->maximum_size(8);
+  NewImage::height->maximum_size(8);
+  NewImage::width->value("640");
+  NewImage::height->value("480");
+  new Separator(NewImage::dialog, 2, 72, 196, 2, "");
+  NewImage::ok = new Fl_Button(56, 80, 64, 24, "OK");
+  NewImage::ok->callback((Fl_Callback *)NewImage::end);
+  NewImage::cancel = new Fl_Button(128, 80, 64, 24, "Cancel");
+  NewImage::cancel->callback((Fl_Callback *)NewImage::quit);
+  NewImage::dialog->set_modal();
+  NewImage::dialog->end(); 
 
   // create palette from image
-  create_palette = new Fl_Double_Window(200, 80, "Create Palette");
-  create_palette_colors = new Field(create_palette, 80, 8, 72, 24, "Colors:", 0);
-  new_image_width->value("256");
-  new Separator(new_image, 2, 40, 196, 2, "");
-  create_palette_ok = new Fl_Button(56, 48, 64, 24, "OK");
-  create_palette_ok->callback((Fl_Callback *)hideCreatePalette);
-  create_palette_cancel = new Fl_Button(128, 48, 64, 24, "Cancel");
-  create_palette_cancel->callback((Fl_Callback *)cancelCreatePalette);
-  create_palette->set_modal();
-  create_palette->end(); 
+  CreatePalette::dialog = new Fl_Double_Window(200, 80, "Create Palette");
+  CreatePalette::colors = new Field(CreatePalette::dialog, 80, 8, 72, 24, "Colors:", 0);
+  CreatePalette::ok = new Fl_Button(56, 48, 64, 24, "OK");
+  CreatePalette::ok->callback((Fl_Callback *)CreatePalette::end);
+  CreatePalette::cancel = new Fl_Button(128, 48, 64, 24, "Cancel");
+  CreatePalette::cancel->callback((Fl_Callback *)CreatePalette::quit);
+  CreatePalette::dialog->set_modal();
+  CreatePalette::dialog->end(); 
 
   // palette editor
   editor = new Fl_Double_Window(608, 312, "Palette Editor");
@@ -174,51 +341,19 @@ void Dialog::init()
   editor->end(); 
 }
 
-void Dialog::jpegQualityCloseCallback(Fl_Widget *, void *)
+void Dialog::about()
 {
-  // needed to prevent quality dialog from being closed
-  // by the window manager
+  About::begin();
 }
 
-void Dialog::showJpegQuality()
+void Dialog::jpegQuality()
 {
-  jpeg_quality->show();
-
-  while(1)
-  {
-    Fl_Widget *action = Fl::readqueue();
-
-    if(!action)
-    {
-      Fl::wait();
-    }
-    else if(action == jpeg_quality_ok)
-    {
-      char s[8];
-      int q = atoi(jpeg_quality_amount->value());
-
-      if(q < 1)
-      {
-        snprintf(s, sizeof(s), "%d", 1);
-        jpeg_quality_amount->value(s);
-      }
-      else if(q > 100)
-      {
-        snprintf(s, sizeof(s), "%d", 100);
-        jpeg_quality_amount->value(s);
-      }
-      else
-      {
-        jpeg_quality->hide();
-        break;
-      }
-    }
-  }
+  JpegQuality::begin();
 }
 
-int Dialog::getJpegQualityValue()
+int Dialog::jpegQualityValue()
 {
-  int quality = atoi(jpeg_quality_amount->value());
+  int quality = atoi(JpegQuality::amount->value());
 
   if(quality < 1)
     quality = 1;
@@ -230,138 +365,34 @@ int Dialog::getJpegQualityValue()
 
 void Dialog::showProgress(float step)
 {
-  progress_value = 0;
-  progress_step = 100.0 / step;
-  progress->show();
+  Progress::value = 0;
+  Progress::step = 100.0 / step;
+  Progress::dialog->show();
 }
 
 void Dialog::updateProgress()
 {
-  progress_bar->value(progress_value);
+  Progress::bar->value(Progress::value);
   char percent[16];
-  sprintf(percent, "%d%%", (int)progress_value);
-  progress_bar->label(percent);
+  sprintf(percent, "%d%%", (int)Progress::value);
+  Progress::bar->label(percent);
   Fl::check();
-  progress_value += progress_step;
+  Progress::value += Progress::step;
 }
 
 void Dialog::hideProgress()
 {
-  progress->hide();
+  Progress::dialog->hide();
 }
 
-void Dialog::showAbout()
+void Dialog::newImage()
 {
-  about->show();
+  NewImage::begin();
 }
 
-void Dialog::hideAbout()
+void Dialog::createPalette()
 {
-  about->hide();
-}
-
-void Dialog::showNewImage()
-{
-  char s[8];
-  snprintf(s, sizeof(s), "%d", Bitmap::main->w - Bitmap::main->overscroll * 2);
-  new_image_width->value(s);
-  snprintf(s, sizeof(s), "%d", Bitmap::main->h - Bitmap::main->overscroll * 2);
-  new_image_height->value(s);
-  new_image->show();
-}
-
-void Dialog::hideNewImage()
-{
-  char s[8];
-
-  int w = atoi(new_image_width->value());
-  int h = atoi(new_image_height->value());
-
-  if(w < 1)
-  {
-    snprintf(s, sizeof(s), "%d", 1);
-    new_image_width->value(s);
-    return;
-  }
-
-  if(h < 1)
-  {
-    snprintf(s, sizeof(s), "%d", 1);
-    new_image_height->value(s);
-    return;
-  }
-
-  if(w > 10000)
-  {
-    snprintf(s, sizeof(s), "%d", 10000);
-    new_image_width->value(s);
-    return;
-  }
-
-  if(h > 10000)
-  {
-    snprintf(s, sizeof(s), "%d", 10000);
-    new_image_height->value(s);
-    return;
-  }
-
-  new_image->hide();
-
-  int overscroll = Bitmap::main->overscroll;
-  delete Bitmap::main;
-  Bitmap::main = new Bitmap(w, h, overscroll,
-                            make_rgb(255, 255, 255), make_rgb(128, 128, 128));
-
-  delete Map::main;
-  Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
-
-  Gui::getView()->ox = 0;
-  Gui::getView()->oy = 0;
-  Gui::getView()->zoomFit(0);
-  Gui::getView()->drawMain(1);
-}
-
-void Dialog::cancelNewImage()
-{
-  new_image->hide();
-}
-
-void Dialog::showCreatePalette()
-{
-  char s[8];
-  snprintf(s, sizeof(s), "%d", Palette::main->max);
-  create_palette_colors->value(s);
-  create_palette->show();
-}
-
-void Dialog::hideCreatePalette()
-{
-  char s[8];
-
-  int colors = atoi(create_palette_colors->value());
-
-  if(colors < 1)
-  {
-    snprintf(s, sizeof(s), "%d", 1);
-    create_palette_colors->value(s);
-    return;
-  }
-
-  if(colors > 256)
-  {
-    snprintf(s, sizeof(s), "%d", 256);
-    create_palette_colors->value(s);
-    return;
-  }
-
-  create_palette->hide();
-
-  Quantize::pca(Bitmap::main, colors);
-}
-
-void Dialog::cancelCreatePalette()
-{
-  create_palette->hide();
+  CreatePalette::begin();
 }
 
 void Dialog::showEditor()

@@ -154,7 +154,7 @@ void Gui::init()
 
   // menu
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
-  menubar->add("File/New", 0, (Fl_Callback *)Dialog::showNewImage, 0, 0);
+  menubar->add("File/New", 0, (Fl_Callback *)Dialog::newImage, 0, 0);
   menubar->add("File/Load", 0, (Fl_Callback *)File::load, 0, 0);
   menubar->add("File/Save", 0, (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
   menubar->add("File/Quit", 0, (Fl_Callback *)quit, 0, 0);
@@ -162,7 +162,7 @@ void Gui::init()
   menubar->add("Palette/Load", 0, (Fl_Callback *)File::loadPalette, 0, 0);
   menubar->add("Palette/Save", 0, (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Editor...", 0, (Fl_Callback *)Dialog::showEditor, 0, FL_MENU_DIVIDER);
-  menubar->add("Palette/Create From Image...", 0, (Fl_Callback *)Dialog::showCreatePalette, 0, 0);
+  menubar->add("Palette/Create From Image...", 0, (Fl_Callback *)Dialog::createPalette, 0, 0);
   menubar->add("Effects/Normalize", 0, (Fl_Callback *)FX::showNormalize, 0, 0);
   menubar->add("Effects/Equalize", 0, (Fl_Callback *)FX::showEqualize, 0, 0);
   menubar->add("Effects/Value Stretch", 0, (Fl_Callback *)FX::showValueStretch, 0, 0);
@@ -174,7 +174,7 @@ void Gui::init()
   menubar->add("Effects/Remove Dust...", 0, (Fl_Callback *)FX::showRemoveDust, 0, 0);
   menubar->add("Effects/Colorize", 0, (Fl_Callback *)FX::showColorize, 0, 0);
   menubar->add("Effects/Apply Palette...", 0, (Fl_Callback *)FX::showApplyPalette, 0, 0);
-  menubar->add("Help/About...", 0, (Fl_Callback *)Dialog::showAbout, 0, 0);
+  menubar->add("Help/About...", 0, (Fl_Callback *)Dialog::about, 0, 0);
 
   // top_left
   //top_left = new Fl_Group(0, menubar->h(), 112, 40);
