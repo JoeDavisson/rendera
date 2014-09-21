@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace About
 {
-  // about
   Fl_Double_Window *dialog;
   Widget *logo;
   Fl_Button *ok;
@@ -46,6 +45,16 @@ namespace About
   void end()
   {
     dialog->hide();
+  }
+
+  void init()
+  {
+    dialog = new Fl_Double_Window(336, 112, "About");
+    logo = new Widget(dialog, 8, 8, 320, 64, "Logo", "data/logo_large.png", 0, 0, 0);
+    ok = new Fl_Button(336 / 2 - 32, 80, 64, 24, "OK");
+    ok->callback((Fl_Callback *)end);
+    dialog->set_modal();
+    dialog->end(); 
   }
 }
 
@@ -95,6 +104,18 @@ namespace JpegQuality
       }
     }
   }
+
+  void init()
+  {
+    dialog = new Fl_Double_Window(200, 80, "JPEG Quality");
+    dialog->callback(closeCallback);
+    amount = new Field(dialog, 80, 8, 72, 24, "Quality:", 0);
+    amount->value("95");
+    new Separator(dialog, 2, 40, 196, 2, "");
+    ok = new Fl_Button(128, 48, 64, 24, "OK");
+    dialog->set_modal();
+    dialog->end();
+  }
 }
 
 namespace Progress
@@ -103,6 +124,19 @@ namespace Progress
   Fl_Progress *bar;
   float value;
   float step;
+
+  void init()
+  {
+    dialog = new Fl_Double_Window(272, 80, "Progress");
+    bar = new Fl_Progress(8, 8, 256, 64);
+    bar->minimum(0);
+    bar->maximum(100);
+    bar->color(0);
+    bar->selection_color(0x88CC8800);
+    bar->labelcolor(0xFFFFFF00);
+    dialog->set_modal();
+    dialog->end();
+  }
 }
 
 namespace NewImage
@@ -178,6 +212,24 @@ namespace NewImage
   {
     dialog->hide();
   }
+
+  void init()
+  {
+    dialog = new Fl_Double_Window(200, 112, "New Image");
+    width = new Field(dialog, 88, 8, 72, 24, "Width:", 0);
+    height = new Field(dialog, 88, 40, 72, 24, "Height:", 0);
+    width->maximum_size(8);
+    height->maximum_size(8);
+    width->value("640");
+    height->value("480");
+    new Separator(dialog, 2, 72, 196, 2, "");
+    ok = new Fl_Button(56, 80, 64, 24, "OK");
+    ok->callback((Fl_Callback *)end);
+    cancel = new Fl_Button(128, 80, 64, 24, "Cancel");
+    cancel->callback((Fl_Callback *)quit);
+    dialog->set_modal();
+    dialog->end(); 
+  }
 }
 
 namespace CreatePalette
@@ -222,6 +274,18 @@ namespace CreatePalette
   void quit()
   {
     dialog->hide();
+  }
+
+  void init()
+  {
+    dialog = new Fl_Double_Window(200, 80, "Create Palette");
+    colors = new Field(dialog, 80, 8, 72, 24, "Colors:", 0);
+    ok = new Fl_Button(56, 48, 64, 24, "OK");
+    ok->callback((Fl_Callback *)end);
+    cancel = new Fl_Button(128, 48, 64, 24, "Cancel");
+    cancel->callback((Fl_Callback *)quit);
+    dialog->set_modal();
+    dialog->end(); 
   }
 }
 
@@ -503,104 +567,42 @@ namespace Editor
     Palette::main->fillTable();
     dialog->hide();
   }
-}
 
-namespace
-{
-  int file_exists(const char *s)
+  void init()
   {
-    FILE *temp = fopen(s, "r");
-
-    if(temp)
-    {
-      fclose(temp);
-      return 1;
-    }
-
-    return 0;
+    dialog = new Fl_Double_Window(608, 312, "Palette Editor");
+    hue = new Widget(dialog, 8, 8, 24, 256, "Hue", 24, 1, (Fl_Callback *)getHue);
+    sat_val = new Widget(dialog, 40, 8, 256, 256, "Saturation/Value", 1, 1, (Fl_Callback *)getSatVal);
+    insert = new Fl_Button(304, 8, 96, 24, "Insert");
+    insert->callback((Fl_Callback *)insertColor);
+    remove = new Fl_Button(304, 48, 96, 24, "Delete");
+    remove->callback((Fl_Callback *)removeColor);
+    replace = new Fl_Button(304, 88, 96, 24, "Replace");
+    replace->callback((Fl_Callback *)replaceColor);
+    undo = new Fl_Button(304, 144, 96, 24, "Undo");
+    undo->callback((Fl_Callback *)getUndo);
+    rgb_ramp = new Fl_Button(304, 200, 96, 24, "RGB Ramp");
+    rgb_ramp->callback((Fl_Callback *)rgbRamp);
+    hsv_ramp = new Fl_Button(304, 240, 96, 24, "HSV Ramp");
+    hsv_ramp->callback((Fl_Callback *)hsvRamp);
+    palette = new Widget(dialog, 408, 8, 192, 192, "Palette", 24, 24, (Fl_Callback *)checkPalette);
+    color = new Widget(dialog, 408, 208, 192, 56, "Color", 0, 0, 0);
+    new Separator(dialog, 2, 272, 604, 2, "");
+    done = new Fl_Button(504, 280, 96, 24, "Done");
+    done->callback((Fl_Callback *)end);
+    dialog->set_modal();
+    dialog->end(); 
   }
 }
 
 void Dialog::init()
 {
-  // about
-  About::dialog = new Fl_Double_Window(336, 112, "About");
-  About::logo = new Widget(About::dialog, 8, 8, 320, 64, "Logo", "data/logo_large.png", 0, 0, 0);
-  About::ok = new Fl_Button(336 / 2 - 32, 80, 64, 24, "OK");
-  About::ok->callback((Fl_Callback *)About::end);
-  About::dialog->set_modal();
-  About::dialog->end(); 
-
-  // JPEG quality
-  JpegQuality::dialog = new Fl_Double_Window(200, 80, "JPEG Quality");
-  JpegQuality::dialog->callback(JpegQuality::closeCallback);
-  JpegQuality::amount = new Field(JpegQuality::dialog, 80, 8, 72, 24, "Quality:", 0);
-  JpegQuality::amount->value("95");
-  new Separator(JpegQuality::dialog, 2, 40, 196, 2, "");
-  JpegQuality::ok = new Fl_Button(128, 48, 64, 24, "OK");
-  JpegQuality::dialog->set_modal();
-  JpegQuality::dialog->end();
-
-  // progress
-  Progress::dialog = new Fl_Double_Window(272, 80, "Progress");
-  Progress::bar = new Fl_Progress(8, 8, 256, 64);
-  Progress::bar->minimum(0);
-  Progress::bar->maximum(100);
-  Progress::bar->color(0);
-  Progress::bar->selection_color(0x88CC8800);
-  Progress::bar->labelcolor(0xFFFFFF00);
-  Progress::dialog->set_modal();
-  Progress::dialog->end();
-
-  // new image
-  NewImage::dialog = new Fl_Double_Window(200, 112, "New Image");
-  NewImage::width = new Field(NewImage::dialog, 88, 8, 72, 24, "Width:", 0);
-  NewImage::height = new Field(NewImage::dialog, 88, 40, 72, 24, "Height:", 0);
-  NewImage::width->maximum_size(8);
-  NewImage::height->maximum_size(8);
-  NewImage::width->value("640");
-  NewImage::height->value("480");
-  new Separator(NewImage::dialog, 2, 72, 196, 2, "");
-  NewImage::ok = new Fl_Button(56, 80, 64, 24, "OK");
-  NewImage::ok->callback((Fl_Callback *)NewImage::end);
-  NewImage::cancel = new Fl_Button(128, 80, 64, 24, "Cancel");
-  NewImage::cancel->callback((Fl_Callback *)NewImage::quit);
-  NewImage::dialog->set_modal();
-  NewImage::dialog->end(); 
-
-  // create palette from image
-  CreatePalette::dialog = new Fl_Double_Window(200, 80, "Create Palette");
-  CreatePalette::colors = new Field(CreatePalette::dialog, 80, 8, 72, 24, "Colors:", 0);
-  CreatePalette::ok = new Fl_Button(56, 48, 64, 24, "OK");
-  CreatePalette::ok->callback((Fl_Callback *)CreatePalette::end);
-  CreatePalette::cancel = new Fl_Button(128, 48, 64, 24, "Cancel");
-  CreatePalette::cancel->callback((Fl_Callback *)CreatePalette::quit);
-  CreatePalette::dialog->set_modal();
-  CreatePalette::dialog->end(); 
-
-  // palette editor
-  Editor::dialog = new Fl_Double_Window(608, 312, "Palette Editor");
-  Editor::hue = new Widget(Editor::dialog, 8, 8, 24, 256, "Hue", 24, 1, (Fl_Callback *)Editor::getHue);
-  Editor::sat_val = new Widget(Editor::dialog, 40, 8, 256, 256, "Saturation/Value", 1, 1, (Fl_Callback *)Editor::getSatVal);
-  Editor::insert = new Fl_Button(304, 8, 96, 24, "Insert");
-  Editor::insert->callback((Fl_Callback *)Editor::insertColor);
-  Editor::remove = new Fl_Button(304, 48, 96, 24, "Delete");
-  Editor::remove->callback((Fl_Callback *)Editor::removeColor);
-  Editor::replace = new Fl_Button(304, 88, 96, 24, "Replace");
-  Editor::replace->callback((Fl_Callback *)Editor::replaceColor);
-  Editor::undo = new Fl_Button(304, 144, 96, 24, "Undo");
-  Editor::undo->callback((Fl_Callback *)Editor::getUndo);
-  Editor::rgb_ramp = new Fl_Button(304, 200, 96, 24, "RGB Ramp");
-  Editor::rgb_ramp->callback((Fl_Callback *)Editor::rgbRamp);
-  Editor::hsv_ramp = new Fl_Button(304, 240, 96, 24, "HSV Ramp");
-  Editor::hsv_ramp->callback((Fl_Callback *)Editor::hsvRamp);
-  Editor::palette = new Widget(Editor::dialog, 408, 8, 192, 192, "Palette", 24, 24, (Fl_Callback *)Editor::checkPalette);
-  Editor::color = new Widget(Editor::dialog, 408, 208, 192, 56, "Color", 0, 0, 0);
-  new Separator(Editor::dialog, 2, 272, 604, 2, "");
-  Editor::done = new Fl_Button(504, 280, 96, 24, "Done");
-  Editor::done->callback((Fl_Callback *)Editor::end);
-  Editor::dialog->set_modal();
-  Editor::dialog->end(); 
+  About::init();
+  JpegQuality::init();
+  Progress::init();
+  NewImage::init();
+  CreatePalette::init();
+  Editor::init();
 }
 
 void Dialog::about()
