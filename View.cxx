@@ -224,7 +224,7 @@ int View::handle(int event)
       }
 
       if(tool->started)
-        tool->stroke->preview(backbuf, ox, oy, zoom);
+        tool->redraw(this);
 
       return 1;
     case FL_MOVE:
@@ -611,7 +611,7 @@ void View::zoomIn(int x, int y)
   drawMain(1);
 
   if(tool->started)
-    tool->stroke->preview(backbuf, ox, oy, zoom);
+    tool->redraw(this);
 
   Gui::checkZoom();
 }
@@ -645,7 +645,7 @@ void View::zoomOut(int x, int y)
   drawMain(1);
 
   if(tool->started)
-    tool->stroke->preview(backbuf, ox, oy, zoom);
+    tool->redraw(this);
 
   Gui::checkZoom();
 }
