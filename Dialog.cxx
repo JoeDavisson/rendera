@@ -131,7 +131,7 @@ namespace Progress
     bar = new Fl_Progress(8, 8, 256, 64);
     bar->minimum(0);
     bar->maximum(100);
-    bar->color(0);
+    bar->color(0x40404000);
     bar->selection_color(0x88CC8800);
     bar->labelcolor(0xFFFFFF00);
     dialog->set_modal();
