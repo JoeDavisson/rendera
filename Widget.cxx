@@ -55,7 +55,8 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   use_highlight = 1;
 
   // shade
-  bitmap->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1, makeRgb(64, 64, 64), 128);
+  bitmap->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1,
+                   getFltkColor(FL_BACKGROUND_COLOR), 192);
 }
 
 // use a blank bitmap
@@ -119,14 +120,15 @@ int Widget::handle(int event)
 
 void Widget::draw()
 {
+//  fl_draw_box(FL_DOWN_FRAME, x(), y(), w(), h(), FL_BLACK);
+//  fl_draw_box(FL_BORDER_FRAME, x(), y(), w(), h(), FL_BLACK);
+  fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
+
   if(use_highlight && (stepx <= 1 || stepy <= 1))
     image2->draw(x(), y());
   else
     image->draw(x(), y());
     
-  fl_draw_box(FL_DOWN_FRAME, x(), y(), w(), h(), FL_BLACK);
-  fl_draw_box(FL_BORDER_FRAME, x(), y(), w(), h(), FL_BLACK);
-
   if(stepx <= 1 && stepy <= 1)
     return;
 
@@ -139,6 +141,7 @@ void Widget::draw()
   offsetx *= stepx;
 
   fl_push_clip(x() + offsetx, y() + offsety, stepx, stepy);
+  fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND2_COLOR);
 
   if(use_highlight)
     image2->draw(x() + offsetx, y() + offsety, stepx, stepy,
@@ -152,6 +155,7 @@ void Widget::draw()
   int tempx = stepx > 1 ? stepx : 2;
   int tempy = stepy > 1 ? stepy : 2;
 
-  fl_draw_box(FL_BORDER_FRAME, x() + offsetx, y() + offsety, tempx, tempy, FL_FOREGROUND_COLOR);
+  fl_draw_box(FL_BORDER_FRAME,
+              x() + offsetx, y() + offsety, tempx, tempy, FL_INACTIVE_COLOR);
 }
 

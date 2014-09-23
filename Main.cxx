@@ -56,11 +56,11 @@ int main(int argc, char *argv[])
   Fl::visual(FL_DOUBLE | FL_RGB);
 
   Fl::scheme("gtk+");
-  Fl::set_color(FL_BACKGROUND_COLOR, 64, 64, 64);
-  Fl::set_color(FL_FOREGROUND_COLOR, 192, 192, 192);
-  Fl::set_color(FL_BACKGROUND2_COLOR, 48, 48, 48);
-  Fl::set_color(FL_INACTIVE_COLOR, 0, 0, 0);
-  Fl::set_color(FL_SELECTION_COLOR, 192, 192, 192);
+  Fl::set_color(FL_BACKGROUND_COLOR, 80, 80, 80);
+  Fl::set_color(FL_BACKGROUND2_COLOR, 64, 64, 64);
+  Fl::set_color(FL_FOREGROUND_COLOR, 248, 248, 248);
+  Fl::set_color(FL_INACTIVE_COLOR, 128, 128, 128);
+  Fl::set_color(FL_SELECTION_COLOR, 248, 248, 248);
 
   Fl_Shared_Image::add_handler(File::previewJPG);
   Fl_Shared_Image::add_handler(File::previewPNG);

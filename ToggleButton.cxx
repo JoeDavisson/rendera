@@ -72,10 +72,17 @@ int ToggleButton::handle(int event)
 
 void ToggleButton::draw()
 {
+  fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(),
+              var ? FL_BACKGROUND2_COLOR : FL_BACKGROUND_COLOR);
+
+  fl_push_clip(x(), y(), w(), h());
+
   if(var)
     image->draw(x() + 1, y() + 1);
   else
     image->draw(x(), y());
+
+  fl_pop_clip();
 
   fl_draw_box(var ? FL_DOWN_FRAME : FL_UP_FRAME, x(), y(), w(), h(), FL_BLACK);
 }
