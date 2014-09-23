@@ -42,7 +42,7 @@ namespace About
     dialog->show();
   }
 
-  void end()
+  void close()
   {
     dialog->hide();
   }
@@ -52,7 +52,7 @@ namespace About
     dialog = new Fl_Double_Window(336, 112, "About");
     logo = new Widget(dialog, 8, 8, 320, 64, "Logo", "data/logo_large.png", 0, 0, 0);
     ok = new Fl_Button(336 / 2 - 32, 80, 64, 24, "OK");
-    ok->callback((Fl_Callback *)end);
+    ok->callback((Fl_Callback *)close);
     dialog->set_modal();
     dialog->end(); 
   }
@@ -157,7 +157,7 @@ namespace NewImage
     dialog->show();
   }
 
-  void end()
+  void close()
   {
     char s[8];
 
@@ -223,7 +223,7 @@ namespace NewImage
     height->value("480");
     new Separator(dialog, 2, 72, 196, 2, "");
     ok = new Fl_Button(56, 80, 64, 24, "OK");
-    ok->callback((Fl_Callback *)end);
+    ok->callback((Fl_Callback *)close);
     cancel = new Fl_Button(128, 80, 64, 24, "Cancel");
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
@@ -246,7 +246,7 @@ namespace CreatePalette
     dialog->show();
   }
 
-  void end()
+  void close()
   {
     char s[8];
 
@@ -280,7 +280,7 @@ namespace CreatePalette
     dialog = new Fl_Double_Window(200, 80, "Create Palette");
     colors = new Field(dialog, 80, 8, 72, 24, "Colors:", 0);
     ok = new Fl_Button(56, 48, 64, 24, "OK");
-    ok->callback((Fl_Callback *)end);
+    ok->callback((Fl_Callback *)close);
     cancel = new Fl_Button(128, 48, 64, 24, "Cancel");
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
@@ -561,7 +561,7 @@ namespace Editor
     ramp_started = 0;
   }
 
-  void end()
+  void close()
   {
     Palette::main->fillTable();
     dialog->hide();
@@ -588,7 +588,7 @@ namespace Editor
     color = new Widget(dialog, 408, 208, 192, 56, "Color", 0, 0, 0);
     new Separator(dialog, 2, 272, 604, 2, "");
     done = new Fl_Button(504, 280, 96, 24, "Done");
-    done->callback((Fl_Callback *)end);
+    done->callback((Fl_Callback *)close);
     dialog->set_modal();
     dialog->end(); 
   }
