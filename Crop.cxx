@@ -244,8 +244,9 @@ void Crop::done(View *view)
   started = 0;
   active = 0;
   absrect(&beginx, &beginy, &lastx, &lasty);
-  int w = lastx - beginx + 1;
-  int h = lasty - beginy + 1;
+  int w = (lastx - beginx) + 1;
+  int h = (lasty - beginy) + 1;
+printf("%d  %d\n", w, h);
   if(w < 1)
     w = 1;
   if(h < 1)
