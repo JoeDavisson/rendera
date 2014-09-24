@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Stroke.H"
 #include "Gui.H"
+#include "Undo.H"
 
 Offset::Offset()
 {
@@ -35,7 +36,7 @@ Offset::~Offset()
 
 void Offset::push(View *view)
 {
-  undo(1);
+  Undo::push(0, 0, 0, 0, 1);
 
   int w = Bitmap::main->cw;
   int h = Bitmap::main->ch;

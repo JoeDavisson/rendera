@@ -46,7 +46,7 @@ namespace
     bmp = Bitmap::main;
     overscroll = bmp->overscroll;
     Undo::push(overscroll, overscroll,
-              bmp->w - overscroll * 2, bmp->h - overscroll * 2, 0);
+               bmp->w - overscroll * 2, bmp->h - overscroll * 2, 0);
   }
 
   void beginProgress()

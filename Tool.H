@@ -33,12 +33,6 @@ public:
   Tool();
   virtual ~Tool();
 
-  // reset tool
-  void reset();
-
-  // store undo
-  void undo(int);
-
   // called when mouse button is initially pressed
   virtual void push(View *) = 0;
 

@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Stroke.H"
 #include "Gui.H"
+#include "Undo.H"
 
 namespace
 {
@@ -225,7 +226,7 @@ void Crop::done(View *view)
   if(started == 0)
     return;
 
-  undo(1);
+  Undo::push(0, 0, 0, 0, 1);
   started = 0;
   active = 0;
   absrect(&beginx, &beginy, &lastx, &lasty);

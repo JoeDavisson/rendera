@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "Tool.H"
 #include "Gui.H"
+#include "Undo.H"
 
 namespace
 {
@@ -528,7 +529,10 @@ void Render::begin()
                        stroke->x2, stroke->y2,
                        view->ox, view->oy, 1, view->zoom);
 
-  view->tool->undo(0);
+  Undo::push(stroke->x1,
+             stroke->y1,
+             (stroke->x2 - stroke->x1) + 1,
+             (stroke->y2 - stroke->y1) + 1, 0);
 
   switch(Gui::getPaintMode())
   {

@@ -65,6 +65,31 @@ void Undo::push(int x, int y, int w, int h, int resized)
 {
   int i;
 
+  int x1 = x;
+  int y1 = y;
+  int x2 = x + w - 1;
+  int y2 = y + h - 1;
+
+  if(resized)
+  {
+    x1 = Bitmap::main->cl;
+    y1 = Bitmap::main->ct;
+    x2 = Bitmap::main->cr;
+    y2 = Bitmap::main->cb;
+  }
+
+  if(x1 < Bitmap::main->cl)
+    x1 = Bitmap::main->cl;
+  if(y1 < Bitmap::main->ct)
+    y1 = Bitmap::main->ct;
+  if(x2 > Bitmap::main->cr)
+    x2 = Bitmap::main->cr;
+  if(y2 > Bitmap::main->cb)
+    y2 = Bitmap::main->cb;
+
+  w = (x2 - x1) + 1;
+  h = (y2 - y1) + 1;
+
   if(undo_current < 0)
   {
     undo_current = 0;
@@ -85,10 +110,10 @@ void Undo::push(int x, int y, int w, int h, int resized)
 
   delete undo_stack[undo_current];
   undo_stack[undo_current] = new Bitmap(w, h);
-  undo_stack[undo_current]->x = x;
-  undo_stack[undo_current]->y = y;
+  undo_stack[undo_current]->x = x1;
+  undo_stack[undo_current]->y = y1;
 
-  Bitmap::main->blit(undo_stack[undo_current], x, y, 0, 0, w, h);
+  Bitmap::main->blit(undo_stack[undo_current], x1, y1, 0, 0, w, h);
   undo_current--;
 }
 
