@@ -33,7 +33,7 @@ public:
 
   void clip();
   void sizeLinear(int, int, int, int);
-  void makeBlitrect(int, int, int, int, int, int, int, float);
+  void makeBlitRect(int, int, int, int, int, int, int, float);
   void size(int, int, int, int);
   void drawBrush(int, int, int);
   void drawBrushLine(int, int, int, int, int);

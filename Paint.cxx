@@ -119,9 +119,9 @@ void Paint::move(View *view)
       stroke->drawBrush(view->imgx, view->imgy, 255);
       stroke->size(view->imgx - 48, view->imgy - 48,
                    view->imgx + 48, view->imgy + 48);
-      stroke->makeBlitrect(stroke->x1, stroke->y1,
-                            stroke->x2, stroke->y2,
-                            view->ox, view->oy, 96, view->zoom);
+      stroke->makeBlitRect(stroke->x1, stroke->y1,
+                           stroke->x2, stroke->y2,
+                           view->ox, view->oy, 96, view->zoom);
       view->drawMain(0);
       stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
       view->redraw();

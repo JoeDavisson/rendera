@@ -525,7 +525,7 @@ void Render::begin()
   stroke->y2 += size;
   stroke->clip();
 
-  stroke->makeBlitrect(stroke->x1, stroke->y1,
+  stroke->makeBlitRect(stroke->x1, stroke->y1,
                        stroke->x2, stroke->y2,
                        view->ox, view->oy, 1, view->zoom);
 

@@ -140,7 +140,7 @@ void Stroke::sizeLinear(int bx, int by, int x, int y)
   }
 }
 
-void Stroke::makeBlitrect(int x1, int y1, int x2, int y2,
+void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
                            int ox, int oy, int size, float zoom)
 {
   int r = (size + 1) / 2 + 1;
@@ -302,11 +302,11 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
   {
     case 0:
       drawBrushLine(x, y, lastx, lasty, 255);
-      makeBlitrect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
+      makeBlitRect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
       break;
     case 1:
       map->line(x, y, lastx, lasty, 255);
-      makeBlitrect(x, y, lastx, lasty, ox, oy, 1, zoom);
+      makeBlitRect(x, y, lastx, lasty, ox, oy, 1, zoom);
       polycachex[polycount] = x;
       polycachey[polycount] = y;
       polycount++;
@@ -316,7 +316,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       break;
     case 3:
       map->line(oldx, oldy, lastx, lasty, 0);
-      makeBlitrect(x, y, lastx, lasty, ox, oy, 1, zoom);
+      makeBlitRect(x, y, lastx, lasty, ox, oy, 1, zoom);
       polycachex[polycount] = x;
       polycachey[polycount] = y;
       polycount++;
@@ -340,7 +340,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         drawBrushLine(lastx, lasty, beginx, beginy, 0);
         drawBrushLine(x, y, beginx, beginy, 255);
       }
-      makeBlitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
+      makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
     case 4:
       if(constrain)
@@ -363,7 +363,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         sizeLinear(beginx, beginy, x, y);
       }
 
-      makeBlitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
+      makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
     case 5:
       if(constrain)
@@ -385,7 +385,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         map->rectfill(x, y, beginx, beginy, 255);
         sizeLinear(beginx, beginy, x, y);
       }
-      makeBlitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
+      makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
     case 6:
       if(constrain)
@@ -407,7 +407,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         drawBrushOval(x, y, beginx, beginy, 255);
         sizeLinear(beginx, beginy, x, y);
       }
-      makeBlitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
+      makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
     case 7:
       if(constrain)
@@ -429,7 +429,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         map->ovalfill(x, y, beginx, beginy, 255);
         sizeLinear(beginx, beginy, x, y);
       }
-      makeBlitrect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
+      makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
     default:
       break;
@@ -491,7 +491,7 @@ void Stroke::polyline(int x, int y, int ox, int oy, float zoom)
 
   map->line(oldx, oldy, x, y, 255);
 
-  makeBlitrect(x1, y1, x2, y2, ox, oy, 1, zoom);
+  makeBlitRect(x1, y1, x2, y2, ox, oy, 1, zoom);
 
   lastx = x;
   lasty = y;
