@@ -58,6 +58,21 @@ namespace
     if(*y2 > Bitmap::main->cb)
       *y2 = Bitmap::main->cb;
   }
+
+  void drawHandles(Stroke *stroke, int x1, int y1, int x2, int y2, int color)
+  {
+    absrect(&x1, &y1, &x2, &y2);
+    Map::main->rect(x1 - 1, y1 - 1, x2 + 1, y2 + 1, color);
+    stroke->size(x1 - 1, y1 - 1, x2 + 1, y2 + 1);
+/*
+    absrect(&x1, &y1, &x2, &y2);
+    Map::main->rect(x1, y1 - 32, x2, y1 - 1, color);
+    Map::main->rect(x1, y2 + 32, x2, y2 + 1, color);
+    Map::main->rect(x1 - 32, y1, x1 - 1, y2, color);
+    Map::main->rect(x2 + 32, y1, x2 + 1, y2, color);
+    stroke->size(x1 - 32, y1 - 32, x2 + 32, y2 + 32);
+*/
+  }
 }
 
 Crop::Crop()
@@ -128,9 +143,8 @@ void Crop::drag(View *view)
 {
   if(started == 1)
   {
-    Map::main->rect(beginx, beginy, lastx, lasty, 0);
-    Map::main->rect(beginx, beginy, view->imgx, view->imgy, 255);
-    stroke->size(beginx, beginy, view->imgx, view->imgy);
+    drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
+    drawHandles(stroke, beginx, beginy, view->imgx, view->imgy, 255);
 
     lastx = view->imgx;
     lasty = view->imgy;
@@ -141,7 +155,7 @@ void Crop::drag(View *view)
   }
   else if(started == 2)
   {
-    Map::main->rect(beginx, beginy, lastx, lasty, 0);
+    drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
 
     if(drag_started == 1)
     {
@@ -244,6 +258,8 @@ void Crop::done(View *view)
   Bitmap::main = new Bitmap(w, h, overscroll);
   temp->blit(Bitmap::main, 0, 0, Bitmap::main->overscroll, Bitmap::main->overscroll, w, h);
   delete temp;
+  delete Map::main;
+  Map::main = new Map(w + overscroll * 2, h + overscroll * 2);
   view->zoom = 1;
   view->ox = 0;
   view->oy = 0;
@@ -253,13 +269,14 @@ void Crop::done(View *view)
 
 void Crop::redraw(View *view)
 {
-  active = 0;
-//  absrect(&beginx, &beginy, &lastx, &lasty);
-  Map::main->rect(beginx, beginy, lastx, lasty, 255);
-  stroke->size(beginx, beginy, lastx, lasty);
-  view->drawMain(0);
-  stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
-  view->redraw();
-  active = 1;
+  if(active)
+  {
+    active = 0;
+    drawHandles(stroke, beginx, beginy, lastx, lasty, 255);
+    view->drawMain(0);
+    stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+    view->redraw();
+    active = 1;
+  }
 }
 

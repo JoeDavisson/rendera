@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Button.H"
 #include "ToggleButton.H"
 #include "Field.H"
+#include "Map.H"
 #include "View.H"
 #include "Undo.H"
 #include "Dialog.H"
@@ -577,6 +578,9 @@ void Gui::checkTool(Widget *, void *var)
 
   view->tool->active = 0;
   view->tool->started = 0;
+
+  Map::main->clear(0);
+  view->drawMain(1);
 }
 
 void Gui::checkColor(Widget *, void *)
