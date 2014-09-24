@@ -64,14 +64,6 @@ namespace
     absrect(&x1, &y1, &x2, &y2);
     Map::main->rect(x1 - 1, y1 - 1, x2 + 1, y2 + 1, color);
     stroke->size(x1 - 1, y1 - 1, x2 + 1, y2 + 1);
-/*
-    absrect(&x1, &y1, &x2, &y2);
-    Map::main->rect(x1, y1 - 32, x2, y1 - 1, color);
-    Map::main->rect(x1, y2 + 32, x2, y2 + 1, color);
-    Map::main->rect(x1 - 32, y1, x1 - 1, y2, color);
-    Map::main->rect(x2 + 32, y1, x2 + 1, y2, color);
-    stroke->size(x1 - 32, y1 - 32, x2 + 32, y2 + 32);
-*/
   }
 }
 
