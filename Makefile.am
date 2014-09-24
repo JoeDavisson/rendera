@@ -130,27 +130,10 @@ dist_pkgdata_DATA =     \
 
 check_PROGRAMS =    \
   test_fltk_version \
-  test_endian       \
-  test_octree
+  test_endian
 
 test_fltk_version_SOURCES = test/fltk_version.C
 test_endian_SOURCES = test/endian.C
-test_octree_SOURCES = \
-  octree/array2d.h    \
-  octree/array.h      \
-  octree/numtraits.h  \
-  octree/octree.h     \
-  octree/octree.tcc   \
-  octree/point3d.h    \
-  octree/shareddata.h \
-  octree/tinyvector.h \
-  test/octree.C
-
-
-dist_doc_DATA =      \
-  README.md          \
-  octree/License.txt \
-  octree/Readme.txt
 
 
 TESTS = $(check_PROGRAMS)
