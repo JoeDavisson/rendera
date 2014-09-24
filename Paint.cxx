@@ -135,10 +135,13 @@ void Paint::done(View *)
 
 void Paint::redraw(View *view)
 {
-  active = 0;
-  view->drawMain(0);
-  stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
-  view->redraw();
-  active = 1;
+  if(active)
+  {
+    active = 0;
+    view->drawMain(0);
+    stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+    view->redraw();
+    active = 1;
+  }
 }
 
