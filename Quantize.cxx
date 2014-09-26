@@ -26,8 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Widget.H"
 #include "Octree.H"
 
-#define MAX_COLORS 4096
-
 namespace
 {
   // color struct, stores RGB values as floats for increased
@@ -81,13 +79,17 @@ namespace
     c1->freq += c2->freq;  
   }
 
-  // averages the color cube down to a maximum of 4096 colors
-  int limitColors(Octree *histogram, color_t *colors)
+  // reduces color count by averaging sections of the color cube
+  int limitColors(Octree *histogram, color_t *colors, int max_colors)
   {
     int r, g, b;
     int i, j, k;
-    int step = 16;
     int count = 0;
+
+    int step = 16;
+
+    if(max_colors == 512)
+      step = 32;
 
     for(b = 0; b <= 256 - step; b += step)
     {
@@ -192,22 +194,20 @@ namespace
   }
 }
 
-// pairwise clustering algorithm
+// Pairwise clustering quantization, adapted from the algorithm described here:
+//
+// http://www.visgraf.impa.br/Projects/quantization/quant.html
+// http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
+//
+// This version saves computation time by reducing the color table size
+// (and reducing it further if an image is very colorful, in which case color
+// accuracy is not as important).
 void Quantize::pca(Bitmap *src, int size)
 {
   int i, j;
 
   // popularity histogram
   Octree *histogram = new Octree();
-
-  // color list
-  struct color_t *colors = new color_t[MAX_COLORS];
-
-  for(i = 0; i < MAX_COLORS; i++)
-    colors[i].active = 0;
-
-  // quantization error matrix
-  float *err_data = new float[((MAX_COLORS + 1) * MAX_COLORS) / 2];
 
   int max;
   int rep = size;
@@ -216,6 +216,13 @@ void Quantize::pca(Bitmap *src, int size)
   // build histogram, inc is the weight of 1 pixel in the image
   float inc = 1.0 / ((src->w - overscroll * 2) * (src->h - overscroll * 2));
   int count = 0;
+
+  // measure of how colorful an image is
+  // more colorful images fill more spaces in the table
+  int *color_metric = new int[512];
+
+  for(i = 0; i < 512; i++)
+    color_metric[i] = 0;
 
   for(j = overscroll; j < src->h - overscroll; j++)
   {
@@ -230,8 +237,34 @@ void Quantize::pca(Bitmap *src, int size)
         count++;
 
       histogram->write(rgba.r, rgba.g, rgba.b, freq + inc);
+
+      color_metric[((int)rgba.r >> 5) << 0 |
+                   ((int)rgba.g >> 5) << 3 |
+                   ((int)rgba.b >> 5) << 6] = 1;
     }
   }
+
+  // if image uses more than 1/4 of the color cube then
+  // reduce table sizes to save time
+  int color_metric_count = 0;
+
+  for(i = 0; i < 512; i++)
+    if(color_metric[i])
+      color_metric_count++;
+
+  int max_colors = 4096;
+
+  if(color_metric_count >= 128)
+    max_colors = 512;
+
+  // color list
+  struct color_t *colors = new color_t[max_colors];
+
+  for(i = 0; i < max_colors; i++)
+    colors[i].active = 0;
+
+  // quantization error matrix
+  float *err_data = new float[((max_colors + 1) * max_colors) / 2];
 
   // if trying to make 1-color palette
   if(count < 2)
@@ -261,7 +294,7 @@ void Quantize::pca(Bitmap *src, int size)
   else
   {
     // limit color count to 4096
-    count = limitColors(histogram, colors);
+    count = limitColors(histogram, colors, max_colors);
   }
 
   // don't need histogram anymore
