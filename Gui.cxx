@@ -160,11 +160,11 @@ void Gui::init()
   menubar->add("Palette/Load", 0, (Fl_Callback *)File::loadPalette, 0, 0);
   menubar->add("Palette/Save", 0, (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Editor...", 0, (Fl_Callback *)Dialog::editor, 0, FL_MENU_DIVIDER);
-  menubar->add("Palette/Default", 0, (Fl_Callback *)paletteDefault, 0, 0);
-  menubar->add("Palette/Fixed/Web Safe", 0, (Fl_Callback *)paletteWebSafe, 0, 0);
-  menubar->add("Palette/Fixed/3-level RGB", 0, (Fl_Callback *)palette3LevelRGB, 0, 0);
-  menubar->add("Palette/Fixed/4-level RGB", 0, (Fl_Callback *)palette4LevelRGB, 0, 0);
-  menubar->add("Palette/Fixed/3-3-2", 0, (Fl_Callback *)palette332, 0, 0);
+  menubar->add("Palette/Presets/Default", 0, (Fl_Callback *)paletteDefault, 0, 0);
+  menubar->add("Palette/Presets/Web Safe", 0, (Fl_Callback *)paletteWebSafe, 0, 0);
+  menubar->add("Palette/Presets/3-level RGB", 0, (Fl_Callback *)palette3LevelRGB, 0, 0);
+  menubar->add("Palette/Presets/4-level RGB", 0, (Fl_Callback *)palette4LevelRGB, 0, 0);
+  menubar->add("Palette/Presets/3-3-2", 0, (Fl_Callback *)palette332, 0, 0);
   menubar->add("Palette/Create From Image...", 0, (Fl_Callback *)Dialog::createPalette, 0, 0);
   menubar->add("Effects/Normalize", 0, (Fl_Callback *)FX::normalize, 0, 0);
   menubar->add("Effects/Equalize", 0, (Fl_Callback *)FX::equalize, 0, 0);
