@@ -65,6 +65,11 @@ namespace Gui
   void checkCropDo();
   void checkCropValues(int, int, int, int);
   void checkOffsetValues(int, int);
+  void paletteDefault();
+  void paletteWebSafe();
+  void palette3LevelRGB();
+  void palette4LevelRGB();
+  void palette332();
 
   View *getView();
   int getTool();

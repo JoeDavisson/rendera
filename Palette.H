@@ -34,7 +34,6 @@ public:
 
   void draw(Widget *);
   void copy(Palette *);
-  void setDefault();
   void insertColor(int, int);
   void deleteColor(int);
   void replaceColor(int, int);
@@ -42,6 +41,12 @@ public:
   int lookup(int);
   int load(const char *);
   int save(const char *);
+
+  void setDefault();
+  void setWebSafe();
+  void set3LevelRGB();
+  void set4LevelRGB();
+  void set332();
 
   int *data;
   Octree *table;

@@ -27,12 +27,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 Palette *Palette::main;
 Palette *Palette::undo;
 
+namespace
+{
+  // qsort callback to sort palette
+  int compareLum(const void *a, const void *b)
+  {
+    int c1 = *(int *)a;
+    int c2 = *(int *)b;
+
+    return getl(c1) - getl(c2);
+  }
+}
+
 Palette::Palette()
 {
   data = new int[256];
-  setDefault();
   table = new Octree();
-  fillTable();
+  setDefault();
 }
 
 Palette::~Palette()
@@ -118,35 +129,6 @@ void Palette::copy(Palette *dest)
     dest->data[i] = data[i];
 
   dest->max = max;
-}
-
-void Palette::setDefault()
-{
-  int r, g, b;
-  int h, v;
-  int index = 0;
-
-  const int sat[5] = { 255, 255, 255, 128, 64 };
-  const int val[5] = { 64, 128, 255, 255, 255 };
-
-  // colors
-  for(v = 4; v >= 0; v--)
-  {
-    for(h = 0; h < 12; h++)
-    {
-      Blend::hsvToRgb(h * 128, sat[v], val[v], &r, &g, &b);
-
-      data[index++] = makeRgb(r, g, b);
-    }
-  }
-
-  // grays
-  for(v = 0; v < 12; v++)
-  {
-    data[index++] = makeRgb(v * 23.19, v * 23.19, v * 23.19);
-  }
-
-  max = index;
 }
 
 void Palette::insertColor(int color, int index)
@@ -319,5 +301,117 @@ int Palette::save(const char *fn)
   fclose(out);
 
   return 0;
+}
+
+void Palette::setDefault()
+{
+  int r, g, b;
+  int h, v;
+  int index = 0;
+
+  const int sat[5] = { 255, 255, 255, 128, 64 };
+  const int val[5] = { 64, 128, 255, 255, 255 };
+
+  // colors
+  for(v = 4; v >= 0; v--)
+  {
+    for(h = 0; h < 12; h++)
+    {
+      Blend::hsvToRgb(h * 128, sat[v], val[v], &r, &g, &b);
+
+      data[index++] = makeRgb(r, g, b);
+    }
+  }
+
+  // grays
+  for(v = 0; v < 12; v++)
+  {
+    data[index++] = makeRgb(v * 23.19, v * 23.19, v * 23.19);
+  }
+
+  max = index;
+  fillTable();
+}
+
+void Palette::setWebSafe()
+{
+  int r, g, b;
+  int index = 0;
+
+  for(b = 0; b < 6; b++)
+  {
+    for(g = 0; g < 6; g++)
+    {
+      for(r = 0; r < 6; r++)
+      {
+        data[index++] = makeRgb(r * 51, g * 51, b * 51);
+      }
+    }
+  }
+
+  max = index;
+  fillTable();
+}
+
+void Palette::set3LevelRGB()
+{
+  int r, g, b;
+  int index = 0;
+
+  for(r = 0; r < 3; r++)
+  {
+    for(g = 0; g < 3; g++)
+    {
+      for(b = 0; b < 3; b++)
+      {
+        data[index++] = makeRgb(MIN(r * 128, 255),
+                                MIN(g * 128, 255),
+                                MIN(b * 128, 255));
+      }
+    }
+  }
+
+  max = index;
+  fillTable();
+}
+
+void Palette::set4LevelRGB()
+{
+  int r, g, b;
+  int index = 0;
+
+  for(r = 0; r < 4; r++)
+  {
+    for(g = 0; g < 4; g++)
+    {
+      for(b = 0; b < 4; b++)
+      {
+        data[index++] = makeRgb(r * 85, g * 85, b * 85);
+      }
+    }
+  }
+
+  max = index;
+  fillTable();
+}
+
+void Palette::set332()
+{
+  int r, g, b;
+  int index = 0;
+
+  for(b = 0; b < 4; b++)
+  {
+    for(g = 0; g < 8; g++)
+    {
+      for(r = 0; r < 8; r++)
+      {
+        data[index++] = makeRgb(r * 36.43, g * 36.43, b * 85);
+      }
+    }
+  }
+
+  max = index;
+  fillTable();
 }
 
