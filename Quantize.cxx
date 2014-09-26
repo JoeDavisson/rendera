@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  // color struct, stores RGB values as floats for increased clustering
+  // color struct, stores RGB values as floats for increased
   // accuracy, also stores the frequency of the color in the image
   struct color_t
   {
@@ -281,23 +281,28 @@ void Quantize::pca(Bitmap *src, int size)
 
   Dialog::showProgress(count - rep);
 
+  // measure offset between array elements
+  const int step = &(colors[1].active) - &(colors[0].active);
+
   while(count > rep)
   {
-    // find lowest value in error matrix
     int ii = 0, jj = 0;
     float least_err = 999999;
+    int *a = &(colors[0].active);
 
-    for(j = 0; j < max; j++)
+    // find lowest value in error matrix
+    for(j = 0; j < max; j++, a += step)
     {
-      if(colors[j].active)
+      if(*a)
       {
-        for(i = 0; i < j; i++)
-        {
-          float e = err_data[i + (j + 1) * j / 2];
+        float *e = &err_data[(j + 1) * j / 2];
+        int *b = &(colors[0].active);
 
-          if(colors[i].active && err_data[i + (j + 1) * j / 2] < least_err)
+        for(i = 0; i < j; i++, e++, b += step)
+        {
+          if(*b && (*e < least_err))
           {
-            least_err = e;
+            least_err = *e;
             ii = i;
             jj = j;
           }
