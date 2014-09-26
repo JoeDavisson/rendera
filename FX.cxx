@@ -990,10 +990,10 @@ namespace ApplyPalette
         for(i = 0; i < 3; i++)
         {
           e[i] = n[i] - v[i];
-          last[i] = (e[i] * 7) / 24;
-          buf[i][x - 1] += (e[i] * 3) / 24;
-          buf[i][x] += (e[i] * 5) / 24;
-          buf[i][x + 1] += (e[i] * 1) / 24;
+          last[i] = (e[i] * 7) / 18;
+          buf[i][x - 1] += (e[i] * 3) / 18;
+          buf[i][x] += (e[i] * 5) / 18;
+          buf[i][x + 1] += (e[i] * 1) / 18;
         }
       }
 
