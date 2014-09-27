@@ -175,6 +175,7 @@ void Gui::init()
   menubar->add("Effects/Restore...", 0, (Fl_Callback *)FX::restore, 0, 0);
   menubar->add("Effects/Correction Matrix", 0, (Fl_Callback *)FX::correctionMatrix, 0, 0);
   menubar->add("Effects/Remove Dust...", 0, (Fl_Callback *)FX::removeDust, 0, 0);
+  menubar->add("Effects/Desaturate", 0, (Fl_Callback *)FX::desaturate, 0, 0);
   menubar->add("Effects/Colorize", 0, (Fl_Callback *)FX::colorize, 0, 0);
   menubar->add("Effects/Apply Palette...", 0, (Fl_Callback *)FX::applyPalette, 0, 0);
   menubar->add("Help/About...", 0, (Fl_Callback *)Dialog::about, 0, 0);
