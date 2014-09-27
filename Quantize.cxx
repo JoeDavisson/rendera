@@ -254,7 +254,7 @@ void Quantize::pca(Bitmap *src, int size)
 
   int max_colors = 4096;
 
-  if(color_metric_count >= 128)
+  if(color_metric_count >= 256)
     max_colors = 512;
 
   // color list
