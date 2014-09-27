@@ -38,6 +38,7 @@ namespace FX
   void restore();
   void correctionMatrix();
   void removeDust();
+  void desaturate();
   void colorize();
   void applyPalette();
 }

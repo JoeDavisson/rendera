@@ -859,6 +859,36 @@ namespace RemoveDust
   }
 }
 
+namespace Desaturate
+{
+  void apply()
+  {
+    int x, y;
+
+    beginProgress();
+
+    for(y = overscroll; y < bmp->h - overscroll; y++)
+    {
+      for(x = overscroll; x < bmp->w - overscroll; x++)
+      {
+        int l = getl(bmp->getpixel(x, y));
+        bmp->setpixel(x, y, makeRgb(l, l, l), 0);
+      }
+
+      if(updateProgress(y) < 0)
+        return;
+    }
+
+    endProgress();
+  }
+
+  void begin()
+  {
+    pushUndo();
+    apply();
+  }
+}
+
 namespace Colorize
 {
   void apply()
@@ -990,10 +1020,10 @@ namespace ApplyPalette
         for(i = 0; i < 3; i++)
         {
           e[i] = n[i] - v[i];
-          last[i] = (e[i] * 7) / 18;
-          buf[i][x - 1] += (e[i] * 3) / 18;
-          buf[i][x] += (e[i] * 5) / 18;
-          buf[i][x + 1] += (e[i] * 1) / 18;
+          last[i] = (e[i] * 7) / 32;
+          buf[i][x - 1] += (e[i] * 3) / 32;
+          buf[i][x] += (e[i] * 5) / 32;
+          buf[i][x + 1] += (e[i] * 1) / 32;
         }
       }
 
@@ -1102,6 +1132,11 @@ void FX::correctionMatrix()
 void FX::removeDust()
 {
   RemoveDust::begin();
+}
+
+void FX::desaturate()
+{
+  Desaturate::begin();
 }
 
 void FX::colorize()
