@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "GetColor.H"
 #include "Crop.H"
 #include "Offset.H"
+#include "Text.H"
 #include "File.H"
 #include "Widget.H"
 
@@ -61,8 +62,6 @@ int main(int argc, char *argv[])
   Fl::set_color(FL_FOREGROUND_COLOR, 248, 248, 248);
   Fl::set_color(FL_INACTIVE_COLOR, 128, 128, 128);
   Fl::set_color(FL_SELECTION_COLOR, 248, 248, 248);
-
-  Fl::set_fonts(0);
 
   Fl_Shared_Image::add_handler(File::previewJPG);
   Fl_Shared_Image::add_handler(File::previewPNG);
@@ -97,6 +96,7 @@ int main(int argc, char *argv[])
   Tool::getcolor = new GetColor();
   Tool::crop = new Crop();
   Tool::offset = new Offset();
+  Tool::text = new Text();
 
   File::init();
   FX::init();

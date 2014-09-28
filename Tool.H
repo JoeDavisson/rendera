@@ -64,6 +64,7 @@ public:
   static Tool *getcolor;
   static Tool *crop;
   static Tool *offset;
+  static Tool *text;
 };
 
 #endif

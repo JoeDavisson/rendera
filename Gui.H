@@ -65,6 +65,11 @@ namespace Gui
   void checkCropDo();
   void checkCropValues(int, int, int, int);
   void checkOffsetValues(int, int);
+  void textStartOver();
+  const char *getTextInput();
+  int getFontFace();
+  int getFontSize();
+  void paletteSort();
   void paletteSort();
   void paletteDefault();
   void paletteWebSafe();

@@ -52,6 +52,8 @@ rendera_SOURCES =     \
   Separator.H         \
   Stroke.cxx          \
   Stroke.H            \
+  Text.cxx            \
+  Text.H              \
   ToggleButton.cxx    \
   ToggleButton.H      \
   Tool.cxx            \

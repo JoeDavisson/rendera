@@ -18,27 +18,27 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#ifndef TEXT_H
+#define TEXT_H
+
+class View;
+
+#include "Rendera.H"
 #include "Tool.H"
-#include "Bitmap.H"
-#include "Stroke.H"
-#include "Undo.H"
-#include "Brush.H"
 
-Tool *Tool::paint;
-Tool *Tool::getcolor;
-Tool *Tool::crop;
-Tool *Tool::offset;
-Tool *Tool::text;
-
-Tool::Tool()
+class Text : public Tool
 {
-  stroke = new Stroke();
-  started = 0;
-  active = 0;
-}
+public:
+  Text();
+  virtual ~Text();
 
-Tool::~Tool()
-{
-  delete stroke;
-}
+  virtual void push(View *);
+  virtual void drag(View *);
+  virtual void release(View *);
+  virtual void move(View *);
+  virtual void done(View *);
+  virtual void redraw(View *);
+};
+
+#endif
 

@@ -99,6 +99,7 @@ namespace
 
   Fl_Hold_Browser *font_browse;
   Fl_Choice *font_size;
+  Fl_Input *text_input;
 
   // right
   Widget *palette;
@@ -323,7 +324,8 @@ void Gui::init()
 
   i = 0;
 
-  int max = Fl::set_fonts(i ? (i > 1 ? "*" : 0) : "-*");
+  int max = Fl::set_fonts(0);
+  //int max = Fl::set_fonts(i ? (i > 1 ? "*" : 0) : "-*");
   for(i = 0; i < max; i++)
   {
     int t;
@@ -331,6 +333,8 @@ void Gui::init()
     font_browse->add(name);
   }
 
+  font_browse->value(0);
+  font_browse->callback((Fl_Callback *)textStartOver);
   y1 += 192 + 8;
 
   font_size = new Fl_Choice(8, y1, 96, 24, "");
@@ -347,7 +351,14 @@ void Gui::init()
   font_size->add("48");
   font_size->add("64");
   font_size->add("96");
-  font_size->value(0);
+  font_size->value(2);
+  font_size->callback((Fl_Callback *)textStartOver);
+  y1 += 24 + 8;
+  text_input = new Fl_Input(8, y1, 96, 24, "");
+  text_input->textsize(10);
+  text_input->value("Text");
+  text_input->resize(text->x() + 8, text->y() + y1, 96, 24);
+  text_input->callback((Fl_Callback *)textStartOver);
   y1 += 24 + 8;
 
   text->resizable(0);
@@ -637,7 +648,7 @@ void Gui::checkTool(Widget *, void *var)
       offset->show();
       break;
     case 4:
-      view->tool = Tool::paint;
+      view->tool = Tool::text;
       text->show();
       break;
   }
@@ -804,6 +815,32 @@ void Gui::checkOffsetValues(int x, int y)
   snprintf(s, sizeof(s), "%d", y);
   offset_y->value(s);
   offset_y->redraw();
+}
+
+void Gui::textStartOver()
+{
+  // start text tool over if font changed
+  view->tool->started = 0;
+  view->tool->active = 0;
+}
+
+int Gui::getFontFace()
+{
+  int index = font_browse->value();
+  if(index < 1)
+    index = 1;
+
+  return index - 1;
+}
+
+int Gui::getFontSize()
+{
+  return font_sizes[font_size->value()];
+}
+
+const char *Gui::getTextInput()
+{
+  return text_input->value();
 }
 
 void Gui::paletteSort()
