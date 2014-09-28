@@ -1005,7 +1005,8 @@ namespace ApplyPalette
         const int g = unfix_gamma[n[1]];
         const int b = unfix_gamma[n[2]];
 
-        const int c = Palette::main->data[(int)Palette::main->lookup(makeRgb(r, g, b))];
+        const int pal_index = (int)Palette::main->lookup(makeRgb(r, g, b));
+        const int c = Palette::main->data[pal_index];
 
         struct rgba_t rgba = get_rgba(c);
 
@@ -1020,10 +1021,10 @@ namespace ApplyPalette
         for(i = 0; i < 3; i++)
         {
           e[i] = n[i] - v[i];
-          last[i] = (e[i] * 7) / 32;
-          buf[i][x - 1] += (e[i] * 3) / 32;
-          buf[i][x] += (e[i] * 5) / 32;
-          buf[i][x + 1] += (e[i] * 1) / 32;
+          last[i] = (e[i] * 7)  >> 4;
+          buf[i][x - 1] += (e[i] * 3)  >> 4;
+          buf[i][x] += (e[i] * 5)  >> 4;
+          buf[i][x + 1] += (e[i] * 1)  >> 4;
         }
       }
 

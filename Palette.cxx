@@ -214,6 +214,12 @@ int Palette::lookup(int c)
   return table->read(rgba.r, rgba.g, rgba.b);
 }
 
+// sort palette
+void Palette::sort()
+{
+  qsort(Palette::main->data, Palette::main->max, sizeof(int), compareLum);
+}
+
 // uses GIMP .gpl palette format
 int Palette::load(const char *fn)
 {
@@ -303,6 +309,7 @@ int Palette::save(const char *fn)
   return 0;
 }
 
+// various fixed palettes
 void Palette::setDefault()
 {
   int r, g, b;

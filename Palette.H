@@ -39,6 +39,7 @@ public:
   void replaceColor(int, int);
   void fillTable();
   int lookup(int);
+  void sort();
   int load(const char *);
   int save(const char *);
 

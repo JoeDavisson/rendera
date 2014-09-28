@@ -59,6 +59,8 @@ namespace
   Group *crop;
   Group *getcolor;
   Group *offset;
+  Group *text;
+
   Group *right;
   Group *bottom;
   Fl_Group *middle;
@@ -94,6 +96,9 @@ namespace
 
   Field *offset_x;
   Field *offset_y;
+
+  Fl_Hold_Browser *font_browse;
+  Fl_Choice *font_size;
 
   // right
   Widget *palette;
@@ -139,11 +144,17 @@ namespace
     1, 2, 3, 4, 8, 12, 16, 24,
     32, 40, 48, 56, 64, 72, 80, 88
   };
+
+  int font_sizes[10] =
+  {
+    8, 10, 12, 16, 20, 24, 32, 48, 64, 96
+  };
 }
 
 void Gui::init()
 {
   int x1, y1;
+  int i;
 
   // window
   window = new Fl_Double_Window(800, 600, "Rendera");
@@ -166,6 +177,7 @@ void Gui::init()
   menubar->add("Palette/Presets/4-level RGB", 0, (Fl_Callback *)palette4LevelRGB, 0, 0);
   menubar->add("Palette/Presets/3-3-2", 0, (Fl_Callback *)palette332, 0, 0);
   menubar->add("Palette/Create From Image...", 0, (Fl_Callback *)Dialog::createPalette, 0, 0);
+  menubar->add("Palette/Sort", 0, (Fl_Callback *)paletteSort, 0, 0);
   menubar->add("Effects/Normalize", 0, (Fl_Callback *)FX::normalize, 0, 0);
   menubar->add("Effects/Equalize", 0, (Fl_Callback *)FX::equalize, 0, 0);
   menubar->add("Effects/Value Stretch", 0, (Fl_Callback *)FX::valueStretch, 0, 0);
@@ -176,6 +188,7 @@ void Gui::init()
   menubar->add("Effects/Correction Matrix", 0, (Fl_Callback *)FX::correctionMatrix, 0, 0);
   menubar->add("Effects/Remove Dust...", 0, (Fl_Callback *)FX::removeDust, 0, 0);
   menubar->add("Effects/Desaturate", 0, (Fl_Callback *)FX::desaturate, 0, 0);
+
   menubar->add("Effects/Colorize", 0, (Fl_Callback *)FX::colorize, 0, 0);
   menubar->add("Effects/Apply Palette...", 0, (Fl_Callback *)FX::applyPalette, 0, 0);
   menubar->add("Help/About...", 0, (Fl_Callback *)Dialog::about, 0, 0);
@@ -228,7 +241,7 @@ void Gui::init()
   // tools
   tools = new Group(0, top_right->h() + menubar->h(), 64, window->h() - (menubar->h() + top_right->h()), "Tools");
   y1 = 20;
-  tool = new Widget(tools, 8, y1, 48, 192, "Tools", "data/tools.png", 48, 48, (Fl_Callback *)checkTool);
+  tool = new Widget(tools, 8, y1, 48, 240, "Tools", "data/tools.png", 48, 48, (Fl_Callback *)checkTool);
   y1 += 96 + 8;
   tools->resizable(0);
   tools->end();
@@ -249,6 +262,7 @@ void Gui::init()
   paint_edge = new Widget(paint, 8, y1, 96, 24, "Soft Edge", "data/soft_edge.png", 12, 24, (Fl_Callback *)checkPaintEdge);
   y1 += 24 + 8;
   paint_mode = new Fl_Choice(8, y1, 96, 24, "");
+  paint_mode->tooltip("Paint Mode");
   paint_mode->textsize(10);
   paint_mode->resize(paint->x() + 8, paint->y() + y1, 96, 24);
   paint_mode->add("Solid");
@@ -300,6 +314,45 @@ void Gui::init()
   offset->resizable(0);
   offset->end();
 
+  // text
+  text = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "Text");
+  y1 = 20;
+  font_browse = new Fl_Hold_Browser(8, y1, 96, 192);
+  font_browse->textsize(9);
+  font_browse->resize(text->x() + 8, text->y() + y1, 96, 192);
+
+  i = 0;
+
+  int max = Fl::set_fonts(i ? (i > 1 ? "*" : 0) : "-*");
+  for(i = 0; i < max; i++)
+  {
+    int t;
+    const char *name = Fl::get_font_name((Fl_Font)i, &t);
+    font_browse->add(name);
+  }
+
+  y1 += 192 + 8;
+
+  font_size = new Fl_Choice(8, y1, 96, 24, "");
+  font_size->tooltip("Font Size");
+  font_size->textsize(10);
+  font_size->resize(text->x() + 8, text->y() + y1, 96, 24);
+  font_size->add("8");
+  font_size->add("10");
+  font_size->add("12");
+  font_size->add("16");
+  font_size->add("20");
+  font_size->add("24");
+  font_size->add("32");
+  font_size->add("48");
+  font_size->add("64");
+  font_size->add("96");
+  font_size->value(0);
+  y1 += 24 + 8;
+
+  text->resizable(0);
+  text->end();
+
   // right
   right = new Group(window->w() - 112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "Colors");
   y1 = 20;
@@ -312,6 +365,7 @@ void Gui::init()
   trans = new Widget(right, 8, y1, 96, 24, "Transparency", "data/transparency.png", 1, 24, (Fl_Callback *)checkTrans);
   y1 += 24 + 8;
   blend = new Fl_Choice(8, y1, 96, 24, "");
+  blend->tooltip("Blending Mode");
   blend->textsize(10);
   blend->resize(right->x() + 8, right->y() + y1, 96, 24);
   blend->add("Normal");
@@ -342,6 +396,7 @@ void Gui::init()
   group_left->add(getcolor);
   group_left->add(crop);
   group_left->add(offset);
+  group_left->add(text);
   group_left->end();
 
   window->size_range(640, 480, 0, 0, 0, 0, 0);
@@ -559,6 +614,7 @@ void Gui::checkTool(Widget *, void *var)
   getcolor->hide();
   crop->hide();
   offset->hide();
+  text->hide();
 
   switch(*(int *)var)
   {
@@ -579,6 +635,10 @@ void Gui::checkTool(Widget *, void *var)
     case 3:
       view->tool = Tool::offset;
       offset->show();
+      break;
+    case 4:
+      view->tool = Tool::paint;
+      text->show();
       break;
   }
 
@@ -744,6 +804,12 @@ void Gui::checkOffsetValues(int x, int y)
   snprintf(s, sizeof(s), "%d", y);
   offset_y->value(s);
   offset_y->redraw();
+}
+
+void Gui::paletteSort()
+{
+  Palette::main->sort();
+  Palette::main->draw(palette);
 }
 
 void Gui::paletteDefault()

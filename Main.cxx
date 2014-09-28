@@ -62,6 +62,8 @@ int main(int argc, char *argv[])
   Fl::set_color(FL_INACTIVE_COLOR, 128, 128, 128);
   Fl::set_color(FL_SELECTION_COLOR, 248, 248, 248);
 
+  Fl::set_fonts(0);
+
   Fl_Shared_Image::add_handler(File::previewJPG);
   Fl_Shared_Image::add_handler(File::previewPNG);
   Fl_Shared_Image::add_handler(File::previewBMP);
