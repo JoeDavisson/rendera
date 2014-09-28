@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Map.H"
 #include "Gui.H"
 #include "View.H"
+#include "Tool.H"
 
 #define MAX_UNDO 10
 
@@ -150,6 +151,7 @@ void Undo::pop()
                                    undo_stack[undo_current]->h);
   }
 
+  Gui::getView()->tool->active = 0;
   Gui::getView()->drawMain(1);
 }
 
