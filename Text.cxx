@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace
 {
   Bitmap *temp;
+  int temp_allocated = 0;
 }
 
 Text::Text()
@@ -70,7 +71,11 @@ void Text::push(View *view)
     }
   }
 
-  delete temp;
+  if(temp_allocated)
+  {
+    delete temp;
+    temp_allocated = 0;
+  }
 
   Blend::set(Blend::TRANS);
 
@@ -101,7 +106,15 @@ void Text::move(View *view)
     const char *string = Gui::getTextInput();
     fl_measure(string, tw, th, 1);
     Fl_Offscreen offscreen = fl_create_offscreen(tw, th);
+
+    if(temp_allocated)
+    {
+      delete temp;
+      temp_allocated = 0;
+    }
+
     temp = new Bitmap(tw, th);
+    temp_allocated = 1;
     temp->clear(makeRgb(255, 255, 255));
     Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)temp->data, temp->w, temp->h, 4, 0);
 
