@@ -322,10 +322,8 @@ void Gui::init()
   font_browse->textsize(9);
   font_browse->resize(text->x() + 8, text->y() + y1, 96, 192);
 
-  i = 0;
-
   int max = Fl::set_fonts(0);
-  //int max = Fl::set_fonts(i ? (i > 1 ? "*" : 0) : "-*");
+
   for(i = 0; i < max; i++)
   {
     int t;

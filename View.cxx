@@ -144,6 +144,12 @@ int View::handle(int event)
   switch(event)
   {
     case FL_FOCUS:
+      if(tool->active)
+      {
+        tool->started = 0;
+        tool->active = 0;
+        drawMain(1);
+      }
       return 1;
     case FL_UNFOCUS:
       return 1;
