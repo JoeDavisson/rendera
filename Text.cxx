@@ -101,12 +101,23 @@ void Text::move(View *view)
   // write text string to FLTK's offscreen image
   if(!started)
   {
+    int i;
+
     started = 1;
     active = 1;
 
     int face = Gui::getFontFace();
     int size = Gui::getFontSize();
-    const char *string = Gui::getTextInput();
+    const char *s = Gui::getTextInput();
+
+    // add a space before and after string, or some
+    // scripty fonts won't render propery on the sides
+    char *string = new char[strlen(s) + 2];
+    string[0] = ' ';
+    for(i = 0; i <= strlen(s); i++)
+      string[i + 1] = s[i];
+    string[i++] = ' ';
+    string[i++] = '\0';
 
     fl_font(face, size);
 
@@ -137,6 +148,8 @@ void Text::move(View *view)
 
     fl_end_offscreen();
     fl_delete_offscreen(offscreen);
+
+    delete string;
   }
 
   // create preview map
