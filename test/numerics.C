@@ -1,24 +1,14 @@
 /* rendera/test/numerics.C */
 
+#include "Rendera.H"
+
 #include <algorithm>
 #include <cassert>
-#include <climits>
+/* #include <climits> */
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
 #include <stdint.h>
-
-
-#define MIN(x, y)          (((x) > (y)) ? (y) : (x))
-#define MAX(x, y)          (((x) < (y)) ? (y) : (x))
-#define MID(a, b, c)       (MAX(a, MIN(b, c)))
-#define SWAP(a, b)         { int c = (a); (a) = (b); (b) = c; }
-#define SIGN(a)            (((a) > 0) ? 1 : -1)
-#define ABS(a)             (((a) > 0) ? (a) : -(a))
-
-
-/* http://graphics.stanford.edu/~seander/bithacks.html#CopyIntegerSign */
-#define SIGN_BITHACKS(v) ( +1 | ( v >> ( sizeof(v)*CHAR_BIT-1) ) )
 
 
 namespace
@@ -124,7 +114,7 @@ main( int, char** )
             ;
     }
 
-    /* SIGN vs SIGN_BITHACKS vs _sign */
+    /* SIGN vs _sign */
     {
         timespec start = _now();
         for( size_t i = 0; i != n; ++i ){
@@ -133,18 +123,6 @@ main( int, char** )
         std::cout
             << std::endl
             << std::dec << n << " iterations of SIGN takes\n"
-            << _duration( start )
-            << std::endl
-            ;
-    }
-    {
-        timespec start = _now();
-        for( size_t i = 0; i != n; ++i ){
-            a = SIGN_BITHACKS( b );
-        }
-        std::cout
-            << std::endl
-            << std::dec << n << " iterations of SIGN_BITHACKS takes\n"
             << _duration( start )
             << std::endl
             ;
@@ -161,6 +139,10 @@ main( int, char** )
             << std::endl
             ;
     }
+
+    assert( -1 == SIGN( -42 ) );
+    assert(  1 == SIGN(  42 ) );
+    assert(  1 == SIGN(   0 ) );
 
 
     return EXIT_SUCCESS ;

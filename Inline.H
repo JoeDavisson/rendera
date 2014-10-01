@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define INLINE_H
 
 #include <stdint.h>
+#include <climits>
 #include "endian.h"
 
 // fast random number seed
