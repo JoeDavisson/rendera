@@ -25,15 +25,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <climits>
 #include "endian.h"
 
-// convenience functions
+// from http://graphics.stanford.edu/~seander/bithacks.html
 inline int MIN(const int &x, const int &y)
 {
-  return x < y ? x : y;
+  return y ^ ((x ^ y) & -(x < y));
 }
 
 inline int MAX(const int &x, const int &y)
 {
-  return x > y ? x : y;
+  return x ^ ((x ^ y) & -(x < y));
 }
 
 inline int MID(const int &x, const int &y, const int &z)
