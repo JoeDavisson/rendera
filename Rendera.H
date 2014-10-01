@@ -50,7 +50,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define MAX(x, y)          (((x) > (y)) ? (x) : (y))
 #define MID(a, b, c)       (MAX(a, MIN(b, c)))
 #define SWAP(a, b)         { int c = (a); (a) = (b); (b) = c; }
-#define SIGN(a)            (((a) > 0) ? 1 : -1)
+
+/* http://graphics.stanford.edu/~seander/bithacks.html#CopyIntegerSign */
+#define SIGN(v)            ( +1 | ( v >> ( sizeof(v)*CHAR_BIT-1) ) )
+
 #define ABS(a)             (((a) > 0) ? (a) : -(a))
 
 #endif
