@@ -88,33 +88,7 @@ main( int, char** )
 
     volatile int a = 42, b = 69 ;
 
-    /* SWAP vs std::swap */
-    {
-        timespec start = _now();
-        for( size_t i = 0; i != n; ++i ){
-            SWAP( a, b );
-        }
-        std::cout
-            << std::endl
-            << std::dec << n << " iterations of SWAP takes\n"
-            << _duration( start )
-            << std::endl
-            ;
-    }
-    {
-        timespec start = _now();
-        for( size_t i = 0; i != n; ++i ){
-            std::swap( a, b );
-        }
-        std::cout
-            << std::endl
-            << std::dec << n << " iterations of std::swap takes\n"
-            << _duration( start )
-            << std::endl
-            ;
-    }
-
-    /* SIGN vs _sign */
+    /* SIGN vs sign */
     {
         timespec start = _now();
         for( size_t i = 0; i != n; ++i ){
@@ -130,11 +104,11 @@ main( int, char** )
     {
         timespec start = _now();
         for( size_t i = 0; i != n; ++i ){
-            a = _sign( b );
+            b = sign( a );
         }
         std::cout
             << std::endl
-            << std::dec << n << " iterations of _sign takes\n"
+            << std::dec << n << " iterations of sign takes\n"
             << _duration( start )
             << std::endl
             ;
@@ -143,6 +117,14 @@ main( int, char** )
     assert( -1 == SIGN( -42 ) );
     assert(  1 == SIGN(  42 ) );
     assert(  1 == SIGN(   0 ) );
+
+    assert( -1 == sign( -42 ) );
+    assert(  1 == sign(  42 ) );
+    assert(  1 == sign(   0 ) );
+
+    assert( -1.0 == sign( -42.0 ) );
+    assert(  1.0 == sign(  42.0 ) );
+    assert(  1.0 == sign(   0.0 ) );
 
 
     return EXIT_SUCCESS ;

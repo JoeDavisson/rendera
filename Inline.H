@@ -21,43 +21,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef INLINE_H
 #define INLINE_H
 
-#include <stdint.h>
+#include <algorithm>
 #include <climits>
+#include <stdint.h>
 #include "endian.h"
 
-// convenience functions
-inline int MIN(const int &x, const int &y)
+
+template< typename T >
+inline T mid( T const&x, T const&y, T const&z )
 {
-  return x < y ? x : y;
+  using std::min ;
+  using std::max ;
+  return max(x, min(y, z));
 }
 
-inline int MAX(const int &x, const int &y)
+
+#define SIGN(v) ( 1 | ( v >> ( sizeof(v) * CHAR_BIT - 1)))
+
+template< typename T >
+inline T sign( T const&v )
 {
-  return x > y ? x : y;
+    static T const zero( 0 );
+    return ( zero > v ) ? T( -1 ) : T( 1 ) ;
 }
 
-inline int MID(const int &x, const int &y, const int &z)
-{
-  return MAX(x, MIN(y, z));
-}
-
-inline void SWAP(int *x, int *y)
-{
-  const int z = *x;
-  *x = *y;
-  *y = z;
-}
-
-inline int SIGN(const int &x)
-{
-  return (1 | ( x >> ( sizeof(int) * CHAR_BIT - 1))); 
-}
-
-inline int ABS(const int &x)
-{
-  const int mask = (x >> sizeof(int) * CHAR_BIT - 1);
-  return (x + mask) ^ mask;
-}
 
 // fast random number seed
 extern int seed;
