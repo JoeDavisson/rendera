@@ -37,6 +37,9 @@ AC_CHECK_LIB([jpeg],[jpeg_start_output],[],
 AC_CHECK_LIB([png],[png_malloc],[],
   [AC_MSG_ERROR([libpng missing])])
 
+AC_CHECK_LIB([rt],[clock_gettime],[],
+  [AC_MSG_ERROR([librt missing])])
+
 AC_CHECK_LIB([z],[gzopen],[],
   [AC_MSG_ERROR([libz missing])])
 
