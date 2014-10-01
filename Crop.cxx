@@ -31,10 +31,12 @@ namespace
 {
   bool inbox(int x, int y, int x1, int y1, int x2, int y2)
   {
+    using std::swap ;
+
     if(x1 > x2)
-      SWAP(&x1, &x2);
+      swap(x1, x2);
     if(y1 > y2)
-      SWAP(&y1, &y2);
+      swap(y1, y2);
 
     if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
       return 1;
@@ -44,10 +46,12 @@ namespace
 
   void absrect(int *x1, int *y1, int *x2, int *y2)
   {
+    using std::swap ;
+
     if(*x1 > *x2)
-      SWAP(x1, x2);
+      swap(x1, x2);
     if(*y1 > *y2)
-      SWAP(y1, y2);
+      swap(y1, y2);
 
     if(*x1 < Bitmap::main->cl)
       *x1 = Bitmap::main->cl;
@@ -100,28 +104,29 @@ void Crop::push(View *view)
       }
       else
       {
+        using std::abs ;
         if(view->imgx < beginx)
         {
           side = 0;
-          offset = ABS(view->imgx - beginx);
+          offset = abs(view->imgx - beginx);
           resize_started = 1;
         }
         else if(view->imgx > lastx)
         {
           side = 1;
-          offset = ABS(view->imgx - lastx);
+          offset = abs(view->imgx - lastx);
           resize_started = 1;
         }
         else if(view->imgy < beginy)
         {
           side = 2;
-          offset = ABS(view->imgy - beginy);
+          offset = abs(view->imgy - beginy);
           resize_started = 1;
         }
         else if(view->imgy > lasty)
         {
           side = 3;
-          offset = ABS(view->imgy - lasty);
+          offset = abs(view->imgy - lasty);
           resize_started = 1;
         }
 
@@ -196,8 +201,8 @@ void Crop::drag(View *view)
   int overscroll = Bitmap::main->overscroll;
   int x = beginx - overscroll;
   int y = beginy - overscroll;
-  int w = ABS(lastx - beginx) + 1;
-  int h = ABS(lasty - beginy) + 1;
+  int w = abs(lastx - beginx) + 1;
+  int h = abs(lasty - beginy) + 1;
 
   Gui::checkCropValues(x, y, w, h);
 }
@@ -217,8 +222,8 @@ void Crop::release(View *view)
   int overscroll = Bitmap::main->overscroll;
   int x = beginx - overscroll;
   int y = beginy - overscroll;
-  int w = ABS(lastx - beginx) + 1;
-  int h = ABS(lasty - beginy) + 1;
+  int w = abs(lastx - beginx) + 1;
+  int h = abs(lasty - beginy) + 1;
 
   Gui::checkCropValues(x, y, w, h);
 }

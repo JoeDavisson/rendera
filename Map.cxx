@@ -92,8 +92,10 @@ void Map::line(int x1, int y1, int x2, int y2, int c)
   inx = dx > 0 ? 1 : -1;
   iny = dy > 0 ? 1 : -1;
 
-  dx = ABS(dx);
-  dy = ABS(dy);
+  using std::abs ;
+
+  dx = abs(dx);
+  dy = abs(dy);
 
   if(dx >= dy)
   {
@@ -141,8 +143,9 @@ void Map::line(int x1, int y1, int x2, int y2, int c)
 
 void Map::oval(int x1, int y1, int x2, int y2, int c)
 {
-  int w = ABS(x2 - x1);
-  int h = ABS(y2 - y1);
+  using std::abs ;
+  int w = abs(x2 - x1);
+  int h = abs(y2 - y1);
   int x, y;
   int ex, ey;
 
@@ -152,10 +155,11 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
   int64_t a2, b2;
   int64_t s, t;
 
+  using std::swap ;
   if(x1 > x2)
-    SWAP(&x1, &x2);
+    swap(x1, x2);
   if(y1 > y2)
-    SWAP(&y1, &y2);
+    swap(y1, y2);
 
   ex = (w & 1);
   ey = (h & 1);
@@ -236,8 +240,9 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
 
 void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
 {
-  int w = ABS(x2 - x1);
-  int h = ABS(y2 - y1);
+  using std::abs ;
+  int w = abs(x2 - x1);
+  int h = abs(y2 - y1);
   int x, y;
   int ex, ey;
 
@@ -247,10 +252,11 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
   int64_t a2, b2;
   int64_t s, t;
 
+  using std::swap ;
   if(x1 > x2)
-    SWAP(&x1, &x2);
+    swap(x1, x2);
   if(y1 > y2)
-    SWAP(&y1, &y2);
+    swap(y1, y2);
 
   ex = (w & 1);
   ey = (h & 1);
@@ -329,10 +335,11 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
 
 void Map::rect(int x1, int y1, int x2, int y2, int c)
 {
+  using std::swap ;
   if(x1 > x2)
-    SWAP(&x1, &x2);
+    swap(x1, x2);
   if(y1 > y2)
-    SWAP(&y1, &y2);
+    swap(y1, y2);
 
   if(x1 < 0)
     x1 = 0;
@@ -364,10 +371,11 @@ void Map::rect(int x1, int y1, int x2, int y2, int c)
 
 void Map::rectfill(int x1, int y1, int x2, int y2, int c)
 {
+  using std::swap ;
   if(x1 > x2)
-    SWAP(&x1, &x2);
+    swap(x1, x2);
   if(y1 > y2)
-    SWAP(&y1, &y2);
+    swap(y1, y2);
 
   for(; y1 <= y2; y1++)
     hline(x1, y1, x2, c);

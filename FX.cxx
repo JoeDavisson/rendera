@@ -332,9 +332,12 @@ namespace ValueStretch
         g = ((ga * gg) + (g * (255 - gg))) / 255;
         b = ((ba * bb) + (b * (255 - bb))) / 255;
 
-        r = MIN(MAX(r, 0), 255);
-        g = MIN(MAX(g, 0), 255);
-        b = MIN(MAX(b, 0), 255);
+        using std::min ;
+        using std::max ;
+
+        r = min(max(r, 0), 255);
+        g = min(max(g, 0), 255);
+        b = min(max(b, 0), 255);
 
         bmp->setpixel(x, y, makeRgb(r, g, b), 0);
       }
@@ -602,9 +605,12 @@ namespace CorrectionMatrix
         int ga = (r * 4 + g * 8 + b * 1) / 13;
         int ba = (r * 2 + g * 4 + b * 8) / 14;
 
-        ra = MAX(MIN(ra, 255), 0);
-        ga = MAX(MIN(ga, 255), 0);
-        ba = MAX(MIN(ba, 255), 0);
+        using std::min ;
+        using std::max ;
+
+        ra = max(min(ra, 255), 0);
+        ga = max(min(ga, 255), 0);
+        ba = max(min(ba, 255), 0);
 
         Blend::rgbToHsv(ra, ga, ba, &h, &s, &v);
         Blend::hsvToRgb(h, sat, val, &ra, &ga, &ba);
@@ -688,9 +694,12 @@ namespace Restore
         g = 255 * powf((float)g / 255, ga);
         b = 255 * powf((float)b / 255, ba);
 
-        r = MAX(MIN(r, 255), 0);
-        g = MAX(MIN(g, 255), 0);
-        b = MAX(MIN(b, 255), 0);
+        using std::min ;
+        using std::max ;
+
+        r = max(min(r, 255), 0);
+        g = max(min(g, 255), 0);
+        b = max(min(b, 255), 0);
 
         bmp->setpixel(x, y, makeRgb(r, g, b), 0);
       }
@@ -997,8 +1006,10 @@ namespace ApplyPalette
 
         for(i = 0; i < 3; i++)
         {
+          using std::min ;
+          using std::max ;
           n[i] = v[i] + last[i] + prev[i][x];
-          n[i] = MAX(MIN(n[i], 65535), 0);
+          n[i] = max(min(n[i], 65535), 0);
         }
 
         const int r = unfix_gamma[n[0]];

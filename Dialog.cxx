@@ -403,8 +403,9 @@ namespace Editor
       storeUndo();
       begin = ramp_begin;
       end = *(int *)var;
+      using std::swap ;
       if(begin > end)
-        SWAP(&begin, &end);
+        swap(begin, end);
       int num = end - begin;
 
       if(ramp_started == 1)
