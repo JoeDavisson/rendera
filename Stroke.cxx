@@ -158,9 +158,9 @@ void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
   y2 *= zoom;
 
   if(x2 < x1)
-    SWAP(x1, x2);
+    SWAP(&x1, &x2);
   if(y2 < y1)
-    SWAP(y1, y2);
+    SWAP(&y1, &y2);
 
   x1 -= r;
   y1 -= r;
@@ -181,9 +181,9 @@ void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
 void Stroke::size(int x1, int y1, int x2, int y2)
 {
   if(x1 > x2)
-    SWAP(x1, x2);
+    SWAP(&x1, &x2);
   if(y1 > y2)
-    SWAP(y1, y2);
+    SWAP(&y1, &y2);
 
   this->x1 = x1;
   this->y1 = y1;

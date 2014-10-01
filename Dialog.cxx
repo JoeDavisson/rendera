@@ -404,7 +404,7 @@ namespace Editor
       begin = ramp_begin;
       end = *(int *)var;
       if(begin > end)
-        SWAP(begin, end);
+        SWAP(&begin, &end);
       int num = end - begin;
 
       if(ramp_started == 1)

@@ -153,9 +153,9 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
   int64_t s, t;
 
   if(x1 > x2)
-    SWAP(x1, x2);
+    SWAP(&x1, &x2);
   if(y1 > y2)
-    SWAP(y1, y2);
+    SWAP(&y1, &y2);
 
   ex = (w & 1);
   ey = (h & 1);
@@ -248,9 +248,9 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
   int64_t s, t;
 
   if(x1 > x2)
-    SWAP(x1, x2);
+    SWAP(&x1, &x2);
   if(y1 > y2)
-    SWAP(y1, y2);
+    SWAP(&y1, &y2);
 
   ex = (w & 1);
   ey = (h & 1);
@@ -330,9 +330,9 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
 void Map::rect(int x1, int y1, int x2, int y2, int c)
 {
   if(x1 > x2)
-    SWAP(x1, x2);
+    SWAP(&x1, &x2);
   if(y1 > y2)
-    SWAP(y1, y2);
+    SWAP(&y1, &y2);
 
   if(x1 < 0)
     x1 = 0;
@@ -365,9 +365,9 @@ void Map::rect(int x1, int y1, int x2, int y2, int c)
 void Map::rectfill(int x1, int y1, int x2, int y2, int c)
 {
   if(x1 > x2)
-    SWAP(x1, x2);
+    SWAP(&x1, &x2);
   if(y1 > y2)
-    SWAP(y1, y2);
+    SWAP(&y1, &y2);
 
   for(; y1 <= y2; y1++)
     hline(x1, y1, x2, c);

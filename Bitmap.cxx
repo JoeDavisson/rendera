@@ -130,7 +130,7 @@ void Bitmap::clear(int c)
 void Bitmap::hline(int x1, int y, int x2, int c, int t)
 {
   if(x1 > x2)
-    SWAP(x1, x2);
+    SWAP(&x1, &x2);
 
   if(y < ct || y > cb)
     return;
@@ -229,9 +229,9 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
 void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
 {
   if(x1 > x2)
-    SWAP(x1, x2);
+    SWAP(&x1, &x2);
   if(y1 > y2)
-    SWAP(y1, y2);
+    SWAP(&y1, &y2);
 
   if(x1 > cr)
     return;
@@ -259,9 +259,9 @@ void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
 void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c, int t)
 {
   if(x1 > x2)
-    SWAP(x1, x2);
+    SWAP(&x1, &x2);
   if(y1 > y2)
-    SWAP(y1, y2);
+    SWAP(&y1, &y2);
 
   if(x1 > cr)
     return;
@@ -335,7 +335,7 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 void Bitmap::xorHline(int x1, int y, int x2)
 {
   if(x1 > x2)
-    SWAP(x1, x2);
+    SWAP(&x1, &x2);
 
   if(y < ct || y > cb)
     return;
@@ -355,9 +355,9 @@ void Bitmap::xorHline(int x1, int y, int x2)
 void Bitmap::xorRect(int x1, int y1, int x2, int y2)
 {
   if(x1 > x2)
-    SWAP(x1, x2);
+    SWAP(&x1, &x2);
   if(y1 > y2)
-    SWAP(y1, y2);
+    SWAP(&y1, &y2);
 
   if(x1 > cr)
     return;
@@ -387,9 +387,9 @@ void Bitmap::xorRect(int x1, int y1, int x2, int y2)
 void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
 {
   if(x1 > x2)
-    SWAP(x1, x2);
+    SWAP(&x1, &x2);
   if(y1 > y2)
-    SWAP(y1, y2);
+    SWAP(&y1, &y2);
 
   if(x1 > cr)
     return;

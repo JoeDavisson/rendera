@@ -25,6 +25,40 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <climits>
 #include "endian.h"
 
+// convenience functions
+inline int MIN(const int &x, const int &y)
+{
+  return x < y ? x : y;
+}
+
+inline int MAX(const int &x, const int &y)
+{
+  return x > y ? x : y;
+}
+
+inline int MID(const int &x, const int &y, const int &z)
+{
+  return MAX(x, MIN(y, z));
+}
+
+inline void SWAP(int *x, int *y)
+{
+  const int z = *x;
+  *x = *y;
+  *y = z;
+}
+
+inline int SIGN(const int &x)
+{
+  return (1 | ( x >> ( sizeof(int) * CHAR_BIT - 1))); 
+}
+
+inline int ABS(const int &x)
+{
+  const int mask = (x >> sizeof(int) * CHAR_BIT - 1);
+  return (x + mask) ^ mask;
+}
+
 // fast random number seed
 extern int seed;
 

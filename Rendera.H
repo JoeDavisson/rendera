@@ -45,16 +45,5 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // include commonly-used inline functions for all modules
 #include "Inline.H"
 
-// macros
-#define MIN(x, y)          (((x) < (y)) ? (x) : (y))
-#define MAX(x, y)          (((x) > (y)) ? (x) : (y))
-#define MID(a, b, c)       (MAX(a, MIN(b, c)))
-#define SWAP(a, b)         { int c = (a); (a) = (b); (b) = c; }
-
-/* http://graphics.stanford.edu/~seander/bithacks.html#CopyIntegerSign */
-#define SIGN(v)            ( +1 | ( v >> ( sizeof(v)*CHAR_BIT-1) ) )
-
-#define ABS(a)             (((a) > 0) ? (a) : -(a))
-
 #endif
 
