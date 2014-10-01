@@ -1,0 +1,167 @@
+/* rendera/test/numerics.C */
+
+#include <algorithm>
+#include <cassert>
+#include <climits>
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
+#include <stdint.h>
+
+
+#define MIN(x, y)          (((x) > (y)) ? (y) : (x))
+#define MAX(x, y)          (((x) < (y)) ? (y) : (x))
+#define MID(a, b, c)       (MAX(a, MIN(b, c)))
+#define SWAP(a, b)         { int c = (a); (a) = (b); (b) = c; }
+#define SIGN(a)            (((a) > 0) ? 1 : -1)
+#define ABS(a)             (((a) > 0) ? (a) : -(a))
+
+
+/* http://graphics.stanford.edu/~seander/bithacks.html#CopyIntegerSign */
+#define SIGN_BITHACKS(v) ( +1 | ( v >> ( sizeof(v)*CHAR_BIT-1) ) )
+
+
+namespace
+{
+    template< typename T >
+    inline
+    int
+    _sign( T const&v )
+    {
+        static int const n( sizeof( T ) * CHAR_BIT - 1 );
+        return +1 | ( v >> n ) ;
+    }
+
+    static uint64_t const billion = uint64_t( 1000000000 );
+
+    uint64_t
+    _nsec( timespec const&o )
+    {
+        uint64_t ret = 0 ;
+        return
+            ( uint64_t( o.tv_sec ) * billion ) +
+            ( uint64_t( o.tv_nsec ) )
+            ;
+        return ret ;
+    }
+
+    timespec
+    _timespec( uint64_t const&nsec )
+    {
+        timespec ret ;
+        ret.tv_sec = ( nsec / billion );
+        ret.tv_nsec = ( nsec % billion );
+        return ret ;        
+    }
+
+    timespec
+    _now( void )
+    {
+        timespec ret ;
+        int stat = clock_gettime( CLOCK_REALTIME, &ret );
+        assert( 0 == stat );
+        return ret ;
+    }
+
+    timespec
+    _duration( timespec const&start, timespec const&stop )
+    {
+        return _timespec( _nsec( stop ) - _nsec( start ) );
+    }
+
+    timespec
+    _duration( timespec const& start )
+    {
+        return _duration( start, _now() );
+    }
+
+    std::ostream&
+    operator<<( std::ostream&os, timespec const&tp )
+    {
+        return
+            os
+            << std::dec
+            << "{ tv_sec: " << tp.tv_sec
+            << ", tv_nsec: " << tp.tv_nsec
+            << " }"
+            ;
+    }
+}
+
+
+int
+main( int, char** )
+{
+    std::cout << std::endl ;
+
+    size_t const n( 5000000 );
+
+    volatile int a = 42, b = 69 ;
+
+    /* SWAP vs std::swap */
+    {
+        timespec start = _now();
+        for( size_t i = 0; i != n; ++i ){
+            SWAP( a, b );
+        }
+        std::cout
+            << std::endl
+            << std::dec << n << " iterations of SWAP takes\n"
+            << _duration( start )
+            << std::endl
+            ;
+    }
+    {
+        timespec start = _now();
+        for( size_t i = 0; i != n; ++i ){
+            std::swap( a, b );
+        }
+        std::cout
+            << std::endl
+            << std::dec << n << " iterations of std::swap takes\n"
+            << _duration( start )
+            << std::endl
+            ;
+    }
+
+    /* SIGN vs SIGN_BITHACKS vs _sign */
+    {
+        timespec start = _now();
+        for( size_t i = 0; i != n; ++i ){
+            a = SIGN( b );
+        }
+        std::cout
+            << std::endl
+            << std::dec << n << " iterations of SIGN takes\n"
+            << _duration( start )
+            << std::endl
+            ;
+    }
+    {
+        timespec start = _now();
+        for( size_t i = 0; i != n; ++i ){
+            a = SIGN_BITHACKS( b );
+        }
+        std::cout
+            << std::endl
+            << std::dec << n << " iterations of SIGN_BITHACKS takes\n"
+            << _duration( start )
+            << std::endl
+            ;
+    }
+    {
+        timespec start = _now();
+        for( size_t i = 0; i != n; ++i ){
+            a = _sign( b );
+        }
+        std::cout
+            << std::endl
+            << std::dec << n << " iterations of _sign takes\n"
+            << _duration( start )
+            << std::endl
+            ;
+    }
+
+
+    return EXIT_SUCCESS ;
+}
