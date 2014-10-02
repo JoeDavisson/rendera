@@ -131,10 +131,8 @@ void Bitmap::clear(int c)
 
 void Bitmap::hline(int x1, int y, int x2, int c, int t)
 {
-  using std::swap ;
-
   if(x1 > x2)
-    swap(x1, x2);
+    std::swap(x1, x2);
 
   if(y < ct || y > cb)
     return;
@@ -183,10 +181,8 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
   inx = dx > 0 ? 1 : -1;
   iny = dy > 0 ? 1 : -1;
 
-  using std::abs ;
-
-  dx = abs(dx);
-  dy = abs(dy);
+  dx = std::abs(dx);
+  dy = std::abs(dy);
 
   if(dx >= dy)
   {
@@ -234,12 +230,10 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
 
 void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
 {
-  using std::swap ;
-
   if(x1 > x2)
-    swap(x1, x2);
+    std::swap(x1, x2);
   if(y1 > y2)
-    swap(y1, y2);
+    std::swap(y1, y2);
 
   if(x1 > cr)
     return;
@@ -254,6 +248,7 @@ void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
 
   hline(x1, y1, x2, c, t);
   hline(x1, y2, x2, c, t);
+
   if(y1 == y2)
     return;
 
@@ -266,12 +261,10 @@ void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
 
 void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c, int t)
 {
-  using std::swap ;
-
   if(x1 > x2)
-    swap(x1, x2);
+    std::swap(x1, x2);
   if(y1 > y2)
-    swap(y1, y2);
+    std::swap(y1, y2);
 
   if(x1 > cr)
     return;
@@ -295,10 +288,8 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
   inx = dx > 0 ? 1 : -1;
   iny = dy > 0 ? 1 : -1;
 
-  using std::abs ;
-
-  dx = abs(dx);
-  dy = abs(dy);
+  dx = std::abs(dx);
+  dy = std::abs(dy);
 
   if(dx >= dy)
   {
@@ -346,10 +337,8 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 
 void Bitmap::xorHline(int x1, int y, int x2)
 {
-  using std::swap ;
-
   if(x1 > x2)
-    swap(x1, x2);
+    std::swap(x1, x2);
 
   if(y < ct || y > cb)
     return;
@@ -368,12 +357,10 @@ void Bitmap::xorHline(int x1, int y, int x2)
 
 void Bitmap::xorRect(int x1, int y1, int x2, int y2)
 {
-  using std::swap ;
-
   if(x1 > x2)
-    swap(x1, x2);
+    std::swap(x1, x2);
   if(y1 > y2)
-    swap(y1, y2);
+    std::swap(y1, y2);
 
   if(x1 > cr)
     return;
@@ -402,12 +389,10 @@ void Bitmap::xorRect(int x1, int y1, int x2, int y2)
 
 void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
 {
-  using std::swap ;
-
   if(x1 > x2)
-    swap(x1, x2);
+    std::swap(x1, x2);
   if(y1 > y2)
-    swap(y1, y2);
+    std::swap(y1, y2);
 
   if(x1 > cr)
     return;
@@ -779,12 +764,10 @@ void Bitmap::fastStretch(Bitmap *dest,
   int dx, dy, e, d, dx2;
   int sx, sy;
 
-  using std::abs ;
-
-  dx = abs(yd2 - yd1);
-  dy = abs(ys2 - ys1);
-  sx = SIGN(yd2 - yd1);
-  sy = SIGN(ys2 - ys1);
+  dx = std::abs(yd2 - yd1);
+  dy = std::abs(ys2 - ys1);
+  sx = FAST_SIGN(yd2 - yd1);
+  sy = FAST_SIGN(ys2 - ys1);
   dy <<= 1;
   e = dy - dx;
   dx2 = dx << 1;
@@ -795,10 +778,10 @@ void Bitmap::fastStretch(Bitmap *dest,
     int sx_1, sy_1;
     int *p, *q;
 
-    dx_1 = abs(xd2 - xd1);
-    dy_1 = abs(xs2 - xs1);
-    sx_1 = SIGN(xd2 - xd1);
-    sy_1 = SIGN(xs2 - xs1);
+    dx_1 = std::abs(xd2 - xd1);
+    dy_1 = std::abs(xs2 - xs1);
+    sx_1 = FAST_SIGN(xd2 - xd1);
+    sy_1 = FAST_SIGN(xs2 - xs1);
     dy_1 <<= 1;
     e_1 = dy_1 - dx_1;
     dx2_1 = dx_1 << 1;

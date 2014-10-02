@@ -371,11 +371,9 @@ void Palette::set3LevelRGB()
     {
       for(b = 0; b < 3; b++)
       {
-        using std::min ;
-        using std::max ;
-        data[index++] = makeRgb(min(r * 128, 255),
-                                min(g * 128, 255),
-                                min(b * 128, 255));
+        data[index++] = makeRgb(std::min(r * 128, 255),
+                                std::min(g * 128, 255),
+                                std::min(b * 128, 255));
       }
     }
   }

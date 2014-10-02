@@ -31,12 +31,10 @@ namespace
 {
   bool inbox(int x, int y, int x1, int y1, int x2, int y2)
   {
-    using std::swap ;
-
     if(x1 > x2)
-      swap(x1, x2);
+      std::swap(x1, x2);
     if(y1 > y2)
-      swap(y1, y2);
+      std::swap(y1, y2);
 
     if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
       return 1;
@@ -46,12 +44,10 @@ namespace
 
   void absrect(int *x1, int *y1, int *x2, int *y2)
   {
-    using std::swap ;
-
     if(*x1 > *x2)
-      swap(x1, x2);
+      std::swap(x1, x2);
     if(*y1 > *y2)
-      swap(y1, y2);
+      std::swap(y1, y2);
 
     if(*x1 < Bitmap::main->cl)
       *x1 = Bitmap::main->cl;
@@ -104,29 +100,28 @@ void Crop::push(View *view)
       }
       else
       {
-        using std::abs ;
         if(view->imgx < beginx)
         {
           side = 0;
-          offset = abs(view->imgx - beginx);
+          offset = std::abs(view->imgx - beginx);
           resize_started = 1;
         }
         else if(view->imgx > lastx)
         {
           side = 1;
-          offset = abs(view->imgx - lastx);
+          offset = std::abs(view->imgx - lastx);
           resize_started = 1;
         }
         else if(view->imgy < beginy)
         {
           side = 2;
-          offset = abs(view->imgy - beginy);
+          offset = std::abs(view->imgy - beginy);
           resize_started = 1;
         }
         else if(view->imgy > lasty)
         {
           side = 3;
-          offset = abs(view->imgy - lasty);
+          offset = std::abs(view->imgy - lasty);
           resize_started = 1;
         }
 

@@ -477,9 +477,8 @@ Bitmap *File::loadBMP(const char *fn, int overscroll)
   if(h >= 0)
     negy = 1;
 
-  using std::abs ;
-  w = abs(w);
-  h = abs(h);
+  w = std::abs(w);
+  h = std::abs(h);
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
 

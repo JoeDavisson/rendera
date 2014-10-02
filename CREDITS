@@ -8,4 +8,5 @@ Rubicks <rubicks00@gmail.com>
   -program organization/refactoring
   -rgba_t related methods in inline.h
   -color quantization improvement ideas
+  -got rid of macros for favor of standard library methods
 

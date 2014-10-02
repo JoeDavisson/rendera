@@ -157,11 +157,10 @@ void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
   x2 *= zoom;
   y2 *= zoom;
 
-  using std::swap ;
   if(x2 < x1)
-    swap(x1, x2);
+    std::swap(x1, x2);
   if(y2 < y1)
-    swap(y1, y2);
+    std::swap(y1, y2);
 
   x1 -= r;
   y1 -= r;
@@ -181,11 +180,10 @@ void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
 
 void Stroke::size(int x1, int y1, int x2, int y2)
 {
-  using std::swap ;
   if(x1 > x2)
-    swap(x1, x2);
+    std::swap(x1, x2);
   if(y1 > y2)
-    swap(y1, y2);
+    std::swap(y1, y2);
 
   this->x1 = x1;
   this->y1 = y1;

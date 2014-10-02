@@ -88,15 +88,15 @@ main( int, char** )
 
     volatile int a = 42, b = 69 ;
 
-    /* SIGN vs sign */
+    /* FAST_SIGN vs sign */
     {
         timespec start = _now();
         for( size_t i = 0; i != n; ++i ){
-            a = SIGN( b );
+            a = FAST_SIGN( b );
         }
         std::cout
             << std::endl
-            << std::dec << n << " iterations of SIGN takes\n"
+            << std::dec << n << " iterations of FAST_SIGN takes\n"
             << _duration( start )
             << std::endl
             ;
@@ -114,9 +114,9 @@ main( int, char** )
             ;
     }
 
-    assert( -1 == SIGN( -42 ) );
-    assert(  1 == SIGN(  42 ) );
-    assert(  1 == SIGN(   0 ) );
+    assert( -1 == FAST_SIGN( -42 ) );
+    assert(  1 == FAST_SIGN(  42 ) );
+    assert(  1 == FAST_SIGN(   0 ) );
 
     assert( -1 == sign( -42 ) );
     assert(  1 == sign(  42 ) );

@@ -114,11 +114,9 @@ int Blend::darken(const int &c1, const int &c2, const int &t)
   g = rgba1.g - g * (255 - t) / 255;
   b = rgba1.b - b * (255 - t) / 255;
 
-  using std::max ;
-
-  r = max(r, 0);
-  g = max(g, 0);
-  b = max(b, 0);
+  r = std::max(r, 0);
+  g = std::max(g, 0);
+  b = std::max(b, 0);
 
   return makeRgba(r, g, b, rgba1.a);
 }
@@ -132,11 +130,9 @@ int Blend::lighten(const int &c1, const int &c2, const int &t)
   int g = rgba1.g + (rgba2.g * (255 - t)) / 255;
   int b = rgba1.b + (rgba2.b * (255 - t)) / 255;
 
-  using std::min ;
-
-  r = min(r, 255);
-  g = min(g, 255);
-  b = min(b, 255);
+  r = std::min(r, 255);
+  g = std::min(g, 255);
+  b = std::min(b, 255);
 
   return makeRgba(r, g, b, rgba1.a);
 }
@@ -299,11 +295,8 @@ int Blend::invert(const int &c1, const int &, const int &)
 // val 0-255
 void Blend::rgbToHsv(const int &r, const int &g, const int &b, int *h, int *s, int *v)
 {
-  using std::max ;
-  using std::min ;
-
-  int _max = max(r, max(g, b));
-  int _min = min(r, min(g, b));
+  int _max = std::max(r, std::max(g, b));
+  int _min = std::min(r, std::min(g, b));
   int delta = _max - _min ;
 
   *v = _max;
