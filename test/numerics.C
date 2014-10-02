@@ -4,11 +4,11 @@
 
 #include <algorithm>
 #include <cassert>
-/* #include <climits> */
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
 #include <stdint.h>
+#include <typeinfo>
 
 #define FAST_SIGN(v) ( 1 | ( v >> ( sizeof(v) * CHAR_BIT - 1)))
 
@@ -115,10 +115,29 @@ main( int, char** )
             ;
     }
 
-    assert( -1 == FAST_SIGN( -42 ) );
-    assert(  1 == FAST_SIGN(  42 ) );
-    assert(  1 == FAST_SIGN(   0 ) );
+    /* FAST_SIGN works for integral types only */
+    assert( -1 == FAST_SIGN(char (-42)) );
+    assert(  1 == FAST_SIGN(char ( 42)) );
+    assert(  1 == FAST_SIGN(char (  0)) );
+    assert( -1 == FAST_SIGN(short(-42)) );
+    assert(  1 == FAST_SIGN(short( 42)) );
+    assert(  1 == FAST_SIGN(short(  0)) );
+    assert( -1 == FAST_SIGN(int  (-42)) );
+    assert(  1 == FAST_SIGN(int  ( 42)) );
+    assert(  1 == FAST_SIGN(int  (  0)) );
+    assert( -1 == FAST_SIGN(long (-42)) );
+    assert(  1 == FAST_SIGN(long ( 42)) );
+    assert(  1 == FAST_SIGN(long (  0)) );
 
+    /* sign works for all numeric type, returns the type it was passed */
+    assert( typeid(char)   == typeid(sign(char   (-42))));
+    assert( typeid(int)    == typeid(sign(int    (-42))));
+    assert( typeid(short)  == typeid(sign(short  (-42))));
+    assert( typeid(long)   == typeid(sign(long   (-42))));
+    assert( typeid(float)  == typeid(sign(float  (-42))));
+    assert( typeid(double) == typeid(sign(double (-42))));
+
+    /* homogeneous type comparisons */
     assert( -1 == sign( -42 ) );
     assert(  1 == sign(  42 ) );
     assert(  1 == sign(   0 ) );
@@ -126,6 +145,15 @@ main( int, char** )
     assert( -1.0 == sign( -42.0 ) );
     assert(  1.0 == sign(  42.0 ) );
     assert(  1.0 == sign(   0.0 ) );
+
+    /* heterogenous type comparisons */
+    assert( -1.0 == sign( -42 ) );
+    assert(  1.0 == sign(  42 ) );
+    assert(  1.0 == sign(   0 ) );
+
+    assert( -1 == sign( -42.0 ) );
+    assert(  1 == sign(  42.0 ) );
+    assert(  1 == sign(   0.0 ) );
 
 
     return EXIT_SUCCESS ;
