@@ -3,7 +3,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
 #AM_CXXFLAGS = -Wall -Wno-unused -fmax-errors=5
-AM_CPPFLAGS = -I$(srcdir)/octree
 AM_CXXFLAGS = -Wall -Wextra -Werror -pedantic-errors # -rdynamic
 
 
