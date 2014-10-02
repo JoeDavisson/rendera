@@ -4,7 +4,7 @@ Rendera is a painting program suitable for photo-retouching and making seamless 
 
 Should work on any platform supporting FLTK, (with a possible performance penalty if Xlib is not available). Eventually we should have optimized versions for Win/Mac, but we aren't quite there yet.
 
-To compile, use "autoreconf -vfi" followed by "./configure" then "make", and optionally "make check" to run some unit tests. You will need to have libjpeg and libpng installed first.
+To compile, use "autoreconf -vfi" followed by "./configure" then "make", and optionally "make check" to run some unit tests. You will need to have FLTK 1.3, libjpeg, and libpng installed first.
 
 ![Screenshot](/screenshots/screenshot.png "Screenshot")
 
