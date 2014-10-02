@@ -10,6 +10,7 @@
 #include <iostream>
 #include <stdint.h>
 
+#define FAST_SIGN(v) ( 1 | ( v >> ( sizeof(v) * CHAR_BIT - 1)))
 
 namespace
 {

@@ -26,8 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <stdint.h>
 #include "endian.h"
 
-#define FAST_SIGN(v) ( 1 | ( v >> ( sizeof(v) * CHAR_BIT - 1)))
-
+// sign, used by fastStretch in Bitmap.cxx
 template< typename T >
 inline T sign( T const &v )
 {
