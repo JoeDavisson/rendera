@@ -36,6 +36,12 @@ public:
   void clear(int);
   void setpixel(int, int, int);
   int getpixel(int, int);
+
+  void setAALevel(int);
+  void blendAA(int, int, int);
+  void setpixelAA(int, int, int);
+  void hlineAA(int, int, int, int);
+
   void line(int, int, int, int, int);
   void oval(int, int, int, int, int);
   void ovalfill(int, int, int, int, int);
