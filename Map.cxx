@@ -24,8 +24,6 @@ Map *Map::main;
 
 namespace
 {
-  int aa_level = 0;
-
   // helper for polyfill
   inline int isLeft(const int *x1, const int *y1, const int *x2,
                            const int *y2, const int &x3, const int &y3)
@@ -71,12 +69,6 @@ void Map::clear(int c)
 
 void Map::setpixel(int x, int y, int c)
 {
-  if(aa_level > 0)
-  {
-    setpixelAA(x, y, c);
-    return;
-  }
-
   if(x < 0 || x >= w || y < 0 || y >= h)
     return;
 
@@ -91,79 +83,9 @@ int Map::getpixel(int x, int y)
   return *(row[y] + x) & 0xff;
 }
 
-void Map::setAALevel(int level)
-{
-  aa_level = level;
-}
-
-void Map::blendAA(int x, int y, int c)
-{
-  if(x < 0 || x >= w || y < 0 || y >= h)
-    return;
-
-  int c1 = *(row[y] + x);
-  c1 += c;
-  if(c1 > 255)
-    c1 = 255;
-
-  *(row[y] + x) = c1;
-}
-
-void Map::setpixelAA(int x, int y, int c)
-{
-  if(x < 0 || x >= (w << aa_level) ||
-     y < 0 || y >= (h << aa_level))
-    return;
-
-  int uu = (x << 8) >> aa_level;
-  int u1 = uu >> 8;
-  int u = ((uu - (u1 << 8)) << 4) >> 8;
-  int vv = (y << 8) >> aa_level;
-  int v1 = vv >> 8;
-  int v = ((vv - (v1 << 8)) << 4) >> 8;
-
-  int u16 = 16 - u;
-  int v16 = 16 - v;
-
-  int a = (u16 | (u << 8)) * (v16 | (v16 << 8));
-  int b = (u16 | (u << 8)) * (v | (v << 8));
-
-  int f[4];
-
-  f[0] = (a & 0x000001FF);
-  f[1] = (a & 0x01FF0000) >> 16;
-  f[2] = (b & 0x000001FF);
-  f[3] = (b & 0x01FF0000) >> 16;
-
-  int i;
-  for(i = 0; i < 4; i++)
-    f[i] = std::min(((f[i] << 4) >> 8), 255);
-
-  int xx = (x >> aa_level);
-  int yy = (y >> aa_level);
-
-  blendAA(xx, yy, c ? f[0] : 0);
-  blendAA(xx + 1, yy, c ? f[1] : 0);
-  blendAA(xx, yy + 1, c ? f[2] : 0);
-  blendAA(xx + 1, yy + 1, c ? f[3] : 0);
-}
-
-void Map::hlineAA(int x1, int y, int x2, int c)
-{
-  int x;
-
-  for(x = x1; x <= x2; x++)
-    setpixelAA(x, y, c);
-}
-
 void Map::line(int x1, int y1, int x2, int y2, int c)
 {
   int dx, dy, inx, iny, e;
-
-  x1 <<= aa_level;
-  y1 <<= aa_level;
-  x2 <<= aa_level;
-  y2 <<= aa_level;
 
   dx = x2 - x1;
   dy = y2 - y1;
@@ -219,11 +141,6 @@ void Map::line(int x1, int y1, int x2, int y2, int c)
 
 void Map::oval(int x1, int y1, int x2, int y2, int c)
 {
-  x1 <<= aa_level;
-  y1 <<= aa_level;
-  x2 <<= aa_level;
-  y2 <<= aa_level;
-
   int w = std::abs(x2 - x1);
   int h = std::abs(y2 - y1);
   int x, y;
@@ -319,11 +236,6 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
 
 void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
 {
-  x1 <<= aa_level;
-  y1 <<= aa_level;
-  x2 <<= aa_level;
-  y2 <<= aa_level;
-
   int w = std::abs(x2 - x1);
   int h = std::abs(y2 - y1);
   int x, y;
@@ -417,11 +329,6 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
 
 void Map::rect(int x1, int y1, int x2, int y2, int c)
 {
-  x1 <<= aa_level;
-  y1 <<= aa_level;
-  x2 <<= aa_level;
-  y2 <<= aa_level;
-
   if(x1 > x2)
     std::swap(x1, x2);
   if(y1 > y2)
@@ -453,12 +360,6 @@ void Map::rectfill(int x1, int y1, int x2, int y2, int c)
 
 void Map::hline(int x1, int y, int x2, int c)
 {
-  if(aa_level > 0)
-  {
-    hlineAA(x1, y, x2, c);
-    return;
-  }
-
   if(x1 < 0)
     x1 = 0;
   if(x1 > w - 1)
@@ -505,9 +406,9 @@ void Map::polyfill(int *polycachex, int *polycachey, int polycount, int x1, int 
 {
   int x, y, i;
 
-  for(y = (y1 << aa_level); y < (y2 << aa_level); y++)
+  for(y = y1; y < y2; y++)
   {
-    for(x = (x1 << aa_level); x < (x2 << aa_level); x++)
+    for(x = x1; x < x2; x++)
     {
       int inside = 0;
       int *px1 = &polycachex[0];
