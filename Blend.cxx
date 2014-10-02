@@ -295,14 +295,14 @@ int Blend::invert(const int &c1, const int &, const int &)
 // val 0-255
 void Blend::rgbToHsv(const int &r, const int &g, const int &b, int *h, int *s, int *v)
 {
-  int _max = std::max(r, std::max(g, b));
-  int _min = std::min(r, std::min(g, b));
-  int delta = _max - _min ;
+  int max = std::max(r, std::max(g, b));
+  int min = std::min(r, std::min(g, b));
+  int delta = max - min ;
 
-  *v = _max;
+  *v = max;
 
-  if(_max)
-    *s = (delta * 255) / _max;
+  if(max)
+    *s = (delta * 255) / max;
   else
     *s = 0;
 
@@ -312,11 +312,11 @@ void Blend::rgbToHsv(const int &r, const int &g, const int &b, int *h, int *s, i
   }
   else
   {
-    if(r == _max)
+    if(r == max)
       *h = ((g - b) * 255) / delta;
-    else if(g == _max)
+    else if(g == max)
       *h = 512 + ((b - r) * 255) / delta;
-    else if(b == _max)
+    else if(b == max)
       *h = 1024 + ((r - g) * 255) / delta;
 
     if(*h < 0)
