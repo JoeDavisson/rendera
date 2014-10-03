@@ -352,7 +352,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
   Map *map = Map::main;
 
   int r = brush->size / 2;
-  int w, h;
+  int w = 0, h = 0;
 
   if(x - r - 1 < x1)
     x1 = x - r - 1;
@@ -513,7 +513,7 @@ void Stroke::end(int x, int y)
   Map *map = Map::main;
   Brush *brush = Brush::main;
 
-  int w, h;
+  int w = 0, h = 0;
   int i;
 
   if(Bitmap::clone)

@@ -186,7 +186,7 @@ namespace
 
       for(x = stroke->x1; x <= stroke->x2; x++)
       {
-        if(*p)
+        if(*p > 0)
           bmp->setpixel(x, y, brush->color, scaleVal((255 - *p), brush->trans));
 
         p++;

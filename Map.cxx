@@ -722,17 +722,19 @@ void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
         t -= 2 * a2 * (2 * y - 3);
         y--;
       }
-    }
 
-    hlineAA(x1 - x, y1 + y + ey, x1 + x + ex, c);
-    hlineAA(x1 - x, y1 - y, x1 + x + ex, c);
+      hlineAA(x1 - x, y1 + y + ey, x1 + x + ex, c);
+      hlineAA(x1 - x, y1 - y, x1 + x + ex, c);
+    }
   }
-  while(y >= 0);
+  while(y > 1);
+
+  y--;
 
   if(ey)
     hlineAA(x1 - x, y1 + y + ey, x1 + x + ex, c);
 
-  hlineAA(x1 + x, y1 - y, x1 + x + ex, c);
+  hlineAA(x1 - x, y1 - y, x1 + x + ex, c);
 }
 
 void Map::rectAA(int x1, int y1, int x2, int y2, int c)
