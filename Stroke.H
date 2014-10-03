@@ -39,9 +39,13 @@ public:
   void drawBrushLine(int, int, int, int, int);
   void drawBrushRect(int, int, int, int, int);
   void drawBrushOval(int, int, int, int, int);
+  void drawBrushAA(int, int, int);
+  void drawBrushLineAA(int, int, int, int, int);
+  void drawBrushRectAA(int, int, int, int, int);
+  void drawBrushOvalAA(int, int, int, int, int);
   void begin(int, int, int, int, float);
   void draw(int, int, int, int, float);
-  void end();
+  void end(int, int);
   void polyline(int, int, int, int, float);
   void preview(Bitmap *,int, int, float);
 

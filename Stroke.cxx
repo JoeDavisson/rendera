@@ -249,6 +249,71 @@ void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
   }
 }
 
+void Stroke::drawBrushAA(int x, int y, int c)
+{
+  Brush *brush = Brush::main;
+  Map *map = Map::main;
+
+  int i;
+
+  for(i = 0; i < brush->solid_count; i++)
+  {
+    map->setpixelAA(x + (brush->solidx[i] << AA_SHIFT),
+                    y + (brush->solidy[i] << AA_SHIFT), c);
+  }
+}
+
+void Stroke::drawBrushLineAA(int x1, int y1, int x2, int y2, int c)
+{
+  Brush *brush = Brush::main;
+  Map *map = Map::main;
+
+  int i;
+
+//  drawBrushAA(x1 << AA_SHIFT, y1 << AA_SHIFT, c);
+//  drawBrushAA(x2 << AA_SHIFT, y2 << AA_SHIFT, c);
+
+  for(i = 0; i < brush->solid_count; i++)
+  {
+    map->lineAA(x1 + brush->solidx[i],
+                y1 + brush->solidy[i],
+                x2 + brush->solidx[i],
+                y2 + brush->solidy[i], c);
+  }
+}
+
+void Stroke::drawBrushRectAA(int x1, int y1, int x2, int y2, int c)
+{
+  Brush *brush = Brush::main;
+  Map *map = Map::main;
+
+  int i;
+
+  for(i = 0; i < brush->solid_count; i++)
+  {
+    map->rectAA(x1 + brush->solidx[i],
+                y1 + brush->solidy[i],
+                x2 + brush->solidx[i],
+                y2 + brush->solidy[i], c);
+  }
+}
+
+void Stroke::drawBrushOvalAA(int x1, int y1, int x2, int y2, int c)
+{
+  Brush *brush = Brush::main;
+  Map *map = Map::main;
+
+  int i;
+
+  for(i = 0; i < brush->solid_count; i++)
+  {
+    map->ovalAA(x1 + brush->solidx[i],
+                y1 + brush->solidy[i],
+                x2 + brush->solidx[i],
+                y2 + brush->solidy[i], c);
+  }
+}
+
 void Stroke::begin(int x, int y, int ox, int oy, float zoom)
 {
   Brush *brush = Brush::main;
@@ -303,6 +368,10 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
     case 0:
       drawBrushLine(x, y, lastx, lasty, 255);
       makeBlitRect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
+      polycachex[polycount] = x;
+      polycachey[polycount] = y;
+      polycount++;
+      polycount &= 65535;
       break;
     case 1:
       map->line(x, y, lastx, lasty, 255);
@@ -439,11 +508,13 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
   lasty = y;
 }
 
-void Stroke::end()
+void Stroke::end(int x, int y)
 {
   Map *map = Map::main;
+  Brush *brush = Brush::main;
 
   int w, h;
+  int i;
 
   if(Bitmap::clone)
   {
@@ -454,18 +525,118 @@ void Stroke::end()
     Bitmap::main->blit(Bitmap::clone_buffer, x1, y1, 0, 0, w, h);
   }
 
-  switch(type)
+  if(brush->aa)
   {
-    case 1:
-    case 3:
-      polycachex[polycount] = beginx;
-      polycachey[polycount] = beginy;
-      polycount++;
-      polycount &= 65535;
-      map->polyfill(polycachex, polycachey, polycount, x1, y1, x2, y2, 255);
-      break;
-    default:
-      break;
+    map->clear(0);
+
+    switch(type)
+    {
+      case 0:
+        for(i = 1; i < polycount; i++)
+        {
+          drawBrushLineAA(polycachex[i], polycachey[i],
+                          polycachex[i - 1], polycachey[i - 1], 255);
+        }
+        break;
+      case 2:
+        if(origin)
+        {
+          w = (x - beginx);
+          h = (y - beginy);
+          drawBrushLineAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+        }
+        else
+        {
+          drawBrushLineAA(x, y, beginx, beginy, 255);
+        }
+        break;
+      case 1:
+      case 3:
+        polycachex[polycount] = beginx;
+        polycachey[polycount] = beginy;
+        polycount++;
+        polycount &= 65535;
+        map->polyfillAA(polycachex, polycachey, polycount, x1, y1, x2, y2, 255);
+        break;
+      case 4:
+        if(constrain)
+          keepSquare(beginx, beginy, &x, &y);
+
+        if(origin)
+        {
+          w = (x - beginx);
+          h = (y - beginy);
+          drawBrushRectAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+        }
+        else
+        {
+          drawBrushRectAA(x, y, beginx, beginy, 255);
+        }
+        break;
+      case 5:
+        if(constrain)
+          keepSquare(beginx, beginy, &x, &y);
+
+        if(origin)
+        {
+          w = (x - beginx);
+          h = (y - beginy);
+          map->rectfillAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+        }
+        else
+        {
+          map->rectfillAA(x, y, beginx, beginy, 255);
+        }
+        break;
+      case 6:
+        if(constrain)
+          keepSquare(beginx, beginy, &x, &y);
+
+        if(origin)
+        {
+          w = (x - beginx);
+          h = (y - beginy);
+          drawBrushOvalAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+        }
+        else
+        {
+          drawBrushOvalAA(x, y, beginx, beginy, 255);
+        }
+        break;
+      case 7:
+        if(constrain)
+          keepSquare(beginx, beginy, &x, &y);
+
+        if(origin)
+        {
+          w = (x - beginx);
+          h = (y - beginy);
+          map->ovalfillAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+        }
+        else
+        {
+          map->ovalfillAA(x, y, beginx, beginy, 255);
+        }
+        break;
+      default:
+        break;
+    }
+  }
+  else
+  {
+    switch(type)
+    {
+      case 1:
+      case 3:
+        polycachex[polycount] = beginx;
+        polycachey[polycount] = beginy;
+        polycount++;
+        polycount &= 65535;
+        map->polyfill(polycachex, polycachey, polycount, x1, y1, x2, y2, 255);
+        break;
+      default:
+        break;
+    }
   }
 }
 

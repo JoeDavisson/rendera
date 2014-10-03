@@ -80,6 +80,7 @@ namespace Gui
   View *getView();
   int getTool();
   int getClone();
+  void checkPaintMode();
   int getPaintMode();
 }
 

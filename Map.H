@@ -33,6 +33,7 @@ public:
   unsigned char *data;
   unsigned char **row;
 
+  // drawing functions
   void clear(int);
   void setpixel(int, int, int);
   int getpixel(int, int);
@@ -44,6 +45,17 @@ public:
   void hline(int, int, int, int);
   void vline(int, int, int, int);
   void polyfill(int *, int *, int, int, int, int, int, int);
+
+  // antialiased versions
+  void blend(int, int, int);
+  void setpixelAA(int, int, int);
+  void lineAA(int, int, int, int, int);
+  void ovalAA(int, int, int, int, int);
+  void ovalfillAA(int, int, int, int, int);
+  void rectAA(int, int, int, int, int);
+  void rectfillAA(int, int, int, int, int);
+  void hlineAA(int, int, int, int);
+  void polyfillAA(int *, int *, int, int, int, int, int, int);
 
   static Map *main;
 };

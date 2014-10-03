@@ -44,7 +44,7 @@ void Paint::push(View *view)
   {
     if(view->dclick)
     {
-      stroke->end();
+      stroke->end(view->imgx, view->imgy);
       Blend::set(Brush::main->blend);
       Render::begin();
       active = 0;
@@ -84,7 +84,7 @@ void Paint::release(View *view)
 {
   if(active && stroke->type != 3)
   {
-    stroke->end();
+    stroke->end(view->imgx, view->imgy);
     Blend::set(Brush::main->blend);
     Render::begin();
     active = 0;

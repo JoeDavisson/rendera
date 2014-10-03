@@ -267,11 +267,13 @@ void Gui::init()
   paint_mode->textsize(10);
   paint_mode->resize(paint->x() + 8, paint->y() + y1, 96, 24);
   paint_mode->add("Solid");
-  paint_mode->add("Coarse");
-  paint_mode->add("Fine");
+  paint_mode->add("Antialiased");
+  paint_mode->add("Coarse Airbrush");
+  paint_mode->add("Fine Airbrush");
   paint_mode->add("Watercolor");
   paint_mode->add("Chalk");
   paint_mode->value(0);
+  paint_mode->callback((Fl_Callback *)checkPaintMode);
   y1 += 24 + 8;
   paint->resizable(0);
   paint->end();
@@ -890,6 +892,14 @@ int Gui::getTool()
 int Gui::getClone()
 {
   return clone->var;
+}
+
+void Gui::checkPaintMode()
+{
+  if(paint_mode->value() == 1)
+    Brush::main->aa = 1;
+  else
+    Brush::main->aa = 0;
 }
 
 int Gui::getPaintMode()

@@ -30,6 +30,7 @@ namespace Render
   enum
   {
     SOLID,
+    ANTIALIASED,
     COARSE,
     FINE,
     WATERCOLOR,

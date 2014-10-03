@@ -41,6 +41,7 @@ public:
   int color;
   int trans;
   int blend;
+  int aa;
 
   static Brush *main;
 };

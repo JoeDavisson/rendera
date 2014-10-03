@@ -176,6 +176,27 @@ namespace
     }
   }
 
+  void renderAntialiased()
+  {
+    int x, y;
+
+    for(y = stroke->y1; y <= stroke->y2; y++)
+    {
+      unsigned char *p = map->row[y] + stroke->x1;
+
+      for(x = stroke->x1; x <= stroke->x2; x++)
+      {
+        if(*p)
+          bmp->setpixel(x, y, brush->color, scaleVal((255 - *p), brush->trans));
+
+        p++;
+      }
+
+      if(update(y, 64) < 0)
+        break;
+    }
+  }
+
   void renderCoarse()
   {
     int x, y, i;
@@ -539,6 +560,9 @@ void Render::begin()
     case SOLID:
       renderSolid();
       break;
+    case ANTIALIASED:
+      renderAntialiased();
+      break;
     case COARSE:
       renderCoarse();
       break;
@@ -550,6 +574,8 @@ void Render::begin()
       break;
     case CHALK:
       renderChalk();
+      break;
+    default:
       break;
   }
 
