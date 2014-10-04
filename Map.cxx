@@ -24,10 +24,11 @@ Map *Map::main;
 
 namespace
 {
-  inline void _blendAA(Map *map, int x, int y, int c)
+  inline void _blendAA(const Map *map,
+                       const int &x, const int &y, const int &c)
   {
-    if(x < 0 || x >= map->w || y < 0 || y >= map->h)
-      return;
+//    if(x < 0 || x >= map->w || y < 0 || y >= map->h)
+//      return;
 
     int c1 = *(map->row[y] + x);
     c1 += c;
@@ -37,25 +38,26 @@ namespace
     *(map->row[y] + x) = c1;
   }
 
-  inline void _setpixelAA(Map *map, int x, int y, int c)
+  inline void _setpixelAA(const Map *map,
+                          const int &x, const int &y, const int &c)
   {
     if(c == 0 ||
-       x < 0 || x >= (map->w << AA_SHIFT) ||
-       y < 0 || y >= (map->h << AA_SHIFT))
+       x < 0 || x >= ((map->w - 1) << AA_SHIFT) ||
+       y < 0 || y >= ((map->h - 1) << AA_SHIFT))
       return;
 
-    int uu = (x << 8) >> AA_SHIFT;
-    int u1 = uu >> 8;
-    int u = ((uu - (u1 << 8)) << 4) >> 8;
-    int vv = (y << 8) >> AA_SHIFT;
-    int v1 = vv >> 8;
-    int v = ((vv - (v1 << 8)) << 4) >> 8;
+    const int uu = (x << 8) >> AA_SHIFT;
+    const int u1 = uu >> 8;
+    const int u = ((uu - (u1 << 8)) << 4) >> 8;
+    const int vv = (y << 8) >> AA_SHIFT;
+    const int v1 = vv >> 8;
+    const int v = ((vv - (v1 << 8)) << 4) >> 8;
 
-    int u16 = 16 - u;
-    int v16 = 16 - v;
+    const int u16 = 16 - u;
+    const int v16 = 16 - v;
 
-    int a = (u16 | (u << 8)) * (v16 | (v16 << 8));
-    int b = (u16 | (u << 8)) * (v | (v << 8));
+    const int a = (u16 | (u << 8)) * (v16 | (v16 << 8));
+    const int b = (u16 | (u << 8)) * (v | (v << 8));
 
     int f[4];
 
@@ -68,8 +70,8 @@ namespace
     for(i = 0; i < 4; i++)
       f[i] = std::min(((f[i] << 4) >> 8), 255);
 
-    int xx = (x >> AA_SHIFT);
-    int yy = (y >> AA_SHIFT);
+    const int xx = (x >> AA_SHIFT);
+    const int yy = (y >> AA_SHIFT);
 
     _blendAA(map, xx, yy, f[0]);
     _blendAA(map, xx + 1, yy, f[1]);
@@ -77,7 +79,8 @@ namespace
     _blendAA(map, xx + 1, yy + 1, f[3]);
   }
 
-  inline void _hlineAA(Map *map, int x1, int y, int x2, int c)
+  inline void _hlineAA(const Map *map,
+                       const int &x1, const int &y, const int &x2, const int &c)
   {
     int x;
 
