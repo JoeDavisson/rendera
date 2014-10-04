@@ -45,12 +45,10 @@ namespace
 
     const int uu = (x << 8) >> AA_SHIFT;
     const int u = ((uu - ((uu >> 8) << 8)) << 4) >> 8;
+    const int u16 = 16 - u;
     const int vv = (y << 8) >> AA_SHIFT;
     const int v = ((vv - ((vv >> 8) << 8)) << 4) >> 8;
-
-    const int u16 = 16 - u;
     const int v16 = 16 - v;
-
     const int a = (u16 | (u << 8)) * (v16 | (v16 << 8));
     const int b = (u16 | (u << 8)) * (v | (v << 8));
 
@@ -63,7 +61,10 @@ namespace
 
     int i;
     for(i = 0; i < 4; i++)
-      f[i] = std::min(((f[i] << 4) >> 8), 255);
+    {
+      const int z = (f[i] << 4) >> 8;
+      f[i] = 255 ^ ((z ^ 255) & -(z < 255));
+    }
 
     const int xx = (x >> AA_SHIFT);
     const int yy = (y >> AA_SHIFT);
