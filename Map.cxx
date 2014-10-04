@@ -27,9 +27,6 @@ namespace
   inline void _blendAA(const Map *map,
                        const int &x, const int &y, const int &c)
   {
-//    if(x < 0 || x >= map->w || y < 0 || y >= map->h)
-//      return;
-
     int c1 = *(map->row[y] + x);
     c1 += c;
     if(c1 > 255)
@@ -47,11 +44,9 @@ namespace
       return;
 
     const int uu = (x << 8) >> AA_SHIFT;
-    const int u1 = uu >> 8;
-    const int u = ((uu - (u1 << 8)) << 4) >> 8;
+    const int u = ((uu - ((uu >> 8) << 8)) << 4) >> 8;
     const int vv = (y << 8) >> AA_SHIFT;
-    const int v1 = vv >> 8;
-    const int v = ((vv - (v1 << 8)) << 4) >> 8;
+    const int v = ((vv - ((vv >> 8) << 8)) << 4) >> 8;
 
     const int u16 = 16 - u;
     const int v16 = 16 - v;
