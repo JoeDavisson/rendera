@@ -39,20 +39,20 @@ namespace
                           const int &x, const int &y, const int &c)
   {
     if(c == 0 ||
-       x < 0 || x >= ((map->w - 1) << AA_SHIFT) ||
-       y < 0 || y >= ((map->h - 1) << AA_SHIFT))
+       x < 0 || x >= ((map->w - 1) << 2) ||
+       y < 0 || y >= ((map->h - 1) << 2))
       return;
 
-    const int uu = (x << 4) >> AA_SHIFT;
+    const int uu = x << 2;
     const int u = uu - ((uu >> 4) << 4);
     const int u16 = 16 - u;
-    const int vv = (y << 4) >> AA_SHIFT;
+    const int vv = y << 2;
     const int v = vv - ((vv >> 4) << 4);
     const int v16 = 16 - v;
     const int a = (u16 | (u << 8)) * (v16 | (v16 << 8));
     const int b = (u16 | (u << 8)) * (v | (v << 8));
-    const int xx = (x >> AA_SHIFT);
-    const int yy = (y >> AA_SHIFT);
+    const int xx = (x >> 2);
+    const int yy = (y >> 2);
 
     _blendAA(map, xx, yy, (a & 0x000001FF) >> 4);
     _blendAA(map, xx + 1, yy, (a & 0x01FF0000) >> 20);
@@ -493,10 +493,10 @@ void Map::setpixelAA(int x, int y, int c)
 
 void Map::lineAA(int x1, int y1, int x2, int y2, int c)
 {
-  x1 <<= AA_SHIFT;
-  y1 <<= AA_SHIFT;
-  x2 <<= AA_SHIFT;
-  y2 <<= AA_SHIFT;
+  x1 <<= 2;
+  y1 <<= 2;
+  x2 <<= 2;
+  y2 <<= 2;
 
   int dx, dy, inx, iny, e;
 
@@ -554,10 +554,10 @@ void Map::lineAA(int x1, int y1, int x2, int y2, int c)
 
 void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
 {
-  x1 <<= AA_SHIFT;
-  y1 <<= AA_SHIFT;
-  x2 <<= AA_SHIFT;
-  y2 <<= AA_SHIFT;
+  x1 <<= 2;
+  y1 <<= 2;
+  x2 <<= 2;
+  y2 <<= 2;
 
   int w = std::abs(x2 - x1);
   int h = std::abs(y2 - y1);
@@ -656,10 +656,10 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
 
 void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
 {
-  x1 <<= AA_SHIFT;
-  y1 <<= AA_SHIFT;
-  x2 <<= AA_SHIFT;
-  y2 <<= AA_SHIFT;
+  x1 <<= 2;
+  y1 <<= 2;
+  x2 <<= 2;
+  y2 <<= 2;
 
   int ww = std::abs(x2 - x1);
   int hh = std::abs(y2 - y1);
@@ -746,10 +746,10 @@ void Map::rectAA(int x1, int y1, int x2, int y2, int c)
 
 void Map::rectfillAA(int x1, int y1, int x2, int y2, int c)
 {
-  x1 <<= AA_SHIFT;
-  y1 <<= AA_SHIFT;
-  x2 <<= AA_SHIFT;
-  y2 <<= AA_SHIFT;
+  x1 <<= 2;
+  y1 <<= 2;
+  x2 <<= 2;
+  y2 <<= 2;
 
   if(x1 > x2)
     std::swap(x1, x2);
@@ -762,17 +762,17 @@ void Map::rectfillAA(int x1, int y1, int x2, int y2, int c)
 
 void Map::polyfillAA(int *polycachex, int *polycachey, int polycount, int x1, int y1, int x2, int y2, int c)
 {
-  x1 <<= AA_SHIFT;
-  y1 <<= AA_SHIFT;
-  x2 <<= AA_SHIFT;
-  y2 <<= AA_SHIFT;
+  x1 <<= 2;
+  y1 <<= 2;
+  x2 <<= 2;
+  y2 <<= 2;
 
   int x, y, i;
 
   for(i = 0; i < polycount; i++)
   {
-    polycachex[i] <<= AA_SHIFT;
-    polycachey[i] <<= AA_SHIFT;
+    polycachex[i] <<= 2;
+    polycachey[i] <<= 2;
   }
 
   for(y = y1; y < y2; y++)

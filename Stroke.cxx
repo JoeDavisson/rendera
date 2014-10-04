@@ -258,8 +258,8 @@ void Stroke::drawBrushAA(int x, int y, int c)
 
   for(i = 0; i < brush->solid_count; i++)
   {
-    map->setpixelAA(x + (brush->solidx[i] << AA_SHIFT),
-                    y + (brush->solidy[i] << AA_SHIFT), c);
+    map->setpixelAA(x + (brush->solidx[i] << 2),
+                    y + (brush->solidy[i] << 2), c);
   }
 }
 
@@ -269,9 +269,6 @@ void Stroke::drawBrushLineAA(int x1, int y1, int x2, int y2, int c)
   Map *map = Map::main;
 
   int i;
-
-//  drawBrushAA(x1 << AA_SHIFT, y1 << AA_SHIFT, c);
-//  drawBrushAA(x2 << AA_SHIFT, y2 << AA_SHIFT, c);
 
   for(i = 0; i < brush->solid_count; i++)
   {
