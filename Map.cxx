@@ -43,36 +43,21 @@ namespace
        y < 0 || y >= ((map->h - 1) << AA_SHIFT))
       return;
 
-    const int uu = (x << 8) >> AA_SHIFT;
-    const int u = ((uu - ((uu >> 8) << 8)) << 4) >> 8;
+    const int uu = (x << 4) >> AA_SHIFT;
+    const int u = uu - ((uu >> 4) << 4);
     const int u16 = 16 - u;
-    const int vv = (y << 8) >> AA_SHIFT;
-    const int v = ((vv - ((vv >> 8) << 8)) << 4) >> 8;
+    const int vv = (y << 4) >> AA_SHIFT;
+    const int v = vv - ((vv >> 4) << 4);
     const int v16 = 16 - v;
     const int a = (u16 | (u << 8)) * (v16 | (v16 << 8));
     const int b = (u16 | (u << 8)) * (v | (v << 8));
-
-    int f[4];
-
-    f[0] = (a & 0x000001FF);
-    f[1] = (a & 0x01FF0000) >> 16;
-    f[2] = (b & 0x000001FF);
-    f[3] = (b & 0x01FF0000) >> 16;
-
-    int i;
-    for(i = 0; i < 4; i++)
-    {
-      const int z = (f[i] << 4) >> 8;
-      f[i] = 255 ^ ((z ^ 255) & -(z < 255));
-    }
-
     const int xx = (x >> AA_SHIFT);
     const int yy = (y >> AA_SHIFT);
 
-    _blendAA(map, xx, yy, f[0]);
-    _blendAA(map, xx + 1, yy, f[1]);
-    _blendAA(map, xx, yy + 1, f[2]);
-    _blendAA(map, xx + 1, yy + 1, f[3]);
+    _blendAA(map, xx, yy, (a & 0x000001FF) >> 4);
+    _blendAA(map, xx + 1, yy, (a & 0x01FF0000) >> 20);
+    _blendAA(map, xx, yy + 1, (b & 0x000001FF) >> 4);
+    _blendAA(map, xx + 1, yy + 1, (b & 0x01FF0000) >> 20);
   }
 
   inline void _hlineAA(const Map *map,
