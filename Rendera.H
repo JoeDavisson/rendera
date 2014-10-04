@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // include commonly-used inline functions for all modules
 #include "Inline.H"
 
-// antialiasing level, only a value of 2 works at the moment
+// antialiasing level (must be 2 for now)
 #define AA_SHIFT 2
 
 #endif
