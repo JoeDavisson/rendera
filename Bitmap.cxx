@@ -1008,8 +1008,8 @@ Bitmap *Bitmap::rotate(float angle, float scale)
     rowV += dvRow;
     if(y < dest->ct || y > dest->cb)
       continue;
-    int *p = dest->row[y + ((dest->h / 2) - hh)] + bx1 + ((dest->w / 2) - ww);
-    for(x = bx1; x <= bx2; x++, p++)
+//    int *p = dest->row[y + ((dest->h / 2) + hh)] + bx1 + ((dest->w / 2) + ww);
+    for(x = bx1; x <= bx2; x++)
     {
       int uu = u >> 8;
       int vv = v >> 8;
@@ -1018,9 +1018,9 @@ Bitmap *Bitmap::rotate(float angle, float scale)
       if(uu < 0 || uu >= w || vv < 0 || vv >= h)
         continue;
       int c = *(row[vv] + uu);
-      if(x < dest->cl || x > dest->cr || c == 0xFFFF00FF)
+      if(x < dest->cl || x > dest->cr)
         continue;
-      *p = c;
+      dest->setpixelSolid(x, y, c, 0);
     }
   }
 
