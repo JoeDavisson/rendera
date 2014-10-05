@@ -33,7 +33,7 @@ void Blend::set(const int &mode)
   switch(mode)
   {
     case TRANS:
-      current_blend = trans;
+      current_blend = transAll;
       break;
     case DARKEN:
       current_blend = darken;
@@ -57,7 +57,7 @@ void Blend::set(const int &mode)
       current_blend = smoothColor;
       break;
     default:
-      current_blend = trans;
+      current_blend = transAll;
       break;
   }
 }
