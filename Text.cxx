@@ -83,7 +83,6 @@ void Text::push(View *view)
 
   Blend::set(Blend::TRANS);
 
-  active = 0;
   started = 0;
   view->drawMain(1);
 }
@@ -104,7 +103,6 @@ void Text::move(View *view)
     int i;
 
     started = 1;
-    active = 1;
 
     int face = Gui::getFontFace();
     int size = Gui::getFontSize();
@@ -183,13 +181,8 @@ void Text::done(View *view)
 
 void Text::redraw(View *view)
 {
-  if(active)
-  {
-    active = 0;
-    view->drawMain(0);
-    stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
-    view->redraw();
-    active = 1;
-  }
+  view->drawMain(0);
+  stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+  view->redraw();
 }
 
