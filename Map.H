@@ -32,6 +32,8 @@ public:
   int w, h;
   unsigned char *data;
   unsigned char **row;
+
+  // make single-pixel antialised lines appear thicker
   int thick_aa;
 
   // drawing functions

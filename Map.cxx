@@ -555,8 +555,6 @@ void Map::lineAA(int x1, int y1, int x2, int y2, int c)
       y1 += iny;
     }
   }
-
-  _setpixelAA(this, x1, y1, c);
 }
 
 void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
@@ -746,9 +744,9 @@ void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
 void Map::rectAA(int x1, int y1, int x2, int y2, int c)
 {
   lineAA(x1, y1, x2, y1, c);
-  lineAA(x1, y2, x2, y2, c);
-  lineAA(x1, y1, x1, y2, c);
   lineAA(x2, y1, x2, y2, c);
+  lineAA(x2, y2, x1, y2, c);
+  lineAA(x1, y2, x1, y1, c);
 }
 
 void Map::rectfillAA(int x1, int y1, int x2, int y2, int c)
