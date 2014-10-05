@@ -137,13 +137,6 @@ namespace Scale
     Bitmap *bmp = Bitmap::main;
     int overscroll = bmp->overscroll;
     Bitmap *temp = new Bitmap(w, h, overscroll);
-/*
-    bmp->pointStretch(temp,
-                      overscroll, overscroll,
-                      bmp->w - overscroll * 2, bmp->h - overscroll * 2,
-                      0, 0, w, h,
-                      0, 0, 0); 
-*/
 
     bmp->scaleBilinear(temp,
                        overscroll, overscroll,
@@ -194,5 +187,19 @@ void Transform::init()
 void Transform::scale()
 {
   Scale::begin();
+}
+
+void Transform::mirror()
+{
+  pushUndo();
+  Bitmap::main->mirror();
+  Gui::getView()->drawMain(1);
+}
+
+void Transform::flip()
+{
+  pushUndo();
+  Bitmap::main->flip();
+  Gui::getView()->drawMain(1);
 }
 

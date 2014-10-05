@@ -897,6 +897,36 @@ void Bitmap::scaleBilinear(Bitmap *dest,
   while(y < dh);
 }
 
+void Bitmap::mirror()
+{
+  int x, y;
+
+  for(y = 0; y < h; y++)
+  {
+    for(x = 0; x < w / 2; x++)
+    {
+      const int temp = *(row[y] + x);
+      *(row[y] + x) = *(row[y] + w - 1 - x);
+      *(row[y] + w - 1 - x) = temp;
+    }
+  }
+}
+
+void Bitmap::flip()
+{
+  int x, y;
+
+  for(y = 0; y < h / 2; y++)
+  {
+    for(x = 0; x < w; x++)
+    {
+      const int temp = *(row[y] + x);
+      *(row[y] + x) = *(row[h - 1 - y] + x);
+      *(row[h - 1 - y] + x) = temp;
+    }
+  }
+}
+
 void Bitmap::fastStretch(Bitmap *dest,
                           int xs1, int ys1, int xs2, int ys2,
                           int xd1, int yd1, int xd2, int yd2, int bgr_order)

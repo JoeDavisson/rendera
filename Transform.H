@@ -30,6 +30,8 @@ namespace Transform
   void init();
 
   void scale();
+  void mirror();
+  void flip();
 }
 
 #endif

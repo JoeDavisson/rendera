@@ -59,6 +59,8 @@ public:
   void blit(Bitmap *, int, int, int, int, int, int);
   void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, int);
   void scaleBilinear(Bitmap *, int, int, int, int, int, int, int, int);
+  void mirror();
+  void flip();
   void fastStretch(Bitmap *, int, int, int, int, int, int, int, int, int);
 
   static Bitmap *main;
