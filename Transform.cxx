@@ -83,6 +83,7 @@ namespace Scale
   Fl_Double_Window *dialog;
   Field *width;
   Field *height;
+  Fl_Check_Button *wrap;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -141,7 +142,8 @@ namespace Scale
     bmp->scaleBilinear(temp,
                        overscroll, overscroll,
                        bmp->w - overscroll * 2, bmp->h - overscroll * 2,
-                       overscroll, overscroll, w, h); 
+                       overscroll, overscroll, w, h,
+                       wrap->value()); 
 
     delete Bitmap::main;
     Bitmap::main = temp;
@@ -162,17 +164,18 @@ namespace Scale
 
   void init()
   {
-    dialog = new Fl_Double_Window(200, 112, "Scale Image");
+    dialog = new Fl_Double_Window(200, 144, "Scale Image");
     width = new Field(dialog, 88, 8, 72, 24, "Width:", 0);
     height = new Field(dialog, 88, 40, 72, 24, "Height:", 0);
     width->maximum_size(8);
     height->maximum_size(8);
     width->value("640");
     height->value("480");
-    new Separator(dialog, 2, 72, 196, 2, "");
-    ok = new Fl_Button(56, 80, 64, 24, "OK");
+    wrap = new Fl_Check_Button(32, 80, 16, 16, "Wrap Edges");
+    new Separator(dialog, 2, 104, 196, 2, "");
+    ok = new Fl_Button(56, 112, 64, 24, "OK");
     ok->callback((Fl_Callback *)close);
-    cancel = new Fl_Button(128, 80, 64, 24, "Cancel");
+    cancel = new Fl_Button(128, 112, 64, 24, "Cancel");
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end(); 

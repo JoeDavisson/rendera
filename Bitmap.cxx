@@ -754,7 +754,8 @@ void Bitmap::pointStretch(Bitmap *dest,
 // warning: does not clip
 void Bitmap::scaleBilinear(Bitmap *dest,
                            int sx, int sy, int sw, int sh,
-                           int dx, int dy, int dw, int dh)
+                           int dx, int dy, int dw, int dh,
+                           int wrap_edges)
 {
   const float ax = ((float)sw / dw);
   const float ay = ((float)sh / dh);
@@ -826,7 +827,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
     int v2 = v1 + 1;
     if(v2 >= sh)
     {
-      if(Bitmap::wrap)
+      if(wrap_edges)
         v2 -= sh;
       else
         v2--;
@@ -847,7 +848,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
       int u2 = u1 + 1;
       if(u2 >= sw)
       {
-        if(Bitmap::wrap)
+        if(wrap_edges)
           u2 -= sw;
         else
           u2--;
