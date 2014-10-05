@@ -230,7 +230,7 @@ void Quantize::pca(Bitmap *src, int size)
 
     for(i = overscroll; i < src->w - overscroll; i++)
     {
-      struct rgba_t rgba = get_rgba(*p++);
+      struct rgba_t rgba = getRgba(*p++);
       float freq = histogram->read(rgba.r, rgba.g, rgba.b);
 
       if(freq < inc)
@@ -281,7 +281,7 @@ void Quantize::pca(Bitmap *src, int size)
 
     for(i = 0; i < 16777216; i++)
     {
-      struct rgba_t rgba = get_rgba(i);
+      struct rgba_t rgba = getRgba(i);
       float freq = histogram->read(rgba.r, rgba.g, rgba.b);
 
       if(freq > 0)

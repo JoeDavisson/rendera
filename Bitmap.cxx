@@ -30,6 +30,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <algorithm>
 
+extern int *fix_gamma;
+extern int *unfix_gamma;
+
 Bitmap *Bitmap::main;
 Bitmap *Bitmap::preview;
 Bitmap *Bitmap::clone_buffer;
@@ -746,6 +749,152 @@ void Bitmap::pointStretch(Bitmap *dest,
                             255 - geta(c)), bgr_order);
     }
   }
+}
+
+// warning: does not clip
+void Bitmap::bilinearScale(Bitmap *dest,
+                           int sx, int sy, int sw, int sh,
+                           int dx, int dy, int dw, int dh)
+{
+  const float ax = ((float)sw / dw);
+  const float ay = ((float)sh / dh);
+
+  if(sw < 1 || sh < 1)
+    return;
+
+  if(dw < 1 || dh < 1)
+    return;
+
+  // average colors if scaling down
+  int mipx = 1, mipy = 1;
+  if(sw > dw)
+    mipx = (sw / dw);
+  if(sh > dh)
+    mipy = (sh / dh);
+
+  int x, y;
+  int div = mipx * mipy;
+
+  if((mipx > 1) | (mipy > 1))
+  {
+    for(y = 0; y <= sh - mipy; y += mipy)
+    {
+      for(x = 0; x <= sw - mipx; x += mipx)
+      {
+        int r = 0, g = 0, b = 0;
+        int i, j, c;
+        for(j = 0; j < mipy; j++)
+        {
+          for(i = 0; i < mipx; i++)
+          {
+            c = getpixel(sx + x + i, sy + y + j);
+            struct rgba_t rgba = getRgba(c);
+            r += fix_gamma[rgba.r];
+            g += fix_gamma[rgba.g];
+            b += fix_gamma[rgba.b];
+          }
+        }
+        r /= div;
+        g /= div;
+        b /= div;
+        r = unfix_gamma[r];
+        g = unfix_gamma[g];
+        b = unfix_gamma[b];
+        c = makeRgb(r, g, b);
+        for(j = 0; j < mipy; j++)
+        {
+          for(i = 0; i < mipx; i++)
+          {
+            setpixel(sx + x + i, sy + y + j, c, 0);
+          }
+        }
+      }
+    }
+  }
+
+  y = 0;
+
+  do
+  {
+    int *d = dest->row[dy + y] + dx;
+
+    float vv = (y * ay);
+    int v1 = vv;
+    float v = vv - v1;
+    if(sy + v1 >= h - 1)
+      break;
+    int v2 = v1 + 1;
+    if(v2 >= sh)
+    {
+      if(wrap)
+        v2 -= sh;
+      else
+        v2--;
+    }
+
+    int *c[4];
+    c[0] = c[1] = row[sy + v1] + sx;
+    c[2] = c[3] = row[sy + v2] + sx;
+
+   x = 0;
+    do
+    {
+      float uu = (x * ax);
+      int u1 = uu;
+      float u = uu - u1;
+      if(sx + u1 >= w - 1)
+        break;
+      int u2 = u1 + 1;
+      if(u2 >= sw)
+      {
+        if(wrap)
+          u2 -= sw;
+        else
+          u2--;
+      }
+
+      c[0] += u1;
+      c[1] += u2;
+      c[2] += u1;
+      c[3] += u2;
+
+      float f[4];
+
+      f[0] = (1.0f - u) * (1.0f - v);
+      f[1] = u * (1.0f - v);
+      f[2] = (1.0f - u) * v;
+      f[3] = u * v;
+
+      float r = 0.0f, g = 0.0f, b = 0.0f;
+      int i = 0;
+      do
+      {
+        struct rgba_t rgba = getRgba(*c[i]);
+        r += (float)fix_gamma[rgba.r] * f[i];
+        g += (float)fix_gamma[rgba.g] * f[i];
+        b += (float)fix_gamma[rgba.b] * f[i];
+        i++;
+      }
+      while(i < 4);
+      r = unfix_gamma[(int)r];
+      g = unfix_gamma[(int)g];
+      b = unfix_gamma[(int)b];
+
+      *d = makeRgb((int)r, (int)g, (int)b);
+      d++;
+
+      c[0] -= u1;
+      c[1] -= u2;
+      c[2] -= u1;
+      c[3] -= u2;
+
+      x++;
+    }
+    while(x < dw);
+
+    y++;
+  }
+  while(y < dh);
 }
 
 void Bitmap::fastStretch(Bitmap *dest,

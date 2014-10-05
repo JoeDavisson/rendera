@@ -71,7 +71,7 @@ union un_rgba_t
 };
 
 // get rgba values all at once
-inline rgba_t get_rgba( uint32_t const &n )
+inline rgba_t getRgba( uint32_t const &n )
 {
   un_rgba_t u ;
   u.uint32_ = n ;
@@ -153,8 +153,8 @@ inline int getFltkColor(const int &c)
 // 3D quadratic distance
 inline int diff24(const int &c1, const int &c2)
 {
-  const struct rgba_t rgba1 = get_rgba(c1);
-  const struct rgba_t rgba2 = get_rgba(c2);
+  const struct rgba_t rgba1 = getRgba(c1);
+  const struct rgba_t rgba2 = getRgba(c2);
   const int r = rgba1.r - rgba2.r;
   const int g = rgba1.g - rgba2.g;
   const int b = rgba1.b - rgba2.b;

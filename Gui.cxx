@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Dialog.H"
 #include "File.H"
 #include "FX.H"
+#include "Transform.H"
 #include "Separator.H"
 #include "Tool.H"
 #include "Stroke.H"
@@ -169,6 +170,7 @@ void Gui::init()
   menubar->add("File/Save", 0, (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
   menubar->add("File/Quit", 0, (Fl_Callback *)quit, 0, 0);
   menubar->add("Edit/Undo", 0, (Fl_Callback *)Undo::pop, 0, 0);
+  menubar->add("Image/Scale...", 0, (Fl_Callback *)Transform::scale, 0, 0);
   menubar->add("Palette/Load", 0, (Fl_Callback *)File::loadPalette, 0, 0);
   menubar->add("Palette/Save", 0, (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Editor...", 0, (Fl_Callback *)Dialog::editor, 0, FL_MENU_DIVIDER);

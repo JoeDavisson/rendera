@@ -57,6 +57,8 @@ rendera_SOURCES =     \
   ToggleButton.H      \
   Tool.cxx            \
   Tool.H              \
+  Transform.cxx       \
+  Transform.H         \
   Undo.cxx            \
   Undo.H              \
   View.cxx            \

@@ -209,7 +209,7 @@ void Palette::fillTable()
 // return palette index which corresponds to color
 int Palette::lookup(int c)
 {
-  struct rgba_t rgba = get_rgba(c);
+  struct rgba_t rgba = getRgba(c);
 
   return table->read(rgba.r, rgba.g, rgba.b);
 }

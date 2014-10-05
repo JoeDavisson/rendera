@@ -652,7 +652,7 @@ namespace Restore
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        const struct rgba_t rgba = get_rgba(bmp->getpixel(x, y));
+        const struct rgba_t rgba = getRgba(bmp->getpixel(x, y));
 
         rr += rgba.r;
         gg += rgba.g;
@@ -678,7 +678,7 @@ namespace Restore
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        const struct rgba_t rgba = get_rgba(bmp->getpixel(x, y));
+        const struct rgba_t rgba = getRgba(bmp->getpixel(x, y));
         int r = rgba.r;
         int g = rgba.g;
         int b = rgba.b;
@@ -1008,7 +1008,7 @@ namespace ApplyPalette
         const int pal_index = (int)Palette::main->lookup(makeRgb(r, g, b));
         const int c = Palette::main->data[pal_index];
 
-        struct rgba_t rgba = get_rgba(c);
+        struct rgba_t rgba = getRgba(c);
 
         *p = makeRgb(rgba.r, rgba.g, rgba.b);
 

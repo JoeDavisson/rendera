@@ -26,9 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Palette.H"
 #include "Blend.H"
 #include "Brush.H"
-#include "FX.H"
 #include "Undo.H"
 #include "Dialog.H"
+#include "FX.H"
+#include "Transform.H"
 #include "Gui.H"
 #include "Tool.H"
 #include "Paint.H"
@@ -99,9 +100,10 @@ int main(int argc, char *argv[])
   Tool::text = new Text();
 
   File::init();
-  FX::init();
   Undo::init();
   Dialog::init();
+  FX::init();
+  Transform::init();
   Gui::init();
 
   if(argc == 2)
