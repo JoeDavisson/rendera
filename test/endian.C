@@ -12,7 +12,7 @@ main( int, char** )
   assert( 4 == sizeof( rgba_t ) );
   assert( 4 == sizeof( un_rgba_t ) );
 
-  rgba_t rgba = get_rgba( 0x03020100 );
+  rgba_t rgba = getRgba( 0x03020100 );
 
   assert( 1 == sizeof( rgba.r ) );
   assert( 1 == sizeof( rgba.g ) );
