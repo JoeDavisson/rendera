@@ -112,9 +112,9 @@ Bitmap::Bitmap(int width, int height, int overscroll)
   setClip(0, 0, w - 1, h - 1);
 
   for(i = 0; i < 4; i++)
-    rect(overscroll - 1 - i, overscroll - 1 - i, w - overscroll + i, h - overscroll + i, makeRgb(96, 96, 96), 0);
-  rectfill(overscroll + 4, h - overscroll + 4, w - overscroll + 4, h - overscroll + 4 + 7, makeRgb(64, 64, 64), 0);
-  rectfill(w - overscroll + 4, overscroll + 4, w - overscroll + 4 + 7, h - overscroll + 4 + 7, makeRgb(64, 64, 64), 0);
+    rect(overscroll - 1 - i, overscroll - 1 - i, w - overscroll + i, h - overscroll + i, makeRgb(56, 56, 56), 0);
+  rectfill(overscroll + 4, h - overscroll + 4, w - overscroll + 4, h - overscroll + 4 + 7, makeRgb(48, 48, 48), 0);
+  rectfill(w - overscroll + 4, overscroll + 4, w - overscroll + 4 + 7, h - overscroll + 4 + 7, makeRgb(48, 48, 48), 0);
 
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
 }
@@ -901,9 +901,9 @@ void Bitmap::mirror()
 {
   int x, y;
 
-  for(y = 0; y < h; y++)
+  for(y = ct; y <= cb; y++)
   {
-    for(x = 0; x < w / 2; x++)
+    for(x = cl; x < w / 2; x++)
     {
       const int temp = *(row[y] + x);
       *(row[y] + x) = *(row[y] + w - 1 - x);
@@ -916,9 +916,9 @@ void Bitmap::flip()
 {
   int x, y;
 
-  for(y = 0; y < h / 2; y++)
+  for(y = ct; y < h / 2; y++)
   {
-    for(x = 0; x < w; x++)
+    for(x = cl; x <= cr; x++)
     {
       const int temp = *(row[y] + x);
       *(row[y] + x) = *(row[h - 1 - y] + x);
