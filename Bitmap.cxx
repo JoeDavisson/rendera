@@ -826,7 +826,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
     int v2 = v1 + 1;
     if(v2 >= sh)
     {
-      if(wrap)
+      if(Bitmap::wrap)
         v2 -= sh;
       else
         v2--;
@@ -847,7 +847,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
       int u2 = u1 + 1;
       if(u2 >= sw)
       {
-        if(wrap)
+        if(Bitmap::wrap)
           u2 -= sw;
         else
           u2--;
