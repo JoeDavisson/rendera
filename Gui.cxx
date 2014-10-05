@@ -172,6 +172,7 @@ void Gui::init()
   menubar->add("Edit/Undo", 0, (Fl_Callback *)Undo::pop, 0, 0);
   menubar->add("Image/Flip Horizontal", 0, (Fl_Callback *)Transform::mirror, 0, 0);
   menubar->add("Image/Flip Vertical", 0, (Fl_Callback *)Transform::flip, 0, FL_MENU_DIVIDER);
+  menubar->add("Image/Rotate...", 0, (Fl_Callback *)Transform::rotate, 0, 0);
   menubar->add("Image/Scale...", 0, (Fl_Callback *)Transform::scale, 0, 0);
   menubar->add("Palette/Load", 0, (Fl_Callback *)File::loadPalette, 0, 0);
   menubar->add("Palette/Save", 0, (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);

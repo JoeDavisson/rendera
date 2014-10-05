@@ -182,9 +182,75 @@ namespace Scale
   }
 }
 
+namespace Rotate
+{
+  Fl_Double_Window *dialog;
+  Field *angle;
+  Fl_Button *ok;
+  Fl_Button *cancel;
+
+  void begin()
+  {
+    char s[8];
+    snprintf(s, sizeof(s), "0");
+    angle->value(s);
+    dialog->show();
+  }
+
+  void close()
+  {
+    char s[8];
+
+    int a = atoi(angle->value());
+
+    if(a < -359)
+    {
+      snprintf(s, sizeof(s), "%d", -359);
+      angle->value(s);
+      return;
+    }
+
+    if(a > 359)
+    {
+      snprintf(s, sizeof(s), "%d", 359);
+      angle->value(s);
+      return;
+    }
+
+    dialog->hide();
+    int overscroll = Bitmap::main->overscroll;
+    Bitmap *temp = Bitmap::main->rotate((float)a, 1.0f);
+
+    delete Bitmap::main;
+    Bitmap::main = temp;
+
+    delete Map::main;
+    Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
+  }
+
+  void quit()
+  {
+    dialog->hide();
+  }
+
+  void init()
+  {
+    dialog = new Fl_Double_Window(200, 80, "Rotate Image");
+    angle = new Field(dialog, 80, 8, 72, 24, "Angle:", 0);
+    angle->value("0");
+    ok = new Fl_Button(56, 48, 64, 24, "OK");
+    ok->callback((Fl_Callback *)close);
+    cancel = new Fl_Button(128, 48, 64, 24, "Cancel");
+    cancel->callback((Fl_Callback *)quit);
+    dialog->set_modal();
+    dialog->end(); 
+  }
+}
+
 void Transform::init()
 {
   Scale::init();
+  Rotate::init();
 }
 
 void Transform::scale()
@@ -203,6 +269,13 @@ void Transform::flip()
 {
   pushUndo();
   Bitmap::main->flip();
+  Gui::getView()->drawMain(1);
+}
+
+void Transform::rotate()
+{
+  pushUndo();
+  Rotate::begin();
   Gui::getView()->drawMain(1);
 }
 

@@ -18,8 +18,6 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include <math.h>
-
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Palette.H"
@@ -29,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Tool.H"
 
 #include <algorithm>
+#include <cmath>
 
 extern int *fix_gamma;
 extern int *unfix_gamma;
@@ -926,6 +925,106 @@ void Bitmap::flip()
       *(row[h - 1 - y] + x) = temp;
     }
   }
+}
+
+Bitmap *Bitmap::rotate(float angle, float scale)
+{
+  angle += 90;
+  // rotation
+  int duCol = (int)((std::sin(angle * (3.14159f / 180)) * scale) * 256);
+  int dvCol = (int)((std::sin((angle + 90) * (3.14159f / 180)) * scale) * 256);
+  int duRow = -dvCol;
+  int dvRow = duCol;
+  int ww = w / 2;
+  int hh = h / 2;
+
+  int xx = w / 2;
+  int yy = h / 2;
+
+  // origin
+  int ox = xx + ww;
+  int oy = yy + hh;
+	
+  // project new corners
+  int x0 = xx - ox;
+  int y0 = yy - oy;
+  int x1 = xx + (w - 1) - ox;
+  int y1 = yy - oy;
+  int x2 = xx - ox;
+  int y2 = yy + (h - 1) - oy;
+  int x3 = xx + (w - 1) - ox;
+  int y3 = yy + (h - 1) - oy;
+
+  // rotate
+  int newx0 = (int)(x0 * duCol + y0 * duRow) >> 8;
+  int newy0 = (int)(x0 * dvCol + y0 * dvRow) >> 8;
+  int newx1 = (int)(x1 * duCol + y1 * duRow) >> 8;
+  int newy1 = (int)(x1 * dvCol + y1 * dvRow) >> 8;
+  int newx2 = (int)(x2 * duCol + y2 * duRow) >> 8;
+  int newy2 = (int)(x2 * dvCol + y2 * dvRow) >> 8;
+  int newx3 = (int)(x3 * duCol + y3 * duRow) >> 8;
+  int newy3 = (int)(x3 * dvCol + y3 * dvRow) >> 8;
+
+  x0 = newx0 + xx;
+  y0 = newy0 + yy;
+  x1 = newx1 + xx;
+  y1 = newy1 + yy;
+  x2 = newx2 + xx;
+  y2 = newy2 + yy;
+  x3 = newx3 + xx;
+  y3 = newy3 + yy;
+
+  // find new bounding box
+  int bx1 = std::min(x0, std::min(x1, std::min(x2, x3)));
+  int by1 = std::min(y0, std::min(y1, std::min(y2, y3)));
+  int bx2 = std::max(x0, std::max(x1, std::max(x2, x3)));
+  int by2 = std::max(y0, std::max(y1, std::max(y2, y3)));
+  int bw = (bx2 - bx1);
+  int bh = (by2 - by1);
+
+  bw /= 2;
+  bh /= 2;
+
+  Bitmap *dest = new Bitmap(bw, bh, overscroll);
+
+  // draw
+  duCol = (int)((std::sin(angle * (3.14159f / 180)) / scale) * 256);
+  dvCol = (int)((std::sin((angle + 90) * (3.14159f / 180)) / scale) * 256);
+  duRow = -dvCol;
+  dvRow = duCol;
+
+  int rowU = ww << 8;
+  int rowV = hh << 8;
+  rowU -= bw * duCol + bh * duRow;
+  rowV -= bw * dvCol + bh * dvRow;
+
+  int x, y;
+
+  for(y = by1; y <= by2; y++)
+  {
+    int u = rowU;
+    int v = rowV;
+    rowU += duRow;
+    rowV += dvRow;
+    if(y < dest->ct || y > dest->cb)
+      continue;
+    int *p = dest->row[y + ((dest->h / 2) - hh)] + bx1 + ((dest->w / 2) - ww);
+    for(x = bx1; x <= bx2; x++, p++)
+    {
+      int uu = u >> 8;
+      int vv = v >> 8;
+      u += duCol;
+      v += dvCol;
+      if(uu < 0 || uu >= w || vv < 0 || vv >= h)
+        continue;
+      int c = *(row[vv] + uu);
+      if(x < dest->cl || x > dest->cr || c == 0xFFFF00FF)
+        continue;
+      *p = c;
+    }
+  }
+
+  return dest;
 }
 
 void Bitmap::fastStretch(Bitmap *dest,

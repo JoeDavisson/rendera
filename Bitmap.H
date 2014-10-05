@@ -61,6 +61,7 @@ public:
   void scaleBilinear(Bitmap *, int, int, int, int, int, int, int, int, int);
   void mirror();
   void flip();
+  Bitmap *rotate(float, float);
   void fastStretch(Bitmap *, int, int, int, int, int, int, int, int, int);
 
   static Bitmap *main;
