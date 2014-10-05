@@ -30,6 +30,7 @@ namespace Blend
   enum
   {
     TRANS,
+    TRANS_NO_ALPHA,
     DARKEN,
     LIGHTEN,
     COLORIZE,
@@ -43,8 +44,8 @@ namespace Blend
   void target(Bitmap *, const int &, const int &);
   int current(const int &, const int &, const int &);
   int invert(const int &, const int &, const int &);
+  int transNoAlpha(const int &, const int &, const int &);
   int trans(const int &, const int &, const int &);
-  int transAll(const int &, const int &, const int &);
   int darken(const int &, const int &, const int &);
   int lighten(const int &, const int &, const int &);
   int colorize(const int &, const int &, const int &);

@@ -33,7 +33,10 @@ void Blend::set(const int &mode)
   switch(mode)
   {
     case TRANS:
-      current_blend = transAll;
+      current_blend = trans;
+      break;
+    case TRANS_NO_ALPHA:
+      current_blend = transNoAlpha;
       break;
     case DARKEN:
       current_blend = darken;
@@ -57,7 +60,7 @@ void Blend::set(const int &mode)
       current_blend = smoothColor;
       break;
     default:
-      current_blend = transAll;
+      current_blend = trans;
       break;
   }
 }
@@ -74,7 +77,7 @@ int Blend::current(const int &c1, const int &c2, const int &t)
   return (*current_blend)(c1, c2, t);
 }
 
-int Blend::trans(const int &c1, const int &c2, const int &t)
+int Blend::transNoAlpha(const int &c1, const int &c2, const int &t)
 {
   const struct rgba_t rgba1 = getRgba(c1);
   const struct rgba_t rgba2 = getRgba(c2);
@@ -85,7 +88,8 @@ int Blend::trans(const int &c1, const int &c2, const int &t)
                   rgba1.a);
 }
 
-int Blend::transAll(const int &c1, const int &c2, const int &t)
+
+int Blend::trans(const int &c1, const int &c2, const int &t)
 {
   const struct rgba_t rgba1 = getRgba(c1);
   const struct rgba_t rgba2 = getRgba(c2);
@@ -118,7 +122,7 @@ int Blend::darken(const int &c1, const int &c2, const int &t)
   g = std::max(g, 0);
   b = std::max(b, 0);
 
-  return makeRgba(r, g, b, rgba1.a);
+  return makeRgba(r, g, b, rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
 }
 
 int Blend::lighten(const int &c1, const int &c2, const int &t)
@@ -134,7 +138,7 @@ int Blend::lighten(const int &c1, const int &c2, const int &t)
   g = std::min(g, 255);
   b = std::min(b, 255);
 
-  return makeRgba(r, g, b, rgba1.a);
+  return makeRgba(r, g, b, rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
 }
 
 int Blend::colorize(const int &c1, const int &c2, const int &t)
@@ -241,7 +245,7 @@ int Blend::smooth(const int &c1, const int &, const int &t)
   b /= 15;
   a /= 15;
 
-  return Blend::transAll(c1, makeRgba(r, g, b, a), t);
+  return Blend::trans(c1, makeRgba(r, g, b, a), t);
 }
 
 int Blend::smoothColor(const int &c1, const int &, const int &t)

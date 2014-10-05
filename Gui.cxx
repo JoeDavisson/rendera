@@ -384,6 +384,7 @@ void Gui::init()
   blend->textsize(10);
   blend->resize(right->x() + 8, right->y() + y1, 96, 24);
   blend->add("Normal");
+  blend->add("Normal (No Alpha)");
   blend->add("Darken");
   blend->add("Lighten");
   blend->add("Colorize");
