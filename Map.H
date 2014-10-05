@@ -32,6 +32,7 @@ public:
   int w, h;
   unsigned char *data;
   unsigned char **row;
+  int thick_aa;
 
   // drawing functions
   void clear(int);

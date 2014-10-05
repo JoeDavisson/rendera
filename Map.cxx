@@ -28,7 +28,12 @@ namespace
                        const int &x, const int &y, const int &c)
   {
     int c1 = *(map->row[y] + x);
-    c1 += c;
+
+    if(map->thick_aa)
+      c1 += c << 2;
+    else
+      c1 += c;
+
     if(c1 > 255)
       c1 = 255;
 
@@ -96,6 +101,8 @@ Map::Map(int width, int height)
 
   for(i = 0; i < height; i++)
     row[i] = &data[width * i];
+
+  thick_aa = 0;
 }
 
 Map::~Map()
