@@ -122,7 +122,7 @@ int Blend::darken(const int &c1, const int &c2, const int &t)
   g = std::max(g, 0);
   b = std::max(b, 0);
 
-  return makeRgba(r, g, b, rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
+  return makeRgba(r, g, b, rgba1.a);
 }
 
 int Blend::lighten(const int &c1, const int &c2, const int &t)
@@ -138,7 +138,7 @@ int Blend::lighten(const int &c1, const int &c2, const int &t)
   g = std::min(g, 255);
   b = std::min(b, 255);
 
-  return makeRgba(r, g, b, rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
+  return makeRgba(r, g, b, rgba1.a);
 }
 
 int Blend::colorize(const int &c1, const int &c2, const int &t)
