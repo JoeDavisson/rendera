@@ -58,7 +58,7 @@ public:
   void setClip(int, int, int, int);
   void blit(Bitmap *, int, int, int, int, int, int);
   void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, int);
-  void bilinearScale(Bitmap *, int, int, int, int, int, int, int, int);
+  void scaleBilinear(Bitmap *, int, int, int, int, int, int, int, int);
   void fastStretch(Bitmap *, int, int, int, int, int, int, int, int, int);
 
   static Bitmap *main;

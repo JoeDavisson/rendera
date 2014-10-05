@@ -752,7 +752,7 @@ void Bitmap::pointStretch(Bitmap *dest,
 }
 
 // warning: does not clip
-void Bitmap::bilinearScale(Bitmap *dest,
+void Bitmap::scaleBilinear(Bitmap *dest,
                            int sx, int sy, int sw, int sh,
                            int dx, int dy, int dw, int dh)
 {

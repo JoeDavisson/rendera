@@ -145,7 +145,7 @@ namespace Scale
                       0, 0, 0); 
 */
 
-    bmp->bilinearScale(temp,
+    bmp->scaleBilinear(temp,
                        overscroll, overscroll,
                        bmp->w - overscroll * 2, bmp->h - overscroll * 2,
                        overscroll, overscroll, w, h); 
