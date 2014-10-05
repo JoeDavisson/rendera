@@ -24,6 +24,7 @@ Map *Map::main;
 
 namespace
 {
+  // add weighted value to real pixel
   inline void _blendAA(const Map *map,
                        const int &x, const int &y, const int &c)
   {
@@ -40,12 +41,14 @@ namespace
     *(map->row[y] + x) = c1;
   }
 
+  // draw antialiased pixel
+  // each real pixel is treated like 4x4 virtual pixels
   inline void _setpixelAA(const Map *map,
                           const int &x, const int &y, const int &c)
   {
     if(c == 0 ||
-       x < 0 || x >= ((map->w - 1) << 2) ||
-       y < 0 || y >= ((map->h - 1) << 2))
+      x < 0 || x >= ((map->w - 1) << 2) ||
+      y < 0 || y >= ((map->h - 1) << 2))
       return;
 
     const int uu = x << 2;
@@ -65,6 +68,7 @@ namespace
     _blendAA(map, xx + 1, yy + 1, (b & 0x01FF0000) >> 20);
   }
 
+  // draw horizontal antialised line (used by filled oval/rectangle)
   inline void _hlineAA(const Map *map,
                        const int &x1, const int &y, const int &x2, const int &c)
   {
@@ -198,7 +202,6 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
   int x, y;
   int ex, ey;
 
-  // need 64-bit values here, 32-bit will overflow on very large ovals
   int64_t a = w / 2;
   int64_t b = h / 2;
   int64_t a2, b2;
@@ -293,7 +296,6 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
   int x, y;
   int ex, ey;
 
-  // need 64-bit values here, 32-bit will overflow on very large ovals
   int64_t a = w / 2;
   int64_t b = h / 2;
   int64_t a2, b2;
@@ -454,7 +456,8 @@ void Map::vline(int y1, int x, int y2, int c)
   while(y2 >= y1);
 }
 
-void Map::polyfill(int *polycachex, int *polycachey, int polycount, int x1, int y1, int x2, int y2, int c)
+void Map::polyfill(int *polycachex, int *polycachey, int polycount,
+                   int x1, int y1, int x2, int y2, int c)
 {
   int x, y, i;
 
@@ -493,6 +496,7 @@ void Map::polyfill(int *polycachex, int *polycachey, int polycount, int x1, int 
   }
 }
 
+// antialised versions of drawing methods
 void Map::setpixelAA(int x, int y, int c)
 {
   _setpixelAA(this, x, y, c);
@@ -569,7 +573,6 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
   int x, y;
   int ex, ey;
 
-  // need 64-bit values here, 32-bit will overflow on very large ovals
   int64_t a = w / 2;
   int64_t b = h / 2;
   int64_t a2, b2;
@@ -671,7 +674,6 @@ void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
   int x, y;
   int ex, ey;
 
-  // need 64-bit values here, 32-bit will overflow on very large ovals
   int64_t a = ww / 2;
   int64_t b = hh / 2;
   int64_t a2, b2;
@@ -765,7 +767,8 @@ void Map::rectfillAA(int x1, int y1, int x2, int y2, int c)
     _hlineAA(this, x1, y1, x2, c);
 }
 
-void Map::polyfillAA(int *polycachex, int *polycachey, int polycount, int x1, int y1, int x2, int y2, int c)
+void Map::polyfillAA(int *polycachex, int *polycachey, int polycount,
+                     int x1, int y1, int x2, int y2, int c)
 {
   x1 <<= 2;
   y1 <<= 2;
