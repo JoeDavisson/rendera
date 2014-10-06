@@ -781,7 +781,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
     {
       for(x = 0; x <= sw - mipx; x += mipx)
       {
-        int r = 0, g = 0, b = 0;
+        int r = 0, g = 0, b = 0, a = 0;
         int i, j, c;
         for(j = 0; j < mipy; j++)
         {
@@ -792,20 +792,23 @@ void Bitmap::scaleBilinear(Bitmap *dest,
             r += fix_gamma[rgba.r];
             g += fix_gamma[rgba.g];
             b += fix_gamma[rgba.b];
+            a += rgba.a;
           }
         }
         r /= div;
         g /= div;
         b /= div;
+        a /= div;
         r = unfix_gamma[r];
         g = unfix_gamma[g];
         b = unfix_gamma[b];
-        c = makeRgb(r, g, b);
+        c = makeRgba(r, g, b, a);
+
         for(j = 0; j < mipy; j++)
         {
           for(i = 0; i < mipx; i++)
           {
-            setpixel(sx + x + i, sy + y + j, c, 0);
+            setpixelSolid(sx + x + i, sy + y + j, c, 0);
           }
         }
       }
@@ -865,7 +868,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
       f[2] = (1.0f - u) * v;
       f[3] = u * v;
 
-      float r = 0.0f, g = 0.0f, b = 0.0f;
+      float r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f;
       int i = 0;
       do
       {
@@ -873,6 +876,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
         r += (float)fix_gamma[rgba.r] * f[i];
         g += (float)fix_gamma[rgba.g] * f[i];
         b += (float)fix_gamma[rgba.b] * f[i];
+        a += rgba.a * f[i];
         i++;
       }
       while(i < 4);
@@ -880,7 +884,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
       g = unfix_gamma[(int)g];
       b = unfix_gamma[(int)b];
 
-      *d = makeRgb((int)r, (int)g, (int)b);
+      *d = makeRgba((int)r, (int)g, (int)b, (int)a);
       d++;
 
       c[0] -= u1;
@@ -985,6 +989,8 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   int bh = (by2 - by1) + 1;
 
   Bitmap *dest = new Bitmap(bw, bh, overscroll);
+  dest->rectfill(dest->cl, dest->ct, dest->cr, dest->cb,
+                 makeRgba(0, 0, 0, 0), 0);
 
   bw /= 2;
   bh /= 2;
