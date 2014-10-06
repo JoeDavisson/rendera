@@ -205,32 +205,32 @@ namespace Rotate
 
     float angle_val = atof(angle->value());
 
-    if(angle_val < -359.99)
+    if(angle_val < -359.99f)
     {
-      snprintf(s, sizeof(s), "%.2f", -359.99);
+      snprintf(s, sizeof(s), "%.2f", -359.99f);
       angle->value(s);
       return;
     }
 
-    if(angle_val > 359.99)
+    if(angle_val > 359.99f)
     {
-      snprintf(s, sizeof(s), "%.2f", 359.99);
+      snprintf(s, sizeof(s), "%.2f", 359.99f);
       angle->value(s);
       return;
     }
 
     float scale_val = atof(scale->value());
 
-    if(scale_val < .01)
+    if(scale_val < .01f)
     {
-      snprintf(s, sizeof(s), "%.2f", .01);
+      snprintf(s, sizeof(s), "%.2f", .01f);
       scale->value(s);
       return;
     }
 
-    if(scale_val > 10.0)
+    if(scale_val > 10.0f)
     {
-      snprintf(s, sizeof(s), "%.2f", 10.0);
+      snprintf(s, sizeof(s), "%.2f", 10.0f);
       scale->value(s);
       return;
     }
@@ -253,15 +253,15 @@ namespace Rotate
 
   void init()
   {
-    dialog = new Fl_Double_Window(200, 104, "Rotate Image");
+    dialog = new Fl_Double_Window(200, 112, "Rotate Image");
     angle = new InputFloat(dialog, 80, 8, 72, 24, "Angle:", 0);
     angle->value("0");
-    scale = new InputFloat(dialog, 80, 24, 72, 24, "Scale:", 0);
+    scale = new InputFloat(dialog, 80, 40, 72, 24, "Scale:", 0);
     scale->value("1.0");
-    new Separator(dialog, 2, 56, 196, 2, "");
-    ok = new Fl_Button(56, 64, 64, 24, "OK");
+    new Separator(dialog, 2, 72, 196, 2, "");
+    ok = new Fl_Button(56, 80, 64, 24, "OK");
     ok->callback((Fl_Callback *)close);
-    cancel = new Fl_Button(128, 64, 64, 24, "Cancel");
+    cancel = new Fl_Button(128, 80, 64, 24, "Cancel");
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end(); 
