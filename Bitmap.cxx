@@ -930,6 +930,7 @@ void Bitmap::flip()
 Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
 {
   angle += 90;
+
   // rotation
   int du_col = (int)((std::sin(angle * (3.14159f / 180)) * scale) * 256);
   int dv_col = (int)((std::sin((angle + 90) * (3.14159f / 180)) * scale) * 256);
@@ -980,8 +981,8 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   int by1 = std::min(y0, std::min(y1, std::min(y2, y3)));
   int bx2 = std::max(x0, std::max(x1, std::max(x2, x3)));
   int by2 = std::max(y0, std::max(y1, std::max(y2, y3)));
-  int bw = (bx2 - bx1) + 2;
-  int bh = (by2 - by1) + 2;
+  int bw = (bx2 - bx1) + 1;
+  int bh = (by2 - by1) + 1;
 
   Bitmap *dest = new Bitmap(bw, bh, overscroll);
 
@@ -1009,7 +1010,7 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
     int v = rowV;
     rowU += du_row;
     rowV += dv_row;
-    int yy = y;
+    int yy = overscroll + y;
     if(yy < dest->ct || yy > dest->cb)
       continue;
     for(x = bx1; x <= bx2; x++)
@@ -1021,14 +1022,14 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
       if(uu < cl || uu > cr || vv < ct || vv > cb)
         continue;
       int c = *(row[vv] + uu);
-      int xx = x;
+      int xx = overscroll + x;
       if(xx < dest->cl || xx > dest->cr)
         continue;
       dest->setpixelSolid(xx, yy, c, 0);
     }
   }
 
-  dest->rect(bx1, by1, bx2, by2, makeRgb(0, 255, 0), 0);
+//  dest->rect(bx1, by1, bx2, by2, makeRgb(0, 255, 0), 0);
 
   return dest;
 }
