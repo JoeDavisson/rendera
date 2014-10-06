@@ -931,16 +931,16 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
 {
   angle += 90;
   // rotation
-  int duCol = (int)((std::sin(angle * (3.14159f / 180)) * scale) * 256);
-  int dvCol = (int)((std::sin((angle + 90) * (3.14159f / 180)) * scale) * 256);
-  int duRow = -dvCol;
-  int dvRow = duCol;
+  int du_col = (int)((std::sin(angle * (3.14159f / 180)) * scale) * 256);
+  int dv_col = (int)((std::sin((angle + 90) * (3.14159f / 180)) * scale) * 256);
+  int du_row = -dv_col;
+  int dv_row = du_col;
 
   int ww = ((cr - cl) + 2) / 2;
   int hh = ((cb - ct) + 2) / 2;
 
-  int xx = ww;
-  int yy = hh;
+  int xx = w / 2;
+  int yy = h / 2;
 
   // origin
   int ox = xx + ww;
@@ -957,14 +957,14 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   int y3 = yy + (hh * 2) - oy;
 
   // rotate
-  int newx0 = (int)(x0 * duCol + y0 * duRow) >> 8;
-  int newy0 = (int)(x0 * dvCol + y0 * dvRow) >> 8;
-  int newx1 = (int)(x1 * duCol + y1 * duRow) >> 8;
-  int newy1 = (int)(x1 * dvCol + y1 * dvRow) >> 8;
-  int newx2 = (int)(x2 * duCol + y2 * duRow) >> 8;
-  int newy2 = (int)(x2 * dvCol + y2 * dvRow) >> 8;
-  int newx3 = (int)(x3 * duCol + y3 * duRow) >> 8;
-  int newy3 = (int)(x3 * dvCol + y3 * dvRow) >> 8;
+  int newx0 = (int)(x0 * du_col + y0 * du_row) >> 8;
+  int newy0 = (int)(x0 * dv_col + y0 * dv_row) >> 8;
+  int newx1 = (int)(x1 * du_col + y1 * du_row) >> 8;
+  int newy1 = (int)(x1 * dv_col + y1 * dv_row) >> 8;
+  int newx2 = (int)(x2 * du_col + y2 * du_row) >> 8;
+  int newy2 = (int)(x2 * dv_col + y2 * dv_row) >> 8;
+  int newx3 = (int)(x3 * du_col + y3 * du_row) >> 8;
+  int newy3 = (int)(x3 * dv_col + y3 * dv_row) >> 8;
 
   x0 = newx0 + xx;
   y0 = newy0 + yy;
@@ -989,15 +989,17 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   bh /= 2;
 
   // draw
-  duCol = (int)((std::sin(angle * (3.14159f / 180)) / scale) * 256);
-  dvCol = (int)((std::sin((angle + 90) * (3.14159f / 180)) / scale) * 256);
-  duRow = -dvCol;
-  dvRow = duCol;
+  du_col = (int)((std::sin(angle * (3.14159f / 180)) / scale) * 256);
+  dv_col = (int)((std::sin((angle + 90) * (3.14159f / 180)) / scale) * 256);
+  du_row = -dv_col;
+  dv_row = du_col;
 
-  int rowU = ww << 8;
-  int rowV = hh << 8;
-  rowU -= bw * duCol + bh * duRow;
-  rowV -= bw * dvCol + bh * dvRow;
+//  int rowU = ww << 8;
+//  int rowV = hh << 8;
+  int rowU = (w / 2) << 8;
+  int rowV = (h / 2) << 8;
+  rowU -= bw * du_col + bh * du_row;
+  rowV -= bw * dv_col + bh * dv_row;
 
   int x, y;
 
@@ -1005,26 +1007,28 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   {
     int u = rowU;
     int v = rowV;
-    rowU += duRow;
-    rowV += dvRow;
-    int yy = dest->h / 2 + y;
+    rowU += du_row;
+    rowV += dv_row;
+    int yy = y;
     if(yy < dest->ct || yy > dest->cb)
       continue;
     for(x = bx1; x <= bx2; x++)
     {
       int uu = u >> 8;
       int vv = v >> 8;
-      u += duCol;
-      v += dvCol;
+      u += du_col;
+      v += dv_col;
       if(uu < cl || uu > cr || vv < ct || vv > cb)
         continue;
       int c = *(row[vv] + uu);
-      int xx = dest->w / 2 + x;
+      int xx = x;
       if(xx < dest->cl || xx > dest->cr)
         continue;
       dest->setpixelSolid(xx, yy, c, 0);
     }
   }
+
+  dest->rect(bx1, by1, bx2, by2, makeRgb(0, 255, 0), 0);
 
   return dest;
 }
