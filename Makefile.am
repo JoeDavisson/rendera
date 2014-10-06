@@ -23,8 +23,6 @@ rendera_SOURCES =     \
   Dialog.H            \
   FX.cxx              \
   FX.H                \
-  Field.cxx           \
-  Field.H             \
   File.cxx            \
   File.H              \
   GetColor.cxx        \
@@ -33,6 +31,10 @@ rendera_SOURCES =     \
   Group.H             \
   Gui.cxx             \
   Gui.H               \
+  InputInt.cxx        \
+  InputInt.H          \
+  InputFloat.cxx      \
+  InputFloat.H        \
   Map.cxx             \
   Map.H               \
   Octree.cxx          \

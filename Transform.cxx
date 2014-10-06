@@ -23,7 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Transform.H"
 #include "Bitmap.H"
 #include "Map.H"
-#include "Field.H"
+#include "InputInt.H"
+#include "InputFloat.H"
 #include "Separator.H"
 #include "Undo.H"
 #include "Gui.H"
@@ -81,8 +82,8 @@ namespace
 namespace Scale
 {
   Fl_Double_Window *dialog;
-  Field *width;
-  Field *height;
+  InputInt *width;
+  InputInt *height;
   Fl_Check_Button *wrap;
   Fl_Button *ok;
   Fl_Button *cancel;
@@ -165,8 +166,8 @@ namespace Scale
   void init()
   {
     dialog = new Fl_Double_Window(200, 144, "Scale Image");
-    width = new Field(dialog, 88, 8, 72, 24, "Width:", 0);
-    height = new Field(dialog, 88, 40, 72, 24, "Height:", 0);
+    width = new InputInt(dialog, 88, 8, 72, 24, "Width:", 0);
+    height = new InputInt(dialog, 88, 40, 72, 24, "Height:", 0);
     width->maximum_size(8);
     height->maximum_size(8);
     width->value("640");
@@ -185,7 +186,8 @@ namespace Scale
 namespace Rotate
 {
   Fl_Double_Window *dialog;
-  Field *angle;
+  InputFloat *angle;
+  InputFloat *scale;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -201,25 +203,41 @@ namespace Rotate
   {
     char s[8];
 
-    int a = atoi(angle->value());
+    float angle_val = atof(angle->value());
 
-    if(a < -359)
+    if(angle_val < -359.99)
     {
-      snprintf(s, sizeof(s), "%d", -359);
+      snprintf(s, sizeof(s), "%.2f", -359.99);
       angle->value(s);
       return;
     }
 
-    if(a > 359)
+    if(angle_val > 359.99)
     {
-      snprintf(s, sizeof(s), "%d", 359);
+      snprintf(s, sizeof(s), "%.2f", 359.99);
       angle->value(s);
+      return;
+    }
+
+    float scale_val = atof(scale->value());
+
+    if(scale_val < .01)
+    {
+      snprintf(s, sizeof(s), "%.2f", .01);
+      scale->value(s);
+      return;
+    }
+
+    if(scale_val > 10.0)
+    {
+      snprintf(s, sizeof(s), "%.2f", 10.0);
+      scale->value(s);
       return;
     }
 
     dialog->hide();
     int overscroll = Bitmap::main->overscroll;
-    Bitmap *temp = Bitmap::main->rotate((float)a, 1.0f, overscroll);
+    Bitmap *temp = Bitmap::main->rotate(angle_val, scale_val, overscroll);
 
     delete Bitmap::main;
     Bitmap::main = temp;
@@ -235,13 +253,15 @@ namespace Rotate
 
   void init()
   {
-    dialog = new Fl_Double_Window(200, 80, "Rotate Image");
-    angle = new Field(dialog, 80, 8, 72, 24, "Angle:", 0);
-    angle->maximum_size(4);
+    dialog = new Fl_Double_Window(200, 104, "Rotate Image");
+    angle = new InputFloat(dialog, 80, 8, 72, 24, "Angle:", 0);
     angle->value("0");
-    ok = new Fl_Button(56, 48, 64, 24, "OK");
+    scale = new InputFloat(dialog, 80, 24, 72, 24, "Scale:", 0);
+    scale->value("1.0");
+    new Separator(dialog, 2, 56, 196, 2, "");
+    ok = new Fl_Button(56, 64, 64, 24, "OK");
     ok->callback((Fl_Callback *)close);
-    cancel = new Fl_Button(128, 48, 64, 24, "Cancel");
+    cancel = new Fl_Button(128, 64, 64, 24, "Cancel");
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end(); 

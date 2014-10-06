@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Brush.H"
 #include "Dialog.H"
-#include "Field.H"
+#include "InputInt.H"
 #include "Separator.H"
 #include "Gui.H"
 #include "View.H"
@@ -433,7 +433,7 @@ namespace Saturate
 namespace RotateHue
 {
   Fl_Double_Window *dialog;
-  Field *amount;
+  InputInt *amount;
   Fl_Check_Button *preserve;
   Fl_Button *ok;
   Fl_Button *cancel;
@@ -524,7 +524,7 @@ namespace RotateHue
   void init()
   {
     dialog = new Fl_Double_Window(240, 104, "Rotate Hue");
-    amount = new Field(dialog, 108, 8, 72, 24, "Amount:", 0);
+    amount = new InputInt(dialog, 108, 8, 72, 24, "Amount:", 0);
     amount->maximum_size(4);
     amount->value("60");
     preserve = new Fl_Check_Button(32, 40, 16, 16, "Preserve Luminance");
@@ -751,7 +751,7 @@ namespace Restore
 namespace RemoveDust
 {
   Fl_Double_Window *dialog;
-  Field *amount;
+  InputInt *amount;
   Fl_Check_Button *invert;
   Fl_Button *ok;
   Fl_Button *cancel;
@@ -846,7 +846,7 @@ namespace RemoveDust
   void init()
   {
     dialog = new Fl_Double_Window(240, 104, "Remove Dust");
-    amount = new Field(dialog, 108, 8, 72, 24, "Amount:", 0);
+    amount = new InputInt(dialog, 108, 8, 72, 24, "Amount:", 0);
     amount->value("4");
     invert = new Fl_Check_Button(64, 40, 16, 16, "Invert First");
     new Separator(dialog, 2, 62, 236, 2, "");

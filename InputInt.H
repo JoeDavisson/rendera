@@ -18,24 +18,21 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef INPUT_INT_H
+#define INPUT_INT_H
 
 #include "Rendera.H"
 
-namespace Dialog
+class InputInt : public Fl_Int_Input
 {
-  void init();
-  void about();
-  void jpegQuality();
-  int jpegQualityValue();
-  void showProgress(float);
-  void updateProgress();
-  void hideProgress();
-  void newImage();
-  void createPalette();
-  void editor();
-}
+public:
+  InputInt(Fl_Group *, int, int, int, int, const char *, Fl_Callback *);
+  virtual ~InputInt();
+
+  int var;
+
+  Fl_Group *group;
+};
 
 #endif
 

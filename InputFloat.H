@@ -18,24 +18,21 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef INPUT_FLOAT_H
+#define INPUT_FLOAT_H
 
 #include "Rendera.H"
 
-namespace Dialog
+class InputFloat : public Fl_Float_Input
 {
-  void init();
-  void about();
-  void jpegQuality();
-  int jpegQualityValue();
-  void showProgress(float);
-  void updateProgress();
-  void hideProgress();
-  void newImage();
-  void createPalette();
-  void editor();
-}
+public:
+  InputFloat(Fl_Group *, int, int, int, int, const char *, Fl_Callback *);
+  virtual ~InputFloat();
+
+  int var;
+
+  Fl_Group *group;
+};
 
 #endif
 

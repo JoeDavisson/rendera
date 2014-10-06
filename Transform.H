@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
-class Field;
-
 #include "Rendera.H"
 
 namespace Transform

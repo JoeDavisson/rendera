@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Widget;
 class Button;
 class ToggleButton;
-class Field;
+class InputInt;
 class View;
 
 #include "Rendera.H"
@@ -45,8 +45,8 @@ namespace Gui
   void checkZoomOne(Button *, void *);
   void checkZoom();
   void checkGrid(ToggleButton *, void *);
-  void checkGridX(Field *, void *);
-  void checkGridY(Field *, void *);
+  void checkGridX(InputInt *, void *);
+  void checkGridY(InputInt *, void *);
   void checkPaintSize(Widget *, void *);
   void checkPaintShape(Widget *, void *);
   void checkPaintStroke(Widget *, void *);

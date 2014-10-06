@@ -18,24 +18,25 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef DIALOG_H
-#define DIALOG_H
+#include "InputInt.H"
 
-#include "Rendera.H"
-
-namespace Dialog
+InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
+                   const char *text, Fl_Callback *cb)
+: Fl_Int_Input(x, y, w, h, 0)
 {
-  void init();
-  void about();
-  void jpegQuality();
-  int jpegQualityValue();
-  void showProgress(float);
-  void updateProgress();
-  void hideProgress();
-  void newImage();
-  void createPalette();
-  void editor();
+  group = g;
+  var = 0;
+  if(cb)
+    callback(cb, &var);
+  maximum_size(5);
+  labelsize(12);
+  textsize(12);
+  label(text);
+  when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY);
+  resize(group->x() + x, group->y() + y, w, h);
 }
 
-#endif
+InputInt::~InputInt()
+{
+}
 

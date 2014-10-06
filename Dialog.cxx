@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Palette.H"
 #include "Blend.H"
 #include "Map.H"
-#include "Field.H"
+#include "InputInt.H"
 #include "Widget.H"
 #include "Separator.H"
 #include "Gui.H"
@@ -61,7 +61,7 @@ namespace About
 namespace JpegQuality
 {
   Fl_Double_Window *dialog;
-  Field *amount;
+  InputInt *amount;
   Fl_Button *ok;
 
   void closeCallback(Fl_Widget *, void *)
@@ -109,7 +109,7 @@ namespace JpegQuality
   {
     dialog = new Fl_Double_Window(200, 80, "JPEG Quality");
     dialog->callback(closeCallback);
-    amount = new Field(dialog, 80, 8, 72, 24, "Quality:", 0);
+    amount = new InputInt(dialog, 80, 8, 72, 24, "Quality:", 0);
     amount->value("95");
     new Separator(dialog, 2, 40, 196, 2, "");
     ok = new Fl_Button(128, 48, 64, 24, "OK");
@@ -142,8 +142,8 @@ namespace Progress
 namespace NewImage
 {
   Fl_Double_Window *dialog;
-  Field *width;
-  Field *height;
+  InputInt *width;
+  InputInt *height;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -215,8 +215,8 @@ namespace NewImage
   void init()
   {
     dialog = new Fl_Double_Window(200, 112, "New Image");
-    width = new Field(dialog, 88, 8, 72, 24, "Width:", 0);
-    height = new Field(dialog, 88, 40, 72, 24, "Height:", 0);
+    width = new InputInt(dialog, 88, 8, 72, 24, "Width:", 0);
+    height = new InputInt(dialog, 88, 40, 72, 24, "Height:", 0);
     width->maximum_size(8);
     height->maximum_size(8);
     width->value("640");
@@ -234,7 +234,7 @@ namespace NewImage
 namespace CreatePalette
 {
   Fl_Double_Window *dialog;
-  Field *colors;
+  InputInt *colors;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -278,7 +278,7 @@ namespace CreatePalette
   void init()
   {
     dialog = new Fl_Double_Window(200, 80, "Create Palette");
-    colors = new Field(dialog, 80, 8, 72, 24, "Colors:", 0);
+    colors = new InputInt(dialog, 80, 8, 72, 24, "Colors:", 0);
     ok = new Fl_Button(56, 48, 64, 24, "OK");
     ok->callback((Fl_Callback *)close);
     cancel = new Fl_Button(128, 48, 64, 24, "Cancel");

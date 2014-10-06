@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Widget.H"
 #include "Button.H"
 #include "ToggleButton.H"
-#include "Field.H"
+#include "InputInt.H"
 #include "Map.H"
 #include "View.H"
 #include "Undo.H"
@@ -71,10 +71,10 @@ namespace
   Button *zoom_one;
   Button *zoom_in;
   Button *zoom_out;
-  Field *zoom;
+  InputInt *zoom;
   ToggleButton *grid;
-  Field *gridx;
-  Field *gridy;
+  InputInt *gridx;
+  InputInt *gridy;
 
   // tools
   Widget *tool;
@@ -89,14 +89,14 @@ namespace
 
   Widget *getcolor_color;
 
-  Field *crop_x;
-  Field *crop_y;
-  Field *crop_w;
-  Field *crop_h;
+  InputInt *crop_x;
+  InputInt *crop_y;
+  InputInt *crop_w;
+  InputInt *crop_h;
   Fl_Button *crop_do;
 
-  Field *offset_x;
-  Field *offset_y;
+  InputInt *offset_x;
+  InputInt *offset_y;
 
   Fl_Hold_Browser *font_browse;
   Fl_Choice *font_size;
@@ -209,7 +209,7 @@ void Gui::init()
   x1 += 24 + 8;
   zoom_out = new Button(top_right, x1, 8, 24, 24, "Zoom Out", "data/zoom_out.png", (Fl_Callback *)checkZoomOut);
   x1 += 24 + 8;
-  zoom = new Field(top_right, x1, 8, 56, 24, "", 0);
+  zoom = new InputInt(top_right, x1, 8, 56, 24, "", 0);
   // make this inactive, display only for now
   zoom->deactivate();
   x1 += 56 + 6;
@@ -217,10 +217,10 @@ void Gui::init()
   x1 += 8;
   grid = new ToggleButton(top_right, x1, 8, 24, 24, "Show Grid", "data/grid.png", (Fl_Callback *)checkGrid);
   x1 += 24 + 48 + 8;
-  gridx = new Field(top_right, x1, 8, 32, 24, "Grid X:", (Fl_Callback *)checkGridX);
+  gridx = new InputInt(top_right, x1, 8, 32, 24, "Grid X:", (Fl_Callback *)checkGridX);
   gridx->value("8");
   x1 += 32 + 48 + 8;
-  gridy = new Field(top_right, x1, 8, 32, 24, "Grid Y:", (Fl_Callback *)checkGridY);
+  gridy = new InputInt(top_right, x1, 8, 32, 24, "Grid Y:", (Fl_Callback *)checkGridY);
   gridy->value("8");
   top_right->resizable(0);
   top_right->end();
@@ -286,16 +286,16 @@ void Gui::init()
   // crop
   crop = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "Crop");
   y1 = 20;
-  crop_x = new Field(crop, 24, y1, 72, 24, "X:", 0);
+  crop_x = new InputInt(crop, 24, y1, 72, 24, "X:", 0);
   crop_x->deactivate();
   y1 += 24 + 6;
-  crop_y = new Field(crop, 24, y1, 72, 24, "Y:", 0);
+  crop_y = new InputInt(crop, 24, y1, 72, 24, "Y:", 0);
   crop_y->deactivate();
   y1 += 24 + 6;
-  crop_w = new Field(crop, 24, y1, 72, 24, "W:", 0);
+  crop_w = new InputInt(crop, 24, y1, 72, 24, "W:", 0);
   crop_w->deactivate();
   y1 += 24 + 6;
-  crop_h = new Field(crop, 24, y1, 72, 24, "H:", 0);
+  crop_h = new InputInt(crop, 24, y1, 72, 24, "H:", 0);
   crop_h->deactivate();
   y1 += 24 + 6;
   crop_do = new Fl_Button(crop->x() + 16, crop->y() + y1, 72, 32, "Crop");
@@ -313,10 +313,10 @@ void Gui::init()
   // offset
   offset = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "Offset");
   y1 = 20;
-  offset_x = new Field(offset, 24, y1, 72, 24, "X:", 0);
+  offset_x = new InputInt(offset, 24, y1, 72, 24, "X:", 0);
   offset_x->deactivate();
   y1 += 24 + 6;
-  offset_y = new Field(offset, 24, y1, 72, 24, "Y:", 0);
+  offset_y = new InputInt(offset, 24, y1, 72, 24, "Y:", 0);
   offset_y->deactivate();
   y1 += 24 + 6;
   offset->resizable(0);
@@ -559,7 +559,7 @@ void Gui::checkGrid(ToggleButton *, void *var)
   view->redraw();
 }
 
-void Gui::checkGridX(Field *field, void *)
+void Gui::checkGridX(InputInt *field, void *)
 {
   int num = atoi(field->value());
   if(num < 1)
@@ -573,7 +573,7 @@ void Gui::checkGridX(Field *field, void *)
   view->drawMain(1);
 }
 
-void Gui::checkGridY(Field *field, void *)
+void Gui::checkGridY(InputInt *field, void *)
 {
   int num = atoi(field->value());
   if(num < 1)
