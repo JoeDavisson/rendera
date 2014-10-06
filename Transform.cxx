@@ -219,7 +219,7 @@ namespace Rotate
 
     dialog->hide();
     int overscroll = Bitmap::main->overscroll;
-    Bitmap *temp = Bitmap::main->rotate((float)a, 1.0f);
+    Bitmap *temp = Bitmap::main->rotate((float)a, 1.0f, overscroll);
 
     delete Bitmap::main;
     Bitmap::main = temp;

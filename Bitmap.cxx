@@ -927,7 +927,7 @@ void Bitmap::flip()
   }
 }
 
-Bitmap *Bitmap::rotate(float angle, float scale)
+Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
 {
   angle += 90;
   // rotation
@@ -935,11 +935,12 @@ Bitmap *Bitmap::rotate(float angle, float scale)
   int dvCol = (int)((std::sin((angle + 90) * (3.14159f / 180)) * scale) * 256);
   int duRow = -dvCol;
   int dvRow = duCol;
-  int ww = w / 2;
-  int hh = h / 2;
 
-  int xx = w / 2;
-  int yy = h / 2;
+  int ww = ((cr - cl) + 2) / 2;
+  int hh = ((cb - ct) + 2) / 2;
+
+  int xx = ww;
+  int yy = hh;
 
   // origin
   int ox = xx + ww;
@@ -948,12 +949,12 @@ Bitmap *Bitmap::rotate(float angle, float scale)
   // project new corners
   int x0 = xx - ox;
   int y0 = yy - oy;
-  int x1 = xx + (w - 1) - ox;
+  int x1 = xx + (ww * 2) - ox;
   int y1 = yy - oy;
   int x2 = xx - ox;
-  int y2 = yy + (h - 1) - oy;
-  int x3 = xx + (w - 1) - ox;
-  int y3 = yy + (h - 1) - oy;
+  int y2 = yy + (hh * 2) - oy;
+  int x3 = xx + (ww * 2) - ox;
+  int y3 = yy + (hh * 2) - oy;
 
   // rotate
   int newx0 = (int)(x0 * duCol + y0 * duRow) >> 8;
@@ -979,13 +980,13 @@ Bitmap *Bitmap::rotate(float angle, float scale)
   int by1 = std::min(y0, std::min(y1, std::min(y2, y3)));
   int bx2 = std::max(x0, std::max(x1, std::max(x2, x3)));
   int by2 = std::max(y0, std::max(y1, std::max(y2, y3)));
-  int bw = (bx2 - bx1);
-  int bh = (by2 - by1);
+  int bw = (bx2 - bx1) + 2;
+  int bh = (by2 - by1) + 2;
+
+  Bitmap *dest = new Bitmap(bw, bh, overscroll);
 
   bw /= 2;
   bh /= 2;
-
-  Bitmap *dest = new Bitmap(bw, bh, overscroll);
 
   // draw
   duCol = (int)((std::sin(angle * (3.14159f / 180)) / scale) * 256);
@@ -1006,21 +1007,22 @@ Bitmap *Bitmap::rotate(float angle, float scale)
     int v = rowV;
     rowU += duRow;
     rowV += dvRow;
-    if(y < dest->ct || y > dest->cb)
+    int yy = dest->h / 2 + y;
+    if(yy < dest->ct || yy > dest->cb)
       continue;
-//    int *p = dest->row[y + ((dest->h / 2) + hh)] + bx1 + ((dest->w / 2) + ww);
     for(x = bx1; x <= bx2; x++)
     {
       int uu = u >> 8;
       int vv = v >> 8;
       u += duCol;
       v += dvCol;
-      if(uu < 0 || uu >= w || vv < 0 || vv >= h)
+      if(uu < cl || uu > cr || vv < ct || vv > cb)
         continue;
       int c = *(row[vv] + uu);
-      if(x < dest->cl || x > dest->cr)
+      int xx = dest->w / 2 + x;
+      if(xx < dest->cl || xx > dest->cr)
         continue;
-      dest->setpixelSolid(x, y, c, 0);
+      dest->setpixelSolid(xx, yy, c, 0);
     }
   }
 
