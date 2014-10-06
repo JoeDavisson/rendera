@@ -244,6 +244,11 @@ namespace Rotate
 
     delete Map::main;
     Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
+
+    Gui::getView()->ox = 0;
+    Gui::getView()->oy = 0;
+    Gui::getView()->zoomFit(0);
+    Gui::getView()->drawMain(1);
   }
 
   void quit()
