@@ -940,8 +940,8 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   int ww = ((cr - cl) + 2) / 2;
   int hh = ((cb - ct) + 2) / 2;
 
-  int xx = w / 2;
-  int yy = h / 2;
+  int xx = cl;
+  int yy = ct;
 
   // origin
   int ox = xx + ww;
@@ -995,8 +995,6 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   du_row = -dv_col;
   dv_row = du_col;
 
-//  int rowU = ww << 8;
-//  int rowV = hh << 8;
   int rowU = (w / 2) << 8;
   int rowV = (h / 2) << 8;
   rowU -= bw * du_col + bh * du_row;
@@ -1010,7 +1008,7 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
     int v = rowV;
     rowU += du_row;
     rowV += dv_row;
-    int yy = overscroll + y;
+    int yy = 0 + ((dest->h - overscroll * 2) / 2) + y;
     if(yy < dest->ct || yy > dest->cb)
       continue;
     for(x = bx1; x <= bx2; x++)
@@ -1022,14 +1020,12 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
       if(uu < cl || uu > cr || vv < ct || vv > cb)
         continue;
       int c = *(row[vv] + uu);
-      int xx = overscroll + x;
+      int xx = 0 + ((dest->w - overscroll * 2) / 2) + x;
       if(xx < dest->cl || xx > dest->cr)
         continue;
       dest->setpixelSolid(xx, yy, c, 0);
     }
   }
-
-//  dest->rect(bx1, by1, bx2, by2, makeRgb(0, 255, 0), 0);
 
   return dest;
 }

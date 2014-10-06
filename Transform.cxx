@@ -237,6 +237,7 @@ namespace Rotate
   {
     dialog = new Fl_Double_Window(200, 80, "Rotate Image");
     angle = new Field(dialog, 80, 8, 72, 24, "Angle:", 0);
+    angle->maximum_size(4);
     angle->value("0");
     ok = new Fl_Button(56, 48, 64, 24, "OK");
     ok->callback((Fl_Callback *)close);
