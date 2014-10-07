@@ -41,11 +41,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Widget.H"
 
 // make test image
-// example: 
-// int *array = new int[256 * 256];
-// for(i = 0; i < 256 * 256; i++)
-//   array[i] = i | 0xFF000000;
-//  Bitmap::main = createFromData(256, 256, array);
 Bitmap *createFromData(int width, int height, int *data)
 {
   // create blank image
@@ -101,7 +96,13 @@ int main(int argc, char *argv[])
   for(i = 0; i < 256; i++)
     fix_gamma[i] = std::pow((double)i / 255, 2.2) * 65535;
 
+// rubicks uncomment this, and comment the following line
+// int *array = new int[256 * 256];
+// for(i = 0; i < 256 * 256; i++)
+//   array[i] = i | 0xFF000000;
+//  Bitmap::main = createFromData(256, 256, array);
   Bitmap::main = new Bitmap(640, 480, 64);
+
   Bitmap::preview = new Bitmap(8, 8);
 
   Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
