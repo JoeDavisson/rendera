@@ -123,7 +123,7 @@ void Map::clear(int c)
     data[i] = c & 0xff;
 }
 
-void Map::setpixel(int x, int y, int c)
+void Map::setpixel(const int &x, const int &y, const int &c)
 {
   if(x < 0 || x >= w || y < 0 || y >= h)
     return;
@@ -131,7 +131,7 @@ void Map::setpixel(int x, int y, int c)
   *(row[y] + x) = c & 0xff;
 }
 
-int Map::getpixel(int x, int y)
+int Map::getpixel(const int &x, const int &y)
 {
   if(x < 0 || x >= w || y < 0 || y >= h)
     return 0;

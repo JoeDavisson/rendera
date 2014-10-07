@@ -38,8 +38,8 @@ public:
 
   // drawing functions
   void clear(int);
-  void setpixel(int, int, int);
-  int getpixel(int, int);
+  void setpixel(const int &, const int &, const int &);
+  int getpixel(const int &, const int &);
   void line(int, int, int, int, int);
   void oval(int, int, int, int, int);
   void ovalfill(int, int, int, int, int);
