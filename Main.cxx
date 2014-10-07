@@ -40,6 +40,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "File.H"
 #include "Widget.H"
 
+// make test image
+// example: 
+// int *array = new int[256 * 256];
+// for(i = 0; i < 256 * 256; i++)
+//   array[i] = i | 0xFF000000;
+//  Bitmap::main = createFromData(256, 256, array);
+Bitmap *createFromData(int width, int height, int *data)
+{
+  // create blank image
+  Bitmap *temp = new Bitmap(width, height);
+
+  // copy data to new image
+  int i;
+  for(i = 0; i < width * height; i++)
+    temp->data[i] = data[i];
+
+  return temp;
+}
+
 // for fast random number generator in inline.h
 int seed = 12345;
 
