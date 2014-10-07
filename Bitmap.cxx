@@ -956,8 +956,8 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   int du_row = -dv_col;
   int dv_row = du_col;
 
-  const int ww = ((cr - cl) + 2) / 2;
-  const int hh = ((cb - ct) + 2) / 2;
+  const int ww = (cr - cl) / 2;
+  const int hh = (cb - ct) / 2;
 
   const int xx = cl;
   const int yy = ct;
