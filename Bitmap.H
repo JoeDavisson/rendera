@@ -48,11 +48,11 @@ public:
   void xorHline(int, int, int);
   void xorRect(int, int, int, int);
   void xorRectfill(int, int, int, int);
-  void setpixel(int, int, int ,int);
-  void setpixelSolid(int, int, int ,int);
-  void setpixelWrap(int, int, int ,int);
-  void setpixelClone(int, int, int ,int);
-  void setpixelWrapClone(int, int, int ,int);
+  void setpixel(const int &, const int &, const int &, const int &);
+  void setpixelSolid(const int &, const int &, const int &, const int &);
+  void setpixelWrap(const int &, const int &, const int &, const int &);
+  void setpixelClone(const int &, const int &, const int &, const int &);
+  void setpixelWrapClone(const int &, const int &, const int &, const int &);
   int getpixel(int, int);
   void clip(int *, int *, int *, int *);
   void setClip(int, int, int, int);

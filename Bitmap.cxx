@@ -417,10 +417,10 @@ void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
     xorHline(x1, y1, x2);
 }
 
-void Bitmap::setpixel(int x, int y, int c2, int t)
+void Bitmap::setpixel(const int &x, const int &y, const int &c2, const int &t)
 {
-  int mode = Bitmap::wrap | (Bitmap::clone << 1);
   Blend::target(Bitmap::main, x, y);
+  const int mode = Bitmap::wrap | (Bitmap::clone << 1);
 
   switch(mode)
   {
@@ -442,7 +442,8 @@ void Bitmap::setpixel(int x, int y, int c2, int t)
   }
 }
 
-void Bitmap::setpixelSolid(int x, int y, int c2, int t)
+void Bitmap::setpixelSolid(const int &x, const int &y,
+                           const int &c2, const int &t)
 {
   if(x < cl || x > cr || y < ct || y > cb)
     return;
@@ -452,23 +453,28 @@ void Bitmap::setpixelSolid(int x, int y, int c2, int t)
   *c1 = Blend::current(*c1, c2, t);
 }
 
-void Bitmap::setpixelWrap(int x, int y, int c2, int t)
+void Bitmap::setpixelWrap(const int &x, const int &y,
+                          const int &c2, const int &t)
 {
-  while(x < cl)
-    x += cw;
-  while(x > cr)
-    x -= cw;
-  while(y < ct)
-    y += ch;
-  while(y > cb)
-    y -= ch;
+  int x1 = x; 
+  int y1 = y; 
 
-  int *c1 = row[y] + x;
+  while(x1 < cl)
+    x1 += cw;
+  while(x1 > cr)
+    x1 -= cw;
+  while(y1 < ct)
+    y1 += ch;
+  while(y1 > cb)
+    y1 -= ch;
+
+  int *c1 = row[y1] + x1;
 
   *c1 = Blend::current(*c1, c2, t);
 }
 
-void Bitmap::setpixelClone(int x, int y, int c2, int t)
+void Bitmap::setpixelClone(const int &x, const int &y,
+                           const int &, const int &t)
 {
   if(x < cl || x > cr || y < ct || y > cb)
     return;
@@ -478,8 +484,8 @@ void Bitmap::setpixelClone(int x, int y, int c2, int t)
   int x1 = x - Bitmap::clone_dx;
   int y1 = y - Bitmap::clone_dy;
 
-  int w1 = w - 1;
-  int h1 = h - 1;
+  const int w1 = w - 1;
+  const int h1 = h - 1;
 
   switch(Bitmap::clone_mirror)
   {
@@ -499,6 +505,8 @@ void Bitmap::setpixelClone(int x, int y, int c2, int t)
 
   Stroke *stroke = Gui::getView()->tool->stroke;
 
+  int c2;
+
   if(x1 >= stroke->x1 && x1 <= stroke->x2 &&
      y1 >= stroke->y1 && y1 <= stroke->y2)
   {
@@ -512,24 +520,28 @@ void Bitmap::setpixelClone(int x, int y, int c2, int t)
   *c1 = Blend::current(*c1, c2, t);
 }
 
-void Bitmap::setpixelWrapClone(int x, int y, int c2, int t)
+void Bitmap::setpixelWrapClone(const int &x, const int &y,
+                               const int &, const int &t)
 {
-  while(x < cl)
-    x += cw;
-  while(x > cr)
-    x -= cw;
-  while(y < ct)
-    y += ch;
-  while(y > cb)
-    y -= ch;
+  int x1 = x; 
+  int y1 = y;
 
-  int *c1 = row[y] + x;
+  while(x1 < cl)
+    x1 += cw;
+  while(x1 > cr)
+    x1 -= cw;
+  while(y1 < ct)
+    y1 += ch;
+  while(y1 > cb)
+    y1 -= ch;
 
-  int x1 = x - Bitmap::clone_dx;
-  int y1 = y - Bitmap::clone_dy;
+  int *c1 = row[y1] + x1;
 
-  int w1 = w - 1;
-  int h1 = h - 1;
+  x1 -= Bitmap::clone_dx;
+  y1 -= Bitmap::clone_dy;
+
+  const int w1 = w - 1;
+  const int h1 = h - 1;
 
   switch(Bitmap::clone_mirror)
   {
@@ -557,6 +569,8 @@ void Bitmap::setpixelWrapClone(int x, int y, int c2, int t)
     y1 -= ch;
 
   Stroke *stroke = Gui::getView()->tool->stroke;
+
+  int c2;
 
   if(x1 >= stroke->x1 && x1 <= stroke->x2 &&
      y1 >= stroke->y1 && y1 <= stroke->y2)
