@@ -134,10 +134,12 @@ dist_pkgdata_DATA =     \
 
 
 check_PROGRAMS =    \
+  test_blend        \
   test_fltk_version \
   test_endian       \
   test_numerics
 
+test_blend_SOURCES = test/blend.C
 test_fltk_version_SOURCES = test/fltk_version.C
 test_endian_SOURCES = test/endian.C
 test_numerics_SOURCES = test/numerics.C
