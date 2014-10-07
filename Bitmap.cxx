@@ -111,9 +111,16 @@ Bitmap::Bitmap(int width, int height, int overscroll)
   setClip(0, 0, w - 1, h - 1);
 
   for(i = 0; i < 4; i++)
-    rect(overscroll - 1 - i, overscroll - 1 - i, w - overscroll + i, h - overscroll + i, makeRgb(56, 56, 56), 0);
-  rectfill(overscroll + 4, h - overscroll + 4, w - overscroll + 4, h - overscroll + 4 + 7, makeRgb(48, 48, 48), 0);
-  rectfill(w - overscroll + 4, overscroll + 4, w - overscroll + 4 + 7, h - overscroll + 4 + 7, makeRgb(48, 48, 48), 0);
+    rect(overscroll - 1 - i, overscroll - 1 - i,
+         w - overscroll + i, h - overscroll + i, makeRgb(56, 56, 56), 0);
+
+  rectfill(overscroll + 4, h - overscroll + 4,
+           w - overscroll + 4, h - overscroll + 4 + 7,
+           makeRgb(48, 48, 48), 0);
+
+  rectfill(w - overscroll + 4, overscroll + 4,
+           w - overscroll + 4 + 7, h - overscroll + 4 + 7,
+           makeRgb(48, 48, 48), 0);
 
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
 }
@@ -146,7 +153,6 @@ void Bitmap::hline(int x1, int y, int x2, int c, int t)
   clip(&x1, &y, &x2, &y);
 
   int x;
-
   int *p = row[y] + x1;
 
   for(x = x1; x <= x2; x++)
@@ -478,15 +484,11 @@ void Bitmap::setpixelClone(int x, int y, int c2, int t)
   switch(Bitmap::clone_mirror)
   {
     case 0:
-      /* x1 = x1; */
-      /* y1 = y1; */
       break;
     case 1:
       x1 = (w1 - x1) - (w1 - Bitmap::clone_x * 2);
-      /* y1 = y1; */
       break;
     case 2:
-      /* x1 = x1; */
       y1 = (h1 - y1) - (h1 - Bitmap::clone_y * 2);
       break;
     case 3:
@@ -532,15 +534,11 @@ void Bitmap::setpixelWrapClone(int x, int y, int c2, int t)
   switch(Bitmap::clone_mirror)
   {
     case 0:
-      /* x1 = x1; */
-      /* y1 = y1; */
       break;
     case 1:
       x1 = (w1 - x1) - (w1 - Bitmap::clone_x * 2);
-      /* y1 = y1; */
       break;
     case 2:
-      /* x1 = x1; */
       y1 = (h1 - y1) - (h1 - Bitmap::clone_y * 2);
       break;
     case 3:
@@ -670,17 +668,18 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
     int *dx1 = dx + dest->row[dy1];
 
     for(x = 0; x < ww; x++, sx1++, dx1++)
-     *dx1 = *sx1;
+      *dx1 = *sx1;
 
     sy1++;
     dy1++;
   }
 }
 
+// for main viewport rendering
 void Bitmap::pointStretch(Bitmap *dest,
-                           int sx, int sy, int sw, int sh,
-                           int dx, int dy, int dw, int dh,
-                           int overx, int overy, int bgr_order)
+                          int sx, int sy, int sw, int sh,
+                          int dx, int dy, int dw, int dh,
+                          int overx, int overy, int bgr_order)
 {
   const int ax = ((float)dw / sw) * 256;
   const int ay = ((float)dh / sh) * 256;
@@ -750,6 +749,8 @@ void Bitmap::pointStretch(Bitmap *dest,
   }
 }
 
+// scale transform
+// performs bilinear filtering with gamma correction
 // warning: does not clip
 void Bitmap::scaleBilinear(Bitmap *dest,
                            int sx, int sy, int sw, int sh,
@@ -783,6 +784,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
       {
         int r = 0, g = 0, b = 0, a = 0;
         int i, j, c;
+
         for(j = 0; j < mipy; j++)
         {
           for(i = 0; i < mipx; i++)
@@ -795,10 +797,12 @@ void Bitmap::scaleBilinear(Bitmap *dest,
             a += rgba.a;
           }
         }
+
         r /= div;
         g /= div;
         b /= div;
         a /= div;
+
         r = unfix_gamma[r];
         g = unfix_gamma[g];
         b = unfix_gamma[b];
@@ -808,7 +812,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
         {
           for(i = 0; i < mipx; i++)
           {
-            setpixelSolid(sx + x + i, sy + y + j, c, 0);
+            *(row[sy + y + j] + sx + x + i) = c;
           }
         }
       }
@@ -820,13 +824,15 @@ void Bitmap::scaleBilinear(Bitmap *dest,
   do
   {
     int *d = dest->row[dy + y] + dx;
-
     float vv = (y * ay);
     int v1 = vv;
     float v = vv - v1;
+
     if(sy + v1 >= h - 1)
       break;
+
     int v2 = v1 + 1;
+
     if(v2 >= sh)
     {
       if(wrap_edges)
@@ -839,15 +845,18 @@ void Bitmap::scaleBilinear(Bitmap *dest,
     c[0] = c[1] = row[sy + v1] + sx;
     c[2] = c[3] = row[sy + v2] + sx;
 
-   x = 0;
+    x = 0;
     do
     {
       float uu = (x * ax);
       int u1 = uu;
       float u = uu - u1;
+
       if(sx + u1 >= w - 1)
         break;
+
       int u2 = u1 + 1;
+
       if(u2 >= sw)
       {
         if(wrap_edges)
@@ -870,6 +879,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
 
       float r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f;
       int i = 0;
+
       do
       {
         struct rgba_t rgba = getRgba(*c[i]);
@@ -880,6 +890,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
         i++;
       }
       while(i < 4);
+
       r = unfix_gamma[(int)r];
       g = unfix_gamma[(int)g];
       b = unfix_gamma[(int)b];
@@ -901,6 +912,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
   while(y < dh);
 }
 
+// flip horizontal transform
 void Bitmap::mirror()
 {
   int x, y;
@@ -916,6 +928,7 @@ void Bitmap::mirror()
   }
 }
 
+// flip vertical transform
 void Bitmap::flip()
 {
   int x, y;
@@ -931,8 +944,10 @@ void Bitmap::flip()
   }
 }
 
+// rotate transform
 Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
 {
+  // angle correction
   angle += 90;
 
   // rotation
@@ -962,14 +977,14 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   int y3 = yy + (hh * 2) - oy;
 
   // rotate
-  int newx0 = (int)(x0 * du_col + y0 * du_row) >> 8;
-  int newy0 = (int)(x0 * dv_col + y0 * dv_row) >> 8;
-  int newx1 = (int)(x1 * du_col + y1 * du_row) >> 8;
-  int newy1 = (int)(x1 * dv_col + y1 * dv_row) >> 8;
-  int newx2 = (int)(x2 * du_col + y2 * du_row) >> 8;
-  int newy2 = (int)(x2 * dv_col + y2 * dv_row) >> 8;
-  int newx3 = (int)(x3 * du_col + y3 * du_row) >> 8;
-  int newy3 = (int)(x3 * dv_col + y3 * dv_row) >> 8;
+  int newx0 = (x0 * du_col + y0 * du_row) >> 8;
+  int newy0 = (x0 * dv_col + y0 * dv_row) >> 8;
+  int newx1 = (x1 * du_col + y1 * du_row) >> 8;
+  int newy1 = (x1 * dv_col + y1 * dv_row) >> 8;
+  int newx2 = (x2 * du_col + y2 * du_row) >> 8;
+  int newy2 = (x2 * dv_col + y2 * dv_row) >> 8;
+  int newx3 = (x3 * du_col + y3 * du_row) >> 8;
+  int newy3 = (x3 * dv_col + y3 * dv_row) >> 8;
 
   x0 = newx0 + xx;
   y0 = newy0 + yy;
@@ -988,6 +1003,7 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   int bw = (bx2 - bx1) + 1;
   int bh = (by2 - by1) + 1;
 
+  // create image with new size
   Bitmap *dest = new Bitmap(bw, bh, overscroll);
   dest->rectfill(dest->cl, dest->ct, dest->cr, dest->cb,
                  makeRgba(0, 0, 0, 0), 0);
@@ -995,50 +1011,63 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   bw /= 2;
   bh /= 2;
 
-  // draw
+  // rotation
   du_col = (int)((std::sin(angle * (3.14159f / 180)) / scale) * 256);
   dv_col = (int)((std::sin((angle + 90) * (3.14159f / 180)) / scale) * 256);
   du_row = -dv_col;
   dv_row = du_col;
 
-  int rowU = (w / 2) << 8;
-  int rowV = (h / 2) << 8;
-  rowU -= bw * du_col + bh * du_row;
-  rowV -= bw * dv_col + bh * dv_row;
+  int row_u = (w / 2) << 8;
+  int row_v = (h / 2) << 8;
 
+  row_u -= bw * du_col + bh * du_row;
+  row_v -= bw * dv_col + bh * dv_row;
+
+  // draw image
   int x, y;
 
   for(y = by1; y <= by2; y++)
   {
-    int u = rowU;
-    int v = rowV;
-    rowU += du_row;
-    rowV += dv_row;
-    int yy = 0 + ((dest->h - overscroll * 2) / 2) + y;
+    int u = row_u;
+    int v = row_v;
+
+    row_u += du_row;
+    row_v += dv_row;
+
+    int yy = ((dest->h - overscroll * 2) / 2) + y;
     if(yy < dest->ct || yy > dest->cb)
       continue;
+
     for(x = bx1; x <= bx2; x++)
     {
       int uu = u >> 8;
       int vv = v >> 8;
+
       u += du_col;
       v += dv_col;
+
+      // clip source image
       if(uu < cl || uu > cr || vv < ct || vv > cb)
         continue;
-      int c = *(row[vv] + uu);
-      int xx = 0 + ((dest->w - overscroll * 2) / 2) + x;
+
+      int xx = ((dest->w - overscroll * 2) / 2) + x;
       if(xx < dest->cl || xx > dest->cr)
         continue;
-      dest->setpixelSolid(xx, yy, c, 0);
+
+      int c = *(row[vv] + uu);
+      *(dest->row[yy] + xx) = c;
     }
   }
 
+  // return pointer to rotated image
   return dest;
 }
 
+// super-fast bresenham stretch for navigator
+// adapted from graphic gems code
 void Bitmap::fastStretch(Bitmap *dest,
-                          int xs1, int ys1, int xs2, int ys2,
-                          int xd1, int yd1, int xd2, int yd2, int bgr_order)
+                         int xs1, int ys1, int xs2, int ys2,
+                         int xd1, int yd1, int xd2, int yd2, int bgr_order)
 {
   xs2 += xs1;
   xs2--;
@@ -1049,33 +1078,27 @@ void Bitmap::fastStretch(Bitmap *dest,
   yd2 += yd1;
   yd2--;
 
-  int dx, dy, e, d, dx2;
-  int sx, sy;
+  const int dx = std::abs(yd2 - yd1);
+  const int dy = std::abs(ys2 - ys1) << 1;
+  const int sx = sign(yd2 - yd1);
+  const int sy = sign(ys2 - ys1);
+  const int dx2 = dx << 1;
 
-  dx = std::abs(yd2 - yd1);
-  dy = std::abs(ys2 - ys1);
-  sx = sign(yd2 - yd1);
-  sy = sign(ys2 - ys1);
-  dy <<= 1;
-  e = dy - dx;
-  dx2 = dx << 1;
+  int e = dy - dx;
+  int d;
 
   for(d = 0; d <= dx; d++)
   {
-    int dx_1, dy_1, e_1, d_1, dx2_1;
-    int sx_1, sy_1;
-    int *p, *q;
+    const int dx_1 = std::abs(xd2 - xd1);
+    const int dy_1 = std::abs(xs2 - xs1) << 1;
+    const int sx_1 = sign(xd2 - xd1);
+    const int sy_1 = sign(xs2 - xs1);
+    const int dx2_1 = dx_1 << 1;
 
-    dx_1 = std::abs(xd2 - xd1);
-    dy_1 = std::abs(xs2 - xs1);
-    sx_1 = sign(xd2 - xd1);
-    sy_1 = sign(xs2 - xs1);
-    dy_1 <<= 1;
-    e_1 = dy_1 - dx_1;
-    dx2_1 = dx_1 << 1;
-
-    p = dest->row[yd1] + xd1;
-    q = row[ys1] + xs1;
+    int e_1 = dy_1 - dx_1;
+    int *p = dest->row[yd1] + xd1;
+    int *q = row[ys1] + xs1;
+    int d_1;
 
     for(d_1 = 0; d_1 <= dx_1; d_1++)
     {
