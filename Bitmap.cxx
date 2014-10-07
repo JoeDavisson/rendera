@@ -774,7 +774,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
     mipy = (sh / dh);
 
   int x, y;
-  int div = mipx * mipy;
+  const int div = mipx * mipy;
 
   if((mipx > 1) | (mipy > 1))
   {
@@ -824,9 +824,9 @@ void Bitmap::scaleBilinear(Bitmap *dest,
   do
   {
     int *d = dest->row[dy + y] + dx;
-    float vv = (y * ay);
-    int v1 = vv;
-    float v = vv - v1;
+    const float vv = (y * ay);
+    const int v1 = vv;
+    const float v = vv - v1;
 
     if(sy + v1 >= h - 1)
       break;
@@ -848,9 +848,9 @@ void Bitmap::scaleBilinear(Bitmap *dest,
     x = 0;
     do
     {
-      float uu = (x * ax);
-      int u1 = uu;
-      float u = uu - u1;
+      const float uu = (x * ax);
+      const int u1 = uu;
+      const float u = uu - u1;
 
       if(sx + u1 >= w - 1)
         break;
@@ -956,15 +956,15 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   int du_row = -dv_col;
   int dv_row = du_col;
 
-  int ww = ((cr - cl) + 2) / 2;
-  int hh = ((cb - ct) + 2) / 2;
+  const int ww = ((cr - cl) + 2) / 2;
+  const int hh = ((cb - ct) + 2) / 2;
 
-  int xx = cl;
-  int yy = ct;
+  const int xx = cl;
+  const int yy = ct;
 
   // origin
-  int ox = xx + ww;
-  int oy = yy + hh;
+  const int ox = xx + ww;
+  const int oy = yy + hh;
 	
   // project new corners
   int x0 = xx - ox;
@@ -977,14 +977,14 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   int y3 = yy + (hh * 2) - oy;
 
   // rotate
-  int newx0 = (x0 * du_col + y0 * du_row) >> 8;
-  int newy0 = (x0 * dv_col + y0 * dv_row) >> 8;
-  int newx1 = (x1 * du_col + y1 * du_row) >> 8;
-  int newy1 = (x1 * dv_col + y1 * dv_row) >> 8;
-  int newx2 = (x2 * du_col + y2 * du_row) >> 8;
-  int newy2 = (x2 * dv_col + y2 * dv_row) >> 8;
-  int newx3 = (x3 * du_col + y3 * du_row) >> 8;
-  int newy3 = (x3 * dv_col + y3 * dv_row) >> 8;
+  const int newx0 = (x0 * du_col + y0 * du_row) >> 8;
+  const int newy0 = (x0 * dv_col + y0 * dv_row) >> 8;
+  const int newx1 = (x1 * du_col + y1 * du_row) >> 8;
+  const int newy1 = (x1 * dv_col + y1 * dv_row) >> 8;
+  const int newx2 = (x2 * du_col + y2 * du_row) >> 8;
+  const int newy2 = (x2 * dv_col + y2 * dv_row) >> 8;
+  const int newx3 = (x3 * du_col + y3 * du_row) >> 8;
+  const int newy3 = (x3 * dv_col + y3 * dv_row) >> 8;
 
   x0 = newx0 + xx;
   y0 = newy0 + yy;
@@ -996,10 +996,10 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   y3 = newy3 + yy;
 
   // find new bounding box
-  int bx1 = std::min(x0, std::min(x1, std::min(x2, x3)));
-  int by1 = std::min(y0, std::min(y1, std::min(y2, y3)));
-  int bx2 = std::max(x0, std::max(x1, std::max(x2, x3)));
-  int by2 = std::max(y0, std::max(y1, std::max(y2, y3)));
+  const int bx1 = std::min(x0, std::min(x1, std::min(x2, x3)));
+  const int by1 = std::min(y0, std::min(y1, std::min(y2, y3)));
+  const int bx2 = std::max(x0, std::max(x1, std::max(x2, x3)));
+  const int by2 = std::max(y0, std::max(y1, std::max(y2, y3)));
   int bw = (bx2 - bx1) + 1;
   int bh = (by2 - by1) + 1;
 
@@ -1034,14 +1034,14 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
     row_u += du_row;
     row_v += dv_row;
 
-    int yy = ((dest->h - overscroll * 2) / 2) + y;
+    const int yy = ((dest->h - overscroll * 2) / 2) + y;
     if(yy < dest->ct || yy > dest->cb)
       continue;
 
     for(x = bx1; x <= bx2; x++)
     {
-      int uu = u >> 8;
-      int vv = v >> 8;
+      const int uu = u >> 8;
+      const int vv = v >> 8;
 
       u += du_col;
       v += dv_col;
@@ -1050,7 +1050,7 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
       if(uu < cl || uu > cr || vv < ct || vv > cb)
         continue;
 
-      int xx = ((dest->w - overscroll * 2) / 2) + x;
+      const int xx = ((dest->w - overscroll * 2) / 2) + x;
       if(xx < dest->cl || xx > dest->cr)
         continue;
 
