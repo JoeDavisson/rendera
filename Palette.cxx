@@ -207,7 +207,7 @@ void Palette::fillTable()
 }
 
 // return palette index which corresponds to color
-int Palette::lookup(int c)
+int Palette::lookup(const int &c)
 {
   struct rgba_t rgba = getRgba(c);
 

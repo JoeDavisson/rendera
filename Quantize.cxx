@@ -39,7 +39,8 @@ namespace
 
   // create a color_t structure
   inline void makeColor(struct color_t *c,
-                        float r, float g, float b, float freq)
+                        const float &r, const float &g, const float &b,
+                        const float &freq)
   {
     c->r = r;
     c->g = g;

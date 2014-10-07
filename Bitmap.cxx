@@ -48,7 +48,7 @@ int Bitmap::clone_mirror = 0;
 
 namespace
 {
-  inline int xorValue(const int x, const int y)
+  inline int xorValue(const int &x, const int &y)
   {
     static const int c[2] = { 0x00FFFFFF, 0x00808080 };
     return c[(x & 1) ^ (y & 1)];
