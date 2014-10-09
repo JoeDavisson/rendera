@@ -194,13 +194,13 @@ int Blend::keepLum(const int &c, const int &dest)
   return makeRgba(n[1], n[0], n[2], rgba.a);
 }
 
-int Blend::alphaAdd(const int &c1, const int &, const int &t)
+int Blend::alphaSub(const int &c1, const int &, const int &t)
 {
   const struct rgba_t rgba = getRgba(c1);
   return makeRgba(rgba.r, rgba.g, rgba.b, (rgba.a * t) / 255);
 }
 
-int Blend::alphaSub(const int &c1, const int &, const int &t)
+int Blend::alphaAdd(const int &c1, const int &, const int &t)
 {
   const struct rgba_t rgba = getRgba(c1);
   return makeRgba(rgba.r, rgba.g, rgba.b, 255 - ((255 - rgba.a) * t) / 255);
@@ -269,6 +269,7 @@ int Blend::smoothColor(const int &c1, const int &, const int &t)
   int r = 0;
   int g = 0;
   int b = 0;
+  int a = 0;
 
   int i;
 
@@ -278,13 +279,15 @@ int Blend::smoothColor(const int &c1, const int &, const int &t)
     r += rgba.r * matrix[i];
     g += rgba.g * matrix[i];
     b += rgba.b * matrix[i];
+    a += rgba.a * matrix[i];
   }
 
   r /= 15;
   g /= 15;
   b /= 15;
+  a /= 15;
 
-  int c3 = Blend::trans(c1, makeRgb(r, g, b), t);
+  int c3 = Blend::trans(c1, makeRgba(r, g, b, a), t);
   return keepLum(c3, getl(c1));
 }
 
