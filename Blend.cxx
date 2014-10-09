@@ -143,7 +143,7 @@ int Blend::lighten(const int &c1, const int &c2, const int &t)
 
 int Blend::colorize(const int &c1, const int &c2, const int &t)
 {
-  int c3 = trans(c1, c2, t);
+  int c3 = transNoAlpha(c1, c2, t);
 
   return keepLum(c3, getl(c1));
 }
