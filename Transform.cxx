@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gui.H"
 #include "View.H"
 #include "Dialog.H"
+#include "Project.H"
 
 extern int *fix_gamma;
 extern int *unfix_gamma;
@@ -41,7 +42,7 @@ namespace
 
   void pushUndo()
   {
-    bmp = Bitmap::main;
+    bmp = Project::bmp;
     overscroll = bmp->overscroll;
     Undo::push(overscroll, overscroll,
                bmp->w - overscroll * 2, bmp->h - overscroll * 2, 1);
@@ -49,7 +50,7 @@ namespace
 
   void beginProgress()
   {
-    bmp = Bitmap::main;
+    bmp = Project::bmp;
     Dialog::showProgress(bmp->h / 64);
   }
 
@@ -91,9 +92,9 @@ namespace Scale
   void begin()
   {
     char s[8];
-    snprintf(s, sizeof(s), "%d", Bitmap::main->w - Bitmap::main->overscroll * 2);
+    snprintf(s, sizeof(s), "%d", Project::bmp->w - Project::bmp->overscroll * 2);
     width->value(s);
-    snprintf(s, sizeof(s), "%d", Bitmap::main->h - Bitmap::main->overscroll * 2);
+    snprintf(s, sizeof(s), "%d", Project::bmp->h - Project::bmp->overscroll * 2);
     height->value(s);
     dialog->show();
   }
@@ -136,7 +137,7 @@ namespace Scale
     dialog->hide();
     pushUndo();
 
-    Bitmap *bmp = Bitmap::main;
+    Bitmap *bmp = Project::bmp;
     int overscroll = bmp->overscroll;
     Bitmap *temp = new Bitmap(w, h, overscroll);
 
@@ -146,11 +147,11 @@ namespace Scale
                        overscroll, overscroll, w, h,
                        wrap->value()); 
 
-    delete Bitmap::main;
-    Bitmap::main = temp;
+    delete Project::bmp;
+    Project::bmp = temp;
 
-    delete Map::main;
-    Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
+    delete Project::map;
+    Project::map = new Map(Project::bmp->w, Project::bmp->h);
 
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
@@ -236,14 +237,14 @@ namespace Rotate
     }
 
     dialog->hide();
-    int overscroll = Bitmap::main->overscroll;
-    Bitmap *temp = Bitmap::main->rotate(angle_val, scale_val, overscroll);
+    int overscroll = Project::bmp->overscroll;
+    Bitmap *temp = Project::bmp->rotate(angle_val, scale_val, overscroll);
 
-    delete Bitmap::main;
-    Bitmap::main = temp;
+    delete Project::bmp;
+    Project::bmp = temp;
 
-    delete Map::main;
-    Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
+    delete Project::map;
+    Project::map = new Map(Project::bmp->w, Project::bmp->h);
 
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
@@ -287,14 +288,14 @@ void Transform::scale()
 void Transform::mirror()
 {
   pushUndo();
-  Bitmap::main->mirror();
+  Project::bmp->mirror();
   Gui::getView()->drawMain(1);
 }
 
 void Transform::flip()
 {
   pushUndo();
-  Bitmap::main->flip();
+  Project::bmp->flip();
   Gui::getView()->drawMain(1);
 }
 

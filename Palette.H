@@ -52,9 +52,6 @@ public:
   int *data;
   Octree *table;
   int max;
-
-  static Palette *main;
-  static Palette *undo;
 };
 
 #endif

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Map.H"
 #include "Brush.H"
+#include "Project.H"
 
 #define XOR_VALUE(x, y) ( ((x & 1) ^ (y & 1)) ? 0x00FFFFFF : 0x00808080)
 
@@ -109,10 +110,10 @@ void Stroke::clip()
     x1 = 0;
   if(y1 < 0)
     y1 = 0;
-  if(x2 > Bitmap::main->w - 1)
-    x2 = Bitmap::main->w - 1;
-  if(y2 > Bitmap::main->h - 1)
-    y2 = Bitmap::main->h - 1;
+  if(x2 > Project::bmp->w - 1)
+    x2 = Project::bmp->w - 1;
+  if(y2 > Project::bmp->h - 1)
+    y2 = Project::bmp->h - 1;
 }
 
 void Stroke::sizeLinear(int bx, int by, int x, int y)
@@ -193,8 +194,8 @@ void Stroke::size(int x1, int y1, int x2, int y2)
 
 void Stroke::drawBrush(int x, int y, int c)
 {
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
+  Brush *brush = Project::brush;
+  Map *map = Project::map;
 
   int i;
 
@@ -206,8 +207,8 @@ void Stroke::drawBrush(int x, int y, int c)
 
 void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
+  Brush *brush = Project::brush;
+  Map *map = Project::map;
 
   int i;
 
@@ -223,8 +224,8 @@ void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushRect(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
+  Brush *brush = Project::brush;
+  Map *map = Project::map;
 
   int i;
 
@@ -237,8 +238,8 @@ void Stroke::drawBrushRect(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
+  Brush *brush = Project::brush;
+  Map *map = Project::map;
 
   int i;
 
@@ -251,8 +252,8 @@ void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushAA(int x, int y, int c)
 {
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
+  Brush *brush = Project::brush;
+  Map *map = Project::map;
 
   int i;
 
@@ -265,8 +266,8 @@ void Stroke::drawBrushAA(int x, int y, int c)
 
 void Stroke::drawBrushLineAA(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
+  Brush *brush = Project::brush;
+  Map *map = Project::map;
 
   int i;
 
@@ -281,8 +282,8 @@ void Stroke::drawBrushLineAA(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushRectAA(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
+  Brush *brush = Project::brush;
+  Map *map = Project::map;
 
   int i;
 
@@ -297,8 +298,8 @@ void Stroke::drawBrushRectAA(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushOvalAA(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
+  Brush *brush = Project::brush;
+  Map *map = Project::map;
 
   int i;
 
@@ -313,8 +314,8 @@ void Stroke::drawBrushOvalAA(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::begin(int x, int y, int ox, int oy, float zoom)
 {
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
+  Brush *brush = Project::brush;
+  Map *map = Project::map;
 
   int r = brush->size / 2;
 
@@ -325,11 +326,11 @@ void Stroke::begin(int x, int y, int ox, int oy, float zoom)
   oldx = x;
   oldy = y;
 
-  if(Bitmap::clone_moved)
+  if(Project::bmp->clone_moved)
   {
-    Bitmap::clone_dx = x - Bitmap::clone_x;
-    Bitmap::clone_dy = y - Bitmap::clone_y;
-    Bitmap::clone_moved = 0;
+    Project::bmp->clone_dx = x - Project::bmp->clone_x;
+    Project::bmp->clone_dy = y - Project::bmp->clone_y;
+    Project::bmp->clone_moved = 0;
   }
 
   polycount = 0;
@@ -345,8 +346,8 @@ void Stroke::begin(int x, int y, int ox, int oy, float zoom)
 
 void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 {
-  Brush *brush = Brush::main;
-  Map *map = Map::main;
+  Brush *brush = Project::brush;
+  Map *map = Project::map;
 
   int r = brush->size / 2;
   int w = 0, h = 0;
@@ -507,21 +508,22 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
 void Stroke::end(int x, int y)
 {
-  Map *map = Map::main;
-  Brush *brush = Brush::main;
+  Map *map = Project::map;
+  Brush *brush = Project::brush;
 
   map->thick_aa = 0;
 
   int w = 0, h = 0;
   int i;
 
-  if(Bitmap::clone)
+  if(Project::bmp->clone)
   {
     w = x2 - x1;
     h = y2 - y1;
-    delete Bitmap::clone_buffer;
+    if(Bitmap::clone_buffer)
+      delete Bitmap::clone_buffer;
     Bitmap::clone_buffer = new Bitmap(w, h);
-    Bitmap::main->blit(Bitmap::clone_buffer, x1, y1, 0, 0, w, h);
+    Project::bmp->blit(Bitmap::clone_buffer, x1, y1, 0, 0, w, h);
   }
 
   if(brush->aa)
@@ -649,7 +651,7 @@ void Stroke::end(int x, int y)
 
 void Stroke::polyline(int x, int y, int ox, int oy, float zoom)
 {
-  Map *map = Map::main;
+  Map *map = Project::map;
 
   if(x - 1 < x1)
     x1 = x - 1;
@@ -677,7 +679,7 @@ void Stroke::polyline(int x, int y, int ox, int oy, float zoom)
 
 void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 {
-  Map *map = Map::main;
+  Map *map = Project::map;
 
   clip();
 

@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gui.H"
 #include "View.H"
 #include "Tool.H"
+#include "Project.H"
 
 #define MAX_UNDO 10
 
@@ -73,20 +74,20 @@ void Undo::push(int x, int y, int w, int h, int resized)
 
   if(resized)
   {
-    x1 = Bitmap::main->cl;
-    y1 = Bitmap::main->ct;
-    x2 = Bitmap::main->cr;
-    y2 = Bitmap::main->cb;
+    x1 = Project::bmp->cl;
+    y1 = Project::bmp->ct;
+    x2 = Project::bmp->cr;
+    y2 = Project::bmp->cb;
   }
 
-  if(x1 < Bitmap::main->cl)
-    x1 = Bitmap::main->cl;
-  if(y1 < Bitmap::main->ct)
-    y1 = Bitmap::main->ct;
-  if(x2 > Bitmap::main->cr)
-    x2 = Bitmap::main->cr;
-  if(y2 > Bitmap::main->cb)
-    y2 = Bitmap::main->cb;
+  if(x1 < Project::bmp->cl)
+    x1 = Project::bmp->cl;
+  if(y1 < Project::bmp->ct)
+    y1 = Project::bmp->ct;
+  if(x2 > Project::bmp->cr)
+    x2 = Project::bmp->cr;
+  if(y2 > Project::bmp->cb)
+    y2 = Project::bmp->cb;
 
   w = (x2 - x1) + 1;
   h = (y2 - y1) + 1;
@@ -114,7 +115,7 @@ void Undo::push(int x, int y, int w, int h, int resized)
   undo_stack[undo_current]->x = x1;
   undo_stack[undo_current]->y = y1;
 
-  Bitmap::main->blit(undo_stack[undo_current], x1, y1, 0, 0, w, h);
+  Project::bmp->blit(undo_stack[undo_current], x1, y1, 0, 0, w, h);
   undo_current--;
 }
 
@@ -127,24 +128,21 @@ void Undo::pop()
 
   if(undo_resized[undo_current])
   {
-    int overscroll = Bitmap::main->overscroll;
-    delete Bitmap::main;
-    Bitmap::main = new Bitmap(undo_stack[undo_current]->w,
-                              undo_stack[undo_current]->h,
-                              overscroll);
-    delete Map::main;
-    Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
+    Project::newImage(undo_stack[undo_current]->w,
+                      undo_stack[undo_current]->h);
+
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
-    undo_stack[undo_current]->blit(Bitmap::main, 0, 0,
-                                   Bitmap::main->overscroll,
-                                   Bitmap::main->overscroll,
+
+    undo_stack[undo_current]->blit(Project::bmp, 0, 0,
+                                   Project::bmp->overscroll,
+                                   Project::bmp->overscroll,
                                    undo_stack[undo_current]->w,
                                    undo_stack[undo_current]->h);
   }
   else
   {
-    undo_stack[undo_current]->blit(Bitmap::main, 0, 0, 
+    undo_stack[undo_current]->blit(Project::bmp, 0, 0, 
                                    undo_stack[undo_current]->x,
                                    undo_stack[undo_current]->y,
                                    undo_stack[undo_current]->w,

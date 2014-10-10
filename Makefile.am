@@ -45,6 +45,8 @@ rendera_SOURCES =     \
   Paint.H             \
   Palette.cxx         \
   Palette.H           \
+  Project.cxx         \
+  Project.H           \
   Quantize.cxx        \
   Quantize.H          \
   Render.cxx          \

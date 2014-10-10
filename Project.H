@@ -18,31 +18,39 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef BRUSH_H
-#define BRUSH_H
+#ifndef PROJECT_H
+#define PROJECT_H
 
 #include "Rendera.H"
 
-class Brush
+class Bitmap;
+class Brush;
+class Map;
+class Palette;
+
+namespace Project
 {
-public:
-  Brush();
-  virtual ~Brush();
+  // main image
+  extern Bitmap *bmp;
 
-  void make(int, int);
+  // brushstroke image
+  extern Map *map;
 
-  int *solidx, *solidy;
-  int *hollowx, *hollowy;
-  int solid_count;
-  int hollow_count;
-  int size;
-  int shape;
-  int edge;
-  int color;
-  int trans;
-  int blend;
-  int aa;
-};
+  // current brush
+  extern Brush *brush;
+
+  // palette
+  extern Palette *palette;
+
+  // overscroll amount
+  extern int overscroll;
+
+  // initialize stuff
+  void init();
+
+  // create main image and brushstroke map
+  void newImage(int, int);
+}
 
 #endif
 

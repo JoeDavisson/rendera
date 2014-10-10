@@ -24,9 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Octree.H"
 
-Palette *Palette::main;
-Palette *Palette::undo;
-
 namespace
 {
   // qsort callback to sort palette
@@ -217,7 +214,7 @@ int Palette::lookup(const int &c)
 // sort palette
 void Palette::sort()
 {
-  qsort(Palette::main->data, Palette::main->max, sizeof(int), compareLum);
+  qsort(data, max, sizeof(int), compareLum);
 }
 
 // uses GIMP .gpl palette format

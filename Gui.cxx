@@ -40,6 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Separator.H"
 #include "Tool.H"
 #include "Stroke.H"
+#include "Project.H"
 
 namespace
 {
@@ -469,7 +470,7 @@ void Gui::updateColor(int c)
 
   hue->do_callback();
 
-  Brush::main->color = c;
+  Project::brush->color = c;
 }
 
 void Gui::updateGetColor(int c)
@@ -480,7 +481,7 @@ void Gui::updateGetColor(int c)
 
 void Gui::checkPalette(Widget *widget, void *var)
 {
-  Palette *palette = Palette::main;
+  Palette *palette = Project::palette;
   int pos = *(int *)var;
 
   int step = widget->stepx;
@@ -512,7 +513,7 @@ void Gui::checkPalette(Widget *widget, void *var)
 
 void Gui::drawPalette()
 {
-  Palette::main->draw(palette);
+  Project::palette->draw(palette);
   palette->var = 0;
   palette->redraw();
   palette->do_callback();
@@ -589,7 +590,7 @@ void Gui::checkGridY(InputInt *field, void *)
 
 void Gui::checkPaintSize(Widget *, void *var)
 {
-  Brush *brush = Brush::main;
+  Brush *brush = Project::brush;
 
   int size = brush_sizes[*(int *)var];
   int shape = paint_shape->var;
@@ -599,7 +600,7 @@ void Gui::checkPaintSize(Widget *, void *var)
 
   int i;
 
-  for(i = 0; i < Brush::main->solid_count; i++)
+  for(i = 0; i < Project::brush->solid_count; i++)
   {
     paint_brush->bitmap->setpixelSolid(48 + brush->solidx[i],
                                        48 + brush->solidy[i],
@@ -622,7 +623,7 @@ void Gui::checkPaintStroke(Widget *, void *var)
 
 void Gui::checkPaintEdge(Widget *, void *var)
 {
-  Brush::main->edge = *(int *)var;
+  Project::brush->edge = *(int *)var;
 }
 
 void Gui::checkTool(Widget *, void *var)
@@ -662,7 +663,6 @@ void Gui::checkTool(Widget *, void *var)
   view->tool->active = 0;
   view->tool->started = 0;
 
-  Map::main->clear(0);
   view->drawMain(1);
 }
 
@@ -680,9 +680,9 @@ void Gui::checkColor(Widget *, void *)
   int r, g, b;
 
   Blend::hsvToRgb(h, s, v, &r, &g, &b);
-  Brush::main->color = makeRgb(r, g, b);
-  Brush::main->trans = trans->var * 2.685;
-  Brush::main->blend = blend->value();
+  Project::brush->color = makeRgb(r, g, b);
+  Project::brush->trans = trans->var * 2.685;
+  Project::brush->blend = blend->value();
 
   int i;
 
@@ -761,17 +761,17 @@ void Gui::checkBlend(Widget *, void *)
 
 void Gui::checkWrap(Widget *, void *var)
 {
-  Bitmap::wrap = *(int *)var;
+  Project::bmp->wrap = *(int *)var;
 }
 
 void Gui::checkClone(Widget *, void *var)
 {
-  Bitmap::clone = *(int *)var;
+  Project::bmp->clone = *(int *)var;
 }
 
 void Gui::checkMirror(Widget *, void *var)
 {
-  Bitmap::clone_mirror = *(int *)var;
+  Project::bmp->clone_mirror = *(int *)var;
 }
 
 void Gui::checkOrigin(Widget *, void *var)
@@ -851,38 +851,38 @@ const char *Gui::getTextInput()
 
 void Gui::paletteSort()
 {
-  Palette::main->sort();
-  Palette::main->draw(palette);
+  Project::palette->sort();
+  Project::palette->draw(palette);
 }
 
 void Gui::paletteDefault()
 {
-  Palette::main->setDefault();
-  Palette::main->draw(palette);
+  Project::palette->setDefault();
+  Project::palette->draw(palette);
 }
 
 void Gui::paletteWebSafe()
 {
-  Palette::main->setWebSafe();
-  Palette::main->draw(palette);
+  Project::palette->setWebSafe();
+  Project::palette->draw(palette);
 }
 
 void Gui::palette3LevelRGB()
 {
-  Palette::main->set3LevelRGB();
-  Palette::main->draw(palette);
+  Project::palette->set3LevelRGB();
+  Project::palette->draw(palette);
 }
 
 void Gui::palette4LevelRGB()
 {
-  Palette::main->set4LevelRGB();
-  Palette::main->draw(palette);
+  Project::palette->set4LevelRGB();
+  Project::palette->draw(palette);
 }
 
 void Gui::palette332()
 {
-  Palette::main->set332();
-  Palette::main->draw(palette);
+  Project::palette->set332();
+  Project::palette->draw(palette);
 }
 
 View *Gui::getView()
@@ -903,9 +903,9 @@ int Gui::getClone()
 void Gui::checkPaintMode()
 {
   if(paint_mode->value() == 1)
-    Brush::main->aa = 1;
+    Project::brush->aa = 1;
   else
-    Brush::main->aa = 0;
+    Project::brush->aa = 0;
 }
 
 int Gui::getPaintMode()

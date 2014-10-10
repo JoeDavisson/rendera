@@ -32,19 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 extern int *fix_gamma;
 extern int *unfix_gamma;
 
-Bitmap *Bitmap::main;
-Bitmap *Bitmap::preview;
-Bitmap *Bitmap::clone_buffer;
-Bitmap *Bitmap::offset_buffer;
-
-int Bitmap::wrap = 0;
-int Bitmap::clone = 0;
-int Bitmap::clone_moved = 0;
-int Bitmap::clone_x = 0;
-int Bitmap::clone_y = 0;
-int Bitmap::clone_dx = 0;
-int Bitmap::clone_dy = 0;
-int Bitmap::clone_mirror = 0;
+Bitmap *Bitmap::clone_buffer = 0;
 
 namespace
 {
@@ -419,10 +407,9 @@ void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
 
 void Bitmap::setpixel(const int &x, const int &y, const int &c2, const int &t)
 {
-  Blend::target(Bitmap::main, x, y);
-  const int mode = Bitmap::wrap | (Bitmap::clone << 1);
+  Blend::target(this, x, y);
 
-  switch(mode)
+  switch(wrap | (clone << 1))
   {
     case 0:
       setpixelSolid(x, y, c2, t);
@@ -487,7 +474,7 @@ void Bitmap::setpixelClone(const int &x, const int &y,
   const int w1 = w - 1;
   const int h1 = h - 1;
 
-  switch(Bitmap::clone_mirror)
+  switch(clone_mirror)
   {
     case 0:
       break;

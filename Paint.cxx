@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Render.H"
 #include "Gui.H"
+#include "Project.H"
 
 Paint::Paint()
 {
@@ -45,7 +46,7 @@ void Paint::push(View *view)
     if(view->dclick)
     {
       stroke->end(view->imgx, view->imgy);
-      Blend::set(Brush::main->blend);
+      Blend::set(Project::brush->blend);
       Render::begin();
       active = 0;
       Blend::set(Blend::TRANS);
@@ -85,7 +86,7 @@ void Paint::release(View *view)
   if(active && stroke->type != 3)
   {
     stroke->end(view->imgx, view->imgy);
-    Blend::set(Brush::main->blend);
+    Blend::set(Project::brush->blend);
     Render::begin();
     active = 0;
     Blend::set(Blend::TRANS);
@@ -112,9 +113,9 @@ void Paint::move(View *view)
     case 2:
     case 4:
     case 6:
-      Map::main->rectfill(view->oldimgx - 48, view->oldimgy - 48,
+      Project::map->rectfill(view->oldimgx - 48, view->oldimgy - 48,
                           view->oldimgx + 48, view->oldimgy + 48, 0);
-      Map::main->rectfill(view->imgx - 48, view->imgy - 48,
+      Project::map->rectfill(view->imgx - 48, view->imgy - 48,
                           view->imgx + 48, view->imgy + 48, 0);
       stroke->drawBrush(view->imgx, view->imgy, 255);
       stroke->size(view->imgx - 48, view->imgy - 48,

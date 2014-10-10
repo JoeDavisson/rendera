@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Undo.H"
 #include "Octree.H"
+#include "Project.H"
 
 extern int *fix_gamma;
 extern int *unfix_gamma;
@@ -43,7 +44,7 @@ namespace
 
   void pushUndo()
   {
-    bmp = Bitmap::main;
+    bmp = Project::bmp;
     overscroll = bmp->overscroll;
     Undo::push(overscroll, overscroll,
                bmp->w - overscroll * 2, bmp->h - overscroll * 2, 0);
@@ -51,7 +52,7 @@ namespace
 
   void beginProgress()
   {
-    bmp = Bitmap::main;
+    bmp = Project::bmp;
     Dialog::showProgress(bmp->h / 64);
   }
 
@@ -910,9 +911,9 @@ namespace Colorize
         int sat = s;
         if(sat < 64)
           sat = 64;
-        r = getr(Brush::main->color);
-        g = getg(Brush::main->color);
-        b = getb(Brush::main->color);
+        r = getr(Project::brush->color);
+        g = getg(Project::brush->color);
+        b = getb(Project::brush->color);
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
         Blend::hsvToRgb(h, (sat * s) / (sat + s), v, &r, &g, &b);
         int c2 = makeRgb(r, g, b);
@@ -951,7 +952,8 @@ namespace ApplyPalette
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         int c = bmp->getpixel(x, y);
-        bmp->setpixel(x, y, Palette::main->data[(int)Palette::main->lookup(c)], 0);
+        bmp->setpixel(x, y,
+          Project::palette->data[(int)Project::palette->lookup(c)], 0);
       }
 
       if(updateProgress(y) < 0)
@@ -965,7 +967,7 @@ namespace ApplyPalette
   {
     int x, y;
     int i, j;
-    Bitmap *bmp = Bitmap::main;
+    Bitmap *bmp = Project::bmp;
 
     int e[3], v[3], n[3], last[3];
     int *buf[3], *prev[3];
@@ -1005,8 +1007,8 @@ namespace ApplyPalette
         const int g = unfix_gamma[n[1]];
         const int b = unfix_gamma[n[2]];
 
-        const int pal_index = (int)Palette::main->lookup(makeRgb(r, g, b));
-        const int c = Palette::main->data[pal_index];
+        const int pal_index = (int)Project::palette->lookup(makeRgb(r, g, b));
+        const int c = Project::palette->data[pal_index];
 
         struct rgba_t rgba = getRgba(c);
 

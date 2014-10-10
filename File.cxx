@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Tool.H"
 #include "Stroke.H"
 #include "Widget.H"
+#include "Project.H"
 
 #ifdef _WIN32
 #define HAVE_BOOLEAN
@@ -38,6 +39,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <jpeglib.h>
 #include <setjmp.h>
 #include <cstring>
+
+Bitmap *File::preview_bmp = 0;
 
 namespace
 {
@@ -208,12 +211,12 @@ void File::load(Fl_Widget *, void *)
 
   fclose(in);
 
-  int overscroll = Bitmap::main->overscroll;
+  int overscroll = Project::overscroll;
 
   if(isPng(header))
   {
-    delete Bitmap::main;
-    if(!(Bitmap::main = File::loadPNG((const char *)fn, overscroll)))
+    delete Project::bmp;
+    if(!(Project::bmp = File::loadPNG((const char *)fn, overscroll)))
     {
       errorMessage();
       return;
@@ -221,8 +224,8 @@ void File::load(Fl_Widget *, void *)
   }
   else if(isJpeg(header))
   {
-    delete Bitmap::main;
-    if(!(Bitmap::main = File::loadJPG((const char *)fn, overscroll)))
+    delete Project::bmp;
+    if(!(Project::bmp = File::loadJPG((const char *)fn, overscroll)))
     {
       errorMessage();
       return;
@@ -230,8 +233,8 @@ void File::load(Fl_Widget *, void *)
   }
   else if(isBmp(header))
   {
-    delete Bitmap::main;
-    if(!(Bitmap::main = File::loadBMP((const char *)fn, overscroll)))
+    delete Project::bmp;
+    if(!(Project::bmp = File::loadBMP((const char *)fn, overscroll)))
     {
       errorMessage();
       return;
@@ -239,8 +242,8 @@ void File::load(Fl_Widget *, void *)
   }
   else if(isTarga(fn))
   {
-    delete Bitmap::main;
-    if(!(Bitmap::main = File::loadTGA((const char *)fn, overscroll)))
+    delete Project::bmp;
+    if(!(Project::bmp = File::loadTGA((const char *)fn, overscroll)))
     {
       errorMessage();
       return;
@@ -252,8 +255,8 @@ void File::load(Fl_Widget *, void *)
     return;
   }
 
-  delete Map::main;
-  Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
+  delete Project::map;
+  Project::map = new Map(Project::bmp->w, Project::bmp->h);
 
   Gui::getView()->tool->stroke->clip();
   Gui::getView()->zoomFit(Gui::getView()->fit);
@@ -276,36 +279,36 @@ int File::loadFile(const char *fn)
 
   fclose(in);
 
-  int overscroll = Bitmap::main->overscroll;
+  int overscroll = Project::overscroll;
 
   if(isPng(header))
   {
-    delete Bitmap::main;
-    if(!(Bitmap::main = File::loadPNG((const char *)fn, overscroll)))
+    delete Project::bmp;
+    if(!(Project::bmp = File::loadPNG((const char *)fn, overscroll)))
     {
       return -1;
     }
   }
   else if(isJpeg(header))
   {
-    delete Bitmap::main;
-    if(!(Bitmap::main = File::loadJPG((const char *)fn, overscroll)))
+    delete Project::bmp;
+    if(!(Project::bmp = File::loadJPG((const char *)fn, overscroll)))
     {
       return -1;
     }
   }
   else if(isBmp(header))
   {
-    delete Bitmap::main;
-    if(!(Bitmap::main = File::loadBMP((const char *)fn, overscroll)))
+    delete Project::bmp;
+    if(!(Project::bmp = File::loadBMP((const char *)fn, overscroll)))
     {
       return -1;
     }
   }
   else if(isTarga(fn))
   {
-    delete Bitmap::main;
-    if(!(Bitmap::main = File::loadTGA((const char *)fn, overscroll)))
+    delete Project::bmp;
+    if(!(Project::bmp = File::loadTGA((const char *)fn, overscroll)))
     {
       return -1;
     }
@@ -315,8 +318,8 @@ int File::loadFile(const char *fn)
     return -1;
   }
 
-  delete Map::main;
-  Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
+  delete Project::map;
+  Project::map = new Map(Project::bmp->w, Project::bmp->h);
 
   Gui::getView()->tool->stroke->clip();
   Gui::getView()->zoomFit(Gui::getView()->fit);
@@ -816,8 +819,8 @@ int File::saveBMP(const char *fn)
   if(!out)
     return -1;
 
-  Bitmap *bmp = Bitmap::main;
-  int overscroll = Bitmap::main->overscroll;
+  Bitmap *bmp = Project::bmp;
+  int overscroll = Project::overscroll;
   int w = bmp->w - overscroll * 2;
   int h = bmp->h - overscroll * 2;
   int pad = w % 4;
@@ -887,8 +890,8 @@ int File::saveTGA(const char *fn)
   if(!out)
     return -1;
 
-  Bitmap *bmp = Bitmap::main;
-  int overscroll = Bitmap::main->overscroll;
+  Bitmap *bmp = Project::bmp;
+  int overscroll = Project::overscroll;
   int w = bmp->w - overscroll * 2;
   int h = bmp->h - overscroll * 2;
 
@@ -969,8 +972,8 @@ int File::savePNG(const char *fn)
     return -1;
   }
 
-  Bitmap *bmp = Bitmap::main;
-  int overscroll = Bitmap::main->overscroll;
+  Bitmap *bmp = Project::bmp;
+  int overscroll = Project::overscroll;
   int w = bmp->w - overscroll * 2;
   int h = bmp->h - overscroll * 2;
 
@@ -1025,8 +1028,8 @@ int File::saveJPG(const char *fn)
   JSAMPROW row_pointer[1];
   JSAMPLE *linebuf;
 
-  Bitmap *bmp = Bitmap::main;
-  int overscroll = Bitmap::main->overscroll;
+  Bitmap *bmp = Project::bmp;
+  int overscroll = Project::overscroll;
   int w = bmp->w - overscroll * 2;
   int h = bmp->h - overscroll * 2;
 
@@ -1085,12 +1088,14 @@ Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
   if(!isPng(header))
     return 0;
 
-  delete Bitmap::preview;
-  Bitmap::preview = loadPNG(fn, 0);
+  if(File::preview_bmp)
+    delete File::preview_bmp;
+  File::preview_bmp = loadPNG(fn, 0);
 
-  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data,
-                                         Bitmap::preview->w, Bitmap::preview->h,
-                                         4, 0);
+  Fl_RGB_Image *image =
+    new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
+                     File::preview_bmp->w, File::preview_bmp->h,
+                     4, 0);
 
   return image;
 }
@@ -1100,12 +1105,14 @@ Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int)
   if(!isJpeg(header))
     return 0;
 
-  delete Bitmap::preview;
-  Bitmap::preview = loadJPG(fn, 0);
+  if(File::preview_bmp)
+    delete File::preview_bmp;
+  File::preview_bmp = loadJPG(fn, 0);
 
-  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data,
-                                         Bitmap::preview->w, Bitmap::preview->h,
-                                         4, 0);
+  Fl_RGB_Image *image =
+    new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
+                     File::preview_bmp->w, File::preview_bmp->h,
+                     4, 0);
 
   return image;
 }
@@ -1115,12 +1122,14 @@ Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int)
   if(!isBmp(header))
     return 0;
 
-  delete Bitmap::preview;
-  Bitmap::preview = loadBMP(fn, 0);
+  if(File::preview_bmp)
+    delete File::preview_bmp;
+  File::preview_bmp = loadBMP(fn, 0);
 
-  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data,
-                                         Bitmap::preview->w, Bitmap::preview->h,
-                                         4, 0);
+  Fl_RGB_Image *image =
+    new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
+                     File::preview_bmp->w, File::preview_bmp->h,
+                     4, 0);
 
   return image;
 }
@@ -1130,12 +1139,14 @@ Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
   if(!isTarga(fn))
     return 0;
 
-  delete Bitmap::preview;
-  Bitmap::preview = loadTGA(fn, 0);
+  if(File::preview_bmp)
+    delete File::preview_bmp;
+  File::preview_bmp = loadTGA(fn, 0);
 
-  Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)Bitmap::preview->data,
-                                         Bitmap::preview->w, Bitmap::preview->h,
-                                         4, 0);
+  Fl_RGB_Image *image =
+    new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
+                     File::preview_bmp->w, File::preview_bmp->h,
+                     4, 0);
 
   return image;
 }
@@ -1201,7 +1212,7 @@ void File::loadPalette()
 
   if(isGimpPalette(header))
   {
-    if(Palette::main->load((const char*)fn) < 0)
+    if(Project::palette->load((const char*)fn) < 0)
     {
       errorMessage();
       return;
@@ -1243,7 +1254,7 @@ void File::savePalette()
       return;
   }
   
-  if(Palette::main->save(fn) < 0)
+  if(Project::palette->save(fn) < 0)
   {
     errorMessage();
     return;

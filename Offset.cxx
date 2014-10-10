@@ -25,6 +25,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.H"
 #include "Gui.H"
 #include "Undo.H"
+#include "Project.H"
+
+namespace
+{
+  Bitmap *offset_buffer = 0;
+}
 
 Offset::Offset()
 {
@@ -38,23 +44,25 @@ void Offset::push(View *view)
 {
   Undo::push(0, 0, 0, 0, 1);
 
-  int w = Bitmap::main->cw;
-  int h = Bitmap::main->ch;
-  int overscroll = Bitmap::main->overscroll;
+  int w = Project::bmp->cw;
+  int h = Project::bmp->ch;
+  int overscroll = Project::overscroll;
 
   beginx = view->imgx;
   beginy = view->imgy;
 
-  delete Bitmap::offset_buffer;
-  Bitmap::offset_buffer = new Bitmap(w, h);
-  Bitmap::main->blit(Bitmap::offset_buffer, overscroll, overscroll, 0, 0, w, h);
+  if(offset_buffer)
+    delete offset_buffer;
+
+  offset_buffer = new Bitmap(w, h);
+  Project::bmp->blit(offset_buffer, overscroll, overscroll, 0, 0, w, h);
 }
 
 void Offset::drag(View *view)
 {
-  int w = Bitmap::main->cw;
-  int h = Bitmap::main->ch;
-  int overscroll = Bitmap::main->overscroll;
+  int w = Project::bmp->cw;
+  int h = Project::bmp->ch;
+  int overscroll = Project::overscroll;
 
   int dx = view->imgx - beginx;
   int dy = view->imgy - beginy;
@@ -71,14 +79,14 @@ void Offset::drag(View *view)
   while(y >= h)
     y -= h;
   
-  Bitmap::offset_buffer->blit(Bitmap::main, 0, 0,
-                              x + overscroll, y + overscroll, w - x, h - y);
-  Bitmap::offset_buffer->blit(Bitmap::main, w - x, 0,
-                              overscroll, y + overscroll, x, h - y);
-  Bitmap::offset_buffer->blit(Bitmap::main, 0, h - y,
-                              x + overscroll, overscroll, w - x, y);
-  Bitmap::offset_buffer->blit(Bitmap::main, w - x, h - y,
-                              overscroll, overscroll, x, y);
+  offset_buffer->blit(Project::bmp, 0, 0,
+                      x + overscroll, y + overscroll, w - x, h - y);
+  offset_buffer->blit(Project::bmp, w - x, 0,
+                      overscroll, y + overscroll, x, h - y);
+  offset_buffer->blit(Project::bmp, 0, h - y,
+                      x + overscroll, overscroll, w - x, y);
+  offset_buffer->blit(Project::bmp, w - x, h - y,
+                      overscroll, overscroll, x, y);
 
   view->drawMain(1);
   Gui::checkOffsetValues(dx, dy);

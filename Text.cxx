@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.H"
 #include "Gui.H"
 #include "Undo.H"
+#include "Project.H"
 
 namespace
 {
@@ -53,8 +54,8 @@ void Text::push(View *view)
              (stroke->y2 - stroke->y1) + 1, 0);
 
   // render text to image
-  Bitmap *dest = Bitmap::main;
-  Blend::set(Brush::main->blend);
+  Bitmap *dest = Project::bmp;
+  Blend::set(Project::brush->blend);
 
   int x, y;
 
@@ -69,8 +70,8 @@ void Text::push(View *view)
       {
         dest->setpixel(view->imgx - temp->w / 2 + x,
                        view->imgy - temp->h / 2 + y,
-                       Brush::main->color,
-                       scaleVal(Brush::main->trans, t));
+                       Project::brush->color,
+                       scaleVal(Project::brush->trans, t));
       }
     }
   }
@@ -155,7 +156,7 @@ void Text::move(View *view)
   int imgx = view->imgx;
   int imgy = view->imgy;
 
-  Map *map = Map::main;
+  Map *map = Project::map;
   map->clear(0);
 
   for(y = 0; y < temp->h; y++)

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Palette.H"
 #include "View.H"
 #include "Gui.H"
+#include "Project.H"
 
 namespace
 {
@@ -50,10 +51,10 @@ GetColor::~GetColor()
 
 void GetColor::push(View *view)
 {
-  if(inbox(view->imgx, view->imgy, Bitmap::main->cl, Bitmap::main->ct,
-                                   Bitmap::main->cr, Bitmap::main->cb))
+  if(inbox(view->imgx, view->imgy, Project::bmp->cl, Project::bmp->ct,
+                                   Project::bmp->cr, Project::bmp->cb))
   {
-    int c = Bitmap::main->getpixel(view->imgx, view->imgy);
+    int c = Project::bmp->getpixel(view->imgx, view->imgy);
     Gui::updateColor(c);
     Gui::updateGetColor(c);
   }

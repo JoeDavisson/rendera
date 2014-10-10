@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Widget.H"
 #include "Stroke.H"
 #include "File.H"
+#include "Project.H"
 
 namespace
 {
@@ -175,9 +176,9 @@ int View::handle(int event)
         case 1:
           if(shift)
           {
-            Bitmap::clone_x = imgx;
-            Bitmap::clone_y = imgy;
-            Bitmap::clone_moved = 1;
+            Project::bmp->clone_x = imgx;
+            Project::bmp->clone_y = imgy;
+            Project::bmp->clone_moved = 1;
             redraw();
             break;
           }
@@ -334,10 +335,10 @@ void View::drawMain(int refresh)
   sw += 2;
   sh += 2;
 
-  if(sw > Bitmap::main->w - ox)
-    sw = Bitmap::main->w - ox;
-  if(sh > Bitmap::main->h - oy)
-    sh = Bitmap::main->h - oy;
+  if(sw > Project::bmp->w - ox)
+    sw = Project::bmp->w - ox;
+  if(sh > Project::bmp->h - oy)
+    sh = Project::bmp->h - oy;
 
   int dw = sw * zoom;
   int dh = sh * zoom;
@@ -353,7 +354,7 @@ void View::drawMain(int refresh)
 
   backbuf->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
-  Bitmap::main->pointStretch(backbuf, ox, oy, sw, sh,
+  Project::bmp->pointStretch(backbuf, ox, oy, sw, sh,
                              0, 0, dw, dh, overx, overy, bgr_order);
 
   if(grid)
@@ -383,8 +384,8 @@ void View::drawGrid()
 
   int zx = zoom * gridx;
   int zy = zoom * gridy;
-  int qx = (Bitmap::main->overscroll % gridx) * zoom;
-  int qy = (Bitmap::main->overscroll % gridy) * zoom;
+  int qx = (Project::bmp->overscroll % gridx) * zoom;
+  int qy = (Project::bmp->overscroll % gridy) * zoom;
 
   y1 = 0 - zy + (offy * zoom) + qy - (int)(oy * zoom) % zy;
 
@@ -417,13 +418,13 @@ void View::drawCloneCursor()
   if(moving)
     return;
 
-  int x = Bitmap::clone_x;
-  int y = Bitmap::clone_y;
-  int dx = Bitmap::clone_dx;
-  int dy = Bitmap::clone_dy;
-  int mirror = Bitmap::clone_mirror;
-  int w = Bitmap::main->w - 1;
-  int h = Bitmap::main->h - 1;
+  int x = Project::bmp->clone_x;
+  int y = Project::bmp->clone_y;
+  int dx = Project::bmp->clone_dx;
+  int dy = Project::bmp->clone_dy;
+  int mirror = Project::bmp->clone_mirror;
+  int w = Project::bmp->w - 1;
+  int h = Project::bmp->h - 1;
 
   int x1 = imgx - dx;
   int y1 = imgy - dy;
@@ -479,7 +480,7 @@ void View::beginMove()
   int hh = h();
 
   winaspect = (float)hh / ww;
-  aspect = (float)Bitmap::main->h / Bitmap::main->w;
+  aspect = (float)Project::bmp->h / Project::bmp->w;
 
   pw = ww;
   ph = hh;
@@ -498,11 +499,11 @@ void View::beginMove()
   px += dx;
   py += dy;
 
-  bw = ww * (((float)pw / zoom) / Bitmap::main->w);
+  bw = ww * (((float)pw / zoom) / Project::bmp->w);
   bh = bw * winaspect;
 
-  bx = ox * ((float)pw / Bitmap::main->w) + px;
-  by = oy * ((float)ph / Bitmap::main->h) + py;
+  bx = ox * ((float)pw / Project::bmp->w) + px;
+  by = oy * ((float)ph / Project::bmp->h) + py;
 
   // pos.x = bx + bw / 2;
   // pos.y = by + bh / 2;
@@ -510,8 +511,8 @@ void View::beginMove()
 
   backbuf->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
-  Bitmap::main->fastStretch(backbuf,
-                             0, 0, Bitmap::main->w, Bitmap::main->h,
+  Project::bmp->fastStretch(backbuf,
+                             0, 0, Project::bmp->w, Project::bmp->h,
                              px, py, pw, ph, bgr_order);
 
   lastbx = bx;
@@ -541,8 +542,8 @@ void View::move()
   if(by > py + ph - bh - 1)
     by = py + ph - bh - 1;
 
-  ox = (bx - px) / ((float)pw / (Bitmap::main->w));
-  oy = (by - py) / ((float)ph / (Bitmap::main->h));
+  ox = (bx - px) / ((float)pw / (Project::bmp->w));
+  oy = (by - py) / ((float)ph / (Project::bmp->h));
 
   if(ox < 0)
     ox = 0;
@@ -598,10 +599,10 @@ void View::zoomIn(int x, int y)
     ox += x / zoom;
     oy += y / zoom;
 
-    if(ox > Bitmap::main->w - w() / zoom)
-      ox = Bitmap::main->w - w() / zoom;
-    if(oy > Bitmap::main->h - h() / zoom)
-      oy = Bitmap::main->h - h() / zoom;
+    if(ox > Project::bmp->w - w() / zoom)
+      ox = Project::bmp->w - w() / zoom;
+    if(oy > Project::bmp->h - h() / zoom)
+      oy = Project::bmp->h - h() / zoom;
     if(ox < 0)
       ox = 0;
     if(oy < 0)
@@ -632,10 +633,10 @@ void View::zoomOut(int x, int y)
   {
     ox -= x / oldzoom;
     oy -= y / oldzoom;
-    if(ox > Bitmap::main->w - w() / zoom)
-      ox = Bitmap::main->w - w() / zoom;
-    if(oy > Bitmap::main->h - h() / zoom)
-      oy = Bitmap::main->h - h() / zoom;
+    if(ox > Project::bmp->w - w() / zoom)
+      ox = Project::bmp->w - w() / zoom;
+    if(oy > Project::bmp->h - h() / zoom)
+      oy = Project::bmp->h - h() / zoom;
     if(ox < 0)
       ox = 0;
     if(oy < 0)
@@ -663,12 +664,12 @@ void View::zoomFit(int fitting)
   }
 
   winaspect = (float)h() / w();
-  aspect = (float)Bitmap::main->h / Bitmap::main->w;
+  aspect = (float)Project::bmp->h / Project::bmp->w;
 
   if(aspect < winaspect)
-    zoom = ((float)w() / Bitmap::main->w);
+    zoom = ((float)w() / Project::bmp->w);
   else
-    zoom = ((float)h() / Bitmap::main->h);
+    zoom = ((float)h() / Project::bmp->h);
 
   ox = 0;
   oy = 0;
@@ -695,7 +696,7 @@ void View::scroll(int dir, int amount)
   switch(dir)
   {
     case 0:
-      x = Bitmap::main->w - w() / zoom;
+      x = Project::bmp->w - w() / zoom;
       if(x < 0)
         return;
       ox += amount / zoom;
@@ -708,7 +709,7 @@ void View::scroll(int dir, int amount)
         ox = 0;
       break;
     case 2:
-      y = Bitmap::main->h - h() / zoom;
+      y = Project::bmp->h - h() / zoom;
       if(y < 0)
         return;
       oy += amount / zoom;

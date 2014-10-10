@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gui.H"
 #include "View.H"
 #include "Quantize.H"
+#include "Project.H"
 
 namespace About
 {
@@ -150,9 +151,9 @@ namespace NewImage
   void begin()
   {
     char s[8];
-    snprintf(s, sizeof(s), "%d", Bitmap::main->w - Bitmap::main->overscroll * 2);
+    snprintf(s, sizeof(s), "%d", Project::bmp->w - Project::overscroll * 2);
     width->value(s);
-    snprintf(s, sizeof(s), "%d", Bitmap::main->h - Bitmap::main->overscroll * 2);
+    snprintf(s, sizeof(s), "%d", Project::bmp->h - Project::overscroll * 2);
     height->value(s);
     dialog->show();
   }
@@ -194,12 +195,7 @@ namespace NewImage
 
     dialog->hide();
 
-    int overscroll = Bitmap::main->overscroll;
-    delete Bitmap::main;
-    Bitmap::main = new Bitmap(w, h, overscroll);
-
-    delete Map::main;
-    Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
+    Project::newImage(w, h);
 
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
@@ -241,7 +237,7 @@ namespace CreatePalette
   void begin()
   {
     char s[8];
-    snprintf(s, sizeof(s), "%d", Palette::main->max);
+    snprintf(s, sizeof(s), "%d", Project::palette->max);
     colors->value(s);
     dialog->show();
   }
@@ -267,7 +263,7 @@ namespace CreatePalette
     }
 
     dialog->hide();
-    Quantize::pca(Bitmap::main, c);
+    Quantize::pca(Project::bmp, c);
   }
 
   void quit()
@@ -307,10 +303,11 @@ namespace Editor
   int ramp_started;
   int begin_undo;
   int oldsvx, oldsvy;
+  Palette *undo_palette;
 
   void storeUndo()
   {
-    Palette::main->copy(Palette::undo);
+    Project::palette->copy(undo_palette);
     begin_undo = 1;
   }
 
@@ -319,8 +316,8 @@ namespace Editor
     if(begin_undo)
     {
       begin_undo = 0;
-      Palette::undo->copy(Palette::main);
-      Palette::main->draw(palette);
+      undo_palette->copy(Project::palette);
+      Project::palette->draw(palette);
       Gui::drawPalette();
       palette->do_callback();
     }
@@ -331,7 +328,7 @@ namespace Editor
     int x , y;
     int r = 0, g = 0, b = 0;
     int h = 0, s = 0, v = 0;
-    int c = Brush::main->color;
+    int c = Project::brush->color;
 
     Blend::rgbToHsv(getr(c), getg(c), getb(c), &h, &s, &v);
 
@@ -377,14 +374,14 @@ namespace Editor
     hue->redraw();
     sat_val->redraw();
 
-    color->bitmap->clear(Brush::main->color);
+    color->bitmap->clear(Project::brush->color);
     color->redraw();
   }
 
   void setHsvSliders()
   {
     int h, s, v;
-    int color = Brush::main->color;
+    int color = Project::brush->color;
     Blend::rgbToHsv(getr(color), getg(color), getb(color), &h, &s, &v);
     hue->var = h / 6;
     sat_val->var = s + 256 * v;
@@ -396,7 +393,7 @@ namespace Editor
   {
     int i;
     int begin, end;
-    Palette *pal = Palette::main;
+    Palette *pal = Project::palette;
 
     if(ramp_started > 0)
     {
@@ -461,7 +458,7 @@ namespace Editor
       }
 
       ramp_started = 0;
-      Palette::main->draw(palette);
+      Project::palette->draw(palette);
       Gui::drawPalette();
 
       return;
@@ -481,9 +478,9 @@ namespace Editor
     int r, g, b;
 
     Blend::hsvToRgb(h, s, v, &r, &g, &b);
-    Brush::main->color = makeRgb(r, g, b);
+    Project::brush->color = makeRgb(r, g, b);
 
-    Gui::updateColor(Brush::main->color);
+    Gui::updateColor(Project::brush->color);
     setHsv(1);
   }
 
@@ -495,17 +492,17 @@ namespace Editor
     int r, g, b;
 
     Blend::hsvToRgb(h, s, v, &r, &g, &b);
-    Brush::main->color = makeRgb(r, g, b);
+    Project::brush->color = makeRgb(r, g, b);
 
-    Gui::updateColor(Brush::main->color);
+    Gui::updateColor(Project::brush->color);
     setHsv(0);
   }
 
   void insertColor()
   {
     storeUndo();
-    Palette::main->insertColor(Brush::main->color, palette->var);
-    Palette::main->draw(palette);
+    Project::palette->insertColor(Project::brush->color, palette->var);
+    Project::palette->draw(palette);
     Gui::drawPalette();
     palette->do_callback();
   }
@@ -513,19 +510,19 @@ namespace Editor
   void removeColor()
   {
     storeUndo();
-    Palette::main->deleteColor(palette->var);
-    Palette::main->draw(palette);
+    Project::palette->deleteColor(palette->var);
+    Project::palette->draw(palette);
     Gui::drawPalette();
-    if(palette->var > Palette::main->max - 1)
-      palette->var = Palette::main->max - 1;
+    if(palette->var > Project::palette->max - 1)
+      palette->var = Project::palette->max - 1;
     palette->do_callback();
   }
 
   void replaceColor()
   {
     storeUndo();
-    Palette::main->replaceColor(Brush::main->color, palette->var);
-    Palette::main->draw(palette);
+    Project::palette->replaceColor(Project::brush->color, palette->var);
+    Project::palette->draw(palette);
     Gui::drawPalette();
     palette->do_callback();
   }
@@ -552,7 +549,7 @@ namespace Editor
 
   void begin()
   {
-    Palette::main->draw(palette);
+    Project::palette->draw(palette);
     setHsvSliders();
     setHsv(1);
     dialog->show();
@@ -563,7 +560,7 @@ namespace Editor
 
   void close()
   {
-    Palette::main->fillTable();
+    Project::palette->fillTable();
     dialog->hide();
   }
 
@@ -591,6 +588,8 @@ namespace Editor
     done->callback((Fl_Callback *)close);
     dialog->set_modal();
     dialog->end(); 
+
+    undo_palette = new Palette();
   }
 }
 

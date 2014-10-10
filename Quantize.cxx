@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Dialog.H"
 #include "Widget.H"
 #include "Octree.H"
+#include "Project.H"
 
 namespace
 {
@@ -378,23 +379,23 @@ void Quantize::pca(Bitmap *src, int size)
   {
     if(colors[i].active)
     {
-      Palette::main->data[index] =
+      Project::palette->data[index] =
         makeRgb((int)colors[i].r, (int)colors[i].g, (int)colors[i].b);
 
       index++;
     }
   }
 
-  Palette::main->max = index;
+  Project::palette->max = index;
 
   // sort palette
-  qsort(Palette::main->data, Palette::main->max, sizeof(int), compareLum);
+  qsort(Project::palette->data, Project::palette->max, sizeof(int), compareLum);
 
   // stretch palette
-  if(Palette::main->max != size)
+  if(Project::palette->max != size)
   {
-    stretchPalette(Palette::main->data, Palette::main->max, size);
-    Palette::main->max = size;
+    stretchPalette(Project::palette->data, Project::palette->max, size);
+    Project::palette->max = size;
   }
 
   // free memory
@@ -403,6 +404,6 @@ void Quantize::pca(Bitmap *src, int size)
 
   // redraw palette widget
   Gui::drawPalette();
-  Palette::main->fillTable();
+  Project::palette->fillTable();
 }
 

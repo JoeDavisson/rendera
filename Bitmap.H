@@ -64,18 +64,16 @@ public:
   Bitmap *rotate(float, float, int);
   void fastStretch(Bitmap *, int, int, int, int, int, int, int, int, int);
 
-  static Bitmap *main;
-  static Bitmap *preview;
+  int wrap;
+  int clone;
+  int clone_moved;
+  int clone_x;
+  int clone_y;
+  int clone_dx;
+  int clone_dy;
+  int clone_mirror;
+
   static Bitmap *clone_buffer;
-  static Bitmap *offset_buffer;
-  static int wrap;
-  static int clone;
-  static int clone_moved;
-  static int clone_x;
-  static int clone_y;
-  static int clone_dx;
-  static int clone_dy;
-  static int clone_mirror;
 };
 
 #endif

@@ -39,20 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Text.H"
 #include "File.H"
 #include "Widget.H"
-
-// make test image
-Bitmap *createFromData(int width, int height, int *data)
-{
-  // create blank image
-  Bitmap *temp = new Bitmap(width, height);
-
-  // copy data to new image
-  int i;
-  for(i = 0; i < width * height; i++)
-    temp->data[i] = data[i];
-
-  return temp;
-}
+#include "Project.H"
 
 // for fast random number generator in inline.h
 int seed = 12345;
@@ -96,29 +83,13 @@ int main(int argc, char *argv[])
   for(i = 0; i < 256; i++)
     fix_gamma[i] = std::pow((double)i / 255, 2.2) * 65535;
 
-// rubicks uncomment this, and comment the following line
-// int *array = new int[256 * 256];
-// for(i = 0; i < 256 * 256; i++)
-//   array[i] = i | 0xFF000000;
-//  Bitmap::main = createFromData(256, 256, array);
-  Bitmap::main = new Bitmap(640, 480, 64);
-
-  Bitmap::preview = new Bitmap(8, 8);
-
-  Map::main = new Map(Bitmap::main->w, Bitmap::main->h);
-  Map::main->clear(0);
-  Brush::main = new Brush();
-  Palette::main = new Palette();
-  Palette::undo = new Palette();
-  Bitmap::clone_buffer = new Bitmap(8, 8);
-  Bitmap::offset_buffer = new Bitmap(8, 8);
-
   Tool::paint = new Paint();
   Tool::getcolor = new GetColor();
   Tool::crop = new Crop();
   Tool::offset = new Offset();
   Tool::text = new Text();
 
+  Project::init();
   File::init();
   Undo::init();
   Dialog::init();

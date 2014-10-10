@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.H"
 #include "Gui.H"
 #include "Undo.H"
+#include "Project.H"
 
 namespace
 {
@@ -49,20 +50,20 @@ namespace
     if(*y1 > *y2)
       std::swap(y1, y2);
 
-    if(*x1 < Bitmap::main->cl)
-      *x1 = Bitmap::main->cl;
-    if(*y1 < Bitmap::main->ct)
-      *y1 = Bitmap::main->ct;
-    if(*x2 > Bitmap::main->cr)
-      *x2 = Bitmap::main->cr;
-    if(*y2 > Bitmap::main->cb)
-      *y2 = Bitmap::main->cb;
+    if(*x1 < Project::bmp->cl)
+      *x1 = Project::bmp->cl;
+    if(*y1 < Project::bmp->ct)
+      *y1 = Project::bmp->ct;
+    if(*x2 > Project::bmp->cr)
+      *x2 = Project::bmp->cr;
+    if(*y2 > Project::bmp->cb)
+      *y2 = Project::bmp->cb;
   }
 
   void drawHandles(Stroke *stroke, int x1, int y1, int x2, int y2, int color)
   {
     absrect(&x1, &y1, &x2, &y2);
-    Map::main->rect(x1 - 1, y1 - 1, x2 + 1, y2 + 1, color);
+    Project::map->rect(x1 - 1, y1 - 1, x2 + 1, y2 + 1, color);
     stroke->size(x1 - 1, y1 - 1, x2 + 1, y2 + 1);
   }
 }
@@ -82,7 +83,7 @@ void Crop::push(View *view)
 {
   if(started == 0)
   {
-    Map::main->clear(0);
+    Project::map->clear(0);
     beginx = view->imgx;
     beginy = view->imgy;
     lastx = view->imgx;
@@ -155,10 +156,10 @@ void Crop::drag(View *view)
       int dx = view->imgx - view->oldimgx;
       int dy = view->imgy - view->oldimgy;
 
-      int cl = Bitmap::main->cl;
-      int cr = Bitmap::main->cr;
-      int ct = Bitmap::main->ct;
-      int cb = Bitmap::main->cb;
+      int cl = Project::bmp->cl;
+      int cr = Project::bmp->cr;
+      int ct = Project::bmp->ct;
+      int cb = Project::bmp->cb;
 
       if( (beginx + dx >= cl) && (beginx + dx <= cr) &&
           (beginy + dy >= ct) && (beginy + dy <= cb) &&
@@ -193,7 +194,7 @@ void Crop::drag(View *view)
 
   redraw(view);
 
-  int overscroll = Bitmap::main->overscroll;
+  int overscroll = Project::bmp->overscroll;
   int x = beginx - overscroll;
   int y = beginy - overscroll;
   int w = abs(lastx - beginx) + 1;
@@ -214,7 +215,7 @@ void Crop::release(View *view)
   absrect(&beginx, &beginy, &lastx, &lasty);
   redraw(view);
 
-  int overscroll = Bitmap::main->overscroll;
+  int overscroll = Project::overscroll;
   int x = beginx - overscroll;
   int y = beginy - overscroll;
   int w = abs(lastx - beginx) + 1;
@@ -243,15 +244,12 @@ void Crop::done(View *view)
   if(h < 1)
     h = 1;
   Bitmap *temp = new Bitmap(w, h);
-  Bitmap::main->blit(temp, beginx, beginy, 0, 0, w, h);
+  Project::bmp->blit(temp, beginx, beginy, 0, 0, w, h);
 
-  int overscroll = Bitmap::main->overscroll;
-  delete Bitmap::main;
-  Bitmap::main = new Bitmap(w, h, overscroll);
-  temp->blit(Bitmap::main, 0, 0, Bitmap::main->overscroll, Bitmap::main->overscroll, w, h);
+  Project::newImage(w, h);
+  temp->blit(Project::bmp, 0, 0,
+             Project::overscroll, Project::overscroll, w, h);
   delete temp;
-  delete Map::main;
-  Map::main = new Map(w + overscroll * 2, h + overscroll * 2);
   view->zoom = 1;
   view->ox = 0;
   view->oy = 0;

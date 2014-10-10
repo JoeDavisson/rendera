@@ -57,8 +57,6 @@ public:
   void rectAA(int, int, int, int, int);
   void rectfillAA(int, int, int, int, int);
   void polyfillAA(int *, int *, int, int, int, int, int, int);
-
-  static Map *main;
 };
 
 #endif

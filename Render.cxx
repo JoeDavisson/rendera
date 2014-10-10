@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Tool.H"
 #include "Gui.H"
 #include "Undo.H"
+#include "Project.H"
 
 namespace
 {
@@ -278,7 +279,7 @@ namespace
     {
       for(x = stroke->x1; x <= stroke->x2; x++)
       {
-        if((Map::main)->getpixel(x, y) && isEdge((Map::main), x, y))
+        if((Project::map)->getpixel(x, y) && isEdge((Project::map), x, y))
         {
           stroke->edgecachex[count] = x;
           stroke->edgecachey[count] = y;
@@ -529,9 +530,9 @@ namespace
 void Render::begin()
 {
   view = Gui::getView();
-  bmp = Bitmap::main;
-  map = Map::main;
-  brush = Brush::main;
+  bmp = Project::bmp;
+  map = Project::map;
+  brush = Project::brush;
   stroke = view->tool->stroke;
 
   int size = 1;
