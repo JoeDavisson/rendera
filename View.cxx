@@ -522,7 +522,7 @@ void View::beginMove()
 
   backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
-  int temp = tool->active;
+  bool temp = tool->active;
   tool->active = 0;
   redraw();
   tool->active = temp;
@@ -572,7 +572,7 @@ void View::move()
   backbuf->xorRect(lastbx, lastby, lastbx + lastbw - 1, lastby + lastbh - 1);
   backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
-  int temp = tool->active;
+  bool temp = tool->active;
   tool->active = 0;
   redraw();
   tool->active = temp;

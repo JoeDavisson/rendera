@@ -40,8 +40,8 @@ public:
   virtual void redraw(View *);
 
 private:
-  int drag_started;
-  int resize_started;
+  bool drag_started;
+  bool resize_started;
   int side;
   int offset;
 };

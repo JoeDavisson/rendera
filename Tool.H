@@ -56,8 +56,7 @@ public:
   Stroke *stroke;
   int beginx, beginy, lastx, lasty;
   int started;
-  int active;
-  int amount;
+  bool active;
 
   // extended tools
   static Tool *paint;

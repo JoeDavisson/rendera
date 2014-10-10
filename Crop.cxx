@@ -81,7 +81,7 @@ Crop::~Crop()
 
 void Crop::push(View *view)
 {
-  if(started == 0)
+  if(!started)
   {
     Project::map->clear(0);
     beginx = view->imgx;
@@ -93,7 +93,7 @@ void Crop::push(View *view)
   }
   else if(started == 2)
   {
-    if(drag_started == 0 && resize_started == 0)
+    if(!drag_started && !resize_started)
     {
       if(inbox(view->imgx, view->imgy, beginx, beginy, lastx, lasty))
       {
@@ -150,16 +150,15 @@ void Crop::drag(View *view)
   {
     drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
 
-    if(drag_started == 1)
+    if(drag_started)
     {
+      const int dx = view->imgx - view->oldimgx;
+      const int dy = view->imgy - view->oldimgy;
 
-      int dx = view->imgx - view->oldimgx;
-      int dy = view->imgy - view->oldimgy;
-
-      int cl = Project::bmp->cl;
-      int cr = Project::bmp->cr;
-      int ct = Project::bmp->ct;
-      int cb = Project::bmp->cb;
+      const int cl = Project::bmp->cl;
+      const int cr = Project::bmp->cr;
+      const int ct = Project::bmp->ct;
+      const int cb = Project::bmp->cb;
 
       if( (beginx + dx >= cl) && (beginx + dx <= cr) &&
           (beginy + dy >= ct) && (beginy + dy <= cb) &&
@@ -172,7 +171,7 @@ void Crop::drag(View *view)
         lasty += dy;
       }
     }
-    else if(resize_started == 1)
+    else if(resize_started)
     {
       switch(side)
       {
@@ -194,11 +193,11 @@ void Crop::drag(View *view)
 
   redraw(view);
 
-  int overscroll = Project::bmp->overscroll;
-  int x = beginx - overscroll;
-  int y = beginy - overscroll;
-  int w = abs(lastx - beginx) + 1;
-  int h = abs(lasty - beginy) + 1;
+  const int overscroll = Project::overscroll;
+  const int x = beginx - overscroll;
+  const int y = beginy - overscroll;
+  const int w = abs(lastx - beginx) + 1;
+  const int h = abs(lasty - beginy) + 1;
 
   Gui::checkCropValues(x, y, w, h);
 }
@@ -215,11 +214,11 @@ void Crop::release(View *view)
   absrect(&beginx, &beginy, &lastx, &lasty);
   redraw(view);
 
-  int overscroll = Project::overscroll;
-  int x = beginx - overscroll;
-  int y = beginy - overscroll;
-  int w = abs(lastx - beginx) + 1;
-  int h = abs(lasty - beginy) + 1;
+  const int overscroll = Project::overscroll;
+  const int x = beginx - overscroll;
+  const int y = beginy - overscroll;
+  const int w = abs(lastx - beginx) + 1;
+  const int h = abs(lasty - beginy) + 1;
 
   Gui::checkCropValues(x, y, w, h);
 }
@@ -237,12 +236,14 @@ void Crop::done(View *view)
   started = 0;
   active = 0;
   absrect(&beginx, &beginy, &lastx, &lasty);
+
   int w = (lastx - beginx) + 1;
   int h = (lasty - beginy) + 1;
   if(w < 1)
     w = 1;
   if(h < 1)
     h = 1;
+
   Bitmap *temp = new Bitmap(w, h);
   Project::bmp->blit(temp, beginx, beginy, 0, 0, w, h);
 
@@ -250,6 +251,7 @@ void Crop::done(View *view)
   temp->blit(Project::bmp, 0, 0,
              Project::overscroll, Project::overscroll, w, h);
   delete temp;
+
   view->zoom = 1;
   view->ox = 0;
   view->oy = 0;
