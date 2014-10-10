@@ -293,7 +293,7 @@ int Blend::smoothColor(const int &c1, const int &, const int &t)
 
 int Blend::invert(const int &c1, const int &, const int &)
 {
-  return makeRgb(255 - getr(c1), 255 - getg(c1), 255 - getb(c1));
+  return makeRgba(255 - getr(c1), 255 - getg(c1), 255 - getb(c1), geta(c1));
 }
 
 // RGB<->HSV conversions use the following ranges:

@@ -142,7 +142,7 @@ namespace Normalize
         int g = (getg(c) - g_low) * g_scale;
         int b = (getb(c) - b_low) * b_scale;
 
-        bmp->setpixel(x, y, makeRgb(r, g, b), 0);
+        bmp->setpixel(x, y, makeRgba(r, g, b, geta(c)), 0);
       }
 
       if(updateProgress(y) < 0)
@@ -221,7 +221,7 @@ namespace Equalize
         g = list_g[g] * scale;
         b = list_b[b] * scale;
 
-        bmp->setpixel(x, y, makeRgb(r, g, b), 0);
+        bmp->setpixel(x, y, makeRgba(r, g, b, geta(c)), 0);
       }
 
       if(updateProgress(y) < 0)
@@ -337,7 +337,7 @@ namespace ValueStretch
         g = std::min(std::max(g, 0), 255);
         b = std::min(std::max(b, 0), 255);
 
-        bmp->setpixel(x, y, makeRgb(r, g, b), 0);
+        bmp->setpixel(x, y, makeRgba(r, g, b, geta(c)), 0);
       }
 
       if(updateProgress(y) < 0)
@@ -412,7 +412,7 @@ namespace Saturate
           s = temp;
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
 
-        bmp->setpixel(x, y, Blend::keepLum(makeRgb(r, g, b), l), 0);
+        bmp->setpixel(x, y, Blend::keepLum(makeRgba(r, g, b, geta(c)), l), 0);
       }
 
       if(updateProgress(y) < 0)
@@ -468,7 +468,7 @@ namespace RotateHue
         if(h >= 1536)
           h -= 1536;
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
-        c = makeRgb(r, g, b);
+        c = makeRgba(r, g, b, geta(c));
 
         if(keep_lum)
           bmp->setpixel(x, y, Blend::keepLum(c, l), 0);
@@ -610,7 +610,8 @@ namespace CorrectionMatrix
         Blend::rgbToHsv(ra, ga, ba, &h, &s, &v);
         Blend::hsvToRgb(h, sat, val, &ra, &ga, &ba);
 
-        bmp->setpixel(x, y, Blend::keepLum(makeRgb(ra, ga, ba), l), 0);
+        bmp->setpixel(x, y,
+          Blend::keepLum(makeRgba(ra, ga, ba, geta(c)), l), 0);
       }
 
       if(updateProgress(y) < 0)
@@ -693,7 +694,7 @@ namespace Restore
         g = std::max(std::min(g, 255), 0);
         b = std::max(std::min(b, 255), 0);
 
-        bmp->setpixel(x, y, makeRgb(r, g, b), 0);
+        bmp->setpixel(x, y, makeRgba(r, g, b, rgba.a), 0);
       }
 
       if(updateProgress(y) < 0)
@@ -789,7 +790,7 @@ namespace RemoveDust
           b += getb(c[i]);
         }
 
-        avg = makeRgb(r / 8, g / 8, b / 8);
+        avg = makeRgba(r / 8, g / 8, b / 8, geta(test));
         if((getl(avg) - getl(test)) > amount)
           bmp->setpixel(x, y, avg, 0);
       }
@@ -872,8 +873,9 @@ namespace Desaturate
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        int l = getl(bmp->getpixel(x, y));
-        bmp->setpixel(x, y, makeRgb(l, l, l), 0);
+        int c = bmp->getpixel(x, y);
+        int l = getl(c);
+        bmp->setpixel(x, y, makeRgba(l, l, l, geta(c)), 0);
       }
 
       if(updateProgress(y) < 0)
@@ -916,7 +918,7 @@ namespace Colorize
         b = getb(Project::brush->color);
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
         Blend::hsvToRgb(h, (sat * s) / (sat + s), v, &r, &g, &b);
-        int c2 = makeRgb(r, g, b);
+        int c2 = makeRgba(r, g, b, geta(c1));
         bmp->setpixel(x, y, Blend::colorize(c1, c2, 0), 0);
       }
 
