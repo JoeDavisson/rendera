@@ -46,9 +46,9 @@ namespace
   void absrect(int *x1, int *y1, int *x2, int *y2)
   {
     if(*x1 > *x2)
-      std::swap(x1, x2);
+      std::swap(*x1, *x2);
     if(*y1 > *y2)
-      std::swap(y1, y2);
+      std::swap(*y1, *y2);
 
     if(*x1 < Project::bmp->cl)
       *x1 = Project::bmp->cl;
@@ -239,6 +239,7 @@ void Crop::done(View *view)
 
   int w = (lastx - beginx) + 1;
   int h = (lasty - beginy) + 1;
+printf("%d %d\n", w, h);
   if(w < 1)
     w = 1;
   if(h < 1)
