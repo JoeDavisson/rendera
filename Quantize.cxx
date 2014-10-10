@@ -142,7 +142,7 @@ namespace
   void stretchPalette(int *data, int current, int target)
   {
     int *temp = new int[target];
-    float ax = (float)(current - 1) / (float)(target - 1);
+    const float ax = (float)(current - 1) / (float)(target - 1);
     int *c[2];
 
     c[0] = c[1] = &data[0];
@@ -180,7 +180,7 @@ namespace
       }
       while(i < 2);
 
-      temp[x] = makeRgb24((int)r, (int)g, (int)b);
+      temp[x] = makeRgb((int)r, (int)g, (int)b);
 
       c[0] -= u1;
       c[1] -= u2;
