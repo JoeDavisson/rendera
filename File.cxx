@@ -123,7 +123,7 @@ namespace
     fl_message("An error occured during the operation.");
   }
 
-  int fileExists(const char *s)
+  bool fileExists(const char *s)
   {
     FILE *temp = fopen(s, "r");
 
@@ -770,8 +770,6 @@ void File::save(Fl_Widget *, void *)
   strcpy(fn, fc->filename());
   int ext = fc->filter_value();
   fl_filename_setext(fn, sizeof(fn), ext_string[ext]);
-
-//  delete fc;
 
   if(fileExists(fn))
   {
