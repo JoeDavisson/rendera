@@ -71,9 +71,8 @@ namespace
     if(s < 1)
       s = 1;
 
-    int temp = 255;
+    int temp = 255 - s * d;
 
-    temp -= s * d;
     if(temp < trans)
       temp = trans;
 
@@ -202,9 +201,8 @@ namespace
   {
     int x, y, i;
     float soft_trans = 255;
-    float j = (float)(3 << brush->edge);
-    float soft_step = (float)(255 - brush->trans) /
-                             (((3 << brush->edge) >> 1) + 1);
+    const int j = (3 << brush->edge);
+    float soft_step = (float)(255 - brush->trans) / ((j >> 1) + 1);
     int found = 0;
 
     for(i = 0; i < j; i++)
@@ -226,10 +224,10 @@ namespace
           if(*s0 | *s1 | *s2 | *s3)
             found = 1;
 
-          unsigned char d0 = *s0;
-          unsigned char d1 = *s1;
-          unsigned char d2 = *s2;
-          unsigned char d3 = *s3;
+          const unsigned char d0 = *s0;
+          const unsigned char d1 = *s1;
+          const unsigned char d2 = *s2;
+          const unsigned char d3 = *s3;
 
           shrinkBlock(s0, s1, s2, s3);
 
@@ -256,8 +254,7 @@ namespace
         {
           for(x = stroke->x1; x <= stroke->x2; x++)
           {
-            int c = map->getpixel(x, y);
-            if(c)
+            if(map->getpixel(x, y))
               bmp->setpixel(x, y, brush->color, soft_trans);
           }
         }
@@ -314,8 +311,8 @@ namespace
         {
           const int dx = (x - *cx++);
           const int dy = (y - *cy++);
-
           const int temp2 = dx * dx + dy * dy;
+
           if(temp2 < temp1)
           {
             z = i;
@@ -339,9 +336,8 @@ namespace
   {
     int x, y, i;
     float soft_trans = brush->trans;
-    float j = (float)(3 << brush->edge);
-    float soft_step = (float)(255 - brush->trans) /
-                             (((3 << brush->edge) >> 1) + 1);
+    const int j = (3 << brush->edge);
+    float soft_step = (float)(255 - brush->trans) / ((j >> 1) + 1);
     int found = 0;
     int inc = 0;
 
@@ -349,8 +345,7 @@ namespace
     {
       for(x = stroke->x1; x <= stroke->x2; x++)
       {
-        int c = map->getpixel(x, y);
-        if(c)
+        if(map->getpixel(x, y))
           bmp->setpixel(x, y, brush->color, brush->trans);
       }
     }
@@ -378,10 +373,10 @@ namespace
           if(*s0 | *s1 | *s2 | *s3)
             found = 1;
 
-          unsigned char d0 = *s0;
-          unsigned char d1 = *s1;
-          unsigned char d2 = *s2;
-          unsigned char d3 = *s3;
+          const unsigned char d0 = *s0;
+          const unsigned char d1 = *s1;
+          const unsigned char d2 = *s2;
+          const unsigned char d3 = *s3;
 
           growBlock(s0, s1, s2, s3);
 
@@ -422,9 +417,8 @@ namespace
   {
     int x, y, i;
     float soft_trans = 255;
-    float j = (float)(3 << brush->edge);
-    float soft_step = (float)(255 - brush->trans) /
-                             (((3 << brush->edge) >> 1) + 1);
+    const int j = (3 << brush->edge);
+    float soft_step = (float)(255 - brush->trans) / ((j >> 1) + 1);
     int found = 0;
     int t;
 
@@ -463,6 +457,7 @@ namespace
               t = 255;
             bmp->setpixel(x, y, brush->color, t);
           }
+
           if(!*s1 && d1)
           {
             t = (int)soft_trans + (rnd32() & 63) - 32;
@@ -472,6 +467,7 @@ namespace
               t = 255;
             bmp->setpixel(x + 1, y, brush->color, t);
           }
+
           if(!*s2 && d2)
           {
             t = (int)soft_trans + (rnd32() & 63) - 32;
@@ -481,6 +477,7 @@ namespace
               t = 255;
             bmp->setpixel(x, y + 1, brush->color, t);
           }
+
           if(!*s3 && d3)
           {
             t = (int)soft_trans + (rnd32() & 63) - 32;
@@ -505,8 +502,7 @@ namespace
         {
           for(x = stroke->x1; x <= stroke->x2; x++)
           {
-            int c = map->getpixel(x, y);
-            if(c)
+            if(map->getpixel(x, y))
             {
               t = (int)soft_trans + (rnd32() & 63) - 32;
               if(t < 0)
