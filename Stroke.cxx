@@ -31,11 +31,11 @@ namespace
 {
   void keepSquare(int x1, int y1, int *x2, int *y2)
   {
-    int px = (*x2 >= x1) ? 1 : 0;
-    int py = (*y2 >= y1) ? 2 : 0;
+    const int px = (*x2 >= x1) ? 1 : 0;
+    const int py = (*y2 >= y1) ? 2 : 0;
 
-    int dx = x1 - *x2;
-    int dy = y1 - *y2;
+    const int dx = x1 - *x2;
+    const int dy = y1 - *y2;
 
     if(abs(dy) > abs(dx))
     {
