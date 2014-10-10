@@ -103,8 +103,6 @@ Bitmap::Bitmap(int width, int height, int overscroll)
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
   clear(getFltkColor(FL_BACKGROUND2_COLOR));
   rectfill(cl, ct, cr, cb, makeRgb(0, 0, 0), 0);
-
-  // draw page border
   setClip(0, 0, w - 1, h - 1);
 
   for(i = 0; i < 4; i++)
@@ -760,10 +758,9 @@ void Bitmap::pointStretch(Bitmap *dest,
     {
       const int x1 = sx + ((x * bx) >> 8);
       const int c = *(row[y1] + x1);
+      const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
 
-      *s++ = convertFormat(blendFast(((x >> 4) & 1) ^ ((y >> 4) & 1)
-                            ? 0xA0A0A0 : 0x606060, c,
-                            255 - geta(c)), bgr_order);
+      *s++ = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
     }
   }
 }
@@ -995,24 +992,24 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   int x3 = xx + (ww * 2) - ox;
   int y3 = yy + (hh * 2) - oy;
 
-  // rotate
-  const int newx0 = (x0 * du_col + y0 * du_row) >> 8;
-  const int newy0 = (x0 * dv_col + y0 * dv_row) >> 8;
-  const int newx1 = (x1 * du_col + y1 * du_row) >> 8;
-  const int newy1 = (x1 * dv_col + y1 * dv_row) >> 8;
-  const int newx2 = (x2 * du_col + y2 * du_row) >> 8;
-  const int newy2 = (x2 * dv_col + y2 * dv_row) >> 8;
-  const int newx3 = (x3 * du_col + y3 * du_row) >> 8;
-  const int newy3 = (x3 * dv_col + y3 * dv_row) >> 8;
+  const int oldx0 = x0;
+  const int oldy0 = y0;
+  const int oldx1 = x1;
+  const int oldy1 = y1;
+  const int oldx2 = x2;
+  const int oldy2 = y2;
+  const int oldx3 = x3;
+  const int oldy3 = y3;
 
-  x0 = newx0 + xx;
-  y0 = newy0 + yy;
-  x1 = newx1 + xx;
-  y1 = newy1 + yy;
-  x2 = newx2 + xx;
-  y2 = newy2 + yy;
-  x3 = newx3 + xx;
-  y3 = newy3 + yy;
+  // rotate
+  x0 = xx + ((oldx0 * du_col + oldy0 * du_row) >> 8);
+  y0 = yy + ((oldx0 * dv_col + oldy0 * dv_row) >> 8);
+  x1 = xx + ((oldx1 * du_col + oldy1 * du_row) >> 8);
+  y1 = yy + ((oldx1 * dv_col + oldy1 * dv_row) >> 8);
+  x2 = xx + ((oldx2 * du_col + oldy2 * du_row) >> 8);
+  y2 = yy + ((oldx2 * dv_col + oldy2 * dv_row) >> 8);
+  x3 = xx + ((oldx3 * du_col + oldy3 * du_row) >> 8);
+  y3 = yy + ((oldx3 * dv_col + oldy3 * dv_row) >> 8);
 
   // find new bounding box
   const int bx1 = std::min(x0, std::min(x1, std::min(x2, x3)));
@@ -1082,7 +1079,7 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
   return dest;
 }
 
-// super-fast bresenham stretch for navigator
+// fast bresenham stretch for navigator
 // adapted from graphic gems code
 void Bitmap::fastStretch(Bitmap *dest,
                          int xs1, int ys1, int xs2, int ys2,
@@ -1121,9 +1118,10 @@ void Bitmap::fastStretch(Bitmap *dest,
 
     for(d_1 = 0; d_1 <= dx_1; d_1++)
     {
-      *p = convertFormat(blendFast(((d_1 >> 4) & 1) ^ ((yd1 >> 4) & 1)
-                            ? 0xA0A0A0 : 0x606060, *q,
-                            255 - geta(*q)), bgr_order);
+      const int checker = ((d_1 >> 4) & 1) ^ ((yd1 >> 4) & 1)
+                            ? 0xA0A0A0 : 0x606060;
+
+      *p = convertFormat(blendFast(checker, *q, 255 - geta(*q)), bgr_order);
 
       while(e_1 >= 0)
       {
