@@ -103,20 +103,22 @@ void Text::move(View *view)
   {
     int i;
 
-    started = 1;
-
     int face = Gui::getFontFace();
     int size = Gui::getFontSize();
     const char *s = Gui::getTextInput();
+    if(strlen(s) > 250)
+      return;
+
+    started = 1;
 
     // add a space before and after string, or some
     // scripty fonts won't render propery on the sides
-    char *string = new char[strlen(s) + 2];
+    char string[256];
     string[0] = ' ';
     for(i = 0; i <= strlen(s); i++)
       string[i + 1] = s[i];
     string[i++] = ' ';
-    string[i++] = '\0';
+    string[i] = '\0';
 
     fl_font(face, size);
 
@@ -147,8 +149,6 @@ void Text::move(View *view)
 
     fl_end_offscreen();
     fl_delete_offscreen(offscreen);
-
-    delete string;
   }
 
   // create preview map
