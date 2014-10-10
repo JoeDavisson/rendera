@@ -284,6 +284,7 @@ int View::handle(int event)
     case FL_DND_RELEASE:
       return 1;
     case FL_PASTE:
+      // drag n drop
       if(strncasecmp(Fl::event_text(), "file://", 7) == 0)
       {
         char fn[256];
@@ -434,15 +435,11 @@ void View::drawCloneCursor()
     switch(mirror)
     {
       case 0:
-        x1 = x1;
-        y1 = y1;
         break;
       case 1:
         x1 = (w - x1) - (w - x * 2);
-        y1 = y1;
         break;
       case 2:
-        x1 = x1;
         y1 = (h - y1) - (h - y * 2);
         break;
       case 3:
@@ -464,9 +461,9 @@ void View::drawCloneCursor()
   backbuf->xorRectfill(x1, y1 - 12, x1, y1 + 13);
 
   screenBlit(oldx1 - 12, oldy1 - 12,
-               this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
+             this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
   screenBlit(x1 - 12, y1 - 12,
-               this->x() + x1 - 12, this->y() + y1 - 12, 26, 26);
+             this->x() + x1 - 12, this->y() + y1 - 12, 26, 26);
 
   oldx1 = x1;
   oldy1 = y1;
@@ -633,6 +630,7 @@ void View::zoomOut(int x, int y)
   {
     ox -= x / oldzoom;
     oy -= y / oldzoom;
+
     if(ox > Project::bmp->w - w() / zoom)
       ox = Project::bmp->w - w() / zoom;
     if(oy > Project::bmp->h - h() / zoom)
