@@ -135,11 +135,17 @@ dist_pkgdata_DATA =     \
 
 check_PROGRAMS =    \
   test_blend        \
+  test_bresenham    \
   test_fltk_version \
   test_endian       \
   test_numerics
 
+check_LTLIBRARIES = libalgo.la
+libalgo_la_SOURCES = Algo.H Algo.cxx Types.H
+
 test_blend_SOURCES = test/blend.C
+test_bresenham_SOURCES = test/bresenham.C
+test_bresenham_LDADD = libalgo.la
 test_fltk_version_SOURCES = test/fltk_version.C
 test_endian_SOURCES = test/endian.C
 test_numerics_SOURCES = test/numerics.C
