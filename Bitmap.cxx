@@ -495,7 +495,8 @@ void Bitmap::setpixelClone(const int &x, const int &y,
   if(x1 >= stroke->x1 && x1 <= stroke->x2 &&
      y1 >= stroke->y1 && y1 <= stroke->y2)
   {
-    c2 = Bitmap::clone_buffer->getpixel(x1 - stroke->x1, y1 - stroke->y1);
+    c2 = Bitmap::clone_buffer->getpixel(x1 - stroke->x1 - 1,
+                                        y1 - stroke->y1 - 1);
   }
   else
   {
@@ -560,7 +561,8 @@ void Bitmap::setpixelWrapClone(const int &x, const int &y,
   if(x1 >= stroke->x1 && x1 <= stroke->x2 &&
      y1 >= stroke->y1 && y1 <= stroke->y2)
   {
-    c2 = Bitmap::clone_buffer->getpixel(x1 - stroke->x1, y1 - stroke->y1);
+    c2 = Bitmap::clone_buffer->getpixel(x1 - stroke->x1 - 1,
+                                        y1 - stroke->y1 - 1);
   }
   else
   {
