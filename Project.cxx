@@ -35,6 +35,16 @@ namespace Project
   void init()
   {
     newImage(640, 480);
+
+    bmp->wrap = 0;
+    bmp->clone = 0;
+    bmp->clone_moved = 0;
+    bmp->clone_x = 0;
+    bmp->clone_y = 0;
+    bmp->clone_dx = 0;
+    bmp->clone_dy = 0;
+    bmp->clone_mirror = 0;
+
     brush = new Brush();
     palette = new Palette();
   }

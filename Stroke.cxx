@@ -518,8 +518,8 @@ void Stroke::end(int x, int y)
 
   if(Project::bmp->clone)
   {
-    w = x2 - x1;
-    h = y2 - y1;
+    w = (x2 - x1) + 1;
+    h = (y2 - y1) + 1;
     if(Bitmap::clone_buffer)
       delete Bitmap::clone_buffer;
     Bitmap::clone_buffer = new Bitmap(w, h);

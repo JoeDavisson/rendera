@@ -65,15 +65,6 @@ Bitmap::Bitmap(int width, int height)
 
   for(i = 0; i < height; i++)
     row[i] = &data[width * i];
-
-  wrap = 0;
-  clone = 0;
-  clone_moved = 0;
-  clone_x = 0;
-  clone_y = 0;
-  clone_dx = 0;
-  clone_dy = 0;
-  clone_mirror = 0;
 }
 
 Bitmap::Bitmap(int width, int height, int overscroll)
@@ -118,15 +109,6 @@ Bitmap::Bitmap(int width, int height, int overscroll)
            makeRgb(48, 48, 48), 0);
 
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
-
-  wrap = 0;
-  clone = 0;
-  clone_moved = 0;
-  clone_x = 0;
-  clone_y = 0;
-  clone_dx = 0;
-  clone_dy = 0;
-  clone_mirror = 0;
 }
 
 Bitmap::~Bitmap()
