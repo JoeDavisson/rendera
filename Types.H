@@ -14,4 +14,6 @@ struct line
   point a, b;
 };
 
+bool operator==( point const&, point const& );
+
 #endif//ndef ___RENDERA___TYPES_H___
