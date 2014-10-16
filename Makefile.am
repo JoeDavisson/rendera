@@ -143,7 +143,7 @@ check_PROGRAMS =    \
   test_numerics
 
 check_LTLIBRARIES = libalgo.la
-libalgo_la_SOURCES = Algo.H Algo.cxx Types.H
+libalgo_la_SOURCES = Algo.H Algo.cxx Types.H Types.cxx
 
 test_blend_SOURCES = test/blend.C
 test_bresenham_SOURCES = test/bresenham.C
