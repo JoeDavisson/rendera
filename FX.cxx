@@ -506,7 +506,6 @@ namespace RotateHue
       a += 360;
 
     dialog->hide();
-
     pushUndo();
     apply(a);
   }
@@ -831,6 +830,7 @@ namespace RemoveDust
       return;
     }
 
+    dialog->hide();
     pushUndo();
 
     if(invert->value())
@@ -840,8 +840,6 @@ namespace RemoveDust
 
     if(invert->value())
       Invert::apply();
-
-    dialog->hide();
   }
 
   void quit()
@@ -1066,7 +1064,6 @@ namespace ApplyPalette
   void close()
   {
     dialog->hide();
-
     pushUndo();
 
     if(dither->value())
@@ -1114,12 +1111,12 @@ namespace StainedGlass
   static inline int isEdge(Bitmap *temp, const int &x, const int &y,
                            const int &div)
   {
-    const int lum0 = getl(temp->getpixel(x, y)) / div;
-    const int lum1 = getl(temp->getpixel(x + 1, y)) / div;
-    const int lum2 = getl(temp->getpixel(x, y + 1)) / div;
-    const int lum3 = getl(temp->getpixel(x + 1, y + 1)) / div;
+    const int c0 = getl(temp->getpixel(x, y)) / div;
+    const int c1 = getl(temp->getpixel(x + 1, y)) / div;
+    const int c2 = getl(temp->getpixel(x, y + 1)) / div;
+    const int c3 = getl(temp->getpixel(x + 1, y + 1)) / div;
 
-    if((lum0 == lum1) && (lum0 == lum2) && (lum0 == lum3))
+    if((c0 == c1) && (c0 == c2) && (c0 == c3))
       return 0;
     else
       return 1;
@@ -1143,12 +1140,18 @@ namespace StainedGlass
       }
       else
       {
+        seedx[i] = rnd32() % bmp->w; 
+        seedy[i] = rnd32() % bmp->h; 
+  
+        int count = 0;
+
         do
         {
           seedx[i] = rnd32() % bmp->w; 
           seedy[i] = rnd32() % bmp->h; 
+          count++;
         }
-        while(!isEdge(bmp, seedx[i], seedy[i], div));
+        while(!isEdge(bmp, seedx[i], seedy[i], div) && count < 10000);
       }
 
       color[i] = bmp->getpixel(seedx[i], seedy[i]);
@@ -1169,6 +1172,7 @@ namespace StainedGlass
           int dx = x - seedx[i];
           int dy = y - seedy[i];
           int distance = dx * dx + dy * dy;
+
           if(distance < nearest)
           {
             nearest = distance;
@@ -1227,11 +1231,10 @@ namespace StainedGlass
       edge->value(str);
       return;
     }
-    pushUndo();
-
-    apply(a, b);
 
     dialog->hide();
+    pushUndo();
+    apply(a, b);
   }
 
   void quit()
@@ -1252,11 +1255,11 @@ namespace StainedGlass
     dialog = new Fl_Double_Window(256, 0, "Stained Glass");
     detail = new InputInt(dialog, 0, y1, 72, 24, "Detail:", 0);
     y1 += 24 + 8;
-    detail->value("1000");
+    detail->value("5000");
     detail->center();
     edge = new InputInt(dialog, 0, y1, 72, 24, "Edge Detect:", 0);
     y1 += 24 + 8;
-    edge->value("16");
+    edge->value("32");
     edge->center();
     uniform = new Fl_Check_Button(0, y1, 16, 16, "Uniform");
     y1 += 16 + 8;

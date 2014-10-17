@@ -65,6 +65,9 @@ Bitmap::Bitmap(int width, int height)
 
   for(i = 0; i < height; i++)
     row[i] = &data[width * i];
+
+  wrap = 0;
+  clone = 0;
 }
 
 Bitmap::Bitmap(int width, int height, int overscroll)
@@ -112,6 +115,9 @@ Bitmap::Bitmap(int width, int height, int overscroll)
 */
 
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
+
+  wrap = 0;
+  clone = 0;
 }
 
 Bitmap::~Bitmap()
