@@ -225,7 +225,12 @@ namespace Equalize
       }
 
       if(updateProgress(y) < 0)
+      {
+        delete[] list_r;
+        delete[] list_g;
+        delete[] list_b;
         return;
+      }
     }
 
     endProgress();
@@ -341,7 +346,12 @@ namespace ValueStretch
       }
 
       if(updateProgress(y) < 0)
+      {
+        delete[] list_r;
+        delete[] list_g;
+        delete[] list_b;
         return;
+      }
     }
 
     endProgress();
@@ -416,7 +426,10 @@ namespace Saturate
       }
 
       if(updateProgress(y) < 0)
+      {
+        delete[] list_s;
         return;
+      }
     }
 
     endProgress();
@@ -1055,7 +1068,20 @@ namespace ApplyPalette
       }
 
       if(updateProgress(y) < 0)
+      {
+        for(i = 0; i < 3; i++)
+        {
+          delete[] buf[i];
+          delete[] prev[i];
+        }
         return;
+      }
+    }
+
+    for(i = 0; i < 3; i++)
+    {
+      delete[] buf[i];
+      delete[] prev[i];
     }
 
     endProgress();
@@ -1187,7 +1213,12 @@ namespace StainedGlass
       }
 
       if(updateProgress(y) < 0)
+      {
+        delete[] color;
+        delete[] seedy;
+        delete[] seedx;
         return;
+      }
     }
 
     endProgress();
