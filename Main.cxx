@@ -73,26 +73,40 @@ namespace
 
 int main(int argc, char *argv[])
 {
-  if(argc > 2)
-  {
-    printf("Usage: %s <filename>\n", argv[0]);
-    return 0;
-  }
-
   // default to dark theme
   setDarkTheme();
 
-  if(argc == 2)
+  int count = argc;
+
+  if(argc > 1)
   {
-    if(strcmp(argv[1], "--use-light-theme") == 0)
+    int i;
+
+    for(i = 1; i < argc; i++)
     {
-      setLightTheme();
-      argc = 0;
-    }
-    if(strcmp(argv[1], "--use-dark-theme") == 0)
-    {
-      setDarkTheme();
-      argc = 0;
+      if(strcmp(argv[i], "--use-light-theme") == 0)
+      {
+        setLightTheme();
+        count--;
+      }
+
+      if(strcmp(argv[i], "--use-dark-theme") == 0)
+      {
+        setDarkTheme();
+        count--;
+      }
+
+      if(strcmp(argv[i], "--help") == 0)
+      {
+        printf("\n");
+        printf("Usage: %s <options> <filename>\n", argv[0]);
+        printf("\n");
+        printf("Theme Settings:\n");
+        printf(" --use-light-theme\n");
+        printf(" --use-dark-theme\n");
+        printf("\n");
+        return 0;
+      }
     }
   }
 
@@ -131,12 +145,12 @@ int main(int argc, char *argv[])
   Transform::init();
   Gui::init();
 
-  if(argc == 2)
+  if(count > 1)
   {
-    if(File::loadFile(argv[1]) < 0)
+    if(File::loadFile(argv[argc - 1]) < 0)
     {
-      fl_message_title("File Error");
-      fl_message("Could not load file from command line.");
+      printf("Usage: %s <options> <filename>\n", argv[0]);
+      return 0;
     }
   }
 
