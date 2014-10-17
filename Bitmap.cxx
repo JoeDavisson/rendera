@@ -98,8 +98,10 @@ Bitmap::Bitmap(int width, int height, int overscroll)
 
   for(i = 0; i < 4; i++)
     rect(overscroll - 1 - i, overscroll - 1 - i,
-         w - overscroll + i, h - overscroll + i, makeRgb(56, 56, 56), 0);
+         w - overscroll + i, h - overscroll + i,
+         getFltkColor(FL_BACKGROUND_COLOR), 0);
 
+/*
   rectfill(overscroll + 4, h - overscroll + 4,
            w - overscroll + 4, h - overscroll + 4 + 7,
            makeRgb(48, 48, 48), 0);
@@ -107,6 +109,7 @@ Bitmap::Bitmap(int width, int height, int overscroll)
   rectfill(w - overscroll + 4, overscroll + 4,
            w - overscroll + 4 + 7, h - overscroll + 4 + 7,
            makeRgb(48, 48, 48), 0);
+*/
 
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
 }
@@ -1127,4 +1130,16 @@ void Bitmap::fastStretch(Bitmap *dest,
     e += dy;
   }
 }
+
+void Bitmap::invert()
+{
+  int i;
+
+  for(i = 0; i < w * h; i++)
+  {
+    rgba_t rgba = getRgba(data[i]);
+    data[i] = makeRgba(255 - rgba.r, 255 - rgba.g, 255 - rgba.b, rgba.a);
+  }
+}
+
 

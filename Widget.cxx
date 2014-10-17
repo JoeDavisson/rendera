@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Widget.H"
 #include "Bitmap.H"
+#include "Project.H"
 #include "Blend.H"
 #include "File.H"
 
@@ -46,6 +47,9 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   }
 
   image = new Fl_RGB_Image((unsigned char *)bitmap->data, bitmap->w, bitmap->h, 4, 0);
+
+  if(Project::theme == Project::THEME_LIGHT)
+    bitmap->invert();
 
   bitmap2 = new Bitmap(bitmap->w, bitmap->h);
   image2 = new Fl_RGB_Image((unsigned char *)bitmap2->data, bitmap2->w, bitmap2->h, 4, 0);

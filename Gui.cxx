@@ -121,7 +121,7 @@ namespace
   View *view;
 
   // prevent escape from closing main window
-  void close_callback(Fl_Widget *widget, void *)
+  void closeCallback(Fl_Widget *widget, void *)
   {
     if((Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT)
       && Fl::event_key() == FL_Escape)
@@ -161,7 +161,7 @@ void Gui::init()
 
   // window
   window = new Fl_Double_Window(800, 600, "Rendera");
-  window->callback(close_callback);
+  window->callback(closeCallback);
 
   // menu
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
@@ -170,7 +170,7 @@ void Gui::init()
   menubar->add("File/Load", 0, (Fl_Callback *)File::load, 0, 0);
   menubar->add("File/Save", 0, (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
   menubar->add("File/Quit", 0, (Fl_Callback *)quit, 0, 0);
-  menubar->add("Edit/Undo", 0, (Fl_Callback *)Undo::pop, 0, 0);
+  menubar->add("Edit/Undo", 0, (Fl_Callback *)Undo::pop, 0, FL_MENU_DIVIDER);
   menubar->add("Image/Flip Horizontal", 0, (Fl_Callback *)Transform::mirror, 0, 0);
   menubar->add("Image/Flip Vertical", 0, (Fl_Callback *)Transform::flip, 0, FL_MENU_DIVIDER);
   menubar->add("Image/Rotate...", 0, (Fl_Callback *)Transform::rotate, 0, 0);

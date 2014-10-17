@@ -63,6 +63,7 @@ public:
   void flip();
   Bitmap *rotate(float, float, int);
   void fastStretch(Bitmap *, int, int, int, int, int, int, int, int, int);
+  void invert();
 
   int wrap;
   int clone;

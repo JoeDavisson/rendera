@@ -30,6 +30,12 @@ class Palette;
 
 namespace Project
 {
+  enum
+  {
+    THEME_LIGHT,
+    THEME_DARK,
+  };
+
   // main image
   extern Bitmap *bmp;
 
@@ -44,6 +50,9 @@ namespace Project
 
   // overscroll amount
   extern int overscroll;
+
+  // current theme
+  extern int theme;
 
   // initialize stuff
   void init();

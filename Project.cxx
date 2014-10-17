@@ -31,6 +31,7 @@ namespace Project
   Brush *brush = 0;
   Palette *palette = 0;
   int overscroll = 64;
+  int theme = THEME_DARK;
 
   void init()
   {
