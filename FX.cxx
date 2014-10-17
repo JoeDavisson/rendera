@@ -1102,12 +1102,180 @@ namespace ApplyPalette
   }
 }
 
+namespace StainedGlass
+{
+  Fl_Double_Window *dialog;
+  InputInt *detail;
+  InputInt *edge;
+  Fl_Check_Button *uniform;
+  Fl_Button *ok;
+  Fl_Button *cancel;
+
+  static inline int isEdge(Bitmap *temp, const int &x, const int &y,
+                           const int &div)
+  {
+    const int lum0 = getl(temp->getpixel(x, y)) / div;
+    const int lum1 = getl(temp->getpixel(x + 1, y)) / div;
+    const int lum2 = getl(temp->getpixel(x, y + 1)) / div;
+    const int lum3 = getl(temp->getpixel(x + 1, y + 1)) / div;
+
+    if((lum0 == lum1) && (lum0 == lum2) && (lum0 == lum3))
+      return 0;
+    else
+      return 1;
+  }
+
+  void apply(int size, int div)
+  {
+    int x, y;
+    int i, j, k;
+
+    int *seedx = new int[size];
+    int *seedy = new int[size];
+    int *color = new int[size];
+
+    for(i = 0; i < size; i++)
+    {
+      if(uniform->value())
+      {
+        seedx[i] = rnd32() % bmp->w; 
+        seedy[i] = rnd32() % bmp->h; 
+      }
+      else
+      {
+        do
+        {
+          seedx[i] = rnd32() % bmp->w; 
+          seedy[i] = rnd32() % bmp->h; 
+        }
+        while(!isEdge(bmp, seedx[i], seedy[i], div));
+      }
+
+      color[i] = bmp->getpixel(seedx[i], seedy[i]);
+    }
+
+    beginProgress();
+
+    for(y = overscroll; y < bmp->h - overscroll; y++)
+    {
+      for(x = overscroll; x < bmp->w - overscroll; x++)
+      {
+        // find nearest color
+        int nearest = 999999;
+        int use = -1;
+
+        for(i = 0; i < size; i++)
+        {
+          int dx = x - seedx[i];
+          int dy = y - seedy[i];
+          int distance = dx * dx + dy * dy;
+          if(distance < nearest)
+          {
+            nearest = distance;
+            use = i;
+          }
+        }
+
+        if(use != -1)
+        {
+          bmp->setpixel(x, y, color[use], 0);
+        }
+      }
+
+      if(updateProgress(y) < 0)
+        return;
+    }
+
+    endProgress();
+
+    delete[] color;
+    delete[] seedy;
+    delete[] seedx;
+  }
+
+  void close()
+  {
+    char str[8];
+    int a = atoi(detail->value());
+
+    if(a < 1)
+    {
+      snprintf(str, sizeof(str), "%d", 1);
+      detail->value(str);
+      return;
+    }
+
+    if(a > 16384)
+    {
+      snprintf(str, sizeof(str), "%d", 16384);
+      detail->value(str);
+      return;
+    }
+
+    int b = atoi(edge->value());
+
+    if(b < 1)
+    {
+      snprintf(str, sizeof(str), "%d", 1);
+      edge->value(str);
+      return;
+    }
+
+    if(b > 64)
+    {
+      snprintf(str, sizeof(str), "%d", 64);
+      edge->value(str);
+      return;
+    }
+    pushUndo();
+
+    apply(a, b);
+
+    dialog->hide();
+  }
+
+  void quit()
+  {
+    endProgress();
+    dialog->hide();
+  }
+
+  void begin()
+  {
+    dialog->show();
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    dialog = new Fl_Double_Window(256, 0, "Stained Glass");
+    detail = new InputInt(dialog, 0, y1, 72, 24, "Detail:", 0);
+    y1 += 24 + 8;
+    detail->value("1000");
+    detail->center();
+    edge = new InputInt(dialog, 0, y1, 72, 24, "Edge Detect:", 0);
+    y1 += 24 + 8;
+    edge->value("16");
+    edge->center();
+    uniform = new Fl_Check_Button(0, y1, 16, 16, "Uniform");
+    y1 += 16 + 8;
+    Dialog::center(uniform);
+    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
+    ok->callback((Fl_Callback *)close);
+    cancel->callback((Fl_Callback *)quit);
+    dialog->set_modal();
+    dialog->end();
+  }
+}
+
 void FX::init()
 {
   RotateHue::init();
   Restore::init();
   RemoveDust::init();
   ApplyPalette::init();
+  StainedGlass::init();
 }
 
 void FX::normalize()
@@ -1168,5 +1336,10 @@ void FX::colorize()
 void FX::applyPalette()
 {
   ApplyPalette::begin();
+}
+
+void FX::stainedGlass()
+{
+  StainedGlass::begin();
 }
 

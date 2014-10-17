@@ -102,8 +102,8 @@ int main(int argc, char *argv[])
         printf("Usage: %s <options> <filename>\n", argv[0]);
         printf("\n");
         printf("Theme Settings:\n");
-        printf(" --use-light-theme\n");
-        printf(" --use-dark-theme\n");
+        printf("  --use-light-theme\n");
+        printf("  --use-dark-theme\n");
         printf("\n");
         return 0;
       }

@@ -39,6 +39,7 @@ namespace FX
   void desaturate();
   void colorize();
   void applyPalette();
+  void stainedGlass();
 }
 
 #endif
