@@ -40,3 +40,12 @@ InputInt::~InputInt()
 {
 }
 
+void InputInt::center()
+{
+  int ww = 0, hh = 0;
+
+  this->measure_label(ww, hh);
+
+  resize(parent()->w() / 2 - (ww + w()) / 2 + ww, y(), w(), h());
+}
+

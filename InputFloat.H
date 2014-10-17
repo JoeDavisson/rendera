@@ -28,6 +28,7 @@ class InputFloat : public Fl_Float_Input
 public:
   InputFloat(Fl_Group *, int, int, int, int, const char *, Fl_Callback *);
   virtual ~InputFloat();
+  void center();
 
   int var;
 

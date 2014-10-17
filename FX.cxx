@@ -524,15 +524,19 @@ namespace RotateHue
 
   void init()
   {
-    dialog = new Fl_Double_Window(240, 104, "Rotate Hue");
-    amount = new InputInt(dialog, 108, 8, 72, 24, "Amount:", 0);
+    int y1 = 8;
+
+    dialog = new Fl_Double_Window(256, 0, "Rotate Hue");
+    amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
+    y1 += 24 + 8;
     amount->maximum_size(4);
     amount->value("60");
-    preserve = new Fl_Check_Button(32, 40, 16, 16, "Preserve Luminance");
-    new Separator(dialog, 2, 62, 236, 2, "");
-    ok = new Fl_Button(96, 72, 64, 24, "OK");
+    amount->center();
+    preserve = new Fl_Check_Button(0, y1, 16, 16, "Preserve Luminance");
+    Dialog::center(preserve);
+    y1 += 16 + 8;
+    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
-    cancel = new Fl_Button(168, 72, 64, 24, "Cancel");
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
@@ -735,15 +739,21 @@ namespace Restore
 
   void init()
   {
-    dialog = new Fl_Double_Window(208, 120, "Restore");
-    normalize = new Fl_Check_Button(8, 8, 16, 16, "Normalize First");
+    int y1 = 8;
+
+    dialog = new Fl_Double_Window(256, 0, "Restore");
+    normalize = new Fl_Check_Button(0, y1, 16, 16, "Normalize First");
+    y1 += 16 + 8;
     normalize->value(1);
-    invert = new Fl_Check_Button(8, 32, 16, 16, "Invert First");
-    correct = new Fl_Check_Button(8, 56, 16, 16, "Use Correction Matrix");
-    new Separator(dialog, 2, 80, 204, 2, "");
-    ok = new Fl_Button(64, 88, 64, 24, "OK");
+    Dialog::center(normalize);
+    invert = new Fl_Check_Button(0, y1, 16, 16, "Invert First");
+    y1 += 16 + 8;
+    Dialog::center(invert);
+    correct = new Fl_Check_Button(8, y1, 16, 16, "Use Correction Matrix");
+    y1 += 16 + 8;
+    Dialog::center(correct);
+    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
-    cancel = new Fl_Button(136, 88, 64, 24, "Cancel");
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
@@ -847,14 +857,18 @@ namespace RemoveDust
 
   void init()
   {
-    dialog = new Fl_Double_Window(240, 104, "Remove Dust");
-    amount = new InputInt(dialog, 108, 8, 72, 24, "Amount:", 0);
+    int y1 = 8;
+
+    dialog = new Fl_Double_Window(256, 0, "Remove Dust");
+    amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
+    y1 += 24 + 8;
     amount->value("4");
-    invert = new Fl_Check_Button(64, 40, 16, 16, "Invert First");
-    new Separator(dialog, 2, 62, 236, 2, "");
-    ok = new Fl_Button(96, 72, 64, 24, "OK");
+    amount->center();
+    invert = new Fl_Check_Button(0, y1, 16, 16, "Invert First");
+    y1 += 16 + 8;
+    Dialog::center(invert);
+    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
-    cancel = new Fl_Button(168, 72, 64, 24, "Cancel");
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
@@ -1074,12 +1088,14 @@ namespace ApplyPalette
 
   void init()
   {
-    dialog = new Fl_Double_Window(200, 72, "Apply Palette");
-    dither = new Fl_Check_Button(48, 8, 16, 16, "Dithering");
-    new Separator(dialog, 2, 32, 196, 2, "");
-    ok = new Fl_Button(56, 40, 64, 24, "OK");
+    int y1 = 8;
+
+    dialog = new Fl_Double_Window(256, 0, "Apply Palette");
+    dither = new Fl_Check_Button(0, y1, 16, 16, "Dithering");
+    Dialog::center(dither);
+    y1 += 16 + 8;
+    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
-    cancel = new Fl_Button(128, 40, 64, 24, "Cancel");
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();

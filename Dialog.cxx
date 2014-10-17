@@ -32,47 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Quantize.H"
 #include "Project.H"
 
-namespace
-{
-  void center(Fl_Widget *widget)
-  {
-    int ww, hh;
-
-    widget->measure_label(ww, hh);
-
-    widget->resize(widget->parent()->w() / 2 - (ww + widget->w()) / 2 + ww,
-                   widget->y(),
-                   widget->w(),
-                   widget->h());
-  }
-
-  void addOkButton(Fl_Group *group, Fl_Button **ok, int *y1)
-  {
-    int w = group->w();
-
-    new Separator(group, 4, *y1, w - 8, 2, "");
-    *y1 += 8;
-    *ok = new Fl_Button(w - 64 - 8, *y1, 64, 24, "OK");
-    group->add(*ok);
-    *y1 += 24 + 8;
-    group->resize(group->x(), group->y(), group->w(), *y1);
-  }
-
-  void addOkCancelButtons(Fl_Group *group, Fl_Button **ok, Fl_Button **cancel, int *y1)
-  {
-    int w = group->w();
-
-    new Separator(group, 4, *y1, w - 8, 2, "");
-    *y1 += 8;
-    *cancel = new Fl_Button(w - 64 - 8, *y1, 64, 24, "Cancel");
-    group->add(*cancel);
-    *ok = new Fl_Button((*cancel)->x() - 64 - 8, *y1, 64, 24, "Ok");
-    *y1 += 24 + 8;
-    group->add(*ok);
-    group->resize(group->x(), group->y(), group->w(), *y1);
-  }
-}
-
 namespace About
 {
   Fl_Double_Window *dialog;
@@ -95,9 +54,9 @@ namespace About
 
     dialog = new Fl_Double_Window(384, 0, "About");
     logo = new Widget(dialog, 0, y1, 320, 64, "", "data/logo_large.png", 0, 0, 0);
-    center(logo);
+    Dialog::center(logo);
     y1 += 64 + 8;
-    addOkButton(dialog, &ok, &y1);
+    Dialog::addOkButton(dialog, &ok, &y1);
     ok->callback((Fl_Callback *)close);
     dialog->set_modal();
     dialog->end(); 
@@ -159,9 +118,9 @@ namespace JpegQuality
     dialog->callback(closeCallback);
     amount = new InputInt(dialog, 0, y1, 72, 24, "Quality:", 0);
     amount->value("95");
-    center(amount);
+    amount->center();
     y1 += 24 + 8;
-    addOkButton(dialog, &ok, &y1);
+    Dialog::addOkButton(dialog, &ok, &y1);
     dialog->set_modal();
     dialog->end();
   }
@@ -265,13 +224,13 @@ namespace NewImage
     y1 += 24 + 8;
     height = new InputInt(dialog, 0, y1, 72, 24, "Height:", 0);
     y1 += 24 + 8;
-    center(width);
-    center(height);
+    width->center();
+    height->center();
     width->maximum_size(8);
     height->maximum_size(8);
     width->value("640");
     height->value("480");
-    addOkCancelButtons(dialog, &ok, &cancel, &y1);
+    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
@@ -329,9 +288,9 @@ namespace CreatePalette
 
     dialog = new Fl_Double_Window(256, 0, "Create Palette");
     colors = new InputInt(dialog, 0, 8, 72, 24, "Colors:", 0);
-    center(colors);
+    colors->center();
     y1 += 24 + 8;
-    addOkCancelButtons(dialog, &ok, &cancel, &y1);
+    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
@@ -646,6 +605,49 @@ namespace Editor
 
     undo_palette = new Palette();
   }
+}
+
+// center a widget horizontally within dialog
+void Dialog::center(Fl_Widget *widget)
+{
+  int ww = 0, hh = 0;
+
+  widget->measure_label(ww, hh);
+
+  widget->resize((widget->parent()->w() / 2) - ((ww + widget->w()) / 2),
+                 widget->y(),
+                 widget->w(),
+                 widget->h());
+
+  widget->redraw();
+}
+
+// add ok button to bottom of dialog, update vertical size
+void Dialog::addOkButton(Fl_Group *group, Fl_Button **ok, int *y1)
+{
+  int w = group->w();
+
+  new Separator(group, 4, *y1, w - 8, 2, "");
+  *y1 += 8;
+  *ok = new Fl_Button(w - 64 - 8, *y1, 64, 24, "OK");
+  group->add(*ok);
+  *y1 += 24 + 8;
+  group->resize(group->x(), group->y(), group->w(), *y1);
+}
+
+// add ok/cancel buttons to bottom of dialog, update vertical size
+void Dialog::addOkCancelButtons(Fl_Group *group, Fl_Button **ok, Fl_Button **cancel, int *y1)
+{
+  int w = group->w();
+
+  new Separator(group, 4, *y1, w - 8, 2, "");
+  *y1 += 8;
+  *cancel = new Fl_Button(w - 64 - 8, *y1, 64, 24, "Cancel");
+  group->add(*cancel);
+  *ok = new Fl_Button((*cancel)->x() - 64 - 8, *y1, 64, 24, "Ok");
+  *y1 += 24 + 8;
+  group->add(*ok);
+  group->resize(group->x(), group->y(), group->w(), *y1);
 }
 
 void Dialog::init()

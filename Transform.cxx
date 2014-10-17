@@ -166,18 +166,24 @@ namespace Scale
 
   void init()
   {
-    dialog = new Fl_Double_Window(200, 144, "Scale Image");
-    width = new InputInt(dialog, 88, 8, 72, 24, "Width:", 0);
-    height = new InputInt(dialog, 88, 40, 72, 24, "Height:", 0);
+    int y1 = 8;
+
+    dialog = new Fl_Double_Window(256, 0, "Scale Image");
+    width = new InputInt(dialog, 0, y1, 72, 24, "Width:", 0);
+    width->center();
+    y1 += 24 + 8;
+    height = new InputInt(dialog, 0, y1, 72, 24, "Height:", 0);
+    height->center();
+    y1 += 24 + 8;
     width->maximum_size(8);
     height->maximum_size(8);
     width->value("640");
     height->value("480");
-    wrap = new Fl_Check_Button(32, 80, 16, 16, "Wrap Edges");
-    new Separator(dialog, 2, 104, 196, 2, "");
-    ok = new Fl_Button(56, 112, 64, 24, "OK");
+    wrap = new Fl_Check_Button(0, y1, 16, 16, "Wrap Edges");
+    Dialog::center(wrap);
+    y1 += 16 + 8;
+    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
-    cancel = new Fl_Button(128, 112, 64, 24, "Cancel");
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end(); 
@@ -259,15 +265,19 @@ namespace Rotate
 
   void init()
   {
-    dialog = new Fl_Double_Window(200, 112, "Rotate Image");
-    angle = new InputFloat(dialog, 80, 8, 72, 24, "Angle:", 0);
+    int y1 = 8;
+
+    dialog = new Fl_Double_Window(256, 0, "Rotate Image");
+    angle = new InputFloat(dialog, 0, y1, 72, 24, "Angle:", 0);
+    angle->center();
+    y1 += 24 + 8;
     angle->value("0");
-    scale = new InputFloat(dialog, 80, 40, 72, 24, "Scale:", 0);
+    scale = new InputFloat(dialog, 0, y1, 72, 24, "Scale:", 0);
+    scale->center();
+    y1 += 24 + 8;
     scale->value("1.0");
-    new Separator(dialog, 2, 72, 196, 2, "");
-    ok = new Fl_Button(56, 80, 64, 24, "OK");
+    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
-    cancel = new Fl_Button(128, 80, 64, 24, "Cancel");
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end(); 

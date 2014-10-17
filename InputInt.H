@@ -28,6 +28,7 @@ class InputInt : public Fl_Int_Input
 public:
   InputInt(Fl_Group *, int, int, int, int, const char *, Fl_Callback *);
   virtual ~InputInt();
+  void center();
 
   int var;
 
