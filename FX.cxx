@@ -67,7 +67,7 @@ namespace
     // user cancelled operation
     if(Fl::get_key(FL_Escape))
     {
-      endProgress();
+      Gui::getView()->drawMain(1);
       return -1;
     }
 
@@ -146,7 +146,9 @@ namespace Normalize
       }
 
       if(updateProgress(y) < 0)
+      {
         return;
+      }
     }
 
     endProgress();
@@ -233,11 +235,11 @@ namespace Equalize
       }
     }
 
-    endProgress();
-
     delete[] list_r;
     delete[] list_g;
     delete[] list_b;
+
+    endProgress();
   }
 
   void begin()
@@ -354,11 +356,11 @@ namespace ValueStretch
       }
     }
 
-    endProgress();
-
     delete[] list_r;
     delete[] list_g;
     delete[] list_b;
+
+    endProgress();
   }
 
   void begin()
@@ -432,9 +434,9 @@ namespace Saturate
       }
     }
 
-    endProgress();
-
     delete[] list_s;
+
+    endProgress();
   }
 
   void begin()
@@ -490,7 +492,9 @@ namespace RotateHue
       }
 
       if(updateProgress(y) < 0)
+      {
         return;
+      }
     }
 
     endProgress();
@@ -572,7 +576,9 @@ namespace Invert
       }
 
       if(updateProgress(y) < 0)
+      {
         return;
+      }
     }
 
     endProgress();
@@ -631,7 +637,9 @@ namespace CorrectionMatrix
       }
 
       if(updateProgress(y) < 0)
+      {
         return;
+      }
     }
 
     endProgress();
@@ -714,7 +722,9 @@ namespace Restore
       }
 
       if(updateProgress(y) < 0)
+      {
         return;
+      }
     }
 
     endProgress();
@@ -818,7 +828,9 @@ namespace RemoveDust
       }
 
       if(updateProgress(y) < 0)
+      {
         return;
+      }
     }
 
     endProgress();
@@ -904,7 +916,9 @@ namespace Desaturate
       }
 
       if(updateProgress(y) < 0)
+      {
         return;
+      }
     }
 
     endProgress();
@@ -948,7 +962,9 @@ namespace Colorize
       }
 
       if(updateProgress(y) < 0)
+      {
         return;
+      }
     }
 
     endProgress();
@@ -984,7 +1000,9 @@ namespace ApplyPalette
       }
 
       if(updateProgress(y) < 0)
+      {
         return;
+      }
     }
 
     endProgress();
@@ -1221,11 +1239,11 @@ namespace StainedGlass
       }
     }
 
-    endProgress();
-
     delete[] color;
     delete[] seedy;
     delete[] seedx;
+
+    endProgress();
   }
 
   void close()
