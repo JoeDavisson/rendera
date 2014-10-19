@@ -1149,6 +1149,7 @@ namespace StainedGlass
   InputInt *detail;
   InputInt *edge;
   Fl_Check_Button *uniform;
+  Fl_Check_Button *sat_alpha;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -1226,7 +1227,17 @@ namespace StainedGlass
 
         if(use != -1)
         {
-          bmp->setpixel(x, y, color[use], 0);
+          if(sat_alpha->value())
+          {
+            rgba_t rgba = getRgba(color[use]);
+            int h, s, v;
+            Blend::rgbToHsv(rgba.r, rgba.g, rgba.b, &h, &s, &v);
+            bmp->setpixel(x, y, makeRgba(rgba.r, rgba.g, rgba.b, s / 2 + 128), 0);
+          }
+          else
+          {
+            bmp->setpixel(x, y, color[use], 0);
+          }
         }
       }
 
@@ -1311,8 +1322,11 @@ namespace StainedGlass
     edge->value("32");
     edge->center();
     uniform = new Fl_Check_Button(0, y1, 16, 16, "Uniform");
-    y1 += 16 + 8;
     Dialog::center(uniform);
+    y1 += 16 + 8;
+    sat_alpha = new Fl_Check_Button(0, y1, 16, 16, "Saturation to Alpha");
+    Dialog::center(sat_alpha);
+    y1 += 16 + 8;
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);

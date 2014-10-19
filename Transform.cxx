@@ -85,6 +85,7 @@ namespace Scale
   Fl_Double_Window *dialog;
   InputInt *width;
   InputInt *height;
+  Fl_Check_Button *keep_aspect;
   Fl_Check_Button *wrap;
   Fl_Button *ok;
   Fl_Button *cancel;
@@ -97,6 +98,44 @@ namespace Scale
     snprintf(s, sizeof(s), "%d", Project::bmp->h - Project::bmp->overscroll * 2);
     height->value(s);
     dialog->show();
+  }
+
+  void checkWidth()
+  {
+    if(keep_aspect->value())
+    {
+      int ww = Project::bmp->w - Project::bmp->overscroll * 2;
+      int hh = Project::bmp->h - Project::bmp->overscroll * 2;
+      float aspect = (float)hh / ww;
+      char s[8];
+      int w = atoi(width->value());
+      int h = w * aspect;
+      snprintf(s, sizeof(s), "%d", h);
+      height->value(s);
+    }
+  }
+
+  void checkHeight()
+  {
+    if(keep_aspect->value())
+    {
+      int ww = Project::bmp->w - Project::bmp->overscroll * 2;
+      int hh = Project::bmp->h - Project::bmp->overscroll * 2;
+      float aspect = (float)ww / hh;
+      char s[8];
+      int h = atoi(height->value());
+      int w = h * aspect;
+      snprintf(s, sizeof(s), "%d", w);
+      width->value(s);
+    }
+  }
+
+  void checkKeepAspect()
+  {
+    if(keep_aspect->value())
+    {
+      checkWidth();
+    }
   }
 
   void close()
@@ -171,17 +210,23 @@ namespace Scale
     dialog = new Fl_Double_Window(256, 0, "Scale Image");
     width = new InputInt(dialog, 0, y1, 72, 24, "Width:", 0);
     width->center();
+    width->callback((Fl_Callback *)checkWidth);
     y1 += 24 + 8;
     height = new InputInt(dialog, 0, y1, 72, 24, "Height:", 0);
     height->center();
+    height->callback((Fl_Callback *)checkHeight);
     y1 += 24 + 8;
     width->maximum_size(8);
     height->maximum_size(8);
     width->value("640");
     height->value("480");
-    wrap = new Fl_Check_Button(0, y1, 16, 16, "Wrap Edges");
-    Dialog::center(wrap);
+    keep_aspect = new Fl_Check_Button(0, y1, 16, 16, "Keep Aspect");
+    keep_aspect->callback((Fl_Callback *)checkKeepAspect);
     y1 += 16 + 8;
+    Dialog::center(keep_aspect);
+    wrap = new Fl_Check_Button(0, y1, 16, 16, "Wrap Edges");
+    y1 += 16 + 8;
+    Dialog::center(wrap);
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);
