@@ -1225,7 +1225,7 @@ namespace StainedGlass
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         // find nearest color
-        int nearest = 999999;
+        int nearest = 999999999;
         int use = -1;
 
         for(i = 0; i < size; i++)
@@ -1312,9 +1312,9 @@ namespace StainedGlass
       return;
     }
 
-    if(a > 16384)
+    if(a > 50000)
     {
-      snprintf(str, sizeof(str), "%d", 16384);
+      snprintf(str, sizeof(str), "%d", 50000);
       detail->value(str);
       return;
     }
