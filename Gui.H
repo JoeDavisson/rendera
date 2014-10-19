@@ -76,6 +76,7 @@ namespace Gui
   void palette3LevelRGB();
   void palette4LevelRGB();
   void palette332();
+  void checkClear();
 
   View *getView();
   int getTool();

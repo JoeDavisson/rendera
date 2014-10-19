@@ -171,6 +171,7 @@ void Gui::init()
   menubar->add("File/Save", 0, (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
   menubar->add("File/Quit", 0, (Fl_Callback *)quit, 0, 0);
   menubar->add("Edit/Undo", 0, (Fl_Callback *)Undo::pop, 0, FL_MENU_DIVIDER);
+  menubar->add("Edit/Clear Image", 0, (Fl_Callback *)checkClear, 0, 0);
   menubar->add("Image/Flip Horizontal", 0, (Fl_Callback *)Transform::mirror, 0, 0);
   menubar->add("Image/Flip Vertical", 0, (Fl_Callback *)Transform::flip, 0, FL_MENU_DIVIDER);
   menubar->add("Image/Rotate...", 0, (Fl_Callback *)Transform::rotate, 0, 0);
@@ -884,6 +885,14 @@ void Gui::palette332()
 {
   Project::palette->set332();
   Project::palette->draw(palette);
+}
+
+void Gui::checkClear()
+{
+  Bitmap *bmp = Project::bmp;
+
+  bmp->rectfill(bmp->cl, bmp->ct, bmp->cr, bmp->cb, Project::brush->color, 0);
+  view->drawMain(1);
 }
 
 View *Gui::getView()
