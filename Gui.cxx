@@ -201,6 +201,7 @@ void Gui::init()
   menubar->add("Effects/Apply Palette...", 0, (Fl_Callback *)FX::applyPalette, 0, 0);
   menubar->add("Effects/Stained Glass...", 0, (Fl_Callback *)FX::stainedGlass, 0, 0);
   menubar->add("Effects/Blur...", 0, (Fl_Callback *)FX::blur, 0, 0);
+  menubar->add("Effects/Sharpen...", 0, (Fl_Callback *)FX::sharpen, 0, 0);
   menubar->add("Help/About...", 0, (Fl_Callback *)Dialog::about, 0, 0);
 
   top_right = new Group(0, menubar->h(), window->w(), 40, "");

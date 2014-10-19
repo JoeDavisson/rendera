@@ -1391,7 +1391,7 @@ namespace Blur
   void apply(int size)
   {
     const int div = (size * 2 + 1) * (size * 2 + 1);
-    int x, y, i;
+    int x, y;
 
     beginProgress();
 
@@ -1488,6 +1488,106 @@ namespace Blur
   }
 }
 
+namespace Sharpen
+{
+  Fl_Double_Window *dialog;
+  InputInt *amount;
+  Fl_Button *ok;
+  Fl_Button *cancel;
+
+  void apply(int amount)
+  {
+    int x, y, i;
+
+    beginProgress();
+
+    for(y = overscroll; y < bmp->h - overscroll; y++)
+    {
+      for(x = overscroll; x < bmp->w - overscroll; x++)
+      {
+        int i, j;
+        int lum = 0;
+
+        for(j = y - 1; j <= y + 1; j++) 
+        {
+          for(i = x - 1; i <= x + 1; i++) 
+          {
+            if((i == x) && (j == y))
+              continue;
+
+              lum += getl(bmp->getpixel(i, j)) * -1;
+          }
+        }
+
+        const int c = bmp->getpixel(x, y);
+
+        lum += getl(c) * 9;
+        lum = std::min(std::max(lum, 0), 255);
+
+        bmp->setpixel(x, y, Blend::keepLum(c, lum), 255 - amount);
+      }
+
+      if(updateProgress(y) < 0)
+      {
+        return;
+      }
+    }
+
+    endProgress();
+  }
+
+  void close()
+  {
+    char str[8];
+    int a = atoi(amount->value());
+
+    if(a < 1)
+    {
+      snprintf(str, sizeof(str), "%d", 1);
+      amount->value(str);
+      return;
+    }
+
+    if(a > 255)
+    {
+      snprintf(str, sizeof(str), "%d", 255);
+      amount->value(str);
+      return;
+    }
+
+    dialog->hide();
+    pushUndo();
+    apply(a);
+  }
+
+  void quit()
+  {
+    endProgress();
+    dialog->hide();
+  }
+
+  void begin()
+  {
+    dialog->show();
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    dialog = new Fl_Double_Window(256, 0, "Sharpen");
+    amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
+    y1 += 24 + 8;
+    amount->value("10");
+    amount->center();
+    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
+    ok->callback((Fl_Callback *)close);
+    cancel->callback((Fl_Callback *)quit);
+    dialog->set_modal();
+    dialog->end();
+  }
+}
+
 void FX::init()
 {
   RotateHue::init();
@@ -1496,6 +1596,7 @@ void FX::init()
   ApplyPalette::init();
   StainedGlass::init();
   Blur::init();
+  Sharpen::init();
 }
 
 void FX::normalize()
@@ -1566,5 +1667,10 @@ void FX::stainedGlass()
 void FX::blur()
 {
   Blur::begin();
+}
+
+void FX::sharpen()
+{
+  Sharpen::begin();
 }
 

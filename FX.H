@@ -41,6 +41,7 @@ namespace FX
   void applyPalette();
   void stainedGlass();
   void blur();
+  void sharpen();
 }
 
 #endif
