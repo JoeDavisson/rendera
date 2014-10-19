@@ -40,6 +40,7 @@ namespace FX
   void colorize();
   void applyPalette();
   void stainedGlass();
+  void blur();
 }
 
 #endif

@@ -1381,6 +1381,113 @@ namespace StainedGlass
   }
 }
 
+namespace Blur
+{
+  Fl_Double_Window *dialog;
+  InputInt *amount;
+  Fl_Button *ok;
+  Fl_Button *cancel;
+
+  void apply(int size)
+  {
+    const int div = (size * 2 + 1) * (size * 2 + 1);
+    int x, y, i;
+
+    beginProgress();
+
+    for(y = overscroll; y < bmp->h - overscroll; y++)
+    {
+      int *p = bmp->row[y] + overscroll;
+
+      for(x = overscroll; x < bmp->w - overscroll; x++)
+      {
+        int rr = 0;
+        int gg = 0;
+        int bb = 0;
+        int aa = 0;
+        int i, j;
+
+        for(j = y - size; j <= y + size; j++) 
+        {
+          for(i = x - size; i <= x + size; i++) 
+          {
+            rgba_t rgba = getRgba(bmp->getpixel(i, j));
+            rr += rgba.r;
+            gg += rgba.g;
+            bb += rgba.b;
+            aa += rgba.a;
+          }
+        }
+
+        rr /= div;
+        gg /= div;
+        bb /= div;
+        aa /= div;
+
+        *p++ = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
+      }
+
+      if(updateProgress(y) < 0)
+      {
+        return;
+      }
+    }
+
+    endProgress();
+  }
+
+  void close()
+  {
+    char str[8];
+    int a = atoi(amount->value());
+
+    if(a < 1)
+    {
+      snprintf(str, sizeof(str), "%d", 1);
+      amount->value(str);
+      return;
+    }
+
+    if(a > 16)
+    {
+      snprintf(str, sizeof(str), "%d", 16);
+      amount->value(str);
+      return;
+    }
+
+    dialog->hide();
+    pushUndo();
+    apply(a);
+  }
+
+  void quit()
+  {
+    endProgress();
+    dialog->hide();
+  }
+
+  void begin()
+  {
+    dialog->show();
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    dialog = new Fl_Double_Window(256, 0, "Blur");
+    amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
+    y1 += 24 + 8;
+    amount->value("1");
+    amount->center();
+    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
+    ok->callback((Fl_Callback *)close);
+    cancel->callback((Fl_Callback *)quit);
+    dialog->set_modal();
+    dialog->end();
+  }
+}
+
 void FX::init()
 {
   RotateHue::init();
@@ -1388,6 +1495,7 @@ void FX::init()
   RemoveDust::init();
   ApplyPalette::init();
   StainedGlass::init();
+  Blur::init();
 }
 
 void FX::normalize()
@@ -1453,5 +1561,10 @@ void FX::applyPalette()
 void FX::stainedGlass()
 {
   StainedGlass::begin();
+}
+
+void FX::blur()
+{
+  Blur::begin();
 }
 
