@@ -51,7 +51,7 @@ namespace About
   void init()
   {
     int y1 = 8;
-    int ww, hh;
+    int ww = 0, hh = 0;
     const char *credits = "Copyright (c) 2014 Joe Davisson.\nAll Rights Reserved.";
 
     dialog = new Fl_Double_Window(384, 0, "About");
