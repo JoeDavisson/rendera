@@ -1495,6 +1495,13 @@ namespace Sharpen
   Fl_Button *ok;
   Fl_Button *cancel;
 
+  const int matrix[3][3] =
+  {
+    { -1, -1, -1 },
+    { -1, 9, -1 },
+    { -1, -1, -1 }
+  };
+
   void apply(int amount)
   {
     int x, y, i;
@@ -1508,22 +1515,17 @@ namespace Sharpen
         int i, j;
         int lum = 0;
 
-        for(j = y - 1; j <= y + 1; j++) 
+        for(j = 0; j < 3; j++) 
         {
-          for(i = x - 1; i <= x + 1; i++) 
+          for(i = 0; i < 3; i++) 
           {
-            if((i == x) && (j == y))
-              continue;
-
-              lum += getl(bmp->getpixel(i, j)) * -1;
+              lum += getl(bmp->getpixel(x + i - 1, y + j - 1)) * matrix[i][j];
           }
         }
 
         const int c = bmp->getpixel(x, y);
 
-        lum += getl(c) * 9;
         lum = std::min(std::max(lum, 0), 255);
-
         bmp->setpixel(x, y, Blend::keepLum(c, lum), 255 - amount);
       }
 
