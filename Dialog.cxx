@@ -51,11 +51,14 @@ namespace About
   void init()
   {
     int y1 = 8;
+    int ww, hh;
+    const char *credits = "Copyright (c) 2014 Joe Davisson.\nAll Rights Reserved.";
 
     dialog = new Fl_Double_Window(384, 0, "About");
-    logo = new Widget(dialog, 0, y1, 320, 64, "", "data/logo_large.png", 0, 0, 0);
-    Dialog::center(logo);
-    y1 += 64 + 8;
+    logo = new Widget(dialog, 32, y1, 320, 64, credits, "data/logo_large.png", 0, 0, 0);
+    logo->align(FL_ALIGN_BOTTOM);
+    logo->measure_label(ww, hh);
+    y1 += 64 + 8 + hh;
     Dialog::addOkButton(dialog, &ok, &y1);
     ok->callback((Fl_Callback *)close);
     dialog->set_modal();
