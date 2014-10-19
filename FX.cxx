@@ -1498,7 +1498,7 @@ namespace Sharpen
   const int matrix[3][3] =
   {
     { -1, -1, -1 },
-    { -1, 9, -1 },
+    { -1,  9, -1 },
     { -1, -1, -1 }
   };
 
@@ -1526,7 +1526,14 @@ namespace Sharpen
         const int c = bmp->getpixel(x, y);
 
         lum = std::min(std::max(lum, 0), 255);
-        bmp->setpixel(x, y, Blend::keepLum(c, lum), 255 - amount);
+
+        // this prevents artifacts in areas with less detail
+        const int diff = std::abs(getl(c) - lum);
+        if(diff < 32)
+          continue;
+
+        bmp->setpixel(x, y, Blend::keepLum(c, lum),
+                      scaleVal(255 - amount, 255 - diff));
       }
 
       if(updateProgress(y) < 0)
@@ -1580,7 +1587,7 @@ namespace Sharpen
     dialog = new Fl_Double_Window(256, 0, "Sharpen");
     amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
-    amount->value("10");
+    amount->value("64");
     amount->center();
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
