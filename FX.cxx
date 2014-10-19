@@ -1219,6 +1219,7 @@ namespace StainedGlass
 
     beginProgress();
 
+    // draw segments
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
@@ -1247,7 +1248,8 @@ namespace StainedGlass
             rgba_t rgba = getRgba(color[use]);
             int h, s, v;
             Blend::rgbToHsv(rgba.r, rgba.g, rgba.b, &h, &s, &v);
-            bmp->setpixel(x, y, makeRgba(rgba.r, rgba.g, rgba.b, s / 2 + 128), 0);
+            bmp->setpixel(x, y, makeRgba(rgba.r, rgba.g, rgba.b,
+                          std::min(192, s / 2 + 128)), 0);
           }
           else
           {
@@ -1265,6 +1267,7 @@ namespace StainedGlass
       }
     }
 
+    // draw edges
     if(draw_edges->value())
     {
       Map *map = Project::map;
@@ -1359,7 +1362,7 @@ namespace StainedGlass
     detail->center();
     edge = new InputInt(dialog, 0, y1, 72, 24, "Edge Detect:", 0);
     y1 += 24 + 8;
-    edge->value("32");
+    edge->value("16");
     edge->center();
     uniform = new Fl_Check_Button(0, y1, 16, 16, "Uniform");
     Dialog::center(uniform);
