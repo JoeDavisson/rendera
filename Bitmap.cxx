@@ -954,7 +954,7 @@ void Bitmap::flip()
 }
 
 // rotate transform
-Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
+Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, int tile)
 {
   // angle correction
   angle += 90;
@@ -1049,15 +1049,29 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll)
 
     for(x = bx1; x <= bx2; x++)
     {
-      const int uu = u >> 8;
-      const int vv = v >> 8;
+      int uu = u >> 8;
+      int vv = v >> 8;
 
       u += du_col;
       v += dv_col;
 
       // clip source image
-      if(uu < cl || uu > cr || vv < ct || vv > cb)
-        continue;
+      if(tile)
+      {
+        while(uu < cl)
+          uu += (cr - cl) + 1;
+        while(vv < ct)
+          vv += (cb - ct) + 1;
+        while(uu > cr)
+          uu -= (cr - cl) + 1;
+        while(vv > cb)
+          vv -= (cb - ct) + 1;
+      }
+      else
+      {
+        if(uu < cl || uu > cr || vv < ct || vv > cb)
+          continue;
+      }
 
       const int xx = ((dest->w - overscroll * 2) / 2) + x;
       if(xx < dest->cl || xx > dest->cr)

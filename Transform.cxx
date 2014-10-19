@@ -240,6 +240,7 @@ namespace Rotate
   Fl_Double_Window *dialog;
   InputFloat *angle;
   InputFloat *scale;
+  Fl_Check_Button *tile;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -289,7 +290,8 @@ namespace Rotate
 
     dialog->hide();
     int overscroll = Project::bmp->overscroll;
-    Bitmap *temp = Project::bmp->rotate(angle_val, scale_val, overscroll);
+    Bitmap *temp = Project::bmp->rotate(angle_val, scale_val, overscroll,
+                                        tile->value());
 
     delete Project::bmp;
     Project::bmp = temp;
@@ -321,6 +323,9 @@ namespace Rotate
     scale->center();
     y1 += 24 + 8;
     scale->value("1.0");
+    tile = new Fl_Check_Button(0, y1, 16, 16, "Tile");
+    y1 += 16 + 8;
+    Dialog::center(tile);
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);
