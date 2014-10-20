@@ -533,8 +533,7 @@ void Stroke::end(int x, int y)
     switch(type)
     {
       case 0:
-        if(brush->size == 1)
-          map->thick_aa = 1;
+        map->thick_aa = 1;
         for(i = 1; i < polycount; i++)
         {
           drawBrushLineAA(polycachex[i], polycachey[i],
@@ -542,8 +541,7 @@ void Stroke::end(int x, int y)
         }
         break;
       case 2:
-        if(brush->size == 1)
-          map->thick_aa = 1;
+        map->thick_aa = 1;
         if(origin)
         {
           w = (x - beginx);
@@ -564,8 +562,7 @@ void Stroke::end(int x, int y)
         map->polyfillAA(polycachex, polycachey, polycount, x1, y1, x2, y2, 255);
         break;
       case 4:
-        if(brush->size == 1)
-          map->thick_aa = 1;
+        map->thick_aa = 1;
         if(constrain)
           keepSquare(beginx, beginy, &x, &y);
 
@@ -596,8 +593,7 @@ void Stroke::end(int x, int y)
         }
         break;
       case 6:
-        if(brush->size == 1)
-          map->thick_aa = 1;
+        map->thick_aa = 1;
         if(constrain)
           keepSquare(beginx, beginy, &x, &y);
 
