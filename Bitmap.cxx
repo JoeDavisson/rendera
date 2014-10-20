@@ -960,8 +960,8 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, int tile)
   angle += 90;
 
   // rotation
-  int du_col = (int)((std::sin(angle * (3.14159f / 180)) * scale) * 256);
-  int dv_col = (int)((std::sin((angle + 90) * (3.14159f / 180)) * scale) * 256);
+  int du_col = (int)((std::sin(angle * (3.14159f / 180)) * scale) * 65536);
+  int dv_col = (int)((std::sin((angle + 90) * (3.14159f / 180)) * scale) * 65536);
   int du_row = -dv_col;
   int dv_row = du_col;
 
@@ -995,20 +995,20 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, int tile)
   const int oldy3 = y3;
 
   // rotate
-  x0 = xx + ((oldx0 * du_col + oldy0 * du_row) >> 8);
-  y0 = yy + ((oldx0 * dv_col + oldy0 * dv_row) >> 8);
-  x1 = xx + ((oldx1 * du_col + oldy1 * du_row) >> 8);
-  y1 = yy + ((oldx1 * dv_col + oldy1 * dv_row) >> 8);
-  x2 = xx + ((oldx2 * du_col + oldy2 * du_row) >> 8);
-  y2 = yy + ((oldx2 * dv_col + oldy2 * dv_row) >> 8);
-  x3 = xx + ((oldx3 * du_col + oldy3 * du_row) >> 8);
-  y3 = yy + ((oldx3 * dv_col + oldy3 * dv_row) >> 8);
+  x0 = xx + ((oldx0 * du_col + oldy0 * du_row) >> 16);
+  y0 = yy + ((oldx0 * dv_col + oldy0 * dv_row) >> 16);
+  x1 = xx + ((oldx1 * du_col + oldy1 * du_row) >> 16);
+  y1 = yy + ((oldx1 * dv_col + oldy1 * dv_row) >> 16);
+  x2 = xx + ((oldx2 * du_col + oldy2 * du_row) >> 16);
+  y2 = yy + ((oldx2 * dv_col + oldy2 * dv_row) >> 16);
+  x3 = xx + ((oldx3 * du_col + oldy3 * du_row) >> 16);
+  y3 = yy + ((oldx3 * dv_col + oldy3 * dv_row) >> 16);
 
   // find new bounding box
-  const int bx1 = std::min(x0, std::min(x1, std::min(x2, x3)));
-  const int by1 = std::min(y0, std::min(y1, std::min(y2, y3)));
-  const int bx2 = std::max(x0, std::max(x1, std::max(x2, x3)));
-  const int by2 = std::max(y0, std::max(y1, std::max(y2, y3)));
+  const int bx1 = std::min(x0, std::min(x1, std::min(x2, x3))) - scale * 2;
+  const int by1 = std::min(y0, std::min(y1, std::min(y2, y3))) - scale * 2;
+  const int bx2 = std::max(x0, std::max(x1, std::max(x2, x3))) + scale * 2;
+  const int by2 = std::max(y0, std::max(y1, std::max(y2, y3))) + scale * 2;
   int bw = (bx2 - bx1) + 1;
   int bh = (by2 - by1) + 1;
 
@@ -1021,13 +1021,13 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, int tile)
   bh /= 2;
 
   // rotation
-  du_col = (int)((std::sin(angle * (3.14159f / 180)) / scale) * 256);
-  dv_col = (int)((std::sin((angle + 90) * (3.14159f / 180)) / scale) * 256);
+  du_col = (int)((std::sin(angle * (3.14159f / 180)) / scale) * 65536);
+  dv_col = (int)((std::sin((angle + 90) * (3.14159f / 180)) / scale) * 65536);
   du_row = -dv_col;
   dv_row = du_col;
 
-  int row_u = (w / 2) << 8;
-  int row_v = (h / 2) << 8;
+  int row_u = (w / 2) << 16;
+  int row_v = (h / 2) << 16;
 
   row_u -= bw * du_col + bh * du_row;
   row_v -= bw * dv_col + bh * dv_row;
@@ -1049,8 +1049,8 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, int tile)
 
     for(x = bx1; x <= bx2; x++)
     {
-      int uu = u >> 8;
-      int vv = v >> 8;
+      int uu = u >> 16;
+      int vv = v >> 16;
 
       u += du_col;
       v += dv_col;
