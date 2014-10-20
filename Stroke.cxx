@@ -210,10 +210,10 @@ void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  int i;
-
   drawBrush(x1, y1, c);
   drawBrush(x2, y2, c);
+
+  int i;
 
   for(i = 0; i < brush->hollow_count; i++)
   {
@@ -259,8 +259,8 @@ void Stroke::drawBrushAA(int x, int y, int c)
 
   for(i = 0; i < brush->solid_count; i++)
   {
-    map->setpixelAA(x + (brush->solidx[i] << 2),
-                    y + (brush->solidy[i] << 2), c);
+    map->setpixelAA((x + brush->solidx[i] << 2),
+                    (y + brush->solidy[i] << 2), c);
   }
 }
 
@@ -533,7 +533,14 @@ void Stroke::end(int x, int y)
     switch(type)
     {
       case 0:
-        map->thick_aa = 1;
+        if(brush->size == 1)
+          map->thick_aa = 1;
+        if(polycount < 2)
+        {
+          map->thick_aa = 1;
+          drawBrushAA(x, y, 255);
+          drawBrushAA(x, y, 255);
+        }
         for(i = 1; i < polycount; i++)
         {
           drawBrushLineAA(polycachex[i], polycachey[i],
@@ -541,7 +548,8 @@ void Stroke::end(int x, int y)
         }
         break;
       case 2:
-        map->thick_aa = 1;
+        if(brush->size == 1)
+          map->thick_aa = 1;
         if(origin)
         {
           w = (x - beginx);
@@ -562,7 +570,8 @@ void Stroke::end(int x, int y)
         map->polyfillAA(polycachex, polycachey, polycount, x1, y1, x2, y2, 255);
         break;
       case 4:
-        map->thick_aa = 1;
+        if(brush->size == 1)
+          map->thick_aa = 1;
         if(constrain)
           keepSquare(beginx, beginy, &x, &y);
 
@@ -593,7 +602,8 @@ void Stroke::end(int x, int y)
         }
         break;
       case 6:
-        map->thick_aa = 1;
+        if(brush->size == 1)
+          map->thick_aa = 1;
         if(constrain)
           keepSquare(beginx, beginy, &x, &y);
 

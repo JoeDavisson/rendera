@@ -28,9 +28,6 @@ namespace
   {
     int c1 = *(map->row[y] + x);
 
-//    if(map->thick_aa)
-//      c1 += c << 2;
-//    else
     c1 += c;
 
     if(c1 > 255)
@@ -49,9 +46,14 @@ namespace
       y < 0 || y >= ((map->h - 1) << 2))
       return;
 
-    int shift = 0;
+    int shift1 = 4;
+    int shift2 = 20;
+
     if(map->thick_aa)
-      shift = 2;
+    {
+      shift1 = 2;
+      shift2 = 18;
+    }
 
     const int uu = x << 2;
     const int u = uu - ((uu >> 4) << 4);
@@ -64,10 +66,10 @@ namespace
     const int xx = (x >> 2);
     const int yy = (y >> 2);
 
-    _blendAA(map, xx, yy, (a & 0x000001FF) >> (4 - shift));
-    _blendAA(map, xx + 1, yy, (a & 0x01FF0000) >> (20 - shift));
-    _blendAA(map, xx, yy + 1, (b & 0x000001FF) >> (4 - shift));
-    _blendAA(map, xx + 1, yy + 1, (b & 0x01FF0000) >> (20 - shift));
+    _blendAA(map, xx, yy, (a & 0x000001FF) >> shift1);
+    _blendAA(map, xx + 1, yy, (a & 0x01FF0000) >> shift2);
+    _blendAA(map, xx, yy + 1, (b & 0x000001FF) >> shift1);
+    _blendAA(map, xx + 1, yy + 1, (b & 0x01FF0000) >> shift2);
   }
 
   // draw horizontal antialised line (used by filled oval/rectangle)
