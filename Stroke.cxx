@@ -363,7 +363,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
   switch(type)
   {
-    case 0:
+    case FREEHAND:
       drawBrushLine(x, y, lastx, lasty, 255);
       makeBlitRect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
       polycachex[polycount] = x;
@@ -371,7 +371,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       polycount++;
       polycount &= 65535;
       break;
-    case 1:
+    case REGION:
       map->line(x, y, lastx, lasty, 255);
       makeBlitRect(x, y, lastx, lasty, ox, oy, 1, zoom);
       polycachex[polycount] = x;
@@ -381,17 +381,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       oldx = x;
       oldy = y;
       break;
-    case 3:
-      map->line(oldx, oldy, lastx, lasty, 0);
-      makeBlitRect(x, y, lastx, lasty, ox, oy, 1, zoom);
-      polycachex[polycount] = x;
-      polycachey[polycount] = y;
-      polycount++;
-      polycount &= 65535;
-      oldx = x;
-      oldy = y;
-      break;
-    case 2:
+    case LINE:
       if(origin)
       {
         w = (lastx - beginx);
@@ -409,7 +399,17 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       }
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
-    case 4:
+    case POLYGON:
+      map->line(oldx, oldy, lastx, lasty, 0);
+      makeBlitRect(x, y, lastx, lasty, ox, oy, 1, zoom);
+      polycachex[polycount] = x;
+      polycachey[polycount] = y;
+      polycount++;
+      polycount &= 65535;
+      oldx = x;
+      oldy = y;
+      break;
+    case RECT:
       if(constrain)
         keepSquare(beginx, beginy, &x, &y);
 
@@ -432,7 +432,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
-    case 5:
+    case FILLED_RECT:
       if(constrain)
         keepSquare(beginx, beginy, &x, &y);
 
@@ -454,7 +454,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       }
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
-    case 6:
+    case OVAL:
       if(constrain)
         keepSquare(beginx, beginy, &x, &y);
 
@@ -476,7 +476,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       }
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
       break;
-    case 7:
+    case FILLED_OVAL:
       if(constrain)
         keepSquare(beginx, beginy, &x, &y);
 
@@ -532,7 +532,7 @@ void Stroke::end(int x, int y)
 
     switch(type)
     {
-      case 0:
+      case FREEHAND:
         if(brush->size == 1)
           map->thick_aa = 1;
         if(polycount < 2)
@@ -547,7 +547,14 @@ void Stroke::end(int x, int y)
                           polycachex[i - 1], polycachey[i - 1], 255);
         }
         break;
-      case 2:
+      case REGION:
+        polycachex[polycount] = beginx;
+        polycachey[polycount] = beginy;
+        polycount++;
+        polycount &= 65535;
+        map->polyfillAA(polycachex, polycachey, polycount, x1, y1, x2, y2, 255);
+        break;
+      case LINE:
         if(brush->size == 1)
           map->thick_aa = 1;
         if(origin)
@@ -561,15 +568,14 @@ void Stroke::end(int x, int y)
           drawBrushLineAA(x, y, beginx, beginy, 255);
         }
         break;
-      case 1:
-      case 3:
+      case POLYGON:
         polycachex[polycount] = beginx;
         polycachey[polycount] = beginy;
         polycount++;
         polycount &= 65535;
         map->polyfillAA(polycachex, polycachey, polycount, x1, y1, x2, y2, 255);
         break;
-      case 4:
+      case RECT:
         if(brush->size == 1)
           map->thick_aa = 1;
         if(constrain)
@@ -586,7 +592,7 @@ void Stroke::end(int x, int y)
           drawBrushRectAA(x, y, beginx, beginy, 255);
         }
         break;
-      case 5:
+      case FILLED_RECT:
         if(constrain)
           keepSquare(beginx, beginy, &x, &y);
 
@@ -601,7 +607,7 @@ void Stroke::end(int x, int y)
           map->rectfillAA(x, y, beginx, beginy, 255);
         }
         break;
-      case 6:
+      case OVAL:
         if(brush->size == 1)
           map->thick_aa = 1;
         if(constrain)
@@ -618,7 +624,7 @@ void Stroke::end(int x, int y)
           drawBrushOvalAA(x, y, beginx, beginy, 255);
         }
         break;
-      case 7:
+      case FILLED_OVAL:
         if(constrain)
           keepSquare(beginx, beginy, &x, &y);
 
@@ -641,8 +647,8 @@ void Stroke::end(int x, int y)
   {
     switch(type)
     {
-      case 1:
-      case 3:
+      case REGION:
+      case POLYGON:
         polycachex[polycount] = beginx;
         polycachey[polycount] = beginy;
         polycount++;

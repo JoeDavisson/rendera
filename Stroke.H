@@ -28,6 +28,18 @@ class Bitmap;
 class Stroke
 {
 public:
+  enum
+  {
+    FREEHAND,
+    REGION,
+    LINE,
+    POLYGON,
+    RECT,
+    FILLED_RECT,
+    OVAL,
+    FILLED_OVAL
+  };
+
   Stroke();
   virtual ~Stroke();
 
