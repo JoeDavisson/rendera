@@ -100,10 +100,11 @@ namespace Normalize
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        int c = bmp->getpixel(x, y);
-        int r = getr(c);
-        int g = getg(c);
-        int b = getb(c);
+        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+
+        const int r = rgba.r;
+        const int g = rgba.g;
+        const int b = rgba.b;
 
         if(r < r_low)
           r_low = r;
@@ -111,7 +112,7 @@ namespace Normalize
           r_high = r;
         if(g < g_low)
           g_low = g;
-          if(g > g_high)
+        if(g > g_high)
           g_high = g;
         if(b < b_low)
           b_low = b;
@@ -138,18 +139,17 @@ namespace Normalize
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        int c = bmp->getpixel(x, y);
-        int r = (getr(c) - r_low) * r_scale;
-        int g = (getg(c) - g_low) * g_scale;
-        int b = (getb(c) - b_low) * b_scale;
+        rgba_t rgba = getRgba(bmp->getpixel(x, y));
 
-        bmp->setpixel(x, y, makeRgba(r, g, b, geta(c)), 0);
+        const int r = (rgba.r - r_low) * r_scale;
+        const int g = (rgba.g - g_low) * g_scale;
+        const int b = (rgba.b - b_low) * b_scale;
+
+        bmp->setpixel(x, y, makeRgba(r, g, b, rgba.a), 0);
       }
 
       if(updateProgress(y) < 0)
-      {
         return;
-      }
     }
 
     endProgress();
@@ -186,10 +186,11 @@ namespace Equalize
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        int c = bmp->getpixel(x, y);
-        int r = getr(c);
-        int g = getg(c);
-        int b = getb(c);
+        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+
+        const int r = rgba.r;
+        const int g = rgba.g;
+        const int b = rgba.b;
 
         list_r[r]++;
         list_g[g]++;
@@ -215,16 +216,17 @@ namespace Equalize
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        int c = bmp->getpixel(x, y);
-        int r = getr(c);
-        int g = getg(c);
-        int b = getb(c);
+        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+
+        int r = rgba.r;
+        int g = rgba.g;
+        int b = rgba.b;
 
         r = list_r[r] * scale;
         g = list_g[g] * scale;
         b = list_b[b] * scale;
 
-        bmp->setpixel(x, y, makeRgba(r, g, b, geta(c)), 0);
+        bmp->setpixel(x, y, makeRgba(r, g, b, rgba.a), 0);
       }
 
       if(updateProgress(y) < 0)
@@ -272,11 +274,11 @@ namespace ValueStretch
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        int c = bmp->getpixel(x, y);
+        rgba_t rgba = getRgba(bmp->getpixel(x, y));
 
-        rr += getr(c);
-        gg += getg(c);
-        bb += getb(c);
+        rr += rgba.r;
+        gg += rgba.g;
+        bb += rgba.b;
 
         count++;
       }
@@ -299,10 +301,11 @@ namespace ValueStretch
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        int c = bmp->getpixel(x, y);
-        int r = getr(c);
-        int g = getg(c);
-        int b = getb(c);
+        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+
+        const int r = rgba.r;
+        const int g = rgba.g;
+        const int b = rgba.b;
 
         list_r[r]++;
         list_g[g]++;
@@ -328,10 +331,11 @@ namespace ValueStretch
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        int c = bmp->getpixel(x, y);
-        int r = getr(c);
-        int g = getg(c);
-        int b = getb(c);
+        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+
+        int r = rgba.r;
+        int g = rgba.g;
+        int b = rgba.b;
 
         int ra = list_r[r] * scale;
         int ga = list_g[g] * scale;
@@ -345,7 +349,7 @@ namespace ValueStretch
         g = std::min(std::max(g, 0), 255);
         b = std::min(std::max(b, 0), 255);
 
-        bmp->setpixel(x, y, makeRgba(r, g, b, geta(c)), 0);
+        bmp->setpixel(x, y, makeRgba(r, g, b, rgba.a), 0);
       }
 
       if(updateProgress(y) < 0)
@@ -390,10 +394,12 @@ namespace Saturate
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        int c = bmp->getpixel(x, y);
-        int r = getr(c);
-        int g = getg(c);
-        int b = getb(c);
+        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+
+        const int r = rgba.r;
+        const int g = rgba.g;
+        const int b = rgba.b;
+
         int h, s, v;
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
 
@@ -412,19 +418,26 @@ namespace Saturate
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        int c = bmp->getpixel(x, y);
-        int r = getr(c);
-        int g = getg(c);
-        int b = getb(c);
-        int l = getl(c);
+        const int c = bmp->getpixel(x, y);
+
+        rgba_t rgba = getRgba(c);
+
+        int r = rgba.r;
+        int g = rgba.g;
+        int b = rgba.b;
+        const int l = getl(c);
         int h, s, v;
+
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
-        int temp = s;
+
+        const int temp = s;
+
         s = list_s[s] * scale;
+
         if(s < temp)
           s = temp;
-        Blend::hsvToRgb(h, s, v, &r, &g, &b);
 
+        Blend::hsvToRgb(h, s, v, &r, &g, &b);
         bmp->setpixel(x, y, Blend::keepLum(makeRgba(r, g, b, geta(c)), l), 0);
       }
 
@@ -464,6 +477,7 @@ namespace RotateHue
     int hh = amount * 4.277;
 
     int keep_lum = 0;
+
     if(preserve->value())
       keep_lum = 1;
 
@@ -474,15 +488,21 @@ namespace RotateHue
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         int c = bmp->getpixel(x, y);
+
+        rgba_t rgba = getRgba(c);
+
         int l = getl(c);
 
-        r = getr(c);
-        g = getg(c);
-        b = getb(c);
+        r = rgba.r;
+        g = rgba.g;
+        b = rgba.b;
+
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
         h += hh;
+
         if(h >= 1536)
           h -= 1536;
+
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
         c = makeRgba(r, g, b, geta(c));
 
@@ -493,9 +513,7 @@ namespace RotateHue
       }
 
       if(updateProgress(y) < 0)
-      {
         return;
-      }
     }
 
     endProgress();
@@ -577,9 +595,7 @@ namespace Invert
       }
 
       if(updateProgress(y) < 0)
-      {
         return;
-      }
     }
 
     endProgress();
@@ -609,11 +625,14 @@ namespace CorrectionMatrix
     {
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        int c = bmp->getpixel(x, y);
-        int r = getr(c);
-        int g = getg(c);
-        int b = getb(c);
-        int l = getl(c);
+        const int c = bmp->getpixel(x, y);
+
+        rgba_t rgba = getRgba(c);
+
+        const int r = rgba.r;
+        const int g = rgba.g;
+        const int b = rgba.b;
+        const int l = getl(c);
 
         // only change hue
         int h, s, v;
@@ -638,9 +657,7 @@ namespace CorrectionMatrix
       }
 
       if(updateProgress(y) < 0)
-      {
         return;
-      }
     }
 
     endProgress();
@@ -723,9 +740,7 @@ namespace Restore
       }
 
       if(updateProgress(y) < 0)
-      {
         return;
-      }
     }
 
     endProgress();
@@ -805,6 +820,7 @@ namespace RemoveDust
       for(x = (overscroll + 1); x < bmp->w - (overscroll + 1); x++)
       {
         test = bmp->getpixel(x, y);
+
         c[0] = bmp->getpixel(x + 1, y);
         c[1] = bmp->getpixel(x - 1, y);
         c[2] = bmp->getpixel(x, y + 1);
@@ -818,20 +834,20 @@ namespace RemoveDust
 
         for(i = 0; i < 8; i++)
         {
-          r += getr(c[i]);
-          g += getg(c[i]);
-          b += getb(c[i]);
+          rgba_t rgba = getRgba(c[i]);
+          r += rgba.r;
+          g += rgba.g;
+          b += rgba.b;
         }
 
         avg = makeRgba(r / 8, g / 8, b / 8, geta(test));
+
         if((getl(avg) - getl(test)) > amount)
           bmp->setpixel(x, y, avg, 0);
       }
 
       if(updateProgress(y) < 0)
-      {
         return;
-      }
     }
 
     endProgress();
@@ -913,13 +929,12 @@ namespace Desaturate
       {
         int c = bmp->getpixel(x, y);
         int l = getl(c);
+
         bmp->setpixel(x, y, makeRgba(l, l, l, geta(c)), 0);
       }
 
       if(updateProgress(y) < 0)
-      {
         return;
-      }
     }
 
     endProgress();
@@ -945,27 +960,34 @@ namespace Colorize
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         int c1 = bmp->getpixel(x, y);
-        int r = getr(c1);
-        int g = getg(c1);
-        int b = getb(c1);
+
+        rgba_t rgba = getRgba(c1);
+
+        int r = rgba.r;
+        int g = rgba.g;
+        int b = rgba.b;
         int h, s, v;
+
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
+
         int sat = s;
+
         if(sat < 64)
           sat = 64;
+
         r = getr(Project::brush->color);
         g = getg(Project::brush->color);
         b = getb(Project::brush->color);
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
         Blend::hsvToRgb(h, (sat * s) / (sat + s), v, &r, &g, &b);
+
         int c2 = makeRgba(r, g, b, geta(c1));
+
         bmp->setpixel(x, y, Blend::colorize(c1, c2, 0), 0);
       }
 
       if(updateProgress(y) < 0)
-      {
         return;
-      }
     }
 
     endProgress();
@@ -1001,9 +1023,7 @@ namespace ApplyPalette
       }
 
       if(updateProgress(y) < 0)
-      {
         return;
-      }
     }
 
     endProgress();
@@ -1428,9 +1448,7 @@ namespace Blur
       }
 
       if(updateProgress(y) < 0)
-      {
         return;
-      }
     }
 
     endProgress();
@@ -1537,9 +1555,7 @@ namespace Sharpen
       }
 
       if(updateProgress(y) < 0)
-      {
         return;
-      }
     }
 
     endProgress();

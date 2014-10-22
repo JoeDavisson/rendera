@@ -275,6 +275,7 @@ int Palette::load(const char *fn)
 int Palette::save(const char *fn)
 {
   FILE *out = fopen(fn, "w");
+
   if(!out)
     return -1;
 
@@ -283,6 +284,7 @@ int Palette::save(const char *fn)
     fclose(out);
     return -1;
   }
+
   if(fprintf(out, "#\n") < 0)
   {
     fclose(out);
@@ -294,6 +296,7 @@ int Palette::save(const char *fn)
   for(i = 0; i < max; i++)
   {
     int c = data[i];
+
     if(fprintf(out, "%d %d %d\n", getr(c), getg(c), getb(c)) < 0)
     {
       fclose(out);
@@ -329,9 +332,7 @@ void Palette::setDefault()
 
   // grays
   for(v = 0; v < 12; v++)
-  {
     data[index++] = makeRgb(v * 23.19, v * 23.19, v * 23.19);
-  }
 
   max = index;
   fillTable();
