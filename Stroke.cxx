@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
+  // keeps dimensions equal, for drawing circles/squares
   void keepSquare(int x1, int y1, int *x2, int *y2)
   {
     const int px = (*x2 >= x1) ? 1 : 0;
@@ -35,7 +36,7 @@ namespace
     const int dx = x1 - *x2;
     const int dy = y1 - *y2;
 
-    if(abs(dy) > abs(dx))
+    if(std::abs(dy) > std::abs(dx))
     {
       switch(px + py)
       {
@@ -102,6 +103,7 @@ Stroke::~Stroke()
   delete[] edgecachey;
 }
 
+// clips the current brushstroke to be within the image boundaries
 void Stroke::clip()
 {
   if(x1 < 0)
@@ -114,6 +116,7 @@ void Stroke::clip()
     y2 = Project::bmp->h - 1;
 }
 
+// use center for origin instead of corner
 void Stroke::sizeLinear(int bx, int by, int x, int y)
 {
   if(bx > x)
@@ -139,6 +142,7 @@ void Stroke::sizeLinear(int bx, int by, int x, int y)
   }
 }
 
+// used by View class to limit drawing to a small rectangle
 void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
                            int ox, int oy, int size, float zoom)
 {
@@ -177,6 +181,7 @@ void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
     blith = 1;
 }
 
+// resize the brushstroke area
 void Stroke::size(int x1, int y1, int x2, int y2)
 {
   if(x1 > x2)
@@ -198,9 +203,7 @@ void Stroke::drawBrush(int x, int y, int c)
   int i;
 
   for(i = 0; i < brush->solid_count; i++)
-  {
     map->setpixel(x + brush->solidx[i], y + brush->solidy[i], c);
-  }
 }
 
 void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
@@ -362,14 +365,19 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
   switch(type)
   {
     case FREEHAND:
+    {
       drawBrushLine(x, y, lastx, lasty, 255);
       makeBlitRect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
       polycachex[polycount] = x;
       polycachey[polycount] = y;
       polycount++;
       polycount &= 65535;
+
       break;
+    }
+
     case REGION:
+    {
       map->line(x, y, lastx, lasty, 255);
       makeBlitRect(x, y, lastx, lasty, ox, oy, 1, zoom);
       polycachex[polycount] = x;
@@ -378,8 +386,12 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       polycount &= 65535;
       oldx = x;
       oldy = y;
+
       break;
+    }
+
     case LINE:
+    {
       if(origin)
       {
         w = (lastx - beginx);
@@ -395,9 +407,14 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         drawBrushLine(lastx, lasty, beginx, beginy, 0);
         drawBrushLine(x, y, beginx, beginy, 255);
       }
+
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
+
       break;
+    }
+
     case POLYGON:
+    {
       map->line(oldx, oldy, lastx, lasty, 0);
       makeBlitRect(x, y, lastx, lasty, ox, oy, 1, zoom);
       polycachex[polycount] = x;
@@ -406,8 +423,12 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       polycount &= 65535;
       oldx = x;
       oldy = y;
+
       break;
+    }
+
     case RECT:
+    {
       if(constrain)
         keepSquare(beginx, beginy, &x, &y);
 
@@ -429,8 +450,12 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       }
 
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
+
       break;
+    }
+
     case FILLED_RECT:
+    {
       if(constrain)
         keepSquare(beginx, beginy, &x, &y);
 
@@ -450,9 +475,14 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         map->rectfill(x, y, beginx, beginy, 255);
         sizeLinear(beginx, beginy, x, y);
       }
+
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
+
       break;
+    }
+
     case OVAL:
+    {
       if(constrain)
         keepSquare(beginx, beginy, &x, &y);
 
@@ -472,9 +502,14 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         drawBrushOval(x, y, beginx, beginy, 255);
         sizeLinear(beginx, beginy, x, y);
       }
+
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
+
       break;
+    }
+
     case FILLED_OVAL:
+    {
       if(constrain)
         keepSquare(beginx, beginy, &x, &y);
 
@@ -494,8 +529,12 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         map->ovalfill(x, y, beginx, beginy, 255);
         sizeLinear(beginx, beginy, x, y);
       }
+
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
+
       break;
+    }
+
     default:
       break;
   }
@@ -518,43 +557,58 @@ void Stroke::end(int x, int y)
   {
     w = (x2 - x1);
     h = (y2 - y1);
+
     if(Bitmap::clone_buffer)
       delete Bitmap::clone_buffer;
+
     Bitmap::clone_buffer = new Bitmap(w, h);
     Project::bmp->blit(Bitmap::clone_buffer, x1, y1, 0, 0, w, h);
   }
 
   if(brush->aa)
   {
+    // antialiased drawing
     map->clear(0);
 
     switch(type)
     {
       case FREEHAND:
+      {
         if(brush->size == 1)
           map->thick_aa = 1;
+
         if(polycount < 2)
         {
           map->thick_aa = 1;
           drawBrushAA(x, y, 255);
           drawBrushAA(x, y, 255);
         }
+
         for(i = 1; i < polycount; i++)
         {
           drawBrushLineAA(polycachex[i], polycachey[i],
                           polycachex[i - 1], polycachey[i - 1], 255);
         }
+
         break;
+      }
+
       case REGION:
+      {
         polycachex[polycount] = beginx;
         polycachey[polycount] = beginy;
         polycount++;
         polycount &= 65535;
         map->polyfillAA(polycachex, polycachey, polycount, x1, y1, x2, y2, 255);
+
         break;
+      }
+
       case LINE:
+      {
         if(brush->size == 1)
           map->thick_aa = 1;
+
         if(origin)
         {
           w = (x - beginx);
@@ -565,17 +619,26 @@ void Stroke::end(int x, int y)
         {
           drawBrushLineAA(x, y, beginx, beginy, 255);
         }
+
         break;
+      }
+
       case POLYGON:
+      {
         polycachex[polycount] = beginx;
         polycachey[polycount] = beginy;
         polycount++;
         polycount &= 65535;
         map->polyfillAA(polycachex, polycachey, polycount, x1, y1, x2, y2, 255);
+
         break;
+      }
+
       case RECT:
+      {
         if(brush->size == 1)
           map->thick_aa = 1;
+
         if(constrain)
           keepSquare(beginx, beginy, &x, &y);
 
@@ -589,8 +652,12 @@ void Stroke::end(int x, int y)
         {
           drawBrushRectAA(x, y, beginx, beginy, 255);
         }
+
         break;
+      }
+
       case FILLED_RECT:
+      {
         if(constrain)
           keepSquare(beginx, beginy, &x, &y);
 
@@ -604,10 +671,15 @@ void Stroke::end(int x, int y)
         {
           map->rectfillAA(x, y, beginx, beginy, 255);
         }
+
         break;
+      }
+
       case OVAL:
+      {
         if(brush->size == 1)
           map->thick_aa = 1;
+
         if(constrain)
           keepSquare(beginx, beginy, &x, &y);
 
@@ -621,8 +693,12 @@ void Stroke::end(int x, int y)
         {
           drawBrushOvalAA(x, y, beginx, beginy, 255);
         }
+
         break;
+      }
+
       case FILLED_OVAL:
+      {
         if(constrain)
           keepSquare(beginx, beginy, &x, &y);
 
@@ -636,29 +712,38 @@ void Stroke::end(int x, int y)
         {
           map->ovalfillAA(x, y, beginx, beginy, 255);
         }
+
         break;
+      }
+
       default:
         break;
     }
   }
   else
   {
+    // normal drawing for filled polygons
+    // (other types have already been drawn correctly)
     switch(type)
     {
       case REGION:
       case POLYGON:
+      {
         polycachex[polycount] = beginx;
         polycachey[polycount] = beginy;
         polycount++;
         polycount &= 65535;
         map->polyfill(polycachex, polycachey, polycount, x1, y1, x2, y2, 255);
         break;
+      }
+
       default:
         break;
     }
   }
 }
 
+// draws a polyline for region/polygon preview
 void Stroke::polyline(int x, int y, int ox, int oy, float zoom)
 {
   Map *map = Project::map;
@@ -675,9 +760,12 @@ void Stroke::polyline(int x, int y, int ox, int oy, float zoom)
   map->line(oldx, oldy, lastx, lasty, 0);
 
   int i;
+
   for(i = 0; i < polycount - 1; i++)
+  {
     map->line(polycachex[i], polycachey[i],
               polycachex[i + 1], polycachey[i + 1], 255);
+  }
 
   map->line(oldx, oldy, x, y, 255);
 
@@ -687,6 +775,7 @@ void Stroke::polyline(int x, int y, int ox, int oy, float zoom)
   lasty = y;
 }
 
+// draws brushstroke preview to viewport
 void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 {
   Map *map = Project::map;
