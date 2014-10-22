@@ -69,7 +69,7 @@ namespace About
 namespace JpegQuality
 {
   Fl_Double_Window *dialog;
-  InputInt *amount;
+  InputInt *quality;
   Fl_Button *ok;
 
   void closeCallback(Fl_Widget *, void *)
@@ -91,20 +91,7 @@ namespace JpegQuality
       }
       else if(action == ok)
       {
-        char s[8];
-        int q = atoi(amount->value());
-
-        if(q < 1)
-        {
-          snprintf(s, sizeof(s), "%d", 1);
-          amount->value(s);
-        }
-        else if(q > 100)
-        {
-          snprintf(s, sizeof(s), "%d", 100);
-          amount->value(s);
-        }
-        else
+        if(quality->limitValue(1, 100) == 0)
         {
           dialog->hide();
           break;
@@ -119,9 +106,9 @@ namespace JpegQuality
 
     dialog = new Fl_Double_Window(256, 0, "JPEG Quality");
     dialog->callback(closeCallback);
-    amount = new InputInt(dialog, 0, y1, 72, 24, "Quality:", 0);
-    amount->value("95");
-    amount->center();
+    quality = new InputInt(dialog, 0, y1, 72, 24, "Quality:", 0);
+    quality->value("95");
+    quality->center();
     y1 += 24 + 8;
     Dialog::addOkButton(dialog, &ok, &y1);
     dialog->set_modal();
@@ -170,38 +157,14 @@ namespace NewImage
 
   void close()
   {
-    char s[8];
+    if(width->limitValue(1, 10000) < 0)
+      return;
+
+    if(height->limitValue(1, 10000) < 0)
+      return;
 
     int w = atoi(width->value());
     int h = atoi(height->value());
-
-    if(w < 1)
-    {
-      snprintf(s, sizeof(s), "%d", 1);
-      width->value(s);
-      return;
-    }
-
-    if(h < 1)
-    {
-      snprintf(s, sizeof(s), "%d", 1);
-      height->value(s);
-      return;
-    }
-
-    if(w > 10000)
-    {
-      snprintf(s, sizeof(s), "%d", 10000);
-      width->value(s);
-      return;
-    }
-
-    if(h > 10000)
-    {
-      snprintf(s, sizeof(s), "%d", 10000);
-      height->value(s);
-      return;
-    }
 
     dialog->hide();
 
@@ -258,23 +221,10 @@ namespace CreatePalette
 
   void close()
   {
-    char s[8];
+    if(colors->limitValue(1, 256) < 0)
+      return;
 
     int c = atoi(colors->value());
-
-    if(c < 1)
-    {
-      snprintf(s, sizeof(s), "%d", 1);
-      colors->value(s);
-      return;
-    }
-
-    if(c > 256)
-    {
-      snprintf(s, sizeof(s), "%d", 256);
-      colors->value(s);
-      return;
-    }
 
     dialog->hide();
     Quantize::pca(Project::bmp, c);
@@ -675,7 +625,7 @@ void Dialog::jpegQuality()
 
 int Dialog::jpegQualityValue()
 {
-  int quality = atoi(JpegQuality::amount->value());
+  int quality = atoi(JpegQuality::quality->value());
 
   if(quality < 1)
     quality = 1;

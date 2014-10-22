@@ -463,7 +463,7 @@ namespace Saturate
 namespace RotateHue
 {
   Fl_Double_Window *dialog;
-  InputInt *amount;
+  InputInt *angle;
   Fl_Check_Button *preserve;
   Fl_Button *ok;
   Fl_Button *cancel;
@@ -521,34 +521,17 @@ namespace RotateHue
 
   void close()
   {
-    if(amount->limitValue(-359, 359) < 0)
+    if(angle->limitValue(-359, 359) < 0)
       return;
-/*
-    char str[8];
-    int a = atoi(amount->value());
 
-    if(a < -359)
-    {
-      snprintf(str, sizeof(str), "%d", -359);
-      amount->value(str);
-      return;
-    }
+    int angle_val = atoi(angle->value());
 
-    if(a > 359)
-    {
-      snprintf(str, sizeof(str), "%d", 359);
-      amount->value(str);
-      return;
-    }
-*/
-    int a = atoi(amount->value());
-
-    if(a < 0)
-      a += 360;
+    if(angle_val < 0)
+      angle_val += 360;
 
     dialog->hide();
     pushUndo();
-    apply(a);
+    apply(angle_val);
   }
 
   void quit()
@@ -567,11 +550,11 @@ namespace RotateHue
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Rotate Hue");
-    amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
+    angle = new InputInt(dialog, 0, y1, 72, 24, "Angle:", 0);
     y1 += 24 + 8;
-    amount->maximum_size(4);
-    amount->value("60");
-    amount->center();
+    angle->maximum_size(4);
+    angle->value("60");
+    angle->center();
     preserve = new Fl_Check_Button(0, y1, 16, 16, "Preserve Luminance");
     Dialog::center(preserve);
     y1 += 16 + 8;
@@ -861,22 +844,10 @@ namespace RemoveDust
 
   void close()
   {
-    char str[8];
-    int a = atoi(amount->value());
-
-    if(a < 1)
-    {
-      snprintf(str, sizeof(str), "%d", 1);
-      amount->value(str);
+    if(amount->limitValue(1, 10) < 0)
       return;
-    }
 
-    if(a > 10)
-    {
-      snprintf(str, sizeof(str), "%d", 10);
-      amount->value(str);
-      return;
-    }
+    int amount_val = atoi(amount->value());
 
     dialog->hide();
     pushUndo();
@@ -884,7 +855,7 @@ namespace RemoveDust
     if(invert->value())
       Invert::apply();
 
-    apply(a);
+    apply(amount_val);
 
     if(invert->value())
       Invert::apply();
@@ -1335,42 +1306,18 @@ namespace StainedGlass
 
   void close()
   {
-    char str[8];
-    int a = atoi(detail->value());
-
-    if(a < 1)
-    {
-      snprintf(str, sizeof(str), "%d", 1);
-      detail->value(str);
+    if(detail->limitValue(1, 50000) < 0)
       return;
-    }
 
-    if(a > 50000)
-    {
-      snprintf(str, sizeof(str), "%d", 50000);
-      detail->value(str);
+    if(edge->limitValue(1, 50) < 0)
       return;
-    }
 
-    int b = atoi(edge->value());
-
-    if(b < 1)
-    {
-      snprintf(str, sizeof(str), "%d", 1);
-      edge->value(str);
-      return;
-    }
-
-    if(b > 64)
-    {
-      snprintf(str, sizeof(str), "%d", 64);
-      edge->value(str);
-      return;
-    }
+    int detail_val = atoi(detail->value());
+    int edge_val = atoi(edge->value());
 
     dialog->hide();
     pushUndo();
-    apply(a, b);
+    apply(detail_val, edge_val);
   }
 
   void quit()
@@ -1469,26 +1416,14 @@ namespace Blur
 
   void close()
   {
-    char str[8];
-    int a = atoi(amount->value());
-
-    if(a < 1)
-    {
-      snprintf(str, sizeof(str), "%d", 1);
-      amount->value(str);
+    if(amount->limitValue(1, 16) < 0)
       return;
-    }
 
-    if(a > 16)
-    {
-      snprintf(str, sizeof(str), "%d", 16);
-      amount->value(str);
-      return;
-    }
+    int amount_val = atoi(amount->value());
 
     dialog->hide();
     pushUndo();
-    apply(a);
+    apply(amount_val);
   }
 
   void quit()
@@ -1577,26 +1512,14 @@ namespace Sharpen
 
   void close()
   {
-    char str[8];
-    int a = atoi(amount->value());
-
-    if(a < 1)
-    {
-      snprintf(str, sizeof(str), "%d", 1);
-      amount->value(str);
+    if(amount->limitValue(1, 255) < 0)
       return;
-    }
 
-    if(a > 255)
-    {
-      snprintf(str, sizeof(str), "%d", 255);
-      amount->value(str);
-      return;
-    }
+    int amout_val = atoi(amount->value());
 
     dialog->hide();
     pushUndo();
-    apply(a);
+    apply(amout_val);
   }
 
   void quit()

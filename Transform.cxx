@@ -140,38 +140,14 @@ namespace Scale
 
   void close()
   {
-    char s[8];
+    if(width->limitValue(1, 10000) < 0)
+      return;
+
+    if(height->limitValue(1, 10000) < 0)
+      return;
 
     int w = atoi(width->value());
     int h = atoi(height->value());
-
-    if(w < 1)
-    {
-      snprintf(s, sizeof(s), "%d", 1);
-      width->value(s);
-      return;
-    }
-
-    if(h < 1)
-    {
-      snprintf(s, sizeof(s), "%d", 1);
-      height->value(s);
-      return;
-    }
-
-    if(w > 10000)
-    {
-      snprintf(s, sizeof(s), "%d", 10000);
-      width->value(s);
-      return;
-    }
-
-    if(h > 10000)
-    {
-      snprintf(s, sizeof(s), "%d", 10000);
-      height->value(s);
-      return;
-    }
 
     dialog->hide();
     pushUndo();
@@ -254,41 +230,6 @@ namespace Rotate
 
   void close()
   {
-/*
-    char s[8];
-
-    float angle_val = atof(angle->value());
-
-    if(angle_val < -359.99f)
-    {
-      snprintf(s, sizeof(s), "%.2f", -359.99f);
-      angle->value(s);
-      return;
-    }
-
-    if(angle_val > 359.99f)
-    {
-      snprintf(s, sizeof(s), "%.2f", 359.99f);
-      angle->value(s);
-      return;
-    }
-
-    float scale_val = atof(scale->value());
-
-    if(scale_val < .01f)
-    {
-      snprintf(s, sizeof(s), "%.2f", .01f);
-      scale->value(s);
-      return;
-    }
-
-    if(scale_val > 10.0f)
-    {
-      snprintf(s, sizeof(s), "%.2f", 10.0f);
-      scale->value(s);
-      return;
-    }
-*/
     if(angle->limitValue(-359.99, 359.99) < 0)
       return;
 
