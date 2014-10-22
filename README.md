@@ -1,6 +1,8 @@
 Rendera [![Build Status](https://travis-ci.org/Mortis69/rendera.svg?branch=master)](https://travis-ci.org/Mortis69/rendera)
 =======
 
+![Screenshot](https://raw.githubusercontent.com/Mortis69/rendera/master/screenshots/screenshot.png)
+
 Rendera is a painting program suitable for photo-retouching and making seamless
 textures. Originally for Windows, it has been rewritten from scratch using
 C++/FLTK. Please see the Wiki for a list of features, and the credits file for a
@@ -54,7 +56,4 @@ not "officially" supported. If you're building from source, you also need
 Rendera is developed on Ubuntu, so there are probably some additional, implicit
 dependencies on the Linux system. Darwin and Cygwin might work, but your mileage
 may vary.
-
-
-![Screenshot](/screenshots/screenshot.png "Screenshot")
 
