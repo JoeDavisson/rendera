@@ -438,7 +438,7 @@ namespace Saturate
           s = temp;
 
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
-        bmp->setpixel(x, y, Blend::keepLum(makeRgba(r, g, b, geta(c)), l), 0);
+        bmp->setpixel(x, y, Blend::keepLum(makeRgba(r, g, b, rgba.a), l), 0);
       }
 
       if(updateProgress(y) < 0)
@@ -504,7 +504,7 @@ namespace RotateHue
           h -= 1536;
 
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
-        c = makeRgba(r, g, b, geta(c));
+        c = makeRgba(r, g, b, rgba.a);
 
         if(keep_lum)
           bmp->setpixel(x, y, Blend::keepLum(c, l), 0);
@@ -591,6 +591,7 @@ namespace Invert
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         int c = bmp->getpixel(x, y);
+
         bmp->setpixel(x, y, Blend::invert(c, 0, 0), 0);
       }
 
@@ -653,7 +654,7 @@ namespace CorrectionMatrix
         Blend::hsvToRgb(h, sat, val, &ra, &ga, &ba);
 
         bmp->setpixel(x, y,
-          Blend::keepLum(makeRgba(ra, ga, ba, geta(c)), l), 0);
+          Blend::keepLum(makeRgba(ra, ga, ba, rgba.a), l), 0);
       }
 
       if(updateProgress(y) < 0)
@@ -953,6 +954,8 @@ namespace Colorize
   {
     int x, y;
 
+    rgba_t rgba_color = getRgba(Project::brush->color);
+
     beginProgress();
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
@@ -975,13 +978,13 @@ namespace Colorize
         if(sat < 64)
           sat = 64;
 
-        r = getr(Project::brush->color);
-        g = getg(Project::brush->color);
-        b = getb(Project::brush->color);
+        r = rgba_color.r;
+        g = rgba_color.g;
+        b = rgba_color.b;
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
         Blend::hsvToRgb(h, (sat * s) / (sat + s), v, &r, &g, &b);
 
-        int c2 = makeRgba(r, g, b, geta(c1));
+        int c2 = makeRgba(r, g, b, rgba.a);
 
         bmp->setpixel(x, y, Blend::colorize(c1, c2, 0), 0);
       }
@@ -1057,11 +1060,13 @@ namespace ApplyPalette
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
       int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        v[0] = fix_gamma[getr(*p)];
-        v[1] = fix_gamma[getg(*p)];
-        v[2] = fix_gamma[getb(*p)];
+        rgba_t rgba = getRgba(*p);
+        v[0] = fix_gamma[rgba.r];
+        v[1] = fix_gamma[rgba.g];
+        v[2] = fix_gamma[rgba.b];
 
         for(i = 0; i < 3; i++)
         {
@@ -1076,13 +1081,13 @@ namespace ApplyPalette
         const int pal_index = (int)Project::palette->lookup(makeRgb(r, g, b));
         const int c = Project::palette->data[pal_index];
 
-        struct rgba_t rgba = getRgba(c);
-
+        rgba = getRgba(c);
         *p = makeRgb(rgba.r, rgba.g, rgba.b);
 
-        v[0] = fix_gamma[getr(*p)];
-        v[1] = fix_gamma[getg(*p)];
-        v[2] = fix_gamma[getb(*p)];
+        rgba = getRgba(*p);
+        v[0] = fix_gamma[rgba.r];
+        v[1] = fix_gamma[rgba.g];
+        v[2] = fix_gamma[rgba.b];
 
         p++;
 
@@ -1175,7 +1180,7 @@ namespace StainedGlass
   Fl_Button *ok;
   Fl_Button *cancel;
 
-  static inline int isEdge(Bitmap *b, const int &x, const int &y,
+  inline int isEdge(Bitmap *b, const int &x, const int &y,
                            const int &div)
   {
     const int c0 = getl(b->getpixel(x, y)) / div;
@@ -1189,7 +1194,7 @@ namespace StainedGlass
       return 1;
   }
 
-  static inline int isSegmentEdge(Bitmap *b, const int &x, const int &y)
+  inline int isSegmentEdge(Bitmap *b, const int &x, const int &y)
   {
     const int c0 = b->getpixel(x, y);
     const int c1 = b->getpixel(x + 1, y);
@@ -1266,7 +1271,9 @@ namespace StainedGlass
           if(sat_alpha->value())
           {
             rgba_t rgba = getRgba(color[use]);
+
             int h, s, v;
+
             Blend::rgbToHsv(rgba.r, rgba.g, rgba.b, &h, &s, &v);
             bmp->setpixel(x, y, makeRgba(rgba.r, rgba.g, rgba.b,
                           std::min(192, s / 2 + 128)), 0);
@@ -1307,6 +1314,7 @@ namespace StainedGlass
         for(x = overscroll; x < bmp->w - overscroll; x++)
         {
           const int c = map->getpixel(x, y);
+
           if(c)
             bmp->setpixel(x, y, makeRgb(0, 0, 0), 255 - c);
         }
@@ -1537,7 +1545,7 @@ namespace Sharpen
         {
           for(i = 0; i < 3; i++) 
           {
-              lum += getl(bmp->getpixel(x + i - 1, y + j - 1)) * matrix[i][j];
+            lum += getl(bmp->getpixel(x + i - 1, y + j - 1)) * matrix[i][j];
           }
         }
 
@@ -1547,6 +1555,7 @@ namespace Sharpen
 
         // this prevents artifacts in areas with less detail
         const int diff = std::abs(getl(c) - lum);
+
         if(diff < 32)
           continue;
 
