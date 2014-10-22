@@ -49,3 +49,25 @@ void InputFloat::center()
   resize(parent()->w() / 2 - (ww + w()) / 2 + ww, y(), w(), h());
 }
 
+int InputFloat::limitValue(double min, double max)
+{
+  char str[8];
+  double val = atof(value());
+
+  if(val < min)
+  {
+    snprintf(str, sizeof(str), "%.2f", min);
+    value(str);
+    return -1;
+  }
+
+  if(val > max)
+  {
+    snprintf(str, sizeof(str), "%.2f", max);
+    value(str);
+    return -1;
+  }
+
+  return 0;
+}
+

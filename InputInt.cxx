@@ -49,3 +49,25 @@ void InputInt::center()
   resize(parent()->w() / 2 - (ww + w()) / 2 + ww, y(), w(), h());
 }
 
+int InputInt::limitValue(int min, int max)
+{
+  char str[8];
+  int val = atoi(value());
+
+  if(val < min)
+  {
+    snprintf(str, sizeof(str), "%d", min);
+    value(str);
+    return -1;
+  }
+
+  if(val > max)
+  {
+    snprintf(str, sizeof(str), "%d", max);
+    value(str);
+    return -1;
+  }
+
+  return 0;
+}
+

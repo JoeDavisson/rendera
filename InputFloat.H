@@ -29,6 +29,7 @@ public:
   InputFloat(Fl_Group *, int, int, int, int, const char *, Fl_Callback *);
   virtual ~InputFloat();
   void center();
+  int limitValue(double, double);
 
   int var;
 

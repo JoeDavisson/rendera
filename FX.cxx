@@ -521,6 +521,9 @@ namespace RotateHue
 
   void close()
   {
+    if(amount->limitValue(-359, 359) < 0)
+      return;
+/*
     char str[8];
     int a = atoi(amount->value());
 
@@ -537,6 +540,8 @@ namespace RotateHue
       amount->value(str);
       return;
     }
+*/
+    int a = atoi(amount->value());
 
     if(a < 0)
       a += 360;

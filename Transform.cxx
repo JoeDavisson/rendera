@@ -254,6 +254,7 @@ namespace Rotate
 
   void close()
   {
+/*
     char s[8];
 
     float angle_val = atof(angle->value());
@@ -287,6 +288,15 @@ namespace Rotate
       scale->value(s);
       return;
     }
+*/
+    if(angle->limitValue(-359.99, 359.99) < 0)
+      return;
+
+    if(scale->limitValue(.1, 10.0) < 0)
+      return;
+
+    float angle_val = atof(angle->value());
+    float scale_val = atof(scale->value());
 
     dialog->hide();
     int overscroll = Project::bmp->overscroll;
