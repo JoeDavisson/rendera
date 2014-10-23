@@ -145,10 +145,17 @@ int View::handle(int event)
   switch(event)
   {
     case FL_FOCUS:
+    {
       return 1;
+    }
+
     case FL_UNFOCUS:
+    {
       return 1;
+    }
+
     case FL_ENTER:
+    {
       switch(Gui::getTool())
       {
         case 1:
@@ -164,11 +171,19 @@ int View::handle(int event)
           window()->cursor(FL_CURSOR_DEFAULT);
           break;
       }
+
       return 1;
+    }
+
     case FL_LEAVE:
+    {
       window()->cursor(FL_CURSOR_DEFAULT);
+
       return 1;
+    }
+
     case FL_PUSH:
+    {
       take_focus();
 
       switch(button)
@@ -193,10 +208,15 @@ int View::handle(int event)
             break;
           }
       } 
+
       oldimgx = imgx;
       oldimgy = imgy;
+
       return 1;
+    }
+
     case FL_DRAG:
+    {
       take_focus();
 
       switch(button)
@@ -209,15 +229,21 @@ int View::handle(int event)
             move();
           break;
       } 
+
       oldimgx = imgx;
       oldimgy = imgy;
+
       return 1;
+    }
+
     case FL_RELEASE:
+    {
       tool->release(this);
 
       if(moving)
       {
         moving = 0;
+
         if(tool->active)
           tool->redraw(this);
         else
@@ -228,13 +254,19 @@ int View::handle(int event)
         tool->redraw(this);
 
       return 1;
+    }
+
     case FL_MOVE:
+    {
       tool->move(this);
 
       oldimgx = imgx;
       oldimgy = imgy;
       return 1;
+    }
+
     case FL_MOUSEWHEEL:
+    {
       if(moving)
         break;
 
@@ -249,8 +281,12 @@ int View::handle(int event)
 
       if(tool->active)
         tool->redraw(this);
+
       return 1;
+    }
+
     case FL_KEYDOWN:
+    {
       if(Fl::event_key() == FL_Escape)
       {
         tool->active = 0;
@@ -274,16 +310,32 @@ int View::handle(int event)
           scroll(3, 64);
           break;
       }
+
       return 1;
+    }
+
     case FL_DND_ENTER:
+    {
       return 1;
+    }
+
     case FL_DND_LEAVE:
+    {
       return 1;
+    }
+
     case FL_DND_DRAG:
+    {
       return 1;
+    }
+
     case FL_DND_RELEASE:
+    {
       return 1;
+    }
+
     case FL_PASTE:
+    {
       // drag n drop
       if(strncasecmp(Fl::event_text(), "file://", 7) == 0)
       {
@@ -297,6 +349,7 @@ int View::handle(int event)
 
         // strip newline
         unsigned int i;
+
         for(i = 0; i < strlen(fn); i++)
         {
           if(fn[i] == '\r')
@@ -308,7 +361,10 @@ int View::handle(int event)
         // try to load the file
         File::loadFile(fn);
       }
+
       return 1;
+    }
+
   }
   return 0;
 }
@@ -333,6 +389,7 @@ void View::drawMain(int refresh)
 {
   int sw = w() / zoom;
   int sh = h() / zoom;
+
   sw += 2;
   sh += 2;
 
@@ -396,9 +453,11 @@ void View::drawGrid()
     gridHline(backbuf, x1, y1, x2, makeRgb(255, 255, 255), d);
     gridHline(backbuf, x1, y1 + zy - 1, x2, makeRgb(0, 0, 0), d);
     i = 0;
+
     do
     {
       x1 = 0 - zx + (offx * zoom) + qx - (int)(ox * zoom) % zx;
+
       do
       {
         gridSetpixel(backbuf, x1, y1, makeRgb(255, 255, 255), d);
@@ -406,6 +465,7 @@ void View::drawGrid()
         x1 += zx;
       }
       while(x1 <= x2);
+
       y1++;
       i++;
     }
@@ -694,31 +754,51 @@ void View::scroll(int dir, int amount)
   switch(dir)
   {
     case 0:
+    {
       x = Project::bmp->w - w() / zoom;
+
       if(x < 0)
         return;
+
       ox += amount / zoom;
+
       if(ox > x)
         ox = x;
+
       break;
+    }
     case 1:
+    {
       ox -= amount / zoom;
+
       if(ox < 0)
         ox = 0;
+
       break;
+    }
     case 2:
+    {
       y = Project::bmp->h - h() / zoom;
+
       if(y < 0)
         return;
+
       oy += amount / zoom;
+
       if(oy > y)
         oy = y;
+
       break;
+    }
     case 3:
+    {
       oy -= amount / zoom;
+
       if(oy < 0)
         oy = 0;
+
       break;
+    }
   }
 
   if(tool->active)
@@ -748,6 +828,7 @@ void View::draw()
       return;
 
     screenBlit(blitx, blity, x() + blitx, y() + blity, blitw, blith);
+
     if(Gui::getClone())
       drawCloneCursor();
   }
