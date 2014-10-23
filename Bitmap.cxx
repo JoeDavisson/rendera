@@ -68,6 +68,12 @@ Bitmap::Bitmap(int width, int height)
 
   wrap = 0;
   clone = 0;
+  clone_moved = 0;
+  clone_x = 0;
+  clone_y = 0;
+  clone_dx = 0;
+  clone_dy = 0;
+  clone_mirror = 0;
 }
 
 Bitmap::Bitmap(int width, int height, int overscroll)
@@ -118,6 +124,12 @@ Bitmap::Bitmap(int width, int height, int overscroll)
 
   wrap = 0;
   clone = 0;
+  clone_moved = 0;
+  clone_x = 0;
+  clone_y = 0;
+  clone_dx = 0;
+  clone_dy = 0;
+  clone_mirror = 0;
 }
 
 Bitmap::~Bitmap()
