@@ -819,8 +819,8 @@ int File::saveBMP(const char *fn)
 
   Bitmap *bmp = Project::bmp;
   int overscroll = Project::overscroll;
-  int w = bmp->w - overscroll * 2;
-  int h = bmp->h - overscroll * 2;
+  int w = bmp->cw;
+  int h = bmp->ch;
   int pad = w % 4;
 
   // BMP_FILE_HEADER
@@ -890,8 +890,8 @@ int File::saveTGA(const char *fn)
 
   Bitmap *bmp = Project::bmp;
   int overscroll = Project::overscroll;
-  int w = bmp->w - overscroll * 2;
-  int h = bmp->h - overscroll * 2;
+  int w = bmp->cw;
+  int h = bmp->ch;
 
   writeUint8(0, out);
   writeUint8(0, out);
@@ -972,8 +972,8 @@ int File::savePNG(const char *fn)
 
   Bitmap *bmp = Project::bmp;
   int overscroll = Project::overscroll;
-  int w = bmp->w - overscroll * 2;
-  int h = bmp->h - overscroll * 2;
+  int w = bmp->cw;
+  int h = bmp->ch;
 
   png_init_io(png_ptr, out);
   png_set_IHDR(png_ptr, info_ptr, w, h, 8,
@@ -1028,8 +1028,8 @@ int File::saveJPG(const char *fn)
 
   Bitmap *bmp = Project::bmp;
   int overscroll = Project::overscroll;
-  int w = bmp->w - overscroll * 2;
-  int h = bmp->h - overscroll * 2;
+  int w = bmp->cw;
+  int h = bmp->ch;
 
   linebuf = new JSAMPLE[w * 3];
   if(!linebuf)

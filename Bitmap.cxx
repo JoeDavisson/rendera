@@ -1043,7 +1043,7 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, int tile)
     row_u += du_row;
     row_v += dv_row;
 
-    const int yy = ((dest->h - overscroll * 2) / 2) + y;
+    const int yy = ((dest->ch) / 2) + y;
     if(yy < dest->ct || yy > dest->cb)
       continue;
 
@@ -1073,7 +1073,7 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, int tile)
           continue;
       }
 
-      const int xx = ((dest->w - overscroll * 2) / 2) + x;
+      const int xx = ((dest->cw) / 2) + x;
       if(xx < dest->cl || xx > dest->cr)
         continue;
 

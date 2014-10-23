@@ -148,9 +148,9 @@ namespace NewImage
   void begin()
   {
     char s[8];
-    snprintf(s, sizeof(s), "%d", Project::bmp->w - Project::overscroll * 2);
+    snprintf(s, sizeof(s), "%d", Project::bmp->cw);
     width->value(s);
-    snprintf(s, sizeof(s), "%d", Project::bmp->h - Project::overscroll * 2);
+    snprintf(s, sizeof(s), "%d", Project::bmp->ch);
     height->value(s);
     dialog->show();
   }

@@ -216,7 +216,7 @@ void Quantize::pca(Bitmap *src, int size)
   int overscroll = src->overscroll;
 
   // build histogram, inc is the weight of 1 pixel in the image
-  float inc = 1.0 / ((src->w - overscroll * 2) * (src->h - overscroll * 2));
+  float inc = 1.0 / (src->cw * src->ch);
   int count = 0;
 
   // measure of how colorful an image is

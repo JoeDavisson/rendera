@@ -47,8 +47,7 @@ namespace
   {
     bmp = Project::bmp;
     overscroll = bmp->overscroll;
-    Undo::push(overscroll, overscroll,
-               bmp->w - overscroll * 2, bmp->h - overscroll * 2, 0);
+    Undo::push(overscroll, overscroll, bmp->cw, bmp->ch, 0);
   }
 
   void beginProgress()
@@ -180,7 +179,7 @@ namespace Equalize
       list_b[i] = 0;
     }
 
-    int size = (bmp->w - overscroll * 2) * (bmp->h - overscroll * 2);
+    int size = bmp->cw * bmp->ch;
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
@@ -295,7 +294,7 @@ namespace ValueStretch
       list_b[i] = 0;
     }
 
-    int size = (bmp->w - overscroll * 2) * (bmp->h - overscroll * 2);
+    int size = bmp->cw * bmp->ch;
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
@@ -388,7 +387,7 @@ namespace Saturate
     for(i = 0; i < 256; i++)
       list_s[i] = 0;
 
-    int size = (bmp->w - overscroll * 2) * (bmp->h - overscroll * 2);
+    int size = bmp->cw * bmp->ch;
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {

@@ -44,8 +44,7 @@ namespace
   {
     bmp = Project::bmp;
     overscroll = bmp->overscroll;
-    Undo::push(overscroll, overscroll,
-               bmp->w - overscroll * 2, bmp->h - overscroll * 2, 1);
+    Undo::push(overscroll, overscroll, bmp->cw, bmp->ch, 1);
   }
 
   void beginProgress()
@@ -93,9 +92,9 @@ namespace Scale
   void begin()
   {
     char s[8];
-    snprintf(s, sizeof(s), "%d", Project::bmp->w - Project::bmp->overscroll * 2);
+    snprintf(s, sizeof(s), "%d", Project::bmp->cw);
     width->value(s);
-    snprintf(s, sizeof(s), "%d", Project::bmp->h - Project::bmp->overscroll * 2);
+    snprintf(s, sizeof(s), "%d", Project::bmp->ch);
     height->value(s);
     dialog->show();
   }
@@ -104,8 +103,8 @@ namespace Scale
   {
     if(keep_aspect->value())
     {
-      int ww = Project::bmp->w - Project::bmp->overscroll * 2;
-      int hh = Project::bmp->h - Project::bmp->overscroll * 2;
+      int ww = Project::bmp->cw;
+      int hh = Project::bmp->ch;
       float aspect = (float)hh / ww;
       char s[8];
       int w = atoi(width->value());
@@ -119,8 +118,8 @@ namespace Scale
   {
     if(keep_aspect->value())
     {
-      int ww = Project::bmp->w - Project::bmp->overscroll * 2;
-      int hh = Project::bmp->h - Project::bmp->overscroll * 2;
+      int ww = Project::bmp->cw;
+      int hh = Project::bmp->ch;
       float aspect = (float)ww / hh;
       char s[8];
       int h = atoi(height->value());
@@ -158,7 +157,7 @@ namespace Scale
 
     bmp->scaleBilinear(temp,
                        overscroll, overscroll,
-                       bmp->w - overscroll * 2, bmp->h - overscroll * 2,
+                       bmp->cw, bmp->ch,
                        overscroll, overscroll, w, h,
                        wrap->value()); 
 

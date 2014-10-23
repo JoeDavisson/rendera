@@ -50,17 +50,17 @@ namespace Project
     palette = new Palette();
   }
 
-  void newImage(int x, int y)
+  void newImage(int w, int h)
   {
     if(bmp)
       delete bmp;
 
-    bmp = new Bitmap(x, y, overscroll);
+    bmp = new Bitmap(w, h, overscroll);
 
     if(map)
       delete map;
 
-    map = new Map(x + overscroll * 2, y + overscroll * 2);
+    map = new Map(bmp->w, bmp->h);
     map->clear(0);
   }
 }
