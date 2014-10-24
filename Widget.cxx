@@ -18,11 +18,11 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Widget.H"
 #include "Bitmap.H"
-#include "Project.H"
 #include "Blend.H"
 #include "File.H"
+#include "Project.H"
+#include "Widget.H"
 
 // load a PNG image from a file
 Widget::Widget(Fl_Group *g, int x, int y, int w, int h,

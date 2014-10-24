@@ -22,26 +22,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define RENDERA_H
 
 #include <FL/Fl.H>
-#include <FL/fl_draw.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Check_Button.H>
+#include <FL/Fl_Choice.H>
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Float_Input.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Hold_Browser.H>
-#include <FL/Fl_Box.H>
+#include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Menu_Item.H>
-#include <FL/Fl_RGB_Image.H>
-#include <FL/Fl_Tiled_Image.H>
-#include <FL/Fl_Shared_Image.H>
-#include <FL/Fl_Widget.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Choice.H>
-#include <FL/Fl_Check_Button.H>
-#include <FL/Fl_Int_Input.H>
-#include <FL/Fl_Float_Input.H>
-#include <FL/Fl_Progress.H>
-#include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_Progress.H>
+#include <FL/Fl_RGB_Image.H>
+#include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_Tiled_Image.H>
+#include <FL/Fl_Tooltip.H>
+#include <FL/Fl_Widget.H>
 #include <FL/fl_ask.H>
+#include <FL/fl_draw.H>
 
 // include commonly-used inline functions for all modules
 #include "Inline.H"

@@ -18,12 +18,12 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Stroke.H"
 #include "Bitmap.H"
 #include "Blend.H"
-#include "Map.H"
 #include "Brush.H"
+#include "Map.H"
 #include "Project.H"
+#include "Stroke.H"
 
 namespace
 {

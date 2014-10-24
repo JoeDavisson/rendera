@@ -18,13 +18,13 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Undo.H"
 #include "Bitmap.H"
-#include "Map.H"
 #include "Gui.H"
-#include "View.H"
-#include "Tool.H"
+#include "Map.H"
 #include "Project.H"
+#include "Tool.H"
+#include "Undo.H"
+#include "View.H"
 
 #define MAX_UNDO 10
 

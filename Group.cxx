@@ -18,9 +18,9 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Group.H"
 #include "Bitmap.H"
 #include "File.H"
+#include "Group.H"
 
 Group::Group(int x, int y, int w, int h, const char *l)
 : Fl_Group(x, y, w, h, l)

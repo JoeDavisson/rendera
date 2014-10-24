@@ -18,27 +18,27 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "File.H"
-#include "Bitmap.H"
-#include "Map.H"
-#include "Palette.H"
-#include "Gui.H"
-#include "View.H"
-#include "Undo.H"
-#include "Dialog.H"
-#include "Tool.H"
-#include "Stroke.H"
-#include "Widget.H"
-#include "Project.H"
-
 #ifdef _WIN32
 #define HAVE_BOOLEAN
 #endif
 
+#include <cstring>
 #include <png.h>
 #include <jpeglib.h>
 #include <setjmp.h>
-#include <cstring>
+
+#include "Bitmap.H"
+#include "Dialog.H"
+#include "File.H"
+#include "Gui.H"
+#include "Map.H"
+#include "Palette.H"
+#include "Project.H"
+#include "Stroke.H"
+#include "Tool.H"
+#include "Undo.H"
+#include "View.H"
+#include "Widget.H"
 
 Bitmap *File::preview_bmp = 0;
 

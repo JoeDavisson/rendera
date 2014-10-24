@@ -18,16 +18,16 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Bitmap.H"
-#include "Blend.H"
-#include "Palette.H"
-#include "Stroke.H"
-#include "Gui.H"
-#include "View.H"
-#include "Tool.H"
-
 #include <algorithm>
 #include <cmath>
+
+#include "Bitmap.H"
+#include "Blend.H"
+#include "Gui.H"
+#include "Palette.H"
+#include "Stroke.H"
+#include "Tool.H"
+#include "View.H"
 
 extern int *fix_gamma;
 extern int *unfix_gamma;

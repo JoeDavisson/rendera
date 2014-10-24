@@ -20,20 +20,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <cmath>
 
-#include "FX.H"
 #include "Bitmap.H"
-#include "Map.H"
-#include "Palette.H"
 #include "Blend.H"
 #include "Brush.H"
 #include "Dialog.H"
-#include "InputInt.H"
-#include "Separator.H"
+#include "FX.H"
 #include "Gui.H"
-#include "View.H"
-#include "Undo.H"
+#include "InputInt.H"
+#include "Map.H"
 #include "Octree.H"
+#include "Palette.H"
 #include "Project.H"
+#include "Separator.H"
+#include "Undo.H"
+#include "View.H"
 
 extern int *fix_gamma;
 extern int *unfix_gamma;

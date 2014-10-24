@@ -18,14 +18,14 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Quantize.H"
 #include "Bitmap.H"
-#include "Palette.H"
-#include "Gui.H"
 #include "Dialog.H"
-#include "Widget.H"
+#include "Gui.H"
 #include "Octree.H"
+#include "Palette.H"
 #include "Project.H"
+#include "Quantize.H"
+#include "Widget.H"
 
 namespace
 {

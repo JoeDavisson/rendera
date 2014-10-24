@@ -18,15 +18,15 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Crop.H"
-#include "Tool.H"
 #include "Bitmap.H"
-#include "Map.H"
-#include "View.H"
-#include "Stroke.H"
+#include "Crop.H"
 #include "Gui.H"
-#include "Undo.H"
+#include "Map.H"
 #include "Project.H"
+#include "Stroke.H"
+#include "Tool.H"
+#include "Undo.H"
+#include "View.H"
 
 namespace
 {
