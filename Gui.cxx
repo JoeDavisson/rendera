@@ -62,7 +62,6 @@ namespace
   Group *getcolor;
   Group *offset;
   Group *text;
-
   Group *right;
   Group *bottom;
   Fl_Group *middle;
@@ -120,6 +119,18 @@ namespace
   // view
   View *view;
 
+  // tables
+  const int brush_sizes[16] =
+  {
+    1, 2, 3, 4, 8, 12, 16, 24,
+    32, 40, 48, 56, 64, 72, 80, 88
+  };
+
+  const int font_sizes[10] =
+  {
+    8, 10, 12, 16, 20, 24, 32, 48, 64, 96
+  };
+
   // prevent escape from closing main window
   void closeCallback(Fl_Widget *widget, void *)
   {
@@ -141,17 +152,6 @@ namespace
     if(fl_choice("Are You Sure?", "No", "Yes", NULL) == 1)
       exit(0);
   }
-
-  int brush_sizes[16] =
-  {
-    1, 2, 3, 4, 8, 12, 16, 24,
-    32, 40, 48, 56, 64, 72, 80, 88
-  };
-
-  int font_sizes[10] =
-  {
-    8, 10, 12, 16, 20, 24, 32, 48, 64, 96
-  };
 }
 
 void Gui::init()
@@ -159,60 +159,104 @@ void Gui::init()
   int x1, y1;
   int i;
 
-  // window
+  // main window
   window = new Fl_Double_Window(800, 600, "Rendera");
   window->callback(closeCallback);
 
   // menu
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
   menubar->box(FL_THIN_UP_BOX);
-  menubar->add("File/New", 0, (Fl_Callback *)Dialog::newImage, 0, 0);
-  menubar->add("File/Load", 0, (Fl_Callback *)File::load, 0, 0);
-  menubar->add("File/Save", 0, (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
-  menubar->add("File/Quit", 0, (Fl_Callback *)quit, 0, 0);
-  menubar->add("Edit/Undo", 0, (Fl_Callback *)Undo::pop, 0, FL_MENU_DIVIDER);
-  menubar->add("Edit/Clear Image", 0, (Fl_Callback *)checkClear, 0, 0);
-  menubar->add("Image/Flip Horizontal", 0, (Fl_Callback *)Transform::mirror, 0, 0);
-  menubar->add("Image/Flip Vertical", 0, (Fl_Callback *)Transform::flip, 0, FL_MENU_DIVIDER);
-  menubar->add("Image/Rotate...", 0, (Fl_Callback *)Transform::rotate, 0, 0);
-  menubar->add("Image/Scale...", 0, (Fl_Callback *)Transform::scale, 0, 0);
-  menubar->add("Palette/Load", 0, (Fl_Callback *)File::loadPalette, 0, 0);
-  menubar->add("Palette/Save", 0, (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);
-  menubar->add("Palette/Editor...", 0, (Fl_Callback *)Dialog::editor, 0, FL_MENU_DIVIDER);
-  menubar->add("Palette/Presets/Default", 0, (Fl_Callback *)paletteDefault, 0, 0);
-  menubar->add("Palette/Presets/Web Safe", 0, (Fl_Callback *)paletteWebSafe, 0, 0);
-  menubar->add("Palette/Presets/3-level RGB", 0, (Fl_Callback *)palette3LevelRGB, 0, 0);
-  menubar->add("Palette/Presets/4-level RGB", 0, (Fl_Callback *)palette4LevelRGB, 0, 0);
-  menubar->add("Palette/Presets/3-3-2", 0, (Fl_Callback *)palette332, 0, 0);
-  menubar->add("Palette/Create From Image...", 0, (Fl_Callback *)Dialog::createPalette, 0, 0);
-  menubar->add("Palette/Sort", 0, (Fl_Callback *)paletteSort, 0, 0);
-  menubar->add("Effects/Normalize", 0, (Fl_Callback *)FX::normalize, 0, 0);
-  menubar->add("Effects/Equalize", 0, (Fl_Callback *)FX::equalize, 0, 0);
-  menubar->add("Effects/Value Stretch", 0, (Fl_Callback *)FX::valueStretch, 0, 0);
-  menubar->add("Effects/Saturate", 0, (Fl_Callback *)FX::saturate, 0, 0);
-  menubar->add("Effects/Rotate Hue...", 0, (Fl_Callback *)FX::rotateHue, 0, 0);
-  menubar->add("Effects/Invert", 0, (Fl_Callback *)FX::invert, 0, 0);
-  menubar->add("Effects/Restore...", 0, (Fl_Callback *)FX::restore, 0, 0);
-  menubar->add("Effects/Correction Matrix", 0, (Fl_Callback *)FX::correctionMatrix, 0, 0);
-  menubar->add("Effects/Remove Dust...", 0, (Fl_Callback *)FX::removeDust, 0, 0);
-  menubar->add("Effects/Desaturate", 0, (Fl_Callback *)FX::desaturate, 0, 0);
 
-  menubar->add("Effects/Colorize", 0, (Fl_Callback *)FX::colorize, 0, 0);
-  menubar->add("Effects/Apply Palette...", 0, (Fl_Callback *)FX::applyPalette, 0, 0);
-  menubar->add("Effects/Stained Glass...", 0, (Fl_Callback *)FX::stainedGlass, 0, 0);
-  menubar->add("Effects/Blur...", 0, (Fl_Callback *)FX::blur, 0, 0);
-  menubar->add("Effects/Sharpen...", 0, (Fl_Callback *)FX::sharpen, 0, 0);
-  menubar->add("Help/About...", 0, (Fl_Callback *)Dialog::about, 0, 0);
+  menubar->add("File/New", 0,
+    (Fl_Callback *)Dialog::newImage, 0, 0);
+  menubar->add("File/Load", 0,
+    (Fl_Callback *)File::load, 0, 0);
+  menubar->add("File/Save", 0,
+    (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
+  menubar->add("File/Quit", 0,
+    (Fl_Callback *)quit, 0, 0);
+  menubar->add("Edit/Undo", 0,
+    (Fl_Callback *)Undo::pop, 0, FL_MENU_DIVIDER);
+  menubar->add("Edit/Clear Image", 0,
+    (Fl_Callback *)checkClear, 0, 0);
+  menubar->add("Image/Flip Horizontal", 0,
+    (Fl_Callback *)Transform::mirror, 0, 0);
+  menubar->add("Image/Flip Vertical", 0,
+    (Fl_Callback *)Transform::flip, 0, FL_MENU_DIVIDER);
+  menubar->add("Image/Rotate...", 0,
+    (Fl_Callback *)Transform::rotate, 0, 0);
+  menubar->add("Image/Scale...", 0,
+    (Fl_Callback *)Transform::scale, 0, 0);
+  menubar->add("Palette/Load", 0,
+    (Fl_Callback *)File::loadPalette, 0, 0);
+  menubar->add("Palette/Save", 0,
+    (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);
+  menubar->add("Palette/Editor...", 0,
+    (Fl_Callback *)Dialog::editor, 0, FL_MENU_DIVIDER);
+  menubar->add("Palette/Presets/Default", 0,
+    (Fl_Callback *)paletteDefault, 0, 0);
+  menubar->add("Palette/Presets/Web Safe", 0,
+    (Fl_Callback *)paletteWebSafe, 0, 0);
+  menubar->add("Palette/Presets/3-level RGB", 0,
+    (Fl_Callback *)palette3LevelRGB, 0, 0);
+  menubar->add("Palette/Presets/4-level RGB", 0,
+    (Fl_Callback *)palette4LevelRGB, 0, 0);
+  menubar->add("Palette/Presets/3-3-2", 0,
+    (Fl_Callback *)palette332, 0, 0);
+  menubar->add("Palette/Create From Image...", 0,
+    (Fl_Callback *)Dialog::createPalette, 0, 0);
+  menubar->add("Palette/Sort", 0,
+    (Fl_Callback *)paletteSort, 0, 0);
+  menubar->add("Effects/Normalize", 0,
+    (Fl_Callback *)FX::normalize, 0, 0);
+  menubar->add("Effects/Equalize", 0,
+    (Fl_Callback *)FX::equalize, 0, 0);
+  menubar->add("Effects/Value Stretch", 0,
+    (Fl_Callback *)FX::valueStretch, 0, 0);
+  menubar->add("Effects/Saturate", 0,
+    (Fl_Callback *)FX::saturate, 0, 0);
+  menubar->add("Effects/Rotate Hue...", 0,
+    (Fl_Callback *)FX::rotateHue, 0, 0);
+  menubar->add("Effects/Invert", 0,
+    (Fl_Callback *)FX::invert, 0, 0);
+  menubar->add("Effects/Restore...", 0,
+    (Fl_Callback *)FX::restore, 0, 0);
+  menubar->add("Effects/Correction Matrix", 0,
+    (Fl_Callback *)FX::correctionMatrix, 0, 0);
+  menubar->add("Effects/Remove Dust...", 0,
+    (Fl_Callback *)FX::removeDust, 0, 0);
+  menubar->add("Effects/Desaturate", 0,
+    (Fl_Callback *)FX::desaturate, 0, 0);
+  menubar->add("Effects/Colorize", 0,
+    (Fl_Callback *)FX::colorize, 0, 0);
+  menubar->add("Effects/Apply Palette...", 0,
+    (Fl_Callback *)FX::applyPalette, 0, 0);
+  menubar->add("Effects/Stained Glass...", 0,
+    (Fl_Callback *)FX::stainedGlass, 0, 0);
+  menubar->add("Effects/Blur...", 0,
+    (Fl_Callback *)FX::blur, 0, 0);
+  menubar->add("Effects/Sharpen...", 0,
+    (Fl_Callback *)FX::sharpen, 0, 0);
+  menubar->add("Help/About...", 0,
+    (Fl_Callback *)Dialog::about, 0, 0);
 
   top_right = new Group(0, menubar->h(), window->w(), 40, "");
   x1 = 8;
-  zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24, "Fit In Window", "data/zoom_fit.png", (Fl_Callback *)checkZoomFit);
+  zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24,
+                              "Fit In Window", "data/zoom_fit.png",
+                              (Fl_Callback *)checkZoomFit);
   x1 += 24 + 8;
-  zoom_one = new Button(top_right, x1, 8, 24, 24, "Actual Size", "data/zoom_one.png", (Fl_Callback *)checkZoomOne);
+  zoom_one = new Button(top_right, x1, 8, 24, 24,
+                        "Actual Size", "data/zoom_one.png",
+                        (Fl_Callback *)checkZoomOne);
   x1 += 24 + 8;
-  zoom_in = new Button(top_right, x1, 8, 24, 24, "Zoom In", "data/zoom_in.png", (Fl_Callback *)checkZoomIn);
+  zoom_in = new Button(top_right, x1, 8, 24, 24,
+                       "Zoom In", "data/zoom_in.png",
+                       (Fl_Callback *)checkZoomIn);
   x1 += 24 + 8;
-  zoom_out = new Button(top_right, x1, 8, 24, 24, "Zoom Out", "data/zoom_out.png", (Fl_Callback *)checkZoomOut);
+  zoom_out = new Button(top_right, x1, 8, 24, 24,
+                        "Zoom Out", "data/zoom_out.png",
+                        (Fl_Callback *)checkZoomOut);
   x1 += 24 + 8;
   zoom = new InputInt(top_right, x1, 8, 56, 24, "", 0);
   // make this inactive, display only for now
@@ -220,12 +264,18 @@ void Gui::init()
   x1 += 56 + 6;
   new Separator(top_right, x1, 2, 2, 36, "");
   x1 += 8;
-  grid = new ToggleButton(top_right, x1, 8, 24, 24, "Show Grid", "data/grid.png", (Fl_Callback *)checkGrid);
+  grid = new ToggleButton(top_right, x1, 8, 24, 24,
+                          "Show Grid", "data/grid.png",
+                          (Fl_Callback *)checkGrid);
   x1 += 24 + 48 + 8;
-  gridx = new InputInt(top_right, x1, 8, 32, 24, "Grid X:", (Fl_Callback *)checkGridX);
+  gridx = new InputInt(top_right, x1, 8, 32, 24,
+                       "Grid X:",
+                       (Fl_Callback *)checkGridX);
   gridx->value("8");
   x1 += 32 + 48 + 8;
-  gridy = new InputInt(top_right, x1, 8, 32, 24, "Grid Y:", (Fl_Callback *)checkGridY);
+  gridy = new InputInt(top_right, x1, 8, 32, 24,
+                       "Grid Y:",
+                       (Fl_Callback *)checkGridY);
   gridy->value("8");
   top_right->resizable(0);
   top_right->end();
@@ -233,44 +283,69 @@ void Gui::init()
   // bottom
   bottom = new Group(176, window->h() - 40, window->w() - 288, 40, "");
   x1 = 8;
-  wrap = new ToggleButton(bottom, x1, 8, 24, 24, "Wrap Edges", "data/wrap.png", (Fl_Callback *)checkWrap);
+  wrap = new ToggleButton(bottom, x1, 8, 24, 24,
+                          "Wrap Edges", "data/wrap.png",
+                          (Fl_Callback *)checkWrap);
   x1 += 24 + 6;
   new Separator(bottom, x1, 2, 2, 36, "");
   x1 += 8;
-  clone = new ToggleButton(bottom, x1, 8, 24, 24, "Clone Enable", "data/clone.png", (Fl_Callback *)checkClone);
+  clone = new ToggleButton(bottom, x1, 8, 24, 24,
+                           "Clone Enable", "data/clone.png",
+                           (Fl_Callback *)checkClone);
   x1 += 24 + 8;
-  mirror = new Widget(bottom, x1, 8, 96, 24, "Clone Mirroring", "data/mirror.png", 24, 24, (Fl_Callback *)checkMirror);
+  mirror = new Widget(bottom, x1, 8, 96, 24,
+                      "Clone Mirroring", "data/mirror.png", 24, 24,
+                      (Fl_Callback *)checkMirror);
   x1 += 96 + 6;
   new Separator(bottom, x1, 2, 2, 36, "");
   x1 += 8;
-  origin = new Widget(bottom, x1, 8, 48, 24, "Origin", "data/origin.png", 24, 24, (Fl_Callback *)checkOrigin);
+  origin = new Widget(bottom, x1, 8, 48, 24,
+                      "Origin", "data/origin.png", 24, 24,
+                      (Fl_Callback *)checkOrigin);
   x1 += 48 + 8;
-  constrain = new Widget(bottom, x1, 8, 48, 24, "Keep Square", "data/constrain.png", 24, 24, (Fl_Callback *)checkConstrain);
+  constrain = new Widget(bottom, x1, 8, 48, 24,
+                         "Keep Square", "data/constrain.png", 24, 24,
+                         (Fl_Callback *)checkConstrain);
   bottom->resizable(0);
   bottom->end();
 
   // tools
-  tools = new Group(0, top_right->h() + menubar->h(), 64, window->h() - (menubar->h() + top_right->h()), "Tools");
+  tools = new Group(0, top_right->h() + menubar->h(),
+                    64, window->h() - (menubar->h() + top_right->h()),
+                    "Tools");
   y1 = 20;
-  tool = new Widget(tools, 8, y1, 48, 240, "Tools", "data/tools.png", 48, 48, (Fl_Callback *)checkTool);
+  tool = new Widget(tools, 8, y1, 48, 240,
+                    "Tools", "data/tools.png", 48, 48,
+                    (Fl_Callback *)checkTool);
   y1 += 96 + 8;
   tools->resizable(0);
   tools->end();
 
   // paint
-  paint = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "Paint");
+  paint = new Group(64, top_right->h() + menubar->h(),
+                    112, window->h() - top_right->h() - menubar->h(),
+                    "Paint");
   y1 = 20;
-  paint_brush = new Widget(paint, 8, y1, 96, 96, "Brush Preview", 0, 0, 0);
+  paint_brush = new Widget(paint, 8, y1, 96, 96,
+                           "Brush Preview", 0, 0, 0);
   paint_brush->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
   paint_brush->bitmap->setpixelSolid(48, 48, makeRgb(192, 192, 192), 0);
   y1 += 96 + 8;
-  paint_size = new Widget(paint, 8, y1, 96, 24, "Size", "data/size.png", 6, 24, (Fl_Callback *)checkPaintSize);
+  paint_size = new Widget(paint, 8, y1, 96, 24,
+                          "Size", "data/size.png", 6, 24,
+                          (Fl_Callback *)checkPaintSize);
   y1 += 24 + 8;
-  paint_stroke = new Widget(paint, 8, y1, 96, 48, "Stroke", "data/stroke.png", 24, 24, (Fl_Callback *)checkPaintStroke);
+  paint_stroke = new Widget(paint, 8, y1, 96, 48,
+                            "Stroke", "data/stroke.png", 24, 24,
+                            (Fl_Callback *)checkPaintStroke);
   y1 += 48 + 8;
-  paint_shape = new Widget(paint, 8, y1, 96, 24, "Shape", "data/shape.png", 24, 24, (Fl_Callback *)checkPaintShape);
+  paint_shape = new Widget(paint, 8, y1, 96, 24,
+                           "Shape", "data/shape.png", 24, 24,
+                           (Fl_Callback *)checkPaintShape);
   y1 += 24 + 8;
-  paint_edge = new Widget(paint, 8, y1, 96, 24, "Soft Edge", "data/soft_edge.png", 12, 24, (Fl_Callback *)checkPaintEdge);
+  paint_edge = new Widget(paint, 8, y1, 96, 24,
+                          "Soft Edge", "data/soft_edge.png", 12, 24,
+                          (Fl_Callback *)checkPaintEdge);
   y1 += 24 + 8;
   paint_mode = new Fl_Choice(8, y1, 96, 24, "");
   paint_mode->tooltip("Paint Mode");
@@ -289,7 +364,9 @@ void Gui::init()
   paint->end();
 
   // crop
-  crop = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "Crop");
+  crop = new Group(64, top_right->h() + menubar->h(),
+                   112, window->h() - top_right->h() - menubar->h(),
+                   "Crop");
   y1 = 20;
   crop_x = new InputInt(crop, 24, y1, 72, 24, "X:", 0);
   crop_x->deactivate();
@@ -309,14 +386,18 @@ void Gui::init()
   crop->end();
 
   // getcolor
-  getcolor = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "GetColor");
+  getcolor = new Group(64, top_right->h() + menubar->h(),
+                       112, window->h() - top_right->h() - menubar->h(),
+                       "GetColor");
   y1 = 20;
   getcolor_color = new Widget(getcolor, 8, y1, 96, 96, "Color", 0, 0, 0);
   getcolor->resizable(0);
   getcolor->end();
 
   // offset
-  offset = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "Offset");
+  offset = new Group(64, top_right->h() + menubar->h(),
+                     112, window->h() - top_right->h() - menubar->h(),
+                     "Offset");
   y1 = 20;
   offset_x = new InputInt(offset, 24, y1, 72, 24, "X:", 0);
   offset_x->deactivate();
@@ -328,15 +409,16 @@ void Gui::init()
   offset->end();
 
   // text
-  text = new Group(64, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "Text");
+  text = new Group(64, top_right->h() + menubar->h(),
+                   112, window->h() - top_right->h() - menubar->h(),
+                   "Text");
   y1 = 20;
+  // add font names
   font_browse = new Fl_Hold_Browser(8, y1, 96, 192);
   font_browse->textsize(9);
   font_browse->resize(text->x() + 8, text->y() + y1, 96, 192);
 
-  int max = Fl::set_fonts(0);
-
-  for(i = 0; i < max; i++)
+  for(i = 0; i < Fl::set_fonts(0); i++)
   {
     int t;
     const char *name = Fl::get_font_name((Fl_Font)i, &t);
@@ -347,20 +429,20 @@ void Gui::init()
   font_browse->callback((Fl_Callback *)textStartOver);
   y1 += 192 + 8;
 
+  // add font sizes
   font_size = new Fl_Choice(8, y1, 96, 24, "");
   font_size->tooltip("Font Size");
   font_size->textsize(10);
   font_size->resize(text->x() + 8, text->y() + y1, 96, 24);
-  font_size->add("8");
-  font_size->add("10");
-  font_size->add("12");
-  font_size->add("16");
-  font_size->add("20");
-  font_size->add("24");
-  font_size->add("32");
-  font_size->add("48");
-  font_size->add("64");
-  font_size->add("96");
+
+  char s[8];
+
+  for(i = 0; i < sizeof(font_sizes) / sizeof(font_sizes[0]); i++)
+  {
+    snprintf(s, sizeof(s), "%d", font_sizes[i]);
+    font_size->add(s);
+  }
+
   font_size->value(2);
   font_size->callback((Fl_Callback *)textStartOver);
   y1 += 24 + 8;
@@ -375,15 +457,25 @@ void Gui::init()
   text->end();
 
   // right
-  right = new Group(window->w() - 112, top_right->h() + menubar->h(), 112, window->h() - top_right->h() - menubar->h(), "Colors");
+  right = new Group(window->w() - 112, top_right->h() + menubar->h(),
+                    112, window->h() - top_right->h() - menubar->h(),
+                    "Colors");
   y1 = 20;
-  palette = new Widget(right, 8, y1, 96, 96, "Color Palette", 6, 6, (Fl_Callback *)checkPalette);
+  palette = new Widget(right, 8, y1, 96, 96,
+                       "Color Palette", 6, 6,
+                       (Fl_Callback *)checkPalette);
   y1 += 96 + 8;
-  hue = new Widget(right, 8, y1, 96, 96, "Hue", 1, 1, (Fl_Callback *)checkHue);
+  hue = new Widget(right, 8, y1, 96, 96,
+                   "Hue", 1, 1,
+                   (Fl_Callback *)checkHue);
   y1 += 96 + 8;
-  satval = new Widget(right, 8, y1, 96, 96, "Saturation/Value", 1, 1, (Fl_Callback *)checkSatVal);
+  satval = new Widget(right, 8, y1, 96, 96,
+                      "Saturation/Value", 1, 1,
+                      (Fl_Callback *)checkSatVal);
   y1 += 96 + 8;
-  trans = new Widget(right, 8, y1, 96, 24, "Transparency", "data/transparency.png", 1, 24, (Fl_Callback *)checkTrans);
+  trans = new Widget(right, 8, y1, 96, 24,
+                     "Transparency", "data/transparency.png", 1, 24,
+                     (Fl_Callback *)checkTrans);
   y1 += 24 + 8;
   blend = new Fl_Choice(8, y1, 96, 24, "");
   blend->tooltip("Blending Mode");
@@ -405,14 +497,16 @@ void Gui::init()
   right->end();
 
   // middle
-  middle = new Fl_Group(176, top_right->h() + menubar->h(), window->w() - 288, window->h() - (menubar->h() + top_right->h() + bottom->h()));
+  middle = new Fl_Group(176, top_right->h() + menubar->h(),
+                        window->w() - 288, window->h() - (menubar->h() + top_right->h() + bottom->h()));
   middle->box(FL_FLAT_BOX);
   view = new View(middle, 0, 0, middle->w(), middle->h(), "View");
   middle->resizable(view);
   middle->end();
 
   // container for left panels
-  group_left = new Fl_Group(0, top_right->h() + menubar->h(), 176, window->h() - (menubar->h() + top_right->h() + bottom->h()));
+  group_left = new Fl_Group(0, top_right->h() + menubar->h(),
+                            176, window->h() - (menubar->h() + top_right->h() + bottom->h()));
   group_left->add(tools);
   group_left->add(paint);
   group_left->add(getcolor);
