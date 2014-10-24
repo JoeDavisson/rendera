@@ -55,7 +55,8 @@ namespace About
     const char *credits = "Copyright (c) 2014 Joe Davisson.\nAll Rights Reserved.";
 
     dialog = new Fl_Double_Window(384, 0, "About");
-    logo = new Widget(dialog, 32, y1, 320, 64, credits, "data/logo_large.png", 0, 0, 0);
+    logo = new Widget(dialog, 32, y1, 320, 64,
+                      credits, "data/logo_large.png", 0, 0, 0);
     logo->align(FL_ALIGN_BOTTOM);
     logo->measure_label(ww, hh);
     y1 += 64 + 8 + hh;
@@ -401,8 +402,10 @@ namespace Editor
         int c2 = pal->data[end];
         int h1, s1, v1;
         int h2, s2, v2;
+
         Blend::rgbToHsv(getr(c1), getg(c1), getb(c1), &h1, &s1, &v1);
         Blend::rgbToHsv(getr(c2), getg(c2), getb(c2), &h2, &s2, &v2);
+
         double steph = (double)(h2 - h1) / num;
         double steps = (double)(s2 - s1) / num;
         double stepv = (double)(v2 - v1) / num;
@@ -534,8 +537,12 @@ namespace Editor
   void init()
   {
     dialog = new Fl_Double_Window(608, 312, "Palette Editor");
-    hue = new Widget(dialog, 8, 8, 24, 256, "Hue", 24, 1, (Fl_Callback *)getHue);
-    sat_val = new Widget(dialog, 40, 8, 256, 256, "Saturation/Value", 1, 1, (Fl_Callback *)getSatVal);
+    hue = new Widget(dialog, 8, 8, 24, 256,
+                     "Hue", 24, 1,
+                     (Fl_Callback *)getHue);
+    sat_val = new Widget(dialog, 40, 8, 256, 256,
+                         "Saturation/Value", 1, 1,
+                         (Fl_Callback *)getSatVal);
     insert = new Fl_Button(304, 8, 96, 24, "Insert");
     insert->callback((Fl_Callback *)insertColor);
     remove = new Fl_Button(304, 48, 96, 24, "Delete");
@@ -548,7 +555,9 @@ namespace Editor
     rgb_ramp->callback((Fl_Callback *)rgbRamp);
     hsv_ramp = new Fl_Button(304, 240, 96, 24, "HSV Ramp");
     hsv_ramp->callback((Fl_Callback *)hsvRamp);
-    palette = new Widget(dialog, 408, 8, 192, 192, "Palette", 24, 24, (Fl_Callback *)checkPalette);
+    palette = new Widget(dialog, 408, 8, 192, 192,
+                         "Palette", 24, 24,
+                         (Fl_Callback *)checkPalette);
     color = new Widget(dialog, 408, 208, 192, 56, "Color", 0, 0, 0);
     new Separator(dialog, 2, 272, 604, 2, "");
     done = new Fl_Button(504, 280, 96, 24, "Done");
@@ -589,7 +598,8 @@ void Dialog::addOkButton(Fl_Group *group, Fl_Button **ok, int *y1)
 }
 
 // add ok/cancel buttons to bottom of dialog, update vertical size
-void Dialog::addOkCancelButtons(Fl_Group *group, Fl_Button **ok, Fl_Button **cancel, int *y1)
+void Dialog::addOkCancelButtons(Fl_Group *group,
+                                Fl_Button **ok, Fl_Button **cancel, int *y1)
 {
   int w = group->w();
 
