@@ -32,9 +32,6 @@ public:
   Paint();
   virtual ~Paint();
 
-//  virtual void renderBegin(View *);
-//  virtual int renderCallback(View *);
-
   virtual void push(View *);
   virtual void drag(View *);
   virtual void release(View *);

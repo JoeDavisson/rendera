@@ -247,10 +247,10 @@ int View::handle(int event)
         if(tool->active)
           tool->redraw(this);
         else
-          drawMain(1);
+          drawMain(true);
       }
 
-      if(tool->started)
+      if(tool->state > 0)
         tool->redraw(this);
 
       return 1;
@@ -289,9 +289,9 @@ int View::handle(int event)
     {
       if(Fl::event_key() == FL_Escape)
       {
-        tool->active = 0;
-        tool->started = 0;
-        drawMain(1);
+        tool->active = false;
+        tool->state = 0;
+        drawMain(true);
         break;
       }
 
@@ -376,7 +376,7 @@ void View::resize(int x, int y, int w, int h)
   if(fit)
     zoomFit(1);
 
-  drawMain(1);
+  drawMain(true);
 }
 
 void View::redraw()
@@ -385,7 +385,7 @@ void View::redraw()
   Fl::flush();
 }
 
-void View::drawMain(int refresh)
+void View::drawMain(bool refresh)
 {
   int sw = w() / zoom;
   int sh = h() / zoom;
@@ -580,7 +580,7 @@ void View::beginMove()
   backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
   bool temp = tool->active;
-  tool->active = 0;
+  tool->active = false;
   redraw();
   tool->active = temp;
 }
@@ -630,7 +630,7 @@ void View::move()
   backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
   bool temp = tool->active;
-  tool->active = 0;
+  tool->active = false;
   redraw();
   tool->active = temp;
 
@@ -666,9 +666,9 @@ void View::zoomIn(int x, int y)
       oy = 0;
   }
 
-  drawMain(1);
+  drawMain(true);
 
-  if(tool->started)
+  if(tool->state > 0)
     tool->redraw(this);
 
   Gui::checkZoom();
@@ -701,9 +701,9 @@ void View::zoomOut(int x, int y)
       oy = 0;
   }
 
-  drawMain(1);
+  drawMain(true);
 
-  if(tool->started)
+  if(tool->state > 0)
     tool->redraw(this);
 
   Gui::checkZoom();
@@ -717,7 +717,7 @@ void View::zoomFit(int fitting)
     zoom = 1;
     ox = 0;
     oy = 0;
-    drawMain(1);
+    drawMain(true);
     return;
   }
 
@@ -733,7 +733,7 @@ void View::zoomFit(int fitting)
   oy = 0;
 
   fit = 1;
-  drawMain(1);
+  drawMain(true);
   Gui::checkZoom();
 }
 
@@ -743,7 +743,7 @@ void View::zoomOne()
   zoom = 1;
   ox = 0;
   oy = 0;
-  drawMain(1);
+  drawMain(true);
   Gui::checkZoom();
 }
 
@@ -804,7 +804,7 @@ void View::scroll(int dir, int amount)
   if(tool->active)
     tool->redraw(this);
   else
-    drawMain(1);
+    drawMain(true);
 }
 
 void View::draw()

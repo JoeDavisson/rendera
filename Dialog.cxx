@@ -174,7 +174,7 @@ namespace NewImage
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
     Gui::getView()->zoomFit(0);
-    Gui::getView()->drawMain(1);
+    Gui::getView()->drawMain(true);
   }
 
   void quit()

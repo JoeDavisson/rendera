@@ -150,6 +150,6 @@ void Undo::pop()
   }
 
   Gui::getView()->tool->active = 0;
-  Gui::getView()->drawMain(1);
+  Gui::getView()->drawMain(true);
 }
 

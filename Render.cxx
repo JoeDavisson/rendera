@@ -152,7 +152,7 @@ namespace
       return -1;
 
     if(!(pos % step))
-      view->drawMain(1);
+      view->drawMain(true);
 
     return 0;
   }
@@ -576,6 +576,6 @@ void Render::begin()
       break;
   }
 
-  view->drawMain(1);
+  view->drawMain(true);
 }
 

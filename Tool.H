@@ -55,7 +55,7 @@ public:
   // vars
   Stroke *stroke;
   int beginx, beginy, lastx, lasty;
-  int started;
+  int state;
   bool active;
 
   // extended tools

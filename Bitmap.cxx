@@ -66,9 +66,9 @@ Bitmap::Bitmap(int width, int height)
   for(i = 0; i < height; i++)
     row[i] = &data[width * i];
 
-  wrap = 0;
-  clone = 0;
-  clone_moved = 0;
+  wrap = false;
+  clone = false;
+  clone_moved = false;
   clone_x = 0;
   clone_y = 0;
   clone_dx = 0;
@@ -122,9 +122,9 @@ Bitmap::Bitmap(int width, int height, int overscroll)
 
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
 
-  wrap = 0;
-  clone = 0;
-  clone_moved = 0;
+  wrap = false;
+  clone = false;
+  clone_moved = false;
   clone_x = 0;
   clone_y = 0;
   clone_dx = 0;
@@ -776,7 +776,7 @@ void Bitmap::pointStretch(Bitmap *dest,
 void Bitmap::scaleBilinear(Bitmap *dest,
                            int sx, int sy, int sw, int sh,
                            int dx, int dy, int dw, int dh,
-                           int wrap_edges)
+                           bool wrap_edges)
 {
   const float ax = ((float)sw / dw);
   const float ay = ((float)sh / dh);
@@ -966,7 +966,7 @@ void Bitmap::flip()
 }
 
 // rotate transform
-Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, int tile)
+Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, bool tile)
 {
   // angle correction
   angle += 90;

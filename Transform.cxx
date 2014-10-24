@@ -56,7 +56,7 @@ namespace
   void endProgress()
   {
     Dialog::hideProgress();
-    Gui::getView()->drawMain(1);
+    Gui::getView()->drawMain(true);
   }
 
   int updateProgress(int y)
@@ -71,7 +71,7 @@ namespace
     // only redraw every 64 rasters
     if(!(y % 64))
     {
-      Gui::getView()->drawMain(1);
+      Gui::getView()->drawMain(true);
       Dialog::updateProgress();
     }
 
@@ -170,7 +170,7 @@ namespace Scale
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
     Gui::getView()->zoomFit(0);
-    Gui::getView()->drawMain(1);
+    Gui::getView()->drawMain(true);
   }
 
   void quit()
@@ -252,7 +252,7 @@ namespace Rotate
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
     Gui::getView()->zoomFit(0);
-    Gui::getView()->drawMain(1);
+    Gui::getView()->drawMain(true);
   }
 
   void quit()
@@ -299,20 +299,20 @@ void Transform::mirror()
 {
   pushUndo();
   Project::bmp->mirror();
-  Gui::getView()->drawMain(1);
+  Gui::getView()->drawMain(true);
 }
 
 void Transform::flip()
 {
   pushUndo();
   Project::bmp->flip();
-  Gui::getView()->drawMain(1);
+  Gui::getView()->drawMain(true);
 }
 
 void Transform::rotate()
 {
   pushUndo();
   Rotate::begin();
-  Gui::getView()->drawMain(1);
+  Gui::getView()->drawMain(true);
 }
 

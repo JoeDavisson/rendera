@@ -70,8 +70,8 @@ namespace
 
 Crop::Crop()
 {
-  drag_started = 0;
-  resize_started = 0;
+  drag_started = false;
+  resize_started = false;
   side = 0;
 }
 
@@ -81,23 +81,23 @@ Crop::~Crop()
 
 void Crop::push(View *view)
 {
-  if(!started)
+  if(state == 0)
   {
     Project::map->clear(0);
     beginx = view->imgx;
     beginy = view->imgy;
     lastx = view->imgx;
     lasty = view->imgy;
-    started = 1;
-    active = 1;
+    state = 1;
+    active = true;
   }
-  else if(started == 2)
+  else if(state == 2)
   {
     if(!drag_started && !resize_started)
     {
       if(inbox(view->imgx, view->imgy, beginx, beginy, lastx, lasty))
       {
-        drag_started = 1;
+        drag_started = true;
       }
       else
       {
@@ -105,28 +105,28 @@ void Crop::push(View *view)
         {
           side = 0;
           offset = std::abs(view->imgx - beginx);
-          resize_started = 1;
+          resize_started = true;
         }
         else if(view->imgx > lastx)
         {
           side = 1;
           offset = std::abs(view->imgx - lastx);
-          resize_started = 1;
+          resize_started = true;
         }
         else if(view->imgy < beginy)
         {
           side = 2;
           offset = std::abs(view->imgy - beginy);
-          resize_started = 1;
+          resize_started = true;
         }
         else if(view->imgy > lasty)
         {
           side = 3;
           offset = std::abs(view->imgy - lasty);
-          resize_started = 1;
+          resize_started = true;
         }
 
-        resize_started = 1;
+        resize_started = true;
       }
     }
   }
@@ -134,7 +134,7 @@ void Crop::push(View *view)
 
 void Crop::drag(View *view)
 {
-  if(started == 1)
+  if(state == 1)
   {
     drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
     drawHandles(stroke, beginx, beginy, view->imgx, view->imgy, 255);
@@ -142,11 +142,11 @@ void Crop::drag(View *view)
     lastx = view->imgx;
     lasty = view->imgy;
 
-    view->drawMain(0);
+    view->drawMain(false);
     stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
     view->redraw();
   }
-  else if(started == 2)
+  else if(state == 2)
   {
     drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
 
@@ -204,13 +204,11 @@ void Crop::drag(View *view)
 
 void Crop::release(View *view)
 {
-  if(started == 1)
-  {
-    started = 2;
-  }
+  if(state == 1)
+    state = 2;
 
-  drag_started = 0;
-  resize_started = 0;
+  drag_started = false;
+  resize_started = false;
   absrect(&beginx, &beginy, &lastx, &lasty);
   redraw(view);
 
@@ -229,12 +227,12 @@ void Crop::move(View *)
 
 void Crop::done(View *view)
 {
-  if(started == 0)
+  if(state == 0)
     return;
 
   Undo::push(0, 0, 0, 0, 1);
-  started = 0;
-  active = 0;
+  state = 0;
+  active = false;
   absrect(&beginx, &beginy, &lastx, &lasty);
 
   int w = (lastx - beginx) + 1;
@@ -256,7 +254,7 @@ void Crop::done(View *view)
   view->zoom = 1;
   view->ox = 0;
   view->oy = 0;
-  view->drawMain(1);
+  view->drawMain(true);
   Gui::checkCropValues(0, 0, 0, 0);
 }
 
@@ -264,12 +262,12 @@ void Crop::redraw(View *view)
 {
   if(active)
   {
-    active = 0;
+    active = false;
     drawHandles(stroke, beginx, beginy, lastx, lasty, 255);
-    view->drawMain(0);
+    view->drawMain(false);
     stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
     view->redraw();
-    active = 1;
+    active = true;
   }
 }
 

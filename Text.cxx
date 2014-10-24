@@ -45,7 +45,7 @@ Text::~Text()
 
 void Text::push(View *view)
 {
-  if(!started)
+  if(state == 0)
     move(view);
 
   Undo::push(stroke->x1,
@@ -84,8 +84,8 @@ void Text::push(View *view)
 
   Blend::set(Blend::TRANS);
 
-  started = 0;
-  view->drawMain(1);
+  state = 0;
+  view->drawMain(true);
 }
 
 void Text::drag(View *view)
@@ -99,7 +99,7 @@ void Text::release(View *)
 void Text::move(View *view)
 {
   // write text string to FLTK's offscreen image
-  if(!started)
+  if(state == 0)
   {
     int i;
 
@@ -109,7 +109,7 @@ void Text::move(View *view)
     if(strlen(s) > 250)
       return;
 
-    started = 1;
+    state = 1;
 
     // add a space before and after string, or some
     // scripty fonts won't render propery on the sides
@@ -182,7 +182,7 @@ void Text::done(View *view)
 
 void Text::redraw(View *view)
 {
-  view->drawMain(0);
+  view->drawMain(false);
   stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
   view->redraw();
 }

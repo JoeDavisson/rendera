@@ -33,8 +33,8 @@ Tool *Tool::text;
 Tool::Tool()
 {
   stroke = new Stroke();
-  started = 0;
-  active = 0;
+  state = 0;
+  active = false;
 }
 
 Tool::~Tool()

@@ -59,7 +59,7 @@ namespace
   void endProgress()
   {
     Dialog::hideProgress();
-    Gui::getView()->drawMain(1);
+    Gui::getView()->drawMain(true);
   }
 
   int updateProgress(int y)
@@ -67,14 +67,14 @@ namespace
     // user cancelled operation
     if(Fl::get_key(FL_Escape))
     {
-      Gui::getView()->drawMain(1);
+      Gui::getView()->drawMain(true);
       return -1;
     }
 
     // only redraw every 64 rasters
     if(!(y % 64))
     {
-      Gui::getView()->drawMain(1);
+      Gui::getView()->drawMain(true);
       Dialog::updateProgress();
     }
 

@@ -9,7 +9,7 @@ the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
 Rendera is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
+state WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
@@ -654,7 +654,7 @@ void Gui::checkZoom()
 void Gui::checkGrid(ToggleButton *, void *var)
 {
   view->grid = *(int *)var;
-  view->drawMain(1);
+  view->drawMain(true);
   view->redraw();
 }
 
@@ -669,7 +669,7 @@ void Gui::checkGridX(InputInt *field, void *)
   snprintf(s, sizeof(s), "%d", num);
   field->value(s);
   view->gridx = num;
-  view->drawMain(1);
+  view->drawMain(true);
 }
 
 void Gui::checkGridY(InputInt *field, void *)
@@ -683,7 +683,7 @@ void Gui::checkGridY(InputInt *field, void *)
   snprintf(s, sizeof(s), "%d", num);
   field->value(s);
   view->gridy = num;
-  view->drawMain(1);
+  view->drawMain(true);
 }
 
 void Gui::checkPaintSize(Widget *, void *var)
@@ -758,10 +758,10 @@ void Gui::checkTool(Widget *, void *var)
       break;
   }
 
-  view->tool->active = 0;
-  view->tool->started = 0;
+  view->tool->active = false;
+  view->tool->state = 0;
 
-  view->drawMain(1);
+  view->drawMain(true);
 }
 
 void Gui::checkColor(Widget *, void *)
@@ -924,8 +924,8 @@ void Gui::checkOffsetValues(int x, int y)
 void Gui::textStartOver()
 {
   // start text tool over if font changed
-  view->tool->started = 0;
-  view->tool->active = 0;
+  view->tool->state = 0;
+  view->tool->active = false;
 }
 
 int Gui::getFontFace()
@@ -988,7 +988,7 @@ void Gui::checkClear()
   Bitmap *bmp = Project::bmp;
 
   bmp->rectfill(bmp->cl, bmp->ct, bmp->cr, bmp->cb, Project::brush->color, 0);
-  view->drawMain(1);
+  view->drawMain(true);
 }
 
 View *Gui::getView()

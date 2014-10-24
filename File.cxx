@@ -260,7 +260,7 @@ void File::load(Fl_Widget *, void *)
 
   Gui::getView()->tool->stroke->clip();
   Gui::getView()->zoomFit(Gui::getView()->fit);
-  Gui::getView()->drawMain(1);
+  Gui::getView()->drawMain(true);
   Undo::reset();
 }
 
@@ -323,7 +323,7 @@ int File::loadFile(const char *fn)
 
   Gui::getView()->tool->stroke->clip();
   Gui::getView()->zoomFit(Gui::getView()->fit);
-  Gui::getView()->drawMain(1);
+  Gui::getView()->drawMain(true);
   Undo::reset();
 
   return 0;
@@ -866,6 +866,7 @@ int File::saveBMP(const char *fn)
 
     for(x = 0; x < pad; x++)
       linebuf[xx++] = 0;
+
     p += overscroll * 2;
 
     if(fwrite(&linebuf[0], 1, w * 3, out) != w * 3)

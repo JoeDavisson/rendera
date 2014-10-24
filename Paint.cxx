@@ -48,10 +48,10 @@ void Paint::push(View *view)
       stroke->end(view->imgx, view->imgy);
       Blend::set(Project::brush->blend);
       Render::begin();
-      active = 0;
+      active = false;
       Blend::set(Blend::TRANS);
       view->moving = 0;
-      view->drawMain(1);
+      view->drawMain(true);
       return;
     }
     else
@@ -67,7 +67,7 @@ void Paint::push(View *view)
   stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
   view->redraw();
 
-  active = 1;
+  active = true;
 }
 
 void Paint::drag(View *view)
@@ -75,7 +75,7 @@ void Paint::drag(View *view)
   if(stroke->type != 3)
   {
     stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
-    view->drawMain(0);
+    view->drawMain(false);
     stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
     view->redraw();
   }
@@ -88,11 +88,11 @@ void Paint::release(View *view)
     stroke->end(view->imgx, view->imgy);
     Blend::set(Project::brush->blend);
     Render::begin();
-    active = 0;
+    active = false;
     Blend::set(Blend::TRANS);
   }
 
-  view->drawMain(1);
+  view->drawMain(true);
 }
 
 void Paint::move(View *view)
@@ -104,7 +104,7 @@ void Paint::move(View *view)
       {
         stroke->polyline(view->imgx, view->imgy,
                          view->ox, view->oy, view->zoom);
-        view->drawMain(0);
+        view->drawMain(false);
         stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
         view->redraw();
       }
@@ -123,7 +123,7 @@ void Paint::move(View *view)
       stroke->makeBlitRect(stroke->x1, stroke->y1,
                            stroke->x2, stroke->y2,
                            view->ox, view->oy, 96, view->zoom);
-      view->drawMain(0);
+      view->drawMain(false);
       stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
       view->redraw();
       break;
@@ -138,11 +138,11 @@ void Paint::redraw(View *view)
 {
   if(active)
   {
-    active = 0;
-    view->drawMain(0);
+    active = false;
+    view->drawMain(false);
     stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
     view->redraw();
-    active = 1;
+    active = true;
   }
 }
 

@@ -36,7 +36,7 @@ public:
   virtual void resize(int, int, int, int);
   virtual void redraw();
   void drawMove();
-  void drawMain(int);
+  void drawMain(bool);
   void drawGrid();
   void drawCloneCursor();
   void beginMove();
