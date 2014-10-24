@@ -62,12 +62,11 @@ public:
   void preview(Bitmap *,int, int, float);
 
   int x1, y1, x2, y2;
-  int origin, constrain;
+  bool origin, constrain;
   int blitx, blity, blitw, blith;
   int beginx, beginy;
   int lastx, lasty;
   int oldx, oldy;
-  int active;
   int type;
   int *polycachex;
   int *polycachey;

@@ -56,7 +56,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   bitmap->blit(bitmap2, 0, 0, 0, 0, bitmap->w, bitmap->h);
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
-  use_highlight = 1;
+  use_highlight = true;
 
   // shade
   Blend::set(Blend::TRANS_NO_ALPHA);
@@ -83,7 +83,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   image = new Fl_RGB_Image((unsigned char *)bitmap->data, w, h, 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
-  use_highlight = 0;
+  use_highlight = false;
 }
 
 Widget::~Widget()

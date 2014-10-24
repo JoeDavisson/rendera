@@ -126,6 +126,7 @@ int main(int argc, char *argv[])
   unfix_gamma = new int[65536];
 
   int i;
+
   for(i = 0; i < 65536; i++)
     unfix_gamma[i] = std::pow((double)i / 65535, (1.0 / 2.2)) * 255;
   for(i = 0; i < 256; i++)

@@ -471,13 +471,13 @@ Bitmap *File::loadBMP(const char *fn, int overscroll)
   //dpiy = bm.biYPelsPerMeter / 39.370079 + .5;
 
   int mul = 3;
-  int negx = 0, negy = 0;
+  bool negx = false, negy = false;
   int pad = w % 4;
 
   if(w < 0)
-    negx = 1;
+    negx = true;
   if(h >= 0)
-    negy = 1;
+    negy = true;
 
   w = std::abs(w);
   h = std::abs(h);
@@ -581,13 +581,13 @@ Bitmap *File::loadTGA(const char *fn, int overscroll)
 
   int x, y;
 
-  int negx = 1;
-  int negy = 1;
+  bool negx = true;
+  bool negy = true;
 
   if(header.descriptor & (1 << 4))
-    negx = 0;
+    negx = false;
   if(header.descriptor & (1 << 5))
-    negy = 0;
+    negy = false;
 
   int xstart = 0;
   int xend = w;

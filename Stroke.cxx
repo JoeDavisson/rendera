@@ -83,8 +83,8 @@ Stroke::Stroke()
   edgecachey = new int[0x100000];
   polycount = 0;
   type = 0;
-  origin = 0;
-  constrain = 0;
+  origin = false;
+  constrain = false;
   x1 = 0;
   y1 = 0;
   x2 = 0;
