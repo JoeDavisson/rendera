@@ -94,8 +94,8 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   ox = 0;
   oy = 0;
   zoom = 1;
-  fit = 0;
-  moving = 0;
+  fit = false;
+  moving = false;
   grid = 0;
   gridx = 8;
   gridy = 8;
@@ -105,12 +105,12 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   tool = Tool::paint;
 
   backbuf = new Bitmap(Fl::w(), Fl::h());
-  bgr_order = 0;
+  bgr_order = false;
 
   #ifdef linux
     // try to detect pixelformat (almost always RGB or BGR)
     if(fl_visual->visual->blue_mask == 0xFF)
-      bgr_order = 1;
+      bgr_order = true;
 
     ximage = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
                           (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
@@ -139,8 +139,8 @@ int View::handle(int event)
   button2 = Fl::event_button2() ? 2 : 0;
   button3 = Fl::event_button3() ? 4 : 0;
   button = button1 | button2 | button3;
-  dclick = Fl::event_clicks() ? 1 : 0;
-  shift = Fl::event_shift() ? 1 : 0;
+  dclick = Fl::event_clicks() ? true : false;
+  shift = Fl::event_shift() ? true : false;
 
   switch(event)
   {
@@ -201,9 +201,9 @@ int View::handle(int event)
           tool->push(this);
           break;
         case 2:
-          if(moving == 0)
+          if(!moving)
           {
-            moving = 1;
+            moving = true;
             beginMove();
             break;
           }
@@ -225,7 +225,7 @@ int View::handle(int event)
           tool->drag(this);
           break;
         case 2:
-          if(moving == 1)
+          if(moving)
             move();
           break;
       } 
@@ -242,7 +242,7 @@ int View::handle(int event)
 
       if(moving)
       {
-        moving = 0;
+        moving = false;
 
         if(tool->active)
           tool->redraw(this);
@@ -374,7 +374,7 @@ void View::resize(int x, int y, int w, int h)
   Fl_Widget::resize(x, y, w, h);
 
   if(fit)
-    zoomFit(1);
+    zoomFit(true);
 
   drawMain(true);
 }
@@ -709,11 +709,11 @@ void View::zoomOut(int x, int y)
   Gui::checkZoom();
 }
 
-void View::zoomFit(int fitting)
+void View::zoomFit(bool fitting)
 {
   if(!fitting)
   {
-    fit = 0;
+    fit = false;
     zoom = 1;
     ox = 0;
     oy = 0;
@@ -732,14 +732,14 @@ void View::zoomFit(int fitting)
   ox = 0;
   oy = 0;
 
-  fit = 1;
+  fit = true;
   drawMain(true);
   Gui::checkZoom();
 }
 
 void View::zoomOne()
 {
-  fit = 0;
+  fit = false;
   zoom = 1;
   ox = 0;
   oy = 0;

@@ -35,7 +35,7 @@ namespace
   {
     float r, g, b;
     float freq;
-    int active;
+    bool active;
   };
 
   // create a color_t structure
@@ -47,7 +47,7 @@ namespace
     c->g = g;
     c->b = b;
     c->freq = freq;
-    c->active = 1;
+    c->active = true;
   }
 
   // qsort callback to sort palette
@@ -263,7 +263,7 @@ void Quantize::pca(Bitmap *src, int size)
   struct color_t *colors = new color_t[max_colors];
 
   for(i = 0; i < max_colors; i++)
-    colors[i].active = 0;
+    colors[i].active = false;
 
   // quantization error matrix
   float *err_data = new float[((max_colors + 1) * max_colors) / 2];
@@ -323,7 +323,7 @@ void Quantize::pca(Bitmap *src, int size)
   {
     int ii = 0, jj = 0;
     float least_err = 999999;
-    int *a = &(colors[0].active);
+    bool *a = &(colors[0].active);
 
     // find lowest value in error matrix
     for(j = 0; j < max; j++, a += step)
@@ -331,7 +331,7 @@ void Quantize::pca(Bitmap *src, int size)
       if(*a)
       {
         float *e = &err_data[(j + 1) * j / 2];
-        int *b = &(colors[0].active);
+        bool *b = &(colors[0].active);
 
         for(i = 0; i < j; i++, e++, b += step)
         {
@@ -349,7 +349,7 @@ void Quantize::pca(Bitmap *src, int size)
     float temp = colors[ii].freq;
 
     merge(&colors[ii], &colors[jj]);
-    colors[jj].active = 0;
+    colors[jj].active = false;
     count--;
 
     // recompute error matrix for new row

@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace
 {
   Bitmap *undo_stack[MAX_UNDO];
-  int undo_resized[MAX_UNDO];
+  bool undo_resized[MAX_UNDO];
   int undo_current;
 }
 
@@ -42,7 +42,7 @@ void Undo::init()
   for(i = 0; i < MAX_UNDO; i++)
   {
     undo_stack[i] = new Bitmap(8, 8);
-    undo_resized[i] = 0;
+    undo_resized[i] = false;
   }
 
   undo_current = MAX_UNDO - 1;
@@ -57,13 +57,13 @@ void Undo::reset()
   {
     delete undo_stack[i];
     undo_stack[i] = new Bitmap(8, 8);
-    undo_resized[i] = 0;
+    undo_resized[i] = false;
   }
 
   undo_current = MAX_UNDO - 1;
 }
 
-void Undo::push(int x, int y, int w, int h, int resized)
+void Undo::push(int x, int y, int w, int h, bool resized)
 {
   int i;
 
@@ -97,7 +97,7 @@ void Undo::push(int x, int y, int w, int h, int resized)
     undo_current = 0;
 
     Bitmap *temp_bmp = undo_stack[MAX_UNDO - 1];
-    int temp_resized = undo_resized[MAX_UNDO - 1];
+    bool temp_resized = undo_resized[MAX_UNDO - 1];
     for(i = MAX_UNDO - 1; i > 0; i--)
     {
       undo_stack[i] = undo_stack[i - 1];
@@ -149,7 +149,7 @@ void Undo::pop()
                                    undo_stack[undo_current]->h);
   }
 
-  Gui::getView()->tool->active = 0;
+  Gui::getView()->tool->active = false;
   Gui::getView()->drawMain(true);
 }
 

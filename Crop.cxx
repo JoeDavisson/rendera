@@ -230,7 +230,7 @@ void Crop::done(View *view)
   if(state == 0)
     return;
 
-  Undo::push(0, 0, 0, 0, 1);
+  Undo::push(0, 0, 0, 0, true);
   state = 0;
   active = false;
   absrect(&beginx, &beginy, &lastx, &lasty);

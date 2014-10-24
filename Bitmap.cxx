@@ -701,7 +701,7 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 void Bitmap::pointStretch(Bitmap *dest,
                           int sx, int sy, int sw, int sh,
                           int dx, int dy, int dw, int dh,
-                          int overx, int overy, int bgr_order)
+                          int overx, int overy, bool bgr_order)
 {
   const int ax = ((float)dw / sw) * 256;
   const int ay = ((float)dh / sh) * 256;
@@ -1102,7 +1102,7 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, bool tile)
 // adapted from graphic gems code
 void Bitmap::fastStretch(Bitmap *dest,
                          int xs1, int ys1, int xs2, int ys2,
-                         int xd1, int yd1, int xd2, int yd2, int bgr_order)
+                         int xd1, int yd1, int xd2, int yd2, bool bgr_order)
 {
   xs2 += xs1;
   xs2--;

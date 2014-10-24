@@ -175,7 +175,7 @@ inline int blendFast(const int &c1, const int &c2, const int &t)
 // convert internal RGB format to whatever the graphics card needs
 // currently only supporting RGB/BGR as I don't think anything
 // else really exists
-inline int convertFormat(const int &c, const int &bgr_order)
+inline int convertFormat(const int &c, const bool &bgr_order)
 {
   if(bgr_order)
     return makeRgb(getb(c), getg(c), getr(c));

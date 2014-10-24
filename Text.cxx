@@ -51,7 +51,7 @@ void Text::push(View *view)
   Undo::push(stroke->x1,
              stroke->y1,
              (stroke->x2 - stroke->x1) + 1,
-             (stroke->y2 - stroke->y1) + 1, 0);
+             (stroke->y2 - stroke->y1) + 1, false);
 
   // render text to image
   Bitmap *dest = Project::bmp;

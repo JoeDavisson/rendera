@@ -82,7 +82,7 @@ namespace JpegQuality
   {
     dialog->show();
 
-    while(1)
+    while(true)
     {
       Fl_Widget *action = Fl::readqueue();
 
@@ -268,22 +268,22 @@ namespace Editor
   Fl_Button *done;
 
   int ramp_begin;
-  int ramp_started;
-  int begin_undo;
+  int ramp_state;
+  bool begin_undo;
   int oldsvx, oldsvy;
   Palette *undo_palette;
 
   void storeUndo()
   {
     Project::palette->copy(undo_palette);
-    begin_undo = 1;
+    begin_undo = true;
   }
 
   void getUndo()
   {
     if(begin_undo)
     {
-      begin_undo = 0;
+      begin_undo = false;
       undo_palette->copy(Project::palette);
       Project::palette->draw(palette);
       Gui::drawPalette();
@@ -363,7 +363,7 @@ namespace Editor
     int begin, end;
     Palette *pal = Project::palette;
 
-    if(ramp_started > 0)
+    if(ramp_state > 0)
     {
       storeUndo();
       begin = ramp_begin;
@@ -372,7 +372,7 @@ namespace Editor
         std::swap(begin, end);
       int num = end - begin;
 
-      if(ramp_started == 1)
+      if(ramp_state == 1)
       {
         // rgb ramp
         int c1 = pal->data[begin];
@@ -395,7 +395,7 @@ namespace Editor
         rgb_ramp->value(0);
         rgb_ramp->redraw();
       }
-      else if(ramp_started == 2)
+      else if(ramp_state == 2)
       {
         // hsv ramp
         int c1 = pal->data[begin];
@@ -427,7 +427,7 @@ namespace Editor
         hsv_ramp->redraw();
       }
 
-      ramp_started = 0;
+      ramp_state = 0;
       Project::palette->draw(palette);
       Gui::drawPalette();
 
@@ -499,21 +499,21 @@ namespace Editor
 
   void rgbRamp()
   {
-    if(!ramp_started)
+    if(ramp_state == 0)
     {
       rgb_ramp->value(1);
       rgb_ramp->redraw();
-      ramp_started = 1;
+      ramp_state = 1;
     }
   }
 
   void hsvRamp()
   {
-    if(!ramp_started)
+    if(ramp_state == 0)
     {
       hsv_ramp->value(1);
       hsv_ramp->redraw();
-      ramp_started = 2;
+      ramp_state = 2;
     }
   }
 
@@ -523,9 +523,9 @@ namespace Editor
     setHsvSliders();
     setHsv(1);
     dialog->show();
-    begin_undo = 0;
+    begin_undo = false;
     ramp_begin = 0;
-    ramp_started = 0;
+    ramp_state = 0;
   }
 
   void close()

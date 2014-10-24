@@ -43,7 +43,7 @@ public:
   void move();
   void zoomIn(int, int);
   void zoomOut(int, int);
-  void zoomFit(int);
+  void zoomFit(bool);
   void zoomOne();
   void scroll(int, int);
 
@@ -55,18 +55,18 @@ public:
   int oldimgx, oldimgy;
   int ox, oy;
   float zoom;
-  int fit;
-  int moving;
+  bool fit;
+  bool moving;
   int grid, gridx, gridy;
   int px, py, pw, ph;
   int bx, by, bw, bh;
   int lastbx, lastby, lastbw, lastbh;
   float aspect, winaspect;
-  int bgr_order;
+  bool bgr_order;
   int button;
   int button1, button2, button3;
-  int dclick;
-  int shift;
+  bool dclick;
+  bool shift;
 protected:
   virtual void draw();
 };

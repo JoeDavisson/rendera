@@ -235,7 +235,7 @@ int Palette::load(const char *fn)
   int len = 0;
   int i;
 
-  while(1)
+  while(true)
   {
     for(i = 0; i < 255; i++)
     {

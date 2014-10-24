@@ -203,7 +203,7 @@ namespace
     float soft_trans = 255;
     const int j = (3 << brush->edge);
     float soft_step = (float)(255 - brush->trans) / ((j >> 1) + 1);
-    int found = 0;
+    bool found = false;
 
     for(i = 0; i < j; i++)
     {
@@ -222,7 +222,7 @@ namespace
           *s3 &= 1;
 
           if(*s0 | *s1 | *s2 | *s3)
-            found = 1;
+            found = true;
 
           const unsigned char d0 = *s0;
           const unsigned char d1 = *s1;
@@ -242,7 +242,7 @@ namespace
         }
       }
 
-      if(found == 0)
+      if(!found)
         break;
 
       soft_trans -= soft_step;
@@ -338,7 +338,7 @@ namespace
     float soft_trans = brush->trans;
     const int j = (3 << brush->edge);
     float soft_step = (float)(255 - brush->trans) / ((j >> 1) + 1);
-    int found = 0;
+    bool found = false;
     int inc = 0;
 
     for(y = stroke->y1; y <= stroke->y2; y++)
@@ -371,7 +371,7 @@ namespace
           *s3 &= 1;
 
           if(*s0 | *s1 | *s2 | *s3)
-            found = 1;
+            found = true;
 
           const unsigned char d0 = *s0;
           const unsigned char d1 = *s1;
@@ -400,7 +400,7 @@ namespace
         }
       }
 
-      if(found == 0)
+      if(!found)
         break;
 
       soft_trans += soft_step;
@@ -419,7 +419,7 @@ namespace
     float soft_trans = 255;
     const int j = (3 << brush->edge);
     float soft_step = (float)(255 - brush->trans) / ((j >> 1) + 1);
-    int found = 0;
+    bool found = false;
     int t;
 
     for(i = 0; i < j; i++)
@@ -439,7 +439,7 @@ namespace
           *s3 &= 1;
 
           if(*s0 | *s1 | *s2 | *s3)
-            found = 1;
+            found = true;
 
           unsigned char d0 = *s0;
           unsigned char d1 = *s1;
@@ -490,7 +490,7 @@ namespace
         }
       }
 
-      if(found == 0)
+      if(!found)
         break;
 
       soft_trans -= soft_step;
@@ -550,7 +550,7 @@ void Render::begin()
   Undo::push(stroke->x1,
              stroke->y1,
              (stroke->x2 - stroke->x1) + 1,
-             (stroke->y2 - stroke->y1) + 1, 0);
+             (stroke->y2 - stroke->y1) + 1, false);
 
   switch(Gui::getPaintMode())
   {
