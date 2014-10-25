@@ -260,8 +260,8 @@ void Stroke::drawBrushAA(int x, int y, int c)
 
   for(i = 0; i < brush->solid_count; i++)
   {
-    map->setpixelAA((x + brush->solidx[i] << 2),
-                    (y + brush->solidy[i] << 2), c);
+    map->setpixelAA((x + brush->solidx[i]) << 2,
+                    (y + brush->solidy[i]) << 2, c);
   }
 }
 
