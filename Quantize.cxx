@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Project.H"
 #include "Quantize.H"
 #include "Widget.H"
+#include "sort_by.H"
 
 namespace
 {
@@ -48,15 +49,6 @@ namespace
     c->b = b;
     c->freq = freq;
     c->active = true;
-  }
-
-  // qsort callback to sort palette
-  int compareLum(const void *a, const void *b)
-  {
-    int c1 = *(int *)a;
-    int c2 = *(int *)b;
-
-    return getl(c1) - getl(c2);
   }
 
   // compute quantization error
@@ -389,7 +381,12 @@ void Quantize::pca(Bitmap *src, int size)
   Project::palette->max = index;
 
   // sort palette
-  qsort(Project::palette->data, Project::palette->max, sizeof(int), compareLum);
+  {
+    int
+      *first = Project::palette->data ,
+      *last  = Project::palette->data + Project::palette->max ;
+    ::rendera::sort_by( first, last, getl );
+  }
 
   // stretch palette
   if(Project::palette->max != size)
