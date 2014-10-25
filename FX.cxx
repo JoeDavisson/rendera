@@ -136,6 +136,8 @@ namespace Normalize
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         rgba_t rgba = getRgba(bmp->getpixel(x, y));
@@ -144,7 +146,7 @@ namespace Normalize
         const int g = (rgba.g - g_low) * g_scale;
         const int b = (rgba.b - b_low) * b_scale;
 
-        bmp->setpixel(x, y, makeRgba(r, g, b, rgba.a), 0);
+        *p++ = makeRgba(r, g, b, rgba.a);
       }
 
       if(updateProgress(y) < 0)
@@ -213,6 +215,8 @@ namespace Equalize
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         rgba_t rgba = getRgba(bmp->getpixel(x, y));
@@ -225,7 +229,7 @@ namespace Equalize
         g = list_g[g] * scale;
         b = list_b[b] * scale;
 
-        bmp->setpixel(x, y, makeRgba(r, g, b, rgba.a), 0);
+        *p++ = makeRgba(r, g, b, rgba.a);
       }
 
       if(updateProgress(y) < 0)
@@ -328,6 +332,8 @@ namespace ValueStretch
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         rgba_t rgba = getRgba(bmp->getpixel(x, y));
@@ -348,7 +354,7 @@ namespace ValueStretch
         g = std::min(std::max(g, 0), 255);
         b = std::min(std::max(b, 0), 255);
 
-        bmp->setpixel(x, y, makeRgba(r, g, b, rgba.a), 0);
+        *p++ = makeRgba(r, g, b, rgba.a);
       }
 
       if(updateProgress(y) < 0)
@@ -415,6 +421,8 @@ namespace Saturate
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         const int c = bmp->getpixel(x, y);
@@ -437,7 +445,7 @@ namespace Saturate
           s = temp;
 
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
-        bmp->setpixel(x, y, Blend::keepLum(makeRgba(r, g, b, rgba.a), l), 0);
+        *p++ = Blend::keepLum(makeRgba(r, g, b, rgba.a), l);
       }
 
       if(updateProgress(y) < 0)
@@ -475,15 +483,14 @@ namespace RotateHue
 
     int hh = amount * 4.277;
 
-    int keep_lum = 0;
-
-    if(preserve->value())
-      keep_lum = 1;
+    bool keep_lum = preserve->value();
 
     beginProgress();
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         int c = bmp->getpixel(x, y);
@@ -506,9 +513,9 @@ namespace RotateHue
         c = makeRgba(r, g, b, rgba.a);
 
         if(keep_lum)
-          bmp->setpixel(x, y, Blend::keepLum(c, l), 0);
+          *p++ = Blend::keepLum(c, l);
         else
-          bmp->setpixel(x, y, c, 0);
+          *p++ = c;
       }
 
       if(updateProgress(y) < 0)
@@ -575,11 +582,13 @@ namespace Invert
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         int c = bmp->getpixel(x, y);
 
-        bmp->setpixel(x, y, Blend::invert(c, 0, 0), 0);
+        *p++ = Blend::invert(c, 0, 0);
       }
 
       if(updateProgress(y) < 0)
@@ -611,6 +620,8 @@ namespace CorrectionMatrix
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         const int c = bmp->getpixel(x, y);
@@ -640,8 +651,7 @@ namespace CorrectionMatrix
         Blend::rgbToHsv(ra, ga, ba, &h, &s, &v);
         Blend::hsvToRgb(h, sat, val, &ra, &ga, &ba);
 
-        bmp->setpixel(x, y,
-          Blend::keepLum(makeRgba(ra, ga, ba, rgba.a), l), 0);
+        *p++ = Blend::keepLum(makeRgba(ra, ga, ba, rgba.a), l);
       }
 
       if(updateProgress(y) < 0)
@@ -667,6 +677,7 @@ namespace Restore
   Fl_Check_Button *normalize;
   Fl_Check_Button *invert;
   Fl_Check_Button *correct;
+  Fl_Check_Button *color_only;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -678,6 +689,8 @@ namespace Restore
     float gg = 0;
     float bb = 0;
     int count = 0;
+
+    bool keep_lum = color_only->value();
 
     // determine overall color cast
     for(y = overscroll; y < bmp->h - overscroll; y++)
@@ -708,12 +721,16 @@ namespace Restore
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
-        const struct rgba_t rgba = getRgba(bmp->getpixel(x, y));
+        const int c = bmp->getpixel(x, y);
+        const struct rgba_t rgba = getRgba(c);
         int r = rgba.r;
         int g = rgba.g;
         int b = rgba.b;
+        const int l = getl(c);
 
         // apply adjustments
         r = 255 * powf((float)r / 255, ra);
@@ -724,7 +741,10 @@ namespace Restore
         g = std::max(std::min(g, 255), 0);
         b = std::max(std::min(b, 255), 0);
 
-        bmp->setpixel(x, y, makeRgba(r, g, b, rgba.a), 0);
+        if(keep_lum)
+          *p++ = Blend::keepLum(makeRgba(r, g, b, rgba.a), l);
+        else
+          *p++ = makeRgba(r, g, b, rgba.a);
       }
 
       if(updateProgress(y) < 0)
@@ -778,6 +798,9 @@ namespace Restore
     correct = new Fl_Check_Button(8, y1, 16, 16, "Use Correction Matrix");
     y1 += 16 + 8;
     Dialog::center(correct);
+    color_only = new Fl_Check_Button(8, y1, 16, 16, "Affect Color Only");
+    y1 += 16 + 8;
+    Dialog::center(color_only);
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);
@@ -805,6 +828,8 @@ namespace RemoveDust
 
     for(y = (overscroll + 1); y < bmp->h - (overscroll + 1); y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = (overscroll + 1); x < bmp->w - (overscroll + 1); x++)
       {
         test = bmp->getpixel(x, y);
@@ -831,7 +856,7 @@ namespace RemoveDust
         avg = makeRgba(r / 8, g / 8, b / 8, geta(test));
 
         if((getl(avg) - getl(test)) > amount)
-          bmp->setpixel(x, y, avg, 0);
+          *p++ = avg;
       }
 
       if(updateProgress(y) < 0)
@@ -901,12 +926,14 @@ namespace Desaturate
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         int c = bmp->getpixel(x, y);
         int l = getl(c);
 
-        bmp->setpixel(x, y, makeRgba(l, l, l, geta(c)), 0);
+        *p++ = makeRgba(l, l, l, geta(c));
       }
 
       if(updateProgress(y) < 0)
@@ -935,6 +962,8 @@ namespace Colorize
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         int c1 = bmp->getpixel(x, y);
@@ -961,7 +990,7 @@ namespace Colorize
 
         int c2 = makeRgba(r, g, b, rgba.a);
 
-        bmp->setpixel(x, y, Blend::colorize(c1, c2, 0), 0);
+        *p++ = Blend::colorize(c1, c2, 0);
       }
 
       if(updateProgress(y) < 0)
@@ -993,11 +1022,12 @@ namespace ApplyPalette
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         int c = bmp->getpixel(x, y);
-        bmp->setpixel(x, y,
-          Project::palette->data[(int)Project::palette->lookup(c)], 0);
+        *p++ = Project::palette->data[(int)Project::palette->lookup(c)];
       }
 
       if(updateProgress(y) < 0)
@@ -1222,6 +1252,8 @@ namespace StainedGlass
     // draw segments
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         // find nearest color
@@ -1250,14 +1282,15 @@ namespace StainedGlass
             int h, s, v;
 
             Blend::rgbToHsv(rgba.r, rgba.g, rgba.b, &h, &s, &v);
-            bmp->setpixel(x, y, makeRgba(rgba.r, rgba.g, rgba.b,
-                          std::min(192, s / 2 + 128)), 0);
+            *p = makeRgba(rgba.r, rgba.g, rgba.b, std::min(192, s / 2 + 128));
           }
           else
           {
-            bmp->setpixel(x, y, color[use], 0);
+            *p = color[use];
           }
         }
+
+        p++;
       }
 
       if(updateProgress(y) < 0)
@@ -1286,12 +1319,13 @@ namespace StainedGlass
 
       for(y = overscroll; y < bmp->h - overscroll; y++)
       {
+        int *p = bmp->row[y] + overscroll;
+
         for(x = overscroll; x < bmp->w - overscroll; x++)
         {
           const int c = map->getpixel(x, y);
 
-          if(c)
-            bmp->setpixel(x, y, makeRgb(0, 0, 0), 255 - c);
+          *p++ = Blend::trans(bmp->getpixel(x, y), makeRgb(0, 0, 0), 255 - c);
         }
       }
     }
@@ -1475,6 +1509,8 @@ namespace Sharpen
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
+      int *p = bmp->row[y] + overscroll;
+
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         int i, j;
@@ -1496,10 +1532,13 @@ namespace Sharpen
         const int diff = std::abs(getl(c) - lum);
 
         if(diff < 32)
+        {
+          *p++;
           continue;
+        }
 
-        bmp->setpixel(x, y, Blend::keepLum(c, lum),
-                      scaleVal(255 - amount, 255 - diff));
+        *p++ = Blend::trans(c, Blend::keepLum(c, lum),
+                            scaleVal(255 - amount, 255 - diff));
       }
 
       if(updateProgress(y) < 0)
