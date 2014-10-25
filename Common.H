@@ -26,271 +26,41 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <stdint.h>
 #include "endian.h"
 
-namespace
+namespace Common
 {
-  template< typename UnaryFunc >
-  struct _comparator
+  namespace
   {
-    UnaryFunc unaryfunc_;
-
-    explicit _comparator( UnaryFunc unaryfunc ):unaryfunc_( unaryfunc ){}
-
-    template< typename T >
-    bool
-    operator()( T const&lhs, T const&rhs )
+    template< typename UnaryFunc >
+    struct _comparator
     {
-      return ( unaryfunc_( lhs ) < unaryfunc_( rhs ) ) ;
-    }
-  };
-}
+      UnaryFunc unaryfunc_;
 
-// for palette sorting etc
-template< typename Iter, typename UnaryFunc >
-void
-sortBy( Iter first, Iter last, UnaryFunc unaryfunc )
-{
-  std::sort( first, last, _comparator< UnaryFunc >( unaryfunc ) );
-}
+      explicit _comparator( UnaryFunc unaryfunc ):unaryfunc_( unaryfunc ){}
 
-// sign, used by fastStretch in Bitmap.cxx
-template< typename T >
-inline T sign( T const &v )
-{
-  static T const zero( 0 );
-  return ( zero > v ) ? T( -1 ) : T( 1 );
-}
+      template< typename T >
+      bool
+      operator()( T const&lhs, T const&rhs )
+      {
+        return ( unaryfunc_( lhs ) < unaryfunc_( rhs ) ) ;
+      }
+    };
+  }
 
-// fast random number seed
-extern int seed;
+  // for palette sorting etc
+  template< typename Iter, typename UnaryFunc >
+  void
+  sortBy( Iter first, Iter last, UnaryFunc unaryfunc )
+  {
+    std::sort( first, last, _comparator< UnaryFunc >( unaryfunc ) );
+  }
 
-// fast random number approximation
-inline int rnd32(void)
-{
-  seed = (seed << 17) ^ (seed >> 13) ^ (seed << 5);
-  return seed;
-}
-
-// stuff for extracting all RGBA values quickly (thanks Rubicks!)
-struct rgba_t
-{
-#if 0
-  /*  */
-#elif ( BYTE_ORDER == LITTLE_ENDIAN )
-  uint8_t r ;
-  uint8_t g ;
-  uint8_t b ;
-  uint8_t a ;
-#elif ( BYTE_ORDER == BIG_ENDIAN )
-  uint8_t a ;
-  uint8_t b ;
-  uint8_t g ;
-  uint8_t r ;
-#else
-#  error "unsupported endianness"
-#endif
-};
-
-union un_rgba_t
-{
-  uint32_t uint32_ ;
-  rgba_t rgba_ ;
-};
-
-// get rgba values all at once
-inline rgba_t getRgba( uint32_t const &n )
-{
-  un_rgba_t u ;
-  u.uint32_ = n ;
-  return u.rgba_ ;
-}
-
-// make RGB color with no alpha
-inline int makeRgb(const int &r, const int &g, const int &b)
-{
-  return r | g << 8 | b << 16 | 0xFF000000;
-}
-
-// make RGBA color
-inline int makeRgba(const int &r, const int &g, const int &b, const int &a)
-{
-  return r | g << 8 | b << 16 | a << 24;
-}
-
-// make RGB color, 24-bits only
-inline int makeRgb24(const int &r, const int &g, const int &b)
-{
-  return r | g << 8 | b << 16;
-}
-
-// get red channel
-inline int getr(const int &c)
-{
-  return c & 255;
-}
-
-// get green channel
-inline int getg(const int &c)
-{
-  return (c >> 8) & 255;
-}
-
-// get blue channel
-inline int getb(const int &c)
-{
-  return (c >> 16) & 255;
-}
-
-// get alpha channel
-inline int geta(const int &c)
-{
-  return (c >> 24) & 255;
-}
-
-// get value
-inline int getv(const int &c)
-{
-  return (getr(c) + getg(c) + getb(c)) / 3;
-}
-
-// get rec 601 luminance
-inline int getl(const int &c)
-{
-  return ((76 * getr(c)) + (150 * getg(c)) + (29 * getb(c))) / 255;
-}
-
-// get rec 601 luminance from unpacked RGB values
-inline int getlUnpacked(const int &r, const int &g, const int &b)
-{
-  return (76 * r + 150 * g + 29 * b) / 255;
-}
-
-// scales a gray value to a particular level
-inline int scaleVal(const int &a, const int &b)
-{
-  return (a * (255 - b) / 255) + b;
-}
-
-// get an FLTK color
-inline int getFltkColor(const int &c)
-{
-  return (Fl::get_color(c) >> 8) | 0xFF000000;
-}
-
-// 3D quadratic distance
-inline int diff24(const int &c1, const int &c2)
-{
-  const struct rgba_t rgba1 = getRgba(c1);
-  const struct rgba_t rgba2 = getRgba(c2);
-  const int r = rgba1.r - rgba2.r;
-  const int g = rgba1.g - rgba2.g;
-  const int b = rgba1.b - rgba2.b;
-
-  return r * r + g * g + b * b;
-}
-
-// normal blend approximation (saves a multiply)
-inline int blendFast(const int &c1, const int &c2, const int &t)
-{
-  const int rb =
-    (((((c1 & 0xFF00FF) - (c2 & 0xFF00FF)) * t) >> 8) + c2) & 0xFF00FF;
-  const int g = (((((c1 & 0xFF00) - (c2 & 0xFF00)) * t) >> 8) + c2) & 0xFF00;
-
-  return rb | g | 0xFF000000;
-}
-
-// convert internal RGB format to whatever the graphics card needs
-// currently only supporting RGB/BGR as I don't think anything
-// else really exists
-inline int convertFormat(const int &c, const bool &bgr_order)
-{
-  if(bgr_order)
-    return makeRgb(getb(c), getg(c), getr(c));
-  else
-    return c;
-}
-
-// file access functions
-inline uint8_t parseUint8(unsigned char *&buffer)
-{
-  uint8_t num = buffer[0];
-
-  buffer += 1;
-  return num;
-}
-
-inline uint16_t parseUint16(unsigned char *&buffer)
-{
-  uint16_t num;
-
-#if 0
-  /*  */
-#elif ( BYTE_ORDER == LITTLE_ENDIAN )
-  num = buffer[0] | buffer[1] << 8;
-#elif ( BYTE_ORDER == BIG_ENDIAN )
-  num = buffer[1] | buffer[0] << 8;
-#else
-#  error "unsupported endianness"
-#endif
-
-  buffer += 2;
-  return num;
-}
-
-inline uint32_t parseUint32(unsigned char *&buffer)
-{
-  uint32_t num;
-
-#if 0
-  /*  */
-#elif ( BYTE_ORDER == LITTLE_ENDIAN )
-  num = buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24;
-#elif ( BYTE_ORDER == BIG_ENDIAN )
-  num = buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24;
-#else
-#  error "unsupported endianness"
-#endif
-
-  buffer += 4;
-  return num;
-}
-
-inline void writeUint8(const uint8_t &num, FILE *out)
-{
-  fputc(num, out);
-}
-
-inline void writeUint16(const uint16_t &num, FILE *out)
-{
-#if 0
-  /*  */
-#elif ( BYTE_ORDER == LITTLE_ENDIAN )
-  fputc(num & 0xff, out);
-  fputc((num >> 8) & 0xff, out);
-#elif ( BYTE_ORDER == BIG_ENDIAN )
-  fputc((num >> 8) & 0xff, out);
-  fputc(num & 0xff, out);
-#else
-#  error "unsupported endianness"
-#endif
-}
-
-inline void writeUint32(const uint32_t &num, FILE *out)
-{
-#if 0
-  /*  */
-#elif ( BYTE_ORDER == LITTLE_ENDIAN )
-  fputc(num & 0xff, out);
-  fputc((num >> 8) & 0xff, out);
-  fputc((num >> 16) & 0xff, out);
-  fputc((num >> 24) & 0xff, out);
-#elif ( BYTE_ORDER == BIG_ENDIAN )
-  fputc((num >> 24) & 0xff, out);
-  fputc((num >> 16) & 0xff, out);
-  fputc((num >> 8) & 0xff, out);
-  fputc(num & 0xff, out);
-#else
-#  error "unsupported endianness"
-#endif
+  // sign, used by fastStretch in Bitmap.cxx
+  template< typename T >
+  inline T sign( T const &v )
+  {
+    static T const zero( 0 );
+    return ( zero > v ) ? T( -1 ) : T( 1 );
+  }
 }
 
 #endif

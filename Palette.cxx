@@ -202,7 +202,7 @@ int Palette::lookup(const int &c)
 // sort palette
 void Palette::sort()
 {
-  sortBy(data, data + max, getl);
+  Common::sortBy(data, data + max, getl);
 }
 
 // uses GIMP .gpl palette format

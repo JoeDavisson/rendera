@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 // commonly-used things
 #include "Common.H"
+#include "Inline.H"
 
 #endif
 

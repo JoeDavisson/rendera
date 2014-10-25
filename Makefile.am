@@ -9,70 +9,70 @@ AM_CXXFLAGS = -Wall -Wextra -Werror -pedantic-errors # -rdynamic
 bin_PROGRAMS = rendera
 
 rendera_SOURCES =     \
-  Bitmap.cxx          \
   Bitmap.H            \
-  Blend.cxx           \
+  Bitmap.cxx          \
   Blend.H             \
-  Brush.cxx           \
+  Blend.cxx           \
   Brush.H             \
-  Button.cxx          \
+  Brush.cxx           \
   Button.H            \
-  Crop.cxx            \
+  Button.cxx          \
+  Common.H            \
   Crop.H              \
-  Dialog.cxx          \
+  Crop.cxx            \
   Dialog.H            \
-  FX.cxx              \
+  Dialog.cxx          \
   FX.H                \
-  File.cxx            \
+  FX.cxx              \
   File.H              \
-  GetColor.cxx        \
+  File.cxx            \
   GetColor.H          \
-  Group.cxx           \
+  GetColor.cxx        \
   Group.H             \
-  Gui.cxx             \
+  Group.cxx           \
   Gui.H               \
-  InputInt.cxx        \
-  InputInt.H          \
-  InputFloat.cxx      \
-  InputFloat.H        \
-  Map.cxx             \
-  Map.H               \
-  Octree.cxx          \
-  Octree.H            \
-  Offset.cxx          \
-  Offset.H            \
-  Paint.cxx           \
-  Paint.H             \
-  Palette.cxx         \
-  Palette.H           \
-  Project.cxx         \
-  Project.H           \
-  Quantize.cxx        \
-  Quantize.H          \
-  Render.cxx          \
-  Render.H            \
-  Separator.cxx       \
-  Separator.H         \
-  Stroke.cxx          \
-  Stroke.H            \
-  Text.cxx            \
-  Text.H              \
-  ToggleButton.cxx    \
-  ToggleButton.H      \
-  Tool.cxx            \
-  Tool.H              \
-  Transform.cxx       \
-  Transform.H         \
-  Undo.cxx            \
-  Undo.H              \
-  View.cxx            \
-  View.H              \
-  Widget.cxx          \
-  Widget.H            \
+  Gui.cxx             \
   Inline.H            \
+  InputFloat.H        \
+  InputFloat.cxx      \
+  InputInt.H          \
+  InputInt.cxx        \
   Main.cxx            \
+  Map.H               \
+  Map.cxx             \
+  Octree.H            \
+  Octree.cxx          \
+  Offset.H            \
+  Offset.cxx          \
+  Paint.H             \
+  Paint.cxx           \
+  Palette.H           \
+  Palette.cxx         \
+  Project.H           \
+  Project.cxx         \
+  Quantize.H          \
+  Quantize.cxx        \
+  Render.H            \
+  Render.cxx          \
   Rendera.H           \
-  sort_by.H
+  Separator.H         \
+  Separator.cxx       \
+  Stroke.H            \
+  Stroke.cxx          \
+  Text.H              \
+  Text.cxx            \
+  ToggleButton.H      \
+  ToggleButton.cxx    \
+  Tool.H              \
+  Tool.cxx            \
+  Transform.H         \
+  Transform.cxx       \
+  Undo.H              \
+  Undo.cxx            \
+  View.H              \
+  View.cxx            \
+  Widget.H            \
+  Widget.cxx          
 
 
 rendera_LDFLAGS = $(shell fltk-config --ldflags)
