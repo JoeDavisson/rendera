@@ -23,16 +23,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Octree.H"
 #include "Palette.H"
 #include "Widget.H"
+#include "sort_by.H"
 
 namespace
 {
-  // qsort callback to sort palette
-  int compareLum(const void *a, const void *b)
+  void _sort( Palette*p )
   {
-    int c1 = *(int *)a;
-    int c2 = *(int *)b;
-
-    return getl(c1) - getl(c2);
+    int*first = p->data ;
+    int*last  = first + p->max ;
+    ::rendera::sort_by( first, last, getl );
   }
 }
 
@@ -212,10 +211,7 @@ int Palette::lookup(const int &c)
 }
 
 // sort palette
-void Palette::sort()
-{
-  qsort(data, max, sizeof(int), compareLum);
-}
+void Palette::sort(){ _sort( this ); }
 
 // uses GIMP .gpl palette format
 int Palette::load(const char *fn)
