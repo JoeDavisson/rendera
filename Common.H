@@ -22,9 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define COMMON_H
 
 #include <algorithm>
-#include <climits>
-#include <stdint.h>
-#include "endian.h"
 
 namespace Common
 {
