@@ -258,7 +258,7 @@ void File::load(Fl_Widget *, void *)
   delete Project::map;
   Project::map = new Map(Project::bmp->w, Project::bmp->h);
 
-  Gui::getView()->tool->stroke->clip();
+  Project::stroke->clip();
   Gui::getView()->zoomFit(Gui::getView()->fit);
   Gui::getView()->drawMain(true);
   Undo::reset();
@@ -321,7 +321,7 @@ int File::loadFile(const char *fn)
   delete Project::map;
   Project::map = new Map(Project::bmp->w, Project::bmp->h);
 
-  Gui::getView()->tool->stroke->clip();
+  Project::stroke->clip();
   Gui::getView()->zoomFit(Gui::getView()->fit);
   Gui::getView()->drawMain(true);
   Undo::reset();

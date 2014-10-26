@@ -81,3 +81,12 @@ void GetColor::redraw(View *)
 {
 }
 
+bool GetColor::isActive()
+{
+  return false;
+}
+
+void GetColor::reset()
+{
+}
+

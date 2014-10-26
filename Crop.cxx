@@ -30,6 +30,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
+  int beginx = 0, beginy = 0, lastx = 0, lasty = 0;
+  int state = 0;
+  bool active = false;
+  bool drag_started = false;
+  bool resize_started = false;
+  int side = 0;
+  int offset = 0;
+
   bool inbox(int x, int y, int x1, int y1, int x2, int y2)
   {
     if(x1 > x2)
@@ -70,9 +78,6 @@ namespace
 
 Crop::Crop()
 {
-  drag_started = false;
-  resize_started = false;
-  side = 0;
 }
 
 Crop::~Crop()
@@ -134,6 +139,8 @@ void Crop::push(View *view)
 
 void Crop::drag(View *view)
 {
+  Stroke *stroke = Project::stroke;
+
   if(state == 1)
   {
     drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
@@ -260,6 +267,8 @@ void Crop::done(View *view)
 
 void Crop::redraw(View *view)
 {
+  Stroke *stroke = Project::stroke;
+
   if(active)
   {
     active = false;
@@ -270,4 +279,16 @@ void Crop::redraw(View *view)
     active = true;
   }
 }
+
+bool Crop::isActive()
+{
+  return active;
+}
+
+void Crop::reset()
+{
+  active = false;
+  state = 0;
+}
+
 

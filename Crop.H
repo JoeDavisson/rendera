@@ -38,12 +38,8 @@ public:
   virtual void move(View *);
   virtual void done(View *);
   virtual void redraw(View *);
-
-private:
-  bool drag_started;
-  bool resize_started;
-  int side;
-  int offset;
+  virtual bool isActive();
+  virtual void reset();
 };
 
 #endif

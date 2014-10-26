@@ -38,6 +38,8 @@ public:
   virtual void move(View *);
   virtual void done(View *);
   virtual void redraw(View *);
+  virtual bool isActive();
+  virtual void reset();
 };
 
 #endif

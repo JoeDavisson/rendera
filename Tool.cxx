@@ -18,27 +18,13 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "Bitmap.H"
-#include "Brush.H"
-#include "Stroke.H"
 #include "Tool.H"
-#include "Undo.H"
-
-Tool *Tool::paint;
-Tool *Tool::getcolor;
-Tool *Tool::crop;
-Tool *Tool::offset;
-Tool *Tool::text;
 
 Tool::Tool()
 {
-  stroke = new Stroke();
-  state = 0;
-  active = false;
 }
 
 Tool::~Tool()
 {
-  delete stroke;
 }
 

@@ -39,6 +39,7 @@ namespace
 
   int oldx1 = 0;
   int oldy1 = 0;
+  bool ignore_tool = 0;
 
   inline void gridSetpixel(const Bitmap *bmp, const int &x, const int &y,
                            const int &c, const int &t)
@@ -101,8 +102,6 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   gridy = 8;
   oldimgx = 0;
   oldimgy = 0;
-
-  tool = Tool::paint;
 
   backbuf = new Bitmap(Fl::w(), Fl::h());
   bgr_order = false;
@@ -198,7 +197,7 @@ int View::handle(int event)
             break;
           }
 
-          tool->push(this);
+          Project::tool->push(this);
           break;
         case 2:
           if(!moving)
@@ -222,7 +221,7 @@ int View::handle(int event)
       switch(button)
       {
         case 1:
-          tool->drag(this);
+          Project::tool->drag(this);
           break;
         case 2:
           if(moving)
@@ -238,27 +237,27 @@ int View::handle(int event)
 
     case FL_RELEASE:
     {
-      tool->release(this);
+      Project::tool->release(this);
 
       if(moving)
       {
         moving = false;
 
-        if(tool->active)
-          tool->redraw(this);
+        if(Project::tool->isActive())
+          Project::tool->redraw(this);
         else
           drawMain(true);
       }
 
-      if(tool->state > 0)
-        tool->redraw(this);
+      if(Project::tool->isActive())
+        Project::tool->redraw(this);
 
       return 1;
     }
 
     case FL_MOVE:
     {
-      tool->move(this);
+      Project::tool->move(this);
 
       oldimgx = imgx;
       oldimgy = imgy;
@@ -279,8 +278,8 @@ int View::handle(int event)
         zoomIn(mousex, mousey);
       }
 
-      if(tool->active)
-        tool->redraw(this);
+      if(Project::tool->isActive())
+        Project::tool->redraw(this);
 
       return 1;
     }
@@ -289,8 +288,7 @@ int View::handle(int event)
     {
       if(Fl::event_key() == FL_Escape)
       {
-        tool->active = false;
-        tool->state = 0;
+        Project::tool->reset();
         drawMain(true);
         break;
       }
@@ -376,6 +374,7 @@ void View::resize(int x, int y, int w, int h)
   if(fit)
     zoomFit(true);
 
+  ignore_tool = true;
   drawMain(true);
 }
 
@@ -490,7 +489,7 @@ void View::drawCloneCursor()
   int x1 = imgx - dx;
   int y1 = imgy - dy;
 
-  if(tool->active)
+  if(Project::tool->isActive())
   {
     switch(mirror)
     {
@@ -579,10 +578,8 @@ void View::beginMove()
 
   backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
-  bool temp = tool->active;
-  tool->active = false;
+  ignore_tool = true;
   redraw();
-  tool->active = temp;
 }
 
 void View::move()
@@ -629,10 +626,8 @@ void View::move()
   backbuf->xorRect(lastbx, lastby, lastbx + lastbw - 1, lastby + lastbh - 1);
   backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
-  bool temp = tool->active;
-  tool->active = false;
+  ignore_tool = true;
   redraw();
-  tool->active = temp;
 
   lastbx = bx;
   lastby = by;
@@ -666,10 +661,10 @@ void View::zoomIn(int x, int y)
       oy = 0;
   }
 
-  drawMain(true);
-
-  if(tool->state > 0)
-    tool->redraw(this);
+  if(Project::tool->isActive())
+    Project::tool->redraw(this);
+  else
+    drawMain(true);
 
   Gui::checkZoom();
 }
@@ -703,8 +698,10 @@ void View::zoomOut(int x, int y)
 
   drawMain(true);
 
-  if(tool->state > 0)
-    tool->redraw(this);
+  if(Project::tool->isActive())
+    Project::tool->redraw(this);
+  else
+    drawMain(true);
 
   Gui::checkZoom();
 }
@@ -801,36 +798,43 @@ void View::scroll(int dir, int amount)
     }
   }
 
-  if(tool->active)
-    tool->redraw(this);
+  if(Project::tool->isActive())
+    Project::tool->redraw(this);
   else
     drawMain(true);
 }
 
 void View::draw()
 {
-  if(tool->active)
+  if(Project::tool->isActive())
   {
-    int blitx = tool->stroke->blitx;
-    int blity = tool->stroke->blity;
-    int blitw = tool->stroke->blitw;
-    int blith = tool->stroke->blith;
+    if(ignore_tool)
+    {
+      ignore_tool = false;
+    }
+    else
+    {
+      int blitx = Project::stroke->blitx;
+      int blity = Project::stroke->blity;
+      int blitw = Project::stroke->blitw;
+      int blith = Project::stroke->blith;
 
-    if(blitx < 0)
-      blitx = 0;
-    if(blity < 0)
-      blity = 0;
-    if(blitx + blitw > w() - 1)
-      blitw = w() - 1 - blitx;
-    if(blity + blith > h() - 1)
-      blith = h() - 1 - blity;
-    if(blitw < 1 || blith < 1)
-      return;
+      if(blitx < 0)
+        blitx = 0;
+      if(blity < 0)
+        blity = 0;
+      if(blitx + blitw > w() - 1)
+        blitw = w() - 1 - blitx;
+      if(blity + blith > h() - 1)
+        blith = h() - 1 - blity;
+      if(blitw < 1 || blith < 1)
+        return;
 
-    screenBlit(blitx, blity, x() + blitx, y() + blity, blitw, blith);
+      screenBlit(blitx, blity, x() + blitx, y() + blity, blitw, blith);
 
-    if(Gui::getClone())
-      drawCloneCursor();
+      if(Gui::getClone())
+        drawCloneCursor();
+    }
   }
   else
   {

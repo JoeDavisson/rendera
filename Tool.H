@@ -30,8 +30,14 @@ class View;
 class Tool
 {
 public:
-  Tool();
-  virtual ~Tool();
+  enum
+  {
+    PAINT,
+    GETCOLOR,
+    CROP,
+    OFFSET,
+    TEXT
+  };
 
   // called when mouse button is initially pressed
   virtual void push(View *) = 0;
@@ -52,18 +58,11 @@ public:
   // call this to redraw tool
   virtual void redraw(View *) = 0;
 
-  // vars
-  Stroke *stroke;
-  int beginx, beginy, lastx, lasty;
-  int state;
-  bool active;
+  // is tool active?
+  virtual bool isActive() = 0;
 
-  // extended tools
-  static Tool *paint;
-  static Tool *getcolor;
-  static Tool *crop;
-  static Tool *offset;
-  static Tool *text;
+  // reset tool
+  virtual void reset() = 0;
 };
 
 #endif

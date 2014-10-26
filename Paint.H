@@ -38,10 +38,8 @@ public:
   virtual void move(View *);
   virtual void done(View *);
   virtual void redraw(View *);
-
-private:
-  int render_pos, render_end, render_count;
-  float soft_trans, soft_step;
+  virtual bool isActive();
+  virtual void reset();
 };
 
 #endif

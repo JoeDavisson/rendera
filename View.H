@@ -35,6 +35,7 @@ public:
   virtual int handle(int);
   virtual void resize(int, int, int, int);
   virtual void redraw();
+
   void drawMove();
   void drawMain(bool);
   void drawGrid();
@@ -49,7 +50,6 @@ public:
 
   Fl_Group *group;
   Bitmap *backbuf;
-  Tool *tool;
   int mousex, mousey;
   int imgx, imgy;
   int oldimgx, oldimgy;
@@ -67,6 +67,7 @@ public:
   int button1, button2, button3;
   bool dclick;
   bool shift;
+
 protected:
   virtual void draw();
 };

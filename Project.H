@@ -27,6 +27,8 @@ class Bitmap;
 class Brush;
 class Map;
 class Palette;
+class Tool;
+class Stroke;
 
 namespace Project
 {
@@ -36,28 +38,18 @@ namespace Project
     THEME_DARK,
   };
 
-  // main image
   extern Bitmap *bmp;
-
-  // brushstroke image
   extern Map *map;
-
-  // current brush
   extern Brush *brush;
-
-  // palette
   extern Palette *palette;
+  extern Tool *tool;
+  extern Stroke *stroke;
 
-  // overscroll amount
   extern int overscroll;
-
-  // current theme
   extern int theme;
 
-  // initialize stuff
   void init();
-
-  // create main image and brushstroke map
+  void setTool(int);
   void newImage(int, int);
 }
 

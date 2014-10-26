@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Gui.H"
 #include "Palette.H"
+#include "Project.H"
 #include "Stroke.H"
 #include "Tool.H"
 #include "View.H"
@@ -509,7 +510,7 @@ void Bitmap::setpixelClone(const int &x, const int &y,
       break;
   }
 
-  Stroke *stroke = Gui::getView()->tool->stroke;
+  Stroke *stroke = Project::stroke;
 
   int c2;
 
@@ -575,7 +576,7 @@ void Bitmap::setpixelWrapClone(const int &x, const int &y,
   while(y1 > cb)
     y1 -= ch;
 
-  Stroke *stroke = Gui::getView()->tool->stroke;
+  Stroke *stroke = Project::stroke;
 
   int c2;
 

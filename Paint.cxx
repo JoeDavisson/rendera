@@ -31,6 +31,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.H"
 #include "View.H"
 
+namespace
+{
+  int state = 0;
+  bool active = 0;
+
+  int render_pos = 0, render_end = 0, render_count = 0;
+  float soft_trans = 0, soft_step = 0;
+}
+
 Paint::Paint()
 {
 }
@@ -41,6 +50,8 @@ Paint::~Paint()
 
 void Paint::push(View *view)
 {
+  Stroke *stroke = Project::stroke;
+
   if(active && stroke->type == 3)
   {
     if(view->dclick)
@@ -72,6 +83,8 @@ void Paint::push(View *view)
 
 void Paint::drag(View *view)
 {
+  Stroke *stroke = Project::stroke;
+
   if(stroke->type != 3)
   {
     stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
@@ -83,6 +96,8 @@ void Paint::drag(View *view)
 
 void Paint::release(View *view)
 {
+  Stroke *stroke = Project::stroke;
+
   if(active && stroke->type != 3)
   {
     stroke->end(view->imgx, view->imgy);
@@ -97,6 +112,8 @@ void Paint::release(View *view)
 
 void Paint::move(View *view)
 {
+  Stroke *stroke = Project::stroke;
+
   switch(stroke->type)
   {
     case 3:
@@ -136,6 +153,8 @@ void Paint::done(View *)
 
 void Paint::redraw(View *view)
 {
+  Stroke *stroke = Project::stroke;
+
   if(active)
   {
     active = false;
@@ -144,5 +163,16 @@ void Paint::redraw(View *view)
     view->redraw();
     active = true;
   }
+}
+
+bool Paint::isActive()
+{
+  return active;
+}
+
+void Paint::reset()
+{
+  active = false;
+  state = 0;
 }
 

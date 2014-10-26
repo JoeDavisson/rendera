@@ -716,7 +716,7 @@ void Gui::checkPaintShape(Widget *, void *)
 
 void Gui::checkPaintStroke(Widget *, void *var)
 {
-  view->tool->stroke->type = *(int *)var;
+  Project::stroke->type = *(int *)var;
 }
 
 void Gui::checkPaintEdge(Widget *, void *var)
@@ -734,32 +734,31 @@ void Gui::checkTool(Widget *, void *var)
 
   switch(*(int *)var)
   {
-    case 0:
-      view->tool = Tool::paint;
+    case Tool::PAINT:
+      Project::setTool(Tool::PAINT);
       paint_brush->do_callback();
       paint_shape->do_callback();
       paint->show();
       break;
-    case 1:
-      view->tool = Tool::getcolor;
+    case Tool::GETCOLOR:
+      Project::setTool(Tool::GETCOLOR);
       getcolor->show();
       break;
-    case 2:
-      view->tool = Tool::crop;
+    case Tool::CROP:
+      Project::setTool(Tool::CROP);
       crop->show();
       break;
-    case 3:
-      view->tool = Tool::offset;
+    case Tool::OFFSET:
+      Project::setTool(Tool::OFFSET);
       offset->show();
       break;
-    case 4:
-      view->tool = Tool::text;
+    case Tool::TEXT:
+      Project::setTool(Tool::TEXT);
       text->show();
       break;
   }
 
-  view->tool->active = false;
-  view->tool->state = 0;
+  Project::tool->reset();
 
   view->drawMain(true);
 }
@@ -874,17 +873,17 @@ void Gui::checkMirror(Widget *, void *var)
 
 void Gui::checkOrigin(Widget *, void *var)
 {
-  view->tool->stroke->origin = *(int *)var;
+  Project::stroke->origin = *(int *)var;
 }
 
 void Gui::checkConstrain(Widget *, void *var)
 {
-  view->tool->stroke->constrain = *(int *)var;
+  Project::stroke->constrain = *(int *)var;
 }
 
 void Gui::checkCropDo()
 {
-  view->tool->done(view);
+  Project::tool->done(view);
 }
 
 void Gui::checkCropValues(int x, int y, int w, int h)
@@ -924,8 +923,7 @@ void Gui::checkOffsetValues(int x, int y)
 void Gui::textStartOver()
 {
   // start text tool over if font changed
-  view->tool->state = 0;
-  view->tool->active = false;
+  Project::tool->reset();
 }
 
 int Gui::getFontFace()
@@ -985,6 +983,8 @@ void Gui::palette332()
 
 void Gui::checkClear()
 {
+  Undo::push(0, 0, 0, 0, 1);
+
   Bitmap *bmp = Project::bmp;
 
   bmp->rectfill(bmp->cl, bmp->ct, bmp->cr, bmp->cb, Project::brush->color, 0);

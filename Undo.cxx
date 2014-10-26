@@ -149,7 +149,7 @@ void Undo::pop()
                                    undo_stack[undo_current]->h);
   }
 
-  Gui::getView()->tool->active = false;
+  Project::tool->reset();
   Gui::getView()->drawMain(true);
 }
 

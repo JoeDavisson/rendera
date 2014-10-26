@@ -132,12 +132,6 @@ int main(int argc, char *argv[])
   for(i = 0; i < 256; i++)
     fix_gamma[i] = std::pow((double)i / 255, 2.2) * 65535;
 
-  Tool::paint = new Paint();
-  Tool::getcolor = new GetColor();
-  Tool::crop = new Crop();
-  Tool::offset = new Offset();
-  Tool::text = new Text();
-
   Project::init();
   File::init();
   Undo::init();

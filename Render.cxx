@@ -529,7 +529,7 @@ void Render::begin()
   bmp = Project::bmp;
   map = Project::map;
   brush = Project::brush;
-  stroke = view->tool->stroke;
+  stroke = Project::stroke;
 
   int size = 1;
 
