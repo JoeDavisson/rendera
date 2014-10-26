@@ -28,7 +28,7 @@ namespace
   int table_unfix[65536];
 }
 
-int Gamma::fix(int val)
+int Gamma::fix(const int &val)
 {
   if(val >= 0 && val < 256)
     return table_fix[val];
@@ -36,7 +36,7 @@ int Gamma::fix(int val)
     return 0;
 }
 
-int Gamma::unfix(int val)
+int Gamma::unfix(const int &val)
 {
   if(val >= 0 && val < 65536)
     return table_unfix[val];

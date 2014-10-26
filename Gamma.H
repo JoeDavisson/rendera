@@ -26,8 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace Gamma
 {
   void init();
-  int fix(int);
-  int unfix(int);
+  int fix(const int &);
+  int unfix(const int &);
 }
 
 #endif

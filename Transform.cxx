@@ -44,7 +44,7 @@ namespace
   {
     bmp = Project::bmp;
     overscroll = bmp->overscroll;
-    Undo::push(overscroll, overscroll, bmp->cw, bmp->ch, true);
+    Undo::push();
   }
 
   void beginProgress()

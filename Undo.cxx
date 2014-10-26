@@ -63,7 +63,46 @@ void Undo::reset()
   undo_current = MAX_UNDO - 1;
 }
 
-void Undo::push(int x, int y, int w, int h, bool resized)
+void Undo::push()
+{
+  int i;
+
+  int x1 = Project::bmp->cl;
+  int y1 = Project::bmp->ct;
+  int x2 = Project::bmp->cr;
+  int y2 = Project::bmp->cb;
+
+  int w = (x2 - x1) + 1;
+  int h = (y2 - y1) + 1;
+
+  if(undo_current < 0)
+  {
+    undo_current = 0;
+
+    Bitmap *temp_bmp = undo_stack[MAX_UNDO - 1];
+    bool temp_resized = undo_resized[MAX_UNDO - 1];
+    for(i = MAX_UNDO - 1; i > 0; i--)
+    {
+      undo_stack[i] = undo_stack[i - 1];
+      undo_resized[i] = undo_resized[i - 1];
+    }
+
+    undo_stack[0] = temp_bmp;
+    undo_resized[0] = temp_resized;
+  }
+
+  undo_resized[undo_current] = true;
+
+  delete undo_stack[undo_current];
+  undo_stack[undo_current] = new Bitmap(w, h);
+  undo_stack[undo_current]->x = x1;
+  undo_stack[undo_current]->y = y1;
+
+  Project::bmp->blit(undo_stack[undo_current], x1, y1, 0, 0, w, h);
+  undo_current--;
+}
+
+void Undo::push(int x, int y, int w, int h)
 {
   int i;
 
@@ -71,14 +110,6 @@ void Undo::push(int x, int y, int w, int h, bool resized)
   int y1 = y;
   int x2 = x + w - 1;
   int y2 = y + h - 1;
-
-  if(resized)
-  {
-    x1 = Project::bmp->cl;
-    y1 = Project::bmp->ct;
-    x2 = Project::bmp->cr;
-    y2 = Project::bmp->cb;
-  }
 
   if(x1 < Project::bmp->cl)
     x1 = Project::bmp->cl;
@@ -108,7 +139,7 @@ void Undo::push(int x, int y, int w, int h, bool resized)
     undo_resized[0] = temp_resized;
   }
 
-  undo_resized[undo_current] = resized;
+  undo_resized[undo_current] = false;
 
   delete undo_stack[undo_current];
   undo_stack[undo_current] = new Bitmap(w, h);

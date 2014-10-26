@@ -44,7 +44,7 @@ Offset::~Offset()
 
 void Offset::push(View *view)
 {
-  Undo::push(0, 0, 0, 0, true);
+  Undo::push();
 
   int w = Project::bmp->cw;
   int h = Project::bmp->ch;

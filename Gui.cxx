@@ -983,7 +983,7 @@ void Gui::palette332()
 
 void Gui::checkClear()
 {
-  Undo::push(0, 0, 0, 0, 1);
+  Undo::push();
 
   Bitmap *bmp = Project::bmp;
 
