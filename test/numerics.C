@@ -1,6 +1,6 @@
 /* rendera/test/numerics.C */
 
-#include "../Rendera.H"
+#include "Rendera.H"
 
 #include <algorithm>
 #include <cassert>
