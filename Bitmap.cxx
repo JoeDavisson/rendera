@@ -1115,8 +1115,8 @@ void Bitmap::fastStretch(Bitmap *dest,
 
   const int dx = std::abs(yd2 - yd1);
   const int dy = std::abs(ys2 - ys1) << 1;
-  const int sx = sign(yd2 - yd1);
-  const int sy = sign(ys2 - ys1);
+  const int sx = Common::sign(yd2 - yd1);
+  const int sy = Common::sign(ys2 - ys1);
   const int dx2 = dx << 1;
 
   int e = dy - dx;
@@ -1126,8 +1126,8 @@ void Bitmap::fastStretch(Bitmap *dest,
   {
     const int dx_1 = std::abs(xd2 - xd1);
     const int dy_1 = std::abs(xs2 - xs1) << 1;
-    const int sx_1 = sign(xd2 - xd1);
-    const int sy_1 = sign(xs2 - xs1);
+    const int sx_1 = Common::sign(xd2 - xd1);
+    const int sy_1 = Common::sign(xs2 - xs1);
     const int dx2_1 = dx_1 << 1;
 
     int e_1 = dy_1 - dx_1;

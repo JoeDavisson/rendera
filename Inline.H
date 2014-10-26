@@ -21,18 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef INLINE_H
 #define INLINE_H
 
-#include <algorithm>
 #include <climits>
 #include <stdint.h>
 #include "endian.h"
-
-// sign, used by fastStretch in Bitmap.cxx
-template< typename T >
-inline T sign( T const &v )
-{
-    static T const zero( 0 );
-    return ( zero > v ) ? T( -1 ) : T( 1 );
-}
 
 // fast random number seed
 extern int seed;

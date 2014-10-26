@@ -23,17 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Octree.H"
 #include "Palette.H"
 #include "Widget.H"
-#include "sort_by.H"
-
-namespace
-{
-  void _sort( Palette*p )
-  {
-    int*first = p->data ;
-    int*last  = first + p->max ;
-    ::rendera::sort_by( first, last, getl );
-  }
-}
 
 Palette::Palette()
 {
@@ -211,7 +200,10 @@ int Palette::lookup(const int &c)
 }
 
 // sort palette
-void Palette::sort(){ _sort( this ); }
+void Palette::sort()
+{
+  Common::sortBy(data, data + max, getl);
+}
 
 // uses GIMP .gpl palette format
 int Palette::load(const char *fn)

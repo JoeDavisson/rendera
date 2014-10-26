@@ -105,7 +105,7 @@ main( int, char** )
     {
         timespec start = _now();
         for( size_t i = 0; i != n; ++i ){
-            b = sign( a );
+            b = Common::sign( a );
         }
         std::cout
             << std::endl
@@ -130,30 +130,30 @@ main( int, char** )
     assert(  1 == FAST_SIGN(long (  0)) );
 
     /* sign works for all numeric type, returns the type it was passed */
-    assert( typeid(char)   == typeid(sign(char   (-42))));
-    assert( typeid(int)    == typeid(sign(int    (-42))));
-    assert( typeid(short)  == typeid(sign(short  (-42))));
-    assert( typeid(long)   == typeid(sign(long   (-42))));
-    assert( typeid(float)  == typeid(sign(float  (-42))));
-    assert( typeid(double) == typeid(sign(double (-42))));
+    assert( typeid(char)   == typeid(Common::sign(char   (-42))));
+    assert( typeid(int)    == typeid(Common::sign(int    (-42))));
+    assert( typeid(short)  == typeid(Common::sign(short  (-42))));
+    assert( typeid(long)   == typeid(Common::sign(long   (-42))));
+    assert( typeid(float)  == typeid(Common::sign(float  (-42))));
+    assert( typeid(double) == typeid(Common::sign(double (-42))));
 
     /* homogeneous type comparisons */
-    assert( -1 == sign( -42 ) );
-    assert(  1 == sign(  42 ) );
-    assert(  1 == sign(   0 ) );
+    assert( -1 == Common::sign( -42 ) );
+    assert(  1 == Common::sign(  42 ) );
+    assert(  1 == Common::sign(   0 ) );
 
-    assert( -1.0 == sign( -42.0 ) );
-    assert(  1.0 == sign(  42.0 ) );
-    assert(  1.0 == sign(   0.0 ) );
+    assert( -1.0 == Common::sign( -42.0 ) );
+    assert(  1.0 == Common::sign(  42.0 ) );
+    assert(  1.0 == Common::sign(   0.0 ) );
 
     /* heterogenous type comparisons */
-    assert( -1.0 == sign( -42 ) );
-    assert(  1.0 == sign(  42 ) );
-    assert(  1.0 == sign(   0 ) );
+    assert( -1.0 == Common::sign( -42 ) );
+    assert(  1.0 == Common::sign(  42 ) );
+    assert(  1.0 == Common::sign(   0 ) );
 
-    assert( -1 == sign( -42.0 ) );
-    assert(  1 == sign(  42.0 ) );
-    assert(  1 == sign(   0.0 ) );
+    assert( -1 == Common::sign( -42.0 ) );
+    assert(  1 == Common::sign(  42.0 ) );
+    assert(  1 == Common::sign(   0.0 ) );
 
 
     return EXIT_SUCCESS ;

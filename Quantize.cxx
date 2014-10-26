@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Project.H"
 #include "Quantize.H"
 #include "Widget.H"
-#include "sort_by.H"
 
 namespace
 {
@@ -381,12 +380,7 @@ void Quantize::pca(Bitmap *src, int size)
   Project::palette->max = index;
 
   // sort palette
-  {
-    int
-      *first = Project::palette->data ,
-      *last  = Project::palette->data + Project::palette->max ;
-    ::rendera::sort_by( first, last, getl );
-  }
+  Project::palette->sort();
 
   // stretch palette
   if(Project::palette->max != size)
