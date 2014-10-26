@@ -22,10 +22,13 @@ rendera_SOURCES =     \
   Crop.cxx            \
   Dialog.H            \
   Dialog.cxx          \
+  FastRnd.H           \
   FX.H                \
   FX.cxx              \
   File.H              \
   File.cxx            \
+  Gamma.H             \
+  Gamma.cxx           \
   GetColor.H          \
   GetColor.cxx        \
   Group.H             \
