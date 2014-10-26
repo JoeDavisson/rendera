@@ -18,8 +18,6 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include <cmath>
-
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Brush.H"
@@ -27,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Dialog.H"
 #include "FX.H"
 #include "File.H"
+#include "Gamma.H"
 #include "GetColor.H"
 #include "Gui.H"
 #include "Map.H"
@@ -40,13 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Transform.H"
 #include "Undo.H"
 #include "Widget.H"
-
-// for fast random number generator in inline.h
-int seed = 12345;
-
-// gamma correction tables
-int *fix_gamma;
-int *unfix_gamma;
 
 namespace
 {
@@ -121,17 +113,7 @@ int main(int argc, char *argv[])
 
   fl_message_hotspot(0);
 
-  // gamma correction tables
-  fix_gamma = new int[256];
-  unfix_gamma = new int[65536];
-
-  int i;
-
-  for(i = 0; i < 65536; i++)
-    unfix_gamma[i] = std::pow((double)i / 65535, (1.0 / 2.2)) * 255;
-  for(i = 0; i < 256; i++)
-    fix_gamma[i] = std::pow((double)i / 255, 2.2) * 65535;
-
+  Gamma::init();
   Project::init();
   File::init();
   Undo::init();

@@ -24,7 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Brush.H"
 #include "Dialog.H"
+#include "FastRnd.H"
 #include "FX.H"
+#include "Gamma.H"
 #include "Gui.H"
 #include "InputInt.H"
 #include "Map.H"
@@ -34,9 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Separator.H"
 #include "Undo.H"
 #include "View.H"
-
-extern int *fix_gamma;
-extern int *unfix_gamma;
 
 namespace
 {
@@ -1069,9 +1068,9 @@ namespace ApplyPalette
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         rgba_t rgba = getRgba(*p);
-        v[0] = fix_gamma[rgba.r];
-        v[1] = fix_gamma[rgba.g];
-        v[2] = fix_gamma[rgba.b];
+        v[0] = Gamma::fix(rgba.r);
+        v[1] = Gamma::fix(rgba.g);
+        v[2] = Gamma::fix(rgba.b);
 
         for(i = 0; i < 3; i++)
         {
@@ -1079,9 +1078,9 @@ namespace ApplyPalette
           n[i] = std::max(std::min(n[i], 65535), 0);
         }
 
-        const int r = unfix_gamma[n[0]];
-        const int g = unfix_gamma[n[1]];
-        const int b = unfix_gamma[n[2]];
+        const int r = Gamma::unfix(n[0]);
+        const int g = Gamma::unfix(n[1]);
+        const int b = Gamma::unfix(n[2]);
 
         const int pal_index = (int)Project::palette->lookup(makeRgb(r, g, b));
         const int c = Project::palette->data[pal_index];
@@ -1090,9 +1089,9 @@ namespace ApplyPalette
         *p = makeRgb(rgba.r, rgba.g, rgba.b);
 
         rgba = getRgba(*p);
-        v[0] = fix_gamma[rgba.r];
-        v[1] = fix_gamma[rgba.g];
-        v[2] = fix_gamma[rgba.b];
+        v[0] = Gamma::fix(rgba.r);
+        v[1] = Gamma::fix(rgba.g);
+        v[2] = Gamma::fix(rgba.b);
 
         p++;
 
@@ -1225,20 +1224,20 @@ namespace StainedGlass
     {
       if(uniform->value())
       {
-        seedx[i] = rnd32() % bmp->w; 
-        seedy[i] = rnd32() % bmp->h; 
+        seedx[i] = FastRnd::get() % bmp->w; 
+        seedy[i] = FastRnd::get() % bmp->h; 
       }
       else
       {
-        seedx[i] = rnd32() % bmp->w; 
-        seedy[i] = rnd32() % bmp->h; 
+        seedx[i] = FastRnd::get() % bmp->w; 
+        seedy[i] = FastRnd::get() % bmp->h; 
   
         int count = 0;
 
         do
         {
-          seedx[i] = rnd32() % bmp->w; 
-          seedy[i] = rnd32() % bmp->h; 
+          seedx[i] = FastRnd::get() % bmp->w; 
+          seedy[i] = FastRnd::get() % bmp->h; 
           count++;
         }
         while(!isEdge(bmp, seedx[i], seedy[i], div) && count < 10000);

@@ -23,15 +23,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Blend.H"
+#include "Gamma.H"
 #include "Gui.H"
 #include "Palette.H"
 #include "Project.H"
 #include "Stroke.H"
 #include "Tool.H"
 #include "View.H"
-
-extern int *fix_gamma;
-extern int *unfix_gamma;
 
 Bitmap *Bitmap::clone_buffer = 0;
 
@@ -813,9 +811,9 @@ void Bitmap::scaleBilinear(Bitmap *dest,
           {
             c = getpixel(sx + x + i, sy + y + j);
             struct rgba_t rgba = getRgba(c);
-            r += fix_gamma[rgba.r];
-            g += fix_gamma[rgba.g];
-            b += fix_gamma[rgba.b];
+            r += Gamma::fix(rgba.r);
+            g += Gamma::fix(rgba.g);
+            b += Gamma::fix(rgba.b);
             a += rgba.a;
           }
         }
@@ -825,9 +823,9 @@ void Bitmap::scaleBilinear(Bitmap *dest,
         b /= div;
         a /= div;
 
-        r = unfix_gamma[r];
-        g = unfix_gamma[g];
-        b = unfix_gamma[b];
+        r = Gamma::unfix(r);
+        g = Gamma::unfix(g);
+        b = Gamma::unfix(b);
         c = makeRgba(r, g, b, a);
 
         for(j = 0; j < mipy; j++)
@@ -905,17 +903,17 @@ void Bitmap::scaleBilinear(Bitmap *dest,
       do
       {
         struct rgba_t rgba = getRgba(*c[i]);
-        r += (float)fix_gamma[rgba.r] * f[i];
-        g += (float)fix_gamma[rgba.g] * f[i];
-        b += (float)fix_gamma[rgba.b] * f[i];
+        r += (float)Gamma::fix(rgba.r) * f[i];
+        g += (float)Gamma::fix(rgba.g) * f[i];
+        b += (float)Gamma::fix(rgba.b) * f[i];
         a += rgba.a * f[i];
         i++;
       }
       while(i < 4);
 
-      r = unfix_gamma[(int)r];
-      g = unfix_gamma[(int)g];
-      b = unfix_gamma[(int)b];
+      r = Gamma::unfix((int)r);
+      g = Gamma::unfix((int)g);
+      b = Gamma::unfix((int)b);
 
       *d = makeRgba((int)r, (int)g, (int)b, (int)a);
       d++;

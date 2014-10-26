@@ -25,16 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <stdint.h>
 #include "endian.h"
 
-// fast random number seed
-extern int seed;
-
-// fast random number approximation
-inline int rnd32(void)
-{
-  seed = (seed << 17) ^ (seed >> 13) ^ (seed << 5);
-  return seed;
-}
-
 // stuff for extracting all RGBA values quickly (thanks Rubicks!)
 struct rgba_t
 {
