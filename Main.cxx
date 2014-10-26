@@ -113,7 +113,6 @@ int main(int argc, char *argv[])
 
   fl_message_hotspot(0);
 
-  Gamma::init();
   Project::init();
   File::init();
   Undo::init();

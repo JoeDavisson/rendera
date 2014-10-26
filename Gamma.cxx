@@ -18,14 +18,39 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include <cmath>
-
 #include "Gamma.H"
+
+#include <cmath>
+#include <vector>
 
 namespace
 {
-  int table_fix[256];
-  int table_unfix[65536];
+  typedef std::vector< int >table_type ;
+
+  table_type
+  _init_table_fix( void )
+  {
+    table_type ret ;
+    ret.resize( 256 );
+    for( int i = 0, n = ret.size() ; i != n ; ++i ){
+      ret[i] = std::pow((double)i / 255, 2.2) * 65535 ;
+    }
+    return ret ;
+  }
+
+  table_type
+  _init_table_unfix( void )
+  {
+    table_type ret ;
+    ret.resize( 65536 );
+    for( int i = 0, n = ret.size() ; i != n ; ++i ){
+      ret[i] = std::pow((double)i / 65535, (1.0 / 2.2)) * 255 ;
+    }
+    return ret ;
+  }
+
+  static table_type const table_fix   ( _init_table_fix   () );
+  static table_type const table_unfix ( _init_table_unfix () );
 }
 
 int Gamma::fix(const int &val)
@@ -43,14 +68,3 @@ int Gamma::unfix(const int &val)
   else
     return 0;
 }
-
-void Gamma::init()
-{
-  int i;
-
-  for(i = 0; i < 65536; i++)
-    table_unfix[i] = std::pow((double)i / 65535, (1.0 / 2.2)) * 255;
-  for(i = 0; i < 256; i++)
-    table_fix[i] = std::pow((double)i / 255, 2.2) * 65535;
-}
-
