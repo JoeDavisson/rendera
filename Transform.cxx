@@ -32,9 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "View.H"
 
-extern int *fix_gamma;
-extern int *unfix_gamma;
-
 namespace
 {
   Bitmap *bmp;

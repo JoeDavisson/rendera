@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef RENDERA_H
 #define RENDERA_H
 
+#include <ctime>
+
 #include <FL/Fl.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
@@ -46,6 +48,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // commonly-used things
 #include "Common.H"
 #include "Inline.H"
+
+// macros for measuring time
+#define START_TIMER clock_t start_time = clock()
+
+#define END_TIMER \
+   start_time = clock() - start_time; \
+   printf("%dms.\n", (int)(((double)start_time / CLOCKS_PER_SEC) * 1000))
 
 #endif
 

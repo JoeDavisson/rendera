@@ -21,12 +21,52 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef GAMMA_H
 #define GAMMA_H
 
+#include <cmath>
+#include <vector>
+
 #include "Rendera.H"
+
+namespace
+{
+  typedef std::vector< int >table_type ;
+
+  table_type
+  _init_table_fix( void )
+  {
+    table_type ret ;
+    ret.resize( 256 );
+    for( int i = 0, n = ret.size() ; i != n ; ++i ){
+      ret[i] = std::pow((double)i / 255, 2.2) * 65535 ;
+    }
+    return ret ;
+  }
+
+  table_type
+  _init_table_unfix( void )
+  {
+    table_type ret ;
+    ret.resize( 65536 );
+    for( int i = 0, n = ret.size() ; i != n ; ++i ){
+      ret[i] = std::pow((double)i / 65535, (1.0 / 2.2)) * 255 ;
+    }
+    return ret ;
+  }
+
+  static table_type const table_fix   ( _init_table_fix   () );
+  static table_type const table_unfix ( _init_table_unfix () );
+}
 
 namespace Gamma
 {
-  int fix(const int &);
-  int unfix(const int &);
+  inline int fix(const int &val)
+  {
+    return table_fix[val];
+  }
+
+  inline int unfix(const int &val)
+  {
+    return table_unfix[val];
+ }
 }
 
 #endif
