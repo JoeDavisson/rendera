@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Dialog.H"
 #include "FastRnd.H"
 #include "FX.H"
+#include "Gamma.H"
 #include "Gui.H"
 #include "InputInt.H"
 #include "Map.H"
@@ -1067,9 +1068,9 @@ namespace ApplyPalette
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
         rgba_t rgba = getRgba(*p);
-        v[0] = fixGamma(rgba.r);
-        v[1] = fixGamma(rgba.g);
-        v[2] = fixGamma(rgba.b);
+        v[0] = Gamma::fix(rgba.r);
+        v[1] = Gamma::fix(rgba.g);
+        v[2] = Gamma::fix(rgba.b);
 
         for(i = 0; i < 3; i++)
         {
@@ -1077,9 +1078,9 @@ namespace ApplyPalette
           n[i] = std::max(std::min(n[i], 65535), 0);
         }
 
-        const int r = unfixGamma(n[0]);
-        const int g = unfixGamma(n[1]);
-        const int b = unfixGamma(n[2]);
+        const int r = Gamma::unfix(n[0]);
+        const int g = Gamma::unfix(n[1]);
+        const int b = Gamma::unfix(n[2]);
 
         const int pal_index = (int)Project::palette->lookup(makeRgb(r, g, b));
         const int c = Project::palette->data[pal_index];
@@ -1088,9 +1089,9 @@ namespace ApplyPalette
         *p = makeRgb(rgba.r, rgba.g, rgba.b);
 
         rgba = getRgba(*p);
-        v[0] = fixGamma(rgba.r);
-        v[1] = fixGamma(rgba.g);
-        v[2] = fixGamma(rgba.b);
+        v[0] = Gamma::fix(rgba.r);
+        v[1] = Gamma::fix(rgba.g);
+        v[2] = Gamma::fix(rgba.b);
 
         p++;
 

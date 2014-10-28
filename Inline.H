@@ -126,18 +126,6 @@ inline int scaleVal(const int &a, const int &b)
   return (a * (255 - b) / 255) + b;
 }
 
-// convert from linear to gamma-corrected value
-inline int fixGamma(const int &x)
-{
-  return x * x;
-}
-
-// convert back from gamma-corrected to linear value
-inline int unfixGamma(const int &x)
-{
-  return (int)std::sqrt((float)x);
-}
-
 // get an FLTK color
 inline int getFltkColor(const int &c)
 {

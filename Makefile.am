@@ -27,6 +27,8 @@ rendera_SOURCES =     \
   FX.cxx              \
   File.H              \
   File.cxx            \
+  Gamma.H             \
+  Gamma.cxx           \
   GetColor.H          \
   GetColor.cxx        \
   Group.H             \
