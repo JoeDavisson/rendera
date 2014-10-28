@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace
 {
   // create gamma-correction tables
-  int *init_table_fix( void )
+  int *init_table_fix(void)
   {
     int *ret = new int[256];
     int i;
@@ -36,10 +36,10 @@ namespace
     for(i = 0; i < 256; i++)
       ret[i] = std::pow((double)i / 255, 2.2) * 65535;
 
-    return ret ;
+    return ret;
   }
 
-  int *init_table_unfix( void )
+  int *init_table_unfix(void)
   {
     int *ret = new int[65536];
     int i;
