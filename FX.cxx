@@ -1526,18 +1526,7 @@ namespace Sharpen
         const int c = bmp->getpixel(x, y);
 
         lum = std::min(std::max(lum, 0), 255);
-
-        // this prevents artifacts in areas with less detail
-        const int diff = std::abs(getl(c) - lum);
-
-        if(diff < 32)
-        {
-          *p++;
-          continue;
-        }
-
-        *p++ = Blend::trans(c, Blend::keepLum(c, lum),
-                            scaleVal(255 - amount, 255 - diff));
+        *p++ = Blend::trans(c, Blend::keepLum(c, lum), 255 - amount);
       }
 
       if(updateProgress(y) < 0)
