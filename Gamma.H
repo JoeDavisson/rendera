@@ -50,8 +50,8 @@ namespace
     return ret;
   }
 
-  static const int *table_fix(init_table_fix());
-  static const int *table_unfix(init_table_unfix());
+  static const int *table_fix = init_table_fix();
+  static const int *table_unfix = init_table_unfix();
 }
 
 namespace Gamma
