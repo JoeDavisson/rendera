@@ -9,4 +9,5 @@ Rubicks <rubicks00@gmail.com>
   -rgba_t related methods in inline.h
   -color quantization improvement ideas
   -got rid of macros for favor of standard library methods
+  -auto-initialization of gamma-correction tables
 
