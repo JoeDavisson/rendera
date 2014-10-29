@@ -175,27 +175,25 @@ void File::init()
 
 void File::load(Fl_Widget *, void *)
 {
-  Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
-  fc->title("Load Image");
-  fc->filter("PNG Image\t*.png\nJPEG Image\t*.{jpg,jpeg}\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
-  fc->options(Fl_Native_File_Chooser::PREVIEW);
-  fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
-  fc->directory(load_dir);
+  Fl_Native_File_Chooser fc;
+  fc.title("Load Image");
+  fc.filter("PNG Image\t*.png\nJPEG Image\t*.{jpg,jpeg}\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
+  fc.options(Fl_Native_File_Chooser::PREVIEW);
+  fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
+  fc.directory(load_dir);
 
-  switch(fc->show())
+  switch(fc.show())
   {
     case -1:
     case 1:
-      delete fc;
       return;
     default:
-      getDirectory(load_dir, fc->filename());
+      getDirectory(load_dir, fc.filename());
       break;
   }
 
   char fn[256];
-  strcpy(fn, fc->filename());
-  delete fc;
+  strcpy(fn, fc.filename());
 
   FILE *in = fopen(fn, "rb");
   if(!in)
@@ -748,27 +746,26 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
 
 void File::save(Fl_Widget *, void *)
 {
-  Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
-  fc->title("Save Image");
-  fc->filter("PNG Image\t*.png\nJPEG Image\t*.jpg\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
-  fc->options(Fl_Native_File_Chooser::PREVIEW);
-  fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-  fc->directory(save_dir);
+  Fl_Native_File_Chooser fc;
+  fc.title("Save Image");
+  fc.filter("PNG Image\t*.png\nJPEG Image\t*.jpg\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
+  fc.options(Fl_Native_File_Chooser::PREVIEW);
+  fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  fc.directory(save_dir);
 
-  switch(fc->show())
+  switch(fc.show())
   {
     case -1:
     case 1:
-      delete fc;
       return;
     default:
-      getDirectory(save_dir, fc->filename());
+      getDirectory(save_dir, fc.filename());
       break;
   }
 
   char fn[256];
-  strcpy(fn, fc->filename());
-  int ext = fc->filter_value();
+  strcpy(fn, fc.filename());
+  int ext = fc.filter_value();
   fl_filename_setext(fn, sizeof(fn), ext_string[ext]);
 
   if(fileExists(fn))
@@ -1173,27 +1170,25 @@ Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int)
 
 void File::loadPalette()
 {
-  Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
-  fc->title("Load Palette");
-  fc->filter("GIMP Palette\t*.gpl\n");
-  fc->options(Fl_Native_File_Chooser::PREVIEW);
-  fc->type(Fl_Native_File_Chooser::BROWSE_FILE);
-  fc->directory(pal_dir);
+  Fl_Native_File_Chooser fc;
+  fc.title("Load Palette");
+  fc.filter("GIMP Palette\t*.gpl\n");
+  fc.options(Fl_Native_File_Chooser::PREVIEW);
+  fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
+  fc.directory(pal_dir);
 
-  switch(fc->show())
+  switch(fc.show())
   {
     case -1:
     case 1:
-      delete fc;
       return;
     default:
-      getDirectory(pal_dir, fc->filename());
+      getDirectory(pal_dir, fc.filename());
       break;
   }
 
   char fn[256];
-  strcpy(fn, fc->filename());
-  delete fc;
+  strcpy(fn, fc.filename());
 
   FILE *in = fopen(fn, "r");
   if(!in)
@@ -1222,29 +1217,26 @@ void File::loadPalette()
 
 void File::savePalette()
 {
-  Fl_Native_File_Chooser *fc = new Fl_Native_File_Chooser();
-  fc->title("Save Palette");
-  fc->filter("GIMP Palette\t*.gpl\n");
-  fc->options(Fl_Native_File_Chooser::PREVIEW);
-  fc->type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-  fc->directory(pal_dir);
+  Fl_Native_File_Chooser fc;
+  fc.title("Save Palette");
+  fc.filter("GIMP Palette\t*.gpl\n");
+  fc.options(Fl_Native_File_Chooser::PREVIEW);
+  fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  fc.directory(pal_dir);
 
-  switch(fc->show())
+  switch(fc.show())
   {
     case -1:
     case 1:
-      delete fc;
       return;
     default:
-      getDirectory(pal_dir, fc->filename());
+      getDirectory(pal_dir, fc.filename());
       break;
   }
 
   char fn[256];
-  strcpy(fn, fc->filename());
+  strcpy(fn, fc.filename());
   fl_filename_setext(fn, sizeof(fn), ".gpl");
-
-  delete fc;
 
   if(fileExists(fn))
   {
