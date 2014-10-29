@@ -48,7 +48,7 @@ namespace About
     dialog->hide();
   }
 
-  void init()
+  int *init()
   {
     int y1 = 8;
     int ww = 0, hh = 0;
@@ -64,7 +64,11 @@ namespace About
     ok->callback((Fl_Callback *)close);
     dialog->set_modal();
     dialog->end(); 
+
+    return 0;
   }
+
+  static const int *temp = init();
 }
 
 namespace JpegQuality
@@ -101,7 +105,7 @@ namespace JpegQuality
     }
   }
 
-  void init()
+  int *init()
   {
     int y1 = 8;
 
@@ -114,7 +118,11 @@ namespace JpegQuality
     Dialog::addOkButton(dialog, &ok, &y1);
     dialog->set_modal();
     dialog->end();
+
+    return 0;
   }
+
+  static const int *temp = init();
 }
 
 namespace Progress
@@ -124,7 +132,7 @@ namespace Progress
   float value;
   float step;
 
-  void init()
+  int *init()
   {
     dialog = new Fl_Double_Window(272, 80, "Progress");
     bar = new Fl_Progress(8, 8, 256, 64);
@@ -135,7 +143,11 @@ namespace Progress
     bar->labelcolor(0xFFFFFF00);
     dialog->set_modal();
     dialog->end();
+
+    return 0;
   }
+
+  static const int *temp = init();
 }
 
 namespace NewImage
@@ -182,7 +194,7 @@ namespace NewImage
     dialog->hide();
   }
 
-  void init()
+  int *init()
   {
     int y1 = 8;
 
@@ -202,7 +214,11 @@ namespace NewImage
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end(); 
+
+    return 0;
   }
+
+  static const int *temp = init();
 }
 
 namespace CreatePalette
@@ -236,7 +252,7 @@ namespace CreatePalette
     dialog->hide();
   }
 
-  void init()
+  int *init()
   {
     int y1 = 8;
 
@@ -249,7 +265,11 @@ namespace CreatePalette
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end(); 
+
+    return 0;
   }
+
+  static const int *temp = init();
 }
 
 namespace Editor
@@ -534,7 +554,7 @@ namespace Editor
     dialog->hide();
   }
 
-  void init()
+  int *init()
   {
     dialog = new Fl_Double_Window(608, 312, "Palette Editor");
     hue = new Widget(dialog, 8, 8, 24, 256,
@@ -566,7 +586,11 @@ namespace Editor
     dialog->end(); 
 
     undo_palette = new Palette();
+
+    return 0;
   }
+
+  static const int *temp = init();
 }
 
 // center a widget horizontally within dialog
@@ -611,16 +635,6 @@ void Dialog::addOkCancelButtons(Fl_Group *group,
   *y1 += 24 + 8;
   group->add(*ok);
   group->resize(group->x(), group->y(), group->w(), *y1);
-}
-
-void Dialog::init()
-{
-  About::init();
-  JpegQuality::init();
-  Progress::init();
-  NewImage::init();
-  CreatePalette::init();
-  Editor::init();
 }
 
 void Dialog::about()

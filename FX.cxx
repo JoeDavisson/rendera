@@ -552,7 +552,6 @@ namespace RotateHue
 
   int *init()
   {
-    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Rotate Hue");
@@ -570,7 +569,7 @@ namespace RotateHue
     dialog->set_modal();
     dialog->end();
 
-    return temp;
+    return 0;
   }
 
   static const int *temp = init();
@@ -789,7 +788,6 @@ namespace Restore
 
   int *init()
   {
-    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Restore");
@@ -812,7 +810,7 @@ namespace Restore
     dialog->set_modal();
     dialog->end();
 
-    return temp;
+    return 0;
   }
 
   static const int *temp = init();
@@ -909,7 +907,6 @@ namespace RemoveDust
 
   int *init()
   {
-    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Remove Dust");
@@ -926,7 +923,7 @@ namespace RemoveDust
     dialog->set_modal();
     dialog->end();
 
-    return temp;
+    return 0;
   }
 
   static const int *temp = init();
@@ -1176,7 +1173,6 @@ namespace ApplyPalette
 
   int *init()
   {
-    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Apply Palette");
@@ -1189,7 +1185,7 @@ namespace ApplyPalette
     dialog->set_modal();
     dialog->end();
 
-    return temp;
+    return 0;
   }
 
   static const int *temp = init();
@@ -1387,7 +1383,6 @@ namespace StainedGlass
 
   int *init()
   {
-    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Stained Glass");
@@ -1414,7 +1409,7 @@ namespace StainedGlass
     dialog->set_modal();
     dialog->end();
 
-    return temp;
+    return 0;
   }
 
   static const int *temp = init();
@@ -1498,7 +1493,6 @@ namespace Blur
 
   int *init()
   {
-    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Blur");
@@ -1512,7 +1506,7 @@ namespace Blur
     dialog->set_modal();
     dialog->end();
 
-    return temp;
+    return 0;
   }
 
   static const int *temp = init();
@@ -1593,7 +1587,6 @@ namespace Sharpen
 
   int *init()
   {
-    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Sharpen");
@@ -1607,7 +1600,7 @@ namespace Sharpen
     dialog->set_modal();
     dialog->end();
 
-    return temp;
+    return 0;
   }
 
   static const int *temp = init();

@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace Dialog
 {
-  void init();
   void center(Fl_Widget *);
   void addOkButton(Fl_Group *, Fl_Button **, int *);
   void addOkCancelButtons(Fl_Group *, Fl_Button **, Fl_Button **, int *);

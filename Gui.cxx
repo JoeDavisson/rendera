@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
-namespace
+namespace Gui
 {
   // window
   Fl_Double_Window *window;
@@ -167,13 +167,13 @@ void Gui::init()
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
   menubar->box(FL_THIN_UP_BOX);
 
-  menubar->add("File/New", 0,
+  menubar->add("File/New...", 0,
     (Fl_Callback *)Dialog::newImage, 0, 0);
-  menubar->add("File/Load", 0,
+  menubar->add("File/Load...", 0,
     (Fl_Callback *)File::load, 0, 0);
-  menubar->add("File/Save", 0,
+  menubar->add("File/Save...", 0,
     (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
-  menubar->add("File/Quit", 0,
+  menubar->add("File/Quit...", 0,
     (Fl_Callback *)quit, 0, 0);
   menubar->add("Edit/Undo", 0,
     (Fl_Callback *)Undo::pop, 0, FL_MENU_DIVIDER);

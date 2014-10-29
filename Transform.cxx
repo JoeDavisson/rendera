@@ -175,7 +175,7 @@ namespace Scale
     dialog->hide();
   }
 
-  void init()
+  int *init()
   {
     int y1 = 8;
 
@@ -204,7 +204,11 @@ namespace Scale
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end(); 
+
+    return 0;
   }
+
+  static const int *temp = init();
 }
 
 namespace Rotate
@@ -257,7 +261,7 @@ namespace Rotate
     dialog->hide();
   }
 
-  void init()
+  int *init()
   {
     int y1 = 8;
 
@@ -278,13 +282,11 @@ namespace Rotate
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end(); 
-  }
-}
 
-void Transform::init()
-{
-  Scale::init();
-  Rotate::init();
+    return 0;
+  }
+
+  static const int *temp = init();
 }
 
 void Transform::scale()

@@ -115,8 +115,6 @@ int main(int argc, char *argv[])
   Project::init();
   File::init();
   Undo::init();
-  Dialog::init();
-  Transform::init();
   Gui::init();
 
   if(count > 1)
