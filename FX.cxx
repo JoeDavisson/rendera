@@ -550,8 +550,9 @@ namespace RotateHue
     dialog->show();
   }
 
-  void init()
+  int *init()
   {
+    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Rotate Hue");
@@ -568,7 +569,11 @@ namespace RotateHue
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
+
+    return temp;
   }
+
+  static const int *temp = init();
 }
 
 namespace Invert
@@ -782,8 +787,9 @@ namespace Restore
     dialog->show();
   }
 
-  void init()
+  int *init()
   {
+    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Restore");
@@ -805,7 +811,11 @@ namespace Restore
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
+
+    return temp;
   }
+
+  static const int *temp = init();
 }
 
 namespace RemoveDust
@@ -855,7 +865,9 @@ namespace RemoveDust
         avg = makeRgba(r / 8, g / 8, b / 8, geta(test));
 
         if((getl(avg) - getl(test)) > amount)
-          *p++ = avg;
+          *p = avg;
+
+        p++;
       }
 
       if(updateProgress(y) < 0)
@@ -895,8 +907,9 @@ namespace RemoveDust
     dialog->show();
   }
 
-  void init()
+  int *init()
   {
+    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Remove Dust");
@@ -912,7 +925,11 @@ namespace RemoveDust
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
+
+    return temp;
   }
+
+  static const int *temp = init();
 }
 
 namespace Desaturate
@@ -1157,8 +1174,9 @@ namespace ApplyPalette
     dialog->show();
   }
 
-  void init()
+  int *init()
   {
+    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Apply Palette");
@@ -1170,7 +1188,11 @@ namespace ApplyPalette
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
+
+    return temp;
   }
+
+  static const int *temp = init();
 }
 
 namespace StainedGlass
@@ -1363,8 +1385,9 @@ namespace StainedGlass
     dialog->show();
   }
 
-  void init()
+  int *init()
   {
+    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Stained Glass");
@@ -1390,7 +1413,11 @@ namespace StainedGlass
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
+
+    return temp;
   }
+
+  static const int *temp = init();
 }
 
 namespace Blur
@@ -1469,8 +1496,9 @@ namespace Blur
     dialog->show();
   }
 
-  void init()
+  int *init()
   {
+    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Blur");
@@ -1483,7 +1511,11 @@ namespace Blur
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
+
+    return temp;
   }
+
+  static const int *temp = init();
 }
 
 namespace Sharpen
@@ -1559,8 +1591,9 @@ namespace Sharpen
     dialog->show();
   }
 
-  void init()
+  int *init()
   {
+    int *temp = 0;
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Sharpen");
@@ -1573,18 +1606,11 @@ namespace Sharpen
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
-  }
-}
 
-void FX::init()
-{
-  RotateHue::init();
-  Restore::init();
-  RemoveDust::init();
-  ApplyPalette::init();
-  StainedGlass::init();
-  Blur::init();
-  Sharpen::init();
+    return temp;
+  }
+
+  static const int *temp = init();
 }
 
 void FX::normalize()

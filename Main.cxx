@@ -116,7 +116,6 @@ int main(int argc, char *argv[])
   File::init();
   Undo::init();
   Dialog::init();
-  FX::init();
   Transform::init();
   Gui::init();
 

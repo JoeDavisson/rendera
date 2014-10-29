@@ -66,7 +66,7 @@ namespace Gamma
   inline int unfix(const int &val)
   {
     return table_unfix[val];
- }
+  }
 }
 
 #endif
