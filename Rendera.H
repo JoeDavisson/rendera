@@ -48,6 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // commonly-used things
 #include "Common.H"
 #include "Inline.H"
+#include "SP.H"
 
 // macros for measuring time
 #define START_TIMER clock_t start_time = clock()
