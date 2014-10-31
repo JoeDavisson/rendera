@@ -432,10 +432,18 @@ namespace Saturate
         int r = rgba.r;
         int g = rgba.g;
         int b = rgba.b;
+
         const int l = getl(c);
         int h, s, v;
 
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
+
+        // don't try to saturate grays
+        if(s == 0)
+        {
+          p++;
+          continue;
+        }
 
         const int temp = s;
 
@@ -445,7 +453,9 @@ namespace Saturate
           s = temp;
 
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
-        *p++ = Blend::keepLum(makeRgba(r, g, b, rgba.a), l);
+        *p = Blend::trans(*p, Blend::keepLum(makeRgba(r, g, b, rgba.a), l), 255 - s);
+
+        p++;
       }
 
       if(updateProgress(y) < 0)
