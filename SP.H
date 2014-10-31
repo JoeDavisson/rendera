@@ -36,12 +36,17 @@ public:
     delete data;
   }
 
-  T& operator * ()
+  T& operator *()
   {
     return *data;
   }
 
-  T* operator -> ()
+  T* operator ->()
+  {
+    return data;
+  }
+
+  T* get()
   {
     return data;
   }
