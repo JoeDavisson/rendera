@@ -59,6 +59,7 @@ rendera_SOURCES =     \
   Rendera.H           \
   Separator.H         \
   Separator.cxx       \
+  SP.H                \
   Stroke.H            \
   Stroke.cxx          \
   Text.H              \
