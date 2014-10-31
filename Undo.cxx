@@ -184,3 +184,12 @@ void Undo::pop()
   Gui::getView()->drawMain(true);
 }
 
+void Undo::free()
+{
+  int i;
+
+  for(i = 0; i < MAX_UNDO; i++)
+    if(undo_stack[i])
+      delete undo_stack[i];
+}
+

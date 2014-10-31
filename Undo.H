@@ -30,6 +30,7 @@ namespace Undo
   void push();
   void push(int, int, int, int);
   void pop();
+  void free();
 }
 
 #endif
