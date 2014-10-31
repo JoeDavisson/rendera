@@ -41,6 +41,10 @@ Brush::Brush()
 
 Brush::~Brush()
 {
+  delete[] solidx;
+  delete[] solidy;
+  delete[] hollowx;
+  delete[] hollowy;
 }
 
 void Brush::make(int shape, int s)

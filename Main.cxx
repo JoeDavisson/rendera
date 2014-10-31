@@ -132,6 +132,10 @@ int main(int argc, char *argv[])
   // delete undo bitmaps
   Undo::free();
 
+  // delete project bitmaps
+  delete Project::bmp;
+  delete Project::map;
+
   // delete all windows (FLTK automatically deletes all child widgets)
   WinTracker::free();
 }

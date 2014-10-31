@@ -105,6 +105,10 @@ void Offset::move(View *)
 
 void Offset::done(View *)
 {
+  if(offset_buffer)
+    delete offset_buffer;
+
+  offset_buffer = 0;
 }
 
 void Offset::redraw(View *)

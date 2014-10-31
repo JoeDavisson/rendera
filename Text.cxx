@@ -184,6 +184,11 @@ void Text::move(View *view)
 
 void Text::done(View *view)
 {
+  if(temp)
+  {
+    delete temp;
+    temp = 0;
+  }
 }
 
 void Text::redraw(View *view)

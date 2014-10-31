@@ -107,7 +107,7 @@ void Palette::draw(Widget *widget)
   widget->redraw();
 }
 
-void Palette::copy(SP<Palette> dest)
+void Palette::copy(Palette *dest)
 {
   int i;
 

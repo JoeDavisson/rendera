@@ -124,6 +124,8 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
 
 View::~View()
 {
+  if(backbuf)
+    delete backbuf;
 }
 
 int View::handle(int event)

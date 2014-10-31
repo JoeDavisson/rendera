@@ -88,6 +88,12 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
 
 Widget::~Widget()
 {
+  if(bitmap)
+    delete bitmap;
+  if(bitmap2)
+    delete bitmap;
+  if(image)
+    delete image;
 }
 
 int Widget::handle(int event)

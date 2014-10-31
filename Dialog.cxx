@@ -292,7 +292,7 @@ namespace Editor
   int ramp_state;
   bool begin_undo;
   int oldsvx, oldsvy;
-  SP<Palette> undo_palette = new Palette();
+  Palette *undo_palette;
 
   void storeUndo()
   {
@@ -305,7 +305,7 @@ namespace Editor
     if(begin_undo)
     {
       begin_undo = false;
-      undo_palette->copy(Project::palette);
+      undo_palette->copy(Project::palette.get());
       Project::palette->draw(palette);
       Gui::drawPalette();
       palette->do_callback();
@@ -585,6 +585,8 @@ namespace Editor
     done->callback((Fl_Callback *)close);
     dialog->set_modal();
     dialog->end(); 
+
+    undo_palette = new Palette();
 
     return 0;
   }
