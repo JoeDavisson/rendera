@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Transform.H"
 #include "Undo.H"
 #include "View.H"
+#include "Win.H"
 
 namespace
 {
@@ -78,7 +79,7 @@ namespace
 
 namespace Scale
 {
-  Fl_Double_Window *dialog;
+  Win *dialog;
   InputInt *width;
   InputInt *height;
   Fl_Check_Button *keep_aspect;
@@ -179,7 +180,7 @@ namespace Scale
   {
     int y1 = 8;
 
-    dialog = new Fl_Double_Window(256, 0, "Scale Image");
+    dialog = new Win(256, 0, "Scale Image");
     width = new InputInt(dialog, 0, y1, 72, 24, "Width:", 0);
     width->center();
     width->callback((Fl_Callback *)checkWidth);
@@ -213,7 +214,7 @@ namespace Scale
 
 namespace Rotate
 {
-  Fl_Double_Window *dialog;
+  Win *dialog;
   InputFloat *angle;
   InputFloat *scale;
   Fl_Check_Button *tile;
@@ -265,7 +266,7 @@ namespace Rotate
   {
     int y1 = 8;
 
-    dialog = new Fl_Double_Window(256, 0, "Rotate Image");
+    dialog = new Win(256, 0, "Rotate Image");
     angle = new InputFloat(dialog, 0, y1, 72, 24, "Angle:", 0);
     angle->center();
     y1 += 24 + 8;

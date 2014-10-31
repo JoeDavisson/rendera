@@ -41,11 +41,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "View.H"
 #include "Widget.H"
+#include "Win.H"
 
 namespace Gui
 {
   // window
-  Fl_Double_Window *window;
+  Win *window;
 
   // main menu
   Fl_Menu_Bar *menubar;
@@ -160,7 +161,7 @@ void Gui::init()
   int i;
 
   // main window
-  window = new Fl_Double_Window(800, 600, "Rendera");
+  window = new Win(800, 600, "Rendera");
   window->callback(closeCallback);
 
   // menu
@@ -1018,3 +1019,4 @@ int Gui::getPaintMode()
 {
   return paint_mode->value();
 }
+

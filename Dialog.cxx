@@ -31,10 +31,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Separator.H"
 #include "View.H"
 #include "Widget.H"
+#include "Win.H"
 
 namespace About
 {
-  Fl_Double_Window *dialog;
+  Win *dialog;
   Widget *logo;
   Fl_Button *ok;
 
@@ -54,7 +55,7 @@ namespace About
     int ww = 0, hh = 0;
     const char *credits = "Copyright (c) 2014 Joe Davisson.\nAll Rights Reserved.";
 
-    dialog = new Fl_Double_Window(384, 0, "About");
+    dialog = new Win(384, 0, "About");
     logo = new Widget(dialog, 32, y1, 320, 64,
                       credits, "data/logo_large.png", 0, 0, 0);
     logo->align(FL_ALIGN_BOTTOM);
@@ -73,7 +74,7 @@ namespace About
 
 namespace JpegQuality
 {
-  Fl_Double_Window *dialog;
+  Win *dialog;
   InputInt *quality;
   Fl_Button *ok;
 
@@ -109,7 +110,7 @@ namespace JpegQuality
   {
     int y1 = 8;
 
-    dialog = new Fl_Double_Window(256, 0, "JPEG Quality");
+    dialog = new Win(256, 0, "JPEG Quality");
     dialog->callback(closeCallback);
     quality = new InputInt(dialog, 0, y1, 72, 24, "Quality:", 0);
     quality->value("95");
@@ -127,14 +128,14 @@ namespace JpegQuality
 
 namespace Progress
 {
-  Fl_Double_Window *dialog;
+  Win *dialog;
   Fl_Progress *bar;
   float value;
   float step;
 
   int *init()
   {
-    dialog = new Fl_Double_Window(272, 80, "Progress");
+    dialog = new Win(272, 80, "Progress");
     bar = new Fl_Progress(8, 8, 256, 64);
     bar->minimum(0);
     bar->maximum(100);
@@ -152,7 +153,7 @@ namespace Progress
 
 namespace NewImage
 {
-  Fl_Double_Window *dialog;
+  Win *dialog;
   InputInt *width;
   InputInt *height;
   Fl_Button *ok;
@@ -198,7 +199,7 @@ namespace NewImage
   {
     int y1 = 8;
 
-    dialog = new Fl_Double_Window(256, 0, "New Image");
+    dialog = new Win(256, 0, "New Image");
     width = new InputInt(dialog, 0, y1, 72, 24, "Width:", 0);
     y1 += 24 + 8;
     height = new InputInt(dialog, 0, y1, 72, 24, "Height:", 0);
@@ -223,7 +224,7 @@ namespace NewImage
 
 namespace CreatePalette
 {
-  Fl_Double_Window *dialog;
+  Win *dialog;
   InputInt *colors;
   Fl_Button *ok;
   Fl_Button *cancel;
@@ -256,7 +257,7 @@ namespace CreatePalette
   {
     int y1 = 8;
 
-    dialog = new Fl_Double_Window(256, 0, "Create Palette");
+    dialog = new Win(256, 0, "Create Palette");
     colors = new InputInt(dialog, 0, 8, 72, 24, "Colors:", 0);
     colors->center();
     y1 += 24 + 8;
@@ -274,7 +275,7 @@ namespace CreatePalette
 
 namespace Editor
 {
-  Fl_Double_Window *dialog;
+  Win *dialog;
   Widget *hue;
   Widget *sat_val;
   Fl_Button *insert;
@@ -556,7 +557,7 @@ namespace Editor
 
   int *init()
   {
-    dialog = new Fl_Double_Window(608, 312, "Palette Editor");
+    dialog = new Win(608, 312, "Palette Editor");
     hue = new Widget(dialog, 8, 8, 24, 256,
                      "Hue", 24, 1,
                      (Fl_Callback *)getHue);

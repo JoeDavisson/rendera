@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Transform.H"
 #include "Undo.H"
 #include "Widget.H"
+#include "WinTracker.H"
 
 namespace
 {
@@ -127,5 +128,8 @@ int main(int argc, char *argv[])
   }
 
   return Fl::run();
+
+  // delete all windows (FLTK automatically deletes all child widgets)
+  WinTracker::free();
 }
 

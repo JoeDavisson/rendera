@@ -73,7 +73,11 @@ rendera_SOURCES =     \
   View.H              \
   View.cxx            \
   Widget.H            \
-  Widget.cxx          
+  Widget.cxx          \
+  Win.H               \
+  Win.cxx             \
+  WinTracker.H        \
+  WinTracker.cxx
 
 
 rendera_LDFLAGS = $(shell fltk-config --ldflags)
