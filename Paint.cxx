@@ -50,7 +50,7 @@ Paint::~Paint()
 
 void Paint::push(View *view)
 {
-  Stroke *stroke = Project::stroke;
+  Stroke *stroke = Project::stroke.get();
 
   if(active && stroke->type == 3)
   {
@@ -83,7 +83,7 @@ void Paint::push(View *view)
 
 void Paint::drag(View *view)
 {
-  Stroke *stroke = Project::stroke;
+  Stroke *stroke = Project::stroke.get();
 
   if(stroke->type != 3)
   {
@@ -96,7 +96,7 @@ void Paint::drag(View *view)
 
 void Paint::release(View *view)
 {
-  Stroke *stroke = Project::stroke;
+  Stroke *stroke = Project::stroke.get();
 
   if(active && stroke->type != 3)
   {
@@ -112,7 +112,7 @@ void Paint::release(View *view)
 
 void Paint::move(View *view)
 {
-  Stroke *stroke = Project::stroke;
+  Stroke *stroke = Project::stroke.get();
 
   switch(stroke->type)
   {
@@ -153,7 +153,7 @@ void Paint::done(View *)
 
 void Paint::redraw(View *view)
 {
-  Stroke *stroke = Project::stroke;
+  Stroke *stroke = Project::stroke.get();
 
   if(active)
   {

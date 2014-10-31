@@ -139,7 +139,7 @@ void Crop::push(View *view)
 
 void Crop::drag(View *view)
 {
-  Stroke *stroke = Project::stroke;
+  Stroke *stroke = Project::stroke.get();
 
   if(state == 1)
   {
@@ -267,7 +267,7 @@ void Crop::done(View *view)
 
 void Crop::redraw(View *view)
 {
-  Stroke *stroke = Project::stroke;
+  Stroke *stroke = Project::stroke.get();
 
   if(active)
   {

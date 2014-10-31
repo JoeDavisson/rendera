@@ -33,7 +33,7 @@ public:
   virtual ~Palette();
 
   void draw(Widget *);
-  void copy(Palette *);
+  void copy(SP<Palette>);
   void insertColor(int, int);
   void deleteColor(int);
   void replaceColor(int, int);

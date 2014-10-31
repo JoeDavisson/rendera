@@ -580,7 +580,7 @@ void Gui::updateGetColor(int c)
 
 void Gui::checkPalette(Widget *widget, void *var)
 {
-  Palette *palette = Project::palette;
+  Palette *palette = Project::palette.get();
   int pos = *(int *)var;
 
   int step = widget->stepx;
@@ -689,7 +689,7 @@ void Gui::checkGridY(InputInt *field, void *)
 
 void Gui::checkPaintSize(Widget *, void *var)
 {
-  Brush *brush = Project::brush;
+  Brush *brush = Project::brush.get();
 
   int size = brush_sizes[*(int *)var];
   int shape = paint_shape->var;

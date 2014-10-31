@@ -508,7 +508,7 @@ void Bitmap::setpixelClone(const int &x, const int &y,
       break;
   }
 
-  Stroke *stroke = Project::stroke;
+  Stroke *stroke = Project::stroke.get();
 
   int c2;
 
@@ -574,7 +574,7 @@ void Bitmap::setpixelWrapClone(const int &x, const int &y,
   while(y1 > cb)
     y1 -= ch;
 
-  Stroke *stroke = Project::stroke;
+  Stroke *stroke = Project::stroke.get();
 
   int c2;
 

@@ -197,7 +197,7 @@ void Stroke::size(int x1, int y1, int x2, int y2)
 
 void Stroke::drawBrush(int x, int y, int c)
 {
-  Brush *brush = Project::brush;
+  Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
   int i;
@@ -208,7 +208,7 @@ void Stroke::drawBrush(int x, int y, int c)
 
 void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Project::brush;
+  Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
   drawBrush(x1, y1, c);
@@ -225,7 +225,7 @@ void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushRect(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Project::brush;
+  Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
   int i;
@@ -239,7 +239,7 @@ void Stroke::drawBrushRect(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Project::brush;
+  Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
   int i;
@@ -253,7 +253,7 @@ void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushAA(int x, int y, int c)
 {
-  Brush *brush = Project::brush;
+  Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
   int i;
@@ -267,7 +267,7 @@ void Stroke::drawBrushAA(int x, int y, int c)
 
 void Stroke::drawBrushLineAA(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Project::brush;
+  Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
   int i;
@@ -283,7 +283,7 @@ void Stroke::drawBrushLineAA(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushRectAA(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Project::brush;
+  Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
   int i;
@@ -299,7 +299,7 @@ void Stroke::drawBrushRectAA(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushOvalAA(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Project::brush;
+  Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
   int i;
@@ -315,7 +315,7 @@ void Stroke::drawBrushOvalAA(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::begin(int x, int y, int ox, int oy, float zoom)
 {
-  Brush *brush = Project::brush;
+  Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
   int r = brush->size / 2;
@@ -347,7 +347,7 @@ void Stroke::begin(int x, int y, int ox, int oy, float zoom)
 
 void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 {
-  Brush *brush = Project::brush;
+  Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
   int r = brush->size / 2;
@@ -545,8 +545,8 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
 void Stroke::end(int x, int y)
 {
+  Brush *brush = Project::brush.get();
   Map *map = Project::map;
-  Brush *brush = Project::brush;
 
   map->thick_aa = 0;
 

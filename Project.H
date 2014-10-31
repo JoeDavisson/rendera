@@ -40,10 +40,16 @@ namespace Project
 
   extern Bitmap *bmp;
   extern Map *map;
+/*
   extern Brush *brush;
   extern Palette *palette;
   extern Tool *tool;
   extern Stroke *stroke;
+*/
+  extern SP<Brush> brush;
+  extern SP<Palette> palette;
+  extern SP<Stroke> stroke;
+  extern Tool *tool;
 
   extern int overscroll;
   extern int theme;

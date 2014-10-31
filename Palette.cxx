@@ -33,6 +33,7 @@ Palette::Palette()
 
 Palette::~Palette()
 {
+  delete table;
   delete[] data;
 }
 
@@ -106,7 +107,7 @@ void Palette::draw(Widget *widget)
   widget->redraw();
 }
 
-void Palette::copy(Palette *dest)
+void Palette::copy(SP<Palette> dest)
 {
   int i;
 

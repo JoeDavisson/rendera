@@ -529,8 +529,8 @@ void Render::begin()
   view = Gui::getView();
   bmp = Project::bmp;
   map = Project::map;
-  brush = Project::brush;
-  stroke = Project::stroke;
+  brush = Project::brush.get();
+  stroke = Project::stroke.get();
 
   int size = 1;
 

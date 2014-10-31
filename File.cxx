@@ -1152,7 +1152,7 @@ Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int)
   if(!isGimpPalette(header))
     return 0;
 
-  Palette *temp_pal = new Palette();
+  SP<Palette> temp_pal = new Palette();
 
   temp_pal->load(fn);
   if(temp_pal->max == 0)
@@ -1164,7 +1164,6 @@ Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int)
     new Fl_RGB_Image((unsigned char *)pal_preview->bitmap->data,
                      96, 96, 4, 0);
 
-  delete temp_pal;
   return image;
 }
 
