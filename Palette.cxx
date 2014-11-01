@@ -24,6 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Palette.H"
 #include "Widget.H"
 
+/**
+  * Constructor.
+  */
 Palette::Palette()
 {
   data = new int[256];
@@ -31,12 +34,20 @@ Palette::Palette()
   setDefault();
 }
 
+/**
+  * Deconstructor.
+  */
 Palette::~Palette()
 {
   delete table;
   delete[] data;
 }
 
+/**
+  * Draws the palette to the specified widget.
+  * Tries to arrange the swatches to fit while being as large as possible.
+  * (Blank palette entries are marked with an X.)
+  */
 void Palette::draw(Widget *widget)
 {
   int x, y;
@@ -107,6 +118,9 @@ void Palette::draw(Widget *widget)
   widget->redraw();
 }
 
+/**
+  * Copy palette entries.
+  */
 void Palette::copy(Palette *dest)
 {
   int i;
@@ -117,6 +131,9 @@ void Palette::copy(Palette *dest)
   dest->max = max;
 }
 
+/**
+  * Insert a color at the specified index.
+  */
 void Palette::insertColor(int color, int index)
 {
   if(max >= 256)
@@ -132,6 +149,9 @@ void Palette::insertColor(int color, int index)
   data[index] = color;
 }
 
+/**
+  * Remove the color at the specified index.
+  */
 void Palette::deleteColor(int index)
 {
   if(max <= 1)
@@ -145,12 +165,17 @@ void Palette::deleteColor(int index)
   max--;
 }
 
+/**
+  * Replace the color at the specified index.
+  */
 void Palette::replaceColor(int color, int index)
 {
   data[index] = color;
 }
 
-// create palette lookup table
+/**
+  * Generate octree for color lookup.
+  */
 void Palette::fillTable()
 {
   delete table;
@@ -192,7 +217,9 @@ void Palette::fillTable()
     table->writePath(getr(data[i]), getg(data[i]), getb(data[i]), i);
 }
 
-// return palette index which corresponds to color
+/**
+  * Return palette index which corresponds to color.
+  */
 int Palette::lookup(const int &c)
 {
   struct rgba_t rgba = getRgba(c);
@@ -200,13 +227,17 @@ int Palette::lookup(const int &c)
   return table->read(rgba.r, rgba.g, rgba.b);
 }
 
-// sort palette
+/**
+  * Sort palette (by luminance for now.)
+  */
 void Palette::sort()
 {
   Common::sortBy(data, data + max, getl);
 }
 
-// uses GIMP .gpl palette format
+/**
+  * Load GIMP Palette file.
+  */
 int Palette::load(const char *fn)
 {
   max = 0;
@@ -260,7 +291,9 @@ int Palette::load(const char *fn)
   return 0;
 }
 
-// uses GIMP .gpl palette format
+/**
+  * Save GIMP Palette file.
+  */
 int Palette::save(const char *fn)
 {
   FILE *out = fopen(fn, "w");
@@ -298,7 +331,9 @@ int Palette::save(const char *fn)
   return 0;
 }
 
-// various fixed palettes
+/**
+  * Generate default palette.
+  */
 void Palette::setDefault()
 {
   int r, g, b;
@@ -327,6 +362,9 @@ void Palette::setDefault()
   fillTable();
 }
 
+/**
+  * Generate web-safe palette.
+  */
 void Palette::setWebSafe()
 {
   int r, g, b;
@@ -347,6 +385,10 @@ void Palette::setWebSafe()
   fillTable();
 }
 
+/**
+  * Generate 3-level palette, nice for a minimal but rather complete
+  * color selection.
+  */
 void Palette::set3LevelRGB()
 {
   int r, g, b;
@@ -369,6 +411,9 @@ void Palette::set3LevelRGB()
   fillTable();
 }
 
+/**
+  * Generate 64-color "EGA" palette.
+  */
 void Palette::set4LevelRGB()
 {
   int r, g, b;
@@ -389,6 +434,10 @@ void Palette::set4LevelRGB()
   fillTable();
 }
 
+/**
+  * Generate 3/3/2 palette, 256 colors.
+  * Probably the best "universal" palette without getting ridiculous.
+  */
 void Palette::set332()
 {
   int r, g, b;
