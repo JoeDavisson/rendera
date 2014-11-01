@@ -40,6 +40,9 @@ namespace
   float soft_trans = 0, soft_step = 0;
 }
 
+/**
+  * Paint tool, extended from Tool class.
+  */
 Paint::Paint()
 {
 }

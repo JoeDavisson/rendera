@@ -164,15 +164,22 @@ namespace
   {
     return (memcmp(header, "GIMP Palette", 12) == 0);
   }
+
+  int *init()
+  {
+    strcpy(load_dir, ".");
+    strcpy(save_dir, ".");
+    strcpy(pal_dir, ".");
+
+    return 0;
+  }
+
+  static const int *temp = init(); 
 }
 
-void File::init()
-{
-  strcpy(load_dir, ".");
-  strcpy(save_dir, ".");
-  strcpy(pal_dir, ".");
-}
-
+/**
+ * Load an image using the dialog.
+ */
 void File::load(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser fc;
@@ -262,6 +269,9 @@ void File::load(Fl_Widget *, void *)
   Undo::reset();
 }
 
+/**
+ * Load an image without the dialog.
+ */
 int File::loadFile(const char *fn)
 {
   FILE *in = fopen(fn, "rb");
@@ -327,6 +337,9 @@ int File::loadFile(const char *fn)
   return 0;
 }
 
+/**
+ * Load JPEG file.
+ */
 Bitmap *File::loadJPG(const char *fn, int overscroll)
 {
   struct jpeg_decompress_struct cinfo;
@@ -406,6 +419,9 @@ Bitmap *File::loadJPG(const char *fn, int overscroll)
   return temp;
 }
 
+/**
+ * Load Windows Bitmap file.
+ */
 Bitmap *File::loadBMP(const char *fn, int overscroll)
 {
   FILE *in = fopen(fn, "rb");
@@ -518,6 +534,9 @@ Bitmap *File::loadBMP(const char *fn, int overscroll)
   return temp;
 }
 
+/**
+ * Load Targa file.
+ */
 Bitmap *File::loadTGA(const char *fn, int overscroll)
 {
   FILE *in = fopen(fn, "rb");
@@ -639,6 +658,9 @@ Bitmap *File::loadTGA(const char *fn, int overscroll)
   return temp;
 }
 
+/**
+ * Load PNG file.
+ */
 Bitmap *File::loadPNG(const char *fn, int overscroll)
 {
   FILE *in = fopen(fn, "rb");
@@ -744,6 +766,9 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
   return temp;
 }
 
+/**
+ * Save an image using the dialog.
+ */
 void File::save(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser fc;
@@ -808,6 +833,9 @@ void File::save(Fl_Widget *, void *)
   }
 }
 
+/**
+ * Save "Windows Bitmap" format.
+ */
 int File::saveBMP(const char *fn)
 {
   FILE *out = fopen(fn, "wb");
@@ -880,6 +908,9 @@ int File::saveBMP(const char *fn)
   return 0;
 }
 
+/**
+ * Save "Targa" format.
+ */
 int File::saveTGA(const char *fn)
 {
   FILE *out = fopen(fn, "wb");
@@ -937,6 +968,9 @@ int File::saveTGA(const char *fn)
   return 0;
 }
 
+/**
+ * Save "PNG" format.
+ */
 int File::savePNG(const char *fn)
 {
   FILE *out = fopen(fn, "wb");
@@ -1079,6 +1113,9 @@ int File::saveJPG(const char *fn)
   return 0;
 }
 
+/**
+ * Preview PNG file.
+ */
 Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
 {
   if(!isPng(header))
@@ -1096,6 +1133,9 @@ Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
   return image;
 }
 
+/**
+ * Preview JPEG file.
+ */
 Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int)
 {
   if(!isJpeg(header))
@@ -1113,6 +1153,9 @@ Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int)
   return image;
 }
 
+/**
+ * Preview Windows Bitmap file.
+ */
 Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int)
 {
   if(!isBmp(header))
@@ -1130,6 +1173,9 @@ Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int)
   return image;
 }
 
+/**
+ * Preview Targa file.
+ */
 Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
 {
   if(!isTarga(fn))
@@ -1147,6 +1193,9 @@ Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
   return image;
 }
 
+/**
+ * Preview GIMP Palette file.
+ */
 Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int)
 {
   if(!isGimpPalette(header))
@@ -1167,6 +1216,9 @@ Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int)
   return image;
 }
 
+/**
+ * Load palette.
+ */
 void File::loadPalette()
 {
   Fl_Native_File_Chooser fc;
@@ -1214,6 +1266,9 @@ void File::loadPalette()
   }
 }
 
+/**
+ * Save palette.
+ */
 void File::savePalette()
 {
   Fl_Native_File_Chooser fc;
@@ -1251,6 +1306,9 @@ void File::savePalette()
   }
 }
 
+/**
+ * Convert URI string to sensible filename.
+ */
 void File::decodeURI(char *s)
 {
   int i, j;
@@ -1274,6 +1332,9 @@ void File::decodeURI(char *s)
   }
 }
 
+/**
+ * Extract directory name.
+ */
 void File::getDirectory(char *dest, const char *src)
 {
   strcpy(dest, src);

@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "Map.H"
 
+/*
+ * Constructor.
+ */
 Brush::Brush()
 {
   solidx = new int[96 * 96];
@@ -39,6 +42,9 @@ Brush::Brush()
   make(shape, size);
 }
 
+/*
+ * Deconstructor.
+ */
 Brush::~Brush()
 {
   delete[] solidx;
@@ -47,6 +53,9 @@ Brush::~Brush()
   delete[] hollowy;
 }
 
+/*
+ * Builds a new brush with the desired shape and size;
+ */
 void Brush::make(int shape, int s)
 {
   size = s;
