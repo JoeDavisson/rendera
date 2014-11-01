@@ -75,10 +75,6 @@ Bitmap::Bitmap(int width, int height)
   clone_mirror = 0;
 }
 
-/**
-  * Alternative Constructor
-  * \param overscroll = width of border around image.
-  */
 Bitmap::Bitmap(int width, int height, int overscroll)
 {
   width += overscroll * 2;
@@ -451,9 +447,6 @@ void Bitmap::setpixel(const int &x, const int &y, const int &c2, const int &t)
   }
 }
 
-/**
- * Draw pixel using current blending mode.
- */
 void Bitmap::setpixelSolid(const int &x, const int &y,
                            const int &c2, const int &t)
 {
@@ -485,9 +478,6 @@ void Bitmap::setpixelWrap(const int &x, const int &y,
   *c1 = Blend::current(*c1, c2, t);
 }
 
-/**
- * Draw cloned pixel using current blending mode.
- */
 void Bitmap::setpixelClone(const int &x, const int &y,
                            const int &, const int &t)
 {

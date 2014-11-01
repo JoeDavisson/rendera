@@ -25,9 +25,6 @@ class Bitmap;
 
 #include "Rendera.H"
 
-/**
-  * File support.
-  */
 namespace File
 {
   void load(Fl_Widget *, void *);
