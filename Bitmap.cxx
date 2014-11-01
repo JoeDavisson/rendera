@@ -42,6 +42,7 @@ namespace
   }
 }
 
+/** Normal Constructor */
 Bitmap::Bitmap(int width, int height)
 {
   if(width < 1)
@@ -75,6 +76,9 @@ Bitmap::Bitmap(int width, int height)
   clone_mirror = 0;
 }
 
+/** Alternative constructor, includes overscroll border around bitmap
+  * to facilitate drawing off the edge.
+  */
 Bitmap::Bitmap(int width, int height, int overscroll)
 {
   width += overscroll * 2;
@@ -131,12 +135,18 @@ Bitmap::Bitmap(int width, int height, int overscroll)
   clone_mirror = 0;
 }
 
+/**
+ *  Deconstructor.
+ */
 Bitmap::~Bitmap()
 {
   delete[] row;
   delete[] data;
 }
 
+/**
+ *  Clear bitmap to a certain color.
+ */
 void Bitmap::clear(int c)
 {
   int i;
@@ -144,6 +154,9 @@ void Bitmap::clear(int c)
     data[i] = c;
 }
 
+/**
+ * Draw horizontal line.
+ */
 void Bitmap::hline(int x1, int y, int x2, int c, int t)
 {
   if(x1 > x2)
@@ -168,6 +181,9 @@ void Bitmap::hline(int x1, int y, int x2, int c, int t)
   }
 }
 
+/**
+ * Draw vertical line.
+ */
 void Bitmap::vline(int y1, int x, int y2, int c, int t)
 {
   if(y1 < 0)
@@ -186,6 +202,9 @@ void Bitmap::vline(int y1, int x, int y2, int c, int t)
   while(y2 >= y1);
 }
 
+/**
+ * Draw arbitrary line.
+ */
 void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
 {
   int dx, dy, inx, iny, e;
@@ -242,6 +261,9 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
   setpixelSolid(x1, y1, c, t);
 }
 
+/**
+ * Draw rectangle.
+ */
 void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
 {
   if(x1 > x2)
@@ -273,6 +295,9 @@ void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
   }
 }
 
+/**
+ * Draw filled rectangle.
+ */
 void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c, int t)
 {
   if(x1 > x2)
@@ -293,6 +318,9 @@ void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c, int t)
     hline(x1, y1, x2, c, t);
 }
 
+/**
+ * Draw XOR line, for brushstroke previews or widgets.
+ */
 void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 {
   int dx, dy, inx, iny, e;
@@ -349,6 +377,9 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
   *(row[y1] + x1) ^= xorValue(x1, y1);
 }
 
+/**
+ * Draw XOR horizontal line, for brushstroke previews or widgets.
+ */
 void Bitmap::xorHline(int x1, int y, int x2)
 {
   if(x1 > x2)
@@ -369,6 +400,9 @@ void Bitmap::xorHline(int x1, int y, int x2)
     *p++ ^= xorValue(x1, y);
 }
 
+/**
+ * Draw XOR rectangle, for brushstroke previews or widgets.
+ */
 void Bitmap::xorRect(int x1, int y1, int x2, int y2)
 {
   if(x1 > x2)
@@ -401,6 +435,9 @@ void Bitmap::xorRect(int x1, int y1, int x2, int y2)
   }
 }
 
+/**
+ * Draw XOR filled rectangle, for brushstroke previews or widgets.
+ */
 void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
 {
   if(x1 > x2)
@@ -423,6 +460,9 @@ void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
     xorHline(x1, y1, x2);
 }
 
+/**
+ * Front-end to pixel drawing.
+ */
 void Bitmap::setpixel(const int &x, const int &y, const int &c2, const int &t)
 {
   Blend::target(this, x, y);
@@ -447,6 +487,9 @@ void Bitmap::setpixel(const int &x, const int &y, const int &c2, const int &t)
   }
 }
 
+/**
+ * Draw pixel using current blending mode.
+ */
 void Bitmap::setpixelSolid(const int &x, const int &y,
                            const int &c2, const int &t)
 {
@@ -458,6 +501,9 @@ void Bitmap::setpixelSolid(const int &x, const int &y,
   *c1 = Blend::current(*c1, c2, t);
 }
 
+/**
+ * Draw wrapped pixel using current blending mode.
+ */
 void Bitmap::setpixelWrap(const int &x, const int &y,
                           const int &c2, const int &t)
 {
@@ -478,6 +524,9 @@ void Bitmap::setpixelWrap(const int &x, const int &y,
   *c1 = Blend::current(*c1, c2, t);
 }
 
+/**
+ * Draw cloned pixel using current blending mode.
+ */
 void Bitmap::setpixelClone(const int &x, const int &y,
                            const int &, const int &t)
 {
@@ -526,6 +575,9 @@ void Bitmap::setpixelClone(const int &x, const int &y,
   *c1 = Blend::current(*c1, c2, t);
 }
 
+/**
+ * Draw wrapped, cloned pixel using current blending mode.
+ */
 void Bitmap::setpixelWrapClone(const int &x, const int &y,
                                const int &, const int &t)
 {
@@ -592,6 +644,9 @@ void Bitmap::setpixelWrapClone(const int &x, const int &y,
   *c1 = Blend::current(*c1, c2, t);
 }
 
+/**
+ * Return color value of pixel.
+ */
 int Bitmap::getpixel(int x, int y)
 {
   if(x < cl)
@@ -606,6 +661,9 @@ int Bitmap::getpixel(int x, int y)
   return *(row[y] + x);
 }
 
+/**
+ * Clip coordinate to clipping rectangle boundary.
+ */
 void Bitmap::clip(int *x1, int *y1, int *x2, int *y2)
 {
   if(*x1 < cl)
@@ -618,6 +676,9 @@ void Bitmap::clip(int *x1, int *y1, int *x2, int *y2)
     *y2 = cb;
 }
 
+/**
+ * Set clipping rectangle.
+ */
 void Bitmap::setClip(int x1, int y1, int x2, int y2)
 {
   cl = x1;
@@ -628,6 +689,9 @@ void Bitmap::setClip(int x1, int y1, int x2, int y2)
   ch = (cb - ct) + 1;
 }
 
+/**
+ * Copy part of one image to another.
+ */
 void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 {
   int x, y;
@@ -696,7 +760,9 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
   }
 }
 
-// for main viewport rendering
+/**
+ * Used for main viewport rendering.
+ */
 void Bitmap::pointStretch(Bitmap *dest,
                           int sx, int sy, int sw, int sh,
                           int dx, int dy, int dw, int dh,
@@ -769,9 +835,11 @@ void Bitmap::pointStretch(Bitmap *dest,
   }
 }
 
-// scale transform
-// performs bilinear filtering with gamma correction
-// warning: does not clip
+/**
+ * Scale transform.
+ * Performs bilinear filtering with gamma correction.
+ * Warning: Does not clip.
+ */
 void Bitmap::scaleBilinear(Bitmap *dest,
                            int sx, int sy, int sw, int sh,
                            int dx, int dy, int dw, int dh,
@@ -932,7 +1000,9 @@ void Bitmap::scaleBilinear(Bitmap *dest,
   while(y < dh);
 }
 
-// flip horizontal transform
+/**
+ * Horizontal flip.
+ */
 void Bitmap::mirror()
 {
   int x, y;
@@ -948,7 +1018,9 @@ void Bitmap::mirror()
   }
 }
 
-// flip vertical transform
+/**
+ * Vertical flip.
+ */
 void Bitmap::flip()
 {
   int x, y;
@@ -964,7 +1036,10 @@ void Bitmap::flip()
   }
 }
 
-// rotate transform
+/**
+ * Rotate transform.
+ * Does not currently perform bilinear filtering but should :)
+ */
 Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, bool tile)
 {
   // angle correction
@@ -1097,8 +1172,10 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, bool tile)
   return dest;
 }
 
-// fast bresenham stretch for navigator
-// adapted from graphic gems code
+/**
+ * Fast Bresenham stretch for navigator.
+ * Adapted from Graphics Gems.
+ */
 void Bitmap::fastStretch(Bitmap *dest,
                          int xs1, int ys1, int xs2, int ys2,
                          int xd1, int yd1, int xd2, int yd2, bool bgr_order)
@@ -1162,6 +1239,9 @@ void Bitmap::fastStretch(Bitmap *dest,
   }
 }
 
+/**
+ * Invert colors.
+ */
 void Bitmap::invert()
 {
   int i;
@@ -1172,5 +1252,4 @@ void Bitmap::invert()
     data[i] = makeRgba(255 - rgba.r, 255 - rgba.g, 255 - rgba.b, rgba.a);
   }
 }
-
 

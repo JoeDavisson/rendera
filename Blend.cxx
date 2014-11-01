@@ -28,6 +28,9 @@ namespace
   int xpos, ypos;
 }
 
+/**
+  * Sets current blending mode.
+  */
 void Blend::set(const int &mode)
 {
   switch(mode)
@@ -65,6 +68,9 @@ void Blend::set(const int &mode)
   }
 }
 
+/**
+  * Sets coordinate of current pixel.
+  */
 void Blend::target(Bitmap *b, const int &x, const int &y)
 {
   bmp = b;
@@ -72,11 +78,17 @@ void Blend::target(Bitmap *b, const int &x, const int &y)
   ypos = y;
 }
 
+/**
+  * Blend using current blending mode.
+  */
 int Blend::current(const int &c1, const int &c2, const int &t)
 {
   return (*current_blend)(c1, c2, t);
 }
 
+/**
+  * Blend without considering the alpha channel.
+  */
 int Blend::transNoAlpha(const int &c1, const int &c2, const int &t)
 {
   const struct rgba_t rgba1 = getRgba(c1);
@@ -88,7 +100,9 @@ int Blend::transNoAlpha(const int &c1, const int &c2, const int &t)
                   rgba1.a);
 }
 
-
+/**
+  * Blend all channels.
+  */
 int Blend::trans(const int &c1, const int &c2, const int &t)
 {
   const struct rgba_t rgba1 = getRgba(c1);
@@ -100,6 +114,10 @@ int Blend::trans(const int &c1, const int &c2, const int &t)
                   rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
 }
 
+/**
+  * Does a subtract and rotates hue 180 degrees so the hue
+  * remains the same.
+  */
 int Blend::darken(const int &c1, const int &c2, const int &t)
 {
   const struct rgba_t rgba1 = getRgba(c1);
@@ -125,6 +143,9 @@ int Blend::darken(const int &c1, const int &c2, const int &t)
   return makeRgba(r, g, b, rgba1.a);
 }
 
+/**
+  * Performs color addition.
+  */
 int Blend::lighten(const int &c1, const int &c2, const int &t)
 {
   const struct rgba_t rgba1 = getRgba(c1);
@@ -148,8 +169,10 @@ int Blend::colorize(const int &c1, const int &c2, const int &t)
   return keepLum(c3, getl(c1));
 }
 
-// forces a color to a similar one with the specified luminance,
-// so an image may be re-colored indefinately with no artifacts
+/**
+  * Forces a color to a similar one of the specified luminance,
+  * so an image may be re-colored indefinitely with no artifacts.
+  */
 int Blend::keepLum(const int &c, const int &dest)
 {
   // these have to be in order of importance in the luminance calc: G, R, B
@@ -194,18 +217,27 @@ int Blend::keepLum(const int &c, const int &dest)
   return makeRgba(n[1], n[0], n[2], rgba.a);
 }
 
+/**
+  * Lower opacity.
+  */
 int Blend::alphaSub(const int &c1, const int &, const int &t)
 {
   const struct rgba_t rgba = getRgba(c1);
   return makeRgba(rgba.r, rgba.g, rgba.b, (rgba.a * t) / 255);
 }
 
+/**
+  * Raise opacity.
+  */
 int Blend::alphaAdd(const int &c1, const int &, const int &t)
 {
   const struct rgba_t rgba = getRgba(c1);
   return makeRgba(rgba.r, rgba.g, rgba.b, 255 - ((255 - rgba.a) * t) / 255);
 }
 
+/**
+  * Performs a simple blur with surrounding pixels.
+  */
 int Blend::smooth(const int &c1, const int &, const int &t)
 {
   static int matrix[9] = { 1, 2, 1, 2, 3, 2, 1, 2, 1 };
@@ -248,6 +280,10 @@ int Blend::smooth(const int &c1, const int &, const int &t)
   return Blend::trans(c1, makeRgba(r, g, b, a), t);
 }
 
+/**
+  * Performs a simple blur with surrounding pixels, but only on
+  * the color information.
+  */
 int Blend::smoothColor(const int &c1, const int &, const int &t)
 {
   static int matrix[9] = { 1, 2, 1, 2, 3, 2, 1, 2, 1 };
@@ -296,10 +332,13 @@ int Blend::invert(const int &c1, const int &, const int &)
   return makeRgba(255 - getr(c1), 255 - getg(c1), 255 - getb(c1), geta(c1));
 }
 
-// RGB<->HSV conversions use the following ranges:
-// hue 0-1535
-// sat 0-255
-// val 0-255
+/**
+ * Convert to HSV:
+ * RGB<->HSV conversions use the following ranges:
+ * hue 0-1535
+ * sat 0-255
+ * val 0-255
+ */
 void Blend::rgbToHsv(const int &r, const int &g, const int &b, int *h, int *s, int *v)
 {
   int max = std::max(r, std::max(g, b));
@@ -331,6 +370,13 @@ void Blend::rgbToHsv(const int &r, const int &g, const int &b, int *h, int *s, i
   }
 }
 
+/**
+ * Convert to RGB:
+ * RGB<->HSV conversions use the following ranges:
+ * hue 0-1535
+ * sat 0-255
+ * val 0-255
+ */
 void Blend::hsvToRgb(const int &h, const int &s, const int &v, int *r, int *g, int *b)
 {
   if(s == 0)
