@@ -34,9 +34,6 @@ namespace
   Bitmap *offset_buffer = 0;
 }
 
-/**
-  * Offset tool, extended from Tool class.
-  */
 Offset::Offset()
 {
 }

@@ -76,9 +76,6 @@ namespace
   }
 }
 
-/**
- * Crop tool, extended from Tool class.
- */
 Crop::Crop()
 {
 }

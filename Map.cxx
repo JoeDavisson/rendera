@@ -90,12 +90,8 @@ namespace
   }
 }
 
-/**
-  * Constructor.
-  *
-  * The "Map" is an 8-bit image used to buffer brushstrokes
-  * before being rendered.
-  */
+// The "Map" is an 8-bit image used to buffer brushstrokes
+// before being rendered.
 Map::Map(int width, int height)
 {
   int i;
@@ -117,18 +113,12 @@ Map::Map(int width, int height)
   thick_aa = 0;
 }
 
-/**
-  * Deconstructor
-  */
 Map::~Map()
 {
   delete[] row;
   delete[] data;
 }
 
-/**
-  * Clear map to a certain value.
-  */
 void Map::clear(int c)
 {
   int i;
@@ -137,9 +127,6 @@ void Map::clear(int c)
     data[i] = c & 0xff;
 }
 
-/**
-  * Draw pixel.
-  */
 void Map::setpixel(const int &x, const int &y, const int &c)
 {
   if(x < 0 || x >= w || y < 0 || y >= h)
@@ -148,9 +135,6 @@ void Map::setpixel(const int &x, const int &y, const int &c)
   *(row[y] + x) = c & 0xff;
 }
 
-/**
-  * Return value of pixel at coordinate.
-  */
 int Map::getpixel(const int &x, const int &y)
 {
   if(x < 0 || x >= w || y < 0 || y >= h)
@@ -159,9 +143,6 @@ int Map::getpixel(const int &x, const int &y)
   return *(row[y] + x) & 0xff;
 }
 
-/**
-  * Draw line.
-  */
 void Map::line(int x1, int y1, int x2, int y2, int c)
 {
   int dx, dy, inx, iny, e;
@@ -218,9 +199,6 @@ void Map::line(int x1, int y1, int x2, int y2, int c)
   setpixel(x1, y1, c);
 }
 
-/**
-  * Draw oval.
-  */
 void Map::oval(int x1, int y1, int x2, int y2, int c)
 {
   int w = std::abs(x2 - x1);
@@ -315,9 +293,6 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
   }
 }
 
-/**
-  * Draw filled oval.
-  */
 void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
 {
   int w = std::abs(x2 - x1);
@@ -410,9 +385,6 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
   }
 }
 
-/**
-  * Draw rectangle.
-  */
 void Map::rect(int x1, int y1, int x2, int y2, int c)
 {
   if(x1 > x2)
@@ -433,9 +405,6 @@ void Map::rect(int x1, int y1, int x2, int y2, int c)
   hline(x1, y2, x2, c);
 }
 
-/**
-  * Draw filled rectangle.
-  */
 void Map::rectfill(int x1, int y1, int x2, int y2, int c)
 {
   if(x1 > x2)
@@ -447,9 +416,6 @@ void Map::rectfill(int x1, int y1, int x2, int y2, int c)
     hline(x1, y1, x2, c);
 }
 
-/**
-  * Draw horizontal line.
-  */
 void Map::hline(int x1, int y, int x2, int c)
 {
   if(x1 < 0)
@@ -476,9 +442,6 @@ void Map::hline(int x1, int y, int x2, int c)
   while(x >= z);
 }
 
-/**
-  * Draw vertical line.
-  */
 void Map::vline(int y1, int x, int y2, int c)
 {
   if(y1 < 0)
@@ -497,9 +460,6 @@ void Map::vline(int y1, int x, int y2, int c)
   while(y2 >= y1);
 }
 
-/**
-  * Draw filled polygon.
-  */
 void Map::polyfill(int *polycachex, int *polycachey, int polycount,
                    int x1, int y1, int x2, int y2, int c)
 {
@@ -540,17 +500,11 @@ void Map::polyfill(int *polycachex, int *polycachey, int polycount,
   }
 }
 
-/**
-  * Draw antialiased pixel.
-  */
 void Map::setpixelAA(int x, int y, int c)
 {
   _setpixelAA(this, x, y, c);
 }
 
-/**
-  * Draw antialiased line.
-  */
 void Map::lineAA(int x1, int y1, int x2, int y2, int c)
 {
   x1 <<= 2;
@@ -610,9 +564,6 @@ void Map::lineAA(int x1, int y1, int x2, int y2, int c)
   }
 }
 
-/**
-  * Draw antialiased oval.
-  */
 void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
 {
   x1 <<= 2;
@@ -714,9 +665,6 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
   }
 }
 
-/**
-  * Draw antialiased filled oval.
-  */
 void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
 {
   x1 <<= 2;
@@ -798,9 +746,6 @@ void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
   _hlineAA(this, x1 - x, y1 - y, x1 + x + ex, c);
 }
 
-/**
-  * Draw antialiased rectangle.
-  */
 void Map::rectAA(int x1, int y1, int x2, int y2, int c)
 {
   lineAA(x1, y1, x2, y1, c);
@@ -809,9 +754,6 @@ void Map::rectAA(int x1, int y1, int x2, int y2, int c)
   lineAA(x1, y2, x1, y1, c);
 }
 
-/**
-  * Draw antialiased filled rectangle.
-  */
 void Map::rectfillAA(int x1, int y1, int x2, int y2, int c)
 {
   x1 <<= 2;
@@ -828,9 +770,6 @@ void Map::rectfillAA(int x1, int y1, int x2, int y2, int c)
     _hlineAA(this, x1, y1, x2, c);
 }
 
-/**
-  * Draw antialiased filled polygon.
-  */
 void Map::polyfillAA(int *polycachex, int *polycachey, int polycount,
                      int x1, int y1, int x2, int y2, int c)
 {

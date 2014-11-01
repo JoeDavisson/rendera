@@ -22,9 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "File.H"
 #include "Group.H"
 
-/**
-  * Extended from Fl_Group.
-  */
 Group::Group(int x, int y, int w, int h, const char *l)
 : Fl_Group(x, y, w, h, l)
 {

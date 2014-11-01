@@ -63,9 +63,6 @@ namespace
   }
 }
 
-/**
-  * Program entry.
-  */
 int main(int argc, char *argv[])
 {
   // default to dark theme

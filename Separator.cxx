@@ -20,11 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Separator.H"
 
-/**
-  * Draws a separator.
-  * (Basically a box, but looks like a nice separator if
-  * the width or height are 2.)
-  */
 Separator::Separator(Fl_Group *g, int x, int y, int w, int h, const char *label)
 : Fl_Widget(x, y, w, h, label)
 {

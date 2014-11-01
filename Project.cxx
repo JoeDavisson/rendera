@@ -31,9 +31,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Text.H"
 #include "Tool.H"
 
-/**
-  * Place to put various "project-oriented" stuff.
-  */
 namespace Project
 {
   Bitmap *bmp = 0;
@@ -72,9 +69,6 @@ void Project::init()
   setTool(Tool::PAINT);
 }
 
-/**
-  * Change current tool.
-  */
 void Project::setTool(int num)
 {
   switch(num)
@@ -100,9 +94,6 @@ void Project::setTool(int num)
   }
 }
 
-/**
-  * Create new image/map, called when loading an image or creating a new one.
-  */
 void Project::newImage(int w, int h)
 {
   if(bmp)

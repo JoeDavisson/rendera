@@ -82,9 +82,6 @@ namespace
   }
 }
 
-/**
-  * Basic normalization.
-  */
 namespace Normalize
 {
   void apply()
@@ -166,9 +163,6 @@ namespace Normalize
   }
 }
 
-/**
-  * Basic equalization.
-  */
 namespace Equalize
 {
   void apply()
@@ -261,9 +255,6 @@ namespace Equalize
   }
 }
 
-/**
-  * Equalizes but retains the overall color cast of an image
-  */
 namespace ValueStretch
 {
   void apply()
@@ -388,9 +379,6 @@ namespace ValueStretch
   }
 }
 
-/**
-  * Tries to restore color saturation to a faded image
-  */
 namespace Saturate
 {
   void apply()
@@ -487,9 +475,6 @@ namespace Saturate
   }
 }
 
-/**
-  * Alter image hue.
-  */
 namespace RotateHue
 {
   Win *dialog;
@@ -599,9 +584,6 @@ namespace RotateHue
   static const int *temp = init();
 }
 
-/**
-  * Invert image.
-  */
 namespace Invert
 {
   void apply()
@@ -635,13 +617,11 @@ namespace Invert
   }
 }
 
-/**
-  * Corrects uneven dye fading in photographs (especially when there is a severe
-  * color cast, such as when one of the dyes have faded almost completely).
-  *
-  * Sometimes works better before or after the restore filter depending on
-  * the image.
-  */
+// Corrects uneven dye fading in photographs (especially when there is a severe
+// color cast, such as when one of the dyes have faded almost completely).
+//
+// Sometimes works better before or after the restore filter depending on
+// the image.
 namespace CorrectionMatrix
 {
   void apply()
@@ -700,11 +680,9 @@ namespace CorrectionMatrix
   }
 }
 
-/**
-  * This algorithm assumes a picture both has a color cast and is faded.
-  * In most cases (with a good scan) it can restore nearly all the color
-  * to a faded photograph.
-  */
+// This algorithm assumes a picture both has a color cast and is faded.
+// In most cases (with a good scan) it can restore nearly all the color
+// to a faded photograph.
 namespace Restore
 {
   Win *dialog;
@@ -847,9 +825,6 @@ namespace Restore
   static const int *temp = init();
 }
 
-/**
-  * Does a decent job of removing dust from scanned images.
-  */
 namespace RemoveDust
 {
   Win *dialog;
@@ -963,9 +938,6 @@ namespace RemoveDust
   static const int *temp = init();
 }
 
-/**
-  * Remove color information from image.
-  */
 namespace Desaturate
 {
   void apply()
@@ -1000,10 +972,6 @@ namespace Desaturate
   }
 }
 
-/**
-  * Colorize image using current color, taking into account the
-  * saturation of the original image.
-  */
 namespace Colorize
 {
   void apply()
@@ -1061,10 +1029,6 @@ namespace Colorize
   }
 }
 
-/**
-  * Reduce colors in the image using the current palette,
-  * with optional dithering.
-  */
 namespace ApplyPalette
 {
   Win *dialog;
@@ -1236,10 +1200,6 @@ namespace ApplyPalette
   static const int *temp = init();
 }
 
-/**
-  * Stained Glass effect.
-  * Basically turns the image into a Voronoi diagram.
-  */
 namespace StainedGlass
 {
   Win *dialog;
@@ -1464,9 +1424,6 @@ namespace StainedGlass
   static const int *temp = init();
 }
 
-/**
-  * Blur image (needs work..)
-  */
 namespace Blur
 {
   Win *dialog;
@@ -1564,9 +1521,6 @@ namespace Blur
   static const int *temp = init();
 }
 
-/**
-  * Sharpen image (needs work..)
-  */
 namespace Sharpen
 {
   Win *dialog;

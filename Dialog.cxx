@@ -594,9 +594,6 @@ namespace Editor
   static const int *temp = init();
 }
 
-/**
-  * Center a widget horizontally within dialog.
-  */
 void Dialog::center(Fl_Widget *widget)
 {
   int ww = 0, hh = 0;
@@ -611,9 +608,6 @@ void Dialog::center(Fl_Widget *widget)
   widget->redraw();
 }
 
-/**
-  * Add OK button to bottom of dialog, update vertical size.
-  */
 void Dialog::addOkButton(Fl_Group *group, Fl_Button **ok, int *y1)
 {
   int w = group->w();
@@ -626,9 +620,6 @@ void Dialog::addOkButton(Fl_Group *group, Fl_Button **ok, int *y1)
   group->resize(group->x(), group->y(), group->w(), *y1);
 }
 
-/**
-  * Add OK/Cancels buttons to bottom of dialog, update vertical size.
-  */
 void Dialog::addOkCancelButtons(Fl_Group *group,
                                 Fl_Button **ok, Fl_Button **cancel, int *y1)
 {
@@ -644,25 +635,16 @@ void Dialog::addOkCancelButtons(Fl_Group *group,
   group->resize(group->x(), group->y(), group->w(), *y1);
 }
 
-/**
-  * Show "About" dialog.
-  */
 void Dialog::about()
 {
   About::begin();
 }
 
-/**
-  * Show "JPEG quality" dialog.
-  */
 void Dialog::jpegQuality()
 {
   JpegQuality::begin();
 }
 
-/**
-  * Returns JPEG quality Value.
-  */
 int Dialog::jpegQualityValue()
 {
   int quality = atoi(JpegQuality::quality->value());
@@ -675,9 +657,6 @@ int Dialog::jpegQualityValue()
   return quality;
 }
 
-/**
-  * Show progress indicator.
-  */
 void Dialog::showProgress(float step)
 {
   Progress::value = 0;
@@ -685,9 +664,6 @@ void Dialog::showProgress(float step)
   Progress::dialog->show();
 }
 
-/**
-  * Update progress indicator.
-  */
 void Dialog::updateProgress()
 {
   Progress::bar->value(Progress::value);
@@ -698,33 +674,21 @@ void Dialog::updateProgress()
   Progress::value += Progress::step;
 }
 
-/**
-  * Hide progress indicator.
-  */
 void Dialog::hideProgress()
 {
   Progress::dialog->hide();
 }
 
-/**
-  * Show "New Image" dialog.
-  */
 void Dialog::newImage()
 {
   NewImage::begin();
 }
 
-/**
-  * Show "Create Palette" dialog.
-  */
 void Dialog::createPalette()
 {
   CreatePalette::begin();
 }
 
-/**
-  * Show "Palette Editor" dialog.
-  */
 void Dialog::editor()
 {
   Editor::begin();

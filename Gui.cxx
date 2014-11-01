@@ -43,9 +43,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Widget.H"
 #include "Win.H"
 
-/**
-  * Main GUI components and callbacks.
-  */
 namespace Gui
 {
   // window

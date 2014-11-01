@@ -20,9 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "InputInt.H"
 
-/**
-  * Extended from Fl_Int_Input.
-  */
 InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
                    const char *text, Fl_Callback *cb)
 : Fl_Int_Input(x, y, w, h, 0)

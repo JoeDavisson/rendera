@@ -524,9 +524,6 @@ namespace
   }
 }
 
-/**
-  * Render brushstroke using current painting mode.
-  */
 void Render::begin()
 {
   view = Gui::getView();

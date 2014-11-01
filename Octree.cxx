@@ -20,9 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Octree.H"
 
-/**
-  * Constructor.
-  */
 Octree::Octree()
 {
   root = new node_t;
@@ -34,17 +31,11 @@ Octree::Octree()
     root->child[i] = 0;
 }
 
-/**
-  * Deconstructor.
-  */
 Octree::~Octree()
 {
   clear(root);
 }
 
-/**
-  * Recursively delete octree node.
-  */
 void Octree::clear(struct node_t *node)
 {
   int i;
@@ -56,9 +47,6 @@ void Octree::clear(struct node_t *node)
   delete node;
 }
 
-/**
-  * Write value to leaf node.
-  */
 void Octree::write(const int &r, const int &g, const int &b,
                    const float &value)
 {
@@ -89,11 +77,9 @@ void Octree::write(const int &r, const int &g, const int &b,
   node->value = value;
 }
 
-/**
-  * Sets entire path to value.
-  * This allows the octree to be used in a different way.
-  * Used for palette lookup.
-  */
+// Sets entire path to value.
+// This allows the octree to be used in a different way.
+// (Needed for palette lookup.)
 void Octree::writePath(const int &r, const int &g, const int &b,
                         const float &value)
 {
@@ -122,9 +108,6 @@ void Octree::writePath(const int &r, const int &g, const int &b,
   }
 }
 
-/**
-  * Read value from leaf node.
-  */
 float Octree::read(const int &r, const int &g, const int &b)
 {
   struct node_t *node = root;

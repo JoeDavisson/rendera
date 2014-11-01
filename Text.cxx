@@ -36,9 +36,6 @@ namespace
   Bitmap *temp = 0;
 }
 
-/**
-  * Text tool, extended from Tool class.
-  */
 Text::Text()
 {
 }

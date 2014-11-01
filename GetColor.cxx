@@ -41,9 +41,6 @@ namespace
   }
 }
 
-/**
-  * GetColor tool, extended from Tool class.
-  */
 GetColor::GetColor()
 {
 }

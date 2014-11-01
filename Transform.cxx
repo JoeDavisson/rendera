@@ -241,6 +241,8 @@ namespace Rotate
     float scale_val = atof(scale->value());
 
     dialog->hide();
+    pushUndo();
+
     int overscroll = Project::bmp->overscroll;
     Bitmap *temp = Project::bmp->rotate(angle_val, scale_val, overscroll,
                                         tile->value());
@@ -290,17 +292,6 @@ namespace Rotate
   static const int *temp = init();
 }
 
-/**
-  * Show scale dialog.
-  */
-void Transform::scale()
-{
-  Scale::begin();
-}
-
-/**
-  * Mirror image.
-  */
 void Transform::mirror()
 {
   pushUndo();
@@ -308,9 +299,6 @@ void Transform::mirror()
   Gui::getView()->drawMain(true);
 }
 
-/**
-  * Flip image.
-  */
 void Transform::flip()
 {
   pushUndo();
@@ -318,13 +306,13 @@ void Transform::flip()
   Gui::getView()->drawMain(true);
 }
 
-/**
-  * Rotate image.
-  */
+void Transform::scale()
+{
+  Scale::begin();
+}
+
 void Transform::rotate()
 {
-  pushUndo();
   Rotate::begin();
-  Gui::getView()->drawMain(true);
 }
 
