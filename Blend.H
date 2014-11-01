@@ -25,6 +25,9 @@ class Bitmap;
 
 #include "Rendera.H"
 
+/**
+  * Blending modes.
+  */
 namespace Blend
 {
   enum
