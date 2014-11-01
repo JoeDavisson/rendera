@@ -290,11 +290,17 @@ namespace Rotate
   static const int *temp = init();
 }
 
+/**
+  * Show scale dialog.
+  */
 void Transform::scale()
 {
   Scale::begin();
 }
 
+/**
+  * Mirror image.
+  */
 void Transform::mirror()
 {
   pushUndo();
@@ -302,6 +308,9 @@ void Transform::mirror()
   Gui::getView()->drawMain(true);
 }
 
+/**
+  * Flip image.
+  */
 void Transform::flip()
 {
   pushUndo();
@@ -309,6 +318,9 @@ void Transform::flip()
   Gui::getView()->drawMain(true);
 }
 
+/**
+  * Rotate image.
+  */
 void Transform::rotate()
 {
   pushUndo();

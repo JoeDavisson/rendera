@@ -23,6 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Project.H"
 #include "ToggleButton.H"
 
+/**
+  * Extended from Fl_Button, toggling version.
+  */
 ToggleButton::ToggleButton(Fl_Group *g, int x, int y, int w, int h,
                            const char *label, const char *filename,
                            Fl_Callback *cb)

@@ -75,6 +75,9 @@ namespace
   }
 }
 
+/**
+  * Constructor
+  */
 Stroke::Stroke()
 {
   polycachex = new int[65536];
@@ -95,6 +98,9 @@ Stroke::Stroke()
   blith = 0;
 }
 
+/**
+  * Deconstructor
+  */
 Stroke::~Stroke()
 {
   delete[] polycachex;
@@ -103,7 +109,9 @@ Stroke::~Stroke()
   delete[] edgecachey;
 }
 
-// clips the current brushstroke to be within the image boundaries
+/**
+  * Clips the current brushstroke to be within the image boundaries.
+  */
 void Stroke::clip()
 {
   if(x1 < 0)
@@ -116,7 +124,9 @@ void Stroke::clip()
     y2 = Project::bmp->h - 1;
 }
 
-// use center for origin instead of corner
+/**
+  * Use center for origin instead of top-left corner.
+  */
 void Stroke::sizeLinear(int bx, int by, int x, int y)
 {
   if(bx > x)
@@ -142,7 +152,9 @@ void Stroke::sizeLinear(int bx, int by, int x, int y)
   }
 }
 
-// used by View class to limit drawing to a small rectangle
+/**
+  * Used by View class to limit drawing to a small rectangle.
+  */
 void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
                            int ox, int oy, int size, float zoom)
 {
@@ -181,7 +193,9 @@ void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
     blith = 1;
 }
 
-// resize the brushstroke area
+/**
+  * Resize the brushstroke rectangle.
+  */
 void Stroke::size(int x1, int y1, int x2, int y2)
 {
   if(x1 > x2)
@@ -195,6 +209,9 @@ void Stroke::size(int x1, int y1, int x2, int y2)
   this->y2 = y2;
 }
 
+/**
+  * Draw current brush.
+  */
 void Stroke::drawBrush(int x, int y, int c)
 {
   Brush *brush = Project::brush.get();
@@ -206,6 +223,9 @@ void Stroke::drawBrush(int x, int y, int c)
     map->setpixel(x + brush->solidx[i], y + brush->solidy[i], c);
 }
 
+/**
+  * Draw line with current brush.
+  */
 void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
 {
   Brush *brush = Project::brush.get();
@@ -223,6 +243,9 @@ void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
   }
 }
 
+/**
+  * Draw rectangle with current brush.
+  */
 void Stroke::drawBrushRect(int x1, int y1, int x2, int y2, int c)
 {
   Brush *brush = Project::brush.get();
@@ -237,6 +260,9 @@ void Stroke::drawBrushRect(int x1, int y1, int x2, int y2, int c)
   }
 }
 
+/**
+  * Draw oval with current brush.
+  */
 void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
 {
   Brush *brush = Project::brush.get();
@@ -251,6 +277,9 @@ void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
   }
 }
 
+/**
+  * Draw current brush (antialiased).
+  */
 void Stroke::drawBrushAA(int x, int y, int c)
 {
   Brush *brush = Project::brush.get();
@@ -265,6 +294,9 @@ void Stroke::drawBrushAA(int x, int y, int c)
   }
 }
 
+/**
+  * Draw line with current brush (antialiased).
+  */
 void Stroke::drawBrushLineAA(int x1, int y1, int x2, int y2, int c)
 {
   Brush *brush = Project::brush.get();
@@ -281,6 +313,9 @@ void Stroke::drawBrushLineAA(int x1, int y1, int x2, int y2, int c)
   }
 }
 
+/**
+  * Draw rectangle with current brush (antialiased).
+  */
 void Stroke::drawBrushRectAA(int x1, int y1, int x2, int y2, int c)
 {
   Brush *brush = Project::brush.get();
@@ -297,6 +332,9 @@ void Stroke::drawBrushRectAA(int x1, int y1, int x2, int y2, int c)
   }
 }
 
+/**
+  * Draw oval with current brush (antialiased).
+  */
 void Stroke::drawBrushOvalAA(int x1, int y1, int x2, int y2, int c)
 {
   Brush *brush = Project::brush.get();
@@ -313,6 +351,9 @@ void Stroke::drawBrushOvalAA(int x1, int y1, int x2, int y2, int c)
   }
 }
 
+/**
+  * Begin brushstroke.
+  */
 void Stroke::begin(int x, int y, int ox, int oy, float zoom)
 {
   Brush *brush = Project::brush.get();
@@ -345,6 +386,9 @@ void Stroke::begin(int x, int y, int ox, int oy, float zoom)
   draw(x, y, ox, oy, zoom);
 }
 
+/**
+  * Continue brushstroke.
+  */
 void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 {
   Brush *brush = Project::brush.get();
@@ -543,6 +587,9 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
   lasty = y;
 }
 
+/**
+  * End brushstroke.
+  */
 void Stroke::end(int x, int y)
 {
   Brush *brush = Project::brush.get();
@@ -743,7 +790,9 @@ void Stroke::end(int x, int y)
   }
 }
 
-// draws a polyline for region/polygon preview
+/**
+  * Draws a polyline (for region/polygon preview).
+  */
 void Stroke::polyline(int x, int y, int ox, int oy, float zoom)
 {
   Map *map = Project::map;
@@ -775,7 +824,9 @@ void Stroke::polyline(int x, int y, int ox, int oy, float zoom)
   lasty = y;
 }
 
-// draws brushstroke preview to viewport
+/**
+  * Draws brushstroke preview to main viewport.
+  */
 void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 {
   Map *map = Project::map;

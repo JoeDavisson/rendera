@@ -187,14 +187,16 @@ namespace
   }
 }
 
-// Pairwise clustering quantization, adapted from the algorithm described here:
-//
-// http://www.visgraf.impa.br/Projects/quantization/quant.html
-// http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
-//
-// This version saves computation time by reducing the color table size
-// (and reducing it further if an image is very colorful, in which case color
-// accuracy is not as important).
+/**
+* Pairwise clustering quantization, adapted from the algorithm described here:
+*
+* http://www.visgraf.impa.br/Projects/quantization/quant.html
+* http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
+*
+* This version saves computation time by reducing the color table size
+* (and reducing it further if an image is very colorful, in which case color
+* accuracy is not as important).
+*/
 void Quantize::pca(Bitmap *src, int size)
 {
   int i, j;
