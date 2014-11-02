@@ -80,6 +80,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   group = g;
   bitmap = new Bitmap(w, h);
   bitmap->clear(makeRgb(0, 0, 0));
+  bitmap2 = 0;
   image = new Fl_RGB_Image((unsigned char *)bitmap->data, w, h, 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
@@ -88,12 +89,12 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
 
 Widget::~Widget()
 {
+  if(image)
+    delete image;
   if(bitmap)
     delete bitmap;
   if(bitmap2)
     delete bitmap;
-  if(image)
-    delete image;
 }
 
 int Widget::handle(int event)

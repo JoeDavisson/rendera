@@ -36,8 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Separator.H"
 #include "Undo.H"
 #include "View.H"
-#include "Win.H"
-
 namespace
 {
   Bitmap *bmp;
@@ -477,7 +475,7 @@ namespace Saturate
 
 namespace RotateHue
 {
-  Win *dialog;
+  Fl_Double_Window *dialog;
   InputInt *angle;
   Fl_Check_Button *preserve;
   Fl_Button *ok;
@@ -563,7 +561,7 @@ namespace RotateHue
   {
     int y1 = 8;
 
-    dialog = new Win(256, 0, "Rotate Hue");
+    dialog = new Fl_Double_Window(256, 0, "Rotate Hue");
     angle = new InputInt(dialog, 0, y1, 72, 24, "Angle:", 0);
     y1 += 24 + 8;
     angle->maximum_size(4);
@@ -685,7 +683,7 @@ namespace CorrectionMatrix
 // to a faded photograph.
 namespace Restore
 {
-  Win *dialog;
+  Fl_Double_Window *dialog;
   Fl_Check_Button *normalize;
   Fl_Check_Button *invert;
   Fl_Check_Button *correct;
@@ -799,7 +797,7 @@ namespace Restore
   {
     int y1 = 8;
 
-    dialog = new Win(256, 0, "Restore");
+    dialog = new Fl_Double_Window(256, 0, "Restore");
     normalize = new Fl_Check_Button(0, y1, 16, 16, "Normalize First");
     y1 += 16 + 8;
     normalize->value(1);
@@ -827,7 +825,7 @@ namespace Restore
 
 namespace RemoveDust
 {
-  Win *dialog;
+  Fl_Double_Window *dialog;
   InputInt *amount;
   Fl_Check_Button *invert;
   Fl_Button *ok;
@@ -918,7 +916,7 @@ namespace RemoveDust
   {
     int y1 = 8;
 
-    dialog = new Win(256, 0, "Remove Dust");
+    dialog = new Fl_Double_Window(256, 0, "Remove Dust");
     amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
     amount->value("4");
@@ -1031,7 +1029,7 @@ namespace Colorize
 
 namespace ApplyPalette
 {
-  Win *dialog;
+  Fl_Double_Window *dialog;
   Fl_Check_Button *dither;
   Fl_Button *ok;
   Fl_Button *cancel;
@@ -1184,7 +1182,7 @@ namespace ApplyPalette
   {
     int y1 = 8;
 
-    dialog = new Win(256, 0, "Apply Palette");
+    dialog = new Fl_Double_Window(256, 0, "Apply Palette");
     dither = new Fl_Check_Button(0, y1, 16, 16, "Dithering");
     Dialog::center(dither);
     y1 += 16 + 8;
@@ -1202,7 +1200,7 @@ namespace ApplyPalette
 
 namespace StainedGlass
 {
-  Win *dialog;
+  Fl_Double_Window *dialog;
   InputInt *detail;
   InputInt *edge;
   Fl_Check_Button *uniform;
@@ -1394,7 +1392,7 @@ namespace StainedGlass
   {
     int y1 = 8;
 
-    dialog = new Win(256, 0, "Stained Glass");
+    dialog = new Fl_Double_Window(256, 0, "Stained Glass");
     detail = new InputInt(dialog, 0, y1, 72, 24, "Detail:", 0);
     y1 += 24 + 8;
     detail->value("5000");
@@ -1426,7 +1424,7 @@ namespace StainedGlass
 
 namespace Blur
 {
-  Win *dialog;
+  Fl_Double_Window *dialog;
   InputInt *amount;
   Fl_Button *ok;
   Fl_Button *cancel;
@@ -1504,7 +1502,7 @@ namespace Blur
   {
     int y1 = 8;
 
-    dialog = new Win(256, 0, "Blur");
+    dialog = new Fl_Double_Window(256, 0, "Blur");
     amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
     amount->value("1");
@@ -1523,7 +1521,7 @@ namespace Blur
 
 namespace Sharpen
 {
-  Win *dialog;
+  Fl_Double_Window *dialog;
   InputInt *amount;
   Fl_Button *ok;
   Fl_Button *cancel;
@@ -1598,7 +1596,7 @@ namespace Sharpen
   {
     int y1 = 8;
 
-    dialog = new Win(256, 0, "Sharpen");
+    dialog = new Fl_Double_Window(256, 0, "Sharpen");
     amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
     amount->value("64");

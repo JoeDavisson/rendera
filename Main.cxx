@@ -38,7 +38,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Transform.H"
 #include "Undo.H"
 #include "Widget.H"
-#include "WinTracker.H"
 
 namespace
 {
@@ -126,7 +125,7 @@ int main(int argc, char *argv[])
     }
   }
 
-  return Fl::run();
+  int ret = Fl::run();
 
   // delete undo bitmaps
   Undo::free();
@@ -135,7 +134,6 @@ int main(int argc, char *argv[])
   delete Project::bmp;
   delete Project::map;
 
-  // delete all windows (FLTK automatically deletes all child widgets)
-  WinTracker::free();
+  return ret;
 }
 
