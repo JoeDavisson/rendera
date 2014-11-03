@@ -1437,10 +1437,11 @@ namespace Blur
     int x, y;
     int div = 0;
 
-    // make kernel
+    // bell curve
     for(x = 0; x < size; x++)
     {
-      kernel[x] = 255 * std::sin((double)x * ((3.14159 * 2) / (size - 1)) / 2);
+      const int b = size / 2;
+      kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) / (2 * b * b)));
       div += kernel[x];
     }
 
@@ -1515,7 +1516,6 @@ namespace Blur
       if(updateProgress(y) < 0)
         return;
     }
-
 
     endProgress();
   }
