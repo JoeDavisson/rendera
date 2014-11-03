@@ -1431,11 +1431,22 @@ namespace Blur
 
   void apply(int size)
   {
-    const int div = (size * 2 + 1) * (size * 2 + 1);
+    size = (size + 1) * 2 + 1;
+
+    int *kernel = new int[size];
     int x, y;
+    int div = 0;
+
+    // make kernel
+    for(x = 0; x < size; x++)
+    {
+      kernel[x] = 255 * std::sin((double)x * ((3.14159 * 2) / (size - 1)) / 2);
+      div += kernel[x];
+    }
 
     beginProgress();
 
+    // x direction
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
       int *p = bmp->row[y] + overscroll;
@@ -1446,18 +1457,15 @@ namespace Blur
         int gg = 0;
         int bb = 0;
         int aa = 0;
-        int i, j;
+        int i;
 
-        for(j = y - size; j <= y + size; j++) 
+        for(i = 0; i < size; i++) 
         {
-          for(i = x - size; i <= x + size; i++) 
-          {
-            rgba_t rgba = getRgba(bmp->getpixel(i, j));
-            rr += rgba.r;
-            gg += rgba.g;
-            bb += rgba.b;
-            aa += rgba.a;
-          }
+          rgba_t rgba = getRgba(bmp->getpixel(x - size / 2 + i, y));
+          rr += rgba.r * kernel[i];
+          gg += rgba.g * kernel[i];
+          bb += rgba.b * kernel[i];
+          aa += rgba.a * kernel[i];
         }
 
         rr /= div;
@@ -1472,12 +1480,49 @@ namespace Blur
         return;
     }
 
+    beginProgress();
+
+    // y direction
+    for(y = overscroll; y < bmp->h - overscroll; y++)
+    {
+      int *p = bmp->row[y] + overscroll;
+
+      for(x = overscroll; x < bmp->w - overscroll; x++)
+      {
+        int rr = 0;
+        int gg = 0;
+        int bb = 0;
+        int aa = 0;
+        int i;
+
+        for(i = 0; i < size; i++) 
+        {
+          rgba_t rgba = getRgba(bmp->getpixel(x, y - size / 2 + i));
+          rr += rgba.r * kernel[i];
+          gg += rgba.g * kernel[i];
+          bb += rgba.b * kernel[i];
+          aa += rgba.a * kernel[i];
+        }
+
+        rr /= div;
+        gg /= div;
+        bb /= div;
+        aa /= div;
+
+        *p++ = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
+      }
+
+      if(updateProgress(y) < 0)
+        return;
+    }
+
+
     endProgress();
   }
 
   void close()
   {
-    if(amount->limitValue(1, 16) < 0)
+    if(amount->limitValue(1, 100) < 0)
       return;
 
     int amount_val = atoi(amount->value());
