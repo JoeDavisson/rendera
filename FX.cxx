@@ -1465,9 +1465,9 @@ namespace Blur
         for(i = 0; i < size; i++) 
         {
           rgba_t rgba = getRgba(bmp->getpixel(x - size / 2 + i, y));
-          rr += rgba.r * kernel[i];
-          gg += rgba.g * kernel[i];
-          bb += rgba.b * kernel[i];
+          rr += Gamma::fix(rgba.r) * kernel[i];
+          gg += Gamma::fix(rgba.g) * kernel[i];
+          bb += Gamma::fix(rgba.b) * kernel[i];
           aa += rgba.a * kernel[i];
         }
 
@@ -1475,6 +1475,10 @@ namespace Blur
         gg /= div;
         bb /= div;
         aa /= div;
+
+        rr = Gamma::unfix(rr);
+        gg = Gamma::unfix(gg);
+        bb = Gamma::unfix(bb);
 
         *p++ = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
       }
@@ -1505,9 +1509,9 @@ namespace Blur
         for(i = 0; i < size; i++) 
         {
           rgba_t rgba = getRgba(bmp->getpixel(x, y - size / 2 + i));
-          rr += rgba.r * kernel[i];
-          gg += rgba.g * kernel[i];
-          bb += rgba.b * kernel[i];
+          rr += Gamma::fix(rgba.r) * kernel[i];
+          gg += Gamma::fix(rgba.g) * kernel[i];
+          bb += Gamma::fix(rgba.b) * kernel[i];
           aa += rgba.a * kernel[i];
         }
 
@@ -1515,6 +1519,10 @@ namespace Blur
         gg /= div;
         bb /= div;
         aa /= div;
+
+        rr = Gamma::unfix(rr);
+        gg = Gamma::unfix(gg);
+        bb = Gamma::unfix(bb);
 
         *p++ = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
       }
