@@ -1438,10 +1438,11 @@ namespace Blur
     int div = 0;
 
     // bell curve
+    const int b = size / 2;
+
     for(x = 0; x < size; x++)
     {
-      const int b = size / 2;
-      kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) / (2 * b * b)));
+      kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) / ((b * b) / 2)));
       div += kernel[x];
     }
 
