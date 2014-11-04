@@ -1446,12 +1446,13 @@ namespace Blur
       div += kernel[x];
     }
 
+    Bitmap *temp = new Bitmap(bmp->cw, bmp->ch);
     beginProgress();
 
     // x direction
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = temp->row[y - overscroll];
 
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
@@ -1479,15 +1480,19 @@ namespace Blur
       }
 
       if(updateProgress(y) < 0)
+      {
+        delete temp;
         return;
+      }
     }
 
+    temp->blit(bmp, 0, 0, bmp->cl, bmp->ct, temp->w, temp->h);
     beginProgress();
 
     // y direction
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = temp->row[y - overscroll];
 
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
@@ -1515,8 +1520,14 @@ namespace Blur
       }
 
       if(updateProgress(y) < 0)
+      {
+        delete temp;
         return;
+      }
     }
+
+    temp->blit(bmp, 0, 0, bmp->cl, bmp->ct, temp->w, temp->h);
+    delete temp;
 
     endProgress();
   }
