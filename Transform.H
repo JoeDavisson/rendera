@@ -27,6 +27,7 @@ namespace Transform
 {
   void mirror();
   void flip();
+  void resize();
   void scale();
   void rotate();
 }

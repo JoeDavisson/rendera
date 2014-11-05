@@ -185,6 +185,8 @@ void Gui::init()
     (Fl_Callback *)Transform::flip, 0, FL_MENU_DIVIDER);
   menubar->add("Image/Rotate...", 0,
     (Fl_Callback *)Transform::rotate, 0, 0);
+  menubar->add("Image/Resize...", 0,
+    (Fl_Callback *)Transform::resize, 0, 0);
   menubar->add("Image/Scale...", 0,
     (Fl_Callback *)Transform::scale, 0, 0);
   menubar->add("Palette/Load", 0,

@@ -672,10 +672,10 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
   }
 
   if((dx + ww - 1) > dest->cr)
-    ww = dest->cr - dx;
+    ww = dest->cr - dx + 1;
 
   if((dy + hh - 1) > dest->cb)
-    hh = dest->cb - dy;
+    hh = dest->cb - dy + 1;
 
   if(ww < 1 || hh < 1)
     return;

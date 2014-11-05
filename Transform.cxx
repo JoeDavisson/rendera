@@ -76,6 +76,134 @@ namespace
   }
 }
 
+namespace Resize
+{
+  Fl_Double_Window *dialog;
+  InputInt *width;
+  InputInt *height;
+  Fl_Check_Button *keep_aspect;
+  Fl_Button *ok;
+  Fl_Button *cancel;
+
+  void begin()
+  {
+    char s[8];
+    snprintf(s, sizeof(s), "%d", Project::bmp->cw);
+    width->value(s);
+    snprintf(s, sizeof(s), "%d", Project::bmp->ch);
+    height->value(s);
+    dialog->show();
+  }
+
+  void checkWidth()
+  {
+    if(keep_aspect->value())
+    {
+      int ww = Project::bmp->cw;
+      int hh = Project::bmp->ch;
+      float aspect = (float)hh / ww;
+      char s[8];
+      int w = atoi(width->value());
+      int h = w * aspect;
+      snprintf(s, sizeof(s), "%d", h);
+      height->value(s);
+    }
+  }
+
+  void checkHeight()
+  {
+    if(keep_aspect->value())
+    {
+      int ww = Project::bmp->cw;
+      int hh = Project::bmp->ch;
+      float aspect = (float)ww / hh;
+      char s[8];
+      int h = atoi(height->value());
+      int w = h * aspect;
+      snprintf(s, sizeof(s), "%d", w);
+      width->value(s);
+    }
+  }
+
+  void checkKeepAspect()
+  {
+    if(keep_aspect->value())
+    {
+      checkWidth();
+    }
+  }
+
+  void close()
+  {
+    if(width->limitValue(1, 10000) < 0)
+      return;
+
+    if(height->limitValue(1, 10000) < 0)
+      return;
+
+    int w = atoi(width->value());
+    int h = atoi(height->value());
+
+    dialog->hide();
+    pushUndo();
+
+    Bitmap *bmp = Project::bmp;
+    int overscroll = bmp->overscroll;
+    Bitmap *temp = new Bitmap(w, h, overscroll);
+
+    bmp->blit(temp, overscroll, overscroll, overscroll, overscroll,
+                    bmp->cw, bmp->ch);
+
+    delete Project::bmp;
+    Project::bmp = temp;
+
+    delete Project::map;
+    Project::map = new Map(Project::bmp->w, Project::bmp->h);
+
+    Gui::getView()->ox = 0;
+    Gui::getView()->oy = 0;
+    Gui::getView()->zoomFit(0);
+    Gui::getView()->drawMain(true);
+  }
+
+  void quit()
+  {
+    dialog->hide();
+  }
+
+  int *init()
+  {
+    int y1 = 8;
+
+    dialog = new Fl_Double_Window(256, 0, "Resize Image");
+    width = new InputInt(dialog, 0, y1, 72, 24, "Width:", 0);
+    width->center();
+    width->callback((Fl_Callback *)checkWidth);
+    y1 += 24 + 8;
+    height = new InputInt(dialog, 0, y1, 72, 24, "Height:", 0);
+    height->center();
+    height->callback((Fl_Callback *)checkHeight);
+    y1 += 24 + 8;
+    width->maximum_size(8);
+    height->maximum_size(8);
+    width->value("640");
+    height->value("480");
+    keep_aspect = new Fl_Check_Button(0, y1, 16, 16, "Keep Aspect");
+    keep_aspect->callback((Fl_Callback *)checkKeepAspect);
+    y1 += 16 + 8;
+    Dialog::center(keep_aspect);
+    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
+    ok->callback((Fl_Callback *)close);
+    cancel->callback((Fl_Callback *)quit);
+    dialog->set_modal();
+    dialog->end(); 
+
+    return 0;
+  }
+
+  static const int *temp = init();
+}
+
 namespace Scale
 {
   Fl_Double_Window *dialog;
@@ -303,6 +431,11 @@ void Transform::flip()
   pushUndo();
   Project::bmp->flip();
   Gui::getView()->drawMain(true);
+}
+
+void Transform::resize()
+{
+  Resize::begin();
 }
 
 void Transform::scale()
