@@ -1602,11 +1602,12 @@ namespace Sharpen
   {
     int x, y, i;
 
+    Bitmap *temp = new Bitmap(bmp->cw, bmp->ch);
     beginProgress();
 
     for(y = overscroll; y < bmp->h - overscroll; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = temp->row[y - overscroll];
 
       for(x = overscroll; x < bmp->w - overscroll; x++)
       {
@@ -1630,6 +1631,9 @@ namespace Sharpen
       if(updateProgress(y) < 0)
         return;
     }
+
+    temp->blit(bmp, 0, 0, bmp->cl, bmp->ct, temp->w, temp->h);
+    delete temp;
 
     endProgress();
   }
