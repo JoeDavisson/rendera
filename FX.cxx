@@ -1640,7 +1640,7 @@ namespace Sharpen
 
   void close()
   {
-    if(amount->limitValue(1, 255) < 0)
+    if(amount->limitValue(1, 100) < 0)
       return;
 
     int amout_val = atoi(amount->value());
@@ -1668,7 +1668,7 @@ namespace Sharpen
     dialog = new Fl_Double_Window(256, 0, "Sharpen");
     amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
-    amount->value("64");
+    amount->value("10");
     amount->center();
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
