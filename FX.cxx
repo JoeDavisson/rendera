@@ -1625,7 +1625,7 @@ namespace Sharpen
         const int c = bmp->getpixel(x, y);
 
         lum = std::min(std::max(lum, 0), 255);
-        *p++ = Blend::trans(c, Blend::keepLum(c, lum), 255 - amount);
+        *p++ = Blend::trans(c, Blend::keepLum(c, lum), 255 - amount * 2.55);
       }
 
       if(updateProgress(y) < 0)
