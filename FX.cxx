@@ -39,13 +39,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace
 {
   Bitmap *bmp;
-  int overscroll;
 
   void pushUndo()
   {
     bmp = Project::bmp;
-    overscroll = bmp->overscroll;
-    Undo::push(overscroll, overscroll, bmp->cw, bmp->ch);
+    Undo::push(bmp->cl, bmp->ct, bmp->cw, bmp->ch);
   }
 
   void beginProgress()
@@ -93,9 +91,9 @@ namespace Normalize
     int g_low = 0xFFFFFF;
     int b_low = 0xFFFFFF;
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_t rgba = getRgba(bmp->getpixel(x, y));
 
@@ -132,11 +130,11 @@ namespace Normalize
 
     beginProgress();
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl;
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_t rgba = getRgba(bmp->getpixel(x, y));
 
@@ -181,9 +179,9 @@ namespace Equalize
 
     int size = bmp->cw * bmp->ch;
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_t rgba = getRgba(bmp->getpixel(x, y));
 
@@ -211,11 +209,11 @@ namespace Equalize
 
     beginProgress();
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl;
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_t rgba = getRgba(bmp->getpixel(x, y));
 
@@ -270,9 +268,9 @@ namespace ValueStretch
     int count = 0;
 
     // determine overall color cast
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_t rgba = getRgba(bmp->getpixel(x, y));
 
@@ -297,9 +295,9 @@ namespace ValueStretch
 
     int size = bmp->cw * bmp->ch;
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_t rgba = getRgba(bmp->getpixel(x, y));
 
@@ -327,11 +325,11 @@ namespace ValueStretch
 
     beginProgress();
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl;
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_t rgba = getRgba(bmp->getpixel(x, y));
 
@@ -391,9 +389,9 @@ namespace Saturate
 
     int size = bmp->cw * bmp->ch;
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_t rgba = getRgba(bmp->getpixel(x, y));
 
@@ -415,11 +413,11 @@ namespace Saturate
 
     beginProgress();
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl;
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         const int c = bmp->getpixel(x, y);
 
@@ -493,11 +491,11 @@ namespace RotateHue
 
     beginProgress();
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl;
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         int c = bmp->getpixel(x, y);
 
@@ -590,11 +588,11 @@ namespace Invert
 
     beginProgress();
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl;
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         int c = bmp->getpixel(x, y);
 
@@ -628,11 +626,11 @@ namespace CorrectionMatrix
 
     beginProgress();
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cr; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl;
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         const int c = bmp->getpixel(x, y);
 
@@ -703,9 +701,9 @@ namespace Restore
     bool keep_lum = color_only->value();
 
     // determine overall color cast
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         const struct rgba_t rgba = getRgba(bmp->getpixel(x, y));
 
@@ -729,11 +727,11 @@ namespace Restore
     // begin restore
     beginProgress();
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl;
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         const int c = bmp->getpixel(x, y);
         const struct rgba_t rgba = getRgba(c);
@@ -840,11 +838,11 @@ namespace RemoveDust
 
     beginProgress();
 
-    for(y = (overscroll + 1); y < bmp->h - (overscroll + 1); y++)
+    for(y = bmp->ct + 1; y <= bmp->cb - 1; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl + 1;
 
-      for(x = (overscroll + 1); x < bmp->w - (overscroll + 1); x++)
+      for(x = bmp->cl + 1; x <= bmp->cr - 1; x++)
       {
         test = bmp->getpixel(x, y);
 
@@ -944,11 +942,11 @@ namespace Desaturate
 
     beginProgress();
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl;
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         int c = bmp->getpixel(x, y);
         int l = getl(c);
@@ -980,11 +978,11 @@ namespace Colorize
 
     beginProgress();
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl;
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         int c1 = bmp->getpixel(x, y);
 
@@ -1040,11 +1038,11 @@ namespace ApplyPalette
 
     beginProgress();
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl;
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         int c = bmp->getpixel(x, y);
         *p++ = Project::palette->data[(int)Project::palette->lookup(c)];
@@ -1082,11 +1080,11 @@ namespace ApplyPalette
 
     beginProgress();
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl;
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_t rgba = getRgba(*p);
         v[0] = Gamma::fix(rgba.r);
@@ -1128,7 +1126,7 @@ namespace ApplyPalette
 
       for(i = 0; i < 3; i++)
       {
-        for(j = overscroll; j < bmp->w - overscroll; j++)
+        for(j = bmp->cl; j <= bmp->cr; j++)
         {
           *(prev[i] + j) = *(buf[i] + j);
           *(buf[i] + j) = 0;
@@ -1274,11 +1272,11 @@ namespace StainedGlass
     beginProgress();
 
     // draw segments
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = bmp->row[y] + overscroll;
+      int *p = bmp->row[y] + bmp->cl;
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         // find nearest color
         int nearest = 999999999;
@@ -1332,20 +1330,20 @@ namespace StainedGlass
       Map *map = Project::map;
       map->clear(0);
 
-      for(y = overscroll * 4; y < (bmp->h - overscroll) * 4; y++)
+      for(y = bmp->ct * 4; y <= bmp->cb * 4; y++)
       {
-        for(x = overscroll * 4; x < (bmp->w - overscroll) * 4; x++)
+        for(x = bmp->cl * 4; x <= bmp->cr * 4; x++)
         {
           if(isSegmentEdge(bmp, x / 4, y / 4))
             map->setpixelAA(x, y, 255);
         }
       }
 
-      for(y = overscroll; y < bmp->h - overscroll; y++)
+      for(y = bmp->ct; y <= bmp->cb; y++)
       {
-        int *p = bmp->row[y] + overscroll;
+        int *p = bmp->row[y] + bmp->cl;
 
-        for(x = overscroll; x < bmp->w - overscroll; x++)
+        for(x = bmp->cl; x <= bmp->cr; x++)
         {
           const int c = map->getpixel(x, y);
 
@@ -1450,11 +1448,11 @@ namespace Blur
     beginProgress();
 
     // x direction
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = temp->row[y - overscroll];
+      int *p = temp->row[y - bmp->cl];
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         int rr = 0;
         int gg = 0;
@@ -1494,11 +1492,11 @@ namespace Blur
     beginProgress();
 
     // y direction
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = temp->row[y - overscroll];
+      int *p = temp->row[y - bmp->cl];
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         int rr = 0;
         int gg = 0;
@@ -1605,11 +1603,11 @@ namespace Sharpen
     Bitmap *temp = new Bitmap(bmp->cw, bmp->ch);
     beginProgress();
 
-    for(y = overscroll; y < bmp->h - overscroll; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = temp->row[y - overscroll];
+      int *p = temp->row[y - bmp->cl];
 
-      for(x = overscroll; x < bmp->w - overscroll; x++)
+      for(x = bmp->cl; x <= bmp->cr; x++)
       {
         int i, j;
         int lum = 0;
