@@ -204,7 +204,6 @@ void Quantize::pca(Bitmap *src, int size)
 
   int max;
   int rep = size;
-  int overscroll = src->overscroll;
 
   // build histogram, inc is the weight of 1 pixel in the image
   float inc = 1.0 / (src->cw * src->ch);
@@ -217,11 +216,11 @@ void Quantize::pca(Bitmap *src, int size)
   for(i = 0; i < 512; i++)
     color_metric[i] = 0;
 
-  for(j = overscroll; j < src->h - overscroll; j++)
+  for(j = src->ct; j <= src->cb; j++)
   {
-    int *p = src->row[j] + overscroll;
+    int *p = src->row[j] + src->cl;
 
-    for(i = overscroll; i < src->w - overscroll; i++)
+    for(i = src->cl; i <= src->cr; i++)
     {
       struct rgba_t rgba = getRgba(*p++);
       float freq = histogram->read(rgba.r, rgba.g, rgba.b);
