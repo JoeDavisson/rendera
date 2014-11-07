@@ -626,7 +626,7 @@ namespace CorrectionMatrix
 
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cr; y++)
+    for(y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
