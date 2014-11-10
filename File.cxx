@@ -214,11 +214,11 @@ void File::load(Fl_Widget *, void *)
   fclose(in);
 
   int overscroll = Project::overscroll;
+  Bitmap *temp = 0;
 
   if(isPng(header))
   {
-    delete Project::bmp;
-    if(!(Project::bmp = File::loadPNG((const char *)fn, overscroll)))
+    if(!(temp = File::loadPNG((const char *)fn, overscroll)))
     {
       errorMessage();
       return;
@@ -226,8 +226,7 @@ void File::load(Fl_Widget *, void *)
   }
   else if(isJpeg(header))
   {
-    delete Project::bmp;
-    if(!(Project::bmp = File::loadJPG((const char *)fn, overscroll)))
+    if(!(temp = File::loadJPG((const char *)fn, overscroll)))
     {
       errorMessage();
       return;
@@ -235,8 +234,7 @@ void File::load(Fl_Widget *, void *)
   }
   else if(isBmp(header))
   {
-    delete Project::bmp;
-    if(!(Project::bmp = File::loadBMP((const char *)fn, overscroll)))
+    if(!(temp = File::loadBMP((const char *)fn, overscroll)))
     {
       errorMessage();
       return;
@@ -244,8 +242,7 @@ void File::load(Fl_Widget *, void *)
   }
   else if(isTarga(fn))
   {
-    delete Project::bmp;
-    if(!(Project::bmp = File::loadTGA((const char *)fn, overscroll)))
+    if(!(temp = File::loadTGA((const char *)fn, overscroll)))
     {
       errorMessage();
       return;
@@ -256,6 +253,9 @@ void File::load(Fl_Widget *, void *)
     errorMessage();
     return;
   }
+
+  delete Project::bmp;
+  Project::bmp = temp;
 
   delete Project::map;
   Project::map = new Map(Project::bmp->w, Project::bmp->h);
@@ -283,42 +283,48 @@ int File::loadFile(const char *fn)
 
   int overscroll = Project::overscroll;
 
+  Bitmap *temp = 0;
+
   if(isPng(header))
   {
-    delete Project::bmp;
-    if(!(Project::bmp = File::loadPNG((const char *)fn, overscroll)))
+    if(!(temp = File::loadPNG((const char *)fn, overscroll)))
     {
+      errorMessage();
       return -1;
     }
   }
   else if(isJpeg(header))
   {
-    delete Project::bmp;
-    if(!(Project::bmp = File::loadJPG((const char *)fn, overscroll)))
+    if(!(temp = File::loadJPG((const char *)fn, overscroll)))
     {
+      errorMessage();
       return -1;
     }
   }
   else if(isBmp(header))
   {
-    delete Project::bmp;
-    if(!(Project::bmp = File::loadBMP((const char *)fn, overscroll)))
+    if(!(temp = File::loadBMP((const char *)fn, overscroll)))
     {
+      errorMessage();
       return -1;
     }
   }
   else if(isTarga(fn))
   {
-    delete Project::bmp;
-    if(!(Project::bmp = File::loadTGA((const char *)fn, overscroll)))
+    if(!(temp = File::loadTGA((const char *)fn, overscroll)))
     {
+      errorMessage();
       return -1;
     }
   }
   else
   {
+    errorMessage();
     return -1;
   }
+
+  delete Project::bmp;
+  Project::bmp = temp;
 
   delete Project::map;
   Project::map = new Map(Project::bmp->w, Project::bmp->h);
@@ -664,8 +670,9 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
   }
 
   png_structp png_ptr;
-  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
   png_infop info_ptr;
+
+  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
 
   if(!png_ptr)
   {
@@ -677,12 +684,14 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
 
   if(!info_ptr)
   {
+    png_destroy_read_struct(&png_ptr, 0, 0);
     fclose(in);
     return 0;
   }
 
   if(setjmp(png_jmpbuf(png_ptr)))
   {
+    png_destroy_read_struct(&png_ptr, &info_ptr, 0);
     fclose(in);
     return 0;
   }
@@ -699,8 +708,18 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
   png_init_io(png_ptr, in);
   png_set_sig_bytes(png_ptr, 8);
   png_read_info(png_ptr, info_ptr);
+
   png_get_IHDR(png_ptr, info_ptr, &w, &h, &bpp, &color_type,
                &interlace_type, &compression_type, &filter_method);
+
+  if( (w < 1) ||
+      (h < 1) ||
+      (((bpp != 0) && ((bpp & (bpp - 1)) == 0)) == 0) ||
+      (bpp > 16) )
+  {
+    fclose(in);
+    return 0;
+  }
 
   //passes = png_set_interlace_handling(png_ptr);
 
