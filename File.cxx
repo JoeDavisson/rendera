@@ -664,9 +664,8 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
   }
 
   png_structp png_ptr;
-  png_infop info_ptr;
-
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+  png_infop info_ptr;
 
   if(!png_ptr)
   {
@@ -688,57 +687,80 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
     return 0;
   }
 
+  png_uint_32 w = 0;
+  png_uint_32 h = 0;
+  int bpp = 0;
+  int color_type = 0;
+  int interlace_type = 0;
+  int compression_type = 0;
+  int filter_method = 0;
+  //int passes = 0;
+
   png_init_io(png_ptr, in);
   png_set_sig_bytes(png_ptr, 8);
   png_read_info(png_ptr, info_ptr);
+  png_get_IHDR(png_ptr, info_ptr, &w, &h, &bpp, &color_type,
+               &interlace_type, &compression_type, &filter_method);
 
-  int w = png_get_image_width(png_ptr, info_ptr);
-  int h = png_get_image_height(png_ptr, info_ptr);
+  //passes = png_set_interlace_handling(png_ptr);
 
-  /* png_byte color_type = png_get_color_type(png_ptr, info_ptr); */
-  /* png_byte bpp = png_get_bit_depth(png_ptr, info_ptr); */
-  /* int passes = png_set_interlace_handling(png_ptr); */
+  if(color_type == PNG_COLOR_TYPE_PALETTE)
+    png_set_expand(png_ptr);
+
+  if(color_type == PNG_COLOR_TYPE_GRAY && bpp < 8)
+    png_set_expand(png_ptr);
+
+  if(png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+    png_set_expand(png_ptr);
+
+  if(bpp == 16)
+    png_set_strip_16(png_ptr);
+
+  if(color_type == PNG_COLOR_TYPE_GRAY ||
+     color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+    png_set_gray_to_rgb(png_ptr);
+
+  double gamma = 0;
+
+  if(png_get_gAMA(png_ptr, info_ptr, &gamma))
+    png_set_gamma(png_ptr, 2.2, gamma);
 
   png_read_update_info(png_ptr, info_ptr);
 
   int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
-  int depth = rowbytes / w;
-//FIXME cancel if not 24 or 32 bit
+  int channels = (int)png_get_channels(png_ptr, info_ptr);
 
   png_bytep linebuf = new png_byte[rowbytes];
 
-  int x, y;
+  int x, y, i;
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
 
-  int *p = temp->row[overscroll] + overscroll;
-
   for(y = 0; y < h; y++)
   {
-    png_read_row(png_ptr, linebuf, (png_bytep)0); 
+    int *p = temp->row[y + overscroll] + overscroll;
+    png_read_row(png_ptr, linebuf, 0); 
 
     int xx = 0;
 
     for(x = 0; x < w; x++)
     {
-      if(depth == 3)
+      if(channels == 3)
       {
         *p++ = makeRgb(linebuf[xx + 0] & 0xFF,
                        linebuf[xx + 1] & 0xFF,
                        linebuf[xx + 2] & 0xFF);
       }
-      else if(depth == 4)
+      else if(channels == 4)
       {
-        *p++ = makeRgba(linebuf[xx + 0] & 0xFF,
-                        linebuf[xx + 1] & 0xFF,
-                        linebuf[xx + 2] & 0xFF,
-                        linebuf[xx + 3] & 0xFF);
+         *p++ = makeRgba(linebuf[xx + 0] & 0xFF,
+                         linebuf[xx + 1] & 0xFF,
+                         linebuf[xx + 2] & 0xFF,
+                         linebuf[xx + 3] & 0xFF);
       }
 
-      xx += depth;
+      xx += channels;
     }
-
-    p += overscroll * 2;
   }
 
   png_destroy_read_struct(&png_ptr, &info_ptr, 0);
