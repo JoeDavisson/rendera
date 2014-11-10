@@ -1120,9 +1120,16 @@ Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
   if(!isPng(header))
     return 0;
 
+  Bitmap *temp = 0;
+  temp = loadPNG(fn, 0);
+
+  if(!temp)
+    return 0;
+
   if(File::preview_bmp)
     delete File::preview_bmp;
-  File::preview_bmp = loadPNG(fn, 0);
+
+  File::preview_bmp = temp;
 
   Fl_RGB_Image *image =
     new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
@@ -1137,9 +1144,16 @@ Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int)
   if(!isJpeg(header))
     return 0;
 
+  Bitmap *temp = 0;
+  temp = loadJPG(fn, 0);
+
+  if(!temp)
+    return 0;
+
   if(File::preview_bmp)
     delete File::preview_bmp;
-  File::preview_bmp = loadJPG(fn, 0);
+
+  File::preview_bmp = temp;
 
   Fl_RGB_Image *image =
     new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
@@ -1154,9 +1168,16 @@ Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int)
   if(!isBmp(header))
     return 0;
 
+  Bitmap *temp = 0;
+  temp = loadBMP(fn, 0);
+
+  if(!temp)
+    return 0;
+
   if(File::preview_bmp)
     delete File::preview_bmp;
-  File::preview_bmp = loadBMP(fn, 0);
+
+  File::preview_bmp = temp;
 
   Fl_RGB_Image *image =
     new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
@@ -1171,9 +1192,16 @@ Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
   if(!isTarga(fn))
     return 0;
 
+  Bitmap *temp = 0;
+  temp = loadTGA(fn, 0);
+
+  if(!temp)
+    return 0;
+
   if(File::preview_bmp)
     delete File::preview_bmp;
-  File::preview_bmp = loadTGA(fn, 0);
+
+  File::preview_bmp = temp;
 
   Fl_RGB_Image *image =
     new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
