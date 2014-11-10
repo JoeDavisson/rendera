@@ -712,15 +712,6 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
   png_get_IHDR(png_ptr, info_ptr, &w, &h, &bpp, &color_type,
                &interlace_type, &compression_type, &filter_method);
 
-  if( (w < 1) ||
-      (h < 1) ||
-      (((bpp != 0) && ((bpp & (bpp - 1)) == 0)) == 0) ||
-      (bpp > 16) )
-  {
-    fclose(in);
-    return 0;
-  }
-
   //passes = png_set_interlace_handling(png_ptr);
 
   if(color_type == PNG_COLOR_TYPE_PALETTE)
