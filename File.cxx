@@ -40,10 +40,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
+// bitmap pointer used for FLTK's file preview
 Bitmap *File::preview_bmp = 0;
 
 namespace
 {
+  // BMP file format structures
   #pragma pack(1)
   typedef struct
   {
@@ -72,6 +74,7 @@ namespace
   }
   BMP_INFO_HEADER;
 
+  // targa file format structure
   #pragma pack(1)
   typedef struct
   {
@@ -110,6 +113,8 @@ namespace
   Widget *pal_preview = new Widget(new Fl_Group(0, 0, 96, 96),
                                    0, 0, 96, 96, "", 6, 6, 0);
 
+  // file extensions in the order they appear in the file chooser dialog
+  // (used to automatically append a file extension)
   const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
 
   // store previous directory paths
@@ -136,6 +141,7 @@ namespace
     return 0;
   }
 
+  // file header tests
   bool isPng(const unsigned char *header)
   {
     return (png_sig_cmp((png_bytep)header, 0, 8) == 0);
@@ -152,9 +158,9 @@ namespace
     return (memcmp(header, "BM", 2) == 0);
   }
 
-  // targa has no real header, will have to trust the file extension
   bool isTarga(const char *fn)
   {
+    // targa has no real header, will have to trust the file extension
     const char *ext;
     ext = fl_filename_ext(fn);
     return (strcmp(ext, ".tga") == 0);
@@ -177,11 +183,15 @@ namespace
   static const int *temp = init(); 
 }
 
+// display file loading dialog
 void File::load(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser fc;
   fc.title("Load Image");
-  fc.filter("PNG Image\t*.png\nJPEG Image\t*.{jpg,jpeg}\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
+  fc.filter("PNG Image\t*.png\n"
+            "JPEG Image\t*.{jpg,jpeg}\n"
+            "Bitmap Image\t*.bmp\n"
+            "Targa Image\t*.tga\n");
   fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
   fc.directory(load_dir);
@@ -213,6 +223,7 @@ void File::load(Fl_Widget *, void *)
 
   fclose(in);
 
+  // load to a temporary bitmap first
   int overscroll = Project::overscroll;
   Bitmap *temp = 0;
 
@@ -254,18 +265,23 @@ void File::load(Fl_Widget *, void *)
     return;
   }
 
+  // load was successful, set the main bitmap to use the temp pointer
+  // and resize the brushstroke map to match the new image size
   delete Project::bmp;
   Project::bmp = temp;
 
   delete Project::map;
   Project::map = new Map(Project::bmp->w, Project::bmp->h);
 
+  // redraw
   Project::stroke->clip();
   Gui::getView()->zoomFit(Gui::getView()->fit);
   Gui::getView()->drawMain(true);
   Undo::reset();
 }
 
+// load a file directly without the dialog
+// (for drag n' drop or command-line loading)
 int File::loadFile(const char *fn)
 {
   FILE *in = fopen(fn, "rb");
@@ -281,8 +297,8 @@ int File::loadFile(const char *fn)
 
   fclose(in);
 
+  // load to a temporary bitmap first
   int overscroll = Project::overscroll;
-
   Bitmap *temp = 0;
 
   if(isPng(header))
@@ -323,12 +339,15 @@ int File::loadFile(const char *fn)
     return -1;
   }
 
+  // load was successful, set the main bitmap to use the temp pointer
+  // and resize the brushstroke map to match the new image size
   delete Project::bmp;
   Project::bmp = temp;
 
   delete Project::map;
   Project::map = new Map(Project::bmp->w, Project::bmp->h);
 
+  // redraw
   Project::stroke->clip();
   Gui::getView()->zoomFit(Gui::getView()->fit);
   Gui::getView()->drawMain(true);
@@ -629,16 +648,16 @@ Bitmap *File::loadTGA(const char *fn, int overscroll)
       {
         *(temp->row[y + overscroll] + x + overscroll) =
                        makeRgb((linebuf[x * depth + 2] & 0xFF),
-                                (linebuf[x * depth + 1] & 0xFF),
-                                (linebuf[x * depth + 0] & 0xFF));
+                               (linebuf[x * depth + 1] & 0xFF),
+                               (linebuf[x * depth + 0] & 0xFF));
       }
       else if(depth == 4)
       {
         *(temp->row[y + overscroll] + x + overscroll) =
                        makeRgba((linebuf[x * depth + 2] & 0xFF),
-                                 (linebuf[x * depth + 1] & 0xFF),
-                                 (linebuf[x * depth + 0] & 0xFF),
-                                 (linebuf[x * depth + 3] & 0xFF));
+                                (linebuf[x * depth + 1] & 0xFF),
+                                (linebuf[x * depth + 0] & 0xFF),
+                                (linebuf[x * depth + 3] & 0xFF));
       }
     }
   }
@@ -712,6 +731,7 @@ Bitmap *File::loadPNG(const char *fn, int overscroll)
   png_get_IHDR(png_ptr, info_ptr, &w, &h, &bpp, &color_type,
                &interlace_type, &compression_type, &filter_method);
 
+//FIXME need interlaced PNG support
   //passes = png_set_interlace_handling(png_ptr);
 
   if(color_type == PNG_COLOR_TYPE_PALETTE)
@@ -784,7 +804,10 @@ void File::save(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser fc;
   fc.title("Save Image");
-  fc.filter("PNG Image\t*.png\nJPEG Image\t*.jpg\nBitmap Image\t*.bmp\nTarga Image\t*.tga\n");
+  fc.filter("PNG Image\t*.png\n"
+            "JPEG Image\t*.jpg\n"
+            "Bitmap Image\t*.bmp\n"
+            "Targa Image\t*.tga\n");
   fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc.directory(save_dir);
@@ -1115,6 +1138,7 @@ int File::saveJPG(const char *fn)
   return 0;
 }
 
+// callbacks for FLTK's file preview
 Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
 {
   if(!isPng(header))
@@ -1231,6 +1255,7 @@ Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int)
   return image;
 }
 
+// load a palette using the file chooser
 void File::loadPalette()
 {
   Fl_Native_File_Chooser fc;
@@ -1278,6 +1303,7 @@ void File::loadPalette()
   }
 }
 
+// save a palette using the file chooser
 void File::savePalette()
 {
   Fl_Native_File_Chooser fc;
@@ -1315,6 +1341,7 @@ void File::savePalette()
   }
 }
 
+// convert special characters from drag n' drop path/filename string
 void File::decodeURI(char *s)
 {
   int i, j;
@@ -1338,6 +1365,7 @@ void File::decodeURI(char *s)
   }
 }
 
+// extract directory from a path/filename string
 void File::getDirectory(char *dest, const char *src)
 {
   strcpy(dest, src);
