@@ -390,6 +390,11 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
   int w = row_stride / bytes;
   int h = cinfo.output_height;
 
+// FIXME need to support dpi in load/save, here are the fields:
+//printf("%d\n", cinfo.density_unit);
+//printf("%d\n", cinfo.X_density);
+//printf("%d\n", cinfo.Y_density);
+
   Bitmap *temp = new Bitmap(w, h, overscroll);
 
   int x;
@@ -1069,6 +1074,7 @@ int File::savePng(const char *fn)
 
 int File::saveJpeg(const char *fn)
 {
+  // show quality dialog
   Dialog::jpegQuality();
 
   int quality = Dialog::jpegQualityValue();
