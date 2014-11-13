@@ -104,11 +104,11 @@ int main(int argc, char *argv[])
   Fl::visual(FL_DOUBLE | FL_RGB);
 
   Fl::scheme("gtk+");
-  Fl_Shared_Image::add_handler(File::previewJPG);
-  Fl_Shared_Image::add_handler(File::previewPNG);
-  Fl_Shared_Image::add_handler(File::previewBMP);
-  Fl_Shared_Image::add_handler(File::previewTGA);
-  Fl_Shared_Image::add_handler(File::previewGPL);
+  Fl_Shared_Image::add_handler(File::previewJpeg);
+  Fl_Shared_Image::add_handler(File::previewPng);
+  Fl_Shared_Image::add_handler(File::previewBmp);
+  Fl_Shared_Image::add_handler(File::previewTarga);
+  Fl_Shared_Image::add_handler(File::previewGimpPalette);
 
   fl_message_hotspot(0);
 

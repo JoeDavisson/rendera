@@ -39,7 +39,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   stepy = sy;
   group = g;
 
-  if(!(bitmap = File::loadPNG(filename, 0)))
+  if(!(bitmap = File::loadPng(filename, 0)))
   {
     fl_message_title("Error");
     fl_message("Could not load %s, exiting.", filename);

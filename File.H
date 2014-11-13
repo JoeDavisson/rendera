@@ -29,25 +29,25 @@ namespace File
 {
   void load(Fl_Widget *, void *);
   int loadFile(const char *);
-  Bitmap *loadJPG(const char *, int);
-  Bitmap *loadBMP(const char *, int);
-  Bitmap *loadTGA(const char *, int);
-  Bitmap *loadPNG(const char *, int);
+  Bitmap *loadJpeg(const char *, int);
+  Bitmap *loadBmp(const char *, int);
+  Bitmap *loadTarga(const char *, int);
+  Bitmap *loadPng(const char *, int);
 
   void save(Fl_Widget *, void *);
-  int saveBMP(const char *);
-  int saveTGA(const char *);
-  int savePNG(const char *);
-  int saveJPG(const char *);
+  int saveBmp(const char *);
+  int saveTarga(const char *);
+  int savePng(const char *);
+  int saveJpeg(const char *);
 
   void loadPalette();
   void savePalette();
 
-  Fl_Image *previewJPG(const char *, unsigned char *, int);
-  Fl_Image *previewPNG(const char *, unsigned char *, int);
-  Fl_Image *previewBMP(const char *, unsigned char *, int);
-  Fl_Image *previewTGA(const char *, unsigned char *, int);
-  Fl_Image *previewGPL(const char *, unsigned char *, int);
+  Fl_Image *previewJpeg(const char *, unsigned char *, int);
+  Fl_Image *previewPng(const char *, unsigned char *, int);
+  Fl_Image *previewBmp(const char *, unsigned char *, int);
+  Fl_Image *previewTarga(const char *, unsigned char *, int);
+  Fl_Image *previewGimpPalette(const char *, unsigned char *, int);
 
   void decodeURI(char *);
   void getDirectory(char *, const char *);

@@ -229,7 +229,7 @@ void File::load(Fl_Widget *, void *)
 
   if(isPng(header))
   {
-    if(!(temp = File::loadPNG((const char *)fn, overscroll)))
+    if(!(temp = File::loadPng((const char *)fn, overscroll)))
     {
       errorMessage();
       return;
@@ -237,7 +237,7 @@ void File::load(Fl_Widget *, void *)
   }
   else if(isJpeg(header))
   {
-    if(!(temp = File::loadJPG((const char *)fn, overscroll)))
+    if(!(temp = File::loadJpeg((const char *)fn, overscroll)))
     {
       errorMessage();
       return;
@@ -245,7 +245,7 @@ void File::load(Fl_Widget *, void *)
   }
   else if(isBmp(header))
   {
-    if(!(temp = File::loadBMP((const char *)fn, overscroll)))
+    if(!(temp = File::loadBmp((const char *)fn, overscroll)))
     {
       errorMessage();
       return;
@@ -253,7 +253,7 @@ void File::load(Fl_Widget *, void *)
   }
   else if(isTarga(fn))
   {
-    if(!(temp = File::loadTGA((const char *)fn, overscroll)))
+    if(!(temp = File::loadTarga((const char *)fn, overscroll)))
     {
       errorMessage();
       return;
@@ -303,7 +303,7 @@ int File::loadFile(const char *fn)
 
   if(isPng(header))
   {
-    if(!(temp = File::loadPNG((const char *)fn, overscroll)))
+    if(!(temp = File::loadPng((const char *)fn, overscroll)))
     {
       errorMessage();
       return -1;
@@ -311,7 +311,7 @@ int File::loadFile(const char *fn)
   }
   else if(isJpeg(header))
   {
-    if(!(temp = File::loadJPG((const char *)fn, overscroll)))
+    if(!(temp = File::loadJpeg((const char *)fn, overscroll)))
     {
       errorMessage();
       return -1;
@@ -319,7 +319,7 @@ int File::loadFile(const char *fn)
   }
   else if(isBmp(header))
   {
-    if(!(temp = File::loadBMP((const char *)fn, overscroll)))
+    if(!(temp = File::loadBmp((const char *)fn, overscroll)))
     {
       errorMessage();
       return -1;
@@ -327,7 +327,7 @@ int File::loadFile(const char *fn)
   }
   else if(isTarga(fn))
   {
-    if(!(temp = File::loadTGA((const char *)fn, overscroll)))
+    if(!(temp = File::loadTarga((const char *)fn, overscroll)))
     {
       errorMessage();
       return -1;
@@ -356,7 +356,7 @@ int File::loadFile(const char *fn)
   return 0;
 }
 
-Bitmap *File::loadJPG(const char *fn, int overscroll)
+Bitmap *File::loadJpeg(const char *fn, int overscroll)
 {
   struct jpeg_decompress_struct cinfo;
   struct my_error_mgr jerr;
@@ -435,7 +435,7 @@ Bitmap *File::loadJPG(const char *fn, int overscroll)
   return temp;
 }
 
-Bitmap *File::loadBMP(const char *fn, int overscroll)
+Bitmap *File::loadBmp(const char *fn, int overscroll)
 {
   FILE *in = fopen(fn, "rb");
   if(!in)
@@ -547,7 +547,7 @@ Bitmap *File::loadBMP(const char *fn, int overscroll)
   return temp;
 }
 
-Bitmap *File::loadTGA(const char *fn, int overscroll)
+Bitmap *File::loadTarga(const char *fn, int overscroll)
 {
   FILE *in = fopen(fn, "rb");
   if(!in)
@@ -668,7 +668,7 @@ Bitmap *File::loadTGA(const char *fn, int overscroll)
   return temp;
 }
 
-Bitmap *File::loadPNG(const char *fn, int overscroll)
+Bitmap *File::loadPng(const char *fn, int overscroll)
 {
   FILE *in = fopen(fn, "rb");
   if(!in)
@@ -837,28 +837,28 @@ void File::save(Fl_Widget *, void *)
   switch(ext)
   {
     case 0:
-      if(File::savePNG(fn) < 0)
+      if(File::savePng(fn) < 0)
       {
         errorMessage();
         return;
       }
       break;
     case 1:
-      if(File::saveJPG(fn) < 0)
+      if(File::saveJpeg(fn) < 0)
       {
         errorMessage();
         return;
       }
       break;
     case 2:
-      if(File::saveBMP(fn) < 0)
+      if(File::saveBmp(fn) < 0)
       {
         errorMessage();
         return;
       }
       break;
     case 3:
-      if(File::saveTGA(fn) < 0)
+      if(File::saveTarga(fn) < 0)
       {
         errorMessage();
         return;
@@ -867,7 +867,7 @@ void File::save(Fl_Widget *, void *)
   }
 }
 
-int File::saveBMP(const char *fn)
+int File::saveBmp(const char *fn)
 {
   FILE *out = fopen(fn, "wb");
   if(!out)
@@ -939,7 +939,7 @@ int File::saveBMP(const char *fn)
   return 0;
 }
 
-int File::saveTGA(const char *fn)
+int File::saveTarga(const char *fn)
 {
   FILE *out = fopen(fn, "wb");
   if(!out)
@@ -996,7 +996,7 @@ int File::saveTGA(const char *fn)
   return 0;
 }
 
-int File::savePNG(const char *fn)
+int File::savePng(const char *fn)
 {
   FILE *out = fopen(fn, "wb");
   if(!out)
@@ -1067,7 +1067,7 @@ int File::savePNG(const char *fn)
   return 0;
 }
 
-int File::saveJPG(const char *fn)
+int File::saveJpeg(const char *fn)
 {
   Dialog::jpegQuality();
 
@@ -1139,13 +1139,13 @@ int File::saveJPG(const char *fn)
 }
 
 // callbacks for FLTK's file preview
-Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
+Fl_Image *File::previewPng(const char *fn, unsigned char *header, int)
 {
   if(!isPng(header))
     return 0;
 
   Bitmap *temp = 0;
-  temp = loadPNG(fn, 0);
+  temp = loadPng(fn, 0);
 
   if(!temp)
     return 0;
@@ -1163,13 +1163,13 @@ Fl_Image *File::previewPNG(const char *fn, unsigned char *header, int)
   return image;
 }
 
-Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int)
+Fl_Image *File::previewJpeg(const char *fn, unsigned char *header, int)
 {
   if(!isJpeg(header))
     return 0;
 
   Bitmap *temp = 0;
-  temp = loadJPG(fn, 0);
+  temp = loadJpeg(fn, 0);
 
   if(!temp)
     return 0;
@@ -1187,13 +1187,13 @@ Fl_Image *File::previewJPG(const char *fn, unsigned char *header, int)
   return image;
 }
 
-Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int)
+Fl_Image *File::previewBmp(const char *fn, unsigned char *header, int)
 {
   if(!isBmp(header))
     return 0;
 
   Bitmap *temp = 0;
-  temp = loadBMP(fn, 0);
+  temp = loadBmp(fn, 0);
 
   if(!temp)
     return 0;
@@ -1211,13 +1211,13 @@ Fl_Image *File::previewBMP(const char *fn, unsigned char *header, int)
   return image;
 }
 
-Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
+Fl_Image *File::previewTarga(const char *fn, unsigned char *, int)
 {
   if(!isTarga(fn))
     return 0;
 
   Bitmap *temp = 0;
-  temp = loadTGA(fn, 0);
+  temp = loadTarga(fn, 0);
 
   if(!temp)
     return 0;
@@ -1235,7 +1235,7 @@ Fl_Image *File::previewTGA(const char *fn, unsigned char *, int)
   return image;
 }
 
-Fl_Image *File::previewGPL(const char *fn, unsigned char *header, int)
+Fl_Image *File::previewGimpPalette(const char *fn, unsigned char *header, int)
 {
   if(!isGimpPalette(header))
     return 0;
