@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #endif
 
 #include <cstring>
+#include <vector>
 #include <png.h>
 #include <jpeglib.h>
 #include <setjmp.h>
@@ -209,79 +210,10 @@ void File::load(Fl_Widget *, void *)
   char fn[256];
   strcpy(fn, fc.filename());
 
-  FILE *in = fopen(fn, "rb");
-  if(!in)
-    return;
-
-  unsigned char header[8];
-  if(fread(&header, 1, 8, in) != 8)
-  {
-    fclose(in);
-    errorMessage();
-    return;
-  }
-
-  fclose(in);
-
-  // load to a temporary bitmap first
-  int overscroll = Project::overscroll;
-  Bitmap *temp = 0;
-
-  if(isPng(header))
-  {
-    if(!(temp = File::loadPng((const char *)fn, overscroll)))
-    {
-      errorMessage();
-      return;
-    }
-  }
-  else if(isJpeg(header))
-  {
-    if(!(temp = File::loadJpeg((const char *)fn, overscroll)))
-    {
-      errorMessage();
-      return;
-    }
-  }
-  else if(isBmp(header))
-  {
-    if(!(temp = File::loadBmp((const char *)fn, overscroll)))
-    {
-      errorMessage();
-      return;
-    }
-  }
-  else if(isTarga(fn))
-  {
-    if(!(temp = File::loadTarga((const char *)fn, overscroll)))
-    {
-      errorMessage();
-      return;
-    }
-  }
-  else
-  {
-    errorMessage();
-    return;
-  }
-
-  // load was successful, set the main bitmap to use the temp pointer
-  // and resize the brushstroke map to match the new image size
-  delete Project::bmp;
-  Project::bmp = temp;
-
-  delete Project::map;
-  Project::map = new Map(Project::bmp->w, Project::bmp->h);
-
-  // redraw
-  Project::stroke->clip();
-  Gui::getView()->zoomFit(Gui::getView()->fit);
-  Gui::getView()->drawMain(true);
-  Undo::reset();
+  loadFile(fn);
 }
 
 // load a file directly without the dialog
-// (for drag n' drop or command-line loading)
 int File::loadFile(const char *fn)
 {
   FILE *in = fopen(fn, "rb");
@@ -516,7 +448,7 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
 
-  unsigned char *linebuf = new unsigned char[w * mul + pad];
+  std::vector<unsigned char> linebuf(w * mul + pad);
 
   int x, y;
 
@@ -525,10 +457,9 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
     int y1 = negy ? h - 1 - y : y;
     y1 += overscroll;
 
-    if(fread(linebuf, 1, w * mul + pad, in) != (unsigned)(w * mul + pad))
+    if(fread(&linebuf[0], 1, w * mul + pad, in) != (unsigned)(w * mul + pad))
     {
       fclose(in);
-      delete[] linebuf;
       return 0;
     }
     else
@@ -546,7 +477,6 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
     }
   }
 
-  delete[] linebuf;
   fclose(in);
 
   return temp;
@@ -609,7 +539,7 @@ Bitmap *File::loadTarga(const char *fn, int overscroll)
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
 
-  unsigned char *linebuf = new unsigned char[w * depth];
+  std::vector<unsigned char> linebuf(w * depth);
 
   int x, y;
 
@@ -640,10 +570,9 @@ Bitmap *File::loadTarga(const char *fn, int overscroll)
 
   for(y = ystart; y != yend; y += negy ? -1 : 1)
   {
-    if(fread(linebuf, 1, w * depth, in) != (unsigned)(w * depth))
+    if(fread(&linebuf[0], 1, w * depth, in) != (unsigned)(w * depth))
     {
       fclose(in);
-      delete[] linebuf;
       return 0;
     }
 
@@ -667,7 +596,6 @@ Bitmap *File::loadTarga(const char *fn, int overscroll)
     }
   }
 
-  delete[] linebuf;
   fclose(in);
 
   return temp;
@@ -765,7 +693,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
   int channels = (int)png_get_channels(png_ptr, info_ptr);
 
-  png_bytep linebuf = new png_byte[rowbytes];
+  std::vector<png_byte> linebuf(rowbytes);
 
   int x, y, i;
 
@@ -774,7 +702,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   for(y = 0; y < h; y++)
   {
     int *p = temp->row[y + overscroll] + overscroll;
-    png_read_row(png_ptr, linebuf, 0); 
+    png_read_row(png_ptr, &linebuf[0], 0); 
 
     int xx = 0;
 
@@ -799,7 +727,6 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   }
 
   png_destroy_read_struct(&png_ptr, &info_ptr, 0);
-  delete[] linebuf;
   fclose(in);
 
   return temp;
@@ -887,7 +814,7 @@ int File::saveBmp(const char *fn)
   // BMP_FILE_HEADER
   writeUint8('B', out);
   writeUint8('M', out);
-  writeUint32(14 + 40 + ((w + pad) * h) * 3, out);
+  writeUint32(14 + 40 + ((w * 3 + pad) * h), out);
   writeUint16(0, out);
   writeUint16(0, out);
   writeUint32(14 + 40, out);
@@ -908,7 +835,7 @@ int File::saveBmp(const char *fn)
   writeUint32(0, out);
 
   int *p = bmp->row[overscroll] + overscroll;
-  unsigned char *linebuf = new unsigned char[w * 3 + pad];
+  std::vector<unsigned char> linebuf(w * 3 + pad);
 
   int x, y;
 
@@ -930,15 +857,13 @@ int File::saveBmp(const char *fn)
 
     p += overscroll * 2;
 
-    if(fwrite(&linebuf[0], 1, w * 3, out) != w * 3)
+    if(fwrite(&linebuf[0], 1, w * 3 + pad, out) != w * 3 + pad)
     {
-      delete[] linebuf;
       fclose(out);
       return -1;
     }
   }
 
-  delete[] linebuf;
   fclose(out);
 
   return 0;
@@ -969,7 +894,7 @@ int File::saveTarga(const char *fn)
   writeUint8(32, out);
 
   int *p = bmp->row[overscroll] + overscroll;
-  unsigned char *linebuf = new unsigned char[w * 4];
+  std::vector<unsigned char> linebuf(w * 4);
 
   int x, y;
 
@@ -985,17 +910,16 @@ int File::saveTarga(const char *fn)
       p++;
       xx += 4;
     }
+
     p += overscroll * 2;
 
     if(fwrite(&linebuf[0], 1, w * 4, out) != w * 4)
     {
-      delete[] linebuf;
       fclose(out);
       return -1;
     }
   }
 
-  delete[] linebuf;
   fclose(out);
 
   return 0;
@@ -1043,7 +967,7 @@ int File::savePng(const char *fn)
                PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
   png_write_info(png_ptr, info_ptr);
 
-  png_bytep linebuf = new png_byte[w * 4];
+  std::vector<png_byte> linebuf(w * 4);
 
   int x, y;
 
@@ -1066,7 +990,6 @@ int File::savePng(const char *fn)
   png_write_end(png_ptr, info_ptr);
 
   png_destroy_write_struct(&png_ptr, &info_ptr);
-  delete[] linebuf;
   fclose(out);
 
   return 0;
@@ -1086,20 +1009,13 @@ int File::saveJpeg(const char *fn)
   struct jpeg_compress_struct cinfo;
 
   struct jpeg_error_mgr jerr;
-  JSAMPROW row_pointer[1];
-  JSAMPLE *linebuf;
 
   Bitmap *bmp = Project::bmp;
   int overscroll = Project::overscroll;
   int w = bmp->cw;
   int h = bmp->ch;
 
-  linebuf = new JSAMPLE[w * 3];
-  if(!linebuf)
-  {
-    fclose(out);
-    return -1;
-  }
+  std::vector<JSAMPLE> linebuf(w * 3);
 
   cinfo.err = jpeg_std_error(&jerr);
   jpeg_create_compress(&cinfo);
@@ -1110,14 +1026,12 @@ int File::saveJpeg(const char *fn)
   cinfo.image_height = h;
   cinfo.input_components = 3;
   cinfo.in_color_space = JCS_RGB;
+
   jpeg_set_defaults(&cinfo);
-
   jpeg_set_quality(&cinfo, quality, TRUE);
-
   jpeg_start_compress(&cinfo, TRUE);
 
   int x;
-
   int *p = bmp->row[overscroll] + overscroll;
 
   while(cinfo.next_scanline < cinfo.image_height)
@@ -1130,15 +1044,14 @@ int File::saveJpeg(const char *fn)
       p++;
     }
 
-    row_pointer[0] = &linebuf[0];
-    jpeg_write_scanlines(&cinfo, row_pointer, 1);
+    JSAMPROW row_pointer = &linebuf[0];
+    jpeg_write_scanlines(&cinfo, &row_pointer, 1);
     p += overscroll * 2;
   }
 
   jpeg_finish_compress(&cinfo);
   jpeg_destroy_compress(&cinfo);
 
-  delete[] linebuf;
   fclose(out);
 
   return 0;
@@ -1161,12 +1074,8 @@ Fl_Image *File::previewPng(const char *fn, unsigned char *header, int)
 
   File::preview_bmp = temp;
 
-  Fl_RGB_Image *image =
-    new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
-                     File::preview_bmp->w, File::preview_bmp->h,
-                     4, 0);
-
-  return image;
+  return new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
+                          File::preview_bmp->w, File::preview_bmp->h, 4, 0);
 }
 
 Fl_Image *File::previewJpeg(const char *fn, unsigned char *header, int)
@@ -1185,12 +1094,8 @@ Fl_Image *File::previewJpeg(const char *fn, unsigned char *header, int)
 
   File::preview_bmp = temp;
 
-  Fl_RGB_Image *image =
-    new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
-                     File::preview_bmp->w, File::preview_bmp->h,
-                     4, 0);
-
-  return image;
+  return new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
+                          File::preview_bmp->w, File::preview_bmp->h, 4, 0);
 }
 
 Fl_Image *File::previewBmp(const char *fn, unsigned char *header, int)
@@ -1209,12 +1114,8 @@ Fl_Image *File::previewBmp(const char *fn, unsigned char *header, int)
 
   File::preview_bmp = temp;
 
-  Fl_RGB_Image *image =
-    new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
-                     File::preview_bmp->w, File::preview_bmp->h,
-                     4, 0);
-
-  return image;
+  return new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
+                          File::preview_bmp->w, File::preview_bmp->h, 4, 0);
 }
 
 Fl_Image *File::previewTarga(const char *fn, unsigned char *, int)
@@ -1233,12 +1134,8 @@ Fl_Image *File::previewTarga(const char *fn, unsigned char *, int)
 
   File::preview_bmp = temp;
 
-  Fl_RGB_Image *image =
-    new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
-                     File::preview_bmp->w, File::preview_bmp->h,
-                     4, 0);
-
-  return image;
+  return new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
+                          File::preview_bmp->w, File::preview_bmp->h, 4, 0);
 }
 
 Fl_Image *File::previewGimpPalette(const char *fn, unsigned char *header, int)
@@ -1254,11 +1151,8 @@ Fl_Image *File::previewGimpPalette(const char *fn, unsigned char *header, int)
 
   temp_pal->draw(pal_preview);
 
-  Fl_RGB_Image *image =
-    new Fl_RGB_Image((unsigned char *)pal_preview->bitmap->data,
-                     96, 96, 4, 0);
-
-  return image;
+  return new Fl_RGB_Image((unsigned char *)pal_preview->bitmap->data,
+                          96, 96, 4, 0);
 }
 
 // load a palette using the file chooser
