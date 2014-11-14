@@ -608,7 +608,6 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   int interlace_type = 0;
   int compression_type = 0;
   int filter_method = 0;
-  //int passes = 0;
 
   png_init_io(png_ptr, in.get());
   png_set_sig_bytes(png_ptr, 8);
@@ -617,8 +616,10 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   png_get_IHDR(png_ptr, info_ptr, &w, &h, &bpp, &color_type,
                &interlace_type, &compression_type, &filter_method);
 
-//FIXME need interlaced PNG support
-  //passes = png_set_interlace_handling(png_ptr);
+  if(png_set_interlace_handling(png_ptr) != 1)
+  {
+    return 0;
+  }
 
   if(color_type == PNG_COLOR_TYPE_PALETTE)
     png_set_expand(png_ptr);
@@ -655,7 +656,8 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   for(y = 0; y < h; y++)
   {
     int *p = temp->row[y + overscroll] + overscroll;
-    png_read_row(png_ptr, &linebuf[0], 0); 
+      
+    png_read_row(png_ptr, &linebuf[0], 0);
 
     int xx = 0;
 
