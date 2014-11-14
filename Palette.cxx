@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Blend.H"
+#include "FileSP.H"
 #include "Octree.H"
 #include "Palette.H"
 #include "Widget.H"
@@ -207,9 +208,7 @@ int Palette::load(const char *fn)
 {
   max = 0;
 
-  FILE *in = fopen(fn, "r");
-  if(!in)
-    return -1;
+  FileSP in(fn, "r");
 
   int index = 0;
 
@@ -225,7 +224,7 @@ int Palette::load(const char *fn)
     for(i = 0; i < 255; i++)
     {
       line[i] = '\0';
-      ch = fgetc(in);
+      ch = fgetc(in.get());
       if(ch == '\n' || ch == EOF)
         break;
       line[i] = ch;
@@ -249,7 +248,6 @@ int Palette::load(const char *fn)
       break;
   }
 
-  fclose(in);
   max = index;
   fillTable();
 
@@ -258,22 +256,13 @@ int Palette::load(const char *fn)
 
 int Palette::save(const char *fn)
 {
-  FILE *out = fopen(fn, "w");
+  FileSP out(fn, "w");
 
-  if(!out)
+  if(fprintf(out.get(), "GIMP Palette\n") < 0)
     return -1;
 
-  if(fprintf(out, "GIMP Palette\n") < 0)
-  {
-    fclose(out);
+  if(fprintf(out.get(), "#\n") < 0)
     return -1;
-  }
-
-  if(fprintf(out, "#\n") < 0)
-  {
-    fclose(out);
-    return -1;
-  }
 
   int i;
 
@@ -281,14 +270,9 @@ int Palette::save(const char *fn)
   {
     int c = data[i];
 
-    if(fprintf(out, "%d %d %d\n", getr(c), getg(c), getb(c)) < 0)
-    {
-      fclose(out);
+    if(fprintf(out.get(), "%d %d %d\n", getr(c), getg(c), getb(c)) < 0)
       return -1;
-    }
   }
-
-  fclose(out);
 
   return 0;
 }
