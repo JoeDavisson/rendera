@@ -176,6 +176,7 @@ namespace
     return (memcmp(header, "GIMP Palette", 12) == 0);
   }
 
+  // reset directories
   int *init()
   {
     strcpy(load_dir, ".");
@@ -345,7 +346,6 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
     return 0;
 
   BMP_INFO_HEADER bm;
-
   unsigned char buffer[64];
 
   if(fread(buffer, 1, sizeof(BMP_FILE_HEADER), in.get()) !=
