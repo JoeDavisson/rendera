@@ -122,7 +122,8 @@ namespace
   // store previous directory paths
   char load_dir[256];
   char save_dir[256];
-  char pal_dir[256];
+  char pal_load_dir[256];
+  char pal_save_dir[256];
 
   // show error dialog
   void errorMessage()
@@ -179,8 +180,8 @@ namespace
   {
     strcpy(load_dir, ".");
     strcpy(save_dir, ".");
-    strcpy(pal_dir, ".");
-
+    strcpy(pal_load_dir, ".");
+    strcpy(pal_save_dir, ".");
     return 0;
   }
 
@@ -229,38 +230,15 @@ int File::loadFile(const char *fn)
   Bitmap *temp = 0;
 
   if(isPng(header))
-  {
-    if(!(temp = File::loadPng((const char *)fn, overscroll)))
-    {
-      errorMessage();
-      return -1;
-    }
-  }
+    temp = File::loadPng((const char *)fn, overscroll);
   else if(isJpeg(header))
-  {
-    if(!(temp = File::loadJpeg((const char *)fn, overscroll)))
-    {
-      errorMessage();
-      return -1;
-    }
-  }
+    temp = File::loadJpeg((const char *)fn, overscroll);
   else if(isBmp(header))
-  {
-    if(!(temp = File::loadBmp((const char *)fn, overscroll)))
-    {
-      errorMessage();
-      return -1;
-    }
-  }
+    temp = File::loadBmp((const char *)fn, overscroll);
   else if(isTarga(fn))
-  {
-    if(!(temp = File::loadTarga((const char *)fn, overscroll)))
-    {
-      errorMessage();
-      return -1;
-    }
-  }
-  else
+    temp = File::loadTarga((const char *)fn, overscroll);
+
+  if(!temp)
   {
     errorMessage();
     return -1;
@@ -288,7 +266,6 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
   struct jpeg_decompress_struct cinfo;
   struct my_error_mgr jerr;
   JSAMPARRAY linebuf;
-  int row_stride;
 
   FileSP in(fn, "rb");
   if(!in.get())
@@ -307,12 +284,10 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
   jpeg_stdio_src(&cinfo, in.get());
   jpeg_read_header(&cinfo, TRUE);
   jpeg_start_decompress(&cinfo);
-  row_stride = cinfo.output_width * cinfo.output_components;
+  int row_stride = cinfo.output_width * cinfo.output_components;
   linebuf = (*cinfo.mem->alloc_sarray)
               ((j_common_ptr)&cinfo, JPOOL_IMAGE, row_stride, 1);
-
   int bytes = cinfo.out_color_components;
-
   int w = row_stride / bytes;
   int h = cinfo.output_height;
 
@@ -322,8 +297,6 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
 //printf("%d\n", cinfo.Y_density);
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
-
-  int x;
   int *p = temp->row[overscroll] + overscroll;
 
   if(bytes == 3)
@@ -332,7 +305,7 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
     {
       jpeg_read_scanlines(&cinfo, linebuf, 1);
 
-      for(x = 0; x < row_stride; x += 3)
+      for(int x = 0; x < row_stride; x += 3)
       {
         *p++ = makeRgb(linebuf[0][x] & 0xFF,
                        linebuf[0][x + 1] & 0xFF,
@@ -348,7 +321,7 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
     {
       jpeg_read_scanlines(&cinfo, linebuf, 1);
 
-      for(x = 0; x < row_stride; x += 1)
+      for(int x = 0; x < row_stride; x += 1)
       {
         *p++ = makeRgb(linebuf[0][x] & 0xFF,
                        linebuf[0][x] & 0xFF,
@@ -435,12 +408,9 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
   h = std::abs(h);
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
-
   std::vector<unsigned char> linebuf(w * mul + pad);
 
-  int x, y;
-
-  for(y = 0; y < h; y++)
+  for(int y = 0; y < h; y++)
   {
     int y1 = negy ? h - 1 - y : y;
     y1 += overscroll;
@@ -453,7 +423,7 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
     else
     {
       int xx = 0;
-      for(x = 0; x < w; x++)
+      for(int x = 0; x < w; x++)
       {
         int x1 = negx ? w - 1 - x : x;
         x1 += overscroll;
@@ -517,10 +487,7 @@ Bitmap *File::loadTarga(const char *fn, int overscroll)
   int h = header.h;
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
-
   std::vector<unsigned char> linebuf(w * depth);
-
-  int x, y;
 
   bool negx = true;
   bool negy = true;
@@ -547,12 +514,12 @@ Bitmap *File::loadTarga(const char *fn, int overscroll)
     yend = -1;
   }
 
-  for(y = ystart; y != yend; y += negy ? -1 : 1)
+  for(int y = ystart; y != yend; y += negy ? -1 : 1)
   {
     if(fread(&linebuf[0], 1, w * depth, in.get()) != (unsigned)(w * depth))
       return 0;
 
-    for(x = xstart; x != xend; x += negx ? -1 : 1)
+    for(int x = xstart; x != xend; x += negx ? -1 : 1)
     {
       if(depth == 3)
       {
@@ -593,12 +560,10 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   png_infop info_ptr;
 
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-
   if(!png_ptr)
     return 0;
 
   info_ptr = png_create_info_struct(png_ptr);
-
   if(!info_ptr)
   {
     png_destroy_read_struct(&png_ptr, 0, 0);
@@ -607,13 +572,14 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
 
   if(setjmp(png_jmpbuf(png_ptr)))
   {
+    // pnglib does a goto here if there is an error:
     png_destroy_read_struct(&png_ptr, &info_ptr, 0);
     return 0;
   }
 
   png_uint_32 w = 0;
   png_uint_32 h = 0;
-  int bpp = 0;
+  int bits_per_channel = 0;
   int color_type = 0;
   int interlace_type = 0;
   int compression_type = 0;
@@ -622,33 +588,36 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   png_init_io(png_ptr, in.get());
   png_set_sig_bytes(png_ptr, 8);
   png_read_info(png_ptr, info_ptr);
-
-  png_get_IHDR(png_ptr, info_ptr, &w, &h, &bpp, &color_type,
+  png_get_IHDR(png_ptr, info_ptr, &w, &h, &bits_per_channel, &color_type,
                &interlace_type, &compression_type, &filter_method);
 
+  // ignore interlaced images for now
   if(png_set_interlace_handling(png_ptr) != 1)
-  {
     return 0;
-  }
 
+  // expand paletted images to RGB
   if(color_type == PNG_COLOR_TYPE_PALETTE)
     png_set_expand(png_ptr);
 
-  if(color_type == PNG_COLOR_TYPE_GRAY && bpp < 8)
+  // expand low-color images to RGB
+  if(color_type == PNG_COLOR_TYPE_GRAY && bits_per_channel < 8)
     png_set_expand(png_ptr);
 
+  // check for alpha channel
   if(png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
     png_set_expand(png_ptr);
 
-  if(bpp == 16)
+  // convert 16-bit images to 8
+  if(bits_per_channel == 16)
     png_set_strip_16(png_ptr);
 
+  // expand grayscale images to RGB
   if(color_type == PNG_COLOR_TYPE_GRAY ||
      color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
     png_set_gray_to_rgb(png_ptr);
 
+  // perform gamma correction if the file requires it
   double gamma = 0;
-
   if(png_get_gAMA(png_ptr, info_ptr, &gamma))
     png_set_gamma(png_ptr, 2.2, gamma);
 
@@ -656,14 +625,11 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
 
   int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
   int channels = (int)png_get_channels(png_ptr, info_ptr);
-
   std::vector<png_byte> linebuf(rowbytes);
-
-  int x, y, i;
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
 
-  for(y = 0; y < h; y++)
+  for(int y = 0; y < h; y++)
   {
     int *p = temp->row[y + overscroll] + overscroll;
       
@@ -671,7 +637,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
 
     int xx = 0;
 
-    for(x = 0; x < w; x++)
+    for(int x = 0; x < w; x++)
     {
       if(channels == 3)
       {
@@ -729,38 +695,29 @@ void File::save(Fl_Widget *, void *)
     if(fl_choice("Replace File?", "No", "Yes", NULL) == 0)
       return;
   }
+
+  int ret = 0;
   
   switch(ext)
   {
     case 0:
-      if(File::savePng(fn) < 0)
-      {
-        errorMessage();
-        return;
-      }
+      ret = File::savePng(fn);
       break;
     case 1:
-      if(File::saveJpeg(fn) < 0)
-      {
-        errorMessage();
-        return;
-      }
+      ret = File::saveJpeg(fn);
       break;
     case 2:
-      if(File::saveBmp(fn) < 0)
-      {
-        errorMessage();
-        return;
-      }
+      ret = File::saveBmp(fn);
       break;
     case 3:
-      if(File::saveTarga(fn) < 0)
-      {
-        errorMessage();
-        return;
-      }
+      ret = File::saveTarga(fn);
       break;
+    default:
+      ret = -1;
   }
+
+  if(ret < 0)
+    errorMessage();
 }
 
 int File::saveBmp(const char *fn)
@@ -802,13 +759,10 @@ int File::saveBmp(const char *fn)
   int *p = bmp->row[overscroll] + overscroll;
   std::vector<unsigned char> linebuf(w * 3 + pad);
 
-  int x, y;
-
-  for(y = 0; y < h; y++)
+  for(int y = 0; y < h; y++)
   {
     int xx = 0;
-
-    for(x = 0; x < w; x++)
+    for(int x = 0; x < w; x++)
     {
       linebuf[xx + 0] = (*p >> 16) & 0xff;
       linebuf[xx + 1] = (*p >> 8) & 0xff;
@@ -817,7 +771,7 @@ int File::saveBmp(const char *fn)
       xx += 3;
     }
 
-    for(x = 0; x < pad; x++)
+    for(int x = 0; x < pad; x++)
       linebuf[xx++] = 0;
 
     p += overscroll * 2;
@@ -857,12 +811,11 @@ int File::saveTarga(const char *fn)
   int *p = bmp->row[overscroll] + overscroll;
   std::vector<unsigned char> linebuf(w * 4);
 
-  int x, y;
-
-  for(y = 0; y < h; y++)
+  for(int y = 0; y < h; y++)
   {
     int xx = 0;
-    for(x = 0; x < w; x++)
+
+    for(int x = 0; x < w; x++)
     {
       linebuf[xx + 0] = (*p >> 16) & 0xff;
       linebuf[xx + 1] = (*p >> 8) & 0xff;
@@ -920,13 +873,11 @@ int File::savePng(const char *fn)
 
   std::vector<png_byte> linebuf(w * 4);
 
-  int x, y;
-
-  for(y = 0; y < h; y++)
+  for(int y = 0; y < h; y++)
   {
     int *p = bmp->row[y + overscroll] + overscroll;
 
-    for(x = 0; x < w * 4; x += 4)
+    for(int x = 0; x < w * 4; x += 4)
     {
       linebuf[x + 0] = getr(*p); 
       linebuf[x + 1] = getg(*p); 
@@ -939,7 +890,6 @@ int File::savePng(const char *fn)
   }
 
   png_write_end(png_ptr, info_ptr);
-
   png_destroy_write_struct(&png_ptr, &info_ptr);
 
   return 0;
@@ -953,11 +903,9 @@ int File::saveJpeg(const char *fn)
 
   // show quality dialog
   Dialog::jpegQuality();
-
   int quality = Dialog::jpegQualityValue();
 
   struct jpeg_compress_struct cinfo;
-
   struct jpeg_error_mgr jerr;
 
   Bitmap *bmp = Project::bmp;
@@ -966,10 +914,8 @@ int File::saveJpeg(const char *fn)
   int h = bmp->ch;
 
   std::vector<JSAMPLE> linebuf(w * 3);
-
   cinfo.err = jpeg_std_error(&jerr);
   jpeg_create_compress(&cinfo);
-
   jpeg_stdio_dest(&cinfo, out.get());
 
   cinfo.image_width = w;
@@ -981,12 +927,11 @@ int File::saveJpeg(const char *fn)
   jpeg_set_quality(&cinfo, quality, TRUE);
   jpeg_start_compress(&cinfo, TRUE);
 
-  int x;
   int *p = bmp->row[overscroll] + overscroll;
 
   while(cinfo.next_scanline < cinfo.image_height)
   {
-    for(x = 0; x < w * 3; x += 3)
+    for(int x = 0; x < w * 3; x += 3)
     {
       linebuf[x + 0] = getr(*p); 
       linebuf[x + 1] = getg(*p); 
@@ -1111,7 +1056,7 @@ void File::loadPalette()
   fc.filter("GIMP Palette\t*.gpl\n");
   fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-  fc.directory(pal_dir);
+  fc.directory(pal_load_dir);
 
   switch(fc.show())
   {
@@ -1119,7 +1064,7 @@ void File::loadPalette()
     case 1:
       return;
     default:
-      getDirectory(pal_dir, fc.filename());
+      getDirectory(pal_load_dir, fc.filename());
       break;
   }
 
@@ -1156,7 +1101,7 @@ void File::savePalette()
   fc.filter("GIMP Palette\t*.gpl\n");
   fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-  fc.directory(pal_dir);
+  fc.directory(pal_save_dir);
 
   switch(fc.show())
   {
@@ -1164,7 +1109,7 @@ void File::savePalette()
     case 1:
       return;
     default:
-      getDirectory(pal_dir, fc.filename());
+      getDirectory(pal_save_dir, fc.filename());
       break;
   }
 
