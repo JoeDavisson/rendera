@@ -217,6 +217,8 @@ void File::load(Fl_Widget *, void *)
 int File::loadFile(const char *fn)
 {
   FileSP in(fn, "rb");
+  if(!in.get())
+    return -1;
 
   unsigned char header[8];
   if(fread(&header, 1, 8, in.get()) != 8)
@@ -289,6 +291,8 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
   int row_stride;
 
   FileSP in(fn, "rb");
+  if(!in.get())
+    return 0;
 
   cinfo.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = jpg_exit;
@@ -364,6 +368,8 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
 Bitmap *File::loadBmp(const char *fn, int overscroll)
 {
   FileSP in(fn, "rb");
+  if(!in.get())
+    return 0;
 
   BMP_INFO_HEADER bm;
 
@@ -465,6 +471,8 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
 Bitmap *File::loadTarga(const char *fn, int overscroll)
 {
   FileSP in(fn, "rb");
+  if(!in.get())
+    return 0;
 
   TARGA_HEADER header;
 
@@ -570,6 +578,8 @@ Bitmap *File::loadTarga(const char *fn, int overscroll)
 Bitmap *File::loadPng(const char *fn, int overscroll)
 {
   FileSP in(fn, "rb");
+  if(!in.get())
+    return 0;
 
   unsigned char header[64];
 
@@ -757,6 +767,8 @@ int File::saveBmp(const char *fn)
 {
   FileSP out(fn, "wb");
   FILE *outp = out.get();
+  if(!outp)
+    return 0;
 
   Bitmap *bmp = Project::bmp;
   int overscroll = Project::overscroll;
@@ -821,6 +833,8 @@ int File::saveTarga(const char *fn)
 {
   FileSP out(fn, "wb");
   FILE *outp = out.get();
+  if(!outp)
+    return 0;
 
   Bitmap *bmp = Project::bmp;
   int overscroll = Project::overscroll;
@@ -870,6 +884,8 @@ int File::saveTarga(const char *fn)
 int File::savePng(const char *fn)
 {
   FileSP out(fn, "wb");
+  if(!out.get())
+    return 0;
 
   png_structp png_ptr;
   png_infop info_ptr;
@@ -932,6 +948,8 @@ int File::savePng(const char *fn)
 int File::saveJpeg(const char *fn)
 {
   FileSP out(fn, "wb");
+  if(!out.get())
+    return 0;
 
   // show quality dialog
   Dialog::jpegQuality();
@@ -1109,6 +1127,8 @@ void File::loadPalette()
   strcpy(fn, fc.filename());
 
   FileSP in(fn, "r");
+  if(!in.get())
+    return;
 
   unsigned char header[12];
   if(fread(&header, 1, 12, in.get()) != 12)
