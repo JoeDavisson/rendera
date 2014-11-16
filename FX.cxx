@@ -1044,8 +1044,10 @@ namespace ApplyPalette
 
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
-        int c = bmp->getpixel(x, y);
-        *p++ = Project::palette->data[(int)Project::palette->lookup(c)];
+        int c = (Project::palette->data[(int)Project::palette->lookup(*p)] &
+                0xFFFFFF) | (geta(*p) << 24);
+
+        *p++ = c;
       }
 
       if(updateProgress(y) < 0)
@@ -1087,6 +1089,7 @@ namespace ApplyPalette
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_t rgba = getRgba(*p);
+        const int alpha = rgba.a;
         v[0] = Gamma::fix(rgba.r);
         v[1] = Gamma::fix(rgba.g);
         v[2] = Gamma::fix(rgba.b);
@@ -1105,7 +1108,7 @@ namespace ApplyPalette
         const int c = Project::palette->data[pal_index];
 
         rgba = getRgba(c);
-        *p = makeRgb(rgba.r, rgba.g, rgba.b);
+        *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
 
         rgba = getRgba(*p);
         v[0] = Gamma::fix(rgba.r);

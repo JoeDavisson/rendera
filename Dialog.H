@@ -31,6 +31,9 @@ namespace Dialog
   void about();
   void jpegQuality();
   int jpegQualityValue();
+  void pngOptions();
+  int pngUsePalette();
+  int pngUseAlpha();
   void showProgress(float);
   void updateProgress();
   void hideProgress();

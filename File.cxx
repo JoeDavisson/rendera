@@ -725,7 +725,7 @@ int File::saveBmp(const char *fn)
   FileSP out(fn, "wb");
   FILE *outp = out.get();
   if(!outp)
-    return 0;
+    return -1;
 
   Bitmap *bmp = Project::bmp;
   int overscroll = Project::overscroll;
@@ -788,7 +788,7 @@ int File::saveTarga(const char *fn)
   FileSP out(fn, "wb");
   FILE *outp = out.get();
   if(!outp)
-    return 0;
+    return -1;
 
   Bitmap *bmp = Project::bmp;
   int overscroll = Project::overscroll;
@@ -836,9 +836,27 @@ int File::saveTarga(const char *fn)
 
 int File::savePng(const char *fn)
 {
+  Dialog::pngOptions();
+  bool use_palette = Dialog::pngUsePalette();
+  bool use_alpha = Dialog::pngUseAlpha();
+  Palette *pal = Project::palette.get();
+
+  if(use_palette && use_alpha && pal->max > 64)
+  {
+    fl_message_title("PNG Error");
+    fl_message("There is a maximum of 64 colors when\n"
+               "using palette and alpha together. (This\n"
+               "allows room for 4 alpha levels within the\n"
+               "256-color palette.)");
+    return 0;
+  }
+
+  std::vector<png_color> palette(256);
+  std::vector<png_byte> trans(256);
+
   FileSP out(fn, "wb");
   if(!out.get())
-    return 0;
+    return -1;
 
   png_structp png_ptr;
   png_infop info_ptr;
@@ -866,23 +884,96 @@ int File::savePng(const char *fn)
   int h = bmp->ch;
 
   png_init_io(png_ptr, out.get());
-  png_set_IHDR(png_ptr, info_ptr, w, h, 8,
-               PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE,
-               PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+
+  if(use_palette)
+  {
+    if(use_alpha)
+    {
+      for(int i = 0; i < pal->max; i++)
+      {
+         rgba_t rgba = getRgba(pal->data[i]);
+
+         palette[i + pal->max * 0].red = rgba.r;
+         palette[i + pal->max * 0].green = rgba.g;
+         palette[i + pal->max * 0].blue = rgba.b;
+         trans[i + pal->max * 0] = 255 - 0;
+
+         palette[i + pal->max * 1].red = rgba.r;
+         palette[i + pal->max * 1].green = rgba.g;
+         palette[i + pal->max * 1].blue = rgba.b;
+         trans[i + pal->max * 1] = 255 - 64;
+
+         palette[i + pal->max * 2].red = rgba.r;
+         palette[i + pal->max * 2].green = rgba.g;
+         palette[i + pal->max * 2].blue = rgba.b;
+         trans[i + pal->max * 2] = 255 - 128;
+
+         palette[i + pal->max * 3].red = rgba.r;
+         palette[i + pal->max * 3].green = rgba.g;
+         palette[i + pal->max * 3].blue = rgba.b;
+         trans[i + pal->max * 3] = 255 - 192;
+      }
+    }
+    else
+    {
+      for(int i = 0; i < pal->max; i++)
+      {
+        rgba_t rgba = getRgba(pal->data[i]);
+
+        palette[i].red = rgba.r;
+        palette[i].green = rgba.g;
+        palette[i].blue = rgba.b;
+      }
+    }
+
+    png_set_IHDR(png_ptr, info_ptr, w, h, 8,
+                 PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+    png_set_PLTE(png_ptr, info_ptr, &palette[0],
+                 use_alpha ? pal->max * 4 : pal->max);
+    if(use_palette && use_alpha)
+      png_set_tRNS(png_ptr, info_ptr, &trans[0], pal->max * 4, 0);
+  }
+  else
+  {
+    png_set_IHDR(png_ptr, info_ptr, w, h, 8,
+                 use_alpha ? PNG_COLOR_TYPE_RGBA : PNG_COLOR_TYPE_RGB,
+                 PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE,
+                 PNG_FILTER_TYPE_BASE);
+  }
+
   png_write_info(png_ptr, info_ptr);
 
-  std::vector<png_byte> linebuf(w * 4);
+  int bytes = 3;
+  if(use_alpha)
+    bytes = 4;
+  if(use_palette)
+    bytes = 1;
+
+  std::vector<png_byte> linebuf(w * bytes);
 
   for(int y = 0; y < h; y++)
   {
     int *p = bmp->row[y + overscroll] + overscroll;
 
-    for(int x = 0; x < w * 4; x += 4)
+    for(int x = 0; x < w * bytes; x += bytes)
     {
-      linebuf[x + 0] = getr(*p); 
-      linebuf[x + 1] = getg(*p); 
-      linebuf[x + 2] = getb(*p); 
-      linebuf[x + 3] = geta(*p); 
+      if(use_palette)
+      {
+        if(use_alpha)
+          linebuf[x] = pal->lookup(*p) + pal->max * ((255 - geta(*p)) / 64);
+        else
+          linebuf[x] = pal->lookup(*p);
+      }
+      else
+      {
+        linebuf[x + 0] = getr(*p); 
+        linebuf[x + 1] = getg(*p); 
+        linebuf[x + 2] = getb(*p); 
+        if(use_alpha)
+          linebuf[x + 3] = geta(*p); 
+      }
+
       p++;
     }
 
@@ -899,7 +990,7 @@ int File::saveJpeg(const char *fn)
 {
   FileSP out(fn, "wb");
   if(!out.get())
-    return 0;
+    return -1;
 
   // show quality dialog
   Dialog::jpegQuality();

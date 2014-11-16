@@ -125,6 +125,60 @@ namespace JpegQuality
   static const int *temp = init();
 }
 
+namespace PngOptions
+{
+  Fl_Double_Window *dialog;
+  Fl_Check_Button *use_palette;
+  Fl_Check_Button *use_alpha;
+  Fl_Button *ok;
+
+  void closeCallback(Fl_Widget *, void *)
+  {
+    // needed to prevent dialog from being closed by window manager
+  }
+
+  void begin()
+  {
+    dialog->show();
+
+    while(true)
+    {
+      Fl_Widget *action = Fl::readqueue();
+
+      if(!action)
+      {
+        Fl::wait();
+      }
+      else if(action == ok)
+      {
+        dialog->hide();
+        break;
+      }
+    }
+  }
+
+  int *init()
+  {
+    int y1 = 8;
+
+    dialog = new Fl_Double_Window(256, 0, "PNG Options");
+    dialog->callback(closeCallback);
+    use_palette = new Fl_Check_Button(0, y1, 16, 16, "Use Current Palette");
+    use_palette->value(1);
+    y1 += 16 + 8;
+    Dialog::center(use_palette);
+    use_alpha = new Fl_Check_Button(0, y1, 16, 16, "Save Alpha Channel");
+    Dialog::center(use_alpha);
+    y1 += 16 + 8;
+    Dialog::addOkButton(dialog, &ok, &y1);
+    dialog->set_modal();
+    dialog->end();
+
+    return 0;
+  }
+
+  static const int *temp = init();
+}
 namespace Progress
 {
   Fl_Double_Window *dialog;
@@ -654,6 +708,21 @@ int Dialog::jpegQualityValue()
     quality = 100;
 
   return quality;
+}
+
+void Dialog::pngOptions()
+{
+  PngOptions::begin();
+}
+
+int Dialog::pngUsePalette()
+{
+  return PngOptions::use_palette->value();
+}
+
+int Dialog::pngUseAlpha()
+{
+  return PngOptions::use_alpha->value();
 }
 
 void Dialog::showProgress(float step)
