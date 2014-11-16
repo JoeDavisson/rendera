@@ -164,10 +164,10 @@ namespace PngOptions
     dialog = new Fl_Double_Window(256, 0, "PNG Options");
     dialog->callback(closeCallback);
     use_palette = new Fl_Check_Button(0, y1, 16, 16, "Use Current Palette");
-    use_palette->value(1);
     y1 += 16 + 8;
     Dialog::center(use_palette);
     use_alpha = new Fl_Check_Button(0, y1, 16, 16, "Save Alpha Channel");
+    use_alpha->value(1);
     Dialog::center(use_alpha);
     y1 += 16 + 8;
     Dialog::addOkButton(dialog, &ok, &y1);
