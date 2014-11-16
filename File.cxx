@@ -839,15 +839,15 @@ int File::savePng(const char *fn)
   Dialog::pngOptions();
   bool use_palette = Dialog::pngUsePalette();
   bool use_alpha = Dialog::pngUseAlpha();
+  int alpha_levels = Dialog::pngAlphaLevels();
+  float alpha_step = 255.0 / (alpha_levels - 1);
   Palette *pal = Project::palette.get();
 
-  if(use_palette && use_alpha && pal->max > 64)
+  if(use_palette && use_alpha && pal->max * alpha_levels > 256)
   {
     fl_message_title("PNG Error");
-    fl_message("There is a maximum of 64 colors when\n"
-               "using palette and alpha together. (This\n"
-               "allows room for 4 alpha levels within the\n"
-               "256-color palette.)");
+    fl_message("Not enough palette entries left for this "
+               "many alpha channel levels.");
     return 0;
   }
 
@@ -889,29 +889,22 @@ int File::savePng(const char *fn)
   {
     if(use_alpha)
     {
-      for(int i = 0; i < pal->max; i++)
+      int index = 0;
+
+      for(int j = 0; j < alpha_levels; j++)
       {
-         rgba_t rgba = getRgba(pal->data[i]);
+        int value = 255 - (int)(j * alpha_step);
 
-         palette[i + pal->max * 0].red = rgba.r;
-         palette[i + pal->max * 0].green = rgba.g;
-         palette[i + pal->max * 0].blue = rgba.b;
-         trans[i + pal->max * 0] = 255 - 0;
+        for(int i = 0; i < pal->max; i++)
+        {
+          rgba_t rgba = getRgba(pal->data[i]);
 
-         palette[i + pal->max * 1].red = rgba.r;
-         palette[i + pal->max * 1].green = rgba.g;
-         palette[i + pal->max * 1].blue = rgba.b;
-         trans[i + pal->max * 1] = 255 - 64;
-
-         palette[i + pal->max * 2].red = rgba.r;
-         palette[i + pal->max * 2].green = rgba.g;
-         palette[i + pal->max * 2].blue = rgba.b;
-         trans[i + pal->max * 2] = 255 - 128;
-
-         palette[i + pal->max * 3].red = rgba.r;
-         palette[i + pal->max * 3].green = rgba.g;
-         palette[i + pal->max * 3].blue = rgba.b;
-         trans[i + pal->max * 3] = 255 - 192;
+          palette[index].red = rgba.r;
+          palette[index].green = rgba.g;
+          palette[index].blue = rgba.b;
+          trans[index] = value;
+          index++;
+        }
       }
     }
     else
@@ -929,10 +922,12 @@ int File::savePng(const char *fn)
     png_set_IHDR(png_ptr, info_ptr, w, h, 8,
                  PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE,
                  PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+
     png_set_PLTE(png_ptr, info_ptr, &palette[0],
-                 use_alpha ? pal->max * 4 : pal->max);
+                 use_alpha ? pal->max * alpha_levels : pal->max);
+
     if(use_palette && use_alpha)
-      png_set_tRNS(png_ptr, info_ptr, &trans[0], pal->max * 4, 0);
+      png_set_tRNS(png_ptr, info_ptr, &trans[0], pal->max * alpha_levels, 0);
   }
   else
   {
@@ -961,7 +956,8 @@ int File::savePng(const char *fn)
       if(use_palette)
       {
         if(use_alpha)
-          linebuf[x] = pal->lookup(*p) + pal->max * ((255 - geta(*p)) / 64);
+          linebuf[x] = pal->lookup(*p) +
+                       (int)(pal->max * ((255 - geta(*p)) / (int)alpha_step));
         else
           linebuf[x] = pal->lookup(*p);
       }

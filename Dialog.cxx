@@ -130,6 +130,7 @@ namespace PngOptions
   Fl_Double_Window *dialog;
   Fl_Check_Button *use_palette;
   Fl_Check_Button *use_alpha;
+  InputInt *alpha_levels;
   Fl_Button *ok;
 
   void closeCallback(Fl_Widget *, void *)
@@ -151,8 +152,11 @@ namespace PngOptions
       }
       else if(action == ok)
       {
-        dialog->hide();
-        break;
+        if(alpha_levels->limitValue(2, 16) == 0)
+        {
+          dialog->hide();
+          break;
+        }
       }
     }
   }
@@ -163,6 +167,10 @@ namespace PngOptions
 
     dialog = new Fl_Double_Window(256, 0, "PNG Options");
     dialog->callback(closeCallback);
+    alpha_levels = new InputInt(dialog, 0, y1, 72, 24, "Alpha Levels:", 0);
+    alpha_levels->value("2");
+    alpha_levels->center();
+    y1 += 24 + 8;
     use_palette = new Fl_Check_Button(0, y1, 16, 16, "Use Current Palette");
     y1 += 16 + 8;
     Dialog::center(use_palette);
@@ -702,10 +710,10 @@ int Dialog::jpegQualityValue()
 {
   int quality = atoi(JpegQuality::quality->value());
 
-  if(quality < 1)
-    quality = 1;
-  if(quality > 100)
-    quality = 100;
+//  if(quality < 1)
+//    quality = 1;
+//  if(quality > 100)
+//    quality = 100;
 
   return quality;
 }
@@ -723,6 +731,11 @@ int Dialog::pngUsePalette()
 int Dialog::pngUseAlpha()
 {
   return PngOptions::use_alpha->value();
+}
+
+int Dialog::pngAlphaLevels()
+{
+  return atoi(PngOptions::alpha_levels->value());
 }
 
 void Dialog::showProgress(float step)

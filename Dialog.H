@@ -34,6 +34,7 @@ namespace Dialog
   void pngOptions();
   int pngUsePalette();
   int pngUseAlpha();
+  int pngAlphaLevels();
   void showProgress(float);
   void updateProgress();
   void hideProgress();
