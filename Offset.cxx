@@ -90,17 +90,6 @@ void Offset::drag(View *view)
   offset_buffer->blit(Project::bmp, 0, 0,
                       x + overscroll, y + overscroll, w - x, h - y);
 
-/*
-  offset_buffer->blit(Project::bmp, 0, 0,
-                      0 - w + overscroll + x, 0 - h + overscroll + y, w, h);
-  offset_buffer->blit(Project::bmp, 0, 0,
-                      overscroll + x, 0 - h + overscroll + y, w, h);
-  offset_buffer->blit(Project::bmp, 0, 0,
-                      0 - w + overscroll + x, overscroll + y, w, h);
-  offset_buffer->blit(Project::bmp, 0, 0,
-                      overscroll + x, overscroll + y, w, h);
-*/
-
   view->drawMain(true);
   Gui::checkOffsetValues(dx, dy);
 }
