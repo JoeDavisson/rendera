@@ -591,9 +591,8 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   png_get_IHDR(png_ptr, info_ptr, &w, &h, &bits_per_channel, &color_type,
                &interlace_type, &compression_type, &filter_method);
 
-  // ignore interlaced images for now
-  if(png_set_interlace_handling(png_ptr) != 1)
-    return 0;
+  // check interlace mode
+  int passes = png_set_interlace_handling(png_ptr);
 
   // expand paletted images to RGB
   if(color_type == PNG_COLOR_TYPE_PALETTE)
@@ -629,34 +628,40 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
 
-  for(int y = 0; y < h; y++)
+  for(int i = 0; i < passes; i++)
   {
-    int *p = temp->row[y + overscroll] + overscroll;
-      
-    png_read_row(png_ptr, &linebuf[0], 0);
-
-    int xx = 0;
-
-    for(int x = 0; x < w; x++)
+    for(int y = 0; y < h; y++)
     {
-      if(channels == 3)
-      {
-        *p++ = makeRgb(linebuf[xx + 0] & 0xFF,
-                       linebuf[xx + 1] & 0xFF,
-                       linebuf[xx + 2] & 0xFF);
-      }
-      else if(channels == 4)
-      {
-         *p++ = makeRgba(linebuf[xx + 0] & 0xFF,
-                         linebuf[xx + 1] & 0xFF,
-                         linebuf[xx + 2] & 0xFF,
-                         linebuf[xx + 3] & 0xFF);
-      }
+      int *p = temp->row[y + overscroll] + overscroll;
+      
+      png_read_row(png_ptr, &linebuf[0], 0);
+      //png_bytep start = &linebuf[0];
+      //png_read_rows(png_ptr, &start, 0, 1);
 
-      xx += channels;
+      int xx = 0;
+
+      for(int x = 0; x < w; x++)
+      {
+        if(channels == 3)
+        {
+          *p++ = makeRgb(linebuf[xx + 0] & 0xFF,
+                         linebuf[xx + 1] & 0xFF,
+                         linebuf[xx + 2] & 0xFF);
+        }
+        else if(channels == 4)
+        {
+           *p++ = makeRgba(linebuf[xx + 0] & 0xFF,
+                           linebuf[xx + 1] & 0xFF,
+                           linebuf[xx + 2] & 0xFF,
+                           linebuf[xx + 3] & 0xFF);
+        }
+
+        xx += channels;
+      }
     }
   }
 
+  png_read_end(png_ptr, info_ptr);
   png_destroy_read_struct(&png_ptr, &info_ptr, 0);
 
   return temp;
