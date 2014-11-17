@@ -80,15 +80,26 @@ void Offset::drag(View *view)
     x -= w;
   while(y >= h)
     y -= h;
-  
-  offset_buffer->blit(Project::bmp, 0, 0,
-                      x + overscroll, y + overscroll, w - x, h - y);
-  offset_buffer->blit(Project::bmp, w - x, 0,
-                      overscroll, y + overscroll, x, h - y);
-  offset_buffer->blit(Project::bmp, 0, h - y,
-                      x + overscroll, overscroll, w - x, y);
+
   offset_buffer->blit(Project::bmp, w - x, h - y,
                       overscroll, overscroll, x, y);
+  offset_buffer->blit(Project::bmp, 0, h - y,
+                      x + overscroll, overscroll, w - x, y);
+  offset_buffer->blit(Project::bmp, w - x, 0,
+                      overscroll, y + overscroll, x, h - y);
+  offset_buffer->blit(Project::bmp, 0, 0,
+                      x + overscroll, y + overscroll, w - x, h - y);
+
+/*
+  offset_buffer->blit(Project::bmp, 0, 0,
+                      0 - w + overscroll + x, 0 - h + overscroll + y, w, h);
+  offset_buffer->blit(Project::bmp, 0, 0,
+                      overscroll + x, 0 - h + overscroll + y, w, h);
+  offset_buffer->blit(Project::bmp, 0, 0,
+                      0 - w + overscroll + x, overscroll + y, w, h);
+  offset_buffer->blit(Project::bmp, 0, 0,
+                      overscroll + x, overscroll + y, w, h);
+*/
 
   view->drawMain(true);
   Gui::checkOffsetValues(dx, dy);
