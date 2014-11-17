@@ -632,7 +632,7 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 {
   int x, y;
 
-  if((sx >= w) || (sy >= h) || (dx >= dest->cr) || (dy >= dest->cb))
+  if((sx >= w) || (sy >= h) || (dx > dest->cr) || (dy > dest->cb))
     return;
 
   if(sx < 0)
