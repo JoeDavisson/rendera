@@ -592,7 +592,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
                &interlace_type, &compression_type, &filter_method);
 
   // check interlace mode
-  int passes = png_set_interlace_handling(png_ptr);
+  bool interlace = png_set_interlace_handling(png_ptr) > 1 ? 1 : 0;
 
   // expand paletted images to RGB
   if(color_type == PNG_COLOR_TYPE_PALETTE)
@@ -616,9 +616,10 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
     png_set_gray_to_rgb(png_ptr);
 
   // perform gamma correction if the file requires it
-  double gamma = 0;
-  if(png_get_gAMA(png_ptr, info_ptr, &gamma))
-    png_set_gamma(png_ptr, 2.2, gamma);
+  // gonna ignore this for now
+//  double gamma = 0;
+//  if(png_get_gAMA(png_ptr, info_ptr, &gamma))
+//    png_set_gamma(png_ptr, 2.2, gamma);
 
   png_read_update_info(png_ptr, info_ptr);
 
@@ -627,19 +628,64 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   std::vector<png_byte> linebuf(rowbytes);
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
+  std::vector<png_bytep> row_pointers(h);
 
-  for(int i = 0; i < passes; i++)
+  if(interlace)
   {
+    // interlaced images require a buffer the size of the entire image
+    for(int y = 0; y < h; y++)
+    {
+      row_pointers[y] = (png_bytep)png_malloc(png_ptr,
+                                           png_get_rowbytes(png_ptr, info_ptr));
+    }
+
+    // read image all at once
+    png_read_image(png_ptr, &row_pointers[0]);
+
+    // convert image
     for(int y = 0; y < h; y++)
     {
       int *p = temp->row[y + overscroll] + overscroll;
-      
-      png_read_row(png_ptr, &linebuf[0], 0);
-      //png_bytep start = &linebuf[0];
-      //png_read_rows(png_ptr, &start, 0, 1);
-
       int xx = 0;
 
+      png_bytep row = row_pointers[y];
+
+      for(int x = 0; x < w; x++)
+      {
+        if(channels == 3)
+        {
+          *p++ = makeRgb(row[xx + 0] & 0xFF,
+                         row[xx + 1] & 0xFF,
+                         row[xx + 2] & 0xFF);
+        }
+        else if(channels == 4)
+        {
+           *p++ = makeRgba(row[xx + 0] & 0xFF,
+                           row[xx + 1] & 0xFF,
+                           row[xx + 2] & 0xFF,
+                           row[xx + 3] & 0xFF);
+        }
+
+        xx += channels;
+      }
+    }
+
+    // free buffer
+    for(int y = 0; y < h; y++)
+      png_free(png_ptr, row_pointers[y]);
+  }
+  else
+  {
+    // non-interlace images can be read line-by-line
+    for(int y = 0; y < h; y++)
+    {
+      // read line
+      png_read_row(png_ptr, &linebuf[0], 0);
+
+      int *p = temp->row[y + overscroll] + overscroll;
+      int xx = 0;
+
+      // convert line
       for(int x = 0; x < w; x++)
       {
         if(channels == 3)
@@ -656,7 +702,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
                            linebuf[xx + 3] & 0xFF);
         }
 
-        xx += channels;
+          xx += channels;
       }
     }
   }
