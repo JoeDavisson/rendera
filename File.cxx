@@ -266,7 +266,6 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
 {
   struct jpeg_decompress_struct cinfo;
   struct my_error_mgr jerr;
-  JSAMPARRAY linebuf;
 
   FileSP in(fn, "rb");
   if(!in.get())
@@ -277,6 +276,7 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
 
   if(setjmp(jerr.setjmp_buffer))
   {
+    // jpeglib does a goto here if there is an error
     jpeg_destroy_decompress(&cinfo);
     return 0;
   }
@@ -285,8 +285,9 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
   jpeg_stdio_src(&cinfo, in.get());
   jpeg_read_header(&cinfo, TRUE);
   jpeg_start_decompress(&cinfo);
+
   int row_stride = cinfo.output_width * cinfo.output_components;
-  linebuf = (*cinfo.mem->alloc_sarray)
+  JSAMPARRAY linebuf = (*cinfo.mem->alloc_sarray)
               ((j_common_ptr)&cinfo, JPOOL_IMAGE, row_stride, 1);
   int bytes = cinfo.out_color_components;
   int w = row_stride / bytes;
@@ -308,7 +309,7 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
 
       for(int x = 0; x < row_stride; x += 3)
       {
-        *p++ = makeRgb(linebuf[0][x] & 0xFF,
+        *p++ = makeRgb(linebuf[0][x + 0] & 0xFF,
                        linebuf[0][x + 1] & 0xFF,
                        linebuf[0][x + 2] & 0xFF);
       }
@@ -572,7 +573,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
 
   if(setjmp(png_jmpbuf(png_ptr)))
   {
-    // pnglib does a goto here if there is an error:
+    // pnglib does a goto here if there is an error
     png_destroy_read_struct(&png_ptr, &info_ptr, 0);
     return 0;
   }
