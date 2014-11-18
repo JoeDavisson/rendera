@@ -625,19 +625,17 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
 
   int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
   int channels = (int)png_get_channels(png_ptr, info_ptr);
-  std::vector<png_byte> linebuf(rowbytes);
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
-  std::vector<png_bytep> row_pointers(h);
 
   if(interlace)
   {
     // interlaced images require a buffer the size of the entire image
+    std::vector<png_byte> data(rowbytes * h);
+    std::vector<png_bytep> row_pointers(h);
+
     for(int y = 0; y < h; y++)
-    {
-      row_pointers[y] = (png_bytep)png_malloc(png_ptr,
-                                           png_get_rowbytes(png_ptr, info_ptr));
-    }
+      row_pointers[y] = &data[y * rowbytes];
 
     // read image all at once
     png_read_image(png_ptr, &row_pointers[0]);
@@ -669,14 +667,12 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
         xx += channels;
       }
     }
-
-    // free buffer
-    for(int y = 0; y < h; y++)
-      png_free(png_ptr, row_pointers[y]);
   }
   else
   {
     // non-interlace images can be read line-by-line
+    std::vector<png_byte> linebuf(rowbytes);
+
     for(int y = 0; y < h; y++)
     {
       // read line
@@ -702,7 +698,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
                            linebuf[xx + 3] & 0xFF);
         }
 
-          xx += channels;
+        xx += channels;
       }
     }
   }
