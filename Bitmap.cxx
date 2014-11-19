@@ -60,9 +60,7 @@ Bitmap::Bitmap(int width, int height)
 
   setClip(0, 0, w - 1, h - 1);
 
-  int i;
-
-  for(i = 0; i < height; i++)
+  for(int i = 0; i < height; i++)
     row[i] = &data[width * i];
 
   wrap = false;
@@ -94,9 +92,7 @@ Bitmap::Bitmap(int width, int height, int overscroll)
   h = height;
   this->overscroll = overscroll;
 
-  int i;
-
-  for(i = 0; i < height; i++)
+  for(int i = 0; i < height; i++)
     row[i] = &data[width * i];
 
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
@@ -104,7 +100,7 @@ Bitmap::Bitmap(int width, int height, int overscroll)
   rectfill(cl, ct, cr, cb, makeRgb(0, 0, 0), 0);
   setClip(0, 0, w - 1, h - 1);
 
-  for(i = 0; i < 4; i++)
+  for(int i = 0; i < 4; i++)
     rect(overscroll - 1 - i, overscroll - 1 - i,
          w - overscroll + i, h - overscroll + i,
          getFltkColor(FL_BACKGROUND_COLOR), 0);
@@ -139,8 +135,7 @@ Bitmap::~Bitmap()
 
 void Bitmap::clear(int c)
 {
-  int i;
-  for(i = 0; i < w * h; i++)
+  for(int i = 0; i < w * h; i++)
     data[i] = c;
 }
 
@@ -158,10 +153,9 @@ void Bitmap::hline(int x1, int y, int x2, int c, int t)
 
   clip(&x1, &y, &x2, &y);
 
-  int x;
   int *p = row[y] + x1;
 
-  for(x = x1; x <= x2; x++)
+  for(int x = x1; x <= x2; x++)
   {
     *p = Blend::current(*p, c, t);
     p++;
@@ -188,12 +182,10 @@ void Bitmap::vline(int y1, int x, int y2, int c, int t)
 
 void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
 {
-  int dx, dy, inx, iny, e;
-
-  dx = x2 - x1;
-  dy = y2 - y1;
-  inx = dx > 0 ? 1 : -1;
-  iny = dy > 0 ? 1 : -1;
+  int dx = x2 - x1;
+  int dy = y2 - y1;
+  int inx = dx > 0 ? 1 : -1;
+  int iny = dy > 0 ? 1 : -1;
 
   dx = std::abs(dx);
   dy = std::abs(dy);
@@ -201,7 +193,7 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
   if(dx >= dy)
   {
     dy <<= 1;
-    e = dy - dx;
+    int e = dy - dx;
     dx <<= 1;
 
     while(x1 != x2)
@@ -221,7 +213,7 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
   else
   {
     dx <<= 1;
-    e = dx - dy;
+    int e = dx - dy;
     dy <<= 1;
 
     while(y1 != y2)
@@ -266,7 +258,7 @@ void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
   if(y1 == y2)
     return;
 
-  for( int y = y1 + 1; y < y2; y++)
+  for(int y = y1 + 1; y < y2; y++)
   {
     *(row[y] + x1) = Blend::current(*(row[y] + x1), c, t);
     *(row[y] + x2) = Blend::current(*(row[y] + x2), c, t);
@@ -295,12 +287,10 @@ void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c, int t)
 
 void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 {
-  int dx, dy, inx, iny, e;
-
-  dx = x2 - x1;
-  dy = y2 - y1;
-  inx = dx > 0 ? 1 : -1;
-  iny = dy > 0 ? 1 : -1;
+  int dx = x2 - x1;
+  int dy = y2 - y1;
+  int inx = dx > 0 ? 1 : -1;
+  int iny = dy > 0 ? 1 : -1;
 
   dx = std::abs(dx);
   dy = std::abs(dy);
@@ -308,7 +298,7 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
   if(dx >= dy)
   {
     dy <<= 1;
-    e = dy - dx;
+    int e = dy - dx;
     dx <<= 1;
 
     while(x1 != x2)
@@ -328,7 +318,7 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
   else
   {
     dx <<= 1;
-    e = dx - dy;
+    int e = dx - dy;
     dy <<= 1;
 
     while(y1 != y2)
@@ -750,14 +740,12 @@ void Bitmap::pointStretch(Bitmap *dest,
   if(dw < 1 || dh < 1)
     return;
 
-  int x, y;
-
-  for(y = 0; y < dh; y++)
+  for(int y = 0; y < dh; y++)
   {
     const int y1 = sy + ((y * by) >> 8);
     int *s = dest->row[dy + y] + dx;
 
-    for(x = 0; x < dw; x++)
+    for(int x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 8);
       const int c = *(row[y1] + x1);
@@ -789,14 +777,13 @@ void Bitmap::scaleBilinear(Bitmap *dest,
   if(sh > dh)
     mipy = (sh / dh);
 
-  int x, y;
   const int div = mipx * mipy;
 
   if((mipx > 1) | (mipy > 1))
   {
-    for(y = 0; y <= sh - mipy; y += mipy)
+    for(int y = 0; y <= sh - mipy; y += mipy)
     {
-      for(x = 0; x <= sw - mipx; x += mipx)
+      for(int x = 0; x <= sw - mipx; x += mipx)
       {
         int r = 0, g = 0, b = 0, a = 0;
         int i, j, c;
@@ -930,11 +917,9 @@ void Bitmap::scaleBilinear(Bitmap *dest,
 
 void Bitmap::mirror()
 {
-  int x, y;
-
-  for(y = ct; y <= cb; y++)
+  for(int y = ct; y <= cb; y++)
   {
-    for(x = cl; x < w / 2; x++)
+    for(int x = cl; x < w / 2; x++)
     {
       const int temp = *(row[y] + x);
       *(row[y] + x) = *(row[y] + w - 1 - x);
@@ -945,11 +930,9 @@ void Bitmap::mirror()
 
 void Bitmap::flip()
 {
-  int x, y;
-
-  for(y = ct; y < h / 2; y++)
+  for(int y = ct; y < h / 2; y++)
   {
-    for(x = cl; x <= cr; x++)
+    for(int x = cl; x <= cr; x++)
     {
       const int temp = *(row[y] + x);
       *(row[y] + x) = *(row[h - 1 - y] + x);
@@ -1037,9 +1020,7 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, bool tile)
   row_v -= bw * dv_col + bh * dv_row;
 
   // draw image
-  int x, y;
-
-  for(y = by1; y <= by2; y++)
+  for(int y = by1; y <= by2; y++)
   {
     int u = row_u;
     int v = row_v;
@@ -1051,7 +1032,7 @@ Bitmap *Bitmap::rotate(float angle, float scale, int overscroll, bool tile)
     if(yy < dest->ct || yy > dest->cb)
       continue;
 
-    for(x = bx1; x <= bx2; x++)
+    for(int x = bx1; x <= bx2; x++)
     {
       int uu = u >> 16;
       int vv = v >> 16;
@@ -1155,9 +1136,7 @@ void Bitmap::fastStretch(Bitmap *dest,
 
 void Bitmap::invert()
 {
-  int i;
-
-  for(i = 0; i < w * h; i++)
+  for(int i = 0; i < w * h; i++)
   {
     rgba_t rgba = getRgba(data[i]);
     data[i] = makeRgba(255 - rgba.r, 255 - rgba.g, 255 - rgba.b, rgba.a);
