@@ -814,6 +814,10 @@ void View::draw()
     if(ignore_tool)
     {
       ignore_tool = false;
+      screenBlit(0, 0, x(), y(), w(), h());
+      if(Gui::getClone())
+        drawCloneCursor();
+      return;
     }
     else
     {
