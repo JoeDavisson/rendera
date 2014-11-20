@@ -208,6 +208,7 @@ int View::handle(int event)
             beginMove();
             break;
           }
+          break;
       } 
 
       oldimgx = imgx;
