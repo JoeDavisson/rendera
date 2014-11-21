@@ -1491,13 +1491,12 @@ namespace Blur
       }
     }
 
-    temp->blit(bmp, 0, 0, bmp->cl, bmp->ct, temp->w, temp->h);
     beginProgress();
 
     // y direction
     for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = temp->row[y - bmp->cl];
+      int *p = bmp->row[y] + bmp->cl;
 
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
@@ -1509,7 +1508,8 @@ namespace Blur
 
         for(i = 0; i < size; i++) 
         {
-          rgba_t rgba = getRgba(bmp->getpixel(x, y - size / 2 + i));
+          rgba_t rgba = getRgba(temp->getpixel(x - bmp->cl,
+                                               y - size / 2 + i - bmp->ct));
           rr += Gamma::fix(rgba.r) * kernel[i];
           gg += Gamma::fix(rgba.g) * kernel[i];
           bb += Gamma::fix(rgba.b) * kernel[i];
@@ -1535,7 +1535,6 @@ namespace Blur
       }
     }
 
-    temp->blit(bmp, 0, 0, bmp->cl, bmp->ct, temp->w, temp->h);
     delete temp;
 
     endProgress();
