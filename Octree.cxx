@@ -48,11 +48,11 @@ void Octree::write(const int &r, const int &g, const int &b,
 {
   struct node_t *node = root;
 
-  for(int i = 7; i >= 0; i--)
+  for(int mask = 128; mask != 0; mask >>= 1)
   {
-    const int index = ((r >> i) & 1) << 0 |
-                      ((g >> i) & 1) << 1 |
-                      ((b >> i) & 1) << 2;
+    const int index = ((r & mask) ? 1 : 0) |
+                      ((g & mask) ? 2 : 0) |
+                      ((b & mask) ? 4 : 0);
 
     if(!node->child[index])
     {
@@ -76,15 +76,15 @@ void Octree::write(const int &r, const int &g, const int &b,
 // This allows the octree to be used in a different way.
 // (Needed for palette lookup.)
 void Octree::writePath(const int &r, const int &g, const int &b,
-                        const float &value)
+                       const float &value)
 {
   struct node_t *node = root;
 
-  for(int i = 7; i >= 0; i--)
+  for(int mask = 128; mask != 0; mask >>= 1)
   {
-    const int index = ((r >> i) & 1) << 0 |
-                      ((g >> i) & 1) << 1 |
-                      ((b >> i) & 1) << 2;
+    const int index = ((r & mask) ? 1 : 0) |
+                      ((g & mask) ? 2 : 0) |
+                      ((b & mask) ? 4 : 0);
 
     if(!node->child[index])
     {
@@ -106,11 +106,11 @@ float Octree::read(const int &r, const int &g, const int &b)
 {
   struct node_t *node = root;
 
-  for(int i = 7; i >= 0; i--)
+  for(int mask = 128; mask != 0; mask >>= 1)
   {
-    const int index = ((r >> i) & 1) << 0 |
-                      ((g >> i) & 1) << 1 |
-                      ((b >> i) & 1) << 2;
+    const int index = ((r & mask) ? 1 : 0) |
+                      ((g & mask) ? 2 : 0) |
+                      ((b & mask) ? 4 : 0);
 
     if(node->child[index])
       node = node->child[index];
