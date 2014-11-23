@@ -48,11 +48,11 @@ void Octree::write(const int &r, const int &g, const int &b,
 {
   struct node_t *node = root;
 
-  for(int mask = 128; mask != 0; mask >>= 1)
+  for(int i = 7; i >= 0; i--)
   {
-    const int index = ((r & mask) ? 1 : 0) |
-                      ((g & mask) ? 2 : 0) |
-                      ((b & mask) ? 4 : 0);
+    const int index = ((r >> i) & 1) << 0 |
+                      ((g >> i) & 1) << 1 |
+                      ((b >> i) & 1) << 2;
 
     if(!node->child[index])
     {
@@ -80,11 +80,11 @@ void Octree::writePath(const int &r, const int &g, const int &b,
 {
   struct node_t *node = root;
 
-  for(int mask = 128; mask != 0; mask >>= 1)
+  for(int i = 7; i >= 0; i--)
   {
-    const int index = ((r & mask) ? 1 : 0) |
-                      ((g & mask) ? 2 : 0) |
-                      ((b & mask) ? 4 : 0);
+    const int index = ((r >> i) & 1) << 0 |
+                      ((g >> i) & 1) << 1 |
+                      ((b >> i) & 1) << 2;
 
     if(!node->child[index])
     {
@@ -106,11 +106,11 @@ float Octree::read(const int &r, const int &g, const int &b)
 {
   struct node_t *node = root;
 
-  for(int mask = 128; mask != 0; mask >>= 1)
+  for(int i = 7; i >= 0; i--)
   {
-    const int index = ((r & mask) ? 1 : 0) |
-                      ((g & mask) ? 2 : 0) |
-                      ((b & mask) ? 4 : 0);
+    const int index = ((r >> i) & 1) << 0 |
+                      ((g >> i) & 1) << 1 |
+                      ((b >> i) & 1) << 2;
 
     if(node->child[index])
       node = node->child[index];
