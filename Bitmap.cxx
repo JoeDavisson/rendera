@@ -756,6 +756,131 @@ void Bitmap::pointStretch(Bitmap *dest,
   }
 }
 
+void Bitmap::integerStretch(Bitmap *dest,
+                            int sx, int sy, int sw, int sh,
+                            int dx, int dy, int dw, int dh,
+                            int overx, int overy, bool bgr_order)
+{
+  const int ax = ((float)dw / sw) * 256;
+  const int ay = ((float)dh / sh) * 256;
+  const int bx = ((float)sw / dw) * 256;
+  const int by = ((float)sh / dh) * 256;
+
+  dw -= overx;
+  dh -= overy;
+
+  if(dx < dest->cl)
+  {
+    const int d = dest->cl - dx;
+    dx = dest->cl;
+    dw -= d;
+    sx += (d * ax) >> 8;
+    sw -= (d * ax) >> 8;
+  }
+
+  if(dx + dw > dest->cr)
+  {
+    const int d = dx + dw - dest->cr;
+    dw -= d;
+    sw -= (d * ax) >> 8;
+  }
+
+  if(dy < dest->ct)
+  {
+    const int d = dest->ct - dy;
+    dy = dest->ct;
+    dh -= d;
+    sy += (d * ay) >> 8;
+    sh -= (d * ay) >> 8;
+  }
+
+  if(dy + dh > dest->cb)
+  {
+    const int d = dy + dh - dest->cb;
+    dh -= d;
+    sh -= (d * ay) >> 8;
+  }
+
+  dw -= (dw - ((sw * ax) >> 8));
+  dh -= (dh - ((sh * ay) >> 8));
+
+  if(sw < 1 || sh < 1)
+    return;
+
+  if(dw < 1 || dh < 1)
+    return;
+
+  for(int y = 0; y < dh; y++)
+  {
+    const int vv = y * by;
+    const int v1 = vv >> 8;
+    const int v = ((vv - (v1 << 8)) << 4) >> 8;
+
+    if(sy + v1 > h - 1)
+      break;
+
+    const int v2 = v1 < (sh - 1) ? v1 + 1: v1;
+    const int y1 = sy + (vv >> 8);
+
+    int *c[4];
+    c[0] = c[1] = row[sy + v1] + sx;
+    c[2] = c[3] = row[sy + v2] + sx;
+ 
+    int *p = dest->row[dy + y] + dx;
+
+    for(int x = 0; x < dw; x++)
+    {
+      const int uu = x * bx;
+      const int u1 = uu >> 8;
+      const int u = ((uu - (u1 << 8)) << 4) >> 8;
+
+      if(sx + u1 > w - 1)
+        break;
+
+      const int u2 = u1 < (sw - 1) ? u1 + 1: u1;
+      const int x1 = sx + (uu >> 8);
+
+      c[0] += u1;
+      c[1] += u2;
+      c[2] += u1;
+      c[3] += u2;
+
+      int f[4];
+
+      const int u16 = 16 - u;
+      const int v16 = 16 - v;
+
+      const int a = (u16 | (u << 8)) * (v16 | (v16 << 8));
+      const int b = (u16 | (u << 8)) *   (v |   (v << 8));
+
+      f[0] = (a & 0x00000FFF);
+      f[1] = (a & 0x0FFF0000) >> 16;
+      f[2] = (b & 0x00000FFF);
+      f[3] = (b & 0x0FFF0000) >> 16;
+
+      int rb = 0;
+      int g = 0;
+
+      for(int i = 0; i < 4; i++)
+      {
+        rb += (((*c[i] & 0xFF00FF) * f[i]) >> 8) & 0xFF00FF;
+        g += (((*c[i] & 0xFF00) * f[i]) >> 8) & 0xFF00;
+      }
+
+      c[0] -= u1;
+      c[1] -= u2;
+      c[2] -= u1;
+      c[3] -= u2;
+
+      const int c = rb | g;
+      const int alpha = geta(*(row[y1] + x1));
+      const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
+
+      *p++ = convertFormat(blendFast(checker, c, 255 - alpha), bgr_order);
+    }
+  }
+}
+
 void Bitmap::scaleBilinear(Bitmap *dest,
                            int sx, int sy, int sw, int sh,
                            int dx, int dy, int dw, int dh,
