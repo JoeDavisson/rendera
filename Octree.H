@@ -40,6 +40,7 @@ public:
   void writePath(const int &, const int &, const int &, const float &);
   float read(const int &, const int &, const int &);
 
+private:
   node_type *root;
 };
 

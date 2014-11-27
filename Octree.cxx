@@ -54,19 +54,18 @@ void Octree::write(const int &r, const int &g, const int &b,
                       ((g >> i) & 1) << 1 |
                       ((b >> i) & 1) << 2;
 
-    if(!node->child[index])
+    if(node->child[index])
     {
-      node->child[index] = new node_type;
       node = node->child[index];
-      node->value = 0;
+      continue;
+    }
 
-      for(int j = 0; j < 8; j++)
-        node->child[j] = 0;
-    }
-    else
-    {
-      node = node->child[index];
-    }
+    node->child[index] = new node_type;
+    node = node->child[index];
+    node->value = 0;
+
+    for(int j = 0; j < 8; j++)
+      node->child[j] = 0;
   }
 
   node->value = value;
@@ -86,19 +85,18 @@ void Octree::writePath(const int &r, const int &g, const int &b,
                       ((g >> i) & 1) << 1 |
                       ((b >> i) & 1) << 2;
 
-    if(!node->child[index])
+    if(node->child[index])
     {
-      node->child[index] = new node_type;
-      node = node->child[index];
-      node->value = value;
+        node = node->child[index];
+        continue;
+    }
 
-      for(int j = 0; j < 8; j++)
+    node->child[index] = new node_type;
+    node = node->child[index];
+    node->value = value;
+
+    for(int j = 0; j < 8; j++)
         node->child[j] = 0;
-    }
-    else
-    {
-      node = node->child[index];
-    }
   }
 }
 
