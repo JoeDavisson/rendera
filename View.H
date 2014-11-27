@@ -30,11 +30,11 @@ class View : public Fl_Widget
 {
 public:
   View(Fl_Group *, int, int, int, int, const char *);
-  virtual ~View();
+  ~View();
 
-  virtual int handle(int);
-  virtual void resize(int, int, int, int);
-  virtual void redraw();
+  int handle(int);
+  void resize(int, int, int, int);
+  void redraw();
 
   void drawMove();
   void drawMain(bool);

@@ -27,12 +27,12 @@ class Separator : public Fl_Widget
 {
 public:
   Separator(Fl_Group *, int, int, int, int, const char *);
-  virtual ~Separator();
+  ~Separator();
 
   Fl_Group *group;
 
 protected:
-  virtual void draw();
+  void draw();
 };
 
 #endif

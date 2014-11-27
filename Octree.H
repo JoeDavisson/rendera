@@ -33,7 +33,7 @@ public:
   };
 
   Octree();
-  virtual ~Octree();
+  ~Octree();
 
   void clear(node_type *);
   void write(const int &, const int &, const int &, const float &);

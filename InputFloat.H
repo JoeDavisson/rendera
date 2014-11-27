@@ -27,12 +27,11 @@ class InputFloat : public Fl_Float_Input
 {
 public:
   InputFloat(Fl_Group *, int, int, int, int, const char *, Fl_Callback *);
-  virtual ~InputFloat();
+  ~InputFloat();
   void center();
   int limitValue(double, double);
 
   int var;
-
   Fl_Group *group;
 };
 

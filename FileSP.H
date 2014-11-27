@@ -30,7 +30,7 @@ private:
 
 public:
   FileSP(const char *, const char *);
-  virtual ~FileSP();
+  ~FileSP();
   FILE *get();
 };
 

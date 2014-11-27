@@ -30,7 +30,7 @@ class Bitmap
 public:
   Bitmap(int, int);
   Bitmap(int, int, int);
-  virtual ~Bitmap();
+  ~Bitmap();
 
   int x, y, w, h;
   int cl, cr, ct, cb, cw, ch;

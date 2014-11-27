@@ -30,14 +30,15 @@ class Button : public Fl_Button
 public:
   Button(Fl_Group *, int, int, int, int,
          const char *, const char *, Fl_Callback *);
-  virtual ~Button();
+  ~Button();
 
   int var;
   Fl_Group *group;
   Bitmap *bitmap;
   Fl_RGB_Image *image;
+
 protected:
-  virtual void draw();
+  void draw();
 };
 
 #endif

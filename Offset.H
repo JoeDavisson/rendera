@@ -30,16 +30,16 @@ class Offset : public Tool
 {
 public:
   Offset();
-  virtual ~Offset();
+  ~Offset();
 
-  virtual void push(View *);
-  virtual void drag(View *);
-  virtual void release(View *);
-  virtual void move(View *);
-  virtual void done(View *);
-  virtual void redraw(View *);
-  virtual bool isActive();
-  virtual void reset();
+  void push(View *);
+  void drag(View *);
+  void release(View *);
+  void move(View *);
+  void done(View *);
+  void redraw(View *);
+  bool isActive();
+  void reset();
 };
 
 #endif

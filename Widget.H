@@ -32,9 +32,9 @@ public:
          const char *, const char *, int, int, Fl_Callback *);
   Widget(Fl_Group *, int, int, int, int,
          const char *, int, int, Fl_Callback *);
-  virtual ~Widget();
+  ~Widget();
 
-  virtual int handle(int);
+  int handle(int);
 
   int var;
   int stepx;
@@ -43,8 +43,9 @@ public:
   Bitmap *bitmap, *bitmap2;
   Fl_RGB_Image *image, *image2;
   bool use_highlight;
+
 protected:
-  virtual void draw();
+  void draw();
 };
 
 #endif

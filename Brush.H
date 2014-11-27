@@ -27,7 +27,7 @@ class Brush
 {
 public:
   Brush();
-  virtual ~Brush();
+  ~Brush();
 
   void make(int, int);
 

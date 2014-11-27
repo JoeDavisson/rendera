@@ -41,7 +41,7 @@ public:
   };
 
   Stroke();
-  virtual ~Stroke();
+  ~Stroke();
 
   void clip();
   void sizeLinear(int, int, int, int);

@@ -30,7 +30,7 @@ class Palette
 {
 public:
   Palette();
-  virtual ~Palette();
+  ~Palette();
 
   void draw(Widget *);
   void copy(Palette *);

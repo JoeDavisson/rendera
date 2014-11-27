@@ -27,7 +27,7 @@ class Map
 {
 public:
   Map(int, int);
-  virtual ~Map();
+  ~Map();
 
   int w, h;
   unsigned char *data;

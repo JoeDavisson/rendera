@@ -29,13 +29,14 @@ class Group : public Fl_Group
 {
 public:
   Group(int, int, int, int, const char *);
-  virtual ~Group();
+  ~Group();
 
   Bitmap *bitmap;
   Fl_RGB_Image *image;
   Fl_Tiled_Image *tiled_image;
+
 protected:
-  virtual void draw();
+  void draw();
 };
 
 #endif

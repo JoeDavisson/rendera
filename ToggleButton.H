@@ -30,16 +30,16 @@ class ToggleButton : public Fl_Button
 public:
   ToggleButton(Fl_Group *, int, int, int, int,
                const char *, const char *, Fl_Callback *);
-  virtual ~ToggleButton();
+  ~ToggleButton();
 
-  virtual int handle(int);
+  int handle(int);
 
   int var;
   Fl_Group *group;
   Bitmap *bitmap;
   Fl_RGB_Image *image;
 protected:
-  virtual void draw();
+  void draw();
 };
 
 #endif
