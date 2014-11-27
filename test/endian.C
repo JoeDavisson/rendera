@@ -9,10 +9,10 @@
 int
 main( int, char** )
 {
-  assert( 4 == sizeof( rgba_t ) );
-  assert( 4 == sizeof( un_rgba_t ) );
+  assert( 4 == sizeof( rgba_type ) );
+  assert( 4 == sizeof( un_rgba_type ) );
 
-  rgba_t rgba = getRgba( 0x03020100 );
+  rgba_type rgba = getRgba( 0x03020100 );
 
   assert( 1 == sizeof( rgba.r ) );
   assert( 1 == sizeof( rgba.g ) );
