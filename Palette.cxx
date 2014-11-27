@@ -194,7 +194,7 @@ void Palette::fillTable()
 
 int Palette::lookup(const int &c)
 {
-  struct rgba_t rgba = getRgba(c);
+  rgba_type rgba = getRgba(c);
 
   return table->read(rgba.r, rgba.g, rgba.b);
 }

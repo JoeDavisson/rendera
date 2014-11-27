@@ -51,8 +51,6 @@ namespace File
 
   void decodeURI(char *);
   void getDirectory(char *, const char *);
-
-  extern Bitmap *preview_bmp;
 }
 
 #endif

@@ -42,25 +42,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
-// bitmap pointer used for FLTK's file preview
-Bitmap *File::preview_bmp = 0;
-
 namespace
 {
-  // BMP file format structures
+  #pragma pack(push)
   #pragma pack(1)
-  typedef struct
+
+  // BMP file format structures
+  struct bmp_file_header_type
   {
     uint16_t bfType;
     uint32_t bfSize;
     uint16_t bfReserved1;
     uint16_t bfReserved2;
     uint32_t bfOffBits;
-  }
-  BMP_FILE_HEADER;
+  };
 
-  #pragma pack(1)
-  typedef struct
+  struct bmp_info_header_type
   {
     uint32_t biSize;
     uint32_t biWidth;
@@ -73,12 +70,10 @@ namespace
     uint32_t biYPelsPerMeter;
     uint32_t biClrUsed;
     uint32_t biClrImportant;
-  }
-  BMP_INFO_HEADER;
+  };
 
   // targa file format structure
-  #pragma pack(1)
-  typedef struct
+  struct targa_header_type
   {
     uint8_t id_length;
     uint8_t color_map_type;
@@ -92,8 +87,9 @@ namespace
     uint16_t h;
     uint8_t bpp;
     uint8_t descriptor;
-  }
-  TARGA_HEADER;
+  };
+
+  #pragma pack(pop)
 
   // jpeg structures
   struct my_error_mgr
@@ -110,6 +106,9 @@ namespace
     (*cinfo->err->output_message)(cinfo);
     longjmp(myerr->setjmp_buffer, 1);
   }
+
+  // bitmap pointer used for FLTK's file preview
+  Bitmap *preview_bmp = 0;
 
   // palette preview widget
   Widget *pal_preview = new Widget(new Fl_Group(0, 0, 96, 96),
@@ -346,11 +345,11 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
   if(!in.get())
     return 0;
 
-  BMP_INFO_HEADER bm;
+  bmp_info_header_type bm;
   unsigned char buffer[64];
 
-  if(fread(buffer, 1, sizeof(BMP_FILE_HEADER), in.get()) !=
-     (unsigned)sizeof(BMP_FILE_HEADER))
+  if(fread(buffer, 1, sizeof(bmp_file_header_type), in.get()) !=
+     (unsigned)sizeof(bmp_file_header_type))
   {
     return 0;
   }
@@ -363,8 +362,8 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
   /* bh.bfReserved2 = parseUint16(p); */
   /* bh.bfOffBits = parseUint32(p); */
 
-  if(fread(buffer, 1, sizeof(BMP_INFO_HEADER), in.get())
-     != (unsigned)sizeof(BMP_INFO_HEADER))
+  if(fread(buffer, 1, sizeof(bmp_info_header_type), in.get())
+     != (unsigned)sizeof(bmp_info_header_type))
   {
     return 0;
   }
@@ -445,12 +444,12 @@ Bitmap *File::loadTarga(const char *fn, int overscroll)
   if(!in.get())
     return 0;
 
-  TARGA_HEADER header;
+  targa_header_type header;
 
   unsigned char buffer[64];
 
-  if(fread(buffer, 1, sizeof(TARGA_HEADER), in.get()) !=
-     (unsigned)sizeof(TARGA_HEADER))
+  if(fread(buffer, 1, sizeof(targa_header_type), in.get()) !=
+     (unsigned)sizeof(targa_header_type))
   {
     return 0;
   }
@@ -945,7 +944,7 @@ int File::savePng(const char *fn)
 
         for(int i = 0; i < pal->max; i++)
         {
-          rgba_t rgba = getRgba(pal->data[i]);
+          rgba_type rgba = getRgba(pal->data[i]);
 
           palette[index].red = rgba.r;
           palette[index].green = rgba.g;
@@ -959,7 +958,7 @@ int File::savePng(const char *fn)
     {
       for(int i = 0; i < pal->max; i++)
       {
-        rgba_t rgba = getRgba(pal->data[i]);
+        rgba_type rgba = getRgba(pal->data[i]);
 
         palette[i].red = rgba.r;
         palette[i].green = rgba.g;
@@ -1097,13 +1096,13 @@ Fl_Image *File::previewPng(const char *fn, unsigned char *header, int)
   if(!temp)
     return 0;
 
-  if(File::preview_bmp)
-    delete File::preview_bmp;
+  if(preview_bmp)
+    delete preview_bmp;
 
-  File::preview_bmp = temp;
+  preview_bmp = temp;
 
-  return new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
-                          File::preview_bmp->w, File::preview_bmp->h, 4, 0);
+  return new Fl_RGB_Image((unsigned char *)preview_bmp->data,
+                          preview_bmp->w, preview_bmp->h, 4, 0);
 }
 
 Fl_Image *File::previewJpeg(const char *fn, unsigned char *header, int)
@@ -1117,13 +1116,13 @@ Fl_Image *File::previewJpeg(const char *fn, unsigned char *header, int)
   if(!temp)
     return 0;
 
-  if(File::preview_bmp)
-    delete File::preview_bmp;
+  if(preview_bmp)
+    delete preview_bmp;
 
-  File::preview_bmp = temp;
+  preview_bmp = temp;
 
-  return new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
-                          File::preview_bmp->w, File::preview_bmp->h, 4, 0);
+  return new Fl_RGB_Image((unsigned char *)preview_bmp->data,
+                          preview_bmp->w, preview_bmp->h, 4, 0);
 }
 
 Fl_Image *File::previewBmp(const char *fn, unsigned char *header, int)
@@ -1137,13 +1136,13 @@ Fl_Image *File::previewBmp(const char *fn, unsigned char *header, int)
   if(!temp)
     return 0;
 
-  if(File::preview_bmp)
-    delete File::preview_bmp;
+  if(preview_bmp)
+    delete preview_bmp;
 
-  File::preview_bmp = temp;
+  preview_bmp = temp;
 
-  return new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
-                          File::preview_bmp->w, File::preview_bmp->h, 4, 0);
+  return new Fl_RGB_Image((unsigned char *)preview_bmp->data,
+                          preview_bmp->w, preview_bmp->h, 4, 0);
 }
 
 Fl_Image *File::previewTarga(const char *fn, unsigned char *, int)
@@ -1157,13 +1156,13 @@ Fl_Image *File::previewTarga(const char *fn, unsigned char *, int)
   if(!temp)
     return 0;
 
-  if(File::preview_bmp)
-    delete File::preview_bmp;
+  if(preview_bmp)
+    delete preview_bmp;
 
-  File::preview_bmp = temp;
+  preview_bmp = temp;
 
-  return new Fl_RGB_Image((unsigned char *)File::preview_bmp->data,
-                          File::preview_bmp->w, File::preview_bmp->h, 4, 0);
+  return new Fl_RGB_Image((unsigned char *)preview_bmp->data,
+                          preview_bmp->w, preview_bmp->h, 4, 0);
 }
 
 Fl_Image *File::previewGimpPalette(const char *fn, unsigned char *header, int)

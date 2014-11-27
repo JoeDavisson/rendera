@@ -95,7 +95,7 @@ namespace Normalize
     {
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
-        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
         const int r = rgba.r;
         const int g = rgba.g;
@@ -136,7 +136,7 @@ namespace Normalize
 
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
-        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
         const int r = (rgba.r - r_low) * r_scale;
         const int g = (rgba.g - g_low) * g_scale;
@@ -183,7 +183,7 @@ namespace Equalize
     {
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
-        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
         const int r = rgba.r;
         const int g = rgba.g;
@@ -215,7 +215,7 @@ namespace Equalize
 
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
-        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
         int r = rgba.r;
         int g = rgba.g;
@@ -272,7 +272,7 @@ namespace ValueStretch
     {
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
-        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
         rr += rgba.r;
         gg += rgba.g;
@@ -299,7 +299,7 @@ namespace ValueStretch
     {
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
-        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
         const int r = rgba.r;
         const int g = rgba.g;
@@ -331,7 +331,7 @@ namespace ValueStretch
 
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
-        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
         int r = rgba.r;
         int g = rgba.g;
@@ -393,7 +393,7 @@ namespace Saturate
     {
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
-        rgba_t rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
         const int r = rgba.r;
         const int g = rgba.g;
@@ -421,7 +421,7 @@ namespace Saturate
       {
         const int c = bmp->getpixel(x, y);
 
-        rgba_t rgba = getRgba(c);
+        rgba_type rgba = getRgba(c);
 
         int r = rgba.r;
         int g = rgba.g;
@@ -499,7 +499,7 @@ namespace RotateHue
       {
         int c = bmp->getpixel(x, y);
 
-        rgba_t rgba = getRgba(c);
+        rgba_type rgba = getRgba(c);
 
         int l = getl(c);
 
@@ -634,7 +634,7 @@ namespace CorrectionMatrix
       {
         const int c = bmp->getpixel(x, y);
 
-        rgba_t rgba = getRgba(c);
+        rgba_type rgba = getRgba(c);
 
         const int r = rgba.r;
         const int g = rgba.g;
@@ -705,7 +705,7 @@ namespace Restore
     {
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
-        const struct rgba_t rgba = getRgba(bmp->getpixel(x, y));
+        const rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
         rr += rgba.r;
         gg += rgba.g;
@@ -734,7 +734,7 @@ namespace Restore
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
         const int c = bmp->getpixel(x, y);
-        const struct rgba_t rgba = getRgba(c);
+        const rgba_type rgba = getRgba(c);
         int r = rgba.r;
         int g = rgba.g;
         int b = rgba.b;
@@ -859,7 +859,7 @@ namespace RemoveDust
 
         for(i = 0; i < 8; i++)
         {
-          rgba_t rgba = getRgba(c[i]);
+          rgba_type rgba = getRgba(c[i]);
           r += rgba.r;
           g += rgba.g;
           b += rgba.b;
@@ -974,7 +974,7 @@ namespace Colorize
   {
     int x, y;
 
-    rgba_t rgba_color = getRgba(Project::brush->color);
+    rgba_type rgba_color = getRgba(Project::brush->color);
 
     beginProgress();
 
@@ -986,7 +986,7 @@ namespace Colorize
       {
         int c1 = bmp->getpixel(x, y);
 
-        rgba_t rgba = getRgba(c1);
+        rgba_type rgba = getRgba(c1);
 
         int r = rgba.r;
         int g = rgba.g;
@@ -1088,7 +1088,7 @@ namespace ApplyPalette
 
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
-        rgba_t rgba = getRgba(*p);
+        rgba_type rgba = getRgba(*p);
         const int alpha = rgba.a;
         v[0] = Gamma::fix(rgba.r);
         v[1] = Gamma::fix(rgba.g);
@@ -1302,7 +1302,7 @@ namespace StainedGlass
         {
           if(sat_alpha->value())
           {
-            rgba_t rgba = getRgba(color[use]);
+            rgba_type rgba = getRgba(color[use]);
 
             int h, s, v;
 
@@ -1465,7 +1465,7 @@ namespace Blur
 
         for(i = 0; i < size; i++) 
         {
-          rgba_t rgba = getRgba(bmp->getpixel(x - size / 2 + i, y));
+          rgba_type rgba = getRgba(bmp->getpixel(x - size / 2 + i, y));
           rr += Gamma::fix(rgba.r) * kernel[i];
           gg += Gamma::fix(rgba.g) * kernel[i];
           bb += Gamma::fix(rgba.b) * kernel[i];
@@ -1508,7 +1508,7 @@ namespace Blur
 
         for(i = 0; i < size; i++) 
         {
-          rgba_t rgba = getRgba(temp->getpixel(x - bmp->cl,
+          rgba_type rgba = getRgba(temp->getpixel(x - bmp->cl,
                                                y - size / 2 + i - bmp->ct));
           rr += Gamma::fix(rgba.r) * kernel[i];
           gg += Gamma::fix(rgba.g) * kernel[i];

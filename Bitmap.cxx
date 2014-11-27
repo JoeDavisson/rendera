@@ -918,7 +918,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
           for(i = 0; i < mipx; i++)
           {
             c = getpixel(sx + x + i, sy + y + j);
-            struct rgba_t rgba = getRgba(c);
+            rgba_type rgba = getRgba(c);
             r += Gamma::fix(rgba.r);
             g += Gamma::fix(rgba.g);
             b += Gamma::fix(rgba.b);
@@ -1010,7 +1010,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
 
       do
       {
-        struct rgba_t rgba = getRgba(*c[i]);
+        rgba_type rgba = getRgba(*c[i]);
         r += (float)Gamma::fix(rgba.r) * f[i];
         g += (float)Gamma::fix(rgba.g) * f[i];
         b += (float)Gamma::fix(rgba.b) * f[i];
@@ -1263,7 +1263,7 @@ void Bitmap::invert()
 {
   for(int i = 0; i < w * h; i++)
   {
-    rgba_t rgba = getRgba(data[i]);
+    rgba_type rgba = getRgba(data[i]);
     data[i] = makeRgba(255 - rgba.r, 255 - rgba.g, 255 - rgba.b, rgba.a);
   }
 }

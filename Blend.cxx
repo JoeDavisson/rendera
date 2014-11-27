@@ -79,8 +79,8 @@ int Blend::current(const int &c1, const int &c2, const int &t)
 
 int Blend::transNoAlpha(const int &c1, const int &c2, const int &t)
 {
-  const struct rgba_t rgba1 = getRgba(c1);
-  const struct rgba_t rgba2 = getRgba(c2);
+  const rgba_type rgba1 = getRgba(c1);
+  const rgba_type rgba2 = getRgba(c2);
 
   return makeRgba(rgba2.r + (t * (rgba1.r - rgba2.r)) / 255,
                   rgba2.g + (t * (rgba1.g - rgba2.g)) / 255,
@@ -90,8 +90,8 @@ int Blend::transNoAlpha(const int &c1, const int &c2, const int &t)
 
 int Blend::trans(const int &c1, const int &c2, const int &t)
 {
-  const struct rgba_t rgba1 = getRgba(c1);
-  const struct rgba_t rgba2 = getRgba(c2);
+  const rgba_type rgba1 = getRgba(c1);
+  const rgba_type rgba2 = getRgba(c2);
 
   return makeRgba(rgba2.r + (t * (rgba1.r - rgba2.r)) / 255,
                   rgba2.g + (t * (rgba1.g - rgba2.g)) / 255,
@@ -101,8 +101,8 @@ int Blend::trans(const int &c1, const int &c2, const int &t)
 
 int Blend::darken(const int &c1, const int &c2, const int &t)
 {
-  const struct rgba_t rgba1 = getRgba(c1);
-  const struct rgba_t rgba2 = getRgba(c2);
+  const rgba_type rgba1 = getRgba(c1);
+  const rgba_type rgba2 = getRgba(c2);
 
   int r, g, b;
   int h = 0, s = 0, v = 0;
@@ -126,8 +126,8 @@ int Blend::darken(const int &c1, const int &c2, const int &t)
 
 int Blend::lighten(const int &c1, const int &c2, const int &t)
 {
-  const struct rgba_t rgba1 = getRgba(c1);
-  const struct rgba_t rgba2 = getRgba(c2);
+  const rgba_type rgba1 = getRgba(c1);
+  const rgba_type rgba2 = getRgba(c2);
 
   int r = rgba1.r + (rgba2.r * (255 - t)) / 255;
   int g = rgba1.g + (rgba2.g * (255 - t)) / 255;
@@ -150,7 +150,7 @@ int Blend::colorize(const int &c1, const int &c2, const int &t)
 int Blend::keepLum(const int &c, const int &dest)
 {
   // these have to be in order of importance in the luminance calc: G, R, B
-  const struct rgba_t rgba = getRgba(c);
+  const rgba_type rgba = getRgba(c);
   int n[3];
   n[1] = rgba.r;
   n[0] = rgba.g;
@@ -193,13 +193,13 @@ int Blend::keepLum(const int &c, const int &dest)
 
 int Blend::alphaSub(const int &c1, const int &, const int &t)
 {
-  const struct rgba_t rgba = getRgba(c1);
+  const rgba_type rgba = getRgba(c1);
   return makeRgba(rgba.r, rgba.g, rgba.b, (rgba.a * t) / 255);
 }
 
 int Blend::alphaAdd(const int &c1, const int &, const int &t)
 {
-  const struct rgba_t rgba = getRgba(c1);
+  const rgba_type rgba = getRgba(c1);
   return makeRgba(rgba.r, rgba.g, rgba.b, 255 - ((255 - rgba.a) * t) / 255);
 }
 
@@ -230,7 +230,7 @@ int Blend::smooth(const int &c1, const int &, const int &t)
 
   for(i = 0; i < 9; i++)
   {
-    const struct rgba_t rgba = getRgba(c[i]);
+    const rgba_type rgba = getRgba(c[i]);
     r += rgba.r * matrix[i];
     g += rgba.g * matrix[i];
     b += rgba.b * matrix[i];
@@ -272,7 +272,7 @@ int Blend::smoothColor(const int &c1, const int &, const int &t)
 
   for(i = 0; i < 9; i++)
   {
-    const struct rgba_t rgba = getRgba(c[i]);
+    const rgba_type rgba = getRgba(c[i]);
     r += rgba.r * matrix[i];
     g += rgba.g * matrix[i];
     b += rgba.b * matrix[i];

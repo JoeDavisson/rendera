@@ -26,21 +26,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Octree
 {
 public:
-  struct node_t
+  struct node_type
   {
     float value;
-    struct node_t *child[8];
+    node_type *child[8];
   };
 
   Octree();
   virtual ~Octree();
 
-  void clear(struct node_t *);
+  void clear(node_type *);
   void write(const int &, const int &, const int &, const float &);
   void writePath(const int &, const int &, const int &, const float &);
   float read(const int &, const int &, const int &);
 
-  struct node_t *root;
+  node_type *root;
 };
 
 #endif

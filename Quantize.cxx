@@ -31,15 +31,15 @@ namespace
 {
   // color struct, stores RGB values as floats for increased
   // accuracy, also stores the frequency of the color in the image
-  struct color_t
+  struct color_type
   {
     float r, g, b;
     float freq;
     bool active;
   };
 
-  // create a color_t structure
-  inline void makeColor(struct color_t *c,
+  // create a color_type structure
+  inline void makeColor(color_type *c,
                         const float &r, const float &g, const float &b,
                         const float &freq)
   {
@@ -51,7 +51,7 @@ namespace
   }
 
   // compute quantization error
-  inline float error(struct color_t *c1, struct color_t *c2)
+  inline float error(color_type *c1, color_type *c2)
   {
     const float r = c1->r - c2->r;
     const float g = c1->g - c2->g;
@@ -62,7 +62,7 @@ namespace
   }
 
   // merge two colors
-  inline void merge(struct color_t *c1, struct color_t *c2)
+  inline void merge(color_type *c1, color_type *c2)
   {
     const float mul = 1.0f / (c1->freq + c2->freq);
     c1->r = (c1->freq * c1->r + c2->freq * c2->r) * mul;
@@ -73,7 +73,7 @@ namespace
   }
 
   // reduces color count by averaging sections of the color cube
-  int limitColors(Octree *histogram, color_t *colors, int max_colors)
+  int limitColors(Octree *histogram, color_type *colors, int max_colors)
   {
     int r, g, b;
     int i, j, k;
@@ -222,7 +222,7 @@ void Quantize::pca(Bitmap *src, int size)
 
     for(i = src->cl; i <= src->cr; i++)
     {
-      struct rgba_t rgba = getRgba(*p++);
+      rgba_type rgba = getRgba(*p++);
       float freq = histogram->read(rgba.r, rgba.g, rgba.b);
 
       if(freq < inc)
@@ -250,7 +250,7 @@ void Quantize::pca(Bitmap *src, int size)
     max_colors = 512;
 
   // color list
-  struct color_t *colors = new color_t[max_colors];
+  color_type *colors = new color_type[max_colors];
 
   for(i = 0; i < max_colors; i++)
     colors[i].active = false;
@@ -273,7 +273,7 @@ void Quantize::pca(Bitmap *src, int size)
 
     for(i = 0; i < 16777216; i++)
     {
-      struct rgba_t rgba = getRgba(i);
+      rgba_type rgba = getRgba(i);
       float freq = histogram->read(rgba.r, rgba.g, rgba.b);
 
       if(freq > 0)

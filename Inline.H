@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "endian.h"
 
 // stuff for extracting all RGBA values quickly (thanks Rubicks!)
-struct rgba_t
+struct rgba_type
 {
 #if 0
   /*  */
@@ -46,16 +46,16 @@ struct rgba_t
 #endif
 };
 
-union un_rgba_t
+union un_rgba_type
 {
   uint32_t uint32_ ;
-  rgba_t rgba_ ;
+  rgba_type rgba_ ;
 };
 
 // get rgba values all at once
-inline rgba_t getRgba( uint32_t const &n )
+inline rgba_type getRgba( uint32_t const &n )
 {
-  un_rgba_t u ;
+  un_rgba_type u ;
   u.uint32_ = n ;
   return u.rgba_ ;
 }
@@ -135,8 +135,8 @@ inline int getFltkColor(const int &c)
 // 3D quadratic distance
 inline int diff24(const int &c1, const int &c2)
 {
-  const struct rgba_t rgba1 = getRgba(c1);
-  const struct rgba_t rgba2 = getRgba(c2);
+  const struct rgba_type rgba1 = getRgba(c1);
+  const struct rgba_type rgba2 = getRgba(c2);
   const int r = rgba1.r - rgba2.r;
   const int g = rgba1.g - rgba2.g;
   const int b = rgba1.b - rgba2.b;

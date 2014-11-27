@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Octree::Octree()
 {
-  root = new node_t;
+  root = new node_type;
   root->value = 0;
 
   for(int i = 0; i < 8; i++)
@@ -34,7 +34,7 @@ Octree::~Octree()
   clear(root);
 }
 
-void Octree::clear(struct node_t *node)
+void Octree::clear(node_type *node)
 {
   for(int i = 0; i < 8; i++)
     if(node->child[i])
@@ -46,7 +46,7 @@ void Octree::clear(struct node_t *node)
 void Octree::write(const int &r, const int &g, const int &b,
                    const float &value)
 {
-  struct node_t *node = root;
+  node_type *node = root;
 
   for(int i = 7; i >= 0; i--)
   {
@@ -56,7 +56,7 @@ void Octree::write(const int &r, const int &g, const int &b,
 
     if(!node->child[index])
     {
-      node->child[index] = new node_t;
+      node->child[index] = new node_type;
       node = node->child[index];
       node->value = 0;
 
@@ -78,7 +78,7 @@ void Octree::write(const int &r, const int &g, const int &b,
 void Octree::writePath(const int &r, const int &g, const int &b,
                        const float &value)
 {
-  struct node_t *node = root;
+  node_type *node = root;
 
   for(int i = 7; i >= 0; i--)
   {
@@ -88,7 +88,7 @@ void Octree::writePath(const int &r, const int &g, const int &b,
 
     if(!node->child[index])
     {
-      node->child[index] = new node_t;
+      node->child[index] = new node_type;
       node = node->child[index];
       node->value = value;
 
@@ -104,7 +104,7 @@ void Octree::writePath(const int &r, const int &g, const int &b,
 
 float Octree::read(const int &r, const int &g, const int &b)
 {
-  struct node_t *node = root;
+  node_type *node = root;
 
   for(int i = 7; i >= 0; i--)
   {
