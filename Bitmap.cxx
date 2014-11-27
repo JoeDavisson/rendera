@@ -765,6 +765,7 @@ void Bitmap::integerStretch(Bitmap *dest,
   const int ay = ((float)dh / sh) * 256;
   const int bx = ((float)sw / dw) * 256;
   const int by = ((float)sh / dh) * 256;
+  const int offset = (dw / sw) / 2;
 
   dw -= overx;
   dh -= overy;
@@ -812,7 +813,7 @@ void Bitmap::integerStretch(Bitmap *dest,
 
   for(int y = 0; y < dh; y++)
   {
-    const int vv = y * by;
+    const int vv = (y - offset) * by;
     const int v1 = vv >> 8;
     const int v = ((vv - (v1 << 8)) << 4) >> 8;
 
@@ -830,7 +831,7 @@ void Bitmap::integerStretch(Bitmap *dest,
 
     for(int x = 0; x < dw; x++)
     {
-      const int uu = x * bx;
+      const int uu = (x - offset) * bx;
       const int u1 = uu >> 8;
       const int u = ((uu - (u1 << 8)) << 4) >> 8;
 
