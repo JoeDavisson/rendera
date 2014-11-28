@@ -59,7 +59,6 @@ Brush::~Brush()
 void Brush::make(int shape, int s)
 {
   size = s;
-  int x, y;
 
   int r = s / 2;
   int inc = s & 1;
@@ -93,9 +92,9 @@ void Brush::make(int shape, int s)
       break;
   }
 
-  for(y = 0; y < 96; y++)
+  for(int y = 0; y < 96; y++)
   {
-    for(x = 0; x < 96; x++)
+    for(int x = 0; x < 96; x++)
     {
       if(map->getpixel(x, y))
       {
@@ -121,9 +120,9 @@ void Brush::make(int shape, int s)
     }
   }
 
-  for(y = 0; y < 96; y++)
+  for(int y = 0; y < 96; y++)
   {
-    for(x = 0; x < 96; x++)
+    for(int x = 0; x < 96; x++)
     {
       if(map->getpixel(x, y))
       {

@@ -1268,11 +1268,10 @@ void File::savePalette()
 // convert special characters from drag n' drop path/filename string
 void File::decodeURI(char *s)
 {
-  int i, j;
   unsigned int c;
   int len = strlen(s);
 
-  for(i = 0; i < len - 2; i++)
+  for(int i = 0; i < len - 2; i++)
   {
     if(s[i] == '%')
     {
@@ -1281,7 +1280,7 @@ void File::decodeURI(char *s)
 
       s[i] = c;
 
-      for(j = 0; j < len - (i + 2); j++)
+      for(int j = 0; j < len - (i + 2); j++)
         s[i + 1 + j] = s[i + 3 + j];
 
       len -= 2;
@@ -1294,12 +1293,11 @@ void File::getDirectory(char *dest, const char *src)
 {
   strcpy(dest, src);
 
-  int i;
   int len = strlen(dest);
   if(len < 2)
     return;
 
-  for(i = len - 1; i > 0; i--)
+  for(int i = len - 1; i > 0; i--)
   {
     if(dest[i - 1] == '/')
     {

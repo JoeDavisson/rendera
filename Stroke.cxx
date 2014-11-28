@@ -196,9 +196,7 @@ void Stroke::drawBrush(int x, int y, int c)
   Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
-  int i;
-
-  for(i = 0; i < brush->solid_count; i++)
+  for(int i = 0; i < brush->solid_count; i++)
     map->setpixel(x + brush->solidx[i], y + brush->solidy[i], c);
 }
 
@@ -210,9 +208,7 @@ void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
   drawBrush(x1, y1, c);
   drawBrush(x2, y2, c);
 
-  int i;
-
-  for(i = 0; i < brush->hollow_count; i++)
+  for(int i = 0; i < brush->hollow_count; i++)
   {
     map->line(x1 + brush->hollowx[i], y1 + brush->hollowy[i],
               x2 + brush->hollowx[i], y2 + brush->hollowy[i], c);
@@ -224,9 +220,7 @@ void Stroke::drawBrushRect(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
-  int i;
-
-  for(i = 0; i < brush->hollow_count; i++)
+  for(int i = 0; i < brush->hollow_count; i++)
   {
     map->rect(x1 + brush->hollowx[i], y1 + brush->hollowy[i],
               x2 + brush->hollowx[i], y2 + brush->hollowy[i], c);
@@ -238,9 +232,7 @@ void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
-  int i;
-
-  for(i = 0; i < brush->hollow_count; i++)
+  for(int i = 0; i < brush->hollow_count; i++)
   {
     map->oval(x1 + brush->hollowx[i], y1 + brush->hollowy[i],
               x2 + brush->hollowx[i], y2 + brush->hollowy[i], c);
@@ -252,9 +244,7 @@ void Stroke::drawBrushAA(int x, int y, int c)
   Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
-  int i;
-
-  for(i = 0; i < brush->solid_count; i++)
+  for(int i = 0; i < brush->solid_count; i++)
   {
     map->setpixelAA((x + brush->solidx[i]) << 2,
                     (y + brush->solidy[i]) << 2, c);
@@ -266,9 +256,7 @@ void Stroke::drawBrushLineAA(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
-  int i;
-
-  for(i = 0; i < brush->solid_count; i++)
+  for(int i = 0; i < brush->solid_count; i++)
   {
     map->lineAA(x1 + brush->solidx[i],
                 y1 + brush->solidy[i],
@@ -282,9 +270,7 @@ void Stroke::drawBrushRectAA(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
-  int i;
-
-  for(i = 0; i < brush->solid_count; i++)
+  for(int i = 0; i < brush->solid_count; i++)
   {
     map->rectAA(x1 + brush->solidx[i],
                 y1 + brush->solidy[i],
@@ -298,9 +284,7 @@ void Stroke::drawBrushOvalAA(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush.get();
   Map *map = Project::map;
 
-  int i;
-
-  for(i = 0; i < brush->solid_count; i++)
+  for(int i = 0; i < brush->solid_count; i++)
   {
     map->ovalAA(x1 + brush->solidx[i],
                 y1 + brush->solidy[i],
@@ -547,7 +531,6 @@ void Stroke::end(int x, int y)
   map->thick_aa = 0;
 
   int w = 0, h = 0;
-  int i;
 
   if(Project::bmp->clone)
   {
@@ -580,7 +563,7 @@ void Stroke::end(int x, int y)
           drawBrushAA(x, y, 255);
         }
 
-        for(i = 1; i < polycount; i++)
+        for(int i = 1; i < polycount; i++)
         {
           drawBrushLineAA(polycachex[i], polycachey[i],
                           polycachex[i - 1], polycachey[i - 1], 255);
@@ -754,9 +737,7 @@ void Stroke::polyline(int x, int y, int ox, int oy, float zoom)
 
   map->line(oldx, oldy, lastx, lasty, 0);
 
-  int i;
-
-  for(i = 0; i < polycount - 1; i++)
+  for(int i = 0; i < polycount - 1; i++)
   {
     map->line(polycachex[i], polycachey[i],
               polycachex[i + 1], polycachey[i + 1], 255);
@@ -781,7 +762,6 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 
   float yy1 = (float)y1 * zoom;
   float yy2 = yy1 + zoom - 1;
-  int x, y;
 
   // prevent overun when zoomed out
   if(x2 > map->w - 2)
@@ -789,13 +769,13 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
   if(y2 > map->h - 2)
     y2 = map->h - 2;
 
-  for(y = y1; y <= y2; y++)
+  for(int y = y1; y <= y2; y++)
   {
     unsigned char *p = map->row[y] + x1;
     float xx1 = (float)x1 * zoom;
     float xx2 = xx1 + zoom - 1;
 
-    for(x = x1; x <= x2; x++)
+    for(int x = x1; x <= x2; x++)
     {
       if(*p++)
         backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);

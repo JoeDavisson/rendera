@@ -117,7 +117,7 @@ void Text::move(View *view)
     char string[256];
     string[0] = ' ';
 
-    int i;
+    int i = 0;
 
     for(i = 0; i <= strlen(s); i++)
       string[i + 1] = s[i];

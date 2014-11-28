@@ -1327,13 +1327,12 @@ namespace Blur
     size = (size + 1) * 2 + 1;
 
     std::vector<int> kernel(size);
-    int x, y;
     int div = 0;
 
     // bell curve
     const int b = size / 2;
 
-    for(x = 0; x < size; x++)
+    for(int x = 0; x < size; x++)
     {
       kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) / ((b * b) / 2)));
       div += kernel[x];
@@ -1343,19 +1342,18 @@ namespace Blur
     beginProgress();
 
     // x direction
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = temp.row[y - bmp->cl];
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         int rr = 0;
         int gg = 0;
         int bb = 0;
         int aa = 0;
-        int i;
 
-        for(i = 0; i < size; i++) 
+        for(int i = 0; i < size; i++) 
         {
           rgba_type rgba = getRgba(bmp->getpixel(x - size / 2 + i, y));
           rr += Gamma::fix(rgba.r) * kernel[i];
@@ -1383,19 +1381,18 @@ namespace Blur
     beginProgress();
 
     // y direction
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         int rr = 0;
         int gg = 0;
         int bb = 0;
         int aa = 0;
-        int i;
 
-        for(i = 0; i < size; i++) 
+        for(int i = 0; i < size; i++) 
         {
           rgba_type rgba = getRgba(temp.getpixel(x - bmp->cl,
                                                  y - size / 2 + i - bmp->ct));
@@ -1484,23 +1481,20 @@ namespace Sharpen
 
   void apply(int amount)
   {
-    int x, y, i;
-
     Bitmap temp(bmp->cw, bmp->ch);
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = temp.row[y - bmp->cl];
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
-        int i, j;
         int lum = 0;
 
-        for(j = 0; j < 3; j++) 
+        for(int j = 0; j < 3; j++) 
         {
-          for(i = 0; i < 3; i++) 
+          for(int i = 0; i < 3; i++) 
           {
             lum += getl(bmp->getpixel(x + i - 1, y + j - 1)) * matrix[i][j];
           }
