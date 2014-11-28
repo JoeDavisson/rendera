@@ -375,7 +375,6 @@ namespace Editor
 
   void setHsv(bool redraw)
   {
-    int x , y;
     int r = 0, g = 0, b = 0;
     int h = 0, s = 0, v = 0;
     int c = Project::brush->color;
@@ -387,9 +386,9 @@ namespace Editor
       hue->bitmap->clear(makeRgb(0, 0, 0));
       sat_val->bitmap->clear(makeRgb(0, 0, 0));
 
-      for(y = 0; y < 256; y++)
+      for(int y = 0; y < 256; y++)
       {
-        for(x = 0; x < 256; x++)
+        for(int x = 0; x < 256; x++)
         {
           Blend::hsvToRgb(h, x, y, &r, &g, &b);
           sat_val->bitmap->setpixelSolid(x, y, makeRgb(r, g, b), 0);
@@ -405,8 +404,8 @@ namespace Editor
       sat_val->bitmap->xorRect(oldsvx - 4, oldsvy - 4, oldsvx + 4, oldsvy + 4);
     }
 
-    x = sat_val->var & 255;
-    y = sat_val->var / 256;
+    int x = sat_val->var & 255;
+    int y = sat_val->var / 256;
 
     if(x < 4)
       x = 4;
@@ -441,9 +440,8 @@ namespace Editor
 
   void checkPalette(Widget *widget, void *var)
   {
-    int i;
-    int begin, end;
     Palette *pal = Project::palette.get();
+    int begin, end;
 
     if(ramp_state > 0)
     {
@@ -466,7 +464,7 @@ namespace Editor
         double g = getg(c1);
         double b = getb(c1);
 
-        for(i = begin; i < end; i++)
+        for(int i = begin; i < end; i++)
         {
           pal->data[i] = makeRgb(r, g, b);
           r += stepr;
@@ -488,15 +486,15 @@ namespace Editor
         Blend::rgbToHsv(getr(c1), getg(c1), getb(c1), &h1, &s1, &v1);
         Blend::rgbToHsv(getr(c2), getg(c2), getb(c2), &h2, &s2, &v2);
 
-        double steph = (double)(h2 - h1) / num;
-        double steps = (double)(s2 - s1) / num;
-        double stepv = (double)(v2 - v1) / num;
         int r, g, b;
         double h = h1;
         double s = s1;
         double v = v1;
+        const double steph = (double)(h2 - h1) / num;
+        const double steps = (double)(s2 - s1) / num;
+        const double stepv = (double)(v2 - v1) / num;
 
-        for(i = begin; i < end; i++)
+        for(int i = begin; i < end; i++)
         {
           Blend::hsvToRgb(h, s, v, &r, &g, &b);
           pal->data[i] = makeRgb(r, g, b);

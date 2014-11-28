@@ -157,7 +157,6 @@ namespace Gui
 void Gui::init()
 {
   int x1, y1;
-  int i;
 
   // main window
   window = new Fl_Double_Window(800, 600, "Rendera");
@@ -420,9 +419,9 @@ void Gui::init()
   font_browse->textsize(9);
   font_browse->resize(text->x() + 8, text->y() + y1, 96, 192);
 
-  for(i = 0; i < Fl::set_fonts(0); i++)
+  for(int i = 0; i < Fl::set_fonts(0); i++)
   {
-    int t;
+    int t = 0;
     const char *name = Fl::get_font_name((Fl_Font)i, &t);
     font_browse->add(name);
   }
@@ -439,7 +438,7 @@ void Gui::init()
 
   char s[8];
 
-  for(i = 0; i < sizeof(font_sizes) / sizeof(font_sizes[0]); i++)
+  for(int i = 0; i < sizeof(font_sizes) / sizeof(font_sizes[0]); i++)
   {
     snprintf(s, sizeof(s), "%d", font_sizes[i]);
     font_size->add(s);
@@ -698,9 +697,7 @@ void Gui::checkPaintSize(Widget *, void *var)
   brush->make(shape, size);
   paint_brush->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
-  int i;
-
-  for(i = 0; i < Project::brush->solid_count; i++)
+  for(int i = 0; i < Project::brush->solid_count; i++)
   {
     paint_brush->bitmap->setpixelSolid(48 + brush->solidx[i],
                                        48 + brush->solidy[i],
@@ -783,13 +780,11 @@ void Gui::checkColor(Widget *, void *)
   Project::brush->trans = trans->var * 2.685;
   Project::brush->blend = blend->value();
 
-  int i;
-
   hue->bitmap->clear(blendFast(getFltkColor(FL_BACKGROUND_COLOR),
                                makeRgb(0, 0, 0), 192));
   satval->bitmap->clear(makeRgb(0, 0, 0));
 
-  for(i = 1; i < 1536; i++)
+  for(int i = 1; i < 1536; i++)
   {
     float angle = ((3.14159 * 2) / 1536) * i;
     int x1 = 48 + 40 * std::cos(angle);
@@ -809,19 +804,17 @@ void Gui::checkColor(Widget *, void *)
 
   hue->bitmap->xorLine(x1, y1, x2, y2);
 
-  int x, y;
-
-  for(y = 0; y < 96; y++)
+  for(int y = 0; y < 96; y++)
   {
-    for(x = 0; x < 96; x++)
+    for(int x = 0; x < 96; x++)
     {
       Blend::hsvToRgb(h, x * 2.685, y * 2.685, &r, &g, &b);
       satval->bitmap->setpixelSolid(x, y, makeRgb(r, g, b), 0);
     }
   }
 
-  x = (satval->var % 96);
-  y = (satval->var / 96);
+  int x = (satval->var % 96);
+  int y = (satval->var / 96);
 
   if(x < 4)
     x = 4;

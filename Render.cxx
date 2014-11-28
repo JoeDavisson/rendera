@@ -160,13 +160,11 @@ namespace
 
   void renderSolid()
   {
-    int x, y;
-
-    for(y = stroke->y1; y <= stroke->y2; y++)
+    for(int y = stroke->y1; y <= stroke->y2; y++)
     {
       unsigned char *p = map->row[y] + stroke->x1;
 
-      for(x = stroke->x1; x <= stroke->x2; x++)
+      for(int x = stroke->x1; x <= stroke->x2; x++)
       {
         if(*p++)
           bmp->setpixel(x, y, brush->color, brush->trans);
@@ -179,13 +177,11 @@ namespace
 
   void renderAntialiased()
   {
-    int x, y;
-
-    for(y = stroke->y1; y <= stroke->y2; y++)
+    for(int y = stroke->y1; y <= stroke->y2; y++)
     {
       unsigned char *p = map->row[y] + stroke->x1;
 
-      for(x = stroke->x1; x <= stroke->x2; x++)
+      for(int x = stroke->x1; x <= stroke->x2; x++)
       {
         if(*p > 0)
           bmp->setpixel(x, y, brush->color, scaleVal((255 - *p), brush->trans));
@@ -200,17 +196,16 @@ namespace
 
   void renderCoarse()
   {
-    int x, y, i;
     float soft_trans = 255;
     const int j = (3 << brush->edge);
     float soft_step = (float)(255 - brush->trans) / ((j >> 1) + 1);
     bool found = false;
 
-    for(i = 0; i < j; i++)
+    for(int i = 0; i < j; i++)
     {
-      for(y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
+      for(int y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
       {
-        for(x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
+        for(int x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
         {
           unsigned char *s0 = map->row[y] + x;
           unsigned char *s1 = map->row[y] + x + 1;
@@ -251,9 +246,10 @@ namespace
       if(soft_trans < brush->trans)
       {
         soft_trans = brush->trans;
-        for(y = stroke->y1; y <= stroke->y2; y++)
+
+        for(int y = stroke->y1; y <= stroke->y2; y++)
         {
-          for(x = stroke->x1; x <= stroke->x2; x++)
+          for(int x = stroke->x1; x <= stroke->x2; x++)
           {
             if(map->getpixel(x, y))
               bmp->setpixel(x, y, brush->color, soft_trans);
@@ -270,12 +266,11 @@ namespace
 
   void renderFine()
   {
-    int x, y;
     int count = 0;
 
-    for(y = stroke->y1; y <= stroke->y2; y++)
+    for(int y = stroke->y1; y <= stroke->y2; y++)
     {
-      for(x = stroke->x1; x <= stroke->x2; x++)
+      for(int x = stroke->x1; x <= stroke->x2; x++)
       {
         if((Project::map)->getpixel(x, y) && isEdge((Project::map), x, y))
         {
@@ -290,11 +285,11 @@ namespace
     if(count < 2)
       return;
 
-    for(y = stroke->y1; y < stroke->y2; y++)
+    for(int y = stroke->y1; y < stroke->y2; y++)
     {
       unsigned char *p = map->row[y] + stroke->x1;
 
-      for(x = stroke->x1; x <= stroke->x2; x++)
+      for(int x = stroke->x1; x <= stroke->x2; x++)
       {
         if(*p == 0)
         {
@@ -306,9 +301,8 @@ namespace
         int *cy = &stroke->edgecachey[0];
         int temp1 = fdist(x, y, *cx++, *cy++);
         int z = 0;
-        int i;
 
-        for(i = 1; i < count; i++)
+        for(int i = 1; i < count; i++)
         {
           const int dx = (x - *cx++);
           const int dy = (y - *cy++);
@@ -335,29 +329,28 @@ namespace
 
   void renderWatercolor()
   {
-    int x, y, i;
     float soft_trans = brush->trans;
     const int j = (3 << brush->edge);
     float soft_step = (float)(255 - brush->trans) / ((j >> 1) + 1);
     bool found = false;
     int inc = 0;
 
-    for(y = stroke->y1; y <= stroke->y2; y++)
+    for(int y = stroke->y1; y <= stroke->y2; y++)
     {
-      for(x = stroke->x1; x <= stroke->x2; x++)
+      for(int x = stroke->x1; x <= stroke->x2; x++)
       {
         if(map->getpixel(x, y))
           bmp->setpixel(x, y, brush->color, brush->trans);
       }
     }
 
-    for(i = 0; i < j; i++)
+    for(int i = 0; i < j; i++)
     {
       inc++;
 
-      for(y = stroke->y1 + (inc & 1); y < stroke->y2 - 1; y += 2)
+      for(int y = stroke->y1 + (inc & 1); y < stroke->y2 - 1; y += 2)
       {
-        for(x = stroke->x1 + (inc & 1); x < stroke->x2 - 1; x += 2)
+        for(int x = stroke->x1 + (inc & 1); x < stroke->x2 - 1; x += 2)
         {
           int yy = y + !(FastRnd::get() & 3);
 
@@ -416,18 +409,16 @@ namespace
 
   void renderChalk()
   {
-    int x, y, i;
     float soft_trans = 255;
     const int j = (3 << brush->edge);
     float soft_step = (float)(255 - brush->trans) / ((j >> 1) + 1);
     bool found = false;
-    int t;
 
-    for(i = 0; i < j; i++)
+    for(int i = 0; i < j; i++)
     {
-      for(y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
+      for(int y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
       {
-        for(x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
+        for(int x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
         {
           unsigned char *s0 = map->row[y] + x;
           unsigned char *s1 = map->row[y] + x + 1;
@@ -448,6 +439,8 @@ namespace
           unsigned char d3 = *s3;
 
           shrinkBlock(s0, s1, s2, s3);
+
+          int t = 0;
 
           if(!*s0 && d0)
           {
@@ -499,13 +492,13 @@ namespace
       if(soft_trans < brush->trans)
       {
         soft_trans = brush->trans;
-        for(y = stroke->y1; y <= stroke->y2; y++)
+        for(int y = stroke->y1; y <= stroke->y2; y++)
         {
-          for(x = stroke->x1; x <= stroke->x2; x++)
+          for(int x = stroke->x1; x <= stroke->x2; x++)
           {
             if(map->getpixel(x, y))
             {
-              t = (int)soft_trans + (FastRnd::get() & 63) - 32;
+              int t = (int)soft_trans + (FastRnd::get() & 63) - 32;
               if(t < 0)
                 t = 0;
               if(t > 255)

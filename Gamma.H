@@ -31,9 +31,8 @@ namespace
   int *init_table_fix(void)
   {
     int *ret = new int[256];
-    int i;
 
-    for(i = 0; i < 256; i++)
+    for(int i = 0; i < 256; i++)
       ret[i] = std::pow((double)i / 255, 2.2) * 65535;
 
     return ret;
@@ -42,9 +41,8 @@ namespace
   int *init_table_unfix(void)
   {
     int *ret = new int[65536];
-    int i;
 
-    for(i = 0; i < 65536; i++)
+    for(int i = 0; i < 65536; i++)
       ret[i] = std::pow((double)i / 65535, (1.0 / 2.2)) * 255;
 
     return ret;

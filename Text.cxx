@@ -60,11 +60,9 @@ void Text::push(View *view)
   Bitmap *dest = Project::bmp;
   Blend::set(Project::brush->blend);
 
-  int x, y;
-
-  for(y = 0; y < temp->h; y++)
+  for(int y = 0; y < temp->h; y++)
   {
-    for(x = 0; x < temp->w; x++)
+    for(int x = 0; x < temp->w; x++)
     {
       int c = temp->getpixel(x, y);
       int t = getv(c);
@@ -106,8 +104,6 @@ void Text::move(View *view)
   // write text string to FLTK's offscreen image
   if(state == 0)
   {
-    int i;
-
     int face = Gui::getFontFace();
     int size = Gui::getFontSize();
     const char *s = Gui::getTextInput();
@@ -120,8 +116,12 @@ void Text::move(View *view)
     // scripty fonts won't render propery on the sides
     char string[256];
     string[0] = ' ';
+
+    int i;
+
     for(i = 0; i <= strlen(s); i++)
       string[i + 1] = s[i];
+
     string[i++] = ' ';
     string[i] = '\0';
 
@@ -158,16 +158,15 @@ void Text::move(View *view)
   }
 
   // create preview map
-  int x, y;
   int imgx = view->imgx;
   int imgy = view->imgy;
 
   Map *map = Project::map;
   map->clear(0);
 
-  for(y = 0; y < temp->h; y++)
+  for(int y = 0; y < temp->h; y++)
   {
-    for(x = 0; x < temp->w; x++)
+    for(int x = 0; x < temp->w; x++)
     {
       int c = temp->getpixel(x, y);
       int t = getv(c);

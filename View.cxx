@@ -67,9 +67,8 @@ namespace
       x2 = bmp->w - 1;
 
     int *p = bmp->row[y] + x1;
-    int x;
 
-    for(x = x1; x <= x2; x++)
+    for(int x = x1; x <= x2; x++)
     {
       *p = blendFast(*p, c, t);
       p++;
@@ -348,10 +347,7 @@ int View::handle(int event)
         // convert to utf-8 (e.g. %20 becomes space)
         File::decodeURI(fn);
 
-        // strip newline
-        unsigned int i;
-
-        for(i = 0; i < strlen(fn); i++)
+        for(int i = 0; i < strlen(fn); i++)
         {
           if(fn[i] == '\r')
             fn[i] = '\0';

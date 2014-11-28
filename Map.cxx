@@ -76,9 +76,7 @@ namespace
   inline void _hlineAA(const Map *map,
                        const int &x1, const int &y, const int &x2, const int &c)
   {
-    int x;
-
-    for(x = x1; x <= x2; x++)
+    for(int x = x1; x <= x2; x++)
       _setpixelAA(map, x, y, c);
   }
 
@@ -94,8 +92,6 @@ namespace
 // before being rendered.
 Map::Map(int width, int height)
 {
-  int i;
-
   if(width < 1)
     width = 1;
   if(height < 1)
@@ -107,7 +103,7 @@ Map::Map(int width, int height)
   w = width;
   h = height;
 
-  for(i = 0; i < height; i++)
+  for(int i = 0; i < height; i++)
     row[i] = &data[width * i];
 
   thick_aa = 0;
@@ -121,9 +117,7 @@ Map::~Map()
 
 void Map::clear(int c)
 {
-  int i;
-
-  for(i = 0; i < w * h; i++)
+  for(int i = 0; i < w * h; i++)
     data[i] = c & 0xff;
 }
 
@@ -394,9 +388,7 @@ void Map::rect(int x1, int y1, int x2, int y2, int c)
 
   hline(x1, y1, x2, c);
 
-  int y;
-
-  for(y = y1 + 1; y < y2; y++)
+  for(int y = y1 + 1; y < y2; y++)
   {
     setpixel(x1, y, c);
     setpixel(x2, y, c);
@@ -463,11 +455,9 @@ void Map::vline(int y1, int x, int y2, int c)
 void Map::polyfill(int *polycachex, int *polycachey, int polycount,
                    int x1, int y1, int x2, int y2, int c)
 {
-  int x, y, i;
-
-  for(y = y1; y < y2; y++)
+  for(int y = y1; y < y2; y++)
   {
-    for(x = x1; x < x2; x++)
+    for(int x = x1; x < x2; x++)
     {
       int inside = 0;
       int *px1 = &polycachex[0];
@@ -475,7 +465,7 @@ void Map::polyfill(int *polycachex, int *polycachey, int polycount,
       int *px2 = &polycachex[1];
       int *py2 = &polycachey[1];
 
-      for(i = 0; i < polycount - 1; i++)
+      for(int i = 0; i < polycount - 1; i++)
       {
         if(*py1 <= y)
         {
@@ -778,17 +768,15 @@ void Map::polyfillAA(int *polycachex, int *polycachey, int polycount,
   x2 <<= 2;
   y2 <<= 2;
 
-  int x, y, i;
-
-  for(i = 0; i < polycount; i++)
+  for(int i = 0; i < polycount; i++)
   {
     polycachex[i] <<= 2;
     polycachey[i] <<= 2;
   }
 
-  for(y = y1; y < y2; y++)
+  for(int y = y1; y < y2; y++)
   {
-    for(x = x1; x < x2; x++)
+    for(int x = x1; x < x2; x++)
     {
       int inside = 0;
       int *px1 = &polycachex[0];
@@ -796,7 +784,7 @@ void Map::polyfillAA(int *polycachex, int *polycachey, int polycount,
       int *px2 = &polycachex[1];
       int *py2 = &polycachey[1];
 
-      for(i = 0; i < polycount - 1; i++)
+      for(int i = 0; i < polycount - 1; i++)
       {
         if(*py1 <= y)
         {

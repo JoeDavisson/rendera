@@ -157,12 +157,11 @@ int Blend::keepLum(const int &c, const int &dest)
   n[2] = rgba.b;
 
   // iterate to find similar color with same luminance
-  int i;
   int src = getlUnpacked(n[1], n[0], n[2]);
 
   while(src < dest)
   {
-    for(i = 0; i < 3; i++)
+    for(int i = 0; i < 3; i++)
     {
       if(n[i] < 255)
       {
@@ -176,7 +175,7 @@ int Blend::keepLum(const int &c, const int &dest)
 
   while(src > dest)
   {
-    for(i = 0; i < 3; i++)
+    for(int i = 0; i < 3; i++)
     {
       if(n[i] > 0)
       {
@@ -226,9 +225,7 @@ int Blend::smooth(const int &c1, const int &, const int &t)
   int b = 0;
   int a = 0;
 
-  int i;
-
-  for(i = 0; i < 9; i++)
+  for(int i = 0; i < 9; i++)
   {
     const rgba_type rgba = getRgba(c[i]);
     r += rgba.r * matrix[i];
@@ -268,9 +265,7 @@ int Blend::smoothColor(const int &c1, const int &, const int &t)
   int b = 0;
   int a = 0;
 
-  int i;
-
-  for(i = 0; i < 9; i++)
+  for(int i = 0; i < 9; i++)
   {
     const rgba_type rgba = getRgba(c[i]);
     r += rgba.r * matrix[i];

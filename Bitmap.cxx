@@ -620,8 +620,6 @@ void Bitmap::setClip(int x1, int y1, int x2, int y2)
 
 void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 {
-  int x, y;
-
   if((sx >= w) || (sy >= h) || (dx > dest->cr) || (dy > dest->cb))
     return;
 
@@ -673,12 +671,12 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
   int sy1 = sy;
   int dy1 = dy;
 
-  for(y = 0; y < hh; y++)
+  for(int y = 0; y < hh; y++)
   {
     int *sx1 = sx + row[sy1];
     int *dx1 = dx + dest->row[dy1];
 
-    for(x = 0; x < ww; x++, sx1++, dx1++)
+    for(int x = 0; x < ww; x++, sx1++, dx1++)
       *dx1 = *sx1;
 
     sy1++;
@@ -912,13 +910,12 @@ void Bitmap::scaleBilinear(Bitmap *dest,
       for(int x = 0; x <= sw - mipx; x += mipx)
       {
         int r = 0, g = 0, b = 0, a = 0;
-        int i, j, c;
 
-        for(j = 0; j < mipy; j++)
+        for(int j = 0; j < mipy; j++)
         {
-          for(i = 0; i < mipx; i++)
+          for(int i = 0; i < mipx; i++)
           {
-            c = getpixel(sx + x + i, sy + y + j);
+            const int c = getpixel(sx + x + i, sy + y + j);
             rgba_type rgba = getRgba(c);
             r += Gamma::fix(rgba.r);
             g += Gamma::fix(rgba.g);
@@ -935,11 +932,12 @@ void Bitmap::scaleBilinear(Bitmap *dest,
         r = Gamma::unfix(r);
         g = Gamma::unfix(g);
         b = Gamma::unfix(b);
-        c = makeRgba(r, g, b, a);
 
-        for(j = 0; j < mipy; j++)
+        const int c = makeRgba(r, g, b, a);
+
+        for(int j = 0; j < mipy; j++)
         {
-          for(i = 0; i < mipx; i++)
+          for(int i = 0; i < mipx; i++)
           {
             *(row[sy + y + j] + sx + x + i) = c;
           }
@@ -948,9 +946,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
     }
   }
 
-  y = 0;
-
-  do
+  for(int y = 0; y < dh; y++) 
   {
     int *d = dest->row[dy + y] + dx;
     const float vv = (y * ay);
@@ -974,8 +970,7 @@ void Bitmap::scaleBilinear(Bitmap *dest,
     c[0] = c[1] = row[sy + v1] + sx;
     c[2] = c[3] = row[sy + v2] + sx;
 
-    x = 0;
-    do
+    for(int x = 0; x < dw; x++) 
     {
       const float uu = (x * ax);
       const int u1 = uu;
@@ -1007,18 +1002,15 @@ void Bitmap::scaleBilinear(Bitmap *dest,
       f[3] = u * v;
 
       float r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f;
-      int i = 0;
 
-      do
+      for(int i = 0; i < 4; i++)
       {
         rgba_type rgba = getRgba(*c[i]);
         r += (float)Gamma::fix(rgba.r) * f[i];
         g += (float)Gamma::fix(rgba.g) * f[i];
         b += (float)Gamma::fix(rgba.b) * f[i];
         a += rgba.a * f[i];
-        i++;
       }
-      while(i < 4);
 
       r = Gamma::unfix((int)r);
       g = Gamma::unfix((int)g);
@@ -1031,14 +1023,8 @@ void Bitmap::scaleBilinear(Bitmap *dest,
       c[1] -= u2;
       c[2] -= u1;
       c[3] -= u2;
-
-      x++;
     }
-    while(x < dw);
-
-    y++;
   }
-  while(y < dh);
 }
 
 void Bitmap::mirror()
@@ -1217,9 +1203,8 @@ void Bitmap::fastStretch(Bitmap *dest,
   const int dx2 = dx << 1;
 
   int e = dy - dx;
-  int d;
 
-  for(d = 0; d <= dx; d++)
+  for(int d = 0; d <= dx; d++)
   {
     const int dx_1 = std::abs(xd2 - xd1);
     const int dy_1 = std::abs(xs2 - xs1) << 1;
@@ -1230,9 +1215,8 @@ void Bitmap::fastStretch(Bitmap *dest,
     int e_1 = dy_1 - dx_1;
     int *p = dest->row[yd1] + xd1;
     int *q = row[ys1] + xs1;
-    int d_1;
 
-    for(d_1 = 0; d_1 <= dx_1; d_1++)
+    for(int d_1 = 0; d_1 <= dx_1; d_1++)
     {
       const int checker = ((d_1 >> 4) & 1) ^ ((yd1 >> 4) & 1)
                             ? 0xA0A0A0 : 0x606060;

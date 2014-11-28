@@ -37,9 +37,7 @@ namespace
 
 void Undo::init()
 {
-  int i;
-
-  for(i = 0; i < MAX_UNDO; i++)
+  for(int i = 0; i < MAX_UNDO; i++)
   {
     undo_stack[i] = new Bitmap(8, 8);
     undo_resized[i] = false;
@@ -50,10 +48,8 @@ void Undo::init()
 
 void Undo::reset()
 {
-  int i;
-
   // free some memory
-  for(i = 0; i < MAX_UNDO; i++)
+  for(int i = 0; i < MAX_UNDO; i++)
   {
     delete undo_stack[i];
     undo_stack[i] = new Bitmap(8, 8);
@@ -65,8 +61,6 @@ void Undo::reset()
 
 void Undo::push()
 {
-  int i;
-
   int x1 = Project::bmp->cl;
   int y1 = Project::bmp->ct;
   int x2 = Project::bmp->cr;
@@ -81,7 +75,8 @@ void Undo::push()
 
     Bitmap *temp_bmp = undo_stack[MAX_UNDO - 1];
     bool temp_resized = undo_resized[MAX_UNDO - 1];
-    for(i = MAX_UNDO - 1; i > 0; i--)
+
+    for(int i = MAX_UNDO - 1; i > 0; i--)
     {
       undo_stack[i] = undo_stack[i - 1];
       undo_resized[i] = undo_resized[i - 1];
@@ -129,7 +124,8 @@ void Undo::push(int x, int y, int w, int h)
 
     Bitmap *temp_bmp = undo_stack[MAX_UNDO - 1];
     bool temp_resized = undo_resized[MAX_UNDO - 1];
-    for(i = MAX_UNDO - 1; i > 0; i--)
+
+    for(int i = MAX_UNDO - 1; i > 0; i--)
     {
       undo_stack[i] = undo_stack[i - 1];
       undo_resized[i] = undo_resized[i - 1];
@@ -186,9 +182,7 @@ void Undo::pop()
 
 void Undo::free()
 {
-  int i;
-
-  for(i = 0; i < MAX_UNDO; i++)
+  for(int i = 0; i < MAX_UNDO; i++)
     if(undo_stack[i])
       delete undo_stack[i];
 }
