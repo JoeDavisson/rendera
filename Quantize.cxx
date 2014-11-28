@@ -18,6 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <vector>
+
 #include "Bitmap.H"
 #include "Dialog.H"
 #include "Gui.H"
@@ -75,33 +77,30 @@ namespace
   // reduces color count by averaging sections of the color cube
   int limitColors(Octree *histogram, color_type *colors, int max_colors)
   {
-    int r, g, b;
-    int i, j, k;
     int count = 0;
-
     int step = 16;
 
     if(max_colors == 512)
       step = 32;
 
-    for(b = 0; b <= 256 - step; b += step)
+    for(int b = 0; b <= 256 - step; b += step)
     {
-      for(g = 0; g <= 256 - step; g += step)
+      for(int g = 0; g <= 256 - step; g += step)
       {
-        for(r = 0; r <= 256 - step; r += step)
+        for(int r = 0; r <= 256 - step; r += step)
         {
           float rr = 0;
           float gg = 0;
           float bb = 0;
           float div = 0;
 
-          for(k = 0; k < step; k++)
+          for(int k = 0; k < step; k++)
           {
-            for(j = 0; j < step; j++)
+            for(int j = 0; j < step; j++)
             {
-              for(i = 0; i < step; i++)
+              for(int i = 0; i < step; i++)
               {
-                float d = histogram->read(r + i, g + j, b + k);
+                const float d = histogram->read(r + i, g + j, b + k);
 
                 if(d > 0)
                   histogram->write(r + i, g + j, b + k, 0);
@@ -132,15 +131,14 @@ namespace
   // stretch a palette to obtain the exact number of colors desired
   void stretchPalette(int *data, int current, int target)
   {
-    int *temp = new int[target];
+    std::vector<int> temp(target);
+
     const float ax = (float)(current - 1) / (float)(target - 1);
     int *c[2];
 
     c[0] = c[1] = &data[0];
 
-    int x = 0;
-
-    do
+    for(int x = 0; x < target; x++)
     {
       float uu = (x * ax);
       int u1 = uu;
@@ -160,30 +158,22 @@ namespace
       f[1] = u;
 
       float r = 0, g = 0, b = 0;
-      int i = 0;
 
-      do
+      for(int i = 0; i < 2; i++)
       {
         r += (float)getr(*c[i]) * f[i];
         g += (float)getg(*c[i]) * f[i];
         b += (float)getb(*c[i]) * f[i];
-        i++;
       }
-      while(i < 2);
 
       temp[x] = makeRgb((int)r, (int)g, (int)b);
 
       c[0] -= u1;
       c[1] -= u2;
-
-      x++;
     }
-    while(x < target);
 
-    for(x = 0; x < target; x++)
+    for(int x = 0; x < target; x++)
       data[x] = temp[x];
-
-    delete[] temp;
   }
 }
 
@@ -197,10 +187,8 @@ namespace
 // accuracy is not as important).
 void Quantize::pca(Bitmap *src, int size)
 {
-  int i, j;
-
   // popularity histogram
-  Octree *histogram = new Octree();
+  Octree histogram;
 
   int max;
   int rep = size;
@@ -211,24 +199,21 @@ void Quantize::pca(Bitmap *src, int size)
 
   // measure of how colorful an image is
   // more colorful images fill more spaces in the table
-  int *color_metric = new int[512];
+  std::vector<int> color_metric(512, 0);
 
-  for(i = 0; i < 512; i++)
-    color_metric[i] = 0;
-
-  for(j = src->ct; j <= src->cb; j++)
+  for(int j = src->ct; j <= src->cb; j++)
   {
     int *p = src->row[j] + src->cl;
 
-    for(i = src->cl; i <= src->cr; i++)
+    for(int i = src->cl; i <= src->cr; i++)
     {
       rgba_type rgba = getRgba(*p++);
-      float freq = histogram->read(rgba.r, rgba.g, rgba.b);
+      float freq = histogram.read(rgba.r, rgba.g, rgba.b);
 
       if(freq < inc)
         count++;
 
-      histogram->write(rgba.r, rgba.g, rgba.b, freq + inc);
+      histogram.write(rgba.r, rgba.g, rgba.b, freq + inc);
 
       color_metric[((int)rgba.r >> 5) << 0 |
                    ((int)rgba.g >> 5) << 3 |
@@ -240,7 +225,7 @@ void Quantize::pca(Bitmap *src, int size)
   // reduce table sizes to save time
   int color_metric_count = 0;
 
-  for(i = 0; i < 512; i++)
+  for(int i = 0; i < 512; i++)
     if(color_metric[i])
       color_metric_count++;
 
@@ -250,13 +235,13 @@ void Quantize::pca(Bitmap *src, int size)
     max_colors = 512;
 
   // color list
-  color_type *colors = new color_type[max_colors];
+  std::vector<color_type> colors(max_colors);
 
-  for(i = 0; i < max_colors; i++)
+  for(int i = 0; i < max_colors; i++)
     colors[i].active = false;
 
   // quantization error matrix
-  float *err_data = new float[((max_colors + 1) * max_colors) / 2];
+  std::vector<float> err_data(((max_colors + 1) * max_colors) / 2);
 
   // if trying to make 1-color palette
   if(count < 2)
@@ -271,10 +256,10 @@ void Quantize::pca(Bitmap *src, int size)
   {
     count = 0;
 
-    for(i = 0; i < 16777216; i++)
+    for(int i = 0; i < 16777216; i++)
     {
       rgba_type rgba = getRgba(i);
-      float freq = histogram->read(rgba.r, rgba.g, rgba.b);
+      const float freq = histogram.read(rgba.r, rgba.g, rgba.b);
 
       if(freq > 0)
       {
@@ -286,11 +271,8 @@ void Quantize::pca(Bitmap *src, int size)
   else
   {
     // limit color count to 4096
-    count = limitColors(histogram, colors, max_colors);
+    count = limitColors(&histogram, &colors[0], max_colors);
   }
-
-  // don't need histogram anymore
-  delete histogram;
 
   // set max
   max = count;
@@ -298,9 +280,9 @@ void Quantize::pca(Bitmap *src, int size)
     rep = max;
 
   // init error matrix
-  for(j = 0; j < max; j++)
+  for(int j = 0; j < max; j++)
   {
-    for(i = 0; i < j; i++)
+    for(int i = 0; i < j; i++)
       err_data[i + (j + 1) * j / 2] = error(&colors[i], &colors[j]);
   }
 
@@ -316,14 +298,14 @@ void Quantize::pca(Bitmap *src, int size)
     bool *a = &(colors[0].active);
 
     // find lowest value in error matrix
-    for(j = 0; j < max; j++, a += step)
+    for(int j = 0; j < max; j++, a += step)
     {
       if(*a)
       {
         float *e = &err_data[(j + 1) * j / 2];
         bool *b = &(colors[0].active);
 
-        for(i = 0; i < j; i++, e++, b += step)
+        for(int i = 0; i < j; i++, e++, b += step)
         {
           if(*b && (*e < least_err))
           {
@@ -336,14 +318,12 @@ void Quantize::pca(Bitmap *src, int size)
     }
 
     // compute quantization level and place in i, delete j
-    float temp = colors[ii].freq;
-
     merge(&colors[ii], &colors[jj]);
     colors[jj].active = false;
     count--;
 
     // recompute error matrix for new row
-    for(j = ii; j < max; j++)
+    for(int j = ii; j < max; j++)
     {
       if(colors[j].active)
         err_data[ii + (j + 1) * j / 2] = error(&colors[ii], &colors[j]);
@@ -351,11 +331,7 @@ void Quantize::pca(Bitmap *src, int size)
 
     // user cancelled operation
     if(Fl::get_key(FL_Escape))
-    {
-      delete[] err_data;
-      delete[] colors;
       return;
-    }
 
     Dialog::updateProgress();
   }
@@ -365,7 +341,7 @@ void Quantize::pca(Bitmap *src, int size)
   // build palette
   int index = 0;
 
-  for(i = 0; i < max; i++)
+  for(int i = 0; i < max; i++)
   {
     if(colors[i].active)
     {
@@ -387,10 +363,6 @@ void Quantize::pca(Bitmap *src, int size)
     stretchPalette(Project::palette->data, Project::palette->max, size);
     Project::palette->max = size;
   }
-
-  // free memory
-  delete[] err_data;
-  delete[] colors;
 
   // redraw palette widget
   Gui::drawPalette();

@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include <cmath>
+#include <vector>
 
 #include "Bitmap.H"
 #include "Blend.H"
@@ -83,7 +84,6 @@ namespace Normalize
   void apply()
   {
     // search for highest & lowest RGB values
-    int x, y;
     int r_high = 0;
     int g_high = 0;
     int b_high = 0;
@@ -91,9 +91,9 @@ namespace Normalize
     int g_low = 0xFFFFFF;
     int b_low = 0xFFFFFF;
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
@@ -130,11 +130,11 @@ namespace Normalize
 
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
@@ -163,25 +163,15 @@ namespace Equalize
 {
   void apply()
   {
-    int *list_r = new int[256];
-    int *list_g = new int[256];
-    int *list_b = new int[256];
+    std::vector<int> list_r(256, 0);
+    std::vector<int> list_g(256, 0);
+    std::vector<int> list_b(256, 0);
 
-    int x, y;
-    int i, j;
+    const int size = bmp->cw * bmp->ch;
 
-    for(i = 0; i < 256; i++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      list_r[i] = 0;
-      list_g[i] = 0;
-      list_b[i] = 0;
-    }
-
-    int size = bmp->cw * bmp->ch;
-
-    for(y = bmp->ct; y <= bmp->cb; y++)
-    {
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
@@ -195,9 +185,9 @@ namespace Equalize
       }
     }
 
-    for(j = 255; j >= 0; j--)
+    for(int j = 255; j >= 0; j--)
     {
-      for(i = 0; i < j; i++)
+      for(int i = 0; i < j; i++)
       {
         list_r[j] += list_r[i];
         list_g[j] += list_g[i];
@@ -209,11 +199,11 @@ namespace Equalize
 
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
@@ -229,17 +219,8 @@ namespace Equalize
       }
 
       if(updateProgress(y) < 0)
-      {
-        delete[] list_r;
-        delete[] list_g;
-        delete[] list_b;
         return;
-      }
     }
-
-    delete[] list_r;
-    delete[] list_g;
-    delete[] list_b;
 
     endProgress();
   }
@@ -255,12 +236,9 @@ namespace ValueStretch
 {
   void apply()
   {
-    int *list_r = new int[256];
-    int *list_g = new int[256];
-    int *list_b = new int[256];
-
-    int x, y;
-    int i, j;
+    std::vector<int> list_r(256, 0);
+    std::vector<int> list_g(256, 0);
+    std::vector<int> list_b(256, 0);
 
     double rr = 0;
     double gg = 0;
@@ -268,9 +246,9 @@ namespace ValueStretch
     int count = 0;
 
     // determine overall color cast
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
@@ -286,18 +264,11 @@ namespace ValueStretch
     gg /= count;
     bb /= count;
 
-    for(i = 0; i < 256; i++)
-    {
-      list_r[i] = 0;
-      list_g[i] = 0;
-      list_b[i] = 0;
-    }
+    const int size = bmp->cw * bmp->ch;
 
-    int size = bmp->cw * bmp->ch;
-
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
@@ -311,9 +282,9 @@ namespace ValueStretch
       }
     }
 
-    for(j = 255; j >= 0; j--)
+    for(int j = 255; j >= 0; j--)
     {
-      for(i = 0; i < j; i++)
+      for(int i = 0; i < j; i++)
       {
         list_r[j] += list_r[i];
         list_g[j] += list_g[i];
@@ -325,11 +296,11 @@ namespace ValueStretch
 
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
@@ -353,17 +324,8 @@ namespace ValueStretch
       }
 
       if(updateProgress(y) < 0)
-      {
-        delete[] list_r;
-        delete[] list_g;
-        delete[] list_b;
         return;
-      }
     }
-
-    delete[] list_r;
-    delete[] list_g;
-    delete[] list_b;
 
     endProgress();
   }
@@ -379,19 +341,13 @@ namespace Saturate
 {
   void apply()
   {
-    int *list_s = new int[256];
+    std::vector<int> list_s(256, 0);
 
-    int x, y;
-    int i, j;
+    const int size = bmp->cw * bmp->ch;
 
-    for(i = 0; i < 256; i++)
-      list_s[i] = 0;
-
-    int size = bmp->cw * bmp->ch;
-
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
@@ -405,19 +361,20 @@ namespace Saturate
         list_s[s]++;
       }
     }
-    for(j = 255; j >= 0; j--)
-      for(i = 0; i < j; i++)
+
+    for(int j = 255; j >= 0; j--)
+      for(int i = 0; i < j; i++)
         list_s[j] += list_s[i];
 
     double scale = 255.0 / size;
 
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         const int c = bmp->getpixel(x, y);
 
@@ -448,18 +405,12 @@ namespace Saturate
 
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
         *p = Blend::trans(*p, Blend::keepLum(makeRgba(r, g, b, rgba.a), l), 255 - s);
-
         p++;
       }
 
       if(updateProgress(y) < 0)
-      {
-        delete[] list_s;
         return;
-      }
     }
-
-    delete[] list_s;
 
     endProgress();
   }
@@ -481,21 +432,16 @@ namespace RotateHue
 
   void apply(int amount)
   {
-    int x, y;
-    int r, g, b;
-    int h, s, v;
-
-    int hh = amount * 4.277;
-
-    bool keep_lum = preserve->value();
+    const int hh = amount * 4.277;
+    const bool keep_lum = preserve->value();
 
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         int c = bmp->getpixel(x, y);
 
@@ -503,9 +449,10 @@ namespace RotateHue
 
         int l = getl(c);
 
-        r = rgba.r;
-        g = rgba.g;
-        b = rgba.b;
+        int r = rgba.r;
+        int g = rgba.g;
+        int b = rgba.b;
+        int h, s, v;
 
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
         h += hh;
@@ -584,15 +531,13 @@ namespace Invert
 {
   void apply()
   {
-    int x, y;
-
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         int c = bmp->getpixel(x, y);
 
@@ -622,15 +567,13 @@ namespace CorrectionMatrix
 {
   void apply()
   {
-    int x, y;
-
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         const int c = bmp->getpixel(x, y);
 
@@ -691,19 +634,17 @@ namespace Restore
 
   void apply()
   {
-    int x, y;
-
     float rr = 0;
     float gg = 0;
     float bb = 0;
     int count = 0;
 
-    bool keep_lum = color_only->value();
+    const bool keep_lum = color_only->value();
 
     // determine overall color cast
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         const rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
@@ -727,11 +668,11 @@ namespace Restore
     // begin restore
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         const int c = bmp->getpixel(x, y);
         const rgba_type rgba = getRgba(c);
@@ -831,20 +772,16 @@ namespace RemoveDust
 
   void apply(int amount)
   {
-    int x, y, i;
-    int c[8];
-    int r, g, b;
-    int test, avg;
-
     beginProgress();
 
-    for(y = bmp->ct + 1; y <= bmp->cb - 1; y++)
+    for(int y = bmp->ct + 1; y <= bmp->cb - 1; y++)
     {
       int *p = bmp->row[y] + bmp->cl + 1;
 
-      for(x = bmp->cl + 1; x <= bmp->cr - 1; x++)
+      for(int x = bmp->cl + 1; x <= bmp->cr - 1; x++)
       {
-        test = bmp->getpixel(x, y);
+        const int test = bmp->getpixel(x, y);
+        int c[8];
 
         c[0] = bmp->getpixel(x + 1, y);
         c[1] = bmp->getpixel(x - 1, y);
@@ -855,9 +792,11 @@ namespace RemoveDust
         c[6] = bmp->getpixel(x - 1, y + 1);
         c[7] = bmp->getpixel(x + 1, y + 1);
 
-        r = g = b = 0;
+        int r = 0;
+        int g = 0;
+        int b = 0;
 
-        for(i = 0; i < 8; i++)
+        for(int i = 0; i < 8; i++)
         {
           rgba_type rgba = getRgba(c[i]);
           r += rgba.r;
@@ -865,7 +804,7 @@ namespace RemoveDust
           b += rgba.b;
         }
 
-        avg = makeRgba(r / 8, g / 8, b / 8, geta(test));
+        const int avg = makeRgba(r / 8, g / 8, b / 8, geta(test));
 
         if((getl(avg) - getl(test)) > amount)
           *p = avg;
@@ -938,15 +877,13 @@ namespace Desaturate
 {
   void apply()
   {
-    int x, y;
-
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         int c = bmp->getpixel(x, y);
         int l = getl(c);
@@ -972,17 +909,15 @@ namespace Colorize
 {
   void apply()
   {
-    int x, y;
-
     rgba_type rgba_color = getRgba(Project::brush->color);
 
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         int c1 = bmp->getpixel(x, y);
 
@@ -1034,18 +969,15 @@ namespace ApplyPalette
 
   void applyNormal()
   {
-    int x, y;
-
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
-        int c = (Project::palette->data[(int)Project::palette->lookup(*p)] &
-                0xFFFFFF) | (geta(*p) << 24);
+        const int c = (Project::palette->data[(int)Project::palette->lookup(*p)] & 0xFFFFFF) | (geta(*p) << 24);
 
         *p++ = c;
       }
@@ -1059,34 +991,19 @@ namespace ApplyPalette
 
   void applyDither()
   {
-    int x, y;
-    int i, j;
     Bitmap *bmp = Project::bmp;
 
-    int e[3], v[3], n[3], last[3];
-    int *buf[3], *prev[3];
-
-    for(i = 0; i < 3; i++)
-    {
-      buf[i] = new int[bmp->w];
-      prev[i] = new int[bmp->w];
-
-      for(j = 0; j < bmp->w; j++)
-      {
-        *(buf[i] + j) = 0;
-        *(prev[i] + j) = 0;
-      }
-
-      last[i] = 0;
-    }
+    int e[3], v[3], n[3], last[3] = { 0, 0, 0 };
+    std::vector<std::vector<int> > buf(3, std::vector<int>(bmp->w, 0));
+    std::vector<std::vector<int> > prev(3, std::vector<int>(bmp->w, 0));
 
     beginProgress();
 
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(*p);
         const int alpha = rgba.a;
@@ -1094,7 +1011,7 @@ namespace ApplyPalette
         v[1] = Gamma::fix(rgba.g);
         v[2] = Gamma::fix(rgba.b);
 
-        for(i = 0; i < 3; i++)
+        for(int i = 0; i < 3; i++)
         {
           n[i] = v[i] + last[i] + prev[i][x];
           n[i] = std::max(std::min(n[i], 65535), 0);
@@ -1117,7 +1034,7 @@ namespace ApplyPalette
 
         p++;
 
-        for(i = 0; i < 3; i++)
+        for(int i = 0; i < 3; i++)
         {
           e[i] = n[i] - v[i];
           last[i] = (e[i] * 7)  >> 4;
@@ -1127,31 +1044,19 @@ namespace ApplyPalette
         }
       }
 
-      for(i = 0; i < 3; i++)
+      for(int i = 0; i < 3; i++)
       {
-        for(j = bmp->cl; j <= bmp->cr; j++)
+        for(int j = bmp->cl; j <= bmp->cr; j++)
         {
-          *(prev[i] + j) = *(buf[i] + j);
-          *(buf[i] + j) = 0;
+          prev[i][j] = buf[i][j];
+          buf[i][j] = 0;
         }
+
         last[i] = 0;
       }
 
       if(updateProgress(y) < 0)
-      {
-        for(i = 0; i < 3; i++)
-        {
-          delete[] buf[i];
-          delete[] prev[i];
-        }
         return;
-      }
-    }
-
-    for(i = 0; i < 3; i++)
-    {
-      delete[] buf[i];
-      delete[] prev[i];
     }
 
     endProgress();
@@ -1239,14 +1144,11 @@ namespace StainedGlass
 
   void apply(int size, int div)
   {
-    int x, y;
-    int i, j, k;
+    std::vector<int> seedx(size);
+    std::vector<int> seedy(size);
+    std::vector<int> color(size);
 
-    int *seedx = new int[size];
-    int *seedy = new int[size];
-    int *color = new int[size];
-
-    for(i = 0; i < size; i++)
+    for(int i = 0; i < size; i++)
     {
       if(uniform->value())
       {
@@ -1275,21 +1177,21 @@ namespace StainedGlass
     beginProgress();
 
     // draw segments
-    for(y = bmp->ct; y <= bmp->cb; y++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         // find nearest color
         int nearest = 999999999;
         int use = -1;
 
-        for(i = 0; i < size; i++)
+        for(int i = 0; i < size; i++)
         {
-          int dx = x - seedx[i];
-          int dy = y - seedy[i];
-          int distance = dx * dx + dy * dy;
+          const int dx = x - seedx[i];
+          const int dy = y - seedy[i];
+          const int distance = dx * dx + dy * dy;
 
           if(distance < nearest)
           {
@@ -1319,12 +1221,7 @@ namespace StainedGlass
       }
 
       if(updateProgress(y) < 0)
-      {
-        delete[] color;
-        delete[] seedy;
-        delete[] seedx;
         return;
-      }
     }
 
     // draw edges
@@ -1333,20 +1230,20 @@ namespace StainedGlass
       Map *map = Project::map;
       map->clear(0);
 
-      for(y = bmp->ct * 4; y <= bmp->cb * 4; y++)
+      for(int y = bmp->ct * 4; y <= bmp->cb * 4; y++)
       {
-        for(x = bmp->cl * 4; x <= bmp->cr * 4; x++)
+        for(int x = bmp->cl * 4; x <= bmp->cr * 4; x++)
         {
           if(isSegmentEdge(bmp, x / 4, y / 4))
             map->setpixelAA(x, y, 255);
         }
       }
 
-      for(y = bmp->ct; y <= bmp->cb; y++)
+      for(int y = bmp->ct; y <= bmp->cb; y++)
       {
         int *p = bmp->row[y] + bmp->cl;
 
-        for(x = bmp->cl; x <= bmp->cr; x++)
+        for(int x = bmp->cl; x <= bmp->cr; x++)
         {
           const int c = map->getpixel(x, y);
 
@@ -1354,10 +1251,6 @@ namespace StainedGlass
         }
       }
     }
-
-    delete[] color;
-    delete[] seedy;
-    delete[] seedx;
 
     endProgress();
   }
@@ -1434,7 +1327,7 @@ namespace Blur
   {
     size = (size + 1) * 2 + 1;
 
-    int *kernel = new int[size];
+    std::vector<int> kernel(size);
     int x, y;
     int div = 0;
 
@@ -1447,13 +1340,13 @@ namespace Blur
       div += kernel[x];
     }
 
-    Bitmap *temp = new Bitmap(bmp->cw, bmp->ch);
+    Bitmap temp(bmp->cw, bmp->ch);
     beginProgress();
 
     // x direction
     for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = temp->row[y - bmp->cl];
+      int *p = temp.row[y - bmp->cl];
 
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
@@ -1485,10 +1378,7 @@ namespace Blur
       }
 
       if(updateProgress(y) < 0)
-      {
-        delete temp;
         return;
-      }
     }
 
     beginProgress();
@@ -1508,8 +1398,8 @@ namespace Blur
 
         for(i = 0; i < size; i++) 
         {
-          rgba_type rgba = getRgba(temp->getpixel(x - bmp->cl,
-                                               y - size / 2 + i - bmp->ct));
+          rgba_type rgba = getRgba(temp.getpixel(x - bmp->cl,
+                                                 y - size / 2 + i - bmp->ct));
           rr += Gamma::fix(rgba.r) * kernel[i];
           gg += Gamma::fix(rgba.g) * kernel[i];
           bb += Gamma::fix(rgba.b) * kernel[i];
@@ -1529,13 +1419,8 @@ namespace Blur
       }
 
       if(updateProgress(y) < 0)
-      {
-        delete temp;
         return;
-      }
     }
-
-    delete temp;
 
     endProgress();
   }
@@ -1602,12 +1487,12 @@ namespace Sharpen
   {
     int x, y, i;
 
-    Bitmap *temp = new Bitmap(bmp->cw, bmp->ch);
+    Bitmap temp(bmp->cw, bmp->ch);
     beginProgress();
 
     for(y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = temp->row[y - bmp->cl];
+      int *p = temp.row[y - bmp->cl];
 
       for(x = bmp->cl; x <= bmp->cr; x++)
       {
@@ -1632,8 +1517,7 @@ namespace Sharpen
         return;
     }
 
-    temp->blit(bmp, 0, 0, bmp->cl, bmp->ct, temp->w, temp->h);
-    delete temp;
+    temp.blit(bmp, 0, 0, bmp->cl, bmp->ct, temp.w, temp.h);
 
     endProgress();
   }
