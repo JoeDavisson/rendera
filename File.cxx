@@ -135,9 +135,9 @@ namespace
   }
 
   // check if trying to overwrite existing file
-  bool fileExists(const char *s)
+  bool fileExists(const char *fn)
   {
-    FILE *temp = fopen(s, "r");
+    FILE *temp = fopen(fn, "rb");
 
     if(temp)
     {
@@ -220,7 +220,10 @@ void File::load(Fl_Widget *, void *)
 // load a file
 int File::loadFile(const char *fn)
 {
-  FileSP in(fn, "rb");
+  if(!fileExists(fn))
+    return -1;
+
+  FileSP in(fn, "r");
   if(!in.get())
     return -1;
 
@@ -1316,7 +1319,6 @@ char *File::themePath(const char *fn)
   strcpy(theme_path_string, Project::theme_path);
   strcat(theme_path_string, fn);
 
-puts(theme_path_string);
   return theme_path_string;
 }
 

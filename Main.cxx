@@ -18,6 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <getopt.h>
+
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Brush.H"
@@ -41,6 +43,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
+  enum
+  {
+    OPTION_THEME,
+    OPTION_HELP
+  };
+
+  int verbose_flag;
+
+  struct option long_options[] =
+  {
+    { "theme", required_argument, &verbose_flag, OPTION_THEME },
+    { "help", no_argument, &verbose_flag, OPTION_HELP },
+    { 0, 0, 0, 0 }
+  };
+
   void setLightTheme()
   {
     Fl::set_color(FL_BACKGROUND_COLOR, 224, 224, 224);
@@ -67,35 +84,44 @@ int main(int argc, char *argv[])
   // default to dark theme
   setDarkTheme();
 
-  int count = argc;
+  // parse command line
+  int c;
+  int option_index = 0;
 
-  if(argc > 1)
+  while(1)
   {
-    for(int i = 1; i < argc; i++)
+    c = getopt_long(argc, argv, "", long_options, &option_index);
+    if(c < 0)
+      break;
+
+    switch(c)
     {
-      if(strcmp(argv[i], "--use-light-theme") == 0)
-      {
-        setLightTheme();
-      }
-
-      if(strcmp(argv[i], "--use-dark-theme") == 0)
-      {
-        setDarkTheme();
-      }
-
-      if(strcmp(argv[i], "--help") == 0)
-      {
-        printf("\n");
-        printf("Usage: %s <options> <filename>\n", argv[0]);
-        printf("\n");
-        printf("Theme Settings:\n");
-        printf("  --use-light-theme\n");
-        printf("  --use-dark-theme\n");
-        printf("\n");
-        return 0;
-      }
-
-      count--;
+      case 0:
+        switch(option_index)
+        {
+          case OPTION_THEME:
+            if(strcmp(optarg, "dark") == 0)
+              setDarkTheme();
+            else if(strcmp(optarg, "light") == 0)
+              setLightTheme();
+            else
+              printf("Unknown theme: %s\n", optarg);
+            break;
+          case OPTION_HELP:
+            printf("\n");
+            printf("Usage: rendera [OPTIONS] filename\n");
+            printf("\n");
+            printf("Options:\n");
+            printf("  --theme=dark\t\t use dark theme\n");
+            printf("  --theme=light\t\t use light theme\n");
+            printf("\n");
+            return 0;
+          default:
+            break;
+        }
+        break;
+      default:
+        break;
     }
   }
 
@@ -117,24 +143,20 @@ int main(int argc, char *argv[])
   Transform::init();
   Gui::init();
 
-  if(count > 1)
+  // try to load image from command line
+  if(optind < argc)
   {
-    if(File::loadFile(argv[argc - 1]) < 0)
+    if(File::loadFile(argv[optind]) < 0)
     {
-      printf("Usage: %s <options> <filename>\n", argv[0]);
+      printf("Could not load image: %s\n", argv[optind]);
       return 0;
     }
   }
 
+  // delay showing main gui until after all arguments are checked
+  Gui::show();
+
   int ret = Fl::run();
-
-  // delete undo bitmaps
-  Undo::free();
-
-  // delete project bitmaps
-  delete Project::bmp;
-  delete Project::map;
-
   return ret;
 }
 

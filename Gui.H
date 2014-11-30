@@ -32,6 +32,7 @@ class View;
 namespace Gui
 {
   void init();
+  void show();
   void setMenuItem(const char *);
   void clearMenuItem(const char *);
 

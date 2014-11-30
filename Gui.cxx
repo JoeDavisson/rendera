@@ -519,7 +519,6 @@ void Gui::init()
   window->size_range(640, 480, 0, 0, 0, 0, 0);
   window->resizable(view);
   window->end();
-  window->show();
 
   // misc init
   Fl_Tooltip::enable(1);
@@ -531,6 +530,11 @@ void Gui::init()
   checkZoom();
   checkCropValues(0, 0, 0, 0);
   checkOffsetValues(0, 0);
+}
+
+void Gui::show()
+{
+  window->show();
 }
 
 void Gui::setMenuItem(const char *s)
