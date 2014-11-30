@@ -27,7 +27,8 @@ FileSP::FileSP(const char *fn, const char *mode)
 
 FileSP::~FileSP()
 {
-  fclose(f);
+  if(f)
+    fclose(f);
 }
 
 FILE *FileSP::get()

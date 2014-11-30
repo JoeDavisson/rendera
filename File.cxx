@@ -188,6 +188,7 @@ namespace
     return 0;
   }
 
+  // force init to run when program starts
   static const int *temp = init(); 
 }
 
@@ -220,10 +221,7 @@ void File::load(Fl_Widget *, void *)
 // load a file
 int File::loadFile(const char *fn)
 {
-  if(!fileExists(fn))
-    return -1;
-
-  FileSP in(fn, "r");
+  FileSP in(fn, "rb");
   if(!in.get())
     return -1;
 
