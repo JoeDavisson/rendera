@@ -33,8 +33,7 @@ public:
 
   ~SP()
   {
-    if(data)
-      delete data;
+    delete data;
   }
 
   T& operator *()
