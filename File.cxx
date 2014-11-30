@@ -124,6 +124,9 @@ namespace
   char pal_load_dir[256];
   char pal_save_dir[256];
 
+  // buffer for theme path + icon filename
+  char theme_path_string[256];
+
   // show error dialog
   void errorMessage()
   {
@@ -1305,5 +1308,15 @@ void File::getDirectory(char *dest, const char *src)
       break;
     }
   }
+}
+
+// expand filename to include theme path
+char *File::themePath(const char *fn)
+{
+  strcpy(theme_path_string, Project::theme_path);
+  strcat(theme_path_string, fn);
+
+puts(theme_path_string);
+  return theme_path_string;
 }
 

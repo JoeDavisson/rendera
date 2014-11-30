@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Separator.H"
 #include "Undo.H"
 #include "View.H"
+
 namespace
 {
   Bitmap *bmp;
@@ -501,7 +502,7 @@ namespace RotateHue
     dialog->show();
   }
 
-  int *init()
+  void init()
   {
     int y1 = 8;
 
@@ -519,11 +520,7 @@ namespace RotateHue
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
-
-    return 0;
   }
-
-  static const int *temp = init();
 }
 
 namespace Invert
@@ -731,7 +728,7 @@ namespace Restore
     dialog->show();
   }
 
-  int *init()
+  void init()
   {
     int y1 = 8;
 
@@ -754,11 +751,7 @@ namespace Restore
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
-
-    return 0;
   }
-
-  static const int *temp = init();
 }
 
 namespace RemoveDust
@@ -848,7 +841,7 @@ namespace RemoveDust
     dialog->show();
   }
 
-  int *init()
+  void init()
   {
     int y1 = 8;
 
@@ -865,11 +858,7 @@ namespace RemoveDust
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
-
-    return 0;
   }
-
-  static const int *temp = init();
 }
 
 namespace Desaturate
@@ -1083,7 +1072,7 @@ namespace ApplyPalette
     dialog->show();
   }
 
-  int *init()
+  void init()
   {
     int y1 = 8;
 
@@ -1096,11 +1085,7 @@ namespace ApplyPalette
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
-
-    return 0;
   }
-
-  static const int *temp = init();
 }
 
 namespace StainedGlass
@@ -1281,7 +1266,7 @@ namespace StainedGlass
     dialog->show();
   }
 
-  int *init()
+  void init()
   {
     int y1 = 8;
 
@@ -1308,11 +1293,7 @@ namespace StainedGlass
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
-
-    return 0;
   }
-
-  static const int *temp = init();
 }
 
 namespace Blur
@@ -1444,7 +1425,7 @@ namespace Blur
     dialog->show();
   }
 
-  int *init()
+  void init()
   {
     int y1 = 8;
 
@@ -1458,11 +1439,7 @@ namespace Blur
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
-
-    return 0;
   }
-
-  static const int *temp = init();
 }
 
 namespace Sharpen
@@ -1538,7 +1515,7 @@ namespace Sharpen
     dialog->show();
   }
 
-  int *init()
+  void init()
   {
     int y1 = 8;
 
@@ -1552,11 +1529,18 @@ namespace Sharpen
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end();
-
-    return 0;
   }
+}
 
-  static const int *temp = init();
+void FX::init()
+{
+  RotateHue::init();
+  Restore::init();
+  RemoveDust::init();
+  ApplyPalette::init();
+  StainedGlass::init();
+  Blur::init();
+  Sharpen::init();
 }
 
 void FX::normalize()

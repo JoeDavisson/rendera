@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Brush.H"
 #include "Dialog.H"
+#include "File.H"
 #include "Gui.H"
 #include "InputInt.H"
 #include "Map.H"
@@ -48,7 +49,7 @@ namespace About
     dialog->hide();
   }
 
-  int *init()
+  void init()
   {
     int y1 = 8;
     int ww = 0, hh = 0;
@@ -56,7 +57,7 @@ namespace About
 
     dialog = new Fl_Double_Window(384, 0, "About");
     logo = new Widget(dialog, 32, y1, 320, 64,
-                      credits, "data/logo_large.png", 0, 0, 0);
+                      credits, File::themePath("logo_large.png"), 0, 0, 0);
     logo->align(FL_ALIGN_BOTTOM);
     logo->measure_label(ww, hh);
     y1 += 64 + 8 + hh;
@@ -64,11 +65,7 @@ namespace About
     ok->callback((Fl_Callback *)close);
     dialog->set_modal();
     dialog->end(); 
-
-    return 0;
   }
-
-  static const int *temp = init();
 }
 
 namespace JpegQuality
@@ -105,7 +102,7 @@ namespace JpegQuality
     }
   }
 
-  int *init()
+  void init()
   {
     int y1 = 8;
 
@@ -118,11 +115,7 @@ namespace JpegQuality
     Dialog::addOkButton(dialog, &ok, &y1);
     dialog->set_modal();
     dialog->end();
-
-    return 0;
   }
-
-  static const int *temp = init();
 }
 
 namespace PngOptions
@@ -161,7 +154,7 @@ namespace PngOptions
     }
   }
 
-  int *init()
+  void init()
   {
     int y1 = 8;
 
@@ -181,11 +174,7 @@ namespace PngOptions
     Dialog::addOkButton(dialog, &ok, &y1);
     dialog->set_modal();
     dialog->end();
-
-    return 0;
   }
-
-  static const int *temp = init();
 }
 namespace Progress
 {
@@ -194,7 +183,7 @@ namespace Progress
   float value;
   float step;
 
-  int *init()
+  void init()
   {
     dialog = new Fl_Double_Window(272, 80, "Progress");
     bar = new Fl_Progress(8, 8, 256, 64);
@@ -205,11 +194,7 @@ namespace Progress
     bar->labelcolor(0xFFFFFF00);
     dialog->set_modal();
     dialog->end();
-
-    return 0;
   }
-
-  static const int *temp = init();
 }
 
 namespace NewImage
@@ -256,7 +241,7 @@ namespace NewImage
     dialog->hide();
   }
 
-  int *init()
+  void init()
   {
     int y1 = 8;
 
@@ -276,11 +261,7 @@ namespace NewImage
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end(); 
-
-    return 0;
   }
-
-  static const int *temp = init();
 }
 
 namespace CreatePalette
@@ -314,7 +295,7 @@ namespace CreatePalette
     dialog->hide();
   }
 
-  int *init()
+  void init()
   {
     int y1 = 8;
 
@@ -327,11 +308,7 @@ namespace CreatePalette
     cancel->callback((Fl_Callback *)quit);
     dialog->set_modal();
     dialog->end(); 
-
-    return 0;
   }
-
-  static const int *temp = init();
 }
 
 namespace Editor
@@ -614,7 +591,7 @@ namespace Editor
     dialog->hide();
   }
 
-  int *init()
+  void init()
   {
     dialog = new Fl_Double_Window(608, 312, "Palette Editor");
     hue = new Widget(dialog, 8, 8, 24, 256,
@@ -646,11 +623,18 @@ namespace Editor
     dialog->end(); 
 
     undo_palette = new Palette();
-
-    return 0;
   }
+}
 
-  static const int *temp = init();
+void Dialog::init()
+{
+  About::init();
+  JpegQuality::init();
+  PngOptions::init();
+  Progress::init();
+  NewImage::init();
+  CreatePalette::init();
+  Editor::init();
 }
 
 void Dialog::center(Fl_Widget *widget)

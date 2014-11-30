@@ -51,10 +51,16 @@ namespace Project
 
   int overscroll = 64;
   int theme = THEME_DARK;
+  char theme_path[256];
 }
 
 void Project::init()
 {
+  // default to dark theme
+  strcpy(theme_path, "data/theme/dark/");
+  if(theme == THEME_LIGHT)
+    strcpy(theme_path, "data/theme/light/");
+
   newImage(640, 480);
 
   bmp->wrap = 0;

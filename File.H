@@ -51,6 +51,7 @@ namespace File
 
   void decodeURI(char *);
   void getDirectory(char *, const char *);
+  char *themePath(const char *);
 }
 
 #endif

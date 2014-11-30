@@ -76,13 +76,11 @@ int main(int argc, char *argv[])
       if(strcmp(argv[i], "--use-light-theme") == 0)
       {
         setLightTheme();
-        count--;
       }
 
       if(strcmp(argv[i], "--use-dark-theme") == 0)
       {
         setDarkTheme();
-        count--;
       }
 
       if(strcmp(argv[i], "--help") == 0)
@@ -96,6 +94,8 @@ int main(int argc, char *argv[])
         printf("\n");
         return 0;
       }
+
+      count--;
     }
   }
 
@@ -112,6 +112,9 @@ int main(int argc, char *argv[])
 
   Project::init();
   Undo::init();
+  Dialog::init();
+  FX::init();
+  Transform::init();
   Gui::init();
 
   if(count > 1)

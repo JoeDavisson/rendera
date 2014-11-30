@@ -182,12 +182,12 @@ void Gui::init()
     (Fl_Callback *)Transform::mirror, 0, 0);
   menubar->add("Image/Flip Vertical", 0,
     (Fl_Callback *)Transform::flip, 0, FL_MENU_DIVIDER);
-  menubar->add("Image/Rotate...", 0,
-    (Fl_Callback *)Transform::rotate, 0, 0);
   menubar->add("Image/Resize...", 0,
     (Fl_Callback *)Transform::resize, 0, 0);
   menubar->add("Image/Scale...", 0,
     (Fl_Callback *)Transform::scale, 0, 0);
+  menubar->add("Image/Rotate...", 0,
+    (Fl_Callback *)Transform::rotate, 0, 0);
   menubar->add("Palette/Load", 0,
     (Fl_Callback *)File::loadPalette, 0, 0);
   menubar->add("Palette/Save", 0,
@@ -244,19 +244,19 @@ void Gui::init()
   top_right = new Group(0, menubar->h(), window->w(), 40, "");
   x1 = 8;
   zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24,
-                              "Fit In Window", "data/zoom_fit.png",
+                              "Fit In Window", File::themePath("zoom_fit.png"),
                               (Fl_Callback *)checkZoomFit);
   x1 += 24 + 8;
   zoom_one = new Button(top_right, x1, 8, 24, 24,
-                        "Actual Size", "data/zoom_one.png",
+                        "Actual Size", File::themePath("zoom_one.png"),
                         (Fl_Callback *)checkZoomOne);
   x1 += 24 + 8;
   zoom_in = new Button(top_right, x1, 8, 24, 24,
-                       "Zoom In", "data/zoom_in.png",
+                       "Zoom In", File::themePath("zoom_in.png"),
                        (Fl_Callback *)checkZoomIn);
   x1 += 24 + 8;
   zoom_out = new Button(top_right, x1, 8, 24, 24,
-                        "Zoom Out", "data/zoom_out.png",
+                        "Zoom Out", File::themePath("zoom_out.png"),
                         (Fl_Callback *)checkZoomOut);
   x1 += 24 + 8;
   zoom = new InputInt(top_right, x1, 8, 56, 24, "", 0);
@@ -266,7 +266,7 @@ void Gui::init()
   new Separator(top_right, x1, 2, 2, 36, "");
   x1 += 8;
   grid = new ToggleButton(top_right, x1, 8, 24, 24,
-                          "Show Grid", "data/grid.png",
+                          "Show Grid", File::themePath("grid.png"),
                           (Fl_Callback *)checkGrid);
   x1 += 24 + 48 + 8;
   gridx = new InputInt(top_right, x1, 8, 32, 24,
@@ -285,27 +285,27 @@ void Gui::init()
   bottom = new Group(176, window->h() - 40, window->w() - 288, 40, "");
   x1 = 8;
   wrap = new ToggleButton(bottom, x1, 8, 24, 24,
-                          "Wrap Edges", "data/wrap.png",
+                          "Wrap Edges", File::themePath("wrap.png"),
                           (Fl_Callback *)checkWrap);
   x1 += 24 + 6;
   new Separator(bottom, x1, 2, 2, 36, "");
   x1 += 8;
   clone = new ToggleButton(bottom, x1, 8, 24, 24,
-                           "Clone Enable", "data/clone.png",
+                           "Clone Enable", File::themePath("clone.png"),
                            (Fl_Callback *)checkClone);
   x1 += 24 + 8;
   mirror = new Widget(bottom, x1, 8, 96, 24,
-                      "Clone Mirroring", "data/mirror.png", 24, 24,
+                      "Clone Mirroring", File::themePath("mirror.png"), 24, 24,
                       (Fl_Callback *)checkMirror);
   x1 += 96 + 6;
   new Separator(bottom, x1, 2, 2, 36, "");
   x1 += 8;
   origin = new Widget(bottom, x1, 8, 48, 24,
-                      "Origin", "data/origin.png", 24, 24,
+                      "Origin", File::themePath("origin.png"), 24, 24,
                       (Fl_Callback *)checkOrigin);
   x1 += 48 + 8;
   constrain = new Widget(bottom, x1, 8, 48, 24,
-                         "Keep Square", "data/constrain.png", 24, 24,
+                         "Keep Square", File::themePath("constrain.png"), 24, 24,
                          (Fl_Callback *)checkConstrain);
   bottom->resizable(0);
   bottom->end();
@@ -316,7 +316,7 @@ void Gui::init()
                     "Tools");
   y1 = 20;
   tool = new Widget(tools, 8, y1, 48, 240,
-                    "Tools", "data/tools.png", 48, 48,
+                    "Tools", File::themePath("tools.png"), 48, 48,
                     (Fl_Callback *)checkTool);
   y1 += 96 + 8;
   tools->resizable(0);
@@ -333,19 +333,19 @@ void Gui::init()
   paint_brush->bitmap->setpixelSolid(48, 48, makeRgb(192, 192, 192), 0);
   y1 += 96 + 8;
   paint_size = new Widget(paint, 8, y1, 96, 24,
-                          "Size", "data/size.png", 6, 24,
+                          "Size", File::themePath("size.png"), 6, 24,
                           (Fl_Callback *)checkPaintSize);
   y1 += 24 + 8;
   paint_stroke = new Widget(paint, 8, y1, 96, 48,
-                            "Stroke", "data/stroke.png", 24, 24,
+                            "Stroke", File::themePath("stroke.png"), 24, 24,
                             (Fl_Callback *)checkPaintStroke);
   y1 += 48 + 8;
   paint_shape = new Widget(paint, 8, y1, 96, 24,
-                           "Shape", "data/shape.png", 24, 24,
+                           "Shape", File::themePath("shape.png"), 24, 24,
                            (Fl_Callback *)checkPaintShape);
   y1 += 24 + 8;
   paint_edge = new Widget(paint, 8, y1, 96, 24,
-                          "Soft Edge", "data/soft_edge.png", 12, 24,
+                          "Soft Edge", File::themePath("soft_edge.png"), 12, 24,
                           (Fl_Callback *)checkPaintEdge);
   y1 += 24 + 8;
   paint_mode = new Fl_Choice(8, y1, 96, 24, "");
@@ -475,7 +475,7 @@ void Gui::init()
                       (Fl_Callback *)checkSatVal);
   y1 += 96 + 8;
   trans = new Widget(right, 8, y1, 96, 24,
-                     "Transparency", "data/transparency.png", 1, 24,
+                     "Transparency", File::themePath("transparency.png"), 1, 24,
                      (Fl_Callback *)checkTrans);
   y1 += 24 + 8;
   blend = new Fl_Choice(8, y1, 96, 24, "");
