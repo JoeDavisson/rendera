@@ -293,6 +293,15 @@ void Palette::setDefault()
   fillTable();
 }
 
+void Palette::setBlackAndWhite()
+{
+  data[0] = makeRgb(0, 0, 0);
+  data[1] = makeRgb(255, 255, 255);
+
+  max = 2;
+  fillTable();
+}
+
 void Palette::setWebSafe()
 {
   int index = 0;

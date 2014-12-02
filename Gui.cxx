@@ -196,6 +196,8 @@ void Gui::init()
     (Fl_Callback *)Dialog::editor, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Presets/Default", 0,
     (Fl_Callback *)paletteDefault, 0, 0);
+  menubar->add("Palette/Presets/Black and White", 0,
+    (Fl_Callback *)paletteBlackAndWhite, 0, 0);
   menubar->add("Palette/Presets/Web Safe", 0,
     (Fl_Callback *)paletteWebSafe, 0, 0);
   menubar->add("Palette/Presets/3-level RGB", 0,
@@ -953,6 +955,12 @@ void Gui::paletteSort()
 void Gui::paletteDefault()
 {
   Project::palette->setDefault();
+  Project::palette->draw(palette);
+}
+
+void Gui::paletteBlackAndWhite()
+{
+  Project::palette->setBlackAndWhite();
   Project::palette->draw(palette);
 }
 

@@ -44,6 +44,7 @@ public:
   int save(const char *);
 
   void setDefault();
+  void setBlackAndWhite();
   void setWebSafe();
   void set3LevelRGB();
   void set4LevelRGB();
