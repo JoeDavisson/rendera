@@ -1158,7 +1158,7 @@ namespace ApplyPalette
 
     const int w = 5;
     const int h = 3;
-    const int div = 7;
+    const int div = 6;
 
 /*
     // floyd
