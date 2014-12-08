@@ -201,12 +201,22 @@ void Quantize::pca(Bitmap *src, int size)
   // more colorful images fill more spaces in the table
   std::vector<int> color_metric(512, 0);
 
+  // preserve lightest/darkest colors
+  int lightest = makeRgb(0, 0, 0);
+  int darkest = makeRgb(255, 255, 255);
+
   for(int j = src->ct; j <= src->cb; j++)
   {
     int *p = src->row[j] + src->cl;
 
     for(int i = src->cl; i <= src->cr; i++)
     {
+      if(getl(*p) > getl(lightest))
+        lightest = *p;
+
+      if(getl(*p) < getl(darkest))
+        darkest = *p;
+
       rgba_type rgba = getRgba(*p++);
       float freq = histogram.read(rgba.r, rgba.g, rgba.b);
 
@@ -220,6 +230,13 @@ void Quantize::pca(Bitmap *src, int size)
                    ((int)rgba.b >> 5) << 6] = 1;
     }
   }
+
+  // assign maximum frequency to lightest/darkest colors
+  rgba_type rgba;
+  rgba = getRgba(lightest);
+  histogram.write(rgba.r, rgba.g, rgba.b, 1.0f);
+  rgba = getRgba(darkest);
+  histogram.write(rgba.r, rgba.g, rgba.b, 1.0f);
 
   // if image uses more than 1/4 of the color cube then
   // reduce table sizes to save time
@@ -242,14 +259,6 @@ void Quantize::pca(Bitmap *src, int size)
 
   // quantization error matrix
   std::vector<float> err_data(((max_colors + 1) * max_colors) / 2);
-
-  // if trying to make 1-color palette
-  if(count < 2)
-  {
-    count = 2;
-    makeColor(&colors[0], 0, 0, 0, inc);
-    makeColor(&colors[1], 255, 255, 255, inc);
-  }
 
   // skip if already enough colors
   if(count <= rep)
