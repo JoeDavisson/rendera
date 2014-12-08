@@ -977,6 +977,7 @@ namespace ApplyPalette
     endProgress();
   }
 
+/*
   void applyDither()
   {
     Bitmap *bmp = Project::bmp;
@@ -1025,10 +1026,10 @@ namespace ApplyPalette
         for(int i = 0; i < 3; i++)
         {
           e[i] = n[i] - v[i];
-          last[i] = (e[i] * 7)  >> 4;
-          buf[i][x - 1] += (e[i] * 3)  >> 4;
-          buf[i][x] += (e[i] * 5)  >> 4;
-          buf[i][x + 1] += (e[i] * 1)  >> 4;
+          last[i] = (e[i] * 7) / 16;
+          buf[i][x - 1] += (e[i] * 3) / 16;
+          buf[i][x] += (e[i] * 5) / 16;
+          buf[i][x + 1] += (e[i] * 1) / 16;
         }
       }
 
@@ -1041,6 +1042,190 @@ namespace ApplyPalette
         }
 
         last[i] = 0;
+      }
+
+      if(updateProgress(y) < 0)
+        return;
+    }
+
+    endProgress();
+  }
+*/
+
+/*
+  void applyDither()
+  {
+    int matrix[3][5] =
+    {
+      { 0, 0, 0, 7, 5 },
+      { 3, 5, 7, 5, 3 },
+      { 1, 3, 5, 3, 1 }
+    };
+
+    Bitmap *bmp = Project::bmp;
+
+    beginProgress();
+
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = bmp->row[y] + bmp->cl;
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        rgba_type rgba = getRgba(*p);
+        const int alpha = rgba.a;
+        const int old_r = Gamma::fix(rgba.r);
+        const int old_g = Gamma::fix(rgba.g);
+        const int old_b = Gamma::fix(rgba.b);
+
+        const int pal_index = (int)Project::palette->lookup(*p);
+        const int c = Project::palette->data[pal_index];
+
+        rgba = getRgba(c);
+        *p++ = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
+
+        const int new_r = Gamma::fix(rgba.r);
+        const int new_g = Gamma::fix(rgba.g);
+        const int new_b = Gamma::fix(rgba.b);
+
+//        const int er = new_r - old_r;
+//        const int eg = new_g - old_g;
+//        const int eb = new_b - old_b;
+        const int er = old_r - new_r;
+        const int eg = old_g - new_g;
+        const int eb = old_b - new_b;
+
+        for(int j = 0; j < 3; j++)
+        {
+          for(int i = 0; i < 5; i++)
+          {
+            if(matrix[j][i] > 0)
+            {
+              rgba_type rgba = getRgba(bmp->getpixel(x - 2 + i, y + j));
+              int r = Gamma::fix(rgba.r); 
+              int g = Gamma::fix(rgba.g); 
+              int b = Gamma::fix(rgba.b); 
+
+              r += (er * matrix[j][i]) / 48;
+              g += (eg * matrix[j][i]) / 48;
+              b += (eb * matrix[j][i]) / 48;
+
+              r = std::max(std::min(r, 65535), 0);
+              g = std::max(std::min(g, 65535), 0);
+              b = std::max(std::min(b, 65535), 0);
+
+              r = Gamma::unfix(r); 
+              g = Gamma::unfix(g); 
+              b = Gamma::unfix(b); 
+
+              bmp->setpixelSolid(x - 2 + i, y + j, makeRgba(r, g, b, rgba.a), 0);
+            }  
+          }
+        }
+      }
+
+      if(updateProgress(y) < 0)
+        return;
+    }
+
+    endProgress();
+  }
+*/
+
+  void applyDither()
+  {
+/*
+    // jarvis
+    int matrix[3][5] =
+    {
+      { 0, 0, 0, 7, 5 },
+      { 3, 5, 7, 5, 3 },
+      { 1, 3, 5, 3, 1 }
+    };
+
+    const int w = 5;
+    const int h = 3;
+    const int div = 48;
+*/
+
+    // modified atkinson
+    int matrix[3][5] =
+    {
+      { 0, 0, 0, 1, 1 },
+      { 0, 1, 1, 1, 0 },
+      { 0, 0, 1, 0, 0 }
+    };
+
+    const int w = 5;
+    const int h = 3;
+    const int div = 6;
+
+/*
+    // floyd
+    int matrix[2][3] =
+    {
+      { 0, 0, 7 },
+      { 3, 5, 1 },
+    };
+
+    const int w = 3;
+    const int h = 2;
+    const int div = 16;
+*/
+
+    Bitmap *bmp = Project::bmp;
+
+    beginProgress();
+
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = bmp->row[y] + bmp->cl;
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        rgba_type rgba = getRgba(*p);
+        const int alpha = rgba.a;
+        const int old_r = rgba.r;
+        const int old_g = rgba.g;
+        const int old_b = rgba.b;
+
+        const int pal_index = (int)Project::palette->lookup(*p);
+        const int c = Project::palette->data[pal_index];
+
+        rgba = getRgba(c);
+        *p++ = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
+
+        const int new_r = rgba.r;
+        const int new_g = rgba.g;
+        const int new_b = rgba.b;
+
+        const int er = old_r - new_r;
+        const int eg = old_g - new_g;
+        const int eb = old_b - new_b;
+
+        for(int j = 0; j < h; j++)
+        {
+          for(int i = 0; i < w; i++)
+          {
+            if(matrix[j][i] > 0)
+            {
+              rgba_type rgba = getRgba(bmp->getpixel(x - w / 2 + i, y + j));
+              int r = rgba.r; 
+              int g = rgba.g; 
+              int b = rgba.b; 
+
+              r += (er * matrix[j][i]) / div;
+              g += (eg * matrix[j][i]) / div;
+              b += (eb * matrix[j][i]) / div;
+
+              r = std::max(std::min(r, 255), 0);
+              g = std::max(std::min(g, 255), 0);
+              b = std::max(std::min(b, 255), 0);
+
+              bmp->setpixelSolid(x - w / 2 + i, y + j, makeRgba(r, g, b, rgba.a), 0);
+            }  
+          }
+        }
       }
 
       if(updateProgress(y) < 0)
