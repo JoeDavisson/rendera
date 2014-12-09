@@ -952,6 +952,7 @@ namespace ApplyPalette
 {
   Fl_Double_Window *dialog;
   Fl_Check_Button *dither;
+  Fl_Check_Button *gamma;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -977,161 +978,6 @@ namespace ApplyPalette
     endProgress();
   }
 
-/*
-  void applyDither()
-  {
-    Bitmap *bmp = Project::bmp;
-
-    int e[3], v[3], n[3], last[3] = { 0, 0, 0 };
-    std::vector<std::vector<int> > buf(3, std::vector<int>(bmp->w, 0));
-    std::vector<std::vector<int> > prev(3, std::vector<int>(bmp->w, 0));
-
-    beginProgress();
-
-    for(int y = bmp->ct; y <= bmp->cb; y++)
-    {
-      int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
-      {
-        rgba_type rgba = getRgba(*p);
-        const int alpha = rgba.a;
-        v[0] = Gamma::fix(rgba.r);
-        v[1] = Gamma::fix(rgba.g);
-        v[2] = Gamma::fix(rgba.b);
-
-        for(int i = 0; i < 3; i++)
-        {
-          n[i] = v[i] + last[i] + prev[i][x];
-          n[i] = std::max(std::min(n[i], 65535), 0);
-        }
-
-        const int r = Gamma::unfix(n[0]);
-        const int g = Gamma::unfix(n[1]);
-        const int b = Gamma::unfix(n[2]);
-
-        const int pal_index = (int)Project::palette->lookup(makeRgb(r, g, b));
-        const int c = Project::palette->data[pal_index];
-
-        rgba = getRgba(c);
-        *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
-
-        rgba = getRgba(*p);
-        v[0] = Gamma::fix(rgba.r);
-        v[1] = Gamma::fix(rgba.g);
-        v[2] = Gamma::fix(rgba.b);
-
-        p++;
-
-        for(int i = 0; i < 3; i++)
-        {
-          e[i] = n[i] - v[i];
-          last[i] = (e[i] * 7) / 16;
-          buf[i][x - 1] += (e[i] * 3) / 16;
-          buf[i][x] += (e[i] * 5) / 16;
-          buf[i][x + 1] += (e[i] * 1) / 16;
-        }
-      }
-
-      for(int i = 0; i < 3; i++)
-      {
-        for(int j = bmp->cl; j <= bmp->cr; j++)
-        {
-          prev[i][j] = buf[i][j];
-          buf[i][j] = 0;
-        }
-
-        last[i] = 0;
-      }
-
-      if(updateProgress(y) < 0)
-        return;
-    }
-
-    endProgress();
-  }
-*/
-
-/*
-  void applyDither()
-  {
-    int matrix[3][5] =
-    {
-      { 0, 0, 0, 7, 5 },
-      { 3, 5, 7, 5, 3 },
-      { 1, 3, 5, 3, 1 }
-    };
-
-    Bitmap *bmp = Project::bmp;
-
-    beginProgress();
-
-    for(int y = bmp->ct; y <= bmp->cb; y++)
-    {
-      int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
-      {
-        rgba_type rgba = getRgba(*p);
-        const int alpha = rgba.a;
-        const int old_r = Gamma::fix(rgba.r);
-        const int old_g = Gamma::fix(rgba.g);
-        const int old_b = Gamma::fix(rgba.b);
-
-        const int pal_index = (int)Project::palette->lookup(*p);
-        const int c = Project::palette->data[pal_index];
-
-        rgba = getRgba(c);
-        *p++ = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
-
-        const int new_r = Gamma::fix(rgba.r);
-        const int new_g = Gamma::fix(rgba.g);
-        const int new_b = Gamma::fix(rgba.b);
-
-//        const int er = new_r - old_r;
-//        const int eg = new_g - old_g;
-//        const int eb = new_b - old_b;
-        const int er = old_r - new_r;
-        const int eg = old_g - new_g;
-        const int eb = old_b - new_b;
-
-        for(int j = 0; j < 3; j++)
-        {
-          for(int i = 0; i < 5; i++)
-          {
-            if(matrix[j][i] > 0)
-            {
-              rgba_type rgba = getRgba(bmp->getpixel(x - 2 + i, y + j));
-              int r = Gamma::fix(rgba.r); 
-              int g = Gamma::fix(rgba.g); 
-              int b = Gamma::fix(rgba.b); 
-
-              r += (er * matrix[j][i]) / 48;
-              g += (eg * matrix[j][i]) / 48;
-              b += (eb * matrix[j][i]) / 48;
-
-              r = std::max(std::min(r, 65535), 0);
-              g = std::max(std::min(g, 65535), 0);
-              b = std::max(std::min(b, 65535), 0);
-
-              r = Gamma::unfix(r); 
-              g = Gamma::unfix(g); 
-              b = Gamma::unfix(b); 
-
-              bmp->setpixelSolid(x - 2 + i, y + j, makeRgba(r, g, b, rgba.a), 0);
-            }  
-          }
-        }
-      }
-
-      if(updateProgress(y) < 0)
-        return;
-    }
-
-    endProgress();
-  }
-*/
-
   void applyDither()
   {
 /*
@@ -1148,7 +994,8 @@ namespace ApplyPalette
     const int div = 48;
 */
 
-    // modified atkinson
+/*
+    // atkinson
     int matrix[3][5] =
     {
       { 0, 0, 0, 1, 1 },
@@ -1158,9 +1005,9 @@ namespace ApplyPalette
 
     const int w = 5;
     const int h = 3;
-    const int div = 6;
+    const int div = 8;
+*/
 
-/*
     // floyd
     int matrix[2][3] =
     {
@@ -1171,9 +1018,9 @@ namespace ApplyPalette
     const int w = 3;
     const int h = 2;
     const int div = 16;
-*/
 
     Bitmap *bmp = Project::bmp;
+    const bool correct_gamma = gamma->value();
 
     beginProgress();
 
@@ -1198,10 +1045,20 @@ namespace ApplyPalette
         const int new_r = rgba.r;
         const int new_g = rgba.g;
         const int new_b = rgba.b;
+        int er, eg, eb;
 
-        const int er = old_r - new_r;
-        const int eg = old_g - new_g;
-        const int eb = old_b - new_b;
+        if(correct_gamma)
+        {
+          er = Gamma::fix(old_r) - Gamma::fix(new_r);
+          eg = Gamma::fix(old_g) - Gamma::fix(new_g);
+          eb = Gamma::fix(old_b) - Gamma::fix(new_b);
+        }
+        else
+        {
+          er = old_r - new_r;
+          eg = old_g - new_g;
+          eb = old_b - new_b;
+        }
 
         for(int j = 0; j < h; j++)
         {
@@ -1210,17 +1067,37 @@ namespace ApplyPalette
             if(matrix[j][i] > 0)
             {
               rgba_type rgba = getRgba(bmp->getpixel(x - w / 2 + i, y + j));
-              int r = rgba.r; 
-              int g = rgba.g; 
-              int b = rgba.b; 
+              int r, g, b;
+
+              if(correct_gamma)
+              {
+                r = Gamma::fix(rgba.r); 
+                g = Gamma::fix(rgba.g); 
+                b = Gamma::fix(rgba.b);
+              }
+              else
+              {
+                r = rgba.r; 
+                g = rgba.g; 
+                b = rgba.b; 
+              }
 
               r += (er * matrix[j][i]) / div;
               g += (eg * matrix[j][i]) / div;
               b += (eb * matrix[j][i]) / div;
 
-              r = std::max(std::min(r, 255), 0);
-              g = std::max(std::min(g, 255), 0);
-              b = std::max(std::min(b, 255), 0);
+              if(correct_gamma)
+              {
+                r = Gamma::unfix(std::max(std::min(r, 65535), 0));
+                g = Gamma::unfix(std::max(std::min(g, 65535), 0));
+                b = Gamma::unfix(std::max(std::min(b, 65535), 0));
+              }
+              else
+              {
+                r = std::max(std::min(r, 255), 0);
+                g = std::max(std::min(g, 255), 0);
+                b = std::max(std::min(b, 255), 0);
+              }
 
               bmp->setpixelSolid(x - w / 2 + i, y + j, makeRgba(r, g, b, rgba.a), 0);
             }  
@@ -1264,6 +1141,9 @@ namespace ApplyPalette
     dialog = new Fl_Double_Window(256, 0, "Apply Palette");
     dither = new Fl_Check_Button(0, y1, 16, 16, "Dithering");
     Dialog::center(dither);
+    y1 += 16 + 8;
+    gamma = new Fl_Check_Button(0, y1, 16, 16, "Gamma Correction");
+    Dialog::center(gamma);
     y1 += 16 + 8;
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
