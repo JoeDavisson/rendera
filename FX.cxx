@@ -995,7 +995,20 @@ namespace ApplyPalette
 */
 
 /*
-    // atkinson
+    // stucki
+    int matrix[3][5] =
+    {
+      { 0, 0, 0, 8, 4 },
+      { 2, 4, 8, 4, 2 },
+      { 1, 2, 4, 2, 1 }
+    };
+
+    const int w = 5;
+    const int h = 3;
+    const int div = 42;
+*/
+
+    // modified atkinson
     int matrix[3][5] =
     {
       { 0, 0, 0, 1, 1 },
@@ -1005,9 +1018,9 @@ namespace ApplyPalette
 
     const int w = 5;
     const int h = 3;
-    const int div = 8;
-*/
+    const int div = 6;
 
+/*
     // floyd
     int matrix[2][3] =
     {
@@ -1018,7 +1031,7 @@ namespace ApplyPalette
     const int w = 3;
     const int h = 2;
     const int div = 16;
-
+*/
     Bitmap *bmp = Project::bmp;
     const bool correct_gamma = gamma->value();
 
@@ -1099,7 +1112,8 @@ namespace ApplyPalette
                 b = std::max(std::min(b, 255), 0);
               }
 
-              bmp->setpixelSolid(x - w / 2 + i, y + j, makeRgba(r, g, b, rgba.a), 0);
+              bmp->setpixelSolid(x - w / 2 + i, y + j,
+                                 makeRgba(r, g, b, rgba.a), 0);
             }  
           }
         }
@@ -1134,15 +1148,28 @@ namespace ApplyPalette
     dialog->show();
   }
 
+  void dither_callback()
+  {
+    if(dither->value())
+      gamma->activate();
+    else
+      gamma->deactivate();
+
+    dialog->redraw();
+  }
+
   void init()
   {
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Apply Palette");
     dither = new Fl_Check_Button(0, y1, 16, 16, "Dithering");
+    dither->callback((Fl_Callback *)dither_callback);
     Dialog::center(dither);
     y1 += 16 + 8;
     gamma = new Fl_Check_Button(0, y1, 16, 16, "Gamma Correction");
+    gamma->value(1);
+    gamma->deactivate();
     Dialog::center(gamma);
     y1 += 16 + 8;
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
