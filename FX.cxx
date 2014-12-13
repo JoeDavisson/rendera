@@ -981,6 +981,18 @@ namespace ApplyPalette
   void applyDither()
   {
 /*
+    // floyd
+    int matrix[2][3] =
+    {
+      { 0, 0, 7 },
+      { 3, 5, 1 },
+    };
+
+    const int w = 3;
+    const int h = 2;
+    const int div = 16;
+*/
+/*
     // jarvis
     int matrix[3][5] =
     {
@@ -993,7 +1005,6 @@ namespace ApplyPalette
     const int h = 3;
     const int div = 48;
 */
-
 /*
     // stucki
     int matrix[3][5] =
@@ -1008,7 +1019,8 @@ namespace ApplyPalette
     const int div = 42;
 */
 
-    // modified atkinson
+    // modified atkinson - dividing by 7 preverves more detail but prevents
+    // color bleeding with gamma correction enabled
     int matrix[3][5] =
     {
       { 0, 0, 0, 1, 1 },
@@ -1018,20 +1030,8 @@ namespace ApplyPalette
 
     const int w = 5;
     const int h = 3;
-    const int div = 6;
+    const int div = 7;
 
-/*
-    // floyd
-    int matrix[2][3] =
-    {
-      { 0, 0, 7 },
-      { 3, 5, 1 },
-    };
-
-    const int w = 3;
-    const int h = 2;
-    const int div = 16;
-*/
     Bitmap *bmp = Project::bmp;
     const bool correct_gamma = gamma->value();
 
@@ -1168,7 +1168,6 @@ namespace ApplyPalette
     Dialog::center(dither);
     y1 += 16 + 8;
     gamma = new Fl_Check_Button(0, y1, 16, 16, "Gamma Correction");
-    gamma->value(1);
     gamma->deactivate();
     Dialog::center(gamma);
     y1 += 16 + 8;
