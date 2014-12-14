@@ -59,7 +59,7 @@ namespace
     Gui::getView()->drawMain(true);
   }
 
-  int updateProgress(int y)
+  int updateProgress(const int y)
   {
     // user cancelled operation
     if(Fl::get_key(FL_Escape))
@@ -195,7 +195,7 @@ namespace Equalize
       }
     }
 
-    double scale = 255.0 / size;
+    const double scale = 255.0 / size;
 
     beginProgress();
 
@@ -308,9 +308,9 @@ namespace ValueStretch
         int g = rgba.g;
         int b = rgba.b;
 
-        int ra = list_r[r] * scale;
-        int ga = list_g[g] * scale;
-        int ba = list_b[b] * scale;
+        const int ra = list_r[r] * scale;
+        const int ga = list_g[g] * scale;
+        const int ba = list_b[b] * scale;
 
         r = ((ra * rr) + (r * (255 - rr))) / 255;
         g = ((ga * gg) + (g * (255 - gg))) / 255;
@@ -366,7 +366,7 @@ namespace Saturate
       for(int i = 0; i < j; i++)
         list_s[j] += list_s[i];
 
-    double scale = 255.0 / size;
+    const double scale = 255.0 / size;
 
     beginProgress();
 
@@ -397,15 +397,13 @@ namespace Saturate
         }
 
         const int temp = s;
-
         s = list_s[s] * scale;
 
         if(s < temp)
           s = temp;
 
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
-        *p = Blend::trans(*p, Blend::keepLum(makeRgba(r, g, b, rgba.a), l), 255 - s);
-        p++;
+        *p++ = Blend::trans(*p, Blend::keepLum(makeRgba(r, g, b, rgba.a), l), 255 - s);
       }
 
       if(updateProgress(y) < 0)
@@ -425,15 +423,15 @@ namespace Saturate
 namespace RotateHue
 {
   Fl_Double_Window *dialog;
-  InputInt *angle;
-  Fl_Check_Button *preserve;
+  InputInt *option_angle;
+  Fl_Check_Button *option_preserve;
   Fl_Button *ok;
   Fl_Button *cancel;
 
   void apply(int amount)
   {
     const int hh = amount * 4.277;
-    const bool keep_lum = preserve->value();
+    const bool keep_lum = option_preserve->value();
 
     beginProgress();
 
@@ -447,8 +445,7 @@ namespace RotateHue
 
         rgba_type rgba = getRgba(c);
 
-        int l = getl(c);
-
+        const int l = getl(c);
         int r = rgba.r;
         int g = rgba.g;
         int b = rgba.b;
@@ -478,17 +475,18 @@ namespace RotateHue
 
   void close()
   {
-    if(angle->limitValue(-359, 359) < 0)
+    if(option_angle->limitValue(-359, 359) < 0)
       return;
-
-    int angle_val = atoi(angle->value());
-
-    if(angle_val < 0)
-      angle_val += 360;
 
     dialog->hide();
     pushUndo();
-    apply(angle_val);
+
+    int angle = atoi(option_angle->value());
+
+    if(angle < 0)
+      angle += 360;
+
+    apply(angle);
   }
 
   void quit()
@@ -507,13 +505,13 @@ namespace RotateHue
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Rotate Hue");
-    angle = new InputInt(dialog, 0, y1, 72, 24, "Angle:", 0);
+    option_angle = new InputInt(dialog, 0, y1, 72, 24, "Angle:", 0);
     y1 += 24 + 8;
-    angle->maximum_size(4);
-    angle->value("60");
-    angle->center();
-    preserve = new Fl_Check_Button(0, y1, 16, 16, "Preserve Luminance");
-    Dialog::center(preserve);
+    option_angle->maximum_size(4);
+    option_angle->value("60");
+    option_angle->center();
+    option_preserve = new Fl_Check_Button(0, y1, 16, 16, "Preserve Luminance");
+    Dialog::center(option_preserve);
     y1 += 16 + 8;
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
@@ -583,8 +581,8 @@ namespace CorrectionMatrix
         // only change hue
         int h, s, v;
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
-        int sat = s;
-        int val = v;
+        const int sat = s;
+        const int val = v;
 
         // correction matrix
         int ra = r;
@@ -621,10 +619,10 @@ namespace CorrectionMatrix
 namespace Restore
 {
   Fl_Double_Window *dialog;
-  Fl_Check_Button *normalize;
-  Fl_Check_Button *invert;
-  Fl_Check_Button *correct;
-  Fl_Check_Button *color_only;
+  Fl_Check_Button *option_normalize;
+  Fl_Check_Button *option_invert;
+  Fl_Check_Button *option_correct;
+  Fl_Check_Button *option_color_only;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -635,7 +633,7 @@ namespace Restore
     float bb = 0;
     int count = 0;
 
-    const bool keep_lum = color_only->value();
+    const bool keep_lum = option_color_only->value();
 
     // determine overall color cast
     for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -657,9 +655,9 @@ namespace Restore
     bb /= count;
 
     // adjustment factors
-    float ra = (256.0f / (256 - rr)) / std::sqrt(256.0f / (rr + 1));
-    float ga = (256.0f / (256 - gg)) / std::sqrt(256.0f / (gg + 1));
-    float ba = (256.0f / (256 - bb)) / std::sqrt(256.0f / (bb + 1));
+    const float ra = (256.0f / (256 - rr)) / std::sqrt(256.0f / (rr + 1));
+    const float ga = (256.0f / (256 - gg)) / std::sqrt(256.0f / (gg + 1));
+    const float ba = (256.0f / (256 - bb)) / std::sqrt(256.0f / (bb + 1));
 
     // begin restore
     beginProgress();
@@ -704,16 +702,16 @@ namespace Restore
     dialog->hide();
     pushUndo();
 
-    if(normalize->value())
+    if(option_normalize->value())
       Normalize::apply();
-    if(invert->value())
+    if(option_invert->value())
       Invert::apply();
 
     apply();
 
-    if(invert->value())
+    if(option_invert->value())
       Invert::apply();
-    if(correct->value())
+    if(option_correct->value())
       CorrectionMatrix::apply();
   }
 
@@ -733,19 +731,19 @@ namespace Restore
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Restore");
-    normalize = new Fl_Check_Button(0, y1, 16, 16, "Normalize First");
+    option_normalize = new Fl_Check_Button(0, y1, 16, 16, "Normalize First");
     y1 += 16 + 8;
-    normalize->value(1);
-    Dialog::center(normalize);
-    invert = new Fl_Check_Button(0, y1, 16, 16, "Invert First");
+    option_normalize->value(1);
+    Dialog::center(option_normalize);
+    option_invert = new Fl_Check_Button(0, y1, 16, 16, "Invert First");
     y1 += 16 + 8;
-    Dialog::center(invert);
-    correct = new Fl_Check_Button(8, y1, 16, 16, "Use Correction Matrix");
+    Dialog::center(option_invert);
+    option_correct = new Fl_Check_Button(8, y1, 16, 16, "Use Correction Matrix");
     y1 += 16 + 8;
-    Dialog::center(correct);
-    color_only = new Fl_Check_Button(8, y1, 16, 16, "Affect Color Only");
+    Dialog::center(option_correct);
+    option_color_only = new Fl_Check_Button(8, y1, 16, 16, "Affect Color Only");
     y1 += 16 + 8;
-    Dialog::center(color_only);
+    Dialog::center(option_color_only);
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);
@@ -757,8 +755,8 @@ namespace Restore
 namespace RemoveDust
 {
   Fl_Double_Window *dialog;
-  InputInt *amount;
-  Fl_Check_Button *invert;
+  InputInt *option_amount;
+  Fl_Check_Button *option_invert;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -813,20 +811,18 @@ namespace RemoveDust
 
   void close()
   {
-    if(amount->limitValue(1, 10) < 0)
+    if(option_amount->limitValue(1, 10) < 0)
       return;
-
-    int amount_val = atoi(amount->value());
 
     dialog->hide();
     pushUndo();
 
-    if(invert->value())
+    if(option_invert->value())
       Invert::apply();
 
-    apply(amount_val);
+    apply(atoi(option_amount->value()));
 
-    if(invert->value())
+    if(option_invert->value())
       Invert::apply();
   }
 
@@ -846,13 +842,13 @@ namespace RemoveDust
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Remove Dust");
-    amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
+    option_amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
-    amount->value("4");
-    amount->center();
-    invert = new Fl_Check_Button(0, y1, 16, 16, "Invert First");
+    option_amount->value("4");
+    option_amount->center();
+    option_invert = new Fl_Check_Button(0, y1, 16, 16, "Invert First");
     y1 += 16 + 8;
-    Dialog::center(invert);
+    Dialog::center(option_invert);
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);
@@ -873,8 +869,8 @@ namespace Desaturate
 
       for(int x = bmp->cl; x <= bmp->cr; x++)
       {
-        int c = bmp->getpixel(x, y);
-        int l = getl(c);
+        const int c = bmp->getpixel(x, y);
+        const int l = getl(c);
 
         *p++ = makeRgba(l, l, l, geta(c));
       }
@@ -929,9 +925,7 @@ namespace Colorize
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
         Blend::hsvToRgb(h, (sat * s) / (sat + s), v, &r, &g, &b);
 
-        int c2 = makeRgba(r, g, b, rgba.a);
-
-        *p++ = Blend::colorize(c1, c2, 0);
+        *p++ = Blend::colorize(c1, makeRgba(r, g, b, rgba.a), 0);
       }
 
       if(updateProgress(y) < 0)
@@ -951,8 +945,8 @@ namespace Colorize
 namespace ApplyPalette
 {
   Fl_Double_Window *dialog;
-  Fl_Check_Button *dither;
-  Fl_Check_Button *gamma;
+  Fl_Check_Button *option_dither;
+  Fl_Check_Button *option_gamma;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -1021,7 +1015,7 @@ namespace ApplyPalette
 
     // modified atkinson - dividing by 7 preverves more detail but prevents
     // color bleeding with gamma correction enabled
-    int matrix[3][5] =
+    const int matrix[3][5] =
     {
       { 0, 0, 0, 1, 1 },
       { 0, 1, 1, 1, 0 },
@@ -1033,7 +1027,7 @@ namespace ApplyPalette
     const int div = 7;
 
     Bitmap *bmp = Project::bmp;
-    const bool correct_gamma = gamma->value();
+    const bool fix_gamma = option_gamma->value();
 
     beginProgress();
 
@@ -1060,7 +1054,7 @@ namespace ApplyPalette
         const int new_b = rgba.b;
         int er, eg, eb;
 
-        if(correct_gamma)
+        if(fix_gamma)
         {
           er = Gamma::fix(old_r) - Gamma::fix(new_r);
           eg = Gamma::fix(old_g) - Gamma::fix(new_g);
@@ -1082,7 +1076,7 @@ namespace ApplyPalette
               rgba_type rgba = getRgba(bmp->getpixel(x - w / 2 + i, y + j));
               int r, g, b;
 
-              if(correct_gamma)
+              if(fix_gamma)
               {
                 r = Gamma::fix(rgba.r); 
                 g = Gamma::fix(rgba.g); 
@@ -1099,7 +1093,7 @@ namespace ApplyPalette
               g += (eg * matrix[j][i]) / div;
               b += (eb * matrix[j][i]) / div;
 
-              if(correct_gamma)
+              if(fix_gamma)
               {
                 r = Gamma::unfix(std::max(std::min(r, 65535), 0));
                 g = Gamma::unfix(std::max(std::min(g, 65535), 0));
@@ -1131,7 +1125,7 @@ namespace ApplyPalette
     dialog->hide();
     pushUndo();
 
-    if(dither->value())
+    if(option_dither->value())
       applyDither();
     else
       applyNormal();
@@ -1150,10 +1144,10 @@ namespace ApplyPalette
 
   void dither_callback()
   {
-    if(dither->value())
-      gamma->activate();
+    if(option_dither->value())
+      option_gamma->activate();
     else
-      gamma->deactivate();
+      option_gamma->deactivate();
 
     dialog->redraw();
   }
@@ -1163,13 +1157,13 @@ namespace ApplyPalette
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Apply Palette");
-    dither = new Fl_Check_Button(0, y1, 16, 16, "Dithering");
-    dither->callback((Fl_Callback *)dither_callback);
-    Dialog::center(dither);
+    option_dither = new Fl_Check_Button(0, y1, 16, 16, "Dithering");
+    option_dither->callback((Fl_Callback *)dither_callback);
+    Dialog::center(option_dither);
     y1 += 16 + 8;
-    gamma = new Fl_Check_Button(0, y1, 16, 16, "Gamma Correction");
-    gamma->deactivate();
-    Dialog::center(gamma);
+    option_gamma = new Fl_Check_Button(0, y1, 16, 16, "Gamma Correction");
+    option_gamma->deactivate();
+    Dialog::center(option_gamma);
     y1 += 16 + 8;
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
@@ -1182,11 +1176,11 @@ namespace ApplyPalette
 namespace StainedGlass
 {
   Fl_Double_Window *dialog;
-  InputInt *detail;
-  InputInt *edge;
-  Fl_Check_Button *uniform;
-  Fl_Check_Button *sat_alpha;
-  Fl_Check_Button *draw_edges;
+  InputInt *option_detail;
+  InputInt *option_edge;
+  Fl_Check_Button *option_uniform;
+  Fl_Check_Button *option_sat_alpha;
+  Fl_Check_Button *option_draw_edges;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -1225,7 +1219,7 @@ namespace StainedGlass
 
     for(int i = 0; i < size; i++)
     {
-      if(uniform->value())
+      if(option_uniform->value())
       {
         seedx[i] = FastRnd::get() % bmp->w; 
         seedy[i] = FastRnd::get() % bmp->h; 
@@ -1277,7 +1271,7 @@ namespace StainedGlass
 
         if(use != -1)
         {
-          if(sat_alpha->value())
+          if(option_sat_alpha->value())
           {
             rgba_type rgba = getRgba(color[use]);
 
@@ -1300,7 +1294,7 @@ namespace StainedGlass
     }
 
     // draw edges
-    if(draw_edges->value())
+    if(option_draw_edges->value())
     {
       Map *map = Project::map;
       map->clear(0);
@@ -1332,18 +1326,15 @@ namespace StainedGlass
 
   void close()
   {
-    if(detail->limitValue(1, 50000) < 0)
+    if(option_detail->limitValue(1, 50000) < 0)
       return;
 
-    if(edge->limitValue(1, 50) < 0)
+    if(option_edge->limitValue(1, 50) < 0)
       return;
-
-    int detail_val = atoi(detail->value());
-    int edge_val = atoi(edge->value());
 
     dialog->hide();
     pushUndo();
-    apply(detail_val, edge_val);
+    apply(atoi(option_detail->value()), atoi(option_edge->value()));
   }
 
   void quit()
@@ -1362,22 +1353,22 @@ namespace StainedGlass
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Stained Glass");
-    detail = new InputInt(dialog, 0, y1, 72, 24, "Detail:", 0);
+    option_detail = new InputInt(dialog, 0, y1, 72, 24, "Detail:", 0);
     y1 += 24 + 8;
-    detail->value("5000");
-    detail->center();
-    edge = new InputInt(dialog, 0, y1, 72, 24, "Edge Detect:", 0);
+    option_detail->value("5000");
+    option_detail->center();
+    option_edge = new InputInt(dialog, 0, y1, 72, 24, "Edge Detect:", 0);
     y1 += 24 + 8;
-    edge->value("16");
-    edge->center();
-    uniform = new Fl_Check_Button(0, y1, 16, 16, "Uniform");
-    Dialog::center(uniform);
+    option_edge->value("16");
+    option_edge->center();
+    option_uniform = new Fl_Check_Button(0, y1, 16, 16, "Uniform");
+    Dialog::center(option_uniform);
     y1 += 16 + 8;
-    sat_alpha = new Fl_Check_Button(0, y1, 16, 16, "Saturation to Alpha");
-    Dialog::center(sat_alpha);
+    option_sat_alpha = new Fl_Check_Button(0, y1, 16, 16, "Saturation to Alpha");
+    Dialog::center(option_sat_alpha);
     y1 += 16 + 8;
-    draw_edges = new Fl_Check_Button(0, y1, 16, 16, "Draw Edges");
-    Dialog::center(draw_edges);
+    option_draw_edges = new Fl_Check_Button(0, y1, 16, 16, "Draw Edges");
+    Dialog::center(option_draw_edges);
     y1 += 16 + 8;
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
@@ -1390,7 +1381,7 @@ namespace StainedGlass
 namespace Blur
 {
   Fl_Double_Window *dialog;
-  InputInt *amount;
+  InputInt *option_amount;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -1495,14 +1486,12 @@ namespace Blur
 
   void close()
   {
-    if(amount->limitValue(1, 100) < 0)
+    if(option_amount->limitValue(1, 100) < 0)
       return;
-
-    int amount_val = atoi(amount->value());
 
     dialog->hide();
     pushUndo();
-    apply(amount_val);
+    apply(atoi(option_amount->value()));
   }
 
   void quit()
@@ -1521,10 +1510,10 @@ namespace Blur
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Blur");
-    amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
+    option_amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
-    amount->value("1");
-    amount->center();
+    option_amount->value("1");
+    option_amount->center();
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);
@@ -1536,7 +1525,7 @@ namespace Blur
 namespace Sharpen
 {
   Fl_Double_Window *dialog;
-  InputInt *amount;
+  InputInt *option_amount;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -1585,14 +1574,12 @@ namespace Sharpen
 
   void close()
   {
-    if(amount->limitValue(1, 100) < 0)
+    if(option_amount->limitValue(1, 100) < 0)
       return;
-
-    int amout_val = atoi(amount->value());
 
     dialog->hide();
     pushUndo();
-    apply(amout_val);
+    apply(atoi(option_amount->value()));
   }
 
   void quit()
@@ -1611,10 +1598,10 @@ namespace Sharpen
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Sharpen");
-    amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
+    option_amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
-    amount->value("10");
-    amount->center();
+    option_amount->value("10");
+    option_amount->center();
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);
