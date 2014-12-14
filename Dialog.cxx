@@ -71,7 +71,7 @@ namespace About
 namespace JpegQuality
 {
   Fl_Double_Window *dialog;
-  InputInt *quality;
+  InputInt *option_quality;
   Fl_Button *ok;
 
   void closeCallback(Fl_Widget *, void *)
@@ -93,7 +93,7 @@ namespace JpegQuality
       }
       else if(action == ok)
       {
-        if(quality->limitValue(1, 100) == 0)
+        if(option_quality->limitValue(1, 100) == 0)
         {
           dialog->hide();
           break;
@@ -108,9 +108,9 @@ namespace JpegQuality
 
     dialog = new Fl_Double_Window(256, 0, "JPEG Quality");
     dialog->callback(closeCallback);
-    quality = new InputInt(dialog, 0, y1, 72, 24, "Quality:", 0);
-    quality->value("95");
-    quality->center();
+    option_quality = new InputInt(dialog, 0, y1, 72, 24, "Quality:", 0);
+    option_quality->value("95");
+    option_quality->center();
     y1 += 24 + 8;
     Dialog::addOkButton(dialog, &ok, &y1);
     dialog->set_modal();
@@ -121,9 +121,9 @@ namespace JpegQuality
 namespace PngOptions
 {
   Fl_Double_Window *dialog;
-  Fl_Check_Button *use_palette;
-  Fl_Check_Button *use_alpha;
-  InputInt *alpha_levels;
+  Fl_Check_Button *option_use_palette;
+  Fl_Check_Button *option_use_alpha;
+  InputInt *option_alpha_levels;
   Fl_Button *ok;
 
   void closeCallback(Fl_Widget *, void *)
@@ -145,7 +145,7 @@ namespace PngOptions
       }
       else if(action == ok)
       {
-        if(alpha_levels->limitValue(2, 16) == 0)
+        if(option_alpha_levels->limitValue(2, 16) == 0)
         {
           dialog->hide();
           break;
@@ -160,16 +160,16 @@ namespace PngOptions
 
     dialog = new Fl_Double_Window(256, 0, "PNG Options");
     dialog->callback(closeCallback);
-    alpha_levels = new InputInt(dialog, 0, y1, 72, 24, "Alpha Levels:", 0);
-    alpha_levels->value("2");
-    alpha_levels->center();
+    option_alpha_levels = new InputInt(dialog, 0, y1, 72, 24, "Alpha Levels:", 0);
+    option_alpha_levels->value("2");
+    option_alpha_levels->center();
     y1 += 24 + 8;
-    use_palette = new Fl_Check_Button(0, y1, 16, 16, "Use Current Palette");
+    option_use_palette = new Fl_Check_Button(0, y1, 16, 16, "Use Current Palette");
     y1 += 16 + 8;
-    Dialog::center(use_palette);
-    use_alpha = new Fl_Check_Button(0, y1, 16, 16, "Save Alpha Channel");
-    use_alpha->value(1);
-    Dialog::center(use_alpha);
+    Dialog::center(option_use_palette);
+    option_use_alpha = new Fl_Check_Button(0, y1, 16, 16, "Save Alpha Channel");
+    option_use_alpha->value(1);
+    Dialog::center(option_use_alpha);
     y1 += 16 + 8;
     Dialog::addOkButton(dialog, &ok, &y1);
     dialog->set_modal();
@@ -200,8 +200,8 @@ namespace Progress
 namespace NewImage
 {
   Fl_Double_Window *dialog;
-  InputInt *width;
-  InputInt *height;
+  InputInt *option_width;
+  InputInt *option_height;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -209,26 +209,24 @@ namespace NewImage
   {
     char s[8];
     snprintf(s, sizeof(s), "%d", Project::bmp->cw);
-    width->value(s);
+    option_width->value(s);
     snprintf(s, sizeof(s), "%d", Project::bmp->ch);
-    height->value(s);
+    option_height->value(s);
     dialog->show();
   }
 
   void close()
   {
-    if(width->limitValue(1, 10000) < 0)
+    if(option_width->limitValue(1, 10000) < 0)
       return;
 
-    if(height->limitValue(1, 10000) < 0)
+    if(option_height->limitValue(1, 10000) < 0)
       return;
-
-    int w = atoi(width->value());
-    int h = atoi(height->value());
 
     dialog->hide();
 
-    Project::newImage(w, h);
+    Project::newImage(atoi(option_width->value()),
+                      atoi(option_height->value()));
 
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
@@ -246,16 +244,16 @@ namespace NewImage
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "New Image");
-    width = new InputInt(dialog, 0, y1, 72, 24, "Width:", 0);
+    option_width = new InputInt(dialog, 0, y1, 72, 24, "Width:", 0);
     y1 += 24 + 8;
-    height = new InputInt(dialog, 0, y1, 72, 24, "Height:", 0);
+    option_height = new InputInt(dialog, 0, y1, 72, 24, "Height:", 0);
     y1 += 24 + 8;
-    width->center();
-    height->center();
-    width->maximum_size(8);
-    height->maximum_size(8);
-    width->value("640");
-    height->value("480");
+    option_width->center();
+    option_height->center();
+    option_width->maximum_size(8);
+    option_height->maximum_size(8);
+    option_width->value("640");
+    option_height->value("480");
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);
@@ -267,7 +265,7 @@ namespace NewImage
 namespace CreatePalette
 {
   Fl_Double_Window *dialog;
-  InputInt *colors;
+  InputInt *option_colors;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -275,19 +273,17 @@ namespace CreatePalette
   {
     char s[8];
     snprintf(s, sizeof(s), "%d", Project::palette->max);
-    colors->value(s);
+    option_colors->value(s);
     dialog->show();
   }
 
   void close()
   {
-    if(colors->limitValue(1, 256) < 0)
+    if(option_colors->limitValue(1, 256) < 0)
       return;
 
-    int c = atoi(colors->value());
-
     dialog->hide();
-    Quantize::pca(Project::bmp, c);
+    Quantize::pca(Project::bmp, atoi(option_colors->value()));
   }
 
   void quit()
@@ -300,8 +296,8 @@ namespace CreatePalette
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Create Palette");
-    colors = new InputInt(dialog, 0, 8, 72, 24, "Colors:", 0);
-    colors->center();
+    option_colors = new InputInt(dialog, 0, 8, 72, 24, "Colors:", 0);
+    option_colors->center();
     y1 += 24 + 8;
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
@@ -314,16 +310,16 @@ namespace CreatePalette
 namespace Editor
 {
   Fl_Double_Window *dialog;
-  Widget *hue;
-  Widget *sat_val;
-  Fl_Button *insert;
-  Fl_Button *remove;
-  Fl_Button *replace;
-  Fl_Button *undo;
-  Fl_Button *rgb_ramp;
-  Fl_Button *hsv_ramp;
-  Widget *palette;
-  Widget *color;
+  Widget *option_hue;
+  Widget *option_sat_val;
+  Fl_Button *option_insert;
+  Fl_Button *option_remove;
+  Fl_Button *option_replace;
+  Fl_Button *option_undo;
+  Fl_Button *option_rgb_ramp;
+  Fl_Button *option_hsv_ramp;
+  Widget *option_palette;
+  Widget *option_color;
   Fl_Button *done;
 
   int ramp_begin;
@@ -344,9 +340,9 @@ namespace Editor
     {
       begin_undo = false;
       undo_palette->copy(Project::palette.get());
-      Project::palette->draw(palette);
+      Project::palette->draw(option_palette);
       Gui::drawPalette();
-      palette->do_callback();
+      option_palette->do_callback();
     }
   }
 
@@ -360,29 +356,29 @@ namespace Editor
 
     if(redraw)
     {
-      hue->bitmap->clear(makeRgb(0, 0, 0));
-      sat_val->bitmap->clear(makeRgb(0, 0, 0));
+      option_hue->bitmap->clear(makeRgb(0, 0, 0));
+      option_sat_val->bitmap->clear(makeRgb(0, 0, 0));
 
       for(int y = 0; y < 256; y++)
       {
         for(int x = 0; x < 256; x++)
         {
           Blend::hsvToRgb(h, x, y, &r, &g, &b);
-          sat_val->bitmap->setpixelSolid(x, y, makeRgb(r, g, b), 0);
+          option_sat_val->bitmap->setpixelSolid(x, y, makeRgb(r, g, b), 0);
         }
 
         Blend::hsvToRgb(y * 6, 255, 255, &r, &g, &b);
-        hue->bitmap->hline(0, y, 23, makeRgb(r, g, b), 0);
+        option_hue->bitmap->hline(0, y, 23, makeRgb(r, g, b), 0);
       }
     }
     else
     {
       // erase previous box if not redrawing entire thing
-      sat_val->bitmap->xorRect(oldsvx - 4, oldsvy - 4, oldsvx + 4, oldsvy + 4);
+      option_sat_val->bitmap->xorRect(oldsvx - 4, oldsvy - 4, oldsvx + 4, oldsvy + 4);
     }
 
-    int x = sat_val->var & 255;
-    int y = sat_val->var / 256;
+    int x = option_sat_val->var & 255;
+    int y = option_sat_val->var / 256;
 
     if(x < 4)
       x = 4;
@@ -393,15 +389,15 @@ namespace Editor
     if(y > 251)
       y = 251;
 
-    sat_val->bitmap->xorRect(x - 4, y - 4, x + 4, y + 4);
+    option_sat_val->bitmap->xorRect(x - 4, y - 4, x + 4, y + 4);
     oldsvx = x;
     oldsvy = y;
 
-    hue->redraw();
-    sat_val->redraw();
+    option_hue->redraw();
+    option_sat_val->redraw();
 
-    color->bitmap->clear(Project::brush->color);
-    color->redraw();
+    option_color->bitmap->clear(Project::brush->color);
+    option_color->redraw();
   }
 
   void setHsvSliders()
@@ -409,10 +405,10 @@ namespace Editor
     int h, s, v;
     int color = Project::brush->color;
     Blend::rgbToHsv(getr(color), getg(color), getb(color), &h, &s, &v);
-    hue->var = h / 6;
-    sat_val->var = s + 256 * v;
-    hue->redraw();
-    sat_val->redraw();
+    option_hue->var = h / 6;
+    option_sat_val->var = s + 256 * v;
+    option_hue->redraw();
+    option_sat_val->redraw();
   }
 
   void checkPalette(Widget *widget, void *var)
@@ -449,8 +445,8 @@ namespace Editor
           b += stepb;
         }
 
-        rgb_ramp->value(0);
-        rgb_ramp->redraw();
+        option_rgb_ramp->value(0);
+        option_rgb_ramp->redraw();
       }
       else if(ramp_state == 2)
       {
@@ -480,12 +476,12 @@ namespace Editor
           v += stepv;
         }
 
-        hsv_ramp->value(0);
-        hsv_ramp->redraw();
+        option_hsv_ramp->value(0);
+        option_hsv_ramp->redraw();
       }
 
       ramp_state = 0;
-      Project::palette->draw(palette);
+      Project::palette->draw(option_palette);
       Gui::drawPalette();
 
       return;
@@ -499,9 +495,9 @@ namespace Editor
 
   void getHue()
   {
-    int h = hue->var * 6;
-    int s = sat_val->var & 255;
-    int v = sat_val->var / 256;
+    int h = option_hue->var * 6;
+    int s = option_sat_val->var & 255;
+    int v = option_sat_val->var / 256;
     int r, g, b;
 
     Blend::hsvToRgb(h, s, v, &r, &g, &b);
@@ -513,9 +509,9 @@ namespace Editor
 
   void getSatVal()
   {
-    int h = hue->var * 6;
-    int s = sat_val->var & 255;
-    int v = sat_val->var / 256;
+    int h = option_hue->var * 6;
+    int s = option_sat_val->var & 255;
+    int v = option_sat_val->var / 256;
     int r, g, b;
 
     Blend::hsvToRgb(h, s, v, &r, &g, &b);
@@ -528,38 +524,38 @@ namespace Editor
   void insertColor()
   {
     storeUndo();
-    Project::palette->insertColor(Project::brush->color, palette->var);
-    Project::palette->draw(palette);
+    Project::palette->insertColor(Project::brush->color, option_palette->var);
+    Project::palette->draw(option_palette);
     Gui::drawPalette();
-    palette->do_callback();
+    option_palette->do_callback();
   }
 
   void removeColor()
   {
     storeUndo();
-    Project::palette->deleteColor(palette->var);
-    Project::palette->draw(palette);
+    Project::palette->deleteColor(option_palette->var);
+    Project::palette->draw(option_palette);
     Gui::drawPalette();
-    if(palette->var > Project::palette->max - 1)
-      palette->var = Project::palette->max - 1;
-    palette->do_callback();
+    if(option_palette->var > Project::palette->max - 1)
+      option_palette->var = Project::palette->max - 1;
+    option_palette->do_callback();
   }
 
   void replaceColor()
   {
     storeUndo();
-    Project::palette->replaceColor(Project::brush->color, palette->var);
-    Project::palette->draw(palette);
+    Project::palette->replaceColor(Project::brush->color, option_palette->var);
+    Project::palette->draw(option_palette);
     Gui::drawPalette();
-    palette->do_callback();
+    option_palette->do_callback();
   }
 
   void rgbRamp()
   {
     if(ramp_state == 0)
     {
-      rgb_ramp->value(1);
-      rgb_ramp->redraw();
+      option_rgb_ramp->value(1);
+      option_rgb_ramp->redraw();
       ramp_state = 1;
     }
   }
@@ -568,15 +564,15 @@ namespace Editor
   {
     if(ramp_state == 0)
     {
-      hsv_ramp->value(1);
-      hsv_ramp->redraw();
+      option_hsv_ramp->value(1);
+      option_hsv_ramp->redraw();
       ramp_state = 2;
     }
   }
 
   void begin()
   {
-    Project::palette->draw(palette);
+    Project::palette->draw(option_palette);
     setHsvSliders();
     setHsv(1);
     dialog->show();
@@ -594,28 +590,28 @@ namespace Editor
   void init()
   {
     dialog = new Fl_Double_Window(608, 312, "Palette Editor");
-    hue = new Widget(dialog, 8, 8, 24, 256,
-                     "Hue", 24, 1,
-                     (Fl_Callback *)getHue);
-    sat_val = new Widget(dialog, 40, 8, 256, 256,
-                         "Saturation/Value", 1, 1,
-                         (Fl_Callback *)getSatVal);
-    insert = new Fl_Button(304, 8, 96, 24, "Insert");
-    insert->callback((Fl_Callback *)insertColor);
-    remove = new Fl_Button(304, 48, 96, 24, "Delete");
-    remove->callback((Fl_Callback *)removeColor);
-    replace = new Fl_Button(304, 88, 96, 24, "Replace");
-    replace->callback((Fl_Callback *)replaceColor);
-    undo = new Fl_Button(304, 144, 96, 24, "Undo");
-    undo->callback((Fl_Callback *)getUndo);
-    rgb_ramp = new Fl_Button(304, 200, 96, 24, "RGB Ramp");
-    rgb_ramp->callback((Fl_Callback *)rgbRamp);
-    hsv_ramp = new Fl_Button(304, 240, 96, 24, "HSV Ramp");
-    hsv_ramp->callback((Fl_Callback *)hsvRamp);
-    palette = new Widget(dialog, 408, 8, 192, 192,
-                         "Palette", 24, 24,
-                         (Fl_Callback *)checkPalette);
-    color = new Widget(dialog, 408, 208, 192, 56, "Color", 0, 0, 0);
+    option_hue = new Widget(dialog, 8, 8, 24, 256,
+                            "Hue", 24, 1,
+                            (Fl_Callback *)getHue);
+    option_sat_val = new Widget(dialog, 40, 8, 256, 256,
+                                "Saturation/Value", 1, 1,
+                                (Fl_Callback *)getSatVal);
+    option_insert = new Fl_Button(304, 8, 96, 24, "Insert");
+    option_insert->callback((Fl_Callback *)insertColor);
+    option_remove = new Fl_Button(304, 48, 96, 24, "Delete");
+    option_remove->callback((Fl_Callback *)removeColor);
+    option_replace = new Fl_Button(304, 88, 96, 24, "Replace");
+    option_replace->callback((Fl_Callback *)replaceColor);
+    option_undo = new Fl_Button(304, 144, 96, 24, "Undo");
+    option_undo->callback((Fl_Callback *)getUndo);
+    option_rgb_ramp = new Fl_Button(304, 200, 96, 24, "RGB Ramp");
+    option_rgb_ramp->callback((Fl_Callback *)rgbRamp);
+    option_hsv_ramp = new Fl_Button(304, 240, 96, 24, "HSV Ramp");
+    option_hsv_ramp->callback((Fl_Callback *)hsvRamp);
+    option_palette = new Widget(dialog, 408, 8, 192, 192,
+                                "Palette", 24, 24,
+                                (Fl_Callback *)checkPalette);
+    option_color = new Widget(dialog, 408, 208, 192, 56, "Color", 0, 0, 0);
     new Separator(dialog, 2, 272, 604, 2, "");
     done = new Fl_Button(504, 280, 96, 24, "Done");
     done->callback((Fl_Callback *)close);
@@ -690,14 +686,7 @@ void Dialog::jpegQuality()
 
 int Dialog::jpegQualityValue()
 {
-  int quality = atoi(JpegQuality::quality->value());
-
-//  if(quality < 1)
-//    quality = 1;
-//  if(quality > 100)
-//    quality = 100;
-
-  return quality;
+  return atoi(JpegQuality::option_quality->value());
 }
 
 void Dialog::pngOptions()
@@ -707,17 +696,17 @@ void Dialog::pngOptions()
 
 int Dialog::pngUsePalette()
 {
-  return PngOptions::use_palette->value();
+  return PngOptions::option_use_palette->value();
 }
 
 int Dialog::pngUseAlpha()
 {
-  return PngOptions::use_alpha->value();
+  return PngOptions::option_use_alpha->value();
 }
 
 int Dialog::pngAlphaLevels()
 {
-  return atoi(PngOptions::alpha_levels->value());
+  return atoi(PngOptions::option_alpha_levels->value());
 }
 
 void Dialog::showProgress(float step)

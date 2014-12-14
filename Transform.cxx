@@ -56,7 +56,7 @@ namespace
     Gui::getView()->drawMain(true);
   }
 
-  int updateProgress(int y)
+  int updateProgress(const int y)
   {
     // user cancelled operation
     if(Fl::get_key(FL_Escape))
@@ -79,9 +79,9 @@ namespace
 namespace Resize
 {
   Fl_Double_Window *dialog;
-  InputInt *width;
-  InputInt *height;
-  Fl_Check_Button *keep_aspect;
+  InputInt *option_width;
+  InputInt *option_height;
+  Fl_Check_Button *option_keep_aspect;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -89,45 +89,45 @@ namespace Resize
   {
     char s[8];
     snprintf(s, sizeof(s), "%d", Project::bmp->cw);
-    width->value(s);
+    option_width->value(s);
     snprintf(s, sizeof(s), "%d", Project::bmp->ch);
-    height->value(s);
+    option_height->value(s);
     dialog->show();
   }
 
   void checkWidth()
   {
-    if(keep_aspect->value())
+    if(option_keep_aspect->value())
     {
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
       float aspect = (float)hh / ww;
       char s[8];
-      int w = atoi(width->value());
+      int w = atoi(option_width->value());
       int h = w * aspect;
       snprintf(s, sizeof(s), "%d", h);
-      height->value(s);
+      option_height->value(s);
     }
   }
 
   void checkHeight()
   {
-    if(keep_aspect->value())
+    if(option_keep_aspect->value())
     {
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
       float aspect = (float)ww / hh;
       char s[8];
-      int h = atoi(height->value());
+      int h = atoi(option_height->value());
       int w = h * aspect;
       snprintf(s, sizeof(s), "%d", w);
-      width->value(s);
+      option_width->value(s);
     }
   }
 
   void checkKeepAspect()
   {
-    if(keep_aspect->value())
+    if(option_keep_aspect->value())
     {
       checkWidth();
     }
@@ -135,14 +135,14 @@ namespace Resize
 
   void close()
   {
-    if(width->limitValue(1, 10000) < 0)
+    if(option_width->limitValue(1, 10000) < 0)
       return;
 
-    if(height->limitValue(1, 10000) < 0)
+    if(option_height->limitValue(1, 10000) < 0)
       return;
 
-    int w = atoi(width->value());
-    int h = atoi(height->value());
+    int w = atoi(option_width->value());
+    int h = atoi(option_height->value());
 
     dialog->hide();
     pushUndo();
@@ -176,22 +176,22 @@ namespace Resize
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Resize Image");
-    width = new InputInt(dialog, 0, y1, 72, 24, "Width:", 0);
-    width->center();
-    width->callback((Fl_Callback *)checkWidth);
+    option_width = new InputInt(dialog, 0, y1, 72, 24, "Width:", 0);
+    option_width->center();
+    option_width->callback((Fl_Callback *)checkWidth);
     y1 += 24 + 8;
-    height = new InputInt(dialog, 0, y1, 72, 24, "Height:", 0);
-    height->center();
-    height->callback((Fl_Callback *)checkHeight);
+    option_height = new InputInt(dialog, 0, y1, 72, 24, "Height:", 0);
+    option_height->center();
+    option_height->callback((Fl_Callback *)checkHeight);
     y1 += 24 + 8;
-    width->maximum_size(8);
-    height->maximum_size(8);
-    width->value("640");
-    height->value("480");
-    keep_aspect = new Fl_Check_Button(0, y1, 16, 16, "Keep Aspect");
-    keep_aspect->callback((Fl_Callback *)checkKeepAspect);
+    option_width->maximum_size(8);
+    option_height->maximum_size(8);
+    option_width->value("640");
+    option_height->value("480");
+    option_keep_aspect = new Fl_Check_Button(0, y1, 16, 16, "Keep Aspect");
+    option_keep_aspect->callback((Fl_Callback *)checkKeepAspect);
     y1 += 16 + 8;
-    Dialog::center(keep_aspect);
+    Dialog::center(option_keep_aspect);
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);
@@ -203,10 +203,10 @@ namespace Resize
 namespace Scale
 {
   Fl_Double_Window *dialog;
-  InputInt *width;
-  InputInt *height;
-  Fl_Check_Button *keep_aspect;
-  Fl_Check_Button *wrap;
+  InputInt *option_width;
+  InputInt *option_height;
+  Fl_Check_Button *option_keep_aspect;
+  Fl_Check_Button *option_wrap;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -214,45 +214,45 @@ namespace Scale
   {
     char s[8];
     snprintf(s, sizeof(s), "%d", Project::bmp->cw);
-    width->value(s);
+    option_width->value(s);
     snprintf(s, sizeof(s), "%d", Project::bmp->ch);
-    height->value(s);
+    option_height->value(s);
     dialog->show();
   }
 
   void checkWidth()
   {
-    if(keep_aspect->value())
+    if(option_keep_aspect->value())
     {
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
       float aspect = (float)hh / ww;
       char s[8];
-      int w = atoi(width->value());
+      int w = atoi(option_width->value());
       int h = w * aspect;
       snprintf(s, sizeof(s), "%d", h);
-      height->value(s);
+      option_height->value(s);
     }
   }
 
   void checkHeight()
   {
-    if(keep_aspect->value())
+    if(option_keep_aspect->value())
     {
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
       float aspect = (float)ww / hh;
       char s[8];
-      int h = atoi(height->value());
+      int h = atoi(option_height->value());
       int w = h * aspect;
       snprintf(s, sizeof(s), "%d", w);
-      width->value(s);
+      option_width->value(s);
     }
   }
 
   void checkKeepAspect()
   {
-    if(keep_aspect->value())
+    if(option_keep_aspect->value())
     {
       checkWidth();
     }
@@ -260,14 +260,14 @@ namespace Scale
 
   void close()
   {
-    if(width->limitValue(1, 10000) < 0)
+    if(option_width->limitValue(1, 10000) < 0)
       return;
 
-    if(height->limitValue(1, 10000) < 0)
+    if(option_height->limitValue(1, 10000) < 0)
       return;
 
-    int w = atoi(width->value());
-    int h = atoi(height->value());
+    int w = atoi(option_width->value());
+    int h = atoi(option_height->value());
 
     dialog->hide();
     pushUndo();
@@ -280,7 +280,7 @@ namespace Scale
                        overscroll, overscroll,
                        bmp->cw, bmp->ch,
                        overscroll, overscroll, w, h,
-                       wrap->value()); 
+                       option_wrap->value()); 
 
     delete Project::bmp;
     Project::bmp = temp;
@@ -304,25 +304,25 @@ namespace Scale
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Scale Image");
-    width = new InputInt(dialog, 0, y1, 72, 24, "Width:", 0);
-    width->center();
-    width->callback((Fl_Callback *)checkWidth);
+    option_width = new InputInt(dialog, 0, y1, 72, 24, "Width:", 0);
+    option_width->center();
+    option_width->callback((Fl_Callback *)checkWidth);
     y1 += 24 + 8;
-    height = new InputInt(dialog, 0, y1, 72, 24, "Height:", 0);
-    height->center();
-    height->callback((Fl_Callback *)checkHeight);
+    option_height = new InputInt(dialog, 0, y1, 72, 24, "Height:", 0);
+    option_height->center();
+    option_height->callback((Fl_Callback *)checkHeight);
     y1 += 24 + 8;
-    width->maximum_size(8);
-    height->maximum_size(8);
-    width->value("640");
-    height->value("480");
-    keep_aspect = new Fl_Check_Button(0, y1, 16, 16, "Keep Aspect");
-    keep_aspect->callback((Fl_Callback *)checkKeepAspect);
+    option_width->maximum_size(8);
+    option_height->maximum_size(8);
+    option_width->value("640");
+    option_height->value("480");
+    option_keep_aspect = new Fl_Check_Button(0, y1, 16, 16, "Keep Aspect");
+    option_keep_aspect->callback((Fl_Callback *)checkKeepAspect);
     y1 += 16 + 8;
-    Dialog::center(keep_aspect);
-    wrap = new Fl_Check_Button(0, y1, 16, 16, "Wrap Edges");
+    Dialog::center(option_keep_aspect);
+    option_wrap = new Fl_Check_Button(0, y1, 16, 16, "Wrap Edges");
     y1 += 16 + 8;
-    Dialog::center(wrap);
+    Dialog::center(option_wrap);
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);
@@ -334,9 +334,9 @@ namespace Scale
 namespace Rotate
 {
   Fl_Double_Window *dialog;
-  InputFloat *angle;
-  InputFloat *scale;
-  Fl_Check_Button *tile;
+  InputFloat *option_angle;
+  InputFloat *option_scale;
+  Fl_Check_Button *option_tile;
   Fl_Button *ok;
   Fl_Button *cancel;
 
@@ -344,27 +344,27 @@ namespace Rotate
   {
     char s[8];
     snprintf(s, sizeof(s), "0");
-    angle->value(s);
+    option_angle->value(s);
     dialog->show();
   }
 
   void close()
   {
-    if(angle->limitValue(-359.99, 359.99) < 0)
+    if(option_angle->limitValue(-359.99, 359.99) < 0)
       return;
 
-    if(scale->limitValue(.1, 10.0) < 0)
+    if(option_scale->limitValue(.1, 10.0) < 0)
       return;
-
-    float angle_val = atof(angle->value());
-    float scale_val = atof(scale->value());
 
     dialog->hide();
     pushUndo();
 
     int overscroll = Project::bmp->overscroll;
-    Bitmap *temp = Project::bmp->rotate(angle_val, scale_val, overscroll,
-                                        tile->value());
+    const float angle = atof(option_angle->value());
+    const float scale = atof(option_scale->value());
+
+    Bitmap *temp = Project::bmp->rotate(angle, scale, overscroll,
+                                        option_tile->value());
 
     delete Project::bmp;
     Project::bmp = temp;
@@ -388,17 +388,17 @@ namespace Rotate
     int y1 = 8;
 
     dialog = new Fl_Double_Window(256, 0, "Rotate Image");
-    angle = new InputFloat(dialog, 0, y1, 72, 24, "Angle:", 0);
-    angle->center();
+    option_angle = new InputFloat(dialog, 0, y1, 72, 24, "Angle:", 0);
+    option_angle->center();
     y1 += 24 + 8;
-    angle->value("0");
-    scale = new InputFloat(dialog, 0, y1, 72, 24, "Scale:", 0);
-    scale->center();
+    option_angle->value("0");
+    option_scale = new InputFloat(dialog, 0, y1, 72, 24, "Scale:", 0);
+    option_scale->center();
     y1 += 24 + 8;
-    scale->value("1.0");
-    tile = new Fl_Check_Button(0, y1, 16, 16, "Tile");
+    option_scale->value("1.0");
+    option_tile = new Fl_Check_Button(0, y1, 16, 16, "Tile");
     y1 += 16 + 8;
-    Dialog::center(tile);
+    Dialog::center(option_tile);
     Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
     ok->callback((Fl_Callback *)close);
     cancel->callback((Fl_Callback *)quit);
