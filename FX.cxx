@@ -422,16 +422,19 @@ namespace Saturate
 
 namespace RotateHue
 {
-  Fl_Double_Window *dialog;
-  InputInt *option_angle;
-  Fl_Check_Button *option_preserve;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    Fl_Double_Window *dialog;
+    InputInt *angle;
+    Fl_Check_Button *preserve;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
 
   void apply(int amount)
   {
     const int hh = amount * 4.277;
-    const bool keep_lum = option_preserve->value();
+    const bool keep_lum = Items::preserve->value();
 
     beginProgress();
 
@@ -475,13 +478,13 @@ namespace RotateHue
 
   void close()
   {
-    if(option_angle->limitValue(-359, 359) < 0)
+    if(Items::angle->limitValue(-359, 359) < 0)
       return;
 
-    dialog->hide();
+    Items::dialog->hide();
     pushUndo();
 
-    int angle = atoi(option_angle->value());
+    int angle = atoi(Items::angle->value());
 
     if(angle < 0)
       angle += 360;
@@ -492,32 +495,32 @@ namespace RotateHue
   void quit()
   {
     endProgress();
-    dialog->hide();
+    Items::dialog->hide();
   }
 
   void begin()
   {
-    dialog->show();
+    Items::dialog->show();
   }
 
   void init()
   {
     int y1 = 8;
 
-    dialog = new Fl_Double_Window(256, 0, "Rotate Hue");
-    option_angle = new InputInt(dialog, 0, y1, 72, 24, "Angle:", 0);
+    Items::dialog = new Fl_Double_Window(256, 0, "Rotate Hue");
+    Items::angle = new InputInt(Items::dialog, 0, y1, 72, 24, "Angle:", 0);
     y1 += 24 + 8;
-    option_angle->maximum_size(4);
-    option_angle->value("60");
-    option_angle->center();
-    option_preserve = new Fl_Check_Button(0, y1, 16, 16, "Preserve Luminance");
-    Dialog::center(option_preserve);
+    Items::angle->maximum_size(4);
+    Items::angle->value("60");
+    Items::angle->center();
+    Items::preserve = new Fl_Check_Button(0, y1, 16, 16, "Preserve Luminance");
+    Dialog::center(Items::preserve);
     y1 += 16 + 8;
-    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
-    ok->callback((Fl_Callback *)close);
-    cancel->callback((Fl_Callback *)quit);
-    dialog->set_modal();
-    dialog->end();
+    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
   }
 }
 
@@ -618,13 +621,16 @@ namespace CorrectionMatrix
 // to a faded photograph.
 namespace Restore
 {
-  Fl_Double_Window *dialog;
-  Fl_Check_Button *option_normalize;
-  Fl_Check_Button *option_invert;
-  Fl_Check_Button *option_correct;
-  Fl_Check_Button *option_color_only;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    Fl_Double_Window *dialog;
+    Fl_Check_Button *normalize;
+    Fl_Check_Button *invert;
+    Fl_Check_Button *correct;
+    Fl_Check_Button *color_only;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
 
   void apply()
   {
@@ -633,7 +639,7 @@ namespace Restore
     float bb = 0;
     int count = 0;
 
-    const bool keep_lum = option_color_only->value();
+    const bool keep_lum = Items::color_only->value();
 
     // determine overall color cast
     for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -699,66 +705,69 @@ namespace Restore
 
   void close()
   {
-    dialog->hide();
+    Items::dialog->hide();
     pushUndo();
 
-    if(option_normalize->value())
+    if(Items::normalize->value())
       Normalize::apply();
-    if(option_invert->value())
+    if(Items::invert->value())
       Invert::apply();
 
     apply();
 
-    if(option_invert->value())
+    if(Items::invert->value())
       Invert::apply();
-    if(option_correct->value())
+    if(Items::correct->value())
       CorrectionMatrix::apply();
   }
 
   void quit()
   {
     endProgress();
-    dialog->hide();
+    Items::dialog->hide();
   }
 
   void begin()
   {
-    dialog->show();
+    Items::dialog->show();
   }
 
   void init()
   {
     int y1 = 8;
 
-    dialog = new Fl_Double_Window(256, 0, "Restore");
-    option_normalize = new Fl_Check_Button(0, y1, 16, 16, "Normalize First");
+    Items::dialog = new Fl_Double_Window(256, 0, "Restore");
+    Items::normalize = new Fl_Check_Button(0, y1, 16, 16, "Normalize First");
     y1 += 16 + 8;
-    option_normalize->value(1);
-    Dialog::center(option_normalize);
-    option_invert = new Fl_Check_Button(0, y1, 16, 16, "Invert First");
+    Items::normalize->value(1);
+    Dialog::center(Items::normalize);
+    Items::invert = new Fl_Check_Button(0, y1, 16, 16, "Invert First");
     y1 += 16 + 8;
-    Dialog::center(option_invert);
-    option_correct = new Fl_Check_Button(8, y1, 16, 16, "Use Correction Matrix");
+    Dialog::center(Items::invert);
+    Items::correct = new Fl_Check_Button(8, y1, 16, 16, "Use Correction Matrix");
     y1 += 16 + 8;
-    Dialog::center(option_correct);
-    option_color_only = new Fl_Check_Button(8, y1, 16, 16, "Affect Color Only");
+    Dialog::center(Items::correct);
+    Items::color_only = new Fl_Check_Button(8, y1, 16, 16, "Affect Color Only");
     y1 += 16 + 8;
-    Dialog::center(option_color_only);
-    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
-    ok->callback((Fl_Callback *)close);
-    cancel->callback((Fl_Callback *)quit);
-    dialog->set_modal();
-    dialog->end();
+    Dialog::center(Items::color_only);
+    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
   }
 }
 
 namespace RemoveDust
 {
-  Fl_Double_Window *dialog;
-  InputInt *option_amount;
-  Fl_Check_Button *option_invert;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    Fl_Double_Window *dialog;
+    InputInt *amount;
+    Fl_Check_Button *invert;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
 
   void apply(int amount)
   {
@@ -811,49 +820,49 @@ namespace RemoveDust
 
   void close()
   {
-    if(option_amount->limitValue(1, 10) < 0)
+    if(Items::amount->limitValue(1, 10) < 0)
       return;
 
-    dialog->hide();
+    Items::dialog->hide();
     pushUndo();
 
-    if(option_invert->value())
+    if(Items::invert->value())
       Invert::apply();
 
-    apply(atoi(option_amount->value()));
+    apply(atoi(Items::amount->value()));
 
-    if(option_invert->value())
+    if(Items::invert->value())
       Invert::apply();
   }
 
   void quit()
   {
     endProgress();
-    dialog->hide();
+    Items::dialog->hide();
   }
 
   void begin()
   {
-    dialog->show();
+    Items::dialog->show();
   }
 
   void init()
   {
     int y1 = 8;
 
-    dialog = new Fl_Double_Window(256, 0, "Remove Dust");
-    option_amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
+    Items::dialog = new Fl_Double_Window(256, 0, "Remove Dust");
+    Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
-    option_amount->value("4");
-    option_amount->center();
-    option_invert = new Fl_Check_Button(0, y1, 16, 16, "Invert First");
+    Items::amount->value("4");
+    Items::amount->center();
+    Items::invert = new Fl_Check_Button(0, y1, 16, 16, "Invert First");
     y1 += 16 + 8;
-    Dialog::center(option_invert);
-    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
-    ok->callback((Fl_Callback *)close);
-    cancel->callback((Fl_Callback *)quit);
-    dialog->set_modal();
-    dialog->end();
+    Dialog::center(Items::invert);
+    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
   }
 }
 
@@ -944,11 +953,14 @@ namespace Colorize
 
 namespace ApplyPalette
 {
-  Fl_Double_Window *dialog;
-  Fl_Check_Button *option_dither;
-  Fl_Check_Button *option_gamma;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    Fl_Double_Window *dialog;
+    Fl_Check_Button *dither;
+    Fl_Check_Button *gamma;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
 
   void applyNormal()
   {
@@ -1027,7 +1039,7 @@ namespace ApplyPalette
     const int div = 7;
 
     Bitmap *bmp = Project::bmp;
-    const bool fix_gamma = option_gamma->value();
+    const bool fix_gamma = Items::gamma->value();
 
     beginProgress();
 
@@ -1122,10 +1134,10 @@ namespace ApplyPalette
 
   void close()
   {
-    dialog->hide();
+    Items::dialog->hide();
     pushUndo();
 
-    if(option_dither->value())
+    if(Items::dither->value())
       applyDither();
     else
       applyNormal();
@@ -1134,55 +1146,58 @@ namespace ApplyPalette
   void quit()
   {
     endProgress();
-    dialog->hide();
+    Items::dialog->hide();
   }
 
   void begin()
   {
-    dialog->show();
+    Items::dialog->show();
   }
 
   void dither_callback()
   {
-    if(option_dither->value())
-      option_gamma->activate();
+    if(Items::dither->value())
+      Items::gamma->activate();
     else
-      option_gamma->deactivate();
+      Items::gamma->deactivate();
 
-    dialog->redraw();
+    Items::dialog->redraw();
   }
 
   void init()
   {
     int y1 = 8;
 
-    dialog = new Fl_Double_Window(256, 0, "Apply Palette");
-    option_dither = new Fl_Check_Button(0, y1, 16, 16, "Dithering");
-    option_dither->callback((Fl_Callback *)dither_callback);
-    Dialog::center(option_dither);
+    Items::dialog = new Fl_Double_Window(256, 0, "Apply Palette");
+    Items::dither = new Fl_Check_Button(0, y1, 16, 16, "Dithering");
+    Items::dither->callback((Fl_Callback *)dither_callback);
+    Dialog::center(Items::dither);
     y1 += 16 + 8;
-    option_gamma = new Fl_Check_Button(0, y1, 16, 16, "Gamma Correction");
-    option_gamma->deactivate();
-    Dialog::center(option_gamma);
+    Items::gamma = new Fl_Check_Button(0, y1, 16, 16, "Gamma Correction");
+    Items::gamma->deactivate();
+    Dialog::center(Items::gamma);
     y1 += 16 + 8;
-    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
-    ok->callback((Fl_Callback *)close);
-    cancel->callback((Fl_Callback *)quit);
-    dialog->set_modal();
-    dialog->end();
+    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
   }
 }
 
 namespace StainedGlass
 {
-  Fl_Double_Window *dialog;
-  InputInt *option_detail;
-  InputInt *option_edge;
-  Fl_Check_Button *option_uniform;
-  Fl_Check_Button *option_sat_alpha;
-  Fl_Check_Button *option_draw_edges;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    Fl_Double_Window *dialog;
+    InputInt *detail;
+    InputInt *edge;
+    Fl_Check_Button *uniform;
+    Fl_Check_Button *sat_alpha;
+    Fl_Check_Button *draw_edges;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
 
   inline int isEdge(Bitmap *b, const int &x, const int &y,
                            const int &div)
@@ -1219,7 +1234,7 @@ namespace StainedGlass
 
     for(int i = 0; i < size; i++)
     {
-      if(option_uniform->value())
+      if(Items::uniform->value())
       {
         seedx[i] = FastRnd::get() % bmp->w; 
         seedy[i] = FastRnd::get() % bmp->h; 
@@ -1271,7 +1286,7 @@ namespace StainedGlass
 
         if(use != -1)
         {
-          if(option_sat_alpha->value())
+          if(Items::sat_alpha->value())
           {
             rgba_type rgba = getRgba(color[use]);
 
@@ -1294,7 +1309,7 @@ namespace StainedGlass
     }
 
     // draw edges
-    if(option_draw_edges->value())
+    if(Items::draw_edges->value())
     {
       Map *map = Project::map;
       map->clear(0);
@@ -1326,64 +1341,67 @@ namespace StainedGlass
 
   void close()
   {
-    if(option_detail->limitValue(1, 50000) < 0)
+    if(Items::detail->limitValue(1, 50000) < 0)
       return;
 
-    if(option_edge->limitValue(1, 50) < 0)
+    if(Items::edge->limitValue(1, 50) < 0)
       return;
 
-    dialog->hide();
+    Items::dialog->hide();
     pushUndo();
-    apply(atoi(option_detail->value()), atoi(option_edge->value()));
+    apply(atoi(Items::detail->value()), atoi(Items::edge->value()));
   }
 
   void quit()
   {
     endProgress();
-    dialog->hide();
+    Items::dialog->hide();
   }
 
   void begin()
   {
-    dialog->show();
+    Items::dialog->show();
   }
 
   void init()
   {
     int y1 = 8;
 
-    dialog = new Fl_Double_Window(256, 0, "Stained Glass");
-    option_detail = new InputInt(dialog, 0, y1, 72, 24, "Detail:", 0);
+    Items::dialog = new Fl_Double_Window(256, 0, "Stained Glass");
+    Items::detail = new InputInt(Items::dialog, 0, y1, 72, 24, "Detail:", 0);
     y1 += 24 + 8;
-    option_detail->value("5000");
-    option_detail->center();
-    option_edge = new InputInt(dialog, 0, y1, 72, 24, "Edge Detect:", 0);
+    Items::detail->value("5000");
+    Items::detail->center();
+    Items::edge = new InputInt(Items::dialog, 0, y1, 72, 24, "Edge Detect:", 0);
     y1 += 24 + 8;
-    option_edge->value("16");
-    option_edge->center();
-    option_uniform = new Fl_Check_Button(0, y1, 16, 16, "Uniform");
-    Dialog::center(option_uniform);
+    Items::edge->value("16");
+    Items::edge->center();
+    Items::uniform = new Fl_Check_Button(0, y1, 16, 16, "Uniform");
+    Dialog::center(Items::uniform);
     y1 += 16 + 8;
-    option_sat_alpha = new Fl_Check_Button(0, y1, 16, 16, "Saturation to Alpha");
-    Dialog::center(option_sat_alpha);
+    Items::sat_alpha = new Fl_Check_Button(0, y1, 16, 16, "Saturation to Alpha");
+    Dialog::center(Items::sat_alpha);
     y1 += 16 + 8;
-    option_draw_edges = new Fl_Check_Button(0, y1, 16, 16, "Draw Edges");
-    Dialog::center(option_draw_edges);
+    Items::draw_edges = new Fl_Check_Button(0, y1, 16, 16, "Draw Edges");
+    Dialog::center(Items::draw_edges);
     y1 += 16 + 8;
-    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
-    ok->callback((Fl_Callback *)close);
-    cancel->callback((Fl_Callback *)quit);
-    dialog->set_modal();
-    dialog->end();
+    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
   }
 }
 
 namespace Blur
 {
-  Fl_Double_Window *dialog;
-  InputInt *option_amount;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    Fl_Double_Window *dialog;
+    InputInt *amount;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
 
   void apply(int size)
   {
@@ -1486,48 +1504,51 @@ namespace Blur
 
   void close()
   {
-    if(option_amount->limitValue(1, 100) < 0)
+    if(Items::amount->limitValue(1, 100) < 0)
       return;
 
-    dialog->hide();
+    Items::dialog->hide();
     pushUndo();
-    apply(atoi(option_amount->value()));
+    apply(atoi(Items::amount->value()));
   }
 
   void quit()
   {
     endProgress();
-    dialog->hide();
+    Items::dialog->hide();
   }
 
   void begin()
   {
-    dialog->show();
+    Items::dialog->show();
   }
 
   void init()
   {
     int y1 = 8;
 
-    dialog = new Fl_Double_Window(256, 0, "Blur");
-    option_amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
+    Items::dialog = new Fl_Double_Window(256, 0, "Blur");
+    Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
-    option_amount->value("1");
-    option_amount->center();
-    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
-    ok->callback((Fl_Callback *)close);
-    cancel->callback((Fl_Callback *)quit);
-    dialog->set_modal();
-    dialog->end();
+    Items::amount->value("1");
+    Items::amount->center();
+    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
   }
 }
 
 namespace Sharpen
 {
-  Fl_Double_Window *dialog;
-  InputInt *option_amount;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    Fl_Double_Window *dialog;
+    InputInt *amount;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+}
 
   const int matrix[3][3] =
   {
@@ -1574,39 +1595,39 @@ namespace Sharpen
 
   void close()
   {
-    if(option_amount->limitValue(1, 100) < 0)
+    if(Items::amount->limitValue(1, 100) < 0)
       return;
 
-    dialog->hide();
+    Items::dialog->hide();
     pushUndo();
-    apply(atoi(option_amount->value()));
+    apply(atoi(Items::amount->value()));
   }
 
   void quit()
   {
     endProgress();
-    dialog->hide();
+    Items::dialog->hide();
   }
 
   void begin()
   {
-    dialog->show();
+    Items::dialog->show();
   }
 
   void init()
   {
     int y1 = 8;
 
-    dialog = new Fl_Double_Window(256, 0, "Sharpen");
-    option_amount = new InputInt(dialog, 0, y1, 72, 24, "Amount:", 0);
+    Items::dialog = new Fl_Double_Window(256, 0, "Sharpen");
+    Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
-    option_amount->value("10");
-    option_amount->center();
-    Dialog::addOkCancelButtons(dialog, &ok, &cancel, &y1);
-    ok->callback((Fl_Callback *)close);
-    cancel->callback((Fl_Callback *)quit);
-    dialog->set_modal();
-    dialog->end();
+    Items::amount->value("10");
+    Items::amount->center();
+    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
   }
 }
 
