@@ -58,7 +58,6 @@ public:
   void setClip(int, int, int, int);
   void blit(Bitmap *, int, int, int, int, int, int);
   void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, bool);
-  void integerStretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, bool);
   void scaleBilinear(Bitmap *, int, int, int, int, int, int, int, int, bool);
   void mirror();
   void flip();

@@ -413,10 +413,6 @@ void View::drawMain(bool refresh)
   Project::bmp->pointStretch(backbuf, ox, oy, sw, sh,
                              0, 0, dw, dh, overx, overy, bgr_order);
 
-//  for smooth display
-//  Project::bmp->integerStretch(backbuf, ox, oy, sw, sh,
-//                               0, 0, dw, dh, overx, overy, bgr_order);
-
   if(grid)
     drawGrid();
 
