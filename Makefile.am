@@ -118,10 +118,10 @@ paths.h : Makefile
 	echo '#endif//ndef PATHS_H' >>$@
 
 
-dist_pkgdata_DATA_COMMON =                 \
+nobase_dist_pkgdata_DATA =          \
   data/common/icon48x48.png 
 
-dist_pkgdata_DATA_THEME_DARK =      \
+nobase_dist_pkgdata_DATA +=         \
   data/theme/dark/clone.png         \
   data/theme/dark/constrain.png     \
   data/theme/dark/grid.png          \
@@ -141,7 +141,7 @@ dist_pkgdata_DATA_THEME_DARK =      \
   data/theme/dark/zoom_one.png      \
   data/theme/dark/zoom_out.png
 
-dist_pkgdata_DATA_THEME_LIGHT =     \
+nobase_dist_pkgdata_DATA +=         \
   data/theme/light/clone.png        \
   data/theme/light/constrain.png    \
   data/theme/light/grid.png         \
