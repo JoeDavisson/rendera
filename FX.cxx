@@ -405,7 +405,8 @@ namespace Saturate
           s = temp;
 
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
-        *p++ = Blend::trans(*p, Blend::keepLum(makeRgba(r, g, b, rgba.a), l), 255 - s);
+        *p = Blend::trans(*p, Blend::keepLum(makeRgba(r, g, b, rgba.a), l), 255 - s);
+        p++;
       }
 
       if(updateProgress(y) < 0)
