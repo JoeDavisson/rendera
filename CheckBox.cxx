@@ -18,28 +18,35 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef DIALOG_H
-#define DIALOG_H
+#include "CheckBox.H"
 
-#include "Rendera.H"
-
-namespace Dialog
+CheckBox::CheckBox(Fl_Group *g, int x, int y, int w, int h,
+               const char *label, Fl_Callback *cb)
+: Fl_Check_Button(x, y, w, h, label)
 {
-  void init();
-  void about();
-  void jpegQuality();
-  int jpegQualityValue();
-  void pngOptions();
-  int pngUsePalette();
-  int pngUseAlpha();
-  int pngAlphaLevels();
-  void showProgress(float);
-  void updateProgress();
-  void hideProgress();
-  void newImage();
-  void createPalette();
-  void editor();
+  group = g;
+
+  if(cb)
+    callback(cb, &var);
+
+//  labelsize(12);
+//  textsize(12);
+//  label(label);
+  resize(group->x() + x, group->y() + y, w, h);
 }
 
-#endif
+CheckBox::~CheckBox()
+{
+}
+
+void CheckBox::center()
+{
+  int ww = 0, hh = 0;
+
+  measure_label(ww, hh);
+
+  resize((parent()->w() / 2) - ((ww + w()) / 2), y(), w(), h());
+
+  redraw();
+}
 

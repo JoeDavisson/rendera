@@ -24,7 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Brush.H"
+#include "CheckBox.H"
 #include "Dialog.H"
+#include "DialogBox.H"
 #include "FastRnd.H"
 #include "FX.H"
 #include "Gamma.H"
@@ -424,9 +426,9 @@ namespace RotateHue
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     InputInt *angle;
-    Fl_Check_Button *preserve;
+    CheckBox *preserve;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -507,16 +509,16 @@ namespace RotateHue
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "Rotate Hue");
+    Items::dialog = new DialogBox(256, 0, "Rotate Hue");
     Items::angle = new InputInt(Items::dialog, 0, y1, 72, 24, "Angle:", 0);
     y1 += 24 + 8;
     Items::angle->maximum_size(4);
     Items::angle->value("60");
     Items::angle->center();
-    Items::preserve = new Fl_Check_Button(0, y1, 16, 16, "Preserve Luminance");
-    Dialog::center(Items::preserve);
+    Items::preserve = new CheckBox(Items::dialog, 0, y1, 16, 16, "Preserve Luminance", 0);
+    Items::preserve->center();
     y1 += 16 + 8;
-    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();
@@ -623,11 +625,11 @@ namespace Restore
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
-    Fl_Check_Button *normalize;
-    Fl_Check_Button *invert;
-    Fl_Check_Button *correct;
-    Fl_Check_Button *color_only;
+    DialogBox *dialog;
+    CheckBox *normalize;
+    CheckBox *invert;
+    CheckBox *correct;
+    CheckBox *color_only;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -736,21 +738,21 @@ namespace Restore
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "Restore");
-    Items::normalize = new Fl_Check_Button(0, y1, 16, 16, "Normalize First");
+    Items::dialog = new DialogBox(256, 0, "Restore");
+    Items::normalize = new CheckBox(Items::dialog, 0, y1, 16, 16, "Normalize First", 0);
     y1 += 16 + 8;
     Items::normalize->value(1);
-    Dialog::center(Items::normalize);
-    Items::invert = new Fl_Check_Button(0, y1, 16, 16, "Invert First");
+    Items::normalize->center();
+    Items::invert = new CheckBox(Items::dialog, 0, y1, 16, 16, "Invert First", 0);
     y1 += 16 + 8;
-    Dialog::center(Items::invert);
-    Items::correct = new Fl_Check_Button(8, y1, 16, 16, "Use Correction Matrix");
+    Items::invert->center();
+    Items::correct = new CheckBox(Items::dialog, 8, y1, 16, 16, "Use Correction Matrix", 0);
     y1 += 16 + 8;
-    Dialog::center(Items::correct);
-    Items::color_only = new Fl_Check_Button(8, y1, 16, 16, "Affect Color Only");
+    Items::correct->center();
+    Items::color_only = new CheckBox(Items::dialog, 8, y1, 16, 16, "Affect Color Only", 0);
     y1 += 16 + 8;
-    Dialog::center(Items::color_only);
-    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::color_only->center();
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();
@@ -762,9 +764,9 @@ namespace RemoveDust
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     InputInt *amount;
-    Fl_Check_Button *invert;
+    CheckBox *invert;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -850,15 +852,15 @@ namespace RemoveDust
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "Remove Dust");
+    Items::dialog = new DialogBox(256, 0, "Remove Dust");
     Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
     Items::amount->value("4");
     Items::amount->center();
-    Items::invert = new Fl_Check_Button(0, y1, 16, 16, "Invert First");
+    Items::invert = new CheckBox(Items::dialog, 0, y1, 16, 16, "Invert First", 0);
     y1 += 16 + 8;
-    Dialog::center(Items::invert);
-    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::invert->center();
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();
@@ -955,9 +957,9 @@ namespace ApplyPalette
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
-    Fl_Check_Button *dither;
-    Fl_Check_Button *gamma;
+    DialogBox *dialog;
+    CheckBox *dither;
+    CheckBox *gamma;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -1168,16 +1170,16 @@ namespace ApplyPalette
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "Apply Palette");
-    Items::dither = new Fl_Check_Button(0, y1, 16, 16, "Dithering");
+    Items::dialog = new DialogBox(256, 0, "Apply Palette");
+    Items::dither = new CheckBox(Items::dialog, 0, y1, 16, 16, "Dithering", 0);
     Items::dither->callback((Fl_Callback *)dither_callback);
-    Dialog::center(Items::dither);
+    Items::dither->center();
     y1 += 16 + 8;
-    Items::gamma = new Fl_Check_Button(0, y1, 16, 16, "Gamma Correction");
+    Items::gamma = new CheckBox(Items::dialog, 0, y1, 16, 16, "Gamma Correction", 0);
     Items::gamma->deactivate();
-    Dialog::center(Items::gamma);
+    Items::gamma->center();
     y1 += 16 + 8;
-    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();
@@ -1189,12 +1191,12 @@ namespace StainedGlass
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     InputInt *detail;
     InputInt *edge;
-    Fl_Check_Button *uniform;
-    Fl_Check_Button *sat_alpha;
-    Fl_Check_Button *draw_edges;
+    CheckBox *uniform;
+    CheckBox *sat_alpha;
+    CheckBox *draw_edges;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -1367,7 +1369,7 @@ namespace StainedGlass
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "Stained Glass");
+    Items::dialog = new DialogBox(256, 0, "Stained Glass");
     Items::detail = new InputInt(Items::dialog, 0, y1, 72, 24, "Detail:", 0);
     y1 += 24 + 8;
     Items::detail->value("5000");
@@ -1376,16 +1378,16 @@ namespace StainedGlass
     y1 += 24 + 8;
     Items::edge->value("16");
     Items::edge->center();
-    Items::uniform = new Fl_Check_Button(0, y1, 16, 16, "Uniform");
-    Dialog::center(Items::uniform);
+    Items::uniform = new CheckBox(Items::dialog, 0, y1, 16, 16, "Uniform", 0);
+    Items::uniform->center();
     y1 += 16 + 8;
-    Items::sat_alpha = new Fl_Check_Button(0, y1, 16, 16, "Saturation to Alpha");
-    Dialog::center(Items::sat_alpha);
+    Items::sat_alpha = new CheckBox(Items::dialog, 0, y1, 16, 16, "Saturation to Alpha", 0);
+    Items::sat_alpha->center();
     y1 += 16 + 8;
-    Items::draw_edges = new Fl_Check_Button(0, y1, 16, 16, "Draw Edges");
-    Dialog::center(Items::draw_edges);
+    Items::draw_edges = new CheckBox(Items::dialog, 0, y1, 16, 16, "Draw Edges", 0);
+    Items::draw_edges->center();
     y1 += 16 + 8;
-    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();
@@ -1397,7 +1399,7 @@ namespace Blur
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     InputInt *amount;
     Fl_Button *ok;
     Fl_Button *cancel;
@@ -1527,12 +1529,12 @@ namespace Blur
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "Blur");
+    Items::dialog = new DialogBox(256, 0, "Blur");
     Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
     Items::amount->value("1");
     Items::amount->center();
-    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();
@@ -1544,7 +1546,7 @@ namespace Sharpen
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     InputInt *amount;
     Fl_Button *ok;
     Fl_Button *cancel;
@@ -1618,12 +1620,12 @@ namespace Sharpen
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "Sharpen");
+    Items::dialog = new DialogBox(256, 0, "Sharpen");
     Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
     Items::amount->value("10");
     Items::amount->center();
-    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();

@@ -18,28 +18,19 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef DIALOGBOX_H
+#define DIALOGBOX_H
 
 #include "Rendera.H"
 
-namespace Dialog
+class DialogBox : public Fl_Double_Window
 {
-  void init();
-  void about();
-  void jpegQuality();
-  int jpegQualityValue();
-  void pngOptions();
-  int pngUsePalette();
-  int pngUseAlpha();
-  int pngAlphaLevels();
-  void showProgress(float);
-  void updateProgress();
-  void hideProgress();
-  void newImage();
-  void createPalette();
-  void editor();
-}
+public:
+  DialogBox(int, int, const char *);
+  ~DialogBox();
+  void addOkButton(Fl_Button **, int *);
+  void addOkCancelButtons(Fl_Button **, Fl_Button **, int *);
+};
 
 #endif
 

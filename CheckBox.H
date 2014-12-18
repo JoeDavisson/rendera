@@ -18,28 +18,22 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef CHECKBOX_H
+#define CHECKBOX_H
 
 #include "Rendera.H"
 
-namespace Dialog
+class CheckBox : public Fl_Check_Button
 {
-  void init();
-  void about();
-  void jpegQuality();
-  int jpegQualityValue();
-  void pngOptions();
-  int pngUsePalette();
-  int pngUseAlpha();
-  int pngAlphaLevels();
-  void showProgress(float);
-  void updateProgress();
-  void hideProgress();
-  void newImage();
-  void createPalette();
-  void editor();
-}
+public:
+  CheckBox(Fl_Group *, int, int, int, int,
+         const char *, Fl_Callback *);
+  ~CheckBox();
+  void center();
+
+  int var;
+  Fl_Group *group;
+};
 
 #endif
 

@@ -17,11 +17,15 @@ rendera_SOURCES =     \
   Brush.cxx           \
   Button.H            \
   Button.cxx          \
+  CheckBox.H          \
+  CheckBox.cxx        \
   Common.H            \
   Crop.H              \
   Crop.cxx            \
   Dialog.H            \
   Dialog.cxx          \
+  DialogBox.H         \
+  DialogBox.cxx       \
   FastRnd.H           \
   FX.H                \
   FX.cxx              \

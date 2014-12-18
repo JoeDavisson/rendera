@@ -21,7 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cmath>
 
 #include "Bitmap.H"
+#include "CheckBox.H"
 #include "Dialog.H"
+#include "DialogBox.H"
 #include "Gui.H"
 #include "InputFloat.H"
 #include "InputInt.H"
@@ -80,10 +82,10 @@ namespace Resize
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     InputInt *width;
     InputInt *height;
-    Fl_Check_Button *keep_aspect;
+    CheckBox *keep_aspect;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -178,7 +180,7 @@ namespace Resize
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "Resize Image");
+    Items::dialog = new DialogBox(256, 0, "Resize Image");
     Items::width = new InputInt(Items::dialog, 0, y1, 72, 24, "Width:", 0);
     Items::width->center();
     Items::width->callback((Fl_Callback *)checkWidth);
@@ -191,11 +193,11 @@ namespace Resize
     Items::height->maximum_size(8);
     Items::width->value("640");
     Items::height->value("480");
-    Items::keep_aspect = new Fl_Check_Button(0, y1, 16, 16, "Keep Aspect");
+    Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
     Items::keep_aspect->callback((Fl_Callback *)checkKeepAspect);
     y1 += 16 + 8;
-    Dialog::center(Items::keep_aspect);
-    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::keep_aspect->value();
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();
@@ -207,11 +209,11 @@ namespace Scale
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     InputInt *width;
     InputInt *height;
-    Fl_Check_Button *keep_aspect;
-    Fl_Check_Button *wrap;
+    CheckBox *keep_aspect;
+    CheckBox *wrap;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -309,7 +311,7 @@ namespace Scale
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "Scale Image");
+    Items::dialog = new DialogBox(256, 0, "Scale Image");
     Items::width = new InputInt(Items::dialog, 0, y1, 72, 24, "Width:", 0);
     Items::width->center();
     Items::width->callback((Fl_Callback *)checkWidth);
@@ -322,14 +324,14 @@ namespace Scale
     Items::height->maximum_size(8);
     Items::width->value("640");
     Items::height->value("480");
-    Items::keep_aspect = new Fl_Check_Button(0, y1, 16, 16, "Keep Aspect");
+    Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
     Items::keep_aspect->callback((Fl_Callback *)checkKeepAspect);
     y1 += 16 + 8;
-    Dialog::center(Items::keep_aspect);
-    Items::wrap = new Fl_Check_Button(0, y1, 16, 16, "Wrap Edges");
+    Items::keep_aspect->value();
+    Items::wrap = new CheckBox(Items::dialog, 0, y1, 16, 16, "Wrap Edges", 0);
     y1 += 16 + 8;
-    Dialog::center(Items::wrap);
-    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::wrap->value();
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();
@@ -341,10 +343,10 @@ namespace Rotate
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     InputFloat *angle;
     InputFloat *scale;
-    Fl_Check_Button *tile;
+    CheckBox *tile;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -396,7 +398,7 @@ namespace Rotate
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "Rotate Image");
+    Items::dialog = new DialogBox(256, 0, "Rotate Image");
     Items::angle = new InputFloat(Items::dialog, 0, y1, 72, 24, "Angle:", 0);
     Items::angle->center();
     y1 += 24 + 8;
@@ -405,10 +407,10 @@ namespace Rotate
     Items::scale->center();
     y1 += 24 + 8;
     Items::scale->value("1.0");
-    Items::tile = new Fl_Check_Button(0, y1, 16, 16, "Tile");
+    Items::tile = new CheckBox(Items::dialog, 0, y1, 16, 16, "Tile", 0);
     y1 += 16 + 8;
-    Dialog::center(Items::tile);
-    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::tile->value();
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();

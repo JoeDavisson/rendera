@@ -21,7 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Brush.H"
+#include "CheckBox.H"
 #include "Dialog.H"
+#include "DialogBox.H"
 #include "File.H"
 #include "Gui.H"
 #include "InputInt.H"
@@ -37,7 +39,7 @@ namespace About
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     Widget *logo;
     Fl_Button *ok;
   }
@@ -58,13 +60,13 @@ namespace About
     int ww = 0, hh = 0;
     const char *credits = "Copyright (c) 2014 Joe Davisson.\nAll Rights Reserved.";
 
-    Items::dialog = new Fl_Double_Window(384, 0, "About");
+    Items::dialog = new DialogBox(384, 0, "About");
     Items::logo = new Widget(Items::dialog, 32, y1, 320, 64,
                            credits, File::themePath("logo_large.png"), 0, 0, 0);
     Items::logo->align(FL_ALIGN_BOTTOM);
     Items::logo->measure_label(ww, hh);
     y1 += 64 + 8 + hh;
-    Dialog::addOkButton(Items::dialog, &Items::ok, &y1);
+    Items::dialog->addOkButton(&Items::ok, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::dialog->set_modal();
     Items::dialog->end(); 
@@ -75,7 +77,7 @@ namespace JpegQuality
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     InputInt *quality;
     Fl_Button *ok;
   }
@@ -112,13 +114,13 @@ namespace JpegQuality
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "JPEG Quality");
+    Items::dialog = new DialogBox(256, 0, "JPEG Quality");
     Items::dialog->callback(closeCallback);
     Items::quality = new InputInt(Items::dialog, 0, y1, 72, 24, "Quality:", 0);
     Items::quality->value("95");
     Items::quality->center();
     y1 += 24 + 8;
-    Dialog::addOkButton(Items::dialog, &Items::ok, &y1);
+    Items::dialog->addOkButton(&Items::ok, &y1);
     Items::dialog->set_modal();
     Items::dialog->end();
   }
@@ -128,9 +130,9 @@ namespace PngOptions
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
-    Fl_Check_Button *use_palette;
-    Fl_Check_Button *use_alpha;
+    DialogBox *dialog;
+    CheckBox *use_palette;
+    CheckBox *use_alpha;
     InputInt *alpha_levels;
     Fl_Button *ok;
   }
@@ -167,20 +169,20 @@ namespace PngOptions
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "PNG Options");
+    Items::dialog = new DialogBox(256, 0, "PNG Options");
     Items::dialog->callback(closeCallback);
     Items::alpha_levels = new InputInt(Items::dialog, 0, y1, 72, 24, "Alpha Levels:", 0);
     Items::alpha_levels->value("2");
     Items::alpha_levels->center();
     y1 += 24 + 8;
-    Items::use_palette = new Fl_Check_Button(0, y1, 16, 16, "Use Current Palette");
+    Items::use_palette = new CheckBox(Items::dialog, 0, y1, 16, 16, "Use Current Palette", 0);
     y1 += 16 + 8;
-    Dialog::center(Items::use_palette);
-    Items::use_alpha = new Fl_Check_Button(0, y1, 16, 16, "Save Alpha Channel");
+    Items::use_palette->center();
+    Items::use_alpha = new CheckBox(Items::dialog, 0, y1, 16, 16, "Save Alpha Channel", 0);
     Items::use_alpha->value(1);
-    Dialog::center(Items::use_alpha);
+    Items::use_alpha->center();
     y1 += 16 + 8;
-    Dialog::addOkButton(Items::dialog, &Items::ok, &y1);
+    Items::dialog->addOkButton(&Items::ok, &y1);
     Items::dialog->set_modal();
     Items::dialog->end();
   }
@@ -190,7 +192,7 @@ namespace Progress
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     Fl_Progress *bar;
   }
 
@@ -199,7 +201,7 @@ namespace Progress
 
   void init()
   {
-    Items::dialog = new Fl_Double_Window(272, 80, "Progress");
+    Items::dialog = new DialogBox(272, 80, "Progress");
     Items::bar = new Fl_Progress(8, 8, 256, 64);
     Items::bar->minimum(0);
     Items::bar->maximum(100);
@@ -215,7 +217,7 @@ namespace NewImage
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     InputInt *width;
     InputInt *height;
     Fl_Button *ok;
@@ -260,7 +262,7 @@ namespace NewImage
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "New Image");
+    Items::dialog = new DialogBox(256, 0, "New Image");
     Items::width = new InputInt(Items::dialog, 0, y1, 72, 24, "Width:", 0);
     y1 += 24 + 8;
     Items::height = new InputInt(Items::dialog, 0, y1, 72, 24, "Height:", 0);
@@ -271,7 +273,7 @@ namespace NewImage
     Items::height->maximum_size(8);
     Items::width->value("640");
     Items::height->value("480");
-    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();
@@ -283,7 +285,7 @@ namespace CreatePalette
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     InputInt *colors;
     Fl_Button *ok;
     Fl_Button *cancel;
@@ -315,11 +317,11 @@ namespace CreatePalette
   {
     int y1 = 8;
 
-    Items::dialog = new Fl_Double_Window(256, 0, "Create Palette");
+    Items::dialog = new DialogBox(256, 0, "Create Palette");
     Items::colors = new InputInt(Items::dialog, 0, 8, 72, 24, "Colors:", 0);
     Items::colors->center();
     y1 += 24 + 8;
-    Dialog::addOkCancelButtons(Items::dialog, &Items::ok, &Items::cancel, &y1);
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();
@@ -331,7 +333,7 @@ namespace Editor
 {
   namespace Items
   {
-    Fl_Double_Window *dialog;
+    DialogBox *dialog;
     Widget *hue;
     Widget *sat_val;
     Fl_Button *insert;
@@ -612,7 +614,7 @@ namespace Editor
 
   void init()
   {
-    Items::dialog = new Fl_Double_Window(608, 312, "Palette Editor");
+    Items::dialog = new DialogBox(608, 312, "Palette Editor");
     Items::hue = new Widget(Items::dialog, 8, 8, 24, 256,
                             "Hue", 24, 1,
                             (Fl_Callback *)getHue);
@@ -654,47 +656,6 @@ void Dialog::init()
   NewImage::init();
   CreatePalette::init();
   Editor::init();
-}
-
-void Dialog::center(Fl_Widget *widget)
-{
-  int ww = 0, hh = 0;
-
-  widget->measure_label(ww, hh);
-
-  widget->resize((widget->parent()->w() / 2) - ((ww + widget->w()) / 2),
-                 widget->y(),
-                 widget->w(),
-                 widget->h());
-
-  widget->redraw();
-}
-
-void Dialog::addOkButton(Fl_Group *group, Fl_Button **ok, int *y1)
-{
-  int w = group->w();
-
-  new Separator(group, 4, *y1, w - 8, 2, "");
-  *y1 += 8;
-  *ok = new Fl_Button(w - 64 - 8, *y1, 64, 24, "OK");
-  group->add(*ok);
-  *y1 += 24 + 8;
-  group->resize(group->x(), group->y(), group->w(), *y1);
-}
-
-void Dialog::addOkCancelButtons(Fl_Group *group,
-                                Fl_Button **ok, Fl_Button **cancel, int *y1)
-{
-  int w = group->w();
-
-  new Separator(group, 4, *y1, w - 8, 2, "");
-  *y1 += 8;
-  *cancel = new Fl_Button(w - 64 - 8, *y1, 64, 24, "Cancel");
-  group->add(*cancel);
-  *ok = new Fl_Button((*cancel)->x() - 64 - 8, *y1, 64, 24, "Ok");
-  *y1 += 24 + 8;
-  group->add(*ok);
-  group->resize(group->x(), group->y(), group->w(), *y1);
 }
 
 void Dialog::about()
