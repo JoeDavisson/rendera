@@ -1028,8 +1028,7 @@ namespace ApplyPalette
     const int div = 42;
 */
 
-    // modified atkinson - dividing by 7 preverves more detail but prevents
-    // color bleeding with gamma correction enabled
+    // atkinson
     const int matrix[3][5] =
     {
       { 0, 0, 0, 1, 1 },
@@ -1039,7 +1038,7 @@ namespace ApplyPalette
 
     const int w = 5;
     const int h = 3;
-    const int div = 7;
+    const int div = 8;
 
     Bitmap *bmp = Project::bmp;
     const bool fix_gamma = Items::gamma->value();
