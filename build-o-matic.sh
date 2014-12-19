@@ -15,4 +15,5 @@ echo -n                                                             && \
     make distcheck                                                  && \
     make install                                                    && \
     ${RENDERA_PREFIX_DIR}/bin/rendera --help                        && \
+    ${RENDERA_PREFIX_DIR}/bin/rendera --version                     && \
     echo "big win"
