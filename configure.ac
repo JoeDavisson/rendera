@@ -2,7 +2,7 @@
 
 AC_PREREQ([2.68])
 AC_INIT([Rendera],
-        [0.1.0-snapshot],
+        [m4_esyscmd_s([git describe --always --dirty])],
         [joe_7@sbcglobal.net],
         [rendera],
         [https://github.com/Mortis69/rendera])

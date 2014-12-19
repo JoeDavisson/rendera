@@ -18,7 +18,15 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#if HAVE_CONFIG_H
+#  include "config.h"
+#else
+#  error "missing config.h"
+#endif
+
 #include <getopt.h>
+
+#include <iostream>
 
 #include "Bitmap.H"
 #include "Blend.H"
@@ -46,6 +54,7 @@ namespace
   enum
   {
     OPTION_THEME,
+    OPTION_VERSION,
     OPTION_HELP
   };
 
@@ -53,8 +62,9 @@ namespace
 
   struct option long_options[] =
   {
-    { "theme", required_argument, &verbose_flag, OPTION_THEME },
-    { "help", no_argument, &verbose_flag, OPTION_HELP },
+    { "theme",   required_argument, &verbose_flag, OPTION_THEME   },
+    { "version", no_argument,       &verbose_flag, OPTION_VERSION },
+    { "help",    no_argument,       &verbose_flag, OPTION_HELP    },
     { 0, 0, 0, 0 }
   };
 
@@ -77,7 +87,23 @@ namespace
     Fl::set_color(FL_SELECTION_COLOR, 248, 248, 248);
     Project::theme = Project::THEME_DARK;
   }
+
+  struct _help_type {};
+
+  std::ostream&
+  operator<<( std::ostream&os, _help_type const& )
+  {
+    return
+      os
+      << std::endl << "Usage: rendera [OPTIONS] filename"
+      << std::endl
+      << std::endl << "Options:"
+      << std::endl << "  --theme=dark\t\t use dark theme"
+      << std::endl << "  --theme=light\t\t use light theme"
+      << std::endl << std::endl ;
+  }
 }
+
 
 int main(int argc, char *argv[])
 {
@@ -88,40 +114,45 @@ int main(int argc, char *argv[])
   int c;
   int option_index = 0;
 
-  while(1)
-  {
+  while( true ){
     c = getopt_long(argc, argv, "", long_options, &option_index);
-    if(c < 0)
+    if(c < 0) break;
+
+    switch(c){
+    case 0:
+      switch(option_index){
+
+      case OPTION_THEME:
+        if(strcmp(optarg, "dark") == 0){
+          setDarkTheme();
+          break;
+        }
+        if(strcmp(optarg, "light") == 0){
+          setLightTheme();
+          break;
+        }
+        std::cerr
+          << "Unknown theme: \"" << optarg << "\"" << std::endl
+          << _help_type() ;
+        return EXIT_FAILURE ;
+
+      case OPTION_HELP:
+        std::cout << _help_type() ;
+        return EXIT_SUCCESS ;
+
+      case OPTION_VERSION:
+        std::cout << PACKAGE_STRING << std::endl ;
+        return EXIT_SUCCESS ;
+
+      default:
+        std::cerr << _help_type() ;
+        return EXIT_FAILURE ;
+      }
       break;
 
-    switch(c)
-    {
-      case 0:
-        switch(option_index)
-        {
-          case OPTION_THEME:
-            if(strcmp(optarg, "dark") == 0)
-              setDarkTheme();
-            else if(strcmp(optarg, "light") == 0)
-              setLightTheme();
-            else
-              printf("Unknown theme: %s\n", optarg);
-            break;
-          case OPTION_HELP:
-            printf("\n");
-            printf("Usage: rendera [OPTIONS] filename\n");
-            printf("\n");
-            printf("Options:\n");
-            printf("  --theme=dark\t\t use dark theme\n");
-            printf("  --theme=light\t\t use light theme\n");
-            printf("\n");
-            return 0;
-          default:
-            break;
-        }
-        break;
-      default:
-        break;
+    default:
+      std::cerr << _help_type() ;
+      return EXIT_FAILURE ;
     }
   }
 
