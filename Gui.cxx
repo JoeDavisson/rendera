@@ -440,7 +440,7 @@ void Gui::init()
 
   char s[8];
 
-  for(int i = 0; i < sizeof(font_sizes) / sizeof(font_sizes[0]); i++)
+  for(size_t i = 0, n = sizeof(font_sizes)/sizeof(font_sizes[0]); i < n; i++)
   {
     snprintf(s, sizeof(s), "%d", font_sizes[i]);
     font_size->add(s);

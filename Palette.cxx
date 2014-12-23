@@ -40,7 +40,6 @@ Palette::~Palette()
 
 void Palette::draw(Widget *widget)
 {
-  int x, y;
   int w = widget->w();
 
   int step = 3;

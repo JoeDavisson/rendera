@@ -638,21 +638,21 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
     std::vector<png_byte> data(rowbytes * h);
     std::vector<png_bytep> row_pointers(h);
 
-    for(int y = 0; y < h; y++)
+    for(size_t y = 0; y < h; y++)
       row_pointers[y] = &data[y * rowbytes];
 
     // read image all at once
     png_read_image(png_ptr, &row_pointers[0]);
 
     // convert image
-    for(int y = 0; y < h; y++)
+    for(size_t y = 0; y < h; y++)
     {
       int *p = temp->row[y + overscroll] + overscroll;
       int xx = 0;
 
       png_bytep row = row_pointers[y];
 
-      for(int x = 0; x < w; x++)
+      for(size_t x = 0; x < w; x++)
       {
         if(channels == 3)
         {
@@ -677,7 +677,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
     // non-interlace images can be read line-by-line
     std::vector<png_byte> linebuf(rowbytes);
 
-    for(int y = 0; y < h; y++)
+    for(size_t y = 0; y < h; y++)
     {
       // read line
       png_read_row(png_ptr, &linebuf[0], 0);
@@ -686,7 +686,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
       int xx = 0;
 
       // convert line
-      for(int x = 0; x < w; x++)
+      for(size_t x = 0; x < w; x++)
       {
         if(channels == 3)
         {
@@ -782,7 +782,7 @@ int File::saveBmp(const char *fn)
   int overscroll = Project::overscroll;
   int w = bmp->cw;
   int h = bmp->ch;
-  int pad = w % 4;
+  size_t pad = w % 4;
 
   // BMP_FILE_HEADER
   writeUint8('B', outp);
@@ -822,7 +822,7 @@ int File::saveBmp(const char *fn)
       xx += 3;
     }
 
-    for(int x = 0; x < pad; x++)
+    for(size_t x = 0; x < pad; x++)
       linebuf[xx++] = 0;
 
     p += overscroll * 2;
@@ -878,7 +878,7 @@ int File::saveTarga(const char *fn)
 
     p += overscroll * 2;
 
-    if(fwrite(&linebuf[0], 1, w * 4, outp) != w * 4)
+    if( size_t( w * 4 ) != fwrite(&linebuf[0], 1, w * 4, outp) )
       return -1;
   }
 

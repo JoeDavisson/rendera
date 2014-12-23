@@ -99,8 +99,6 @@ void Undo::push()
 
 void Undo::push(int x, int y, int w, int h)
 {
-  int i;
-
   int x1 = x;
   int y1 = y;
   int x2 = x + w - 1;
