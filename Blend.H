@@ -37,7 +37,7 @@ namespace Blend
     ALPHA_ADD,
     ALPHA_SUB,
     SMOOTH,
-    SMOOTH_COLOR,
+    SMOOTH_COLOR
   };
  
   void set(const int &);

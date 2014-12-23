@@ -84,7 +84,7 @@ rendera_SOURCES =     \
 
 
 rendera_LDFLAGS = $(shell fltk-config --ldflags)
-rendera_CXXFLAGS = $(shell fltk-config --cxxflags)
+rendera_CXXFLAGS = $(shell fltk-config --cxxflags) $(AM_CXXFLAGS)
 
 
 nodist_rendera_SOURCES = paths.h

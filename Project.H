@@ -35,7 +35,7 @@ namespace Project
   enum
   {
     THEME_LIGHT,
-    THEME_DARK,
+    THEME_DARK
   };
 
   extern Bitmap *bmp;

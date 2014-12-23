@@ -89,11 +89,11 @@ void Text::push(View *view)
   view->drawMain(true);
 }
 
-void Text::drag(View *view)
+void Text::drag(View*)
 {
 }
 
-void Text::release(View *)
+void Text::release(View*)
 {
 }
 
@@ -117,9 +117,9 @@ void Text::move(View *view)
     char string[256];
     string[0] = ' ';
 
-    int i = 0;
+    size_t i = 0;
 
-    for(i = 0; i <= strlen(s); i++)
+    for( ; i <= strlen(s); i++)
       string[i + 1] = s[i];
 
     string[i++] = ' ';
@@ -144,7 +144,6 @@ void Text::move(View *view)
     temp->clear(makeRgb(255, 255, 255));
     //Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)temp->data,
     //                                       temp->w, temp->h, 4, 0);
-
     fl_begin_offscreen(offscreen);
     fl_color(FL_WHITE);
     fl_rectf(0, 0, tw, th);
@@ -181,7 +180,7 @@ void Text::move(View *view)
   redraw(view);
 }
 
-void Text::done(View *view)
+void Text::done(View*)
 {
   if(temp)
   {

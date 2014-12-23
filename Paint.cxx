@@ -35,9 +35,6 @@ namespace
 {
   int state = 0;
   bool active = 0;
-
-  int render_pos = 0, render_end = 0, render_count = 0;
-  float soft_trans = 0, soft_step = 0;
 }
 
 Paint::Paint()

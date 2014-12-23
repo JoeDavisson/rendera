@@ -63,6 +63,9 @@ public:
 
   // reset tool
   virtual void reset() = 0;
+
+  // virtual dtor
+  virtual ~Tool(){}
 };
 
 #endif
