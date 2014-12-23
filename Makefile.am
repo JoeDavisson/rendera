@@ -83,8 +83,8 @@ rendera_SOURCES =     \
   Widget.cxx
 
 
-rendera_LDFLAGS = $(shell fltk-config --ldflags)
-rendera_CXXFLAGS = $(shell fltk-config --cxxflags) $(AM_CXXFLAGS)
+rendera_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
+rendera_LDFLAGS = $(FLTK_CONFIG_LDFLAGS)
 
 
 nodist_rendera_SOURCES = paths.h
