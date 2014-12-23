@@ -82,5 +82,11 @@ AC_CHECK_DECLS([M_PI],
   [[#include <math.h>]])
 
 
+FLTK_CONFIG_CXXFLAGS=$(fltk-config --cxxflags)
+FLTK_CONFIG_LDFLAGS=$(fltk-config --ldflags)
+AC_SUBST([FLTK_CONFIG_CXXFLAGS])
+AC_SUBST([FLTK_CONFIG_LDFLAGS])
+
+
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
