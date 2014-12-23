@@ -45,37 +45,6 @@ namespace
     overscroll = bmp->overscroll;
     Undo::push();
   }
-
-  void beginProgress()
-  {
-    bmp = Project::bmp;
-    Dialog::showProgress(bmp->h / 64);
-  }
-
-  void endProgress()
-  {
-    Dialog::hideProgress();
-    Gui::getView()->drawMain(true);
-  }
-
-  int updateProgress(const int y)
-  {
-    // user cancelled operation
-    if(Fl::get_key(FL_Escape))
-    {
-      endProgress();
-      return -1;
-    }
-
-    // only redraw every 64 rasters
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(true);
-      Dialog::updateProgress();
-    }
-
-    return 0;
-  }
 }
 
 namespace Resize
