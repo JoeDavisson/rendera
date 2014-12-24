@@ -1401,23 +1401,25 @@ namespace Blur
   {
     DialogBox *dialog;
     InputInt *amount;
+    InputInt *blend;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
 
-  void apply(int size)
+  void apply(int amount, int blend)
   {
-    size = (size + 1) * 2 + 1;
+    amount = (amount + 1) * 2 + 1;
 
-    std::vector<int> kernel(size);
+    std::vector<int> kernel(amount);
     int div = 0;
 
     // bell curve
-    const int b = size / 2;
+    const int b = amount / 2;
 
-    for(int x = 0; x < size; x++)
+    for(int x = 0; x < amount; x++)
     {
-      kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) / ((b * b) / 2)));
+      kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) /
+                                           ((b * b) / 2)));
       div += kernel[x];
     }
 
@@ -1436,9 +1438,9 @@ namespace Blur
         int bb = 0;
         int aa = 0;
 
-        for(int i = 0; i < size; i++) 
+        for(int i = 0; i < amount; i++) 
         {
-          rgba_type rgba = getRgba(bmp->getpixel(x - size / 2 + i, y));
+          rgba_type rgba = getRgba(bmp->getpixel(x - amount / 2 + i, y));
           rr += Gamma::fix(rgba.r) * kernel[i];
           gg += Gamma::fix(rgba.g) * kernel[i];
           bb += Gamma::fix(rgba.b) * kernel[i];
@@ -1475,10 +1477,10 @@ namespace Blur
         int bb = 0;
         int aa = 0;
 
-        for(int i = 0; i < size; i++) 
+        for(int i = 0; i < amount; i++) 
         {
           rgba_type rgba = getRgba(temp.getpixel(x - bmp->cl,
-                                                 y - size / 2 + i - bmp->ct));
+                                                 y - amount / 2 + i - bmp->ct));
           rr += Gamma::fix(rgba.r) * kernel[i];
           gg += Gamma::fix(rgba.g) * kernel[i];
           bb += Gamma::fix(rgba.b) * kernel[i];
@@ -1494,7 +1496,8 @@ namespace Blur
         gg = Gamma::unfix(gg);
         bb = Gamma::unfix(bb);
 
-        *p++ = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
+        *p = Blend::trans(*p, makeRgba((int)rr, (int)gg, (int)bb, (int)aa), blend);
+        p++;
       }
 
       if(updateProgress(y) < 0)
@@ -1509,9 +1512,12 @@ namespace Blur
     if(Items::amount->limitValue(1, 100) < 0)
       return;
 
+    if(Items::blend->limitValue(0, 255) < 0)
+      return;
+
     Items::dialog->hide();
     pushUndo();
-    apply(atoi(Items::amount->value()));
+    apply(atoi(Items::amount->value()), atoi(Items::blend->value()));
   }
 
   void quit()
@@ -1534,6 +1540,10 @@ namespace Blur
     y1 += 24 + 8;
     Items::amount->value("1");
     Items::amount->center();
+    Items::blend = new InputInt(Items::dialog, 0, y1, 72, 24, "Blend:", 0);
+    y1 += 24 + 8;
+    Items::blend->value("0");
+    Items::blend->center();
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
