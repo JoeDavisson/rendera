@@ -342,7 +342,7 @@ void Quantize::pca(Bitmap *src, int size)
     if(Fl::get_key(FL_Escape))
       return;
 
-    Dialog::updateProgress();
+    Dialog::updateProgress(count);
   }
 
   Dialog::hideProgress();

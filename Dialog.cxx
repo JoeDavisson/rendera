@@ -696,23 +696,37 @@ int Dialog::pngAlphaLevels()
 void Dialog::showProgress(float step)
 {
   Progress::value = 0;
-  Progress::step = 100.0 / step;
+  Progress::step = 100.0 / (step / 50);
   Progress::Items::dialog->show();
 }
 
-void Dialog::updateProgress()
+int Dialog::updateProgress(const int y)
 {
-  Progress::Items::bar->value(Progress::value);
-  char percent[16];
-  sprintf(percent, "%d%%", (int)Progress::value);
-  Progress::Items::bar->label(percent);
-  Fl::check();
-  Progress::value += Progress::step;
+  // user cancelled operation
+  if(Fl::get_key(FL_Escape))
+  {
+    Gui::getView()->drawMain(true);
+    return -1;
+  }
+
+  if(!(y % 50))
+  {
+    Gui::getView()->drawMain(true);
+    Progress::Items::bar->value(Progress::value);
+    char percent[16];
+    sprintf(percent, "%d%%", (int)Progress::value);
+    Progress::Items::bar->label(percent);
+    Fl::check();
+    Progress::value += Progress::step;
+  }
+
+  return 0;
 }
 
 void Dialog::hideProgress()
 {
   Progress::Items::dialog->hide();
+  Gui::getView()->drawMain(true);
 }
 
 void Dialog::newImage()

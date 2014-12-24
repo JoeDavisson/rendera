@@ -48,37 +48,6 @@ namespace
     bmp = Project::bmp;
     Undo::push(bmp->cl, bmp->ct, bmp->cw, bmp->ch);
   }
-
-  void beginProgress()
-  {
-    bmp = Project::bmp;
-    Dialog::showProgress(bmp->h / 64);
-  }
-
-  void endProgress()
-  {
-    Dialog::hideProgress();
-    Gui::getView()->drawMain(true);
-  }
-
-  int updateProgress(const int y)
-  {
-    // user cancelled operation
-    if(Fl::get_key(FL_Escape))
-    {
-      Gui::getView()->drawMain(true);
-      return -1;
-    }
-
-    // only redraw every 64 rasters
-    if(!(y % 64))
-    {
-      Gui::getView()->drawMain(true);
-      Dialog::updateProgress();
-    }
-
-    return 0;
-  }
 }
 
 namespace Normalize
@@ -130,7 +99,7 @@ namespace Normalize
     double g_scale = 255.0 / (g_high - g_low);
     double b_scale = 255.0 / (b_high - b_low);
 
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
@@ -147,11 +116,11 @@ namespace Normalize
         *p++ = makeRgba(r, g, b, rgba.a);
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void begin()
@@ -199,7 +168,7 @@ namespace Equalize
 
     const double scale = 255.0 / size;
 
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
@@ -220,11 +189,11 @@ namespace Equalize
         *p++ = makeRgba(r, g, b, rgba.a);
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void begin()
@@ -296,7 +265,7 @@ namespace ValueStretch
 
     double scale = 255.0 / size;
 
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
@@ -325,11 +294,11 @@ namespace ValueStretch
         *p++ = makeRgba(r, g, b, rgba.a);
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void begin()
@@ -370,7 +339,7 @@ namespace Saturate
 
     const double scale = 255.0 / size;
 
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
@@ -409,11 +378,11 @@ namespace Saturate
         p++;
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void begin()
@@ -439,7 +408,7 @@ namespace RotateHue
     const int hh = amount * 4.277;
     const bool keep_lum = Items::preserve->value();
 
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
@@ -472,11 +441,11 @@ namespace RotateHue
           *p++ = c;
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void close()
@@ -497,7 +466,7 @@ namespace RotateHue
 
   void quit()
   {
-    endProgress();
+    Dialog::hideProgress();
     Items::dialog->hide();
   }
 
@@ -531,7 +500,7 @@ namespace Invert
 {
   void apply()
   {
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
@@ -544,11 +513,11 @@ namespace Invert
         *p++ = Blend::invert(c, 0, 0);
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void begin()
@@ -567,7 +536,7 @@ namespace CorrectionMatrix
 {
   void apply()
   {
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
@@ -605,11 +574,11 @@ namespace CorrectionMatrix
         *p++ = Blend::keepLum(makeRgba(ra, ga, ba, rgba.a), l);
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void begin()
@@ -669,7 +638,7 @@ namespace Restore
     const float ba = (256.0f / (256 - bb)) / std::sqrt(256.0f / (bb + 1));
 
     // begin restore
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
@@ -699,11 +668,11 @@ namespace Restore
           *p++ = makeRgba(r, g, b, rgba.a);
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void close()
@@ -726,7 +695,7 @@ namespace Restore
 
   void quit()
   {
-    endProgress();
+    Dialog::hideProgress();
     Items::dialog->hide();
   }
 
@@ -774,7 +743,7 @@ namespace RemoveDust
 
   void apply(int amount)
   {
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct + 1; y <= bmp->cb - 1; y++)
     {
@@ -814,11 +783,11 @@ namespace RemoveDust
         p++;
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void close()
@@ -840,7 +809,7 @@ namespace RemoveDust
 
   void quit()
   {
-    endProgress();
+    Dialog::hideProgress();
     Items::dialog->hide();
   }
 
@@ -873,7 +842,7 @@ namespace Desaturate
 {
   void apply()
   {
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
@@ -887,11 +856,11 @@ namespace Desaturate
         *p++ = makeRgba(l, l, l, geta(c));
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void begin()
@@ -907,7 +876,7 @@ namespace Colorize
   {
     rgba_type rgba_color = getRgba(Project::brush->color);
 
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
@@ -940,11 +909,11 @@ namespace Colorize
         *p++ = Blend::colorize(c1, makeRgba(r, g, b, rgba.a), 0);
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void begin()
@@ -967,7 +936,7 @@ namespace ApplyPalette
 
   void applyNormal()
   {
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
@@ -980,11 +949,11 @@ namespace ApplyPalette
         *p++ = c;
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void applyDither()
@@ -1043,7 +1012,7 @@ namespace ApplyPalette
     Bitmap *bmp = Project::bmp;
     const bool fix_gamma = Items::gamma->value();
 
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
@@ -1127,11 +1096,11 @@ namespace ApplyPalette
         }
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void close()
@@ -1147,7 +1116,7 @@ namespace ApplyPalette
 
   void quit()
   {
-    endProgress();
+    Dialog::hideProgress();
     Items::dialog->hide();
   }
 
@@ -1260,7 +1229,7 @@ namespace StainedGlass
       color[i] = bmp->getpixel(seedx[i], seedy[i]);
     }
 
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     // draw segments
     for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -1306,7 +1275,7 @@ namespace StainedGlass
         p++;
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
@@ -1338,7 +1307,7 @@ namespace StainedGlass
       }
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void close()
@@ -1356,7 +1325,7 @@ namespace StainedGlass
 
   void quit()
   {
-    endProgress();
+    Dialog::hideProgress();
     Items::dialog->hide();
   }
 
@@ -1424,7 +1393,7 @@ namespace Blur
     }
 
     Bitmap temp(bmp->cw, bmp->ch);
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     // x direction
     for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -1459,11 +1428,11 @@ namespace Blur
         *p++ = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     // y direction
     for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -1500,11 +1469,11 @@ namespace Blur
         p++;
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void close()
@@ -1522,7 +1491,7 @@ namespace Blur
 
   void quit()
   {
-    endProgress();
+    Dialog::hideProgress();
     Items::dialog->hide();
   }
 
@@ -1572,7 +1541,7 @@ namespace Sharpen
   void apply(int amount)
   {
     Bitmap temp(bmp->cw, bmp->ch);
-    beginProgress();
+    Dialog::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
@@ -1596,13 +1565,13 @@ namespace Sharpen
         *p++ = Blend::trans(c, Blend::keepLum(c, lum), 255 - amount * 2.55);
       }
 
-      if(updateProgress(y) < 0)
+      if(Dialog::updateProgress(y) < 0)
         return;
     }
 
     temp.blit(bmp, 0, 0, bmp->cl, bmp->ct, temp.w, temp.h);
 
-    endProgress();
+    Dialog::hideProgress();
   }
 
   void close()
@@ -1617,7 +1586,7 @@ namespace Sharpen
 
   void quit()
   {
-    endProgress();
+    Dialog::hideProgress();
     Items::dialog->hide();
   }
 
