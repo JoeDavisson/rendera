@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #endif
 
 #include <getopt.h>
-
 #include <iostream>
 
 #include "Bitmap.H"
@@ -90,8 +89,8 @@ namespace
 
   struct _help_type {};
 
-  std::ostream&
-  operator<<( std::ostream&os, _help_type const& )
+  std::ostream &
+  operator << (std::ostream &os, _help_type const &)
   {
     return
       os
@@ -100,10 +99,9 @@ namespace
       << std::endl << "Options:"
       << std::endl << "  --theme=dark\t\t use dark theme"
       << std::endl << "  --theme=light\t\t use light theme"
-      << std::endl << std::endl ;
+      << std::endl << std::endl;
   }
 }
-
 
 int main(int argc, char *argv[])
 {
@@ -111,48 +109,57 @@ int main(int argc, char *argv[])
   setDarkTheme();
 
   // parse command line
-  int c;
   int option_index = 0;
 
-  while( true ){
-    c = getopt_long(argc, argv, "", long_options, &option_index);
-    if(c < 0) break;
-
-    switch(c){
-    case 0:
-      switch(option_index){
-
-      case OPTION_THEME:
-        if(strcmp(optarg, "dark") == 0){
-          setDarkTheme();
-          break;
-        }
-        if(strcmp(optarg, "light") == 0){
-          setLightTheme();
-          break;
-        }
-        std::cerr
-          << "Unknown theme: \"" << optarg << "\"" << std::endl
-          << _help_type() ;
-        return EXIT_FAILURE ;
-
-      case OPTION_HELP:
-        std::cout << _help_type() ;
-        return EXIT_SUCCESS ;
-
-      case OPTION_VERSION:
-        std::cout << PACKAGE_STRING << std::endl ;
-        return EXIT_SUCCESS ;
-
-      default:
-        std::cerr << _help_type() ;
-        return EXIT_FAILURE ;
-      }
+  while(true)
+  {
+    const int c = getopt_long(argc, argv, "", long_options, &option_index);
+    if(c < 0)
       break;
 
-    default:
-      std::cerr << _help_type() ;
-      return EXIT_FAILURE ;
+    switch(c)
+    {
+      case 0:
+      {
+        switch(option_index)
+        {
+          case OPTION_THEME:
+            if(strcmp(optarg, "dark") == 0)
+            {
+              setDarkTheme();
+              break;
+            }
+            if(strcmp(optarg, "light") == 0)
+            {
+              setLightTheme();
+              break;
+            }
+            std::cerr
+              << "Unknown theme: \"" << optarg << "\"" << std::endl
+              << _help_type();
+            return EXIT_FAILURE;
+
+          case OPTION_HELP:
+            std::cout << _help_type();
+            return EXIT_SUCCESS;
+
+          case OPTION_VERSION:
+            std::cout << PACKAGE_STRING << std::endl;
+            return EXIT_SUCCESS;
+
+          default:
+            std::cerr << _help_type();
+            return EXIT_FAILURE ;
+        }
+
+        break;
+      }
+
+      default:
+      {
+        std::cerr << _help_type();
+        return EXIT_FAILURE ;
+      }
     }
   }
 
