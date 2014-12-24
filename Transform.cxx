@@ -188,7 +188,7 @@ namespace Scale
     Fl_Button *cancel;
   }
 
-  void apply(int w, int h, bool wrap_edges)
+  void apply(int dw, int dh, bool wrap_edges)
   {
     Bitmap *bmp = Project::bmp;
     int overscroll = bmp->overscroll;
@@ -198,16 +198,6 @@ namespace Scale
     const int sh = bmp->ch;
     const int dx = overscroll;
     const int dy = overscroll;
-    const int dw = w;
-    const int dh = h;
-
-    Bitmap *temp = new Bitmap(w, h, overscroll);
-
-//    bmp->scaleBilinear(temp,
-//                       overscroll, overscroll,
-//                       bmp->cw, bmp->ch,
-//                       overscroll, overscroll, w, h,
-//                       Items::wrap->value()); 
 
     const float ax = ((float)sw / dw);
     const float ay = ((float)sh / dh);
@@ -217,6 +207,8 @@ namespace Scale
 
     if(dw < 1 || dh < 1)
       return;
+
+    Bitmap *temp = new Bitmap(dw, dh, overscroll);
   
     // average colors if scaling down
     int mipx = 1, mipy = 1;
@@ -227,7 +219,7 @@ namespace Scale
 
     const int div = mipx * mipy;
 
-    if((mipx > 1) | (mipy > 1))
+    if((mipx > 1) || (mipy > 1))
     {
       for(int y = 0; y <= sh - mipy; y += mipy)
       {
@@ -270,6 +262,8 @@ namespace Scale
       }
     }
 
+    Dialog::showProgress(dh);
+
     for(int y = 0; y < dh; y++) 
     {
       int *d = temp->row[dy + y] + dx;
@@ -277,7 +271,7 @@ namespace Scale
       const int v1 = vv;
       const float v = vv - v1;
 
-      if(sy + v1 >= h - 1)
+      if(sy + v1 >= bmp->h - 1)
         break;
 
       int v2 = v1 + 1;
@@ -300,7 +294,7 @@ namespace Scale
         const int u1 = uu;
         const float u = uu - u1;
 
-        if(sx + u1 >= w - 1)
+        if(sx + u1 >= bmp->w - 1)
           break;
 
         int u2 = u1 + 1;
@@ -347,7 +341,12 @@ namespace Scale
         c[2] -= u1;
         c[3] -= u2;
       }
+
+      if(Dialog::updateProgress(y) < 0)
+        break;
     }
+
+    Dialog::hideProgress();
 
     delete Project::bmp;
     Project::bmp = temp;
@@ -417,12 +416,11 @@ namespace Scale
     if(Items::height->limitValue(1, 10000) < 0)
       return;
 
-    int w = atoi(Items::width->value());
-    int h = atoi(Items::height->value());
-
     Items::dialog->hide();
     pushUndo();
-    apply(w, h, Items::wrap->value());
+    apply(atoi(Items::width->value()),
+          atoi(Items::height->value()),
+          Items::wrap->value());
   }
 
   void quit()
@@ -554,6 +552,8 @@ namespace Rotate
     row_u -= bw * du_col + bh * du_row;
     row_v -= bw * dv_col + bh * dv_row;
 
+    Dialog::showProgress(by2 - by1);
+
     // draw image
     for(int y = by1; y <= by2; y++)
     {
@@ -600,7 +600,11 @@ namespace Rotate
         int c = *(bmp->row[vv] + uu);
         *(temp->row[yy] + xx) = c;
       }
+
+      Dialog::updateProgress(y - by1);
     }
+
+    Dialog::hideProgress();
 
     delete Project::bmp;
     Project::bmp = temp;
