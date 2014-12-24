@@ -52,6 +52,16 @@ namespace Project
   int overscroll = 64;
   int theme = THEME_DARK;
   char theme_path[256];
+
+  bool wrap = 0;
+  bool clone = 0;
+  bool clone_moved = 0;
+  int clone_x = 0;
+  int clone_y = 0;
+  int clone_dx = 0;
+  int clone_dy = 0;
+  int clone_mirror = 0;
+  Bitmap *clone_bmp = 0;
 }
 
 void Project::init()
@@ -62,15 +72,6 @@ void Project::init()
     strcpy(theme_path, "data/theme/light/");
 
   newImage(640, 480);
-
-  bmp->wrap = 0;
-  bmp->clone = 0;
-  bmp->clone_moved = 0;
-  bmp->clone_x = 0;
-  bmp->clone_y = 0;
-  bmp->clone_dx = 0;
-  bmp->clone_dy = 0;
-  bmp->clone_mirror = 0;
 
   setTool(Tool::PAINT);
 }

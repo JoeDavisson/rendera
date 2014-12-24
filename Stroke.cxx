@@ -307,11 +307,11 @@ void Stroke::begin(int x, int y, int ox, int oy, float zoom)
   oldx = x;
   oldy = y;
 
-  if(Project::bmp->clone_moved)
+  if(Project::clone_moved)
   {
-    Project::bmp->clone_dx = x - Project::bmp->clone_x;
-    Project::bmp->clone_dy = y - Project::bmp->clone_y;
-    Project::bmp->clone_moved = 0;
+    Project::clone_dx = x - Project::clone_x;
+    Project::clone_dy = y - Project::clone_y;
+    Project::clone_moved = 0;
   }
 
   polycount = 0;
@@ -532,16 +532,16 @@ void Stroke::end(int x, int y)
 
   int w = 0, h = 0;
 
-  if(Project::bmp->clone)
+  if(Project::clone)
   {
     w = (x2 - x1);
     h = (y2 - y1);
 
-    if(Bitmap::clone_buffer)
-      delete Bitmap::clone_buffer;
+    if(Project::clone_bmp)
+      delete Project::clone_bmp;
 
-    Bitmap::clone_buffer = new Bitmap(w, h);
-    Project::bmp->blit(Bitmap::clone_buffer, x1, y1, 0, 0, w, h);
+    Project::clone_bmp = new Bitmap(w, h);
+    Project::bmp->blit(Project::clone_bmp, x1, y1, 0, 0, w, h);
   }
 
   if(brush->aa)

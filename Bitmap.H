@@ -62,17 +62,6 @@ public:
   void flip();
   void fastStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);
   void invert();
-
-  bool wrap;
-  bool clone;
-  bool clone_moved;
-  int clone_x;
-  int clone_y;
-  int clone_dx;
-  int clone_dy;
-  int clone_mirror;
-
-  static Bitmap *clone_buffer;
 };
 
 #endif

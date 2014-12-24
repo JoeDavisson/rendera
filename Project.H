@@ -40,12 +40,7 @@ namespace Project
 
   extern Bitmap *bmp;
   extern Map *map;
-/*
-  extern Brush *brush;
-  extern Palette *palette;
-  extern Tool *tool;
-  extern Stroke *stroke;
-*/
+
   extern SP<Brush> brush;
   extern SP<Palette> palette;
   extern SP<Stroke> stroke;
@@ -54,6 +49,16 @@ namespace Project
   extern int overscroll;
   extern int theme;
   extern char theme_path[256];
+
+  extern bool wrap;
+  extern bool clone;
+  extern bool clone_moved;
+  extern int clone_x;
+  extern int clone_y;
+  extern int clone_dx;
+  extern int clone_dy;
+  extern int clone_mirror;
+  extern Bitmap *clone_bmp;
 
   void init();
   void setTool(int);

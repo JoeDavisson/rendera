@@ -859,17 +859,17 @@ void Gui::checkBlend(Widget *, void *)
 
 void Gui::checkWrap(Widget *, void *var)
 {
-  Project::bmp->wrap = *(int *)var;
+  Project::wrap = *(int *)var;
 }
 
 void Gui::checkClone(Widget *, void *var)
 {
-  Project::bmp->clone = *(int *)var;
+  Project::clone = *(int *)var;
 }
 
 void Gui::checkMirror(Widget *, void *var)
 {
-  Project::bmp->clone_mirror = *(int *)var;
+  Project::clone_mirror = *(int *)var;
 }
 
 void Gui::checkOrigin(Widget *, void *var)

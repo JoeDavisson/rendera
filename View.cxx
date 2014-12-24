@@ -191,9 +191,9 @@ int View::handle(int event)
         case 1:
           if(shift)
           {
-            Project::bmp->clone_x = imgx;
-            Project::bmp->clone_y = imgy;
-            Project::bmp->clone_moved = 1;
+            Project::clone_x = imgx;
+            Project::clone_y = imgy;
+            Project::clone_moved = 1;
             redraw();
             break;
           }
@@ -477,11 +477,11 @@ void View::drawCloneCursor()
   if(moving)
     return;
 
-  int x = Project::bmp->clone_x;
-  int y = Project::bmp->clone_y;
-  int dx = Project::bmp->clone_dx;
-  int dy = Project::bmp->clone_dy;
-  int mirror = Project::bmp->clone_mirror;
+  int x = Project::clone_x;
+  int y = Project::clone_y;
+  int dx = Project::clone_dx;
+  int dy = Project::clone_dy;
+  int mirror = Project::clone_mirror;
   int w = Project::bmp->w - 1;
   int h = Project::bmp->h - 1;
 
