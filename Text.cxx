@@ -142,8 +142,7 @@ void Text::move(View *view)
 
     temp = new Bitmap(tw, th);
     temp->clear(makeRgb(255, 255, 255));
-    //Fl_RGB_Image *image = new Fl_RGB_Image((unsigned char *)temp->data,
-    //                                       temp->w, temp->h, 4, 0);
+
     fl_begin_offscreen(offscreen);
     fl_color(FL_WHITE);
     fl_rectf(0, 0, tw, th);
