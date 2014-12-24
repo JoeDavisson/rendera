@@ -581,8 +581,8 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
     return 0;
   }
 
-  png_uint_32 w = 0;
-  png_uint_32 h = 0;
+  png_uint_32 temp_w = 0;
+  png_uint_32 temp_h = 0;
   int bits_per_channel = 0;
   int color_type = 0;
   int interlace_type = 0;
@@ -592,8 +592,12 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   png_init_io(png_ptr, in.get());
   png_set_sig_bytes(png_ptr, 8);
   png_read_info(png_ptr, info_ptr);
-  png_get_IHDR(png_ptr, info_ptr, &w, &h, &bits_per_channel, &color_type,
+  png_get_IHDR(png_ptr, info_ptr, &temp_w, &temp_h,
+               &bits_per_channel, &color_type,
                &interlace_type, &compression_type, &filter_method);
+
+  int w = temp_w;
+  int h = temp_h;
 
   // check interlace mode
   bool interlace = png_set_interlace_handling(png_ptr) > 1 ? 1 : 0;
@@ -638,21 +642,21 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
     std::vector<png_byte> data(rowbytes * h);
     std::vector<png_bytep> row_pointers(h);
 
-    for(size_t y = 0; y < h; y++)
+    for(int y = 0; y < h; y++)
       row_pointers[y] = &data[y * rowbytes];
 
     // read image all at once
     png_read_image(png_ptr, &row_pointers[0]);
 
     // convert image
-    for(size_t y = 0; y < h; y++)
+    for(int y = 0; y < h; y++)
     {
       int *p = temp->row[y + overscroll] + overscroll;
       int xx = 0;
 
       png_bytep row = row_pointers[y];
 
-      for(size_t x = 0; x < w; x++)
+      for(int x = 0; x < w; x++)
       {
         if(channels == 3)
         {
@@ -677,7 +681,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
     // non-interlace images can be read line-by-line
     std::vector<png_byte> linebuf(rowbytes);
 
-    for(size_t y = 0; y < h; y++)
+    for(int y = 0; y < h; y++)
     {
       // read line
       png_read_row(png_ptr, &linebuf[0], 0);
@@ -686,7 +690,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
       int xx = 0;
 
       // convert line
-      for(size_t x = 0; x < w; x++)
+      for(int x = 0; x < w; x++)
       {
         if(channels == 3)
         {
@@ -782,7 +786,7 @@ int File::saveBmp(const char *fn)
   int overscroll = Project::overscroll;
   int w = bmp->cw;
   int h = bmp->ch;
-  size_t pad = w % 4;
+  int pad = w % 4;
 
   // BMP_FILE_HEADER
   writeUint8('B', outp);
@@ -822,12 +826,12 @@ int File::saveBmp(const char *fn)
       xx += 3;
     }
 
-    for(size_t x = 0; x < pad; x++)
+    for(int x = 0; x < pad; x++)
       linebuf[xx++] = 0;
 
     p += overscroll * 2;
 
-    if(fwrite(&linebuf[0], 1, w * 3 + pad, outp) != w * 3 + pad)
+    if(fwrite(&linebuf[0], 1, w * 3 + pad, outp) != (unsigned)(w * 3 + pad))
       return -1;
   }
 
@@ -878,7 +882,7 @@ int File::saveTarga(const char *fn)
 
     p += overscroll * 2;
 
-    if( size_t( w * 4 ) != fwrite(&linebuf[0], 1, w * 4, outp) )
+    if(fwrite(&linebuf[0], 1, w * 4, outp) != (unsigned)(w * 4))
       return -1;
   }
 

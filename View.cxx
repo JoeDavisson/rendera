@@ -347,7 +347,7 @@ int View::handle(int event)
         // convert to utf-8 (e.g. %20 becomes space)
         File::decodeURI(fn);
 
-        for(size_t i = 0, n = strlen(fn); i < n; i++)
+        for(unsigned int i = 0, n = strlen(fn); i < n; i++)
         {
           if(fn[i] == '\r')
             fn[i] = '\0';
