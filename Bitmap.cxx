@@ -101,19 +101,11 @@ Bitmap::Bitmap(int width, int height, int overscroll)
   setClip(0, 0, w - 1, h - 1);
 
   for(int i = 0; i < 4; i++)
+  {
     rect(overscroll - 1 - i, overscroll - 1 - i,
          w - overscroll + i, h - overscroll + i,
          getFltkColor(FL_BACKGROUND_COLOR), 0);
-
-/*
-  rectfill(overscroll + 4, h - overscroll + 4,
-           w - overscroll + 4, h - overscroll + 4 + 7,
-           makeRgb(48, 48, 48), 0);
-
-  rectfill(w - overscroll + 4, overscroll + 4,
-           w - overscroll + 4 + 7, h - overscroll + 4 + 7,
-           makeRgb(48, 48, 48), 0);
-*/
+  }
 
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
 
