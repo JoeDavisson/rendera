@@ -489,6 +489,9 @@ void Gui::init()
   blend->add("Darken");
   blend->add("Lighten");
   blend->add("Colorize");
+  blend->add("Colorize (Highlights)");
+  blend->add("Colorize (Midtones)");
+  blend->add("Colorize (Shadows)");
   blend->add("Alpha Add");
   blend->add("Alpha Subtract");
   blend->add("Smooth");
