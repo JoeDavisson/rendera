@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "CheckBox.H"
 #include "Dialog.H"
-#include "DialogBox.H"
+#include "DialogWindow.H"
 #include "File.H"
 #include "Gui.H"
 #include "InputInt.H"
@@ -39,7 +39,7 @@ namespace About
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     Widget *logo;
     Fl_Button *ok;
   }
@@ -60,7 +60,7 @@ namespace About
     int ww = 0, hh = 0;
     const char *credits = "Copyright (c) 2014 Joe Davisson.\nAll Rights Reserved.";
 
-    Items::dialog = new DialogBox(384, 0, "About");
+    Items::dialog = new DialogWindow(384, 0, "About");
     Items::logo = new Widget(Items::dialog, 32, y1, 320, 64,
                            credits, File::themePath("logo_large.png"), 0, 0, 0);
     Items::logo->align(FL_ALIGN_BOTTOM);
@@ -77,7 +77,7 @@ namespace JpegQuality
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     InputInt *quality;
     Fl_Button *ok;
   }
@@ -114,7 +114,7 @@ namespace JpegQuality
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "JPEG Quality");
+    Items::dialog = new DialogWindow(256, 0, "JPEG Quality");
     Items::dialog->callback(closeCallback);
     Items::quality = new InputInt(Items::dialog, 0, y1, 72, 24, "Quality:", 0);
     Items::quality->value("95");
@@ -130,7 +130,7 @@ namespace PngOptions
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     CheckBox *use_palette;
     CheckBox *use_alpha;
     InputInt *alpha_levels;
@@ -169,7 +169,7 @@ namespace PngOptions
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "PNG Options");
+    Items::dialog = new DialogWindow(256, 0, "PNG Options");
     Items::dialog->callback(closeCallback);
     Items::alpha_levels = new InputInt(Items::dialog, 0, y1, 72, 24, "Alpha Levels:", 0);
     Items::alpha_levels->value("2");
@@ -192,7 +192,7 @@ namespace Progress
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     Fl_Progress *bar;
   }
 
@@ -201,7 +201,7 @@ namespace Progress
 
   void init()
   {
-    Items::dialog = new DialogBox(272, 80, "Progress");
+    Items::dialog = new DialogWindow(272, 80, "Progress");
     Items::bar = new Fl_Progress(8, 8, 256, 64);
     Items::bar->minimum(0);
     Items::bar->maximum(100);
@@ -217,7 +217,7 @@ namespace NewImage
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     InputInt *width;
     InputInt *height;
     Fl_Button *ok;
@@ -262,7 +262,7 @@ namespace NewImage
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "New Image");
+    Items::dialog = new DialogWindow(256, 0, "New Image");
     Items::width = new InputInt(Items::dialog, 0, y1, 72, 24, "Width:", 0);
     y1 += 24 + 8;
     Items::height = new InputInt(Items::dialog, 0, y1, 72, 24, "Height:", 0);
@@ -281,11 +281,11 @@ namespace NewImage
   }
 }
 
-namespace CreatePalette
+namespace MakePalette
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     InputInt *colors;
     Fl_Button *ok;
     Fl_Button *cancel;
@@ -317,7 +317,7 @@ namespace CreatePalette
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "Create Palette");
+    Items::dialog = new DialogWindow(256, 0, "Create Palette");
     Items::colors = new InputInt(Items::dialog, 0, 8, 72, 24, "Colors:", 0);
     Items::colors->center();
     y1 += 24 + 8;
@@ -333,7 +333,7 @@ namespace Editor
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     Widget *hue;
     Widget *sat_val;
     Fl_Button *insert;
@@ -614,7 +614,7 @@ namespace Editor
 
   void init()
   {
-    Items::dialog = new DialogBox(608, 312, "Palette Editor");
+    Items::dialog = new DialogWindow(608, 312, "Palette Editor");
     Items::hue = new Widget(Items::dialog, 8, 8, 24, 256,
                             "Hue", 24, 1,
                             (Fl_Callback *)getHue);
@@ -654,7 +654,7 @@ void Dialog::init()
   PngOptions::init();
   Progress::init();
   NewImage::init();
-  CreatePalette::init();
+  MakePalette::init();
   Editor::init();
 }
 
@@ -734,9 +734,9 @@ void Dialog::newImage()
   NewImage::begin();
 }
 
-void Dialog::createPalette()
+void Dialog::makePalette()
 {
-  CreatePalette::begin();
+  MakePalette::begin();
 }
 
 void Dialog::editor()

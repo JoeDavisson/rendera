@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "CheckBox.H"
 #include "Dialog.H"
-#include "DialogBox.H"
+#include "DialogWindow.H"
 #include "Gamma.H"
 #include "Gui.H"
 #include "InputFloat.H"
@@ -52,7 +52,7 @@ namespace Resize
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     InputInt *width;
     InputInt *height;
     CheckBox *keep_aspect;
@@ -150,7 +150,7 @@ namespace Resize
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "Resize Image");
+    Items::dialog = new DialogWindow(256, 0, "Resize Image");
     Items::width = new InputInt(Items::dialog, 0, y1, 72, 24, "Width:", 0);
     Items::width->center();
     Items::width->callback((Fl_Callback *)checkWidth);
@@ -179,7 +179,7 @@ namespace Scale
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     InputInt *width;
     InputInt *height;
     CheckBox *keep_aspect;
@@ -432,7 +432,7 @@ namespace Scale
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "Scale Image");
+    Items::dialog = new DialogWindow(256, 0, "Scale Image");
     Items::width = new InputInt(Items::dialog, 0, y1, 72, 24, "Width:", 0);
     Items::width->center();
     Items::width->callback((Fl_Callback *)checkWidth);
@@ -464,7 +464,7 @@ namespace Rotate
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     InputFloat *angle;
     InputFloat *scale;
     CheckBox *tile;
@@ -650,7 +650,7 @@ namespace Rotate
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "Rotate Image");
+    Items::dialog = new DialogWindow(256, 0, "Rotate Image");
     Items::angle = new InputFloat(Items::dialog, 0, y1, 72, 24, "Angle:", 0);
     Items::angle->center();
     y1 += 24 + 8;

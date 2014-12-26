@@ -18,16 +18,16 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef DIALOGBOX_H
-#define DIALOGBOX_H
+#ifndef DIALOGWINDOW_H
+#define DIALOGWINDOW_H
 
 #include "Rendera.H"
 
-class DialogBox : public Fl_Double_Window
+class DialogWindow : public Fl_Double_Window
 {
 public:
-  DialogBox(int, int, const char *);
-  ~DialogBox();
+  DialogWindow(int, int, const char *);
+  ~DialogWindow();
   void addOkButton(Fl_Button **, int *);
   void addOkCancelButtons(Fl_Button **, Fl_Button **, int *);
 };

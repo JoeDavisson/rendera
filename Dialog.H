@@ -37,7 +37,7 @@ namespace Dialog
   int updateProgress(const int);
   void hideProgress();
   void newImage();
-  void createPalette();
+  void makePalette();
   void editor();
 }
 

@@ -18,19 +18,19 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "DialogBox.H"
+#include "DialogWindow.H"
 #include "Separator.H"
 
-DialogBox::DialogBox(int w, int h, const char *l)
+DialogWindow::DialogWindow(int w, int h, const char *l)
 : Fl_Double_Window(w, h, l)
 {
 }
 
-DialogBox::~DialogBox()
+DialogWindow::~DialogWindow()
 {
 }
 
-void DialogBox::addOkButton(Fl_Button **ok, int *y1)
+void DialogWindow::addOkButton(Fl_Button **ok, int *y1)
 {
   new Separator(this, 4, *y1, w() - 8, 2, "");
   *y1 += 8;
@@ -40,7 +40,7 @@ void DialogBox::addOkButton(Fl_Button **ok, int *y1)
   resize(x(), y(), w(), *y1);
 }
 
-void DialogBox::addOkCancelButtons(Fl_Button **ok, Fl_Button **cancel, int *y1)
+void DialogWindow::addOkCancelButtons(Fl_Button **ok, Fl_Button **cancel, int *y1)
 {
   new Separator(this, 4, *y1, w() - 8, 2, "");
   *y1 += 8;

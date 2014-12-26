@@ -207,7 +207,7 @@ void Gui::init()
   menubar->add("Palette/Presets/3-3-2", 0,
     (Fl_Callback *)palette332, 0, 0);
   menubar->add("Palette/Create From Image...", 0,
-    (Fl_Callback *)Dialog::createPalette, 0, 0);
+    (Fl_Callback *)Dialog::makePalette, 0, 0);
   menubar->add("Palette/Sort", 0,
     (Fl_Callback *)paletteSort, 0, 0);
   menubar->add("Effects/Normalize", 0,

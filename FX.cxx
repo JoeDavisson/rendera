@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "CheckBox.H"
 #include "Dialog.H"
-#include "DialogBox.H"
+#include "DialogWindow.H"
 #include "FastRnd.H"
 #include "FX.H"
 #include "Gamma.H"
@@ -396,7 +396,7 @@ namespace RotateHue
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     InputInt *angle;
     CheckBox *preserve;
     Fl_Button *ok;
@@ -479,7 +479,7 @@ namespace RotateHue
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "Rotate Hue");
+    Items::dialog = new DialogWindow(256, 0, "Rotate Hue");
     Items::angle = new InputInt(Items::dialog, 0, y1, 72, 24, "Angle:", 0);
     y1 += 24 + 8;
     Items::angle->maximum_size(4);
@@ -595,7 +595,7 @@ namespace Restore
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     CheckBox *normalize;
     CheckBox *invert;
     CheckBox *correct;
@@ -708,7 +708,7 @@ namespace Restore
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "Restore");
+    Items::dialog = new DialogWindow(256, 0, "Restore");
     Items::normalize = new CheckBox(Items::dialog, 0, y1, 16, 16, "Normalize First", 0);
     y1 += 16 + 8;
     Items::normalize->value(1);
@@ -734,7 +734,7 @@ namespace RemoveDust
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     InputInt *amount;
     CheckBox *invert;
     Fl_Button *ok;
@@ -822,7 +822,7 @@ namespace RemoveDust
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "Remove Dust");
+    Items::dialog = new DialogWindow(256, 0, "Remove Dust");
     Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
     Items::amount->value("4");
@@ -927,7 +927,7 @@ namespace ApplyPalette
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     CheckBox *dither;
     CheckBox *gamma;
     Fl_Button *ok;
@@ -1139,7 +1139,7 @@ namespace ApplyPalette
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "Apply Palette");
+    Items::dialog = new DialogWindow(256, 0, "Apply Palette");
     Items::dither = new CheckBox(Items::dialog, 0, y1, 16, 16, "Dithering", 0);
     Items::dither->callback((Fl_Callback *)dither_callback);
     Items::dither->center();
@@ -1160,7 +1160,7 @@ namespace StainedGlass
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     InputInt *detail;
     InputInt *edge;
     CheckBox *uniform;
@@ -1338,7 +1338,7 @@ namespace StainedGlass
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "Stained Glass");
+    Items::dialog = new DialogWindow(256, 0, "Stained Glass");
     Items::detail = new InputInt(Items::dialog, 0, y1, 72, 24, "Detail:", 0);
     y1 += 24 + 8;
     Items::detail->value("5000");
@@ -1368,7 +1368,7 @@ namespace Blur
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     InputInt *amount;
     InputInt *blend;
     Fl_Button *ok;
@@ -1504,7 +1504,7 @@ namespace Blur
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "Blur");
+    Items::dialog = new DialogWindow(256, 0, "Blur");
     Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
     Items::amount->value("1");
@@ -1525,7 +1525,7 @@ namespace Sharpen
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     InputInt *amount;
     Fl_Button *ok;
     Fl_Button *cancel;
@@ -1599,7 +1599,7 @@ namespace Sharpen
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "Sharpen");
+    Items::dialog = new DialogWindow(256, 0, "Sharpen");
     Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
     Items::amount->value("10");
@@ -1616,7 +1616,7 @@ namespace Artistic
 {
   namespace Items
   {
-    DialogBox *dialog;
+    DialogWindow *dialog;
     InputInt *amount;
     Fl_Button *ok;
     Fl_Button *cancel;
@@ -1632,7 +1632,7 @@ namespace Artistic
 
       for(int x = bmp->cl; x <= bmp->cr; x++)
       {
-        rgba_type rgba3 = getRgba(*p);
+//        rgba_type rgba3 = getRgba(*p);
 
         int r = 0;
         int g = 0;
@@ -1643,6 +1643,23 @@ namespace Artistic
         {
           for(int u = -amount; u <= amount; u++) 
           {
+            const int c3 = *p;
+            const int c1 = bmp->getpixel(x + u, y + v);
+            const int c2 = bmp->getpixel(x - u, y - v);
+
+            if(diff24(c3, c1) < diff24(c3, c2))
+            {
+              r += getr(c1);
+              g += getg(c1);
+              b += getb(c1);
+            }
+            else
+            {
+              r += getr(c2);
+              g += getg(c2);
+              b += getb(c2);
+            }
+/*
             rgba_type rgba1 = getRgba(bmp->getpixel(x + u, y + v));
             rgba_type rgba2 = getRgba(bmp->getpixel(x - u, y - v));
 
@@ -1660,6 +1677,7 @@ namespace Artistic
               b += rgba1.b;
             else
               b += rgba2.b;
+*/
 
             count++;
           }
@@ -1705,7 +1723,7 @@ namespace Artistic
   {
     int y1 = 8;
 
-    Items::dialog = new DialogBox(256, 0, "Artistic");
+    Items::dialog = new DialogWindow(256, 0, "Artistic");
     Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
     Items::amount->value("3");

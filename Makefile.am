@@ -24,8 +24,8 @@ rendera_SOURCES =     \
   Crop.cxx            \
   Dialog.H            \
   Dialog.cxx          \
-  DialogBox.H         \
-  DialogBox.cxx       \
+  DialogWindow.H         \
+  DialogWindow.cxx       \
   FastRnd.H           \
   FX.H                \
   FX.cxx              \
