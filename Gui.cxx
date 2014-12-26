@@ -240,6 +240,8 @@ void Gui::init()
     (Fl_Callback *)FX::blur, 0, 0);
   menubar->add("Effects/Sharpen...", 0,
     (Fl_Callback *)FX::sharpen, 0, 0);
+  menubar->add("Effects/Artistic...", 0,
+    (Fl_Callback *)FX::artistic, 0, 0);
   menubar->add("Help/About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
 

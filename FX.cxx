@@ -1612,6 +1612,112 @@ namespace Sharpen
   }
 }
 
+namespace Artistic
+{
+  namespace Items
+  {
+    DialogBox *dialog;
+    InputInt *amount;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
+
+  void apply(int amount)
+  {
+    Dialog::showProgress(bmp->h);
+
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = bmp->row[y] + bmp->cl;
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        rgba_type rgba3 = getRgba(*p);
+
+        int r = 0;
+        int g = 0;
+        int b = 0;
+        int count = 0;
+
+        for(int v = -amount; v <= amount; v++) 
+        {
+          for(int u = -amount; u <= amount; u++) 
+          {
+            rgba_type rgba1 = getRgba(bmp->getpixel(x + u, y + v));
+            rgba_type rgba2 = getRgba(bmp->getpixel(x - u, y - v));
+
+            if(std::abs(rgba3.r - rgba1.r) < std::abs(rgba3.r - rgba2.r))
+              r += rgba1.r;
+            else
+              r += rgba2.r;
+
+            if(std::abs(rgba3.g - rgba1.g) < std::abs(rgba3.g - rgba2.g))
+              g += rgba1.g;
+            else
+              g += rgba2.g;
+
+            if(std::abs(rgba3.b - rgba1.b) < std::abs(rgba3.b - rgba2.b))
+              b += rgba1.b;
+            else
+              b += rgba2.b;
+
+            count++;
+          }
+        }
+
+        r /= count;
+        g /= count;
+        b /= count;
+
+        *p = makeRgba(r, g, b, geta(*p));
+        p++;
+      }
+
+      if(Dialog::updateProgress(y) < 0)
+        return;
+    }
+
+    Dialog::hideProgress();
+  }
+
+  void close()
+  {
+    if(Items::amount->limitValue(1, 10) < 0)
+      return;
+
+    Items::dialog->hide();
+    pushUndo();
+    apply(atoi(Items::amount->value()));
+  }
+
+  void quit()
+  {
+    Dialog::hideProgress();
+    Items::dialog->hide();
+  }
+
+  void begin()
+  {
+    Items::dialog->show();
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    Items::dialog = new DialogBox(256, 0, "Artistic");
+    Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
+    y1 += 24 + 8;
+    Items::amount->value("3");
+    Items::amount->center();
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
+  }
+}
+
 void FX::init()
 {
   RotateHue::init();
@@ -1621,6 +1727,7 @@ void FX::init()
   StainedGlass::init();
   Blur::init();
   Sharpen::init();
+  Artistic::init();
 }
 
 void FX::normalize()
@@ -1696,5 +1803,10 @@ void FX::blur()
 void FX::sharpen()
 {
   Sharpen::begin();
+}
+
+void FX::artistic()
+{
+  Artistic::begin();
 }
 
