@@ -68,6 +68,9 @@ void Blend::set(const int &mode)
     case SMOOTH_COLOR:
       current_blend = smoothColor;
       break;
+    case SHARPEN:
+      current_blend = sharpen;
+      break;
     default:
       current_blend = trans;
       break;
@@ -237,34 +240,28 @@ int Blend::alphaAdd(const int &c1, const int &, const int &t)
 
 int Blend::smooth(const int &c1, const int &, const int &t)
 {
-  static int matrix[9] = { 1, 2, 1, 2, 3, 2, 1, 2, 1 };
-  int x = xpos;
-  int y = ypos;
-  int c[9];
-
-  // need to use getpixel here because of clipping
-  c[0] = bmp->getpixel(x - 1, y - 1);
-  c[1] = bmp->getpixel(x, y - 1);
-  c[2] = bmp->getpixel(x + 1, y - 1);
-  c[3] = bmp->getpixel(x - 1, y);
-  c[4] = bmp->getpixel(x, y);
-  c[5] = bmp->getpixel(x + 1, y);
-  c[6] = bmp->getpixel(x - 1, y + 1);
-  c[7] = bmp->getpixel(x, y + 1);
-  c[8] = bmp->getpixel(x + 1, y + 1);
+  const int matrix[3][3] =
+  {
+    { 1, 2, 1 },
+    { 2, 3, 2 },
+    { 1, 2, 1 }
+  };
 
   int r = 0;
   int g = 0;
   int b = 0;
   int a = 0;
 
-  for(int i = 0; i < 9; i++)
+  for(int j = 0; j < 3; j++)
   {
-    const rgba_type rgba = getRgba(c[i]);
-    r += rgba.r * matrix[i];
-    g += rgba.g * matrix[i];
-    b += rgba.b * matrix[i];
-    a += rgba.a * matrix[i];
+    for(int i = 0; i < 3; i++)
+    {
+      const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
+      r += rgba.r * matrix[i][j];
+      g += rgba.g * matrix[i][j];
+      b += rgba.b * matrix[i][j];
+      a += rgba.a * matrix[i][j];
+    }
   }
 
   r /= 15;
@@ -277,34 +274,28 @@ int Blend::smooth(const int &c1, const int &, const int &t)
 
 int Blend::smoothColor(const int &c1, const int &, const int &t)
 {
-  static int matrix[9] = { 1, 2, 1, 2, 3, 2, 1, 2, 1 };
-  int x = xpos;
-  int y = ypos;
-  int c[9];
-
-  // need to use getpixel here because of clipping
-  c[0] = bmp->getpixel(x - 1, y - 1);
-  c[1] = bmp->getpixel(x, y - 1);
-  c[2] = bmp->getpixel(x + 1, y - 1);
-  c[3] = bmp->getpixel(x - 1, y);
-  c[4] = bmp->getpixel(x, y);
-  c[5] = bmp->getpixel(x + 1, y);
-  c[6] = bmp->getpixel(x - 1, y + 1);
-  c[7] = bmp->getpixel(x, y + 1);
-  c[8] = bmp->getpixel(x + 1, y + 1);
+  const int matrix[3][3] =
+  {
+    { 1, 2, 1 },
+    { 2, 3, 2 },
+    { 1, 2, 1 }
+  };
 
   int r = 0;
   int g = 0;
   int b = 0;
   int a = 0;
 
-  for(int i = 0; i < 9; i++)
+  for(int j = 0; j < 3; j++)
   {
-    const rgba_type rgba = getRgba(c[i]);
-    r += rgba.r * matrix[i];
-    g += rgba.g * matrix[i];
-    b += rgba.b * matrix[i];
-    a += rgba.a * matrix[i];
+    for(int i = 0; i < 3; i++)
+    {
+      const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
+      r += rgba.r * matrix[i][j];
+      g += rgba.g * matrix[i][j];
+      b += rgba.b * matrix[i][j];
+      a += rgba.a * matrix[i][j];
+    }
   }
 
   r /= 15;
@@ -314,6 +305,30 @@ int Blend::smoothColor(const int &c1, const int &, const int &t)
 
   int c3 = Blend::trans(c1, makeRgba(r, g, b, a), t);
   return keepLum(c3, getl(c1));
+}
+
+int Blend::sharpen(const int &c1, const int &, const int &t)
+{
+  const int matrix[3][3] =
+  {
+    { -1, -1, -1 },
+    { -1,  9, -1 },
+    { -1, -1, -1 }
+  };
+
+  int lum = 0;
+
+  for(int j = 0; j < 3; j++)
+  {
+    for(int i = 0; i < 3; i++)
+    {
+      lum += getl(bmp->getpixel(xpos + i - 1, ypos + j - 1)) * matrix[i][j];
+    }
+  }
+
+  lum = std::min(std::max(lum, 0), 255);
+
+  return Blend::trans(c1, keepLum(c1, lum), 255 - (255 - t) / 16);
 }
 
 int Blend::invert(const int &c1, const int &, const int &)
