@@ -130,6 +130,8 @@ int Widget::handle(int event)
 
 void Widget::draw()
 {
+  image->uncache();
+
   fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
 
   if(use_highlight && (stepx <= 1 || stepy <= 1))

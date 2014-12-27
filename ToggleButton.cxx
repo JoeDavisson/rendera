@@ -77,6 +77,8 @@ int ToggleButton::handle(int event)
 
 void ToggleButton::draw()
 {
+  image->uncache();
+
   fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(),
               var ? FL_BACKGROUND2_COLOR : FL_BACKGROUND_COLOR);
 
