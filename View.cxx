@@ -34,7 +34,7 @@ namespace
   #ifdef linux
     XImage *ximage;
   #else
-    Fl_RGB_Image *image;
+    Fl_RGB_Image *wimage;
   #endif
 
   int oldx1 = 0;
@@ -81,9 +81,9 @@ namespace
       XPutImage(fl_display, fl_window, fl_gc, ximage, sx, sy, dx, dy, w, h);
     #else
       fl_push_clip(dx, dy, w, h);
-      image->uncache();
-      image->draw(dx, dy, w, h, sx, sy);
-      fl_pop_clip()
+      wimage->uncache();
+      wimage->draw(dx, dy, w, h, sx, sy);
+      fl_pop_clip();
     #endif
   }
 }
@@ -114,7 +114,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
     ximage = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
                           (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
   #else
-    image = new Fl_RGB_Image((unsigned char *)backbuf->data,
+    wimage = new Fl_RGB_Image((unsigned char *)backbuf->data,
                              Fl::w(), Fl::h(), 4, 0);
   #endif
 
