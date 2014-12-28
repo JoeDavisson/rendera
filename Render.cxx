@@ -154,7 +154,6 @@ namespace
 
     if(!(pos % step))
     {
-      Fl::check();
       view->drawMain(true);
     }
 
