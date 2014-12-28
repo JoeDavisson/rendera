@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define BLEND_H
 
 class Bitmap;
+class Palette;
 
 #include "Rendera.H"
 
@@ -41,11 +42,12 @@ namespace Blend
     ALPHA_SUB,
     SMOOTH,
     SMOOTH_COLOR,
-    SHARPEN
+    SHARPEN,
+    PALETTE_COLORS
   };
  
   void set(const int &);
-  void target(Bitmap *, const int &, const int &);
+  void target(Bitmap *, Palette *, const int &, const int &);
   int current(const int &, const int &, const int &);
   int invert(const int &, const int &, const int &);
   int transNoAlpha(const int &, const int &, const int &);
@@ -62,6 +64,7 @@ namespace Blend
   int smooth(const int &, const int &, const int &);
   int smoothColor(const int &, const int &, const int &);
   int sharpen(const int &, const int &, const int &);
+  int paletteColors(const int &, const int &, const int &);
   int invert(const int &, const int &, const int &);
   void rgbToHsv(const int &, const int &, const int &, int *, int *, int *);
   void hsvToRgb(const int &, const int &, const int &, int *, int *, int *);

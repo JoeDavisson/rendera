@@ -20,11 +20,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Blend.H"
+#include "Palette.H"
 
 namespace
 {
   int (*current_blend)(const int &, const int &, const int &) = &Blend::trans;
   Bitmap *bmp;
+  Palette *pal;
   int xpos, ypos;
 }
 
@@ -71,15 +73,19 @@ void Blend::set(const int &mode)
     case SHARPEN:
       current_blend = sharpen;
       break;
+    case PALETTE_COLORS:
+      current_blend = paletteColors;
+      break;
     default:
       current_blend = trans;
       break;
   }
 }
 
-void Blend::target(Bitmap *b, const int &x, const int &y)
+void Blend::target(Bitmap *b, Palette *p, const int &x, const int &y)
 {
   bmp = b;
+  pal = p;
   xpos = x;
   ypos = y;
 }
@@ -329,6 +335,15 @@ int Blend::sharpen(const int &c1, const int &, const int &t)
   lum = std::min(std::max(lum, 0), 255);
 
   return Blend::trans(c1, keepLum(c1, lum), 255 - (255 - t) / 16);
+}
+
+int Blend::paletteColors(const int &c1, const int &c2, const int &t)
+{
+  int c = pal->data[pal->lookup(transNoAlpha(c1, c2, t))];
+  c &= 0xFFFFFF;
+  c |= c1 & 0xFF000000;
+
+  return c;
 }
 
 int Blend::invert(const int &c1, const int &, const int &)

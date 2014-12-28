@@ -387,7 +387,7 @@ void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
 
 void Bitmap::setpixel(const int &x, const int &y, const int &c2, const int &t)
 {
-  Blend::target(this, x, y);
+  Blend::target(this, Project::palette.get(), x, y);
 
   switch(Project::wrap | (Project::clone << 1))
   {

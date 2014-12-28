@@ -210,6 +210,8 @@ void Gui::init()
     (Fl_Callback *)Dialog::makePalette, 0, 0);
   menubar->add("Palette/Sort", 0,
     (Fl_Callback *)paletteSort, 0, 0);
+  menubar->add("Palette/Apply to Image...", 0,
+    (Fl_Callback *)FX::applyPalette, 0, 0);
   menubar->add("Effects/Normalize", 0,
     (Fl_Callback *)FX::normalize, 0, 0);
   menubar->add("Effects/Equalize", 0,
@@ -232,8 +234,6 @@ void Gui::init()
     (Fl_Callback *)FX::desaturate, 0, 0);
   menubar->add("Effects/Colorize", 0,
     (Fl_Callback *)FX::colorize, 0, 0);
-  menubar->add("Effects/Apply Palette...", 0,
-    (Fl_Callback *)FX::applyPalette, 0, 0);
   menubar->add("Effects/Stained Glass...", 0,
     (Fl_Callback *)FX::stainedGlass, 0, 0);
   menubar->add("Effects/Blur...", 0,
@@ -499,6 +499,7 @@ void Gui::init()
   blend->add("Smooth");
   blend->add("Smooth (Color Only)");
   blend->add("Sharpen");
+  blend->add("Palette Colors");
   blend->value(0);
   blend->callback((Fl_Callback *)checkBlend);
   y1 += 24 + 8;
