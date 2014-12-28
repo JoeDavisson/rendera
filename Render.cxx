@@ -153,7 +153,10 @@ namespace
       return -1;
 
     if(!(pos % step))
+    {
+      Fl::check();
       view->drawMain(true);
+    }
 
     return 0;
   }
