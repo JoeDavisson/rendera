@@ -30,14 +30,7 @@ install:
   - sudo apt-get --assume-yes install mesa-common-dev
   - sudo apt-get --assume-yes install zlib1g-dev
 
-script:
-  - mkdir -vp ${TRAVIS_BUILD_DIR}/m4
-  - cd `mktemp -t -d rendera-build-XXXXXX`
-  - autoreconf -ivf ${TRAVIS_BUILD_DIR}
-  - ${TRAVIS_BUILD_DIR}/configure --prefix=`mktemp -t -d rendera-prefix-XXXXXX`
-  - make
-  - make check
-  - make distcheck
+script: ${TRAVIS_BUILD_DIR}/build-o-matic.sh
 
 matrix:
   allow_failures:
