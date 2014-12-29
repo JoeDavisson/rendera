@@ -1,9 +1,5 @@
 language: cpp
 
-compiler:
-  - gcc
-  - clang
-
 before_install:
   - uname -a
   - lsb_release --all
@@ -28,11 +24,24 @@ install:
   - sudo apt-get --assume-yes install libxrender-dev
   - sudo apt-get --assume-yes install libz-dev
   - sudo apt-get --assume-yes install mesa-common-dev
+  - sudo apt-get --assume-yes install mingw32
+  - sudo apt-get --assume-yes install mingw32-binutils
+  - sudo apt-get --assume-yes install mingw32-runtime
+  - sudo apt-get --assume-yes install wine
   - sudo apt-get --assume-yes install zlib1g-dev
 
-script: ${TRAVIS_BUILD_DIR}/build-o-matic.sh
+env:
+  - TRCC=gcc TRCXX=g++
+  - TRCC=clang TRCXX=clang++
+  - TRCC=i586-mingw32msvc-gcc TRCXX=i586-mingw32msvc-g++
+
+script:
+  - export CC=$TRCC
+  - export CXX=$TRCXX
+  - ${TRAVIS_BUILD_DIR}/build-o-matic.sh
 
 matrix:
   allow_failures:
-    - compiler: clang
+    - env: TRCC=clang TRCXX=clang++
+    - env: TRCC=i586-mingw32msvc-gcc TRCXX=i586-mingw32msvc-g++
   fast_finish: true
