@@ -22,8 +22,8 @@ AC_PROG_CXX
 
 # Checks for libraries.
 
-AC_CHECK_LIB([dl],[dlsym],[],
-  [AC_MSG_ERROR([libdl missing])])
+dnl AC_CHECK_LIB([dl],[dlsym],[],
+dnl   [AC_MSG_ERROR([libdl missing])])
 
 AC_CHECK_LIB([fltk],[fl_system],[],
   [AC_MSG_ERROR([libfltk missing])])
