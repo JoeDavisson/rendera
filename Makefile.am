@@ -6,9 +6,10 @@ ACLOCAL_AMFLAGS = -I m4
 AM_CXXFLAGS = -Wall -Wextra -Werror -pedantic-errors # -rdynamic
 
 
-bin_PROGRAMS = rendera
-
-rendera_SOURCES =     \
+noinst_LTLIBRARIES = libren.la
+libren_la_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
+libren_la_LDFLAGS = $(FLTK_CONFIG_LDFLAGS)
+libren_la_SOURCES =   \
   Bitmap.H            \
   Bitmap.cxx          \
   Blend.H             \
@@ -45,7 +46,6 @@ rendera_SOURCES =     \
   InputFloat.cxx      \
   InputInt.H          \
   InputInt.cxx        \
-  Main.cxx            \
   Map.H               \
   Map.cxx             \
   Octree.H            \
@@ -83,8 +83,11 @@ rendera_SOURCES =     \
   Widget.cxx
 
 
-rendera_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
-rendera_LDFLAGS = $(FLTK_CONFIG_LDFLAGS)
+bin_PROGRAMS = rendera
+rendera_SOURCES = Main.cxx
+rendera_LDADD = libren.la
+# rendera_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
+# rendera_LDFLAGS = $(FLTK_CONFIG_LDFLAGS)
 
 
 nodist_rendera_SOURCES = paths.h
