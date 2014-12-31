@@ -43,9 +43,6 @@ Button::Button(Fl_Group *g, int x, int y, int w, int h,
 
   image = new Fl_RGB_Image((unsigned char *)bitmap->data, bitmap->w, bitmap->h, 4, 0);
 
-//  if(Project::theme == Project::THEME_LIGHT)
-//    bitmap->invert();
-
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
 }
@@ -56,8 +53,6 @@ Button::~Button()
 
 void Button::draw()
 {
-  image->uncache();
-
   fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(),
               value() ? FL_BACKGROUND2_COLOR : FL_BACKGROUND_COLOR);
 
@@ -68,6 +63,7 @@ void Button::draw()
   else
     image->draw(x(), y());
 
+  image->uncache();
   fl_pop_clip();
 
   fl_draw_box(value() ? FL_DOWN_FRAME : FL_UP_FRAME,

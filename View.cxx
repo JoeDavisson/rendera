@@ -81,8 +81,8 @@ namespace
       XPutImage(fl_display, fl_window, fl_gc, ximage, sx, sy, dx, dy, w, h);
     #else
       fl_push_clip(dx, dy, w, h);
-      wimage->uncache();
       wimage->draw(dx, dy, w, h, sx, sy);
+      wimage->uncache();
       fl_pop_clip();
     #endif
   }

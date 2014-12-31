@@ -130,14 +130,18 @@ int Widget::handle(int event)
 
 void Widget::draw()
 {
-  image->uncache();
-
   fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
 
   if(use_highlight && (stepx <= 1 || stepy <= 1))
+  {
     image2->draw(x(), y());
+    image2->uncache();
+  }
   else
+  {
     image->draw(x(), y());
+    image->uncache();
+  }
     
   if(stepx <= 1 && stepy <= 1)
     return;
@@ -154,11 +158,17 @@ void Widget::draw()
   fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND2_COLOR);
 
   if(use_highlight)
+  {
     image2->draw(x() + offsetx, y() + offsety, stepx, stepy,
                 offsetx + 1, offsety + 1);
+    image2->uncache();
+  }
   else
+  {
     image->draw(x() + offsetx, y() + offsety, stepx, stepy,
                 offsetx + 1, offsety + 1);
+    image->uncache();
+  }
 
   fl_pop_clip();
 
