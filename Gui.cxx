@@ -188,9 +188,9 @@ void Gui::init()
     (Fl_Callback *)Transform::scale, 0, 0);
   menubar->add("Image/Rotate...", 0,
     (Fl_Callback *)Transform::rotate, 0, 0);
-  menubar->add("Palette/Load", 0,
+  menubar->add("Palette/Load...", 0,
     (Fl_Callback *)File::loadPalette, 0, 0);
-  menubar->add("Palette/Save", 0,
+  menubar->add("Palette/Save...", 0,
     (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);
   menubar->add("Palette/Create From Image...", 0,
     (Fl_Callback *)Dialog::makePalette, 0, 0);
