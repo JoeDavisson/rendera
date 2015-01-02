@@ -52,6 +52,15 @@ Selectively sharpens the image.
 .TP
 .B Palette Colors:
 Use the nearest palette color only (useful when working on paletted images.)
+.SH MISCELLANEOUS
+.TP
+.B Edge-Wrapping and Cloning:
+On the bottom panel there are edge-wrapping/cloning options, as well as an option to mirror the clone. All of these may be combined to suit a particular need. (SHIFT + CLICK sets the clone target.)
+.TP
+.B Paletted Images:
+Although Rendera is primarily an RGBA program, there is some support for creating paletted images. (Currently the only supported paletted format is PNG.)
+
+All of the applicable options are under the Palette menu. When saving a paletted PNG, there is an option to include transparency with a certain number of levels. It is important that the 256-color palette has enough leftover entries to accomodate the transparency levels. (For example, a 64-color palette can have four transparency levels.)
 .SH OPTIONS
 .TP
 .BR \-\-help
