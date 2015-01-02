@@ -17,5 +17,5 @@ echo -n                                                             && \
     export PATH="${RENDERA_PREFIX_DIR}/bin:${PATH}"                 && \
     rendera --help                                                  && \
     rendera --version                                               && \
-    man -t rendera | ps2ascii -                                     && \
+    man -M ${RENDERA_PREFIX_DIR}/share/man -t rendera | ps2ascii -  && \
     echo && echo "big win"
