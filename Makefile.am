@@ -188,3 +188,6 @@ test_numerics_SOURCES = test/numerics.C
 
 
 TESTS = $(check_PROGRAMS)
+
+
+dist_man1_MANS = man/rendera.man
