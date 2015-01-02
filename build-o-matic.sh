@@ -14,6 +14,8 @@ echo -n                                                             && \
     make check                                                      && \
     make distcheck                                                  && \
     make install                                                    && \
-    ${RENDERA_PREFIX_DIR}/bin/rendera --help                        && \
-    ${RENDERA_PREFIX_DIR}/bin/rendera --version                     && \
-    echo "big win"
+    export PATH="${RENDERA_PREFIX_DIR}/bin:${PATH}"                 && \
+    rendera --help                                                  && \
+    rendera --version                                               && \
+    man -t rendera | ps2ascii -                                     && \
+    echo && echo "big win"
