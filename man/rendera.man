@@ -7,7 +7,51 @@ rendera \- A painting program.
 .IR file ...
 .SH DESCRIPTION
 .B rendera
-Rendera is a painting program suitable for photo-retouching, seamless tile production, and colorizing black-and-white photographs.
+is a painting program suitable for photo-retouching, seamless tile production, and colorizing black-and-white photographs.
+.SH TOOLS
+.TP
+.B Paintbrush:
+The paintbrush is used for general painting tasks. The painting mode is combined with the current color and blending mode from the right panel, and also the wrap and clone options on the bottom panel.
+.TP
+.B Eyedropper:
+This grabs a color from the current image.
+.TP
+.B Crop:
+An interactive cropping tool. Click inside the box to move it, or outside to change the dimensions. Press the "crop" button to finish.
+.TP
+.B Offset:
+For making seamless tiles. Simply click and drag to change the image offset.
+.TP
+.B Text:
+Text placement tool, change the options and click to draw text.
+.SH BLENDING MODES
+.TP
+.B Normal:
+Normal transparent blend, with a variation to ignore the alpha channel.
+.TP
+.B Darken:
+Logical Subtract, but with a 180-degree hue shift so the hue stays the same.
+.TP
+.B Lighten:
+Logical Add.
+.TP
+.B Colorize:
+Colorize the image, keeps the same luminance for a realistic look, with variations which restrict the operation to the highlights/midtones/shadows.
+.TP
+.B Alpha Add:
+Add to the alpha channel.
+.TP
+.B Alpha Subtract:
+Subtract from the alpha channel.
+.TP
+.B Smooth:
+Selectively smooth the image, with a variation to affect the color only (useful when colorizing a photograph to smooth edges).
+.TP
+.B Sharpen:
+Selectively sharpens the image.
+.TP
+.B Palette Colors:
+Use the nearest palette color only (useful when working on paletted images.)
 .SH OPTIONS
 .TP
 .BR \-\-help
