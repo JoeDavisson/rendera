@@ -33,6 +33,7 @@ namespace Gui
 {
   void init();
   void show();
+  void menuFocus();
   void setMenuItem(const char *);
   void clearMenuItem(const char *);
 

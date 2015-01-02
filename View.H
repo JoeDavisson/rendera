@@ -67,6 +67,7 @@ public:
   int button1, button2, button3;
   bool dclick;
   bool shift;
+  bool ctrl;
 
 protected:
   virtual void draw();

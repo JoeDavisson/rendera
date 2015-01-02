@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Project.H"
 #include "Stroke.H"
 #include "Tool.H"
+#include "Undo.H"
 #include "View.H"
 #include "Widget.H"
 
@@ -118,7 +119,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
                              Fl::w(), Fl::h(), 4, 0);
   #endif
 
-  take_focus();
+//  take_focus();
   resize(group->x() + x, group->y() + y, w, h);
 }
 
@@ -142,6 +143,7 @@ int View::handle(int event)
   button = button1 | button2 | button3;
   dclick = Fl::event_clicks() ? true : false;
   shift = Fl::event_shift() ? true : false;
+  ctrl = Fl::event_ctrl() ? true : false;
 
   switch(event)
   {
@@ -185,7 +187,7 @@ int View::handle(int event)
 
     case FL_PUSH:
     {
-      take_focus();
+//      take_focus();
 
       switch(button)
       {
@@ -219,7 +221,7 @@ int View::handle(int event)
 
     case FL_DRAG:
     {
-      take_focus();
+//      take_focus();
 
       switch(button)
       {
@@ -255,6 +257,8 @@ int View::handle(int event)
       if(Project::tool->isActive())
         Project::tool->redraw(this);
 
+      Gui::menuFocus();
+
       return 1;
     }
 
@@ -287,6 +291,7 @@ int View::handle(int event)
       return 1;
     }
 
+/*
     case FL_KEYDOWN:
     {
       if(Fl::event_key() == FL_Escape)
@@ -310,10 +315,15 @@ int View::handle(int event)
         case FL_Up:
           scroll(3, 64);
           break;
+        case 'z':
+          if(ctrl)
+            Undo::pop();
+          break;
       }
 
       return 1;
     }
+*/
 
     case FL_DND_ENTER:
     {
@@ -364,6 +374,7 @@ int View::handle(int event)
     }
 
   }
+
   return 0;
 }
 
