@@ -56,8 +56,26 @@ void Text::push(View *view)
              (stroke->x2 - stroke->x1) + 1,
              (stroke->y2 - stroke->y1) + 1);
 
+  if(Project::clone_moved)
+  {
+    Project::clone_dx = view->imgx - Project::clone_x;
+    Project::clone_dy = view->imgy - Project::clone_y;
+    Project::clone_moved = 0;
+  }
+
+ if(Project::clone)
+  {
+    int w = (stroke->x2 - stroke->x1);
+    int h = (stroke->y2 - stroke->y1);
+
+    if(Project::clone_bmp)
+      delete Project::clone_bmp;
+
+    Project::clone_bmp = new Bitmap(w, h);
+    Project::bmp->blit(Project::clone_bmp, stroke->x1, stroke->y1, 0, 0, w, h);
+  }
+
   // render text to image
-  Bitmap *dest = Project::bmp;
   Blend::set(Project::brush->blend);
 
   for(int y = 0; y < temp->h; y++)
@@ -69,10 +87,10 @@ void Text::push(View *view)
 
       if(t < 255)
       {
-        dest->setpixel(view->imgx - temp->w / 2 + x,
-                       view->imgy - temp->h / 2 + y,
-                       Project::brush->color,
-                       scaleVal(Project::brush->trans, t));
+        Project::bmp->setpixel(view->imgx - temp->w / 2 + x,
+                               view->imgy - temp->h / 2 + y,
+                               Project::brush->color,
+                               scaleVal(Project::brush->trans, t));
       }
     }
   }
