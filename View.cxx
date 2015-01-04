@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Blend.H"
+#include "Clone.H"
 #include "File.H"
 #include "Gui.H"
 #include "Palette.H"
@@ -194,9 +195,9 @@ int View::handle(int event)
         case 1:
           if(shift)
           {
-            Project::clone_x = imgx;
-            Project::clone_y = imgy;
-            Project::clone_moved = 1;
+            Clone::x = imgx;
+            Clone::y = imgy;
+            Clone::moved = true;
             redraw();
             break;
           }
@@ -489,11 +490,11 @@ void View::drawCloneCursor()
   if(moving)
     return;
 
-  int x = Project::clone_x;
-  int y = Project::clone_y;
-  int dx = Project::clone_dx;
-  int dy = Project::clone_dy;
-  int mirror = Project::clone_mirror;
+  int x = Clone::x;
+  int y = Clone::y;
+  int dx = Clone::dx;
+  int dy = Clone::dy;
+  int mirror = Clone::mirror;
   int w = Project::bmp->w - 1;
   int h = Project::bmp->h - 1;
 

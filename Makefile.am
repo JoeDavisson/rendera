@@ -20,6 +20,8 @@ libren_la_SOURCES =   \
   Button.cxx          \
   CheckBox.H          \
   CheckBox.cxx        \
+  Clone.H             \
+  Clone.cxx           \
   Common.H            \
   Crop.H              \
   Crop.cxx            \

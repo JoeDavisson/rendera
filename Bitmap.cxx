@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Blend.H"
+#include "Clone.H"
 #include "Gamma.H"
 #include "Gui.H"
 #include "Palette.H"
@@ -389,7 +390,7 @@ void Bitmap::setpixel(const int &x, const int &y, const int &c2, const int &t)
 {
   Blend::target(this, Project::palette.get(), x, y);
 
-  switch(Project::wrap | (Project::clone << 1))
+  switch(Clone::wrap | (Clone::active << 1))
   {
     case 0:
       setpixelSolid(x, y, c2, t);
@@ -448,25 +449,25 @@ void Bitmap::setpixelClone(const int &x, const int &y,
 
   int *c1 = row[y] + x;
 
-  int x1 = x - Project::clone_dx;
-  int y1 = y - Project::clone_dy;
+  int x1 = x - Clone::dx;
+  int y1 = y - Clone::dy;
 
   const int w1 = w - 1;
   const int h1 = h - 1;
 
-  switch(Project::clone_mirror)
+  switch(Clone::mirror)
   {
     case 0:
       break;
     case 1:
-      x1 = (w1 - x1) - (w1 - Project::clone_x * 2);
+      x1 = (w1 - x1) - (w1 - Clone::x * 2);
       break;
     case 2:
-      y1 = (h1 - y1) - (h1 - Project::clone_y * 2);
+      y1 = (h1 - y1) - (h1 - Clone::y * 2);
       break;
     case 3:
-      x1 = (w1 - x1) - (w1 - Project::clone_x * 2);
-      y1 = (h1 - y1) - (h1 - Project::clone_y * 2);
+      x1 = (w1 - x1) - (w1 - Clone::x * 2);
+      y1 = (h1 - y1) - (h1 - Clone::y * 2);
       break;
   }
 
@@ -477,8 +478,7 @@ void Bitmap::setpixelClone(const int &x, const int &y,
   if(x1 > stroke->x1 && x1 < stroke->x2 &&
      y1 > stroke->y1 && y1 < stroke->y2)
   {
-    c2 = Project::clone_bmp->getpixel(x1 - stroke->x1 - 1,
-                                      y1 - stroke->y1 - 1);
+    c2 = Clone::bmp->getpixel(x1 - stroke->x1 - 1, y1 - stroke->y1 - 1);
   }
   else
   {
@@ -505,25 +505,25 @@ void Bitmap::setpixelWrapClone(const int &x, const int &y,
 
   int *c1 = row[y1] + x1;
 
-  x1 -= Project::clone_dx;
-  y1 -= Project::clone_dy;
+  x1 -= Clone::dx;
+  y1 -= Clone::dy;
 
   const int w1 = w - 1;
   const int h1 = h - 1;
 
-  switch(Project::clone_mirror)
+  switch(Clone::mirror)
   {
     case 0:
       break;
     case 1:
-      x1 = (w1 - x1) - (w1 - Project::clone_x * 2);
+      x1 = (w1 - x1) - (w1 - Clone::x * 2);
       break;
     case 2:
-      y1 = (h1 - y1) - (h1 - Project::clone_y * 2);
+      y1 = (h1 - y1) - (h1 - Clone::y * 2);
       break;
     case 3:
-      x1 = (w1 - x1) - (w1 - Project::clone_x * 2);
-      y1 = (h1 - y1) - (h1 - Project::clone_y * 2);
+      x1 = (w1 - x1) - (w1 - Clone::x * 2);
+      y1 = (h1 - y1) - (h1 - Clone::y * 2);
       break;
   }
 
@@ -543,8 +543,7 @@ void Bitmap::setpixelWrapClone(const int &x, const int &y,
   if(x1 > stroke->x1 && x1 < stroke->x2 &&
      y1 > stroke->y1 && y1 < stroke->y2)
   {
-    c2 = Project::clone_bmp->getpixel(x1 - stroke->x1 - 1,
-                                         y1 - stroke->y1 - 1);
+    c2 = Clone::bmp->getpixel(x1 - stroke->x1 - 1, y1 - stroke->y1 - 1);
   }
   else
   {

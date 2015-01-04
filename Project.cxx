@@ -36,13 +36,12 @@ namespace Project
   Bitmap *bmp = 0;
   Map *map = 0;
 
-  Tool *tool = 0;
-
   SP<Brush> brush = new Brush();
   SP<Palette> palette = new Palette();
   SP<Stroke> stroke = new Stroke();
 
   // tools
+  Tool *tool = 0;
   SP<Paint> paint = new Paint();
   SP<GetColor> getcolor = new GetColor();
   SP<Crop> crop = new Crop();
@@ -52,16 +51,6 @@ namespace Project
   int overscroll = 64;
   int theme = THEME_DARK;
   char theme_path[256];
-
-  bool wrap = 0;
-  bool clone = 0;
-  bool clone_moved = 0;
-  int clone_x = 0;
-  int clone_y = 0;
-  int clone_dx = 0;
-  int clone_dy = 0;
-  int clone_mirror = 0;
-  Bitmap *clone_bmp = 0;
 }
 
 void Project::init()

@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Brush.H"
 #include "Button.H"
+#include "Clone.H"
 #include "Dialog.H"
 #include "FX.H"
 #include "File.H"
@@ -871,17 +872,17 @@ void Gui::checkBlend(Widget *, void *)
 
 void Gui::checkWrap(Widget *, void *var)
 {
-  Project::wrap = *(int *)var;
+  Clone::wrap = *(int *)var;
 }
 
 void Gui::checkClone(Widget *, void *var)
 {
-  Project::clone = *(int *)var;
+  Clone::active = *(int *)var;
 }
 
 void Gui::checkMirror(Widget *, void *var)
 {
-  Project::clone_mirror = *(int *)var;
+  Clone::mirror = *(int *)var;
 }
 
 void Gui::checkOrigin(Widget *, void *var)

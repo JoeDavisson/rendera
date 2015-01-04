@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Brush.H"
+#include "Clone.H"
 #include "Gui.H"
 #include "Map.H"
 #include "Project.H"
@@ -56,24 +57,8 @@ void Text::push(View *view)
              (stroke->x2 - stroke->x1) + 1,
              (stroke->y2 - stroke->y1) + 1);
 
-  if(Project::clone_moved)
-  {
-    Project::clone_dx = view->imgx - Project::clone_x;
-    Project::clone_dy = view->imgy - Project::clone_y;
-    Project::clone_moved = 0;
-  }
-
- if(Project::clone)
-  {
-    int w = (stroke->x2 - stroke->x1);
-    int h = (stroke->y2 - stroke->y1);
-
-    if(Project::clone_bmp)
-      delete Project::clone_bmp;
-
-    Project::clone_bmp = new Bitmap(w, h);
-    Project::bmp->blit(Project::clone_bmp, stroke->x1, stroke->y1, 0, 0, w, h);
-  }
+  Clone::move(view->imgx, view->imgy);
+  Clone::refresh(stroke->x1, stroke->y1, stroke->x2, stroke->y2);
 
   // render text to image
   Blend::set(Project::brush->blend);

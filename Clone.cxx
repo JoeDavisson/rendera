@@ -18,42 +18,42 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef PROJECT_H
-#define PROJECT_H
+#include "Bitmap.H"
+#include "Clone.H"
+#include "Project.H"
 
-#include "Rendera.H"
-
-class Bitmap;
-class Brush;
-class Map;
-class Palette;
-class Tool;
-class Stroke;
-
-namespace Project
+namespace Clone
 {
-  enum
-  {
-    THEME_LIGHT,
-    THEME_DARK
-  };
-
-  extern Bitmap *bmp;
-  extern Map *map;
-
-  extern SP<Brush> brush;
-  extern SP<Palette> palette;
-  extern SP<Stroke> stroke;
-  extern Tool *tool;
-
-  extern int overscroll;
-  extern int theme;
-  extern char theme_path[256];
-
-  void init();
-  void setTool(int);
-  void newImage(int, int);
+  int x = 0;
+  int y = 0;
+  int dx = 0;
+  int dy = 0;
+  bool wrap = false;
+  int mirror = 0;
+  bool active = false;
+  bool moved = false;
+  Bitmap *bmp = 0;
 }
 
-#endif
+void Clone::move(int xx, int yy)
+{
+  if(moved)
+  {
+    dx = xx - x; 
+    dy = yy - y; 
+    moved = false;
+  }
+}
+
+void Clone::refresh(int x1, int y1, int x2, int y2)
+{
+  const int w = x2 - x1;
+  const int h = y2 - y1;
+
+  if(bmp)
+    delete bmp;
+
+  bmp = new Bitmap(w, h);
+  Project::bmp->blit(bmp, x1, y1, 0, 0, w, h);
+}
 

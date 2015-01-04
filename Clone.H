@@ -18,41 +18,27 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef PROJECT_H
-#define PROJECT_H
+#ifndef CLONE_H
+#define CLONE_H
+
+class Bitmap;
 
 #include "Rendera.H"
 
-class Bitmap;
-class Brush;
-class Map;
-class Palette;
-class Tool;
-class Stroke;
-
-namespace Project
+namespace Clone
 {
-  enum
-  {
-    THEME_LIGHT,
-    THEME_DARK
-  };
-
+  extern int x;
+  extern int y;
+  extern int dx;
+  extern int dy;
+  extern bool wrap;
+  extern int mirror;
+  extern bool active;
+  extern bool moved;
   extern Bitmap *bmp;
-  extern Map *map;
 
-  extern SP<Brush> brush;
-  extern SP<Palette> palette;
-  extern SP<Stroke> stroke;
-  extern Tool *tool;
-
-  extern int overscroll;
-  extern int theme;
-  extern char theme_path[256];
-
-  void init();
-  void setTool(int);
-  void newImage(int, int);
+  void move(int, int);
+  void refresh(int, int, int, int);
 }
 
 #endif

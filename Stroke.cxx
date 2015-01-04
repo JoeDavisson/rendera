@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Brush.H"
+#include "Clone.H"
 #include "Map.H"
 #include "Project.H"
 #include "Stroke.H"
@@ -307,19 +308,14 @@ void Stroke::begin(int x, int y, int ox, int oy, float zoom)
   oldx = x;
   oldy = y;
 
-  if(Project::clone_moved)
-  {
-    Project::clone_dx = x - Project::clone_x;
-    Project::clone_dy = y - Project::clone_y;
-    Project::clone_moved = 0;
-  }
-
   polycount = 0;
 
   x1 = x - (r + 1);
   y1 = y - (r + 1);
   x2 = x + (r + 1);
   y2 = y + (r + 1);
+
+  Clone::move(x, y);
 
   map->clear(0);
   draw(x, y, ox, oy, zoom);
@@ -532,17 +528,7 @@ void Stroke::end(int x, int y)
 
   int w = 0, h = 0;
 
-  if(Project::clone)
-  {
-    w = (x2 - x1);
-    h = (y2 - y1);
-
-    if(Project::clone_bmp)
-      delete Project::clone_bmp;
-
-    Project::clone_bmp = new Bitmap(w, h);
-    Project::bmp->blit(Project::clone_bmp, x1, y1, 0, 0, w, h);
-  }
+  Clone::refresh(x1, y1, x2, y2);
 
   if(brush->aa)
   {
