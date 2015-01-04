@@ -547,11 +547,6 @@ void Gui::show()
   window->show();
 }
 
-void Gui::menuFocus()
-{
-  menubar->take_focus();
-}
-
 void Gui::setMenuItem(const char *s)
 {
   Fl_Menu_Item *m;

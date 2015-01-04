@@ -120,7 +120,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
                              Fl::w(), Fl::h(), 4, 0);
   #endif
 
-//  take_focus();
+  take_focus();
   resize(group->x() + x, group->y() + y, w, h);
 }
 
@@ -188,7 +188,7 @@ int View::handle(int event)
 
     case FL_PUSH:
     {
-//      take_focus();
+      take_focus();
 
       switch(button)
       {
@@ -222,7 +222,7 @@ int View::handle(int event)
 
     case FL_DRAG:
     {
-//      take_focus();
+      take_focus();
 
       switch(button)
       {
@@ -258,8 +258,6 @@ int View::handle(int event)
       if(Project::tool->isActive())
         Project::tool->redraw(this);
 
-      Gui::menuFocus();
-
       return 1;
     }
 
@@ -292,7 +290,6 @@ int View::handle(int event)
       return 1;
     }
 
-/*
     case FL_KEYDOWN:
     {
       if(Fl::event_key() == FL_Escape)
@@ -324,7 +321,6 @@ int View::handle(int event)
 
       return 1;
     }
-*/
 
     case FL_DND_ENTER:
     {
