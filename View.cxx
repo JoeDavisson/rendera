@@ -120,7 +120,6 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
                              Fl::w(), Fl::h(), 4, 0);
   #endif
 
-  take_focus();
   resize(group->x() + x, group->y() + y, w, h);
 }
 
@@ -160,6 +159,9 @@ int View::handle(int event)
 
     case FL_ENTER:
     {
+      if(Fl::focus() != this)
+        Fl::focus(this);
+
       switch(Gui::getTool())
       {
         case 1:
@@ -188,8 +190,6 @@ int View::handle(int event)
 
     case FL_PUSH:
     {
-      take_focus();
-
       switch(button)
       {
         case 1:
@@ -222,8 +222,6 @@ int View::handle(int event)
 
     case FL_DRAG:
     {
-      take_focus();
-
       switch(button)
       {
         case 1:

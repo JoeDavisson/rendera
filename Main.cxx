@@ -164,8 +164,8 @@ int main(int argc, char *argv[])
   }
 
   Fl::visual(FL_DOUBLE | FL_RGB);
-
   Fl::scheme("gtk+");
+
   Fl_Shared_Image::add_handler(File::previewJpeg);
   Fl_Shared_Image::add_handler(File::previewPng);
   Fl_Shared_Image::add_handler(File::previewBmp);
