@@ -147,15 +147,17 @@ namespace
     *s3 = 1;
   }
 
-  int update(int pos, int step)
+  int update(int pos)
   {
+    // user cancelled operation
     if(Fl::get_key(FL_Escape))
-      return -1;
-
-    if(!(pos % step))
     {
-      view->drawMain(true);
+      Gui::getView()->drawMain(true);
+      return -1;
     }
+
+    if(!(pos % 50))
+      view->drawMain(true);
 
     return 0;
   }
@@ -172,7 +174,7 @@ namespace
           bmp->setpixel(x, y, brush->color, brush->trans);
       }
 
-      if(update(y, 64) < 0)
+      if(update(y) < 0)
         break;
     }
   }
@@ -191,7 +193,7 @@ namespace
         p++;
       }
 
-      if(update(y, 64) < 0)
+      if(update(y) < 0)
         break;
     }
   }
@@ -261,7 +263,7 @@ namespace
         return;
       }
 
-      if(update(i, 64) < 0)
+      if(update(i) < 0)
         break;
     }
   }
@@ -324,7 +326,7 @@ namespace
         p++;
       }
 
-      if(update(y, 64) < 0)
+      if(update(y) < 0)
         break;
     }
   }
@@ -404,7 +406,7 @@ namespace
       if(soft_trans > 255)
         break;
 
-      if(update(i, 64) < 0)
+      if(update(i) < 0)
         break;
     }
   }
@@ -513,7 +515,7 @@ namespace
         return;
       }
 
-      if(update(i, 64) < 0)
+      if(update(i) < 0)
         break;
     }
   }
