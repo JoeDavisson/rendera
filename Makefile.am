@@ -82,7 +82,9 @@ libren_la_SOURCES =   \
   View.H              \
   View.cxx            \
   Widget.H            \
-  Widget.cxx
+  Widget.cxx          \
+  getopt.h            \
+  getopt.c
 
 
 bin_PROGRAMS = rendera
