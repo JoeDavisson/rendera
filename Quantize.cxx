@@ -129,6 +129,7 @@ namespace
   }
 
   // stretch a palette to obtain the exact number of colors desired
+/*
   void stretchPalette(int *data, int current, int target)
   {
     std::vector<int> temp(target);
@@ -175,6 +176,7 @@ namespace
     for(int x = 0; x < target; x++)
       data[x] = temp[x];
   }
+*/
 }
 
 // Pairwise clustering quantization, adapted from the algorithm described here:
