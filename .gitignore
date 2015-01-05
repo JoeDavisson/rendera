@@ -30,7 +30,6 @@
 /.deps/
 /INSTALL
 /Makefile
-/Makefile.in
 /aclocal.m4
 /autom4te.cache/
 /build-aux/
@@ -46,12 +45,13 @@
 /install-sh
 /libtool
 /ltmain.sh
-/m4/
+/m4/*.m4
 /missing
 /paths.h
 /rendera
 /stamp-h1
 /test-driver
+Makefile.in
 
 # emacs temp files
 *~

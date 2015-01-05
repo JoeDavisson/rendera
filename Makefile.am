@@ -1,5 +1,7 @@
 # rendera/Makefile.am
 
+SUBDIRS = tests
+
 ACLOCAL_AMFLAGS = -I m4
 
 #AM_CXXFLAGS = -Wall -Wno-unused -fmax-errors=5

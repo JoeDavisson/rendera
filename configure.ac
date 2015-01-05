@@ -9,6 +9,7 @@ AC_INIT([Rendera],
 AC_LANG_PUSH([C++])
 AC_CONFIG_SRCDIR([Rendera.H])
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_TESTDIR([tests])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([subdir-objects])
 LT_PREREQ([2.4])
@@ -88,5 +89,8 @@ AC_SUBST([FLTK_CONFIG_CXXFLAGS])
 AC_SUBST([FLTK_CONFIG_LDFLAGS])
 
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile
+                 tests/Makefile
+                 tests/testsuite.at])
+
 AC_OUTPUT
