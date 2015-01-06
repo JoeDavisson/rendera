@@ -127,11 +127,6 @@ namespace Gui
     32, 40, 48, 56, 64, 72, 80, 88
   };
 
-  const int font_sizes[10] =
-  {
-    8, 10, 12, 16, 20, 24, 32, 48, 64, 96
-  };
-
   // prevent escape from closing main window
   void closeCallback(Fl_Widget *widget, void *)
   {
