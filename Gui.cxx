@@ -100,7 +100,7 @@ namespace Gui
   InputInt *offset_y;
 
   Fl_Hold_Browser *font_browse;
-  Fl_Choice *font_size;
+  InputInt *font_size;
   Fl_Input *text_input;
 
   // right
@@ -435,23 +435,12 @@ void Gui::init()
   font_browse->callback((Fl_Callback *)textStartOver);
   y1 += 192 + 8;
 
-  // add font sizes
-  font_size = new Fl_Choice(8, y1, 96, 24, "");
-  font_size->tooltip("Font Size");
-  font_size->textsize(10);
-  font_size->resize(text->x() + 8, text->y() + y1, 96, 24);
-
-  char s[8];
-
-  for(size_t i = 0, n = sizeof(font_sizes)/sizeof(font_sizes[0]); i < n; i++)
-  {
-    snprintf(s, sizeof(s), "%d", font_sizes[i]);
-    font_size->add(s);
-  }
-
-  font_size->value(2);
-  font_size->callback((Fl_Callback *)textStartOver);
+  // font size
+  font_size = new InputInt(text, 40, y1, 64, 24, "Size:",
+                           (Fl_Callback *)textStartOver);
+  font_size->value("12");
   y1 += 24 + 8;
+
   text_input = new Fl_Input(8, y1, 96, 24, "");
   text_input->textsize(10);
   text_input->value("Text");
@@ -946,7 +935,16 @@ int Gui::getFontFace()
 
 int Gui::getFontSize()
 {
-  return font_sizes[font_size->value()];
+  int num = atoi(font_size->value());
+  if(num < 4)
+    num = 4;
+  if(num > 256)
+    num = 256;
+  char s[8];
+  snprintf(s, sizeof(s), "%d", num);
+  font_size->value(s);
+
+  return num;
 }
 
 const char *Gui::getTextInput()
