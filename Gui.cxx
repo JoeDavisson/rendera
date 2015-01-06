@@ -916,7 +916,7 @@ int Gui::getFontFace()
 
 int Gui::getFontSize()
 {
-  font_size->limitValue(4, 256);
+  font_size->limitValue(6, 512);
 
   return atoi(font_size->value());
 }
