@@ -662,31 +662,17 @@ void Gui::checkGrid(ToggleButton *, void *var)
   view->redraw();
 }
 
-void Gui::checkGridX(InputInt *field, void *)
+void Gui::checkGridX()
 {
-  int num = atoi(field->value());
-  if(num < 1)
-    num = 1;
-  if(num > 256)
-    num = 256;
-  char s[8];
-  snprintf(s, sizeof(s), "%d", num);
-  field->value(s);
-  view->gridx = num;
+  gridx->limitValue(1, 256);
+  view->gridx = atoi(gridx->value());
   view->drawMain(true);
 }
 
-void Gui::checkGridY(InputInt *field, void *)
+void Gui::checkGridY()
 {
-  int num = atoi(field->value());
-  if(num < 1)
-    num = 1;
-  if(num > 256)
-    num = 256;
-  char s[8];
-  snprintf(s, sizeof(s), "%d", num);
-  field->value(s);
-  view->gridy = num;
+  gridy->limitValue(1, 256);
+  view->gridy = atoi(gridy->value());
   view->drawMain(true);
 }
 
@@ -935,16 +921,9 @@ int Gui::getFontFace()
 
 int Gui::getFontSize()
 {
-  int num = atoi(font_size->value());
-  if(num < 4)
-    num = 4;
-  if(num > 256)
-    num = 256;
-  char s[8];
-  snprintf(s, sizeof(s), "%d", num);
-  font_size->value(s);
+  font_size->limitValue(4, 256);
 
-  return num;
+  return atoi(font_size->value());
 }
 
 const char *Gui::getTextInput()
