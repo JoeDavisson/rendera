@@ -1,5 +1,7 @@
 # rendera/Makefile.am
 
+SUBDIRS = tests
+
 ACLOCAL_AMFLAGS = -I m4
 
 #AM_CXXFLAGS = -Wall -Wno-unused -fmax-errors=5
@@ -87,46 +89,45 @@ libren_la_SOURCES =   \
   getopt.c
 
 
-bin_PROGRAMS = rendera
-rendera_SOURCES = Main.cxx
-rendera_LDADD = libren.la
+bin_PROGRAMS = ./bin/rendera
+__bin_rendera_SOURCES = Main.cxx
+__bin_rendera_LDADD = libren.la
 # rendera_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
 # rendera_LDFLAGS = $(FLTK_CONFIG_LDFLAGS)
 
-
-nodist_rendera_SOURCES = paths.h
-BUILT_SOURCES = paths.h
-CLEANFILES = paths.h
-# DISTCLEANFILES = paths.h
-paths.h : Makefile
-	echo '#ifndef PATHS_H' >$@
-	echo '#define PATHS_H' >>$@
-	echo >>$@
-	echo '#define DATADIR        "$(datadir)"'        >>$@
-	echo '#define BINDIR         "$(bindir)"'         >>$@
-	echo '#define DATADIR        "$(datadir)"'        >>$@
-	echo '#define DATAROOTDIR    "$(datarootdir)"'    >>$@
-	echo '#define DOCDIR         "$(docdir)"'         >>$@
-	echo '#define DVIDIR         "$(dvidir)"'         >>$@
-	echo '#define EXEC_PREFIX    "$(exec_prefix)"'    >>$@
-	echo '#define HTMLDIR        "$(htmldir)"'        >>$@
-	echo '#define INCLUDEDIR     "$(includedir)"'     >>$@
-	echo '#define INFODIR        "$(infodir)"'        >>$@
-	echo '#define LIBDIR         "$(libdir)"'         >>$@
-	echo '#define LIBEXECDIR     "$(libexecdir)"'     >>$@
-	echo '#define LOCALEDIR      "$(localedir)"'      >>$@
-	echo '#define LOCALSTATEDIR  "$(localstatedir)"'  >>$@
-	echo '#define MANDIR         "$(mandir)"'         >>$@
-	echo '#define OLDINCLUDEDIR  "$(oldincludedir)"'  >>$@
-	echo '#define PDFDIR         "$(pdfdir)"'         >>$@
-	echo '#define PREFIX         "$(prefix)"'         >>$@
-	echo '#define PSDIR          "$(psdir)"'          >>$@
-	echo '#define SBINDIR        "$(sbindir)"'        >>$@
-	echo '#define SHAREDSTATEDIR "$(sharedstatedir)"' >>$@
-	echo '#define SYSCONFDIR     "$(sysconfdir)"'     >>$@
-	echo '#define PKGDATADIR     "$(pkgdatadir)"'     >>$@
-	echo >>$@
-	echo '#endif//ndef PATHS_H' >>$@
+# nodist_rendera_SOURCES = paths.h
+# BUILT_SOURCES = paths.h
+# CLEANFILES = paths.h
+# # DISTCLEANFILES = paths.h
+# paths.h : Makefile
+# 	echo '#ifndef PATHS_H' >$@
+# 	echo '#define PATHS_H' >>$@
+# 	echo >>$@
+# 	echo '#define DATADIR        "$(datadir)"'        >>$@
+# 	echo '#define BINDIR         "$(bindir)"'         >>$@
+# 	echo '#define DATADIR        "$(datadir)"'        >>$@
+# 	echo '#define DATAROOTDIR    "$(datarootdir)"'    >>$@
+# 	echo '#define DOCDIR         "$(docdir)"'         >>$@
+# 	echo '#define DVIDIR         "$(dvidir)"'         >>$@
+# 	echo '#define EXEC_PREFIX    "$(exec_prefix)"'    >>$@
+# 	echo '#define HTMLDIR        "$(htmldir)"'        >>$@
+# 	echo '#define INCLUDEDIR     "$(includedir)"'     >>$@
+# 	echo '#define INFODIR        "$(infodir)"'        >>$@
+# 	echo '#define LIBDIR         "$(libdir)"'         >>$@
+# 	echo '#define LIBEXECDIR     "$(libexecdir)"'     >>$@
+# 	echo '#define LOCALEDIR      "$(localedir)"'      >>$@
+# 	echo '#define LOCALSTATEDIR  "$(localstatedir)"'  >>$@
+# 	echo '#define MANDIR         "$(mandir)"'         >>$@
+# 	echo '#define OLDINCLUDEDIR  "$(oldincludedir)"'  >>$@
+# 	echo '#define PDFDIR         "$(pdfdir)"'         >>$@
+# 	echo '#define PREFIX         "$(prefix)"'         >>$@
+# 	echo '#define PSDIR          "$(psdir)"'          >>$@
+# 	echo '#define SBINDIR        "$(sbindir)"'        >>$@
+# 	echo '#define SHAREDSTATEDIR "$(sharedstatedir)"' >>$@
+# 	echo '#define SYSCONFDIR     "$(sysconfdir)"'     >>$@
+# 	echo '#define PKGDATADIR     "$(pkgdatadir)"'     >>$@
+# 	echo >>$@
+# 	echo '#endif//ndef PATHS_H' >>$@
 
 
 nobase_dist_pkgdata_DATA =          \
@@ -195,3 +196,4 @@ TESTS = $(check_PROGRAMS)
 
 
 dist_man1_MANS = man/rendera.man
+

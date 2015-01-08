@@ -9,13 +9,17 @@ AC_INIT([Rendera],
 AC_LANG_PUSH([C++])
 AC_CONFIG_SRCDIR([Rendera.H])
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_TESTDIR([tests])
 AC_CONFIG_MACRO_DIR([m4])
+
 AM_INIT_AUTOMAKE([subdir-objects])
 LT_PREREQ([2.4])
 LT_INIT([dlopen])
 
 # Checks for programs.
 AC_PROG_CXX
+AC_PROG_LN_S
+AC_PROG_MKDIR_P
 # AX_CXX_COMPILE_STDCXX_11
 # AC_PROG_CC
 
@@ -82,11 +86,22 @@ AC_CHECK_DECLS([M_PI],
   [[#include <math.h>]])
 
 
+# various futzing
+
 FLTK_CONFIG_CXXFLAGS=$(fltk-config --cxxflags)
 FLTK_CONFIG_LDFLAGS=$(fltk-config --ldflags)
 AC_SUBST([FLTK_CONFIG_CXXFLAGS])
 AC_SUBST([FLTK_CONFIG_LDFLAGS])
 
+(
+  $MKDIR_P share/rendera && \
+  cd share/rendera       && \
+  $LN_S ../../"${srcdir}"/data
+)
 
-AC_CONFIG_FILES([Makefile])
+
+AC_CONFIG_FILES([Makefile
+                 tests/Makefile
+                 tests/testsuite.at])
+
 AC_OUTPUT
