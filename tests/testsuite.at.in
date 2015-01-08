@@ -6,7 +6,7 @@ AT_COLOR_TESTS()
 
 m4_define([AT_RENDERA],
 [AT_SETUP([rendera@EXEEXT@ $@])
-AT_CHECK([$abs_top_builddir/rendera@EXEEXT@ $@],[0],[ignore])
+AT_CHECK([$abs_top_builddir/bin/rendera@EXEEXT@ $@],[0],[ignore])
 AT_CLEANUP()
 ])
 
