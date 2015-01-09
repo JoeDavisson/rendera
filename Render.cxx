@@ -141,6 +141,7 @@ namespace
         *s2 = 1;
         return;
     }
+
     *s0 = 1;
     *s1 = 1;
     *s2 = 1;

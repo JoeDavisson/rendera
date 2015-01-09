@@ -36,7 +36,8 @@ public:
     GETCOLOR,
     CROP,
     OFFSET,
-    TEXT
+    TEXT,
+    FILL
   };
 
   // called when mouse button is initially pressed

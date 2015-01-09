@@ -63,6 +63,7 @@ namespace Gui
   Group *getcolor;
   Group *offset;
   Group *text;
+  Group *fill;
   Group *right;
   Group *bottom;
   Fl_Group *middle;
@@ -315,7 +316,7 @@ void Gui::init()
                     64, window->h() - (menubar->h() + top_right->h()),
                     "Tools");
   y1 = 20;
-  tool = new Widget(tools, 8, y1, 48, 240,
+  tool = new Widget(tools, 8, y1, 48, 240 + 48,
                     "Tools", File::themePath("tools.png"), 48, 48,
                     (Fl_Callback *)checkTool);
   y1 += 96 + 8;
@@ -445,6 +446,12 @@ void Gui::init()
 
   text->resizable(0);
   text->end();
+
+  // fill
+  fill = new Group(64, top_right->h() + menubar->h(),
+                   112, window->h() - top_right->h() - menubar->h(),
+                   "Fill");
+  fill->end();
 
   // right
   right = new Group(window->w() - 112, top_right->h() + menubar->h(),
@@ -714,6 +721,7 @@ void Gui::checkTool(Widget *, void *var)
   crop->hide();
   offset->hide();
   text->hide();
+  fill->hide();
 
   switch(*(int *)var)
   {
@@ -739,10 +747,13 @@ void Gui::checkTool(Widget *, void *var)
       Project::setTool(Tool::TEXT);
       text->show();
       break;
+    case Tool::FILL:
+      Project::setTool(Tool::FILL);
+      fill->show();
+      break;
   }
 
   Project::tool->reset();
-
   view->drawMain(true);
 }
 

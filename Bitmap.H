@@ -62,6 +62,7 @@ public:
   void flip();
   void fastStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);
   void invert();
+  void fill(int, int, int, int);
 };
 
 #endif

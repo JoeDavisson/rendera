@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Brush.H"
 #include "Crop.H"
+#include "Fill.H"
 #include "GetColor.H"
 #include "Map.H"
 #include "Offset.H"
@@ -47,6 +48,7 @@ namespace Project
   SP<Crop> crop = new Crop();
   SP<Offset> offset = new Offset();
   SP<Text> text = new Text();
+  SP<Fill> fill = new Fill();
 
   int overscroll = 64;
   int theme = THEME_DARK;
@@ -83,6 +85,9 @@ void Project::setTool(int num)
       break;
     case Tool::TEXT:
       tool = text.get(); 
+      break;
+    case Tool::FILL:
+      tool = fill.get(); 
       break;
     default:
       tool = paint.get(); 

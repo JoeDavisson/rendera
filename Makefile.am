@@ -32,6 +32,8 @@ libren_la_SOURCES =   \
   DialogWindow.H      \
   DialogWindow.cxx    \
   FastRnd.H           \
+  Fill.H              \
+  Fill.cxx            \
   FX.H                \
   FX.cxx              \
   File.H              \

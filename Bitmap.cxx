@@ -34,10 +34,47 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
+  int stack_size = 1024 * 1024;
+  int *stack = new int[stack_size];
+  int sp = 0;
+  int width = 1;
+
   inline int xorValue(const int &x, const int &y)
   {
     static const int c[2] = { 0x00FFFFFF, 0x00808080 };
     return c[(x & 1) ^ (y & 1)];
+  }
+
+  inline bool pop(int *x, int *y)
+  {
+    if(sp > 0)
+    {
+      const int p = stack[sp];
+      *x = p % width;
+      *y = p / width;
+      sp--;
+      return true;
+    }
+
+    return false;
+  }
+
+  inline bool push(const int &x, const int &y)
+  {
+    if(sp < stack_size - 1)
+    {
+      sp++;
+      stack[sp] = x + width * y;
+      return true;
+    }
+
+    return false;
+  }
+
+  inline void emptyStack()
+  {
+    int x, y;
+    while(pop(&x, &y));
   }
 }
 
@@ -818,6 +855,61 @@ void Bitmap::invert()
   {
     rgba_type rgba = getRgba(data[i]);
     data[i] = makeRgba(255 - rgba.r, 255 - rgba.g, 255 - rgba.b, rgba.a);
+  }
+}
+
+void Bitmap::fill(int x, int y, int new_color, int old_color)
+{
+  if(old_color == new_color) return;
+  emptyStack();
+    
+  int x1; 
+  bool span_top, span_bottom;
+  width = w;
+    
+  if(!push(x, y)) return;
+    
+  while(pop(&x, &y))
+  {    
+    x1 = x;
+
+    while(x1 >= cl && getpixel(x1, y) == old_color)
+      x1--;
+
+    x1++;
+    span_top = false;
+    span_bottom = false;
+
+    while(x1 <= cr && getpixel(x1, y) == old_color)
+    {
+      setpixelSolid(x1, y, new_color, 0);
+
+      if((!span_top && y > ct) && (getpixel(x1, y - 1) == old_color)) 
+      {
+        if(!push(x1, y - 1))
+          return;
+
+        span_top = true;
+      }
+      else if((span_top && y > ct) && (getpixel(x1, y - 1) != old_color))
+      {
+        span_top = false;
+      }
+
+      if((!span_bottom && y < cb) && (getpixel(x1, y + 1) == old_color)) 
+      {
+        if(!push(x1, y + 1))
+          return;
+
+        span_bottom = true;
+      }
+      else if((span_bottom && y < cb) && (getpixel(x1, y + 1) != old_color))
+      {
+        span_bottom = false;
+      } 
+
+      x1++;
+    }
   }
 }
 
