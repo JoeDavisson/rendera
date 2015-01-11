@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <algorithm>
 #include <cmath>
+#include <vector>
 
 #include "Bitmap.H"
 #include "Blend.H"
@@ -34,24 +35,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  int stack_size = 1024 * 1024;
-  int *stack = new int[stack_size];
+  const int stack_size = 0x100000;
+  std::vector<int> stack_x(stack_size);
+  std::vector<int> stack_y(stack_size);
   int sp = 0;
-  int width = 1;
 
+  // XOR checkerboard pattern (for brushstroke previews)
   inline int xorValue(const int &x, const int &y)
   {
     static const int c[2] = { 0x00FFFFFF, 0x00808080 };
     return c[(x & 1) ^ (y & 1)];
   }
 
+  // flood-fill related stack routines
   inline bool pop(int *x, int *y)
   {
     if(sp > 0)
     {
-      const int p = stack[sp];
-      *x = p % width;
-      *y = p / width;
+      *x = stack_x[sp];
+      *y = stack_y[sp];
       sp--;
       return true;
     }
@@ -64,7 +66,8 @@ namespace
     if(sp < stack_size - 1)
     {
       sp++;
-      stack[sp] = x + width * y;
+      stack_x[sp] = x;
+      stack_y[sp] = y;
       return true;
     }
 
@@ -74,7 +77,11 @@ namespace
   inline void emptyStack()
   {
     int x, y;
-    while(pop(&x, &y));
+
+    while(pop(&x, &y))
+    {
+      // loop until pop returns false
+    }
   }
 }
 
@@ -860,52 +867,52 @@ void Bitmap::invert()
 
 void Bitmap::fill(int x, int y, int new_color, int old_color)
 {
-  if(old_color == new_color) return;
+  if(old_color == new_color)
+    return;
+
   emptyStack();
     
-  int x1; 
-  bool span_top, span_bottom;
-  width = w;
-    
-  if(!push(x, y)) return;
+  if(!push(x, y))
+    return;
     
   while(pop(&x, &y))
   {    
-    x1 = x;
+    int x1 = x;
 
     while(x1 >= cl && getpixel(x1, y) == old_color)
       x1--;
 
     x1++;
-    span_top = false;
-    span_bottom = false;
+
+    bool span_t = false;
+    bool span_b = false;
 
     while(x1 <= cr && getpixel(x1, y) == old_color)
     {
       setpixelSolid(x1, y, new_color, 0);
 
-      if((!span_top && y > ct) && (getpixel(x1, y - 1) == old_color)) 
+      if((!span_t && y > ct) && (getpixel(x1, y - 1) == old_color)) 
       {
         if(!push(x1, y - 1))
           return;
 
-        span_top = true;
+        span_t = true;
       }
-      else if((span_top && y > ct) && (getpixel(x1, y - 1) != old_color))
+      else if((span_t && y > ct) && (getpixel(x1, y - 1) != old_color))
       {
-        span_top = false;
+        span_t = false;
       }
 
-      if((!span_bottom && y < cb) && (getpixel(x1, y + 1) == old_color)) 
+      if((!span_b && y < cb) && (getpixel(x1, y + 1) == old_color)) 
       {
         if(!push(x1, y + 1))
           return;
 
-        span_bottom = true;
+        span_b = true;
       }
-      else if((span_bottom && y < cb) && (getpixel(x1, y + 1) != old_color))
+      else if((span_b && y < cb) && (getpixel(x1, y + 1) != old_color))
       {
-        span_bottom = false;
+        span_b = false;
       } 
 
       x1++;

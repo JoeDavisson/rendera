@@ -61,9 +61,8 @@ void Fill::push(View *view)
   }
 }
 
-void Fill::drag(View *view)
+void Fill::drag(View *)
 {
-  push(view);
 }
 
 void Fill::release(View *)
