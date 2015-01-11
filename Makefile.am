@@ -4,134 +4,101 @@ SUBDIRS = tests
 
 ACLOCAL_AMFLAGS = -I m4
 
-#AM_CXXFLAGS = -Wall -Wno-unused -fmax-errors=5
+# AM_CXXFLAGS = -Wall -Wno-unused -fmax-errors=5
+AM_CPPFLAGS = -I$(srcdir)/src
 AM_CXXFLAGS = -Wall -Wextra -Werror -pedantic-errors # -rdynamic
 
 
 noinst_LTLIBRARIES = libren.la
 libren_la_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
 libren_la_LDFLAGS = $(FLTK_CONFIG_LDFLAGS)
-libren_la_SOURCES =   \
-  Bitmap.H            \
-  Bitmap.cxx          \
-  Blend.H             \
-  Blend.cxx           \
-  Brush.H             \
-  Brush.cxx           \
-  Button.H            \
-  Button.cxx          \
-  CheckBox.H          \
-  CheckBox.cxx        \
-  Clone.H             \
-  Clone.cxx           \
-  Common.H            \
-  Crop.H              \
-  Crop.cxx            \
-  Dialog.H            \
-  Dialog.cxx          \
-  DialogWindow.H      \
-  DialogWindow.cxx    \
-  FastRnd.H           \
-  Fill.H              \
-  Fill.cxx            \
-  FX.H                \
-  FX.cxx              \
-  File.H              \
-  File.cxx            \
-  FileSP.H            \
-  FileSP.cxx          \
-  Gamma.H             \
-  GetColor.H          \
-  GetColor.cxx        \
-  Group.H             \
-  Group.cxx           \
-  Gui.H               \
-  Gui.cxx             \
-  Inline.H            \
-  InputFloat.H        \
-  InputFloat.cxx      \
-  InputInt.H          \
-  InputInt.cxx        \
-  Map.H               \
-  Map.cxx             \
-  Octree.H            \
-  Octree.cxx          \
-  Offset.H            \
-  Offset.cxx          \
-  Paint.H             \
-  Paint.cxx           \
-  Palette.H           \
-  Palette.cxx         \
-  Project.H           \
-  Project.cxx         \
-  Quantize.H          \
-  Quantize.cxx        \
-  Render.H            \
-  Render.cxx          \
-  Rendera.H           \
-  Separator.H         \
-  Separator.cxx       \
-  SP.H                \
-  Stroke.H            \
-  Stroke.cxx          \
-  Text.H              \
-  Text.cxx            \
-  ToggleButton.H      \
-  ToggleButton.cxx    \
-  Tool.H              \
-  Transform.H         \
-  Transform.cxx       \
-  Undo.H              \
-  Undo.cxx            \
-  Util.H              \
-  Util.cxx            \
-  View.H              \
-  View.cxx            \
-  Widget.H            \
-  Widget.cxx          \
-  getopt.h            \
-  getopt.c
+libren_la_SOURCES =       \
+  src/Bitmap.H            \
+  src/Bitmap.cxx          \
+  src/Blend.H             \
+  src/Blend.cxx           \
+  src/Brush.H             \
+  src/Brush.cxx           \
+  src/Button.H            \
+  src/Button.cxx          \
+  src/CheckBox.H          \
+  src/CheckBox.cxx        \
+  src/Clone.H             \
+  src/Clone.cxx           \
+  src/Common.H            \
+  src/Crop.H              \
+  src/Crop.cxx            \
+  src/Dialog.H            \
+  src/Dialog.cxx          \
+  src/DialogWindow.H      \
+  src/DialogWindow.cxx    \
+  src/FastRnd.H           \
+  src/Fill.H              \
+  src/Fill.cxx            \
+  src/FX.H                \
+  src/FX.cxx              \
+  src/File.H              \
+  src/File.cxx            \
+  src/FileSP.H            \
+  src/FileSP.cxx          \
+  src/Gamma.H             \
+  src/GetColor.H          \
+  src/GetColor.cxx        \
+  src/Group.H             \
+  src/Group.cxx           \
+  src/Gui.H               \
+  src/Gui.cxx             \
+  src/Inline.H            \
+  src/InputFloat.H        \
+  src/InputFloat.cxx      \
+  src/InputInt.H          \
+  src/InputInt.cxx        \
+  src/Map.H               \
+  src/Map.cxx             \
+  src/Octree.H            \
+  src/Octree.cxx          \
+  src/Offset.H            \
+  src/Offset.cxx          \
+  src/Paint.H             \
+  src/Paint.cxx           \
+  src/Palette.H           \
+  src/Palette.cxx         \
+  src/Project.H           \
+  src/Project.cxx         \
+  src/Quantize.H          \
+  src/Quantize.cxx        \
+  src/Render.H            \
+  src/Render.cxx          \
+  src/Rendera.H           \
+  src/Separator.H         \
+  src/Separator.cxx       \
+  src/SP.H                \
+  src/Stroke.H            \
+  src/Stroke.cxx          \
+  src/Text.H              \
+  src/Text.cxx            \
+  src/ToggleButton.H      \
+  src/ToggleButton.cxx    \
+  src/Tool.H              \
+  src/Transform.H         \
+  src/Transform.cxx       \
+  src/Undo.H              \
+  src/Undo.cxx            \
+  src/Util.H              \
+  src/Util.cxx            \
+  src/View.H              \
+  src/View.cxx            \
+  src/Widget.H            \
+  src/Widget.cxx          \
+  src/getopt.h            \
+  src/getopt.c
 
 
 bin_PROGRAMS = ./bin/rendera
-__bin_rendera_SOURCES = Main.cxx
+__bin_rendera_SOURCES = src/Main.cxx
 __bin_rendera_LDADD = libren.la
 # rendera_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
 # rendera_LDFLAGS = $(FLTK_CONFIG_LDFLAGS)
-
-# nodist_rendera_SOURCES = paths.h
-# BUILT_SOURCES = paths.h
-# CLEANFILES = paths.h
-# # DISTCLEANFILES = paths.h
-# paths.h : Makefile
-# 	echo '#ifndef PATHS_H' >$@
-# 	echo '#define PATHS_H' >>$@
-# 	echo >>$@
-# 	echo '#define DATADIR        "$(datadir)"'        >>$@
-# 	echo '#define BINDIR         "$(bindir)"'         >>$@
-# 	echo '#define DATADIR        "$(datadir)"'        >>$@
-# 	echo '#define DATAROOTDIR    "$(datarootdir)"'    >>$@
-# 	echo '#define DOCDIR         "$(docdir)"'         >>$@
-# 	echo '#define DVIDIR         "$(dvidir)"'         >>$@
-# 	echo '#define EXEC_PREFIX    "$(exec_prefix)"'    >>$@
-# 	echo '#define HTMLDIR        "$(htmldir)"'        >>$@
-# 	echo '#define INCLUDEDIR     "$(includedir)"'     >>$@
-# 	echo '#define INFODIR        "$(infodir)"'        >>$@
-# 	echo '#define LIBDIR         "$(libdir)"'         >>$@
-# 	echo '#define LIBEXECDIR     "$(libexecdir)"'     >>$@
-# 	echo '#define LOCALEDIR      "$(localedir)"'      >>$@
-# 	echo '#define LOCALSTATEDIR  "$(localstatedir)"'  >>$@
-# 	echo '#define MANDIR         "$(mandir)"'         >>$@
-# 	echo '#define OLDINCLUDEDIR  "$(oldincludedir)"'  >>$@
-# 	echo '#define PDFDIR         "$(pdfdir)"'         >>$@
-# 	echo '#define PREFIX         "$(prefix)"'         >>$@
-# 	echo '#define PSDIR          "$(psdir)"'          >>$@
-# 	echo '#define SBINDIR        "$(sbindir)"'        >>$@
-# 	echo '#define SHAREDSTATEDIR "$(sharedstatedir)"' >>$@
-# 	echo '#define SYSCONFDIR     "$(sysconfdir)"'     >>$@
-# 	echo '#define PKGDATADIR     "$(pkgdatadir)"'     >>$@
-# 	echo >>$@
-# 	echo '#endif//ndef PATHS_H' >>$@
 
 
 nobase_dist_pkgdata_DATA =          \
@@ -186,7 +153,11 @@ check_PROGRAMS =    \
   test_numerics
 
 check_LTLIBRARIES = libalgo.la
-libalgo_la_SOURCES = Algo.H Algo.cxx Types.H Types.cxx
+libalgo_la_SOURCES = \
+  src/Algo.H         \
+  src/Algo.cxx       \
+  src/Types.H        \
+  src/Types.cxx
 
 test_blend_SOURCES = test/blend.C
 test_bresenham_SOURCES = test/bresenham.C
@@ -200,4 +171,6 @@ TESTS = $(check_PROGRAMS)
 
 
 dist_man1_MANS = man/rendera.man
+
+EXTRA_DIST = Rendera.md
 
