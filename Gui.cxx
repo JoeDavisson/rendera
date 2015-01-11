@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Brush.H"
 #include "Button.H"
+#include "CheckBox.H"
 #include "Clone.H"
 #include "Dialog.H"
 #include "FX.H"
@@ -103,6 +104,7 @@ namespace Gui
   Fl_Hold_Browser *font_browse;
   InputInt *font_size;
   Fl_Input *text_input;
+  CheckBox *text_smooth;
 
   // right
   Widget *palette;
@@ -443,6 +445,9 @@ void Gui::init()
   text_input->resize(text->x() + 8, text->y() + y1, 96, 24);
   text_input->callback((Fl_Callback *)textStartOver);
   y1 += 24 + 8;
+
+  text_smooth = new CheckBox(text, 12, y1, 16, 16, "Smooth", 0);
+  text_smooth->value(1);
 
   text->resizable(0);
   text->end();
@@ -1015,5 +1020,10 @@ void Gui::checkPaintMode()
 int Gui::getPaintMode()
 {
   return paint_mode->value();
+}
+
+int Gui::getTextSmooth()
+{
+  return text_smooth->value();
 }
 

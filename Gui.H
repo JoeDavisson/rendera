@@ -85,6 +85,7 @@ namespace Gui
   int getClone();
   void checkPaintMode();
   int getPaintMode();
+  int getTextSmooth();
 }
 
 #endif

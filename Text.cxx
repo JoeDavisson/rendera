@@ -63,19 +63,41 @@ void Text::push(View *view)
   // render text to image
   Blend::set(Project::brush->blend);
 
-  for(int y = 0; y < temp->h; y++)
+  if(Gui::getTextSmooth() > 0)
   {
-    for(int x = 0; x < temp->w; x++)
+    for(int y = 0; y < temp->h; y++)
     {
-      int c = temp->getpixel(x, y);
-      int t = getv(c);
-
-      if(t < 255)
+      for(int x = 0; x < temp->w; x++)
       {
-        Project::bmp->setpixel(view->imgx - temp->w / 2 + x,
-                               view->imgy - temp->h / 2 + y,
-                               Project::brush->color,
-                               scaleVal(Project::brush->trans, t));
+        int c = temp->getpixel(x, y);
+        int t = getv(c);
+
+        if(t < 255)
+        {
+          Project::bmp->setpixel(view->imgx - temp->w / 2 + x,
+                                 view->imgy - temp->h / 2 + y,
+                                 Project::brush->color,
+                                 scaleVal(Project::brush->trans, t));
+        }
+      }
+    }
+  }
+  else
+  {
+    for(int y = 0; y < temp->h; y++)
+    {
+      for(int x = 0; x < temp->w; x++)
+      {
+        int c = temp->getpixel(x, y);
+        int t = getv(c);
+
+        if(t < 128)
+        {
+          Project::bmp->setpixel(view->imgx - temp->w / 2 + x,
+                                 view->imgy - temp->h / 2 + y,
+                                 Project::brush->color,
+                                 Project::brush->trans);
+        }
       }
     }
   }
