@@ -48,7 +48,7 @@ namespace Project
 
   extern int overscroll;
   extern int theme;
-  extern char theme_path[256];
+  extern char theme_path[ PATH_MAX ];
 
   void init();
   void setTool(int);

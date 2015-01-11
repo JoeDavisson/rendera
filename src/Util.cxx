@@ -33,3 +33,22 @@ Util::parent_path( std::string const&path )
 {
   return path.substr( 0, path.find_last_of( "/\\" ) );
 }
+
+std::string
+Util::executable_path( void )
+{
+  return Util::readlink( "/proc/self/exe" );
+}
+
+std::string
+Util::bindir_path( void )
+{
+  return Util::parent_path( Util::executable_path() );
+}
+
+std::string
+Util::usrdir_path( void )
+{
+  return Util::parent_path( Util::bindir_path() );
+}
+

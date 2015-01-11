@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.H"
 #include "Text.H"
 #include "Tool.H"
+#include "Util.H"
 
 namespace Project
 {
@@ -52,15 +53,18 @@ namespace Project
 
   int overscroll = 64;
   int theme = THEME_DARK;
-  char theme_path[256];
+  char theme_path[ PATH_MAX ];
 }
 
 void Project::init()
 {
   // default to dark theme
-  strcpy(theme_path, "data/theme/dark/");
-  if(theme == THEME_LIGHT)
-    strcpy(theme_path, "data/theme/light/");
+  std::string themedir_path
+    = Util::usrdir_path()
+    + "/share/rendera/data/theme"
+    + ( ( THEME_LIGHT == theme ) ? "/light/" : "/dark/" )
+    ;
+  strcpy(theme_path, themedir_path.c_str() );
 
   newImage(640, 480);
 

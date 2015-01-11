@@ -12,6 +12,12 @@ namespace Util
   std::string readlink( std::string const& );
 
   std::string parent_path( std::string const& );
+
+  std::string executable_path( void );
+
+  std::string bindir_path( void );
+
+  std::string usrdir_path( void );
 }
 
 #endif//ndef ___RENDERA___UTIL_H___
