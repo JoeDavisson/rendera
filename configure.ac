@@ -56,6 +56,8 @@ dnl Checks for header files.
 AC_CHECK_HEADER([cstdlib],[],[AC_MSG_ERROR([cstdlib missing])])
 AC_CHECK_HEADER([endian.h],[],[AC_MSG_ERROR([endian.h missing])])
 AC_CHECK_HEADER([stdint.h],[],[AC_MSG_ERROR([stdint.h missing])])
+AC_CHECK_HEADER([unistd.h],[],[AC_MSG_ERROR([unistd.h missing])])
+AC_CHECK_HEADER([limits.h],[],[AC_MSG_ERROR([limits.h missing])])
 
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -75,15 +77,20 @@ AC_TYPE_INT64_T
 
 # Checks for library functions.
 
-AC_CHECK_FUNCS([pow sqrt strcasecmp])
+AC_CHECK_FUNCS([pow sqrt strcasecmp readlink])
 
 
-dnl Checks for symbol declarations
+# Checks for symbol declarations
 
 AC_CHECK_DECLS([M_PI],
   [],
   [AC_MSG_ERROR([M_PI missing])],
   [[#include <math.h>]])
+
+AC_CHECK_DECLS([PATH_MAX],
+  [],
+  [AC_MSG_ERROR([PATH_MAX missing])],
+  [[#include <limits.h>]])
 
 
 # various futzing

@@ -83,6 +83,8 @@ libren_la_SOURCES =   \
   Transform.cxx       \
   Undo.H              \
   Undo.cxx            \
+  Util.H              \
+  Util.cxx            \
   View.H              \
   View.cxx            \
   Widget.H            \
