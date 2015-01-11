@@ -91,7 +91,7 @@ void Text::push(View *view)
         int c = temp->getpixel(x, y);
         int t = getv(c);
 
-        if(t < 128)
+        if(t < 192)
         {
           Project::bmp->setpixel(view->imgx - temp->w / 2 + x,
                                  view->imgy - temp->h / 2 + y,
