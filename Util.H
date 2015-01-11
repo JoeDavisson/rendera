@@ -1,0 +1,17 @@
+/* rendera/Util.H */
+
+/* rendera's home for wayward functions */
+
+#ifndef ___RENDERA___UTIL_H___
+#define ___RENDERA___UTIL_H___
+
+#include <string>
+
+namespace Util
+{
+  std::string readlink( std::string const& );
+
+  std::string parent_path( std::string const& );
+}
+
+#endif//ndef ___RENDERA___UTIL_H___
