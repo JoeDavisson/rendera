@@ -194,7 +194,7 @@ void Text::move(View *view)
       int c = temp->getpixel(x, y);
       int t = getv(c);
 
-      if(t < 128)
+      if(t < 192)
         map->setpixel(imgx - temp->w / 2 + x, imgy - temp->h / 2 + y, 255);
     }
   }
