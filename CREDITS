@@ -1,14 +1,25 @@
 Joe Davisson <joe_7@sbcglobal.net>
-  -main program author
+  -main program design
   -user interface and graphics
-  -8-inch floppy disk backups
+  -bitmap routines
+  -rendering engine
+  -blending modes
+  -image filters
+  -color quantization
+  -octree implementation
+  -file formats
+  -documentation
 
 Rubicks <rubicks00@gmail.com>
-  -build system/related tests
+  -autotools build system
+  -unit tests
   -travis setup
   -program organization/refactoring
   -rgba_t related methods in inline.h
   -color quantization improvement ideas
-  -got rid of macros for favor of standard library methods
+  -replaced macros with standard library methods
   -auto-initialization of gamma-correction tables
+  -reorganization of source tree
+  -GNU getopt support
+  -utility functions
 
