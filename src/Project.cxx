@@ -18,6 +18,7 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include "Art.H"
 #include "Bitmap.H"
 #include "Brush.H"
 #include "Crop.H"
@@ -39,12 +40,14 @@ namespace Project
   Map *map = 0;
 
   SP<Brush> brush = new Brush();
+  SP<Brush> brush2 = new Brush();
   SP<Palette> palette = new Palette();
   SP<Stroke> stroke = new Stroke();
 
   // tools
   Tool *tool = 0;
   SP<Paint> paint = new Paint();
+  SP<Art> art = new Art();
   SP<GetColor> getcolor = new GetColor();
   SP<Crop> crop = new Crop();
   SP<Offset> offset = new Offset();
@@ -77,6 +80,9 @@ void Project::setTool(int num)
   {
     case Tool::PAINT:
       tool = paint.get(); 
+      break;
+    case Tool::ART:
+      tool = art.get(); 
       break;
     case Tool::GETCOLOR:
       tool = getcolor.get(); 

@@ -60,6 +60,7 @@ namespace Gui
   Group *top_right;
   Group *tools;
   Group *paint;
+  Group *art;
   Group *crop;
   Group *getcolor;
   Group *offset;
@@ -89,6 +90,11 @@ namespace Gui
   Widget *paint_shape;
   Widget *paint_edge;
   Fl_Choice *paint_mode;
+
+  Widget *art_brush;
+  Widget *art_size;
+  Widget *art_edge;
+  Fl_Choice *art_mode;
 
   Widget *getcolor_color;
 
@@ -318,7 +324,7 @@ void Gui::init()
                     64, window->h() - (menubar->h() + top_right->h()),
                     "Tools");
   y1 = 20;
-  tool = new Widget(tools, 8, y1, 48, 240 + 48,
+  tool = new Widget(tools, 8, y1, 48, 336,
                     "Tools", File::themePath("tools.png"), 48, 48,
                     (Fl_Callback *)checkTool);
   y1 += 96 + 8;
@@ -328,7 +334,7 @@ void Gui::init()
   // paint
   paint = new Group(64, top_right->h() + menubar->h(),
                     112, window->h() - top_right->h() - menubar->h(),
-                    "Paint");
+                    "Painting");
   y1 = 20;
   paint_brush = new Widget(paint, 8, y1, 96, 96,
                            "Brush Preview", 0, 0, 0);
@@ -366,6 +372,36 @@ void Gui::init()
   y1 += 24 + 8;
   paint->resizable(0);
   paint->end();
+
+  // art
+  art = new Group(64, top_right->h() + menubar->h(),
+                  112, window->h() - top_right->h() - menubar->h(),
+                  "Art Tools");
+  y1 = 20;
+  art_brush = new Widget(art, 8, y1, 96, 96,
+                         "Brush Preview", 0, 0, 0);
+  art_brush->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
+  art_brush->bitmap->setpixelSolid(48, 48, makeRgb(192, 192, 192), 0);
+  y1 += 96 + 8;
+  art_size = new Widget(art, 8, y1, 96, 24,
+                        "Size", File::themePath("size.png"), 6, 24,
+                        (Fl_Callback *)checkArtSize);
+  y1 += 24 + 8;
+  art_edge = new Widget(art, 8, y1, 96, 24,
+                        "Soft Edge", File::themePath("soft_edge.png"), 12, 24,
+                        (Fl_Callback *)checkArtEdge);
+  y1 += 24 + 8;
+  art_mode = new Fl_Choice(8, y1, 96, 24, "");
+  art_mode->tooltip("Art Mode");
+  art_mode->textsize(10);
+  art_mode->resize(art->x() + 8, art->y() + y1, 96, 24);
+  art_mode->add("Solid");
+  art_mode->add("Airbrush");
+  art_mode->value(0);
+  art_mode->callback((Fl_Callback *)checkArtMode);
+  y1 += 24 + 8;
+  art->resizable(0);
+  art->end();
 
   // crop
   crop = new Group(64, top_right->h() + menubar->h(),
@@ -693,7 +729,7 @@ void Gui::checkPaintSize(Widget *, void *var)
   brush->make(shape, size);
   paint_brush->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
-  for(int i = 0; i < Project::brush->solid_count; i++)
+  for(int i = 0; i < brush->solid_count; i++)
   {
     paint_brush->bitmap->setpixelSolid(48 + brush->solidx[i],
                                        48 + brush->solidy[i],
@@ -719,9 +755,35 @@ void Gui::checkPaintEdge(Widget *, void *var)
   Project::brush->edge = *(int *)var;
 }
 
+void Gui::checkArtSize(Widget *, void *var)
+{
+  Brush *brush = Project::brush2.get();
+
+  int size = brush_sizes[*(int *)var];
+
+  brush->make(0, size);
+  art_brush->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
+
+  for(int i = 0; i < brush->solid_count; i++)
+  {
+    art_brush->bitmap->setpixelSolid(48 + brush->solidx[i],
+                                     48 + brush->solidy[i],
+                                     getFltkColor(FL_FOREGROUND_COLOR),
+                                     0);
+  }
+
+  art_brush->redraw();
+}
+
+void Gui::checkArtEdge(Widget *, void *var)
+{
+  Project::brush2->edge = *(int *)var;
+}
+
 void Gui::checkTool(Widget *, void *var)
 {
   paint->hide();
+  art->hide();
   getcolor->hide();
   crop->hide();
   offset->hide();
@@ -735,6 +797,11 @@ void Gui::checkTool(Widget *, void *var)
       paint_brush->do_callback();
       paint_shape->do_callback();
       paint->show();
+      break;
+    case Tool::ART:
+      Project::setTool(Tool::ART);
+      art_brush->do_callback();
+      art->show();
       break;
     case Tool::GETCOLOR:
       Project::setTool(Tool::GETCOLOR);
@@ -1017,9 +1084,18 @@ void Gui::checkPaintMode()
     Project::brush->aa = 0;
 }
 
+void Gui::checkArtMode()
+{
+}
+
 int Gui::getPaintMode()
 {
   return paint_mode->value();
+}
+
+int Gui::getArtMode()
+{
+  return art_mode->value();
 }
 
 int Gui::getTextSmooth()

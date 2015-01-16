@@ -42,6 +42,7 @@ namespace Project
   extern Map *map;
 
   extern SP<Brush> brush;
+  extern SP<Brush> brush2;
   extern SP<Palette> palette;
   extern SP<Stroke> stroke;
   extern Tool *tool;

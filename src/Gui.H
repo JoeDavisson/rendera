@@ -52,6 +52,8 @@ namespace Gui
   void checkPaintShape(Widget *, void *);
   void checkPaintStroke(Widget *, void *);
   void checkPaintEdge(Widget *, void *);
+  void checkArtSize(Widget *, void *);
+  void checkArtEdge(Widget *, void *);
   void checkTool(Widget *, void *);
   void checkColor(Widget *, void *);
   void checkHue(Widget *, void *);
@@ -84,7 +86,9 @@ namespace Gui
   int getTool();
   int getClone();
   void checkPaintMode();
+  void checkArtMode();
   int getPaintMode();
+  int getArtMode();
   int getTextSmooth();
 }
 
