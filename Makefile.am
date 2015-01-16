@@ -13,6 +13,8 @@ noinst_LTLIBRARIES = libren.la
 libren_la_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
 libren_la_LDFLAGS = $(FLTK_CONFIG_LDFLAGS)
 libren_la_SOURCES =       \
+  src/Art.H               \
+  src/Art.cxx             \
   src/Bitmap.H            \
   src/Bitmap.cxx          \
   src/Blend.H             \
@@ -67,6 +69,8 @@ libren_la_SOURCES =       \
   src/Project.cxx         \
   src/Quantize.H          \
   src/Quantize.cxx        \
+  src/Realtime.H          \
+  src/Realtime.cxx        \
   src/Render.H            \
   src/Render.cxx          \
   src/Rendera.H           \
