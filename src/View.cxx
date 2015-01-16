@@ -164,14 +164,17 @@ int View::handle(int event)
 
       switch(Gui::getTool())
       {
-        case 1:
+        case Tool::GETCOLOR:
           window()->cursor(FL_CURSOR_CROSS);
           break;
-        case 2:
+        case Tool::CROP:
           window()->cursor(FL_CURSOR_CROSS);
           break;
-        case 3:
+        case Tool::OFFSET:
           window()->cursor(FL_CURSOR_HAND);
+          break;
+        case Tool::FILL:
+          window()->cursor(FL_CURSOR_CROSS);
           break;
         default:
           window()->cursor(FL_CURSOR_DEFAULT);
