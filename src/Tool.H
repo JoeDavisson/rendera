@@ -33,7 +33,6 @@ public:
   enum
   {
     PAINT,
-    ART,
     GETCOLOR,
     CROP,
     OFFSET,
