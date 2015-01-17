@@ -359,6 +359,7 @@ void Gui::init()
   paint_mode->add("Antialiased");
   paint_mode->add("Coarse Airbrush");
   paint_mode->add("Fine Airbrush");
+  paint_mode->add("Gaussian Blur");
   paint_mode->add("Watercolor");
   paint_mode->add("Chalk");
   paint_mode->value(0);

@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include <cmath>
+#include <vector>
 
 #include "Bitmap.H"
 #include "Brush.H"
@@ -332,6 +333,83 @@ namespace
     }
   }
 
+  void renderBlur()
+  {
+    const int amount = (brush->edge + 2) * (brush->edge + 2) + 1;
+
+    std::vector<int> kernel(amount);
+    int div = 0;
+
+    // bell curve
+    const int b = amount / 2;
+
+    for(int x = 0; x < amount; x++)
+    {
+      kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) /
+                                           ((b * b) / 2)));
+      div += kernel[x];
+    }
+
+    Map temp(map->w, map->h);
+
+    // x direction
+    for(int y = 0; y < map->h; y++)
+    {
+      unsigned char *p = temp.row[y];
+
+      for(int x = 0; x < map->w; x++)
+      {
+        int val = 0;
+
+        for(int i = 0; i < amount; i++)
+        {
+          val += map->getpixel(x - amount / 2 + i, y) * kernel[i];
+        }
+
+        val /= div;
+
+        *p++ = (unsigned char)val;
+      }
+    }
+
+    // y direction
+    for(int y = 0; y < map->h; y++)
+    {
+      unsigned char *p = map->row[y];
+
+      for(int x = 0; x < map->w; x++)
+      {
+        int val = 0;
+
+        for(int i = 0; i < amount; i++)
+        {
+          val += temp.getpixel(x, y - amount / 2 + i) * kernel[i];
+        }
+
+        val /= div;
+
+        *p++ = (unsigned char)val;
+      }
+    }
+
+    // render
+    for(int y = 0; y < map->h; y++)
+    {
+      unsigned char *p = map->row[y];
+
+      for(int x = 0; x < map->w; x++)
+      {
+        if(*p > 0)
+          bmp->setpixel(x, y, brush->color, scaleVal((255 - *p), brush->trans));
+
+        p++;
+      }
+
+      if(update(y) < 0)
+        break;
+    }
+  }
+
   void renderWatercolor()
   {
     float soft_trans = brush->trans;
@@ -564,6 +642,9 @@ void Render::begin()
       break;
     case FINE:
       renderFine();
+      break;
+    case BLUR:
+      renderBlur();
       break;
     case WATERCOLOR:
       renderWatercolor();
