@@ -1398,7 +1398,7 @@ namespace Blur
     // x direction
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = temp.row[y - bmp->cl];
+      int *p = temp.row[y - bmp->ct];
 
       for(int x = bmp->cl; x <= bmp->cr; x++)
       {
