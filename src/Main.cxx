@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #  error "missing config.h"
 #endif
 
-#include "./getopt.h"
+#include <getopt.h>
 #include <iostream>
 
 #include "Bitmap.H"
