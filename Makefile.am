@@ -89,9 +89,7 @@ libren_la_SOURCES =       \
   src/View.H              \
   src/View.cxx            \
   src/Widget.H            \
-  src/Widget.cxx          \
-  src/getopt.h            \
-  src/getopt.c
+  src/Widget.cxx
 
 
 bin_PROGRAMS = ./bin/rendera
