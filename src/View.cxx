@@ -104,9 +104,10 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   gridy = 8;
   oldimgx = 0;
   oldimgy = 0;
+  rendering = false;
+  bgr_order = false;
 
   backbuf = new Bitmap(Fl::w(), Fl::h());
-  bgr_order = false;
 
   #ifdef linux
     // try to detect pixelformat (almost always RGB or BGR)
@@ -159,6 +160,9 @@ int View::handle(int event)
 
     case FL_ENTER:
     {
+      if(rendering)
+        return 0;
+
       if(Fl::focus() != this)
         Fl::focus(this);
 
@@ -186,6 +190,9 @@ int View::handle(int event)
 
     case FL_LEAVE:
     {
+      if(rendering)
+        return 0;
+
       window()->cursor(FL_CURSOR_DEFAULT);
 
       return 1;
@@ -193,6 +200,9 @@ int View::handle(int event)
 
     case FL_PUSH:
     {
+      if(rendering)
+        return 0;
+
       switch(button)
       {
         case 1:
@@ -225,6 +235,9 @@ int View::handle(int event)
 
     case FL_DRAG:
     {
+      if(rendering)
+        return 0;
+
       switch(button)
       {
         case 1:
@@ -244,6 +257,9 @@ int View::handle(int event)
 
     case FL_RELEASE:
     {
+      if(rendering)
+        return 0;
+
       Project::tool->release(this);
 
       if(moving)
@@ -264,6 +280,9 @@ int View::handle(int event)
 
     case FL_MOVE:
     {
+      if(rendering)
+        return 0;
+
       Project::tool->move(this);
 
       oldimgx = imgx;
@@ -273,6 +292,9 @@ int View::handle(int event)
 
     case FL_MOUSEWHEEL:
     {
+      if(rendering)
+        return 0;
+
       if(moving)
         break;
 
@@ -345,6 +367,9 @@ int View::handle(int event)
 
     case FL_PASTE:
     {
+      if(rendering)
+        return 0;
+
       // drag n drop
       if(strncasecmp(Fl::event_text(), "file://", 7) == 0)
       {

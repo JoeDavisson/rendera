@@ -159,7 +159,10 @@ namespace
     }
 
     if(!(pos % 50))
+    {
       view->drawMain(true);
+      Fl::check();
+    }
 
     return 0;
   }
@@ -637,6 +640,8 @@ void Render::begin()
              (stroke->x2 - stroke->x1) + 1,
              (stroke->y2 - stroke->y1) + 1);
 
+  view->rendering = true;
+
   switch(Gui::getPaintMode())
   {
     case SOLID:
@@ -665,5 +670,6 @@ void Render::begin()
   }
 
   view->drawMain(true);
+  view->rendering = false;
 }
 

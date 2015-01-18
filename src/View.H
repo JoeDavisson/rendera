@@ -62,6 +62,7 @@ public:
   int bx, by, bw, bh;
   int lastbx, lastby, lastbw, lastbh;
   float aspect, winaspect;
+  bool rendering;
   bool bgr_order;
   int button;
   int button1, button2, button3;
