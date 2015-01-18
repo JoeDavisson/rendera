@@ -285,7 +285,7 @@ void Gui::init()
   top_right->end();
 
   // bottom
-  bottom = new Group(176, window->h() - 40, window->w() - 288, 40, "");
+  bottom = new Group(160, window->h() - 40, window->w() - 288, 40, "");
   x1 = 8;
   wrap = new ToggleButton(bottom, x1, 8, 24, 24,
                           "Wrap Edges", File::themePath("wrap.png"),
@@ -315,18 +315,18 @@ void Gui::init()
 
   // tools
   tools = new Group(0, top_right->h() + menubar->h(),
-                    64, window->h() - (menubar->h() + top_right->h()),
+                    48, window->h() - (menubar->h() + top_right->h()),
                     "Tools");
   y1 = 20;
-  tool = new Widget(tools, 8, y1, 48, 288,
-                    "Tools", File::themePath("tools.png"), 48, 48,
+  tool = new Widget(tools, 8, y1, 32, 192,
+                    "Tools", File::themePath("tools.png"), 32, 32,
                     (Fl_Callback *)checkTool);
   y1 += 96 + 8;
   tools->resizable(0);
   tools->end();
 
   // paint
-  paint = new Group(64, top_right->h() + menubar->h(),
+  paint = new Group(48, top_right->h() + menubar->h(),
                     112, window->h() - top_right->h() - menubar->h(),
                     "Painting");
   y1 = 20;
@@ -369,7 +369,7 @@ void Gui::init()
   paint->end();
 
   // crop
-  crop = new Group(64, top_right->h() + menubar->h(),
+  crop = new Group(48, top_right->h() + menubar->h(),
                    112, window->h() - top_right->h() - menubar->h(),
                    "Crop");
   y1 = 20;
@@ -391,7 +391,7 @@ void Gui::init()
   crop->end();
 
   // getcolor
-  getcolor = new Group(64, top_right->h() + menubar->h(),
+  getcolor = new Group(48, top_right->h() + menubar->h(),
                        112, window->h() - top_right->h() - menubar->h(),
                        "GetColor");
   y1 = 20;
@@ -400,7 +400,7 @@ void Gui::init()
   getcolor->end();
 
   // offset
-  offset = new Group(64, top_right->h() + menubar->h(),
+  offset = new Group(48, top_right->h() + menubar->h(),
                      112, window->h() - top_right->h() - menubar->h(),
                      "Offset");
   y1 = 20;
@@ -414,7 +414,7 @@ void Gui::init()
   offset->end();
 
   // text
-  text = new Group(64, top_right->h() + menubar->h(),
+  text = new Group(48, top_right->h() + menubar->h(),
                    112, window->h() - top_right->h() - menubar->h(),
                    "Text");
   y1 = 20;
@@ -454,7 +454,7 @@ void Gui::init()
   text->end();
 
   // fill
-  fill = new Group(64, top_right->h() + menubar->h(),
+  fill = new Group(48, top_right->h() + menubar->h(),
                    112, window->h() - top_right->h() - menubar->h(),
                    "Fill");
   fill->end();
@@ -505,7 +505,7 @@ void Gui::init()
   right->end();
 
   // middle
-  middle = new Fl_Group(176, top_right->h() + menubar->h(),
+  middle = new Fl_Group(160, top_right->h() + menubar->h(),
                         window->w() - 288, window->h() - (menubar->h() + top_right->h() + bottom->h()));
   middle->box(FL_FLAT_BOX);
   view = new View(middle, 0, 0, middle->w(), middle->h(), "View");
@@ -514,7 +514,7 @@ void Gui::init()
 
   // container for left panels
   group_left = new Fl_Group(0, top_right->h() + menubar->h(),
-                            176, window->h() - (menubar->h() + top_right->h() + bottom->h()));
+                            160, window->h() - (menubar->h() + top_right->h() + bottom->h()));
   group_left->add(tools);
   group_left->add(paint);
   group_left->add(getcolor);

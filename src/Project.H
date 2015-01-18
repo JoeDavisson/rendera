@@ -48,7 +48,9 @@ namespace Project
 
   extern int overscroll;
   extern int theme;
-  extern char theme_path[ PATH_MAX ];
+  extern char theme_path[PATH_MAX];
+  extern int theme_color;
+  extern Fl_Color fltk_theme_color;
 
   void init();
   void setTool(int);

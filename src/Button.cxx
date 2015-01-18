@@ -53,8 +53,8 @@ Button::~Button()
 
 void Button::draw()
 {
-  fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(),
-              value() ? FL_BACKGROUND2_COLOR : FL_BACKGROUND_COLOR);
+  fl_draw_box(FL_FLAT_BOX, x(), y(), w(), h(),
+              value() ? Project::fltk_theme_color : FL_BACKGROUND_COLOR);
 
   fl_push_clip(x(), y(), w(), h());
 
