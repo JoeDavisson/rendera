@@ -336,7 +336,6 @@ namespace
   void renderBlur()
   {
     const int amount = (brush->edge + 2) * (brush->edge + 2) + 1;
-
     std::vector<int> kernel(amount);
     int div = 0;
 
@@ -350,14 +349,15 @@ namespace
       div += kernel[x];
     }
 
-    Map temp(map->w, map->h);
+    Map temp((stroke->x2 - stroke->x1) + 1,
+             (stroke->y2 - stroke->y1) + 1);
 
     // x direction
-    for(int y = 0; y < map->h; y++)
+    for(int y = stroke->y1; y <= stroke->y2; y++)
     {
-      unsigned char *p = temp.row[y];
+      unsigned char *p = temp.row[y - stroke->y1];
 
-      for(int x = 0; x < map->w; x++)
+      for(int x = stroke->x1; x <= stroke->x2; x++)
       {
         int val = 0;
 
@@ -373,17 +373,18 @@ namespace
     }
 
     // y direction
-    for(int y = 0; y < map->h; y++)
+    for(int y = stroke->y1; y <= stroke->y2; y++)
     {
-      unsigned char *p = map->row[y];
+      unsigned char *p = map->row[y] + stroke->x1;
 
-      for(int x = 0; x < map->w; x++)
+      for(int x = stroke->x1; x <= stroke->x2; x++)
       {
         int val = 0;
 
         for(int i = 0; i < amount; i++)
         {
-          val += temp.getpixel(x, y - amount / 2 + i) * kernel[i];
+          val += temp.getpixel(x - stroke->x1,
+                               y - amount / 2 + i - stroke->y1) * kernel[i];
         }
 
         val /= div;
@@ -393,11 +394,11 @@ namespace
     }
 
     // render
-    for(int y = 0; y < map->h; y++)
+    for(int y = stroke->y1; y <= stroke->y2; y++)
     {
-      unsigned char *p = map->row[y];
+      unsigned char *p = map->row[y] + stroke->x1;
 
-      for(int x = 0; x < map->w; x++)
+      for(int x = stroke->x1; x <= stroke->x2; x++)
       {
         if(*p > 0)
           bmp->setpixel(x, y, brush->color, scaleVal((255 - *p), brush->trans));
@@ -610,9 +611,16 @@ void Render::begin()
 
   int size = 1;
 
-  // kludge for watercolor since it grows outward
-  if(Gui::getPaintMode() == WATERCOLOR)
-    size = (3 << brush->edge);
+  // kludge for tools that grow outward
+  switch(Gui::getPaintMode())
+  {
+    case WATERCOLOR:
+      size = (3 << brush->edge);
+      break;
+    case BLUR:
+      size = ((brush->edge + 2) * (brush->edge + 2) + 1) / 2 + 1;
+      break;
+  }
 
   stroke->x1 -= size;
   stroke->y1 -= size;
