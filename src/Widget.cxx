@@ -56,16 +56,16 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   use_highlight = true;
 
   // colorize
-  Blend::set(Blend::COLORIZE);
+  Blend::set(Blend::LIGHTEN);
   bitmap2->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1,
-                    Project::theme_color, 192);
+                    Project::theme_color, 96);
   Blend::set(Blend::TRANS);
 
   // shade
-  Blend::set(Blend::TRANS_NO_ALPHA);
-  bitmap->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1,
-                   getFltkColor(FL_BACKGROUND_COLOR), 192);
-  Blend::set(Blend::TRANS);
+//  Blend::set(Blend::TRANS_NO_ALPHA);
+//  bitmap->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1,
+//                   getFltkColor(FL_BACKGROUND_COLOR), 192);
+//  Blend::set(Blend::TRANS);
 }
 
 // use a blank bitmap
