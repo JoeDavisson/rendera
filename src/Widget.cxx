@@ -53,7 +53,11 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   bitmap->blit(bitmap2, 0, 0, 0, 0, bitmap->w, bitmap->h);
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
-  use_highlight = true;
+
+  if(sx != 0 && sy != 0)
+    use_highlight = true;
+  else
+    use_highlight = false;
 
   // colorize
   Blend::set(Blend::LIGHTEN);
