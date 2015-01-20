@@ -14,7 +14,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([subdir-objects])
 LT_PREREQ([2.4])
-LT_INIT([dlopen])
+LT_INIT([static disable-shared])
 
 # Checks for programs.
 AC_PROG_CXX
