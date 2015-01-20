@@ -76,8 +76,8 @@ namespace
     Fl::set_color(FL_SELECTION_COLOR, 64, 64, 64);
     Project::theme = Project::THEME_LIGHT;
     Project::theme_color = makeRgb(0, 64, 128);
-    const int blend = Blend::lighten(makeRgb(224, 224, 224),
-                                      Project::theme_color, 96);
+    const int blend = Blend::darken(makeRgb(224, 224, 224),
+                                    Project::theme_color, 96);
     Project::fltk_theme_color = fl_rgb_color(getr(blend),
                                              getg(blend),
                                              getb(blend));
@@ -93,7 +93,7 @@ namespace
     Project::theme = Project::THEME_DARK;
     Project::theme_color = makeRgb(0, 64, 128);
     const int blend = Blend::lighten(makeRgb(80, 80, 80),
-                                      Project::theme_color, 96);
+                                     Project::theme_color, 96);
     Project::fltk_theme_color = fl_rgb_color(getr(blend),
                                              getg(blend),
                                              getb(blend));
