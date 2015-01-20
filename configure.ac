@@ -54,7 +54,6 @@ AC_CHECK_LIB([X11],[XInitThreads],[],
 dnl Checks for header files.
 
 AC_CHECK_HEADER([cstdlib],[],[AC_MSG_ERROR([cstdlib missing])])
-AC_CHECK_HEADER([endian.h],[],[AC_MSG_ERROR([endian.h missing])])
 AC_CHECK_HEADER([stdint.h],[],[AC_MSG_ERROR([stdint.h missing])])
 AC_CHECK_HEADER([unistd.h],[],[AC_MSG_ERROR([unistd.h missing])])
 AC_CHECK_HEADER([limits.h],[],[AC_MSG_ERROR([limits.h missing])])
