@@ -24,19 +24,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cmath>
 #include <climits>
 #include <stdint.h>
-#include "endian.h"
 
 // stuff for extracting all RGBA values quickly (thanks Rubicks!)
+#if ! defined( __BYTE_ORDER__ )
+#  error "__BYTE_ORDER__ undefined"
+#endif
+#if ! defined( __ORDER_LITTLE_ENDIAN__ )
+#  error "__ORDER_LITTLE_ENDIAN__ undefined"
+#endif
+#if ! defined( __ORDER_BIG_ENDIAN__ )
+#  error "__ORDER_BIG_ENDIAN__ undefined"
+#endif
 struct rgba_type
 {
 #if 0
   /*  */
-#elif ( BYTE_ORDER == LITTLE_ENDIAN )
+#elif ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
   uint8_t r ;
   uint8_t g ;
   uint8_t b ;
   uint8_t a ;
-#elif ( BYTE_ORDER == BIG_ENDIAN )
+#elif ( __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ )
   uint8_t a ;
   uint8_t b ;
   uint8_t g ;
