@@ -18,6 +18,9 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <FL/Fl_Check_Button.H>
+#include <FL/Fl_Group.H>
+
 #include "CheckBox.H"
 
 CheckBox::CheckBox(Fl_Group *g, int x, int y, int w, int h,
@@ -29,9 +32,6 @@ CheckBox::CheckBox(Fl_Group *g, int x, int y, int w, int h,
   if(cb)
     callback(cb, &var);
 
-//  labelsize(12);
-//  textsize(12);
-//  label(label);
   resize(group->x() + x, group->y() + y, w, h);
 }
 

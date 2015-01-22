@@ -1,7 +1,5 @@
 /* rendera/test/blend.C */
 
-
-#include "Rendera.H"
 #include "Inline.H"
 
 #include <cassert>

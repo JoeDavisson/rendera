@@ -21,8 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef DIALOGWINDOW_H
 #define DIALOGWINDOW_H
 
-#include <FL/Fl_Button.H>
 #include <FL/Fl_Double_Window.H>
+
+class Fl_Button;
 
 class DialogWindow : public Fl_Double_Window
 {

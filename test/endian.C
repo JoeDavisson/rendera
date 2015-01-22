@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cassert>
 
-#include "Rendera.H"
 #include "Inline.H"
 
 int

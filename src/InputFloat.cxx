@@ -18,6 +18,12 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <cstdio>
+#include <cstdlib>
+
+#include <FL/Fl_Float_Input.H>
+#include <FL/Fl_Group.H>
+
 #include "InputFloat.H"
 
 InputFloat::InputFloat(Fl_Group *g, int x, int y, int w, int h,

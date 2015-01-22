@@ -21,12 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef GUI_H
 #define GUI_H
 
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Hold_Browser.H>
-#include <FL/Fl_Menu_Bar.H>
-#include <FL/Fl_Tooltip.H>
-
 class Widget;
 class Button;
 class ToggleButton;

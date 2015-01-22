@@ -18,6 +18,10 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <FL/fl_draw.H>
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Tiled_Image.H>
+
 #include "Bitmap.H"
 #include "File.H"
 #include "Group.H"

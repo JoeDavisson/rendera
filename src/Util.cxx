@@ -6,7 +6,7 @@
 #  error "missing config.h"
 #endif
 
-#include <limits.h>
+#include <climits>
 #include <unistd.h>
 
 #include "Util.H"

@@ -21,14 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef DIALOG_H
 #define DIALOG_H
 
-#include <algorithm>
-
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Int_Input.H>
-#include <FL/Fl_Progress.H>
-#include <FL/Fl_Widget.H>
-
 namespace Dialog
 {
   void init();

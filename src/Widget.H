@@ -21,11 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include <FL/fl_ask.H>
-#include <FL/fl_draw.H>
 #include <FL/Fl_Widget.H>
 
 class Bitmap;
+class Fl_Group;
+class Fl_RGB_Image;
 
 class Widget : public Fl_Widget
 {

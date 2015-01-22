@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cmath>
 #include <vector>
 
+#include <FL/Fl_Button.H>
+
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Brush.H"
@@ -31,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "FX.H"
 #include "Gamma.H"
 #include "Gui.H"
+#include "Inline.H"
 #include "InputInt.H"
 #include "Map.H"
 #include "Palette.H"

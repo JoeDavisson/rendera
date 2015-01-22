@@ -1,14 +1,15 @@
 /* rendera/test/numerics.C */
 
-#include "Rendera.H"
-
 #include <algorithm>
 #include <cassert>
+#include <climits>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
 #include <stdint.h>
 #include <typeinfo>
+
+#include "Common.H"
 
 #define FAST_SIGN(v) ( 1 | ( v >> ( sizeof(v) * CHAR_BIT - 1)))
 

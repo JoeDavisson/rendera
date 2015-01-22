@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include <limits.h>
-
 #include <FL/Fl.H>
 
 #include "SP.H"
@@ -52,7 +50,7 @@ namespace Project
 
   extern int overscroll;
   extern int theme;
-  extern char theme_path[PATH_MAX];
+  extern char theme_path[];
   extern int theme_color;
   extern Fl_Color fltk_theme_color;
 

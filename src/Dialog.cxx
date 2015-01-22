@@ -18,6 +18,14 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <algorithm>
+
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Int_Input.H>
+#include <FL/Fl_Progress.H>
+#include <FL/Fl_Widget.H>
+
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Brush.H"
@@ -26,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "DialogWindow.H"
 #include "File.H"
 #include "Gui.H"
+#include "Inline.H"
 #include "InputInt.H"
 #include "Map.H"
 #include "Palette.H"

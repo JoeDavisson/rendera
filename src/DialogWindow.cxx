@@ -18,6 +18,9 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Double_Window.H>
+
 #include "DialogWindow.H"
 #include "Separator.H"
 

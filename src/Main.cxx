@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <getopt.h>
 #include <iostream>
 
+#include <FL/fl_ask.H>
 #include <FL/Fl_Shared_Image.H>
 
 #include "Bitmap.H"
@@ -38,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "File.H"
 #include "GetColor.H"
 #include "Gui.H"
+#include "Inline.H"
 #include "Map.H"
 #include "Offset.H"
 #include "Paint.H"

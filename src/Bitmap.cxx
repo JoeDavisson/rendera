@@ -22,12 +22,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cmath>
 #include <vector>
 
-#include "Bitmap.H"
 #include "Blend.H"
+#include "Bitmap.H"
 #include "Clone.H"
 #include "Common.H"
 #include "Gamma.H"
 #include "Gui.H"
+#include "Inline.H"
 #include "Palette.H"
 #include "Project.H"
 #include "Stroke.H"

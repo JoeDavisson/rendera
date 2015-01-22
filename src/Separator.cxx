@@ -18,6 +18,9 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <FL/fl_draw.H>
+#include <FL/Fl_Group.H>
+
 #include "Separator.H"
 
 Separator::Separator(Fl_Group *g, int x, int y, int w, int h, const char *label)

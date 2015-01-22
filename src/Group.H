@@ -21,10 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef GROUP_H
 #define GROUP_H
 
-#include <FL/fl_draw.H>
 #include <FL/Fl_Group.H>
-#include <FL/Fl_Tiled_Image.H>
 
+class Fl_RGB_Image;
+class Fl_Tiled_Image;
 class Bitmap;
 
 class Group : public Fl_Group

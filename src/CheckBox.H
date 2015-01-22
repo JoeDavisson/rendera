@@ -21,8 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef CHECKBOX_H
 #define CHECKBOX_H
 
-#include <FL/Fl_Check_Button.H>
-#include <FL/Fl_Group.H>
+#include <Fl/Fl_Check_Button.H>
+
+class Fl_Group;
 
 class CheckBox : public Fl_Check_Button
 {
