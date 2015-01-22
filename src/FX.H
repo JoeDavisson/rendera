@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef FX_H
 #define FX_H
 
-#include "Rendera.H"
+#include <FL/Fl_Button.H>
 
 namespace FX
 {

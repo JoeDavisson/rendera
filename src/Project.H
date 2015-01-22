@@ -21,7 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include "Rendera.H"
+#include <limits.h>
+
+#include <FL/Fl.H>
+
+#include "SP.H"
 
 class Bitmap;
 class Brush;

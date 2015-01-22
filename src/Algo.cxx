@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include "Algo.H"
-/* #include "Rendera.H" */
 
 
 namespace

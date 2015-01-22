@@ -21,10 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef BLEND_H
 #define BLEND_H
 
+#include "Inline.H"
+
 class Bitmap;
 class Palette;
-
-#include "Rendera.H"
 
 namespace Blend
 {

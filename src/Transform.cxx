@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "DialogWindow.H"
 #include "Gamma.H"
 #include "Gui.H"
+#include "Inline.H"
 #include "InputFloat.H"
 #include "InputInt.H"
 #include "Map.H"

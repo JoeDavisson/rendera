@@ -24,8 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Widget;
 class Octree;
 
-#include "Rendera.H"
-
 class Palette
 {
 public:

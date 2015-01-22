@@ -21,9 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef FILE_H
 #define FILE_H
 
-class Bitmap;
+#include <FL/Fl_Image.H>
+#include <FL/Fl_Native_File_Chooser.H>
 
-#include "Rendera.H"
+class Bitmap;
 
 namespace File
 {

@@ -21,10 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef VIEW_H
 #define VIEW_H
 
+#include <FL/Fl_Widget.H>
+
 class Bitmap;
 class Tool;
-
-#include "Rendera.H"
 
 class View : public Fl_Widget
 {

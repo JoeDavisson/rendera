@@ -24,8 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Stroke;
 class View;
 
-#include "Rendera.H"
-
 // extend this class for painting/interactive tools
 class Tool
 {

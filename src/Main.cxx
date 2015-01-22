@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <getopt.h>
 #include <iostream>
 
+#include <FL/Fl_Shared_Image.H>
+
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Brush.H"
@@ -41,7 +43,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Paint.H"
 #include "Palette.H"
 #include "Project.H"
-#include "Rendera.H"
 #include "Text.H"
 #include "Tool.H"
 #include "Transform.H"

@@ -23,7 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 class View;
 
-#include "Rendera.H"
+#include <algorithm>
+
 #include "Tool.H"
 
 class GetColor : public Tool

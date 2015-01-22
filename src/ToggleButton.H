@@ -21,9 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef TOGGLE_BUTTON_H
 #define TOGGLE_BUTTON_H
 
-class Bitmap;
+#include <FL/fl_ask.H>
+#include <FL/fl_draw.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Group.H>
 
-#include "Rendera.H"
+class Bitmap;
 
 class ToggleButton : public Fl_Button
 {

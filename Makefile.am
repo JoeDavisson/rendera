@@ -69,7 +69,6 @@ libren_la_SOURCES =       \
   src/Quantize.cxx        \
   src/Render.H            \
   src/Render.cxx          \
-  src/Rendera.H           \
   src/Separator.H         \
   src/Separator.cxx       \
   src/SP.H                \

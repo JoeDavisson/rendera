@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef FASTRND_H
 #define FASTRND_H
 
-#include "Rendera.H"
-
 namespace
 {
   int seed = 12345;

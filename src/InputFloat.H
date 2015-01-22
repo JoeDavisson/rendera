@@ -21,7 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef INPUT_FLOAT_H
 #define INPUT_FLOAT_H
 
-#include "Rendera.H"
+#include <cstdio>
+#include <cstdlib>
+
+#include <FL/Fl_Float_Input.H>
+#include <FL/Fl_Group.H>
 
 class InputFloat : public Fl_Float_Input
 {

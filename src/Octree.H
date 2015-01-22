@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef OCTREE_H
 #define OCTREE_H
 
-#include "Rendera.H"
-
 class Octree
 {
 public:
