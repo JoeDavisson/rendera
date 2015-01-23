@@ -6,52 +6,41 @@ AC_INIT([Rendera],
         [joe_7@sbcglobal.net],
         [rendera],
         [https://github.com/Mortis69/rendera])
+
+AC_CONFIG_AUX_DIR([.])
+
 AC_LANG_PUSH([C++])
 AC_CONFIG_SRCDIR([Rendera.md])
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_TESTDIR([tests])
 AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([subdir-objects])
+
 LT_PREREQ([2.4])
 LT_INIT([static disable-shared])
 
+
 # Checks for programs.
+
 AC_PROG_CXX
 AC_PROG_LN_S
 AC_PROG_MKDIR_P
-# AX_CXX_COMPILE_STDCXX_11
-# AC_PROG_CC
 
 
 # Checks for libraries.
 
-dnl AC_CHECK_LIB([dl],[dlsym],[],
-dnl   [AC_MSG_ERROR([libdl missing])])
-
-AC_CHECK_LIB([fltk],[fl_system],[],
-  [AC_MSG_ERROR([libfltk missing])])
-
-#AC_CHECK_LIB([fltk_images],[fl_numericsort],[],
-#  [AC_MSG_ERROR([libfltk_images missing])])
-
-AC_CHECK_LIB([jpeg],[jpeg_start_output],[],
-  [AC_MSG_ERROR([libjpeg missing])])
-
-AC_CHECK_LIB([png],[png_malloc],[],
-  [AC_MSG_ERROR([libpng missing])])
-
-AC_CHECK_LIB([rt],[clock_gettime],[],
-  [AC_MSG_ERROR([librt missing])])
-
-AC_CHECK_LIB([z],[gzopen],[],
-  [AC_MSG_ERROR([libz missing])])
-
-AC_CHECK_LIB([X11],[XInitThreads],[],
-  [AC_MSG_ERROR([libX11 missing])])
+AC_CHECK_LIB([X11],        [main],[], [AC_MSG_ERROR([libX11 missing])])
+AC_CHECK_LIB([Xcursor],    [main],[], [AC_MSG_ERROR([libXcursor missing])])
+AC_CHECK_LIB([Xext],       [main],[], [AC_MSG_ERROR([libXext missing])])
+AC_CHECK_LIB([Xfixes],     [main],[], [AC_MSG_ERROR([libXfixes missing])])
+AC_CHECK_LIB([Xft],        [main],[], [AC_MSG_ERROR([libXft missing])])
+AC_CHECK_LIB([Xinerama],   [main],[], [AC_MSG_ERROR([libXinerama missing])])
+AC_CHECK_LIB([dl],         [main],[], [AC_MSG_ERROR([libdl missing])])
+AC_CHECK_LIB([fontconfig], [main],[], [AC_MSG_ERROR([libfontconfig missing])])
+AC_CHECK_LIB([rt],         [main],[], [AC_MSG_ERROR([librt missing])])
 
 
-dnl Checks for header files.
+# Checks for header files.
 
 AC_CHECK_HEADER([cstdlib],[],[AC_MSG_ERROR([cstdlib missing])])
 AC_CHECK_HEADER([stdint.h],[],[AC_MSG_ERROR([stdint.h missing])])
@@ -94,11 +83,6 @@ AC_CHECK_DECLS([PATH_MAX],
 
 # various futzing
 
-FLTK_CONFIG_CXXFLAGS=$(fltk-config --cxxflags)
-FLTK_CONFIG_LDFLAGS=$(fltk-config --ldflags)
-AC_SUBST([FLTK_CONFIG_CXXFLAGS])
-AC_SUBST([FLTK_CONFIG_LDFLAGS])
-
 (
   $MKDIR_P share/rendera && \
   cd share/rendera       && \
@@ -106,8 +90,6 @@ AC_SUBST([FLTK_CONFIG_LDFLAGS])
 )
 
 
-AC_CONFIG_FILES([Makefile
-                 tests/Makefile
-                 tests/testsuite.at])
+AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT
