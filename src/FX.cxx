@@ -1484,12 +1484,12 @@ namespace Blur
     if(Items::amount->limitValue(1, 100) < 0)
       return;
 
-    if(Items::blend->limitValue(0, 255) < 0)
+    if(Items::blend->limitValue(0, 100) < 0)
       return;
 
     Items::dialog->hide();
     pushUndo();
-    apply(atoi(Items::amount->value()), atoi(Items::blend->value()));
+    apply(atoi(Items::amount->value()), atoi(Items::blend->value()) * 2.55);
   }
 
   void quit()
@@ -1635,8 +1635,6 @@ namespace Artistic
 
       for(int x = bmp->cl; x <= bmp->cr; x++)
       {
-//        rgba_type rgba3 = getRgba(*p);
-
         int r = 0;
         int g = 0;
         int b = 0;
@@ -1662,25 +1660,6 @@ namespace Artistic
               g += getg(c2);
               b += getb(c2);
             }
-/*
-            rgba_type rgba1 = getRgba(bmp->getpixel(x + u, y + v));
-            rgba_type rgba2 = getRgba(bmp->getpixel(x - u, y - v));
-
-            if(std::abs(rgba3.r - rgba1.r) < std::abs(rgba3.r - rgba2.r))
-              r += rgba1.r;
-            else
-              r += rgba2.r;
-
-            if(std::abs(rgba3.g - rgba1.g) < std::abs(rgba3.g - rgba2.g))
-              g += rgba1.g;
-            else
-              g += rgba2.g;
-
-            if(std::abs(rgba3.b - rgba1.b) < std::abs(rgba3.b - rgba2.b))
-              b += rgba1.b;
-            else
-              b += rgba2.b;
-*/
 
             count++;
           }
