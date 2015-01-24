@@ -24,6 +24,8 @@ Grab the FLTK submodule:
 
 ```$ git submodule update```
 
+Build:
+
 ```$ autoreconf -vfi```
 
 ```$ ./configure```
