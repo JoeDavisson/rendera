@@ -1,57 +1,17 @@
 # rendera/Makefile.am
 
-EXTRA_DIST = Rendera.md FLTK
-
+SUBDIRS = tests
 
 ACLOCAL_AMFLAGS = -I m4
 
-
-AM_CPPFLAGS =                  \
-  -I $(srcdir)/src             \
-  -isystem $(srcdir)/FLTK      \
-  -isystem $(srcdir)/FLTK/jpeg \
-  -isystem $(srcdir)/FLTK/png
-
-
-AM_CXXFLAGS = -Wall -Wextra -Werror -pedantic-errors
+# AM_CXXFLAGS = -Wall -Wno-unused -fmax-errors=5
+AM_CPPFLAGS = -I$(srcdir)/src
+AM_CXXFLAGS = -Wall -Wextra -Werror -pedantic-errors # -rdynamic
 
 
 noinst_LTLIBRARIES = libren.la
-
-
-fltkdir = $(top_srcdir)/FLTK
-
-
-fltk_libs_base =                  \
-  $(fltkdir)/lib/libfltk.a        \
-  $(fltkdir)/lib/libfltk_images.a \
-  $(fltkdir)/lib/libfltk_forms.a  \
-  $(fltkdir)/lib/libfltk_gl.a
-
-fltk_libjpeg = $(fltkdir)/lib/libfltk_jpeg.a
-fltk_libpng  = $(fltkdir)/lib/libfltk_png.a
-fltk_libz    = $(fltkdir)/lib/libfltk_z.a
-
-fltk_libs =         \
-  $(fltk_libs_base) \
-  $(fltk_libjpeg)   \
-  $(fltk_libpng)    \
-  $(fltk_libz)
-
-
-$(fltk_libs_base):
-	$(MAKE) -C $(fltkdir)
-
-$(fltk_libjpeg):
-	$(MAKE) -C $(fltkdir)/jpeg
-
-$(fltk_libpng):
-	$(MAKE) -C $(fltkdir)/png
-
-$(fltk_libz):
-	$(MAKE) -C $(fltkdir)/zlib
-
-
+libren_la_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
+libren_la_LDFLAGS = $(FLTK_CONFIG_LDFLAGS)
 libren_la_SOURCES =       \
   src/Bitmap.H            \
   src/Bitmap.cxx          \
@@ -133,7 +93,9 @@ libren_la_SOURCES =       \
 
 bin_PROGRAMS = ./bin/rendera
 __bin_rendera_SOURCES = src/Main.cxx
-__bin_rendera_LDADD = libren.la $(fltk_libs)
+__bin_rendera_LDADD = libren.la
+# rendera_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
+# rendera_LDFLAGS = $(FLTK_CONFIG_LDFLAGS)
 
 
 nobase_dist_pkgdata_DATA =          \
@@ -207,4 +169,5 @@ TESTS = $(check_PROGRAMS)
 
 dist_man1_MANS = man/rendera.man
 
+EXTRA_DIST = Rendera.md
 
