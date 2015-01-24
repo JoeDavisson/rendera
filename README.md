@@ -18,14 +18,6 @@ for Win/Mac, but we aren't quite there yet.
 
 ```$ cd rendera```
 
-Grab the FLTK submodule:
-
-```$ git submodule init```
-
-```$ git submodule update```
-
-Build:
-
 ```$ autoreconf -vfi```
 
 ```$ ./configure```
