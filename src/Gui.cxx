@@ -265,8 +265,8 @@ void Gui::init()
   // status
   status = new Group(0, window->h() - 24, window->w(), 24, "");
   x1 = 8;
-  coords = new Fl_Box(FL_FLAT_BOX, x1, 6, 128, 12, "");
-  coords->resize(status->x() + x1, status->y() + 6, 128, 12);
+  coords = new Fl_Box(FL_FLAT_BOX, x1, 4, 128, 16, "");
+  coords->resize(status->x() + x1, status->y() + 4, 128, 16);
   coords->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
   progress = new Fl_Progress(x1, window->w() - 256 - 8, 256, 16);
   progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4, 256, 16);
