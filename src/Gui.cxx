@@ -126,8 +126,8 @@ namespace Gui
   ToggleButton *wrap;
   ToggleButton *clone;
   Widget *mirror;
-  Widget *origin;
-  Widget *constrain;
+  ToggleButton *origin;
+  ToggleButton *constrain;
 
   // view
   View *view;
@@ -294,7 +294,7 @@ void Gui::init()
   top_right->end();
 
   // bottom
-  bottom = new Group(160, window->h() - 40, window->w() - 288, 40, "");
+  bottom = new Group(160, window->h() - 40, window->w() - 272, 40, "");
   x1 = 8;
   wrap = new ToggleButton(bottom, x1, 8, 24, 24,
                           "Wrap Edges", File::themePath("wrap.png"),
@@ -312,13 +312,14 @@ void Gui::init()
   x1 += 96 + 6;
   new Separator(bottom, x1, 2, 2, 36, "");
   x1 += 8;
-  origin = new Widget(bottom, x1, 8, 48, 24,
-                      "Origin", File::themePath("origin.png"), 24, 24,
-                      (Fl_Callback *)checkOrigin);
-  x1 += 48 + 8;
-  constrain = new Widget(bottom, x1, 8, 48, 24,
-                         "Keep Square", File::themePath("constrain.png"), 24, 24,
-                         (Fl_Callback *)checkConstrain);
+  origin = new ToggleButton(bottom, x1, 8, 24, 24,
+                            "Start From Center", File::themePath("origin.png"),
+                            (Fl_Callback *)checkOrigin);
+  x1 += 24 + 8;
+  constrain = new ToggleButton(bottom, x1, 8, 24, 24,
+                              "Constrain Proportions",
+                              File::themePath("constrain.png"),
+                              (Fl_Callback *)checkConstrain);
   bottom->resizable(0);
   bottom->end();
 
@@ -515,7 +516,7 @@ void Gui::init()
 
   // middle
   middle = new Fl_Group(160, top_right->h() + menubar->h(),
-                        window->w() - 288, window->h() - (menubar->h() + top_right->h() + bottom->h()));
+                        window->w() - 272, window->h() - (menubar->h() + top_right->h() + bottom->h()));
   middle->box(FL_FLAT_BOX);
   view = new View(middle, 0, 0, middle->w(), middle->h(), "View");
   middle->resizable(view);
@@ -546,6 +547,17 @@ void Gui::init()
   checkZoom();
   checkCropValues(0, 0, 0, 0);
   checkOffsetValues(0, 0);
+
+  // fix certain icons if using a light theme
+  if(Project::theme == Project::THEME_LIGHT)
+  {
+    paint_size->bitmap->invert();
+    paint_size->bitmap2->invert();
+    paint_edge->bitmap->invert();
+    paint_edge->bitmap2->invert();
+    trans->bitmap->invert();
+    trans->bitmap2->invert();
+  }
 }
 
 void Gui::show()

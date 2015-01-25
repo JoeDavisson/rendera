@@ -57,7 +57,7 @@ namespace Project
 
   int overscroll = 64;
   int theme = THEME_DARK;
-  char theme_path[ PATH_MAX ];
+  char theme_path[PATH_MAX];
   int theme_color;
   Fl_Color fltk_theme_color; 
 }
@@ -65,11 +65,7 @@ namespace Project
 void Project::init()
 {
   // default to dark theme
-  std::string themedir_path
-    = Util::usrdir_path()
-    + "/share/rendera/data/theme"
-    + ( ( THEME_LIGHT == theme ) ? "/light/" : "/dark/" )
-    ;
+  std::string themedir_path = Util::usrdir_path() + "/share/rendera/data/";
   strcpy(theme_path, themedir_path.c_str() );
 
   newImage(640, 480);

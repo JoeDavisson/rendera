@@ -99,47 +99,25 @@ __bin_rendera_LDADD = libren.la
 
 
 nobase_dist_pkgdata_DATA =          \
-  data/common/icon48x48.png 
-
-nobase_dist_pkgdata_DATA +=         \
-  data/theme/dark/clone.png         \
-  data/theme/dark/constrain.png     \
-  data/theme/dark/grid.png          \
-  data/theme/dark/logo.png          \
-  data/theme/dark/logo_large.png    \
-  data/theme/dark/mirror.png        \
-  data/theme/dark/origin.png        \
-  data/theme/dark/shape.png         \
-  data/theme/dark/size.png          \
-  data/theme/dark/soft_edge.png     \
-  data/theme/dark/stroke.png        \
-  data/theme/dark/tools.png         \
-  data/theme/dark/transparency.png  \
-  data/theme/dark/wrap.png          \
-  data/theme/dark/zoom_fit.png      \
-  data/theme/dark/zoom_in.png       \
-  data/theme/dark/zoom_one.png      \
-  data/theme/dark/zoom_out.png
-
-nobase_dist_pkgdata_DATA +=         \
-  data/theme/light/clone.png        \
-  data/theme/light/constrain.png    \
-  data/theme/light/grid.png         \
-  data/theme/light/logo.png         \
-  data/theme/light/logo_large.png   \
-  data/theme/light/mirror.png       \
-  data/theme/light/origin.png       \
-  data/theme/light/shape.png        \
-  data/theme/light/size.png         \
-  data/theme/light/soft_edge.png    \
-  data/theme/light/stroke.png       \
-  data/theme/light/tools.png        \
-  data/theme/light/transparency.png \
-  data/theme/light/wrap.png         \
-  data/theme/light/zoom_fit.png     \
-  data/theme/light/zoom_in.png      \
-  data/theme/light/zoom_one.png     \
-  data/theme/light/zoom_out.png
+  data/icon48x48.png                \
+  data/clone.png                    \
+  data/constrain.png                \
+  data/grid.png                     \
+  data/logo.png                     \
+  data/logo_large.png               \
+  data/mirror.png                   \
+  data/origin.png                   \
+  data/shape.png                    \
+  data/size.png                     \
+  data/soft_edge.png                \
+  data/stroke.png                   \
+  data/tools.png                    \
+  data/transparency.png             \
+  data/wrap.png                     \
+  data/zoom_fit.png                 \
+  data/zoom_in.png                  \
+  data/zoom_one.png                 \
+  data/zoom_out.png
 
 
 check_PROGRAMS =    \
