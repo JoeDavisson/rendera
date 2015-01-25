@@ -143,9 +143,9 @@ namespace Gui
   void closeCallback(Fl_Widget *widget, void *)
   {
     if((Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT)
-      && Fl::event_key() == FL_Escape)
+       && Fl::event_key() == FL_Escape)
     {
-      return;
+        return;
     }
     else
     {
@@ -174,17 +174,17 @@ void Gui::init()
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
   menubar->box(FL_THIN_UP_BOX);
 
-  menubar->add("File/New...", 0,
+  menubar->add("&File/New...", 0,
     (Fl_Callback *)Dialog::newImage, 0, 0);
-  menubar->add("File/Load...", 0,
+  menubar->add("&File/&Open...", 0,
     (Fl_Callback *)File::load, 0, 0);
-  menubar->add("File/Save...", 0,
+  menubar->add("&File/&Save...", 0,
     (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
-  menubar->add("File/Quit...", 0,
+  menubar->add("&File/&Quit...", 0,
     (Fl_Callback *)quit, 0, 0);
-  menubar->add("Edit/Undo", 0,
+  menubar->add("&Edit/Undo (Ctrl+Z)", 0,
     (Fl_Callback *)Undo::pop, 0, FL_MENU_DIVIDER);
-  menubar->add("Edit/Clear Image", 0,
+  menubar->add("&Edit/Clear Image", 0,
     (Fl_Callback *)checkClear, 0, 0);
   menubar->add("Image/Flip Horizontal", 0,
     (Fl_Callback *)Transform::mirror, 0, 0);
@@ -250,7 +250,7 @@ void Gui::init()
     (Fl_Callback *)FX::sharpen, 0, 0);
   menubar->add("Effects/Artistic...", 0,
     (Fl_Callback *)FX::artistic, 0, 0);
-  menubar->add("Help/About...", 0,
+  menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
 
   top_right = new Group(0, menubar->h(), window->w(), 40, "");
