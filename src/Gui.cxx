@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cmath>
 
 #include <FL/fl_ask.H>
+#include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Double_Window.H>
@@ -81,6 +82,7 @@ namespace Gui
 
   // status
   Fl_Progress *progress;
+  Fl_Box *status_box;
 
   // top right
   ToggleButton *zoom_fit;
@@ -273,6 +275,9 @@ void Gui::init()
   x1 += 256 + 6;
   new Separator(status, x1, 2, 2, 20, "");
   x1 += 8;
+  status_box = new Fl_Box(FL_FLAT_BOX, x1, 6, 256, 12, "");
+  status_box->resize(status->x() + x1, status->y() + 6, 256, 12);
+  status_box->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
   status->resizable(0);
   status->end();
 
@@ -1109,4 +1114,11 @@ void Gui::hideProgress()
     progress->label("");
     progress->redraw();
 }
+
+void Gui::updateStatus(char *s)
+{
+  status_box->copy_label(s);
+  status_box->redraw();
+}
+
 

@@ -90,6 +90,8 @@ namespace Gui
   void showProgress(float);
   int updateProgress(const int);
   void hideProgress();
+
+  void updateStatus(char *);
 }
 
 #endif

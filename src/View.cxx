@@ -18,6 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <algorithm>
+
 #include <FL/fl_draw.H>
 
 #include "Bitmap.H"
@@ -287,6 +289,14 @@ int View::handle(int event)
         return 0;
 
       Project::tool->move(this);
+
+      char coords[256];
+      int coordx = imgx - Project::overscroll;
+      int coordy = imgy - Project::overscroll;
+      coordx = std::max(std::min(coordx, Project::bmp->cw - 1), 0);
+      coordy = std::max(std::min(coordy, Project::bmp->ch - 1), 0);
+      sprintf(coords, "(%d, %d)", coordx, coordy);
+      Gui::updateStatus(coords);
 
       oldimgx = imgx;
       oldimgy = imgy;
