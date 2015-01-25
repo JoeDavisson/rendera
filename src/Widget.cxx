@@ -112,7 +112,7 @@ int Widget::handle(int event)
       return 1;
     case FL_PUSH:
     case FL_DRAG:
-      if(stepx == 0 || stepy == 0)
+      if(stepx <= 0 || stepy <= 0)
         return 0;
 
       x1 = (Fl::event_x() - x()) / stepx;
@@ -164,6 +164,9 @@ void Widget::draw()
   offsetx *= stepx;
 
   fl_push_clip(x() + offsetx, y() + offsety, stepx, stepy);
+
+  if(stepx >= 0 && stepy >= 0)
+    fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND2_COLOR);
 
   if(use_highlight)
   {
