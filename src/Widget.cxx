@@ -59,7 +59,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
 
-  if(sx != 0 && sy != 0)
+  if(sx > 0 && sy > 0)
     use_highlight = true;
   else
     use_highlight = false;
@@ -138,7 +138,8 @@ int Widget::handle(int event)
 
 void Widget::draw()
 {
-  fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
+  if(stepx >= 0 && stepy >= 0)
+    fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
 
   if(use_highlight && (stepx <= 1 || stepy <= 1))
   {
@@ -151,7 +152,7 @@ void Widget::draw()
     image->uncache();
   }
     
-  if(stepx <= 1 && stepy <= 1)
+  if(stepx >= 0 && stepx <= 1 && stepy >= 0 && stepy <= 1)
     return;
 
   int offsety = (var / (w() / stepx)) * stepy;
@@ -163,7 +164,6 @@ void Widget::draw()
   offsetx *= stepx;
 
   fl_push_clip(x() + offsetx, y() + offsety, stepx, stepy);
-  fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND2_COLOR);
 
   if(use_highlight)
   {
@@ -183,7 +183,10 @@ void Widget::draw()
   int tempx = stepx > 1 ? stepx : 2;
   int tempy = stepy > 1 ? stepy : 2;
 
-  fl_draw_box(FL_BORDER_FRAME,
-              x() + offsetx, y() + offsety, tempx, tempy, FL_INACTIVE_COLOR);
+  if(stepx >= 0 && stepy >= 0)
+  {
+    fl_draw_box(FL_BORDER_FRAME,
+                x() + offsetx, y() + offsety, tempx, tempy, FL_INACTIVE_COLOR);
+  }
 }
 

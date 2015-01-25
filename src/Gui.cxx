@@ -82,7 +82,7 @@ namespace Gui
 
   // status
   Fl_Progress *progress;
-  Fl_Box *status_box;
+  Fl_Box *coords;
 
   // top right
   ToggleButton *zoom_fit;
@@ -275,9 +275,9 @@ void Gui::init()
   x1 += 256 + 6;
   new Separator(status, x1, 2, 2, 20, "");
   x1 += 8;
-  status_box = new Fl_Box(FL_FLAT_BOX, x1, 6, 256, 12, "");
-  status_box->resize(status->x() + x1, status->y() + 6, 256, 12);
-  status_box->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+  coords = new Fl_Box(FL_FLAT_BOX, x1, 6, 128, 12, "");
+  coords->resize(status->x() + x1, status->y() + 6, 128, 12);
+  coords->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
   status->resizable(0);
   status->end();
 
@@ -1117,8 +1117,8 @@ void Gui::hideProgress()
 
 void Gui::updateStatus(char *s)
 {
-  status_box->copy_label(s);
-  status_box->redraw();
+  coords->copy_label(s);
+  coords->redraw();
 }
 
 

@@ -71,7 +71,12 @@ namespace About
 
     Items::dialog = new DialogWindow(384, 0, "About");
     Items::logo = new Widget(Items::dialog, 32, y1, 320, 64,
-                           credits, File::themePath("logo_large.png"), 0, 0, 0);
+                           credits, File::themePath("logo_large.png"), -1, -1, 0);
+    if(Project::theme == Project::THEME_LIGHT)
+    {
+      Items::logo->bitmap->invert();
+    }
+
     Items::logo->align(FL_ALIGN_BOTTOM);
     Items::logo->measure_label(ww, hh);
     y1 += 64 + 8 + hh;
