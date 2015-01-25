@@ -92,12 +92,7 @@ AC_CHECK_DECLS([PATH_MAX],
   [[#include <limits.h>]])
 
 
-# various futzing
-
-FLTK_CONFIG_CXXFLAGS=$(fltk-config --cxxflags)
-FLTK_CONFIG_LDFLAGS=$(fltk-config --ldflags)
-AC_SUBST([FLTK_CONFIG_CXXFLAGS])
-AC_SUBST([FLTK_CONFIG_LDFLAGS])
+# futz the data path
 
 (
   $MKDIR_P share/rendera && \

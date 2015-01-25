@@ -10,8 +10,7 @@ AM_CXXFLAGS = -Wall -Wextra -Werror -pedantic-errors # -rdynamic
 
 
 noinst_LTLIBRARIES = libren.la
-libren_la_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
-libren_la_LDFLAGS = $(FLTK_CONFIG_LDFLAGS)
+
 libren_la_SOURCES =       \
   src/Bitmap.H            \
   src/Bitmap.cxx          \
@@ -94,8 +93,6 @@ libren_la_SOURCES =       \
 bin_PROGRAMS = ./bin/rendera
 __bin_rendera_SOURCES = src/Main.cxx
 __bin_rendera_LDADD = libren.la
-# rendera_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
-# rendera_LDFLAGS = $(FLTK_CONFIG_LDFLAGS)
 
 
 nobase_dist_pkgdata_DATA =          \
