@@ -137,6 +137,9 @@ View::~View()
 
 int View::handle(int event)
 {
+  if(rendering)
+    return 0;
+
   mousex = Fl::event_x() - x();
   mousey = Fl::event_y() - y();
   imgx = mousex / zoom + ox;
@@ -165,9 +168,6 @@ int View::handle(int event)
 
     case FL_ENTER:
     {
-      if(rendering)
-        return 0;
-
       if(Fl::focus() != this)
         Fl::focus(this);
 
@@ -195,9 +195,6 @@ int View::handle(int event)
 
     case FL_LEAVE:
     {
-      if(rendering)
-        return 0;
-
       window()->cursor(FL_CURSOR_DEFAULT);
 
       return 1;
@@ -205,9 +202,6 @@ int View::handle(int event)
 
     case FL_PUSH:
     {
-      if(rendering)
-        return 0;
-
       switch(button)
       {
         case 1:
@@ -240,9 +234,6 @@ int View::handle(int event)
 
     case FL_DRAG:
     {
-      if(rendering)
-        return 0;
-
       switch(button)
       {
         case 1:
@@ -262,9 +253,6 @@ int View::handle(int event)
 
     case FL_RELEASE:
     {
-      if(rendering)
-        return 0;
-
       Project::tool->release(this);
 
       if(moving)
@@ -285,9 +273,6 @@ int View::handle(int event)
 
     case FL_MOVE:
     {
-      if(rendering)
-        return 0;
-
       Project::tool->move(this);
 
       char coords[256];
@@ -305,9 +290,6 @@ int View::handle(int event)
 
     case FL_MOUSEWHEEL:
     {
-      if(rendering)
-        return 0;
-
       if(moving)
         break;
 
@@ -380,9 +362,6 @@ int View::handle(int event)
 
     case FL_PASTE:
     {
-      if(rendering)
-        return 0;
-
       // drag n drop
       if(strncasecmp(Fl::event_text(), "file://", 7) == 0)
       {

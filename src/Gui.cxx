@@ -1078,6 +1078,7 @@ int Gui::getTextSmooth()
 
 void Gui::showProgress(float step)
 {
+  view->rendering = true;
   progress_value = 0;
   progress_step = 100.0 / (step / 50);
   progress->show();
@@ -1088,13 +1089,14 @@ int Gui::updateProgress(const int y)
   // user cancelled operation
   if(Fl::get_key(FL_Escape))
   {
+    hideProgress();
     Gui::getView()->drawMain(true);
     return -1;
   }
 
   if(!(y % 50))
   {
-    Gui::getView()->drawMain(true);
+    view->drawMain(true);
     progress->value(progress_value);
     char percent[16];
     sprintf(percent, "%d%%", (int)progress_value);
@@ -1108,11 +1110,12 @@ int Gui::updateProgress(const int y)
 
 void Gui::hideProgress()
 {
-    Gui::getView()->drawMain(true);
+    view->drawMain(true);
     progress->value(0);
     progress->label("");
     progress->redraw();
     progress->hide();
+    view->rendering = false;
 }
 
 void Gui::updateStatus(char *s)
