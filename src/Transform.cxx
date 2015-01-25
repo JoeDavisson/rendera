@@ -264,7 +264,7 @@ namespace Scale
       }
     }
 
-    Dialog::showProgress(dh);
+    Gui::showProgress(dh);
 
     for(int y = 0; y < dh; y++) 
     {
@@ -344,11 +344,11 @@ namespace Scale
         c[3] -= u2;
       }
 
-      if(Dialog::updateProgress(y) < 0)
+      if(Gui::updateProgress(y) < 0)
         break;
     }
 
-    Dialog::hideProgress();
+    Gui::hideProgress();
 
     delete Project::bmp;
     Project::bmp = temp;
@@ -554,7 +554,7 @@ namespace Rotate
     row_u -= bw * du_col + bh * du_row;
     row_v -= bw * dv_col + bh * dv_row;
 
-    Dialog::showProgress(by2 - by1);
+    Gui::showProgress(by2 - by1);
 
     // draw image
     for(int y = by1; y <= by2; y++)
@@ -603,10 +603,10 @@ namespace Rotate
         *(temp->row[yy] + xx) = c;
       }
 
-      Dialog::updateProgress(y - by1);
+      Gui::updateProgress(y - by1);
     }
 
-    Dialog::hideProgress();
+    Gui::hideProgress();
 
     delete Project::bmp;
     Project::bmp = temp;

@@ -31,9 +31,6 @@ namespace Dialog
   int pngUsePalette();
   int pngUseAlpha();
   int pngAlphaLevels();
-  void showProgress(float);
-  int updateProgress(const int);
-  void hideProgress();
   void newImage();
   void makePalette();
   void editor();

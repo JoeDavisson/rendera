@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Hold_Browser.H>
+#include <FL/Fl_Progress.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Tooltip.H>
 
@@ -62,7 +63,6 @@ namespace Gui
   Fl_Menu_Bar *menubar;
 
   // containers
-  //Fl_Group *group_top;
   Fl_Group *group_left;
 
   // panels
@@ -76,9 +76,13 @@ namespace Gui
   Group *fill;
   Group *right;
   Group *bottom;
+  Group *status;
   Fl_Group *middle;
 
-  //top right
+  // status
+  Fl_Progress *progress;
+
+  // top right
   ToggleButton *zoom_fit;
   Button *zoom_one;
   Button *zoom_in;
@@ -131,6 +135,9 @@ namespace Gui
 
   // view
   View *view;
+
+  float progress_value = 0;
+  float progress_step = 0;
 
   // tables
   const int brush_sizes[16] =
@@ -253,6 +260,23 @@ void Gui::init()
   menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
 
+  // status
+  status = new Group(0, window->h() - 24, window->w(), 24, "");
+  x1 = 6;
+  progress = new Fl_Progress(x1, 6, 256, 12);
+  progress->resize(status->x() + x1, status->y() + 6, 256, 12);
+  progress->minimum(0);
+  progress->maximum(100);
+  progress->color(0x40404000);
+  progress->selection_color(0x88CC8800);
+  progress->labelcolor(0xFFFFFF00);
+  x1 += 256 + 6;
+  new Separator(status, x1, 2, 2, 20, "");
+  x1 += 8;
+  status->resizable(0);
+  status->end();
+
+  // top right
   top_right = new Group(0, menubar->h(), window->w(), 40, "");
   x1 = 8;
   zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24,
@@ -294,7 +318,7 @@ void Gui::init()
   top_right->end();
 
   // bottom
-  bottom = new Group(160, window->h() - 40, window->w() - 272, 40, "");
+  bottom = new Group(160, window->h() - status->h() - 40, window->w() - 272, 40, "");
   x1 = 8;
   wrap = new ToggleButton(bottom, x1, 8, 24, 24,
                           "Wrap Edges", File::themePath("wrap.png"),
@@ -325,7 +349,7 @@ void Gui::init()
 
   // tools
   tools = new Group(0, top_right->h() + menubar->h(),
-                    48, window->h() - (menubar->h() + top_right->h()),
+                    48, window->h() - (menubar->h() + top_right->h() + status->h()),
                     "Tools");
   y1 = 20;
   tool = new Widget(tools, 8, y1, 32, 192,
@@ -337,7 +361,7 @@ void Gui::init()
 
   // paint
   paint = new Group(48, top_right->h() + menubar->h(),
-                    112, window->h() - top_right->h() - menubar->h(),
+                    112, window->h() - top_right->h() - menubar->h() - status->h(),
                     "Painting");
   y1 = 20;
   paint_brush = new Widget(paint, 8, y1, 96, 96,
@@ -380,7 +404,7 @@ void Gui::init()
 
   // crop
   crop = new Group(48, top_right->h() + menubar->h(),
-                   112, window->h() - top_right->h() - menubar->h(),
+                   112, window->h() - top_right->h() - menubar->h() - status->h(),
                    "Crop");
   y1 = 20;
   crop_x = new InputInt(crop, 24, y1, 72, 24, "X:", 0);
@@ -402,7 +426,7 @@ void Gui::init()
 
   // getcolor
   getcolor = new Group(48, top_right->h() + menubar->h(),
-                       112, window->h() - top_right->h() - menubar->h(),
+                       112, window->h() - top_right->h() - menubar->h() - status->h(),
                        "GetColor");
   y1 = 20;
   getcolor_color = new Widget(getcolor, 8, y1, 96, 96, "Color", 0, 0, 0);
@@ -411,7 +435,7 @@ void Gui::init()
 
   // offset
   offset = new Group(48, top_right->h() + menubar->h(),
-                     112, window->h() - top_right->h() - menubar->h(),
+                     112, window->h() - top_right->h() - menubar->h() - status->h(),
                      "Offset");
   y1 = 20;
   offset_x = new InputInt(offset, 24, y1, 72, 24, "X:", 0);
@@ -425,7 +449,7 @@ void Gui::init()
 
   // text
   text = new Group(48, top_right->h() + menubar->h(),
-                   112, window->h() - top_right->h() - menubar->h(),
+                   112, window->h() - top_right->h() - menubar->h() - status->h(),
                    "Text");
   y1 = 20;
   // add font names
@@ -465,13 +489,13 @@ void Gui::init()
 
   // fill
   fill = new Group(48, top_right->h() + menubar->h(),
-                   112, window->h() - top_right->h() - menubar->h(),
+                   112, window->h() - top_right->h() - menubar->h() - status->h(),
                    "Fill");
   fill->end();
 
   // right
   right = new Group(window->w() - 112, top_right->h() + menubar->h(),
-                    112, window->h() - top_right->h() - menubar->h(),
+                    112, window->h() - top_right->h() - menubar->h() - status->h(),
                     "Colors");
   y1 = 20;
   palette = new Widget(right, 8, y1, 96, 96,
@@ -516,7 +540,7 @@ void Gui::init()
 
   // middle
   middle = new Fl_Group(160, top_right->h() + menubar->h(),
-                        window->w() - 272, window->h() - (menubar->h() + top_right->h() + bottom->h()));
+                        window->w() - 272, window->h() - (menubar->h() + top_right->h() + bottom->h() + status->h()));
   middle->box(FL_FLAT_BOX);
   view = new View(middle, 0, 0, middle->w(), middle->h(), "View");
   middle->resizable(view);
@@ -1047,5 +1071,42 @@ int Gui::getPaintMode()
 int Gui::getTextSmooth()
 {
   return text_smooth->value();
+}
+
+void Gui::showProgress(float step)
+{
+  progress_value = 0;
+  progress_step = 100.0 / (step / 50);
+}
+
+int Gui::updateProgress(const int y)
+{
+  // user cancelled operation
+  if(Fl::get_key(FL_Escape))
+  {
+    Gui::getView()->drawMain(true);
+    return -1;
+  }
+
+  if(!(y % 50))
+  {
+    Gui::getView()->drawMain(true);
+    progress->value(progress_value);
+    char percent[16];
+    sprintf(percent, "%d%%", (int)progress_value);
+    progress->label(percent);
+    Fl::check();
+    progress_value += progress_step;
+  }
+
+  return 0;
+}
+
+void Gui::hideProgress()
+{
+    Gui::getView()->drawMain(true);
+    progress->value(0);
+    progress->label("");
+    progress->redraw();
 }
 

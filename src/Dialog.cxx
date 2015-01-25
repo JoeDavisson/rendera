@@ -197,31 +197,6 @@ namespace PngOptions
   }
 }
 
-namespace Progress
-{
-  namespace Items
-  {
-    DialogWindow *dialog;
-    Fl_Progress *bar;
-  }
-
-  float value;
-  float step;
-
-  void init()
-  {
-    Items::dialog = new DialogWindow(272, 80, "Progress");
-    Items::bar = new Fl_Progress(8, 8, 256, 64);
-    Items::bar->minimum(0);
-    Items::bar->maximum(100);
-    Items::bar->color(0x40404000);
-    Items::bar->selection_color(0x88CC8800);
-    Items::bar->labelcolor(0xFFFFFF00);
-    Items::dialog->set_modal();
-    Items::dialog->end();
-  }
-}
-
 namespace NewImage
 {
   namespace Items
@@ -661,7 +636,6 @@ void Dialog::init()
   About::init();
   JpegQuality::init();
   PngOptions::init();
-  Progress::init();
   NewImage::init();
   MakePalette::init();
   Editor::init();
@@ -700,42 +674,6 @@ int Dialog::pngUseAlpha()
 int Dialog::pngAlphaLevels()
 {
   return atoi(PngOptions::Items::alpha_levels->value());
-}
-
-void Dialog::showProgress(float step)
-{
-  Progress::value = 0;
-  Progress::step = 100.0 / (step / 50);
-  Progress::Items::dialog->show();
-}
-
-int Dialog::updateProgress(const int y)
-{
-  // user cancelled operation
-  if(Fl::get_key(FL_Escape))
-  {
-    Gui::getView()->drawMain(true);
-    return -1;
-  }
-
-  if(!(y % 50))
-  {
-    Gui::getView()->drawMain(true);
-    Progress::Items::bar->value(Progress::value);
-    char percent[16];
-    sprintf(percent, "%d%%", (int)Progress::value);
-    Progress::Items::bar->label(percent);
-    Fl::check();
-    Progress::value += Progress::step;
-  }
-
-  return 0;
-}
-
-void Dialog::hideProgress()
-{
-  Progress::Items::dialog->hide();
-  Gui::getView()->drawMain(true);
 }
 
 void Dialog::newImage()

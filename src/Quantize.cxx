@@ -298,7 +298,7 @@ void Quantize::pca(Bitmap *src, int size)
       err_data[i + (j + 1) * j / 2] = error(&colors[i], &colors[j]);
   }
 
-  Dialog::showProgress(count - rep);
+  Gui::showProgress(count - rep);
 
   // measure offset between array elements
   const int step = &(colors[1].active) - &(colors[0].active);
@@ -345,10 +345,10 @@ void Quantize::pca(Bitmap *src, int size)
     if(Fl::get_key(FL_Escape))
       return;
 
-    Dialog::updateProgress(count);
+    Gui::updateProgress(count);
   }
 
-  Dialog::hideProgress();
+  Gui::hideProgress();
 
   // build palette
   int index = 0;
