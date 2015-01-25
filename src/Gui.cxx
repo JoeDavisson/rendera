@@ -264,20 +264,18 @@ void Gui::init()
 
   // status
   status = new Group(0, window->h() - 24, window->w(), 24, "");
-  x1 = 6;
-  progress = new Fl_Progress(x1, 6, 256, 12);
-  progress->resize(status->x() + x1, status->y() + 6, 256, 12);
+  x1 = 8;
+  coords = new Fl_Box(FL_FLAT_BOX, x1, 6, 128, 12, "");
+  coords->resize(status->x() + x1, status->y() + 6, 128, 12);
+  coords->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+  progress = new Fl_Progress(x1, window->w() - 256 - 8, 256, 16);
+  progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4, 256, 16);
   progress->minimum(0);
   progress->maximum(100);
   progress->color(0x40404000);
   progress->selection_color(0x88CC8800);
   progress->labelcolor(0xFFFFFF00);
-  x1 += 256 + 6;
-  new Separator(status, x1, 2, 2, 20, "");
-  x1 += 8;
-  coords = new Fl_Box(FL_FLAT_BOX, x1, 6, 128, 12, "");
-  coords->resize(status->x() + x1, status->y() + 6, 128, 12);
-  coords->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+  progress->hide();
   status->resizable(0);
   status->end();
 
@@ -1082,6 +1080,7 @@ void Gui::showProgress(float step)
 {
   progress_value = 0;
   progress_step = 100.0 / (step / 50);
+  progress->show();
 }
 
 int Gui::updateProgress(const int y)
@@ -1113,6 +1112,7 @@ void Gui::hideProgress()
     progress->value(0);
     progress->label("");
     progress->redraw();
+    progress->hide();
 }
 
 void Gui::updateStatus(char *s)
