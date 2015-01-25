@@ -344,7 +344,7 @@ void Gui::init()
                             (Fl_Callback *)checkOrigin);
   x1 += 24 + 8;
   constrain = new ToggleButton(bottom, x1, 8, 24, 24,
-                              "Constrain Proportions",
+                              "Lock Proportions",
                               File::themePath("constrain.png"),
                               (Fl_Callback *)checkConstrain);
   bottom->resizable(0);
