@@ -29,7 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.H"
 #include "Tool.H"
 #include "Undo.H"
+#include "Util.H"
 #include "View.H"
+
 
 namespace
 {
@@ -112,25 +114,25 @@ void Crop::push(View *view)
         if(view->imgx < beginx)
         {
           side = 0;
-          offset = std::abs(view->imgx - beginx);
+          offset = ::ren::abs(view->imgx - beginx);
           resize_started = true;
         }
         else if(view->imgx > lastx)
         {
           side = 1;
-          offset = std::abs(view->imgx - lastx);
+          offset = ::ren::abs(view->imgx - lastx);
           resize_started = true;
         }
         else if(view->imgy < beginy)
         {
           side = 2;
-          offset = std::abs(view->imgy - beginy);
+          offset = ::ren::abs(view->imgy - beginy);
           resize_started = true;
         }
         else if(view->imgy > lasty)
         {
           side = 3;
-          offset = std::abs(view->imgy - lasty);
+          offset = ::ren::abs(view->imgy - lasty);
           resize_started = true;
         }
 

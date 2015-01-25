@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <cstdio>
 #include <cstdlib>
+#include <algorithm>
 
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Int_Input.H>
@@ -58,7 +59,7 @@ void InputInt::center()
 int InputInt::limitValue(int min, int max)
 {
   char str[8];
-  int val = atoi(value());
+  int val = std::atoi(value());
 
   if(val < min)
   {
