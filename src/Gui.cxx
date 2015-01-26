@@ -1081,6 +1081,8 @@ void Gui::showProgress(float step)
   view->rendering = true;
   progress_value = 0;
   progress_step = 100.0 / (step / 50);
+  // keep progress bar on right side in case window was resized
+  progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4, 256, 16);
   progress->show();
 }
 
