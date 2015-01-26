@@ -67,10 +67,10 @@ namespace About
   {
     int y1 = 8;
     int ww = 0, hh = 0;
-    const char *credits = "Copyright (c) 2014 Joe Davisson.\nAll Rights Reserved.";
+    const char *credits = "Copyright (c) 2015 Joe Davisson.\nAll Rights Reserved.";
 
     Items::dialog = new DialogWindow(384, 0, "About");
-    Items::logo = new Widget(Items::dialog, 32, y1, 320, 64,
+    Items::logo = new Widget(Items::dialog, 32, y1, 320, 96,
                            credits, File::themePath("logo_large.png"), -1, -1, 0);
     if(Project::theme == Project::THEME_LIGHT)
     {
@@ -79,7 +79,7 @@ namespace About
 
     Items::logo->align(FL_ALIGN_BOTTOM);
     Items::logo->measure_label(ww, hh);
-    y1 += 64 + 8 + hh;
+    y1 += 96 + 8 + hh;
     Items::dialog->addOkButton(&Items::ok, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::dialog->set_modal();
