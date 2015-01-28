@@ -52,6 +52,8 @@ libren_la_SOURCES =       \
   src/InputFloat.cxx      \
   src/InputInt.H          \
   src/InputInt.cxx        \
+  src/InputText.H         \
+  src/InputText.cxx       \
   src/Map.H               \
   src/Map.cxx             \
   src/Octree.H            \

@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gui.H"
 #include "Inline.H"
 #include "InputInt.H"
+#include "InputText.H"
 #include "Map.H"
 #include "Palette.H"
 #include "Project.H"
@@ -126,6 +127,7 @@ namespace Gui
   Widget *palette;
   Widget *hue;
   Widget *satval;
+  InputText *hexcolor;
   Widget *trans;
   Fl_Choice *blend;
 
@@ -514,7 +516,9 @@ void Gui::init()
                        "Color Palette", 6, 6,
                        (Fl_Callback *)checkPalette);
   y1 += 96 + 8;
-
+  hexcolor = new InputText(right, 8, y1, 96, 24, "", 0);
+  hexcolor->deactivate();
+  y1 += 24 + 8;
   // satval overlaps the hue color wheel
   hue = new Widget(right, 8, y1, 96, 96,
                    "Hue", 1, 1,
@@ -631,10 +635,10 @@ void Gui::updateColor(int c)
   Blend::rgbToHsv(r, g, b, &h, &s, &v);
 
   float angle = ((3.14159 * 2) / 1536) * h;
-  int mx = 48 + 40 * std::cos(angle);
-  int my = 48 + 40 * std::sin(angle);
+  int mx = 48 + 41 * std::cos(angle);
+  int my = 48 + 41 * std::sin(angle);
   hue->var = mx + 96 * my;
-  satval->var = (int)(s / 2.684) + 96 * (int)(v / 2.684);
+  satval->var = (int)(s / 5.42) + 48 * (int)(v / 5.42);
 
   hue->do_callback();
 
@@ -892,6 +896,11 @@ void Gui::checkColor(Widget *, void *)
 
   hue->redraw();
   satval->redraw();
+
+  char hex_string[8];
+  snprintf(hex_string, sizeof(hex_string),
+           "%06X", (unsigned)Project::brush->color & 0xFFFFFF);
+  hexcolor->value(hex_string);
 }
 
 void Gui::checkHue(Widget *, void *)
