@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 //#endif
 
 #include <algorithm>
+#include <cstdlib>
 #include <cstring>
 #include <vector>
 #include <png.h>
