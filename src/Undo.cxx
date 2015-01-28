@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include "Bitmap.H"
+#include "Clone.H"
 #include "Gui.H"
 #include "Map.H"
 #include "Project.H"
@@ -99,6 +100,13 @@ void Undo::push()
 
 void Undo::push(int x, int y, int w, int h)
 {
+  // store full image if wrap is enabled
+  if(Clone::wrap)
+  {
+    push();
+    return;
+  }
+
   int x1 = x;
   int y1 = y;
   int x2 = x + w - 1;
