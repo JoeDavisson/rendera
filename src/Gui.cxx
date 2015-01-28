@@ -624,6 +624,14 @@ void Gui::clearMenuItem(const char *s)
     m->clear();
 }
 
+void Gui::updateHexColor(int c)
+{
+  char hex_string[8];
+  snprintf(hex_string, sizeof(hex_string),
+           "%06X", (unsigned)c & 0xFFFFFF);
+  hexcolor->value(hex_string);
+}
+
 void Gui::updateColor(int c)
 {
   int r = getr(c);
@@ -643,6 +651,7 @@ void Gui::updateColor(int c)
   hue->do_callback();
 
   Project::brush->color = c;
+  updateHexColor(Project::brush->color);
 }
 
 void Gui::updateGetColor(int c)
@@ -897,10 +906,7 @@ void Gui::checkColor(Widget *, void *)
   hue->redraw();
   satval->redraw();
 
-  char hex_string[8];
-  snprintf(hex_string, sizeof(hex_string),
-           "%06X", (unsigned)Project::brush->color & 0xFFFFFF);
-  hexcolor->value(hex_string);
+  updateHexColor(Project::brush->color);
 }
 
 void Gui::checkHue(Widget *, void *)
