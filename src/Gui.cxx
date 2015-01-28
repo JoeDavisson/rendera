@@ -269,6 +269,7 @@ void Gui::init()
   coords = new Fl_Box(FL_FLAT_BOX, x1, 4, 96, 16, "");
   coords->resize(status->x() + x1, status->y() + 4, 96, 16);
   coords->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+  coords->copy_label("(0, 0)");
   x1 += 96 + 6;
   new Separator(status, x1, 2, 2, 20, "");
   x1 += 8;
