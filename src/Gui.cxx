@@ -514,11 +514,12 @@ void Gui::init()
                        "Color Palette", 6, 6,
                        (Fl_Callback *)checkPalette);
   y1 += 96 + 8;
+
+  // satval overlaps the hue color wheel
   hue = new Widget(right, 8, y1, 96, 96,
                    "Hue", 1, 1,
                    (Fl_Callback *)checkHue);
-  y1 += 96 + 8;
-  satval = new Widget(right, 8, y1, 96, 96,
+  satval = new Widget(right, 32, y1 + 24, 48, 48,
                       "Saturation/Value", 1, 1,
                       (Fl_Callback *)checkSatVal);
   y1 += 96 + 8;
@@ -834,8 +835,8 @@ void Gui::checkColor(Widget *, void *)
 
   float mouse_angle = atan2f(my - 48, mx - 48);
   int h = ((int)(mouse_angle * 244.46) + 1536) % 1536;
-  int s = (satval->var % 96) * 2.685;
-  int v = (satval->var / 96) * 2.685;
+  int s = (satval->var % 48) * 5.43;
+  int v = (satval->var / 48) * 5.43;
 
   int r, g, b;
 
@@ -851,43 +852,41 @@ void Gui::checkColor(Widget *, void *)
   for(int i = 1; i < 1536; i++)
   {
     float angle = ((3.14159 * 2) / 1536) * i;
-    int x1 = 48 + 40 * std::cos(angle);
-    int y1 = 48 + 40 * std::sin(angle);
-    int x2 = 48 + 20 * std::cos(angle);
-    int y2 = 48 + 20 * std::sin(angle);
+    int x1 = 48 + 44 * std::cos(angle);
+    int y1 = 48 + 44 * std::sin(angle);
+    int x2 = 48 + 38 * std::cos(angle);
+    int y2 = 48 + 38 * std::sin(angle);
 
     Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
     hue->bitmap->line(x1, y1, x2, y2, makeRgb(r, g, b), 0);
     hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makeRgb(r, g, b), 0);
   }
 
-  int x1 = 48 + 40 * std::cos(mouse_angle);
-  int y1 = 48 + 40 * std::sin(mouse_angle);
-  int x2 = 48 + 20 * std::cos(mouse_angle);
-  int y2 = 48 + 20 * std::sin(mouse_angle);
+  const int x1 = 48 + 41 * std::cos(mouse_angle);
+  const int y1 = 48 + 41 * std::sin(mouse_angle);
 
-  hue->bitmap->xorLine(x1, y1, x2, y2);
+  hue->bitmap->xorRect(x1 - 4, y1 - 4, x1 + 4, y1 + 4);
 
-  for(int y = 0; y < 96; y++)
+  for(int y = 0; y < 48; y++)
   {
-    for(int x = 0; x < 96; x++)
+    for(int x = 0; x < 48; x++)
     {
-      Blend::hsvToRgb(h, x * 2.685, y * 2.685, &r, &g, &b);
+      Blend::hsvToRgb(h, x * 5.43, y * 5.43, &r, &g, &b);
       satval->bitmap->setpixelSolid(x, y, makeRgb(r, g, b), 0);
     }
   }
 
-  int x = (satval->var % 96);
-  int y = (satval->var / 96);
+  int x = (satval->var % 48);
+  int y = (satval->var / 48);
 
   if(x < 4)
     x = 4;
   if(y < 4)
     y = 4;
-  if(x > 91)
-    x = 91;
-  if(y > 91)
-    y = 91;
+  if(x > 43)
+    x = 43;
+  if(y > 43)
+    y = 43;
 
   satval->bitmap->xorRect(x - 4, y - 4, x + 4, y + 4);
 
