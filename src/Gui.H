@@ -91,7 +91,8 @@ namespace Gui
   int updateProgress(const int);
   void hideProgress();
 
-  void updateStatus(char *);
+  void updateCoords(char *);
+  void updateInfo(char *);
 }
 
 #endif

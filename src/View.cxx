@@ -281,7 +281,7 @@ int View::handle(int event)
       coordx = std::max(std::min(coordx, Project::bmp->cw - 1), 0);
       coordy = std::max(std::min(coordy, Project::bmp->ch - 1), 0);
       sprintf(coords, "(%d, %d)", coordx, coordy);
-      Gui::updateStatus(coords);
+      Gui::updateCoords(coords);
 
       oldimgx = imgx;
       oldimgy = imgy;

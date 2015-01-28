@@ -83,6 +83,7 @@ namespace Gui
   // status
   Fl_Progress *progress;
   Fl_Box *coords;
+  Fl_Box *info;
 
   // top right
   ToggleButton *zoom_fit;
@@ -265,9 +266,16 @@ void Gui::init()
   // status
   status = new Group(0, window->h() - 24, window->w(), 24, "");
   x1 = 8;
-  coords = new Fl_Box(FL_FLAT_BOX, x1, 4, 128, 16, "");
-  coords->resize(status->x() + x1, status->y() + 4, 128, 16);
+  coords = new Fl_Box(FL_FLAT_BOX, x1, 4, 96, 16, "");
+  coords->resize(status->x() + x1, status->y() + 4, 96, 16);
   coords->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+  x1 += 96 + 6;
+  new Separator(status, x1, 2, 2, 20, "");
+  x1 += 8;
+  info = new Fl_Box(FL_FLAT_BOX, x1, 4, window->w() - x1, 16, "");
+  info->resize(status->x() + x1, status->y() + 4, window->w() - x1, 16);
+  info->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+  info->copy_label("Welcome to Rendera!");
   progress = new Fl_Progress(x1, window->w() - 256 - 8, 256, 16);
   progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4, 256, 16);
   progress->minimum(0);
@@ -330,7 +338,7 @@ void Gui::init()
   new Separator(bottom, x1, 2, 2, 36, "");
   x1 += 8;
   clone = new ToggleButton(bottom, x1, 8, 24, 24,
-                           "Clone Enable", File::themePath("clone.png"),
+                           "Clone Enable (Shift+Click sets clone target!)", File::themePath("clone.png"),
                            (Fl_Callback *)checkClone);
   x1 += 24 + 8;
   mirror = new Widget(bottom, x1, 8, 96, 24,
@@ -340,11 +348,11 @@ void Gui::init()
   new Separator(bottom, x1, 2, 2, 36, "");
   x1 += 8;
   origin = new ToggleButton(bottom, x1, 8, 24, 24,
-                            "Start From Center", File::themePath("origin.png"),
+                            "Start Shape From Center", File::themePath("origin.png"),
                             (Fl_Callback *)checkOrigin);
   x1 += 24 + 8;
   constrain = new ToggleButton(bottom, x1, 8, 24, 24,
-                              "Lock Proportions",
+                              "Lock Shape Proportions",
                               File::themePath("constrain.png"),
                               (Fl_Callback *)checkConstrain);
   bottom->resizable(0);
@@ -784,26 +792,32 @@ void Gui::checkTool(Widget *, void *var)
       paint_brush->do_callback();
       paint_shape->do_callback();
       paint->show();
+      updateInfo((char *)"Middle-click to navigate. Mouse wheel zooms. Esc cancels rendering.");
       break;
     case Tool::GETCOLOR:
       Project::setTool(Tool::GETCOLOR);
       getcolor->show();
+      updateInfo((char *)"Click to grab a color from the image.");
       break;
     case Tool::CROP:
       Project::setTool(Tool::CROP);
       crop->show();
+      updateInfo((char *)"Draw a box, then click inside box to move, outside to change size.");
       break;
     case Tool::OFFSET:
       Project::setTool(Tool::OFFSET);
       offset->show();
+      updateInfo((char *)"Click and drag to change image offset.");
       break;
     case Tool::TEXT:
       Project::setTool(Tool::TEXT);
       text->show();
+      updateInfo((char *)"Click to stamp text onto the image.");
       break;
     case Tool::FILL:
       Project::setTool(Tool::FILL);
       fill->show();
+      updateInfo((char *)"Click to fill an area with the selected color.");
       break;
   }
 
@@ -1083,6 +1097,7 @@ void Gui::showProgress(float step)
   progress_step = 100.0 / (step / 50);
   // keep progress bar on right side in case window was resized
   progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4, 256, 16);
+  info->hide();
   progress->show();
 }
 
@@ -1117,13 +1132,19 @@ void Gui::hideProgress()
     progress->label("");
     progress->redraw();
     progress->hide();
+    info->show();
     view->rendering = false;
 }
 
-void Gui::updateStatus(char *s)
+void Gui::updateCoords(char *s)
 {
   coords->copy_label(s);
   coords->redraw();
 }
 
+void Gui::updateInfo(char *s)
+{
+  info->copy_label(s);
+  info->redraw();
+}
 
