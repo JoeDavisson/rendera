@@ -640,7 +640,9 @@ void Gui::checkHexColor()
   if(c > 0xFFFFFF)
     c = 0xFFFFFF;
 
-  updateColor((int)(c | 0xFF000000));
+  c |= 0xFF000000;
+
+  updateColor(convertFormat((int)c, true));
   updateHexColor(Project::brush->color);
 }
 
@@ -648,7 +650,7 @@ void Gui::updateHexColor(int c)
 {
   char hex_string[8];
   snprintf(hex_string, sizeof(hex_string),
-           "%06x", (unsigned)c & 0xFFFFFF);
+           "%06x", (unsigned)convertFormat(c, true) & 0xFFFFFF);
   hexcolor->value(hex_string);
 }
 
