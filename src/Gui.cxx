@@ -521,8 +521,10 @@ void Gui::init()
                        "Color Preview", 0, 0,
                        0);
   y1 += 48 + 8;
-  hexcolor = new InputText(right, 8, y1, 96, 24, "", 0);
-  hexcolor->deactivate();
+  hexcolor = new InputText(right, 40, y1, 64, 24, "Hex:",
+                           (Fl_Callback *)checkHexColor);
+  hexcolor->maximum_size(6);
+  hexcolor->textsize(14);
   y1 += 24 + 8;
   // satval overlaps the hue color wheel
   hue = new Widget(right, 8, y1, 96, 96,
@@ -629,11 +631,24 @@ void Gui::clearMenuItem(const char *s)
     m->clear();
 }
 
+void Gui::checkHexColor()
+{
+  unsigned int c;
+
+  sscanf(hexcolor->value(), "%06x", &c);
+
+  if(c > 0xFFFFFF)
+    c = 0xFFFFFF;
+
+  updateColor((int)(c | 0xFF000000));
+  updateHexColor(Project::brush->color);
+}
+
 void Gui::updateHexColor(int c)
 {
   char hex_string[8];
   snprintf(hex_string, sizeof(hex_string),
-           "%06X", (unsigned)c & 0xFFFFFF);
+           "%06x", (unsigned)c & 0xFFFFFF);
   hexcolor->value(hex_string);
 }
 
