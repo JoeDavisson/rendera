@@ -125,6 +125,7 @@ namespace Gui
 
   // right
   Widget *palette;
+  Widget *color;
   Widget *hue;
   Widget *satval;
   InputText *hexcolor;
@@ -516,6 +517,10 @@ void Gui::init()
                        "Color Palette", 6, 6,
                        (Fl_Callback *)checkPalette);
   y1 += 96 + 8;
+  color = new Widget(right, 8, y1, 96, 48,
+                       "Color Preview", 0, 0,
+                       0);
+  y1 += 48 + 8;
   hexcolor = new InputText(right, 8, y1, 96, 24, "", 0);
   hexcolor->deactivate();
   y1 += 24 + 8;
@@ -652,6 +657,8 @@ void Gui::updateColor(int c)
 
   Project::brush->color = c;
   updateHexColor(Project::brush->color);
+  color->bitmap->clear(Project::brush->color);
+  color->redraw();
 }
 
 void Gui::updateGetColor(int c)
@@ -902,9 +909,11 @@ void Gui::checkColor(Widget *, void *)
     y = 43;
 
   satval->bitmap->xorRect(x - 4, y - 4, x + 4, y + 4);
+  color->bitmap->clear(Project::brush->color);
 
   hue->redraw();
   satval->redraw();
+  color->redraw();
 
   updateHexColor(Project::brush->color);
 }
