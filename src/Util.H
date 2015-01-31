@@ -20,4 +20,11 @@ namespace Util
   std::string usrdir_path( void );
 }
 
+namespace ren
+{
+  template< typename T >
+  inline
+  T abs( T const n ){ return ( 0 > n ) ? -n : n ; }
+}
+
 #endif//ndef ___RENDERA___UTIL_H___

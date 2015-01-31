@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
+#include <algorithm>
 #include <vector>
 #include <png.h>
 #include <jpeglib.h>
@@ -47,6 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.H"
 #include "Tool.H"
 #include "Undo.H"
+#include "Util.H"
 #include "View.H"
 #include "Widget.H"
 
@@ -416,8 +418,8 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
   if(h >= 0)
     negy = true;
 
-  w = std::abs(w);
-  h = std::abs(h);
+  w = ::ren::abs(w);
+  h = ::ren::abs(h);
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
   std::vector<unsigned char> linebuf(w * mul + pad);

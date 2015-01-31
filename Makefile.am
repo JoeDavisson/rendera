@@ -5,11 +5,14 @@ SUBDIRS = tests
 ACLOCAL_AMFLAGS = -I m4
 
 # AM_CXXFLAGS = -Wall -Wno-unused -fmax-errors=5
-AM_CPPFLAGS = -I$(srcdir)/src
+AM_CPPFLAGS = -I $(srcdir)/src -isystem $(FLTK_CONFIG_INCLUDEDIR)
 AM_CXXFLAGS = -Wall -Wextra -Werror -pedantic-errors # -rdynamic
 
 
 noinst_LTLIBRARIES = libren.la
+
+libren_la_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
+libren_la_LDFLAGS  = $(FLTK_CONFIG_LDFLAGS)  $(AM_LDFLAGS)
 
 libren_la_SOURCES =       \
   src/Bitmap.H            \

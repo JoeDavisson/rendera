@@ -1,0 +1,32 @@
+language: cpp
+
+os:
+  - linux
+  - osx
+
+before_install:
+  - uname -a
+  - uname -s
+  - echo "\${TRAVIS_OS_NAME} == \"${TRAVIS_OS_NAME}\""
+
+install:
+  - ${TRAVIS_BUILD_DIR}/install-dependencies.sh
+
+env:
+  - TRCC=gcc TRCXX=g++
+  - TRCC=clang TRCXX=clang++
+  - TRCC=i586-mingw32msvc-gcc TRCXX=i586-mingw32msvc-g++
+
+script:
+  - export CC=$TRCC
+  - export CXX=$TRCXX
+  - ${TRAVIS_BUILD_DIR}/build-o-matic.sh
+
+matrix:
+  exclude:
+    - os: osx
+      env: TRCC=i586-mingw32msvc-gcc TRCXX=i586-mingw32msvc-g++
+  allow_failures:
+    - env: TRCC=clang TRCXX=clang++
+    - env: TRCC=i586-mingw32msvc-gcc TRCXX=i586-mingw32msvc-g++
+  fast_finish: true

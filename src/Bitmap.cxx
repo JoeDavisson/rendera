@@ -23,8 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cstdlib>
 #include <vector>
 
-#include "Blend.H"
 #include "Bitmap.H"
+#include "Blend.H"
 #include "Clone.H"
 #include "Common.H"
 #include "Gamma.H"
@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Project.H"
 #include "Stroke.H"
 #include "Tool.H"
+#include "Util.H"
 #include "View.H"
 
 namespace
@@ -207,8 +208,8 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
   int inx = dx > 0 ? 1 : -1;
   int iny = dy > 0 ? 1 : -1;
 
-  dx = std::abs(dx);
-  dy = std::abs(dy);
+  dx = ::ren::abs(dx);
+  dy = ::ren::abs(dy);
 
   if(dx >= dy)
   {
@@ -312,8 +313,8 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
   int inx = dx > 0 ? 1 : -1;
   int iny = dy > 0 ? 1 : -1;
 
-  dx = std::abs(dx);
-  dy = std::abs(dy);
+  dx = ::ren::abs(dx);
+  dy = ::ren::abs(dy);
 
   if(dx >= dy)
   {
@@ -811,8 +812,8 @@ void Bitmap::fastStretch(Bitmap *dest,
   yd2 += yd1;
   yd2--;
 
-  const int dx = std::abs(yd2 - yd1);
-  const int dy = std::abs(ys2 - ys1) << 1;
+  const int dx = ::ren::abs(yd2 - yd1);
+  const int dy = ::ren::abs(ys2 - ys1) << 1;
   const int sx = Common::sign(yd2 - yd1);
   const int sy = Common::sign(ys2 - ys1);
   const int dx2 = dx << 1;
@@ -821,8 +822,8 @@ void Bitmap::fastStretch(Bitmap *dest,
 
   for(int d = 0; d <= dx; d++)
   {
-    const int dx_1 = std::abs(xd2 - xd1);
-    const int dy_1 = std::abs(xs2 - xs1) << 1;
+    const int dx_1 = ::ren::abs(xd2 - xd1);
+    const int dy_1 = ::ren::abs(xs2 - xs1) << 1;
     const int sx_1 = Common::sign(xd2 - xd1);
     const int sy_1 = Common::sign(xs2 - xs1);
     const int dx2_1 = dx_1 << 1;

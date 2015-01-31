@@ -100,7 +100,7 @@ namespace
     }
 
     double err = 0.0 ;
-    double derr = std::abs( double(dy) / double(dx) );
+    double derr = std::fabs( double(dy) / double(dx) );
 
     if( 1.0 < derr ){
       /* iterate over y, shim x */

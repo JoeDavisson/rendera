@@ -2,6 +2,14 @@
 #
 # rendera/build-o-matic.sh
 
+if [[ "Darwin" == $(uname -s) ]]
+then
+    export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+    export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+    echo "\${PATH}    == \"${PATH}\""
+    echo "\${MANPATH} == \"${MANPATH}\""
+fi
+
 echo -n                                                             && \
     export PROJECT_DIR=$(dirname $(readlink -f ${BASH_SOURCE}))     && \
     mkdir -vp ${PROJECT_DIR}/m4                                     && \
@@ -17,5 +25,6 @@ echo -n                                                             && \
     export PATH="${RENDERA_PREFIX_DIR}/bin:${PATH}"                 && \
     rendera --help                                                  && \
     rendera --version                                               && \
-    man -M ${RENDERA_PREFIX_DIR}/share/man -t rendera | ps2ascii -  && \
     echo && echo "big win"
+
+#     man -M ${RENDERA_PREFIX_DIR}/share/man -t rendera | ps2ascii -  && \
