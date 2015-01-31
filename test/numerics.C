@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <typeinfo>
 
-#include "Common.H"
+#include "Util.H"
 
 #define FAST_SIGN(v) ( 1 | ( v >> ( sizeof(v) * CHAR_BIT - 1)))
 
@@ -44,30 +44,30 @@ main( int, char** )
     assert(  1 == FAST_SIGN(long (  0)) );
 
     /* sign works for all numeric type, returns the type it was passed */
-    assert( typeid(char)   == typeid(Common::sign(char   (-42))));
-    assert( typeid(int)    == typeid(Common::sign(int    (-42))));
-    assert( typeid(short)  == typeid(Common::sign(short  (-42))));
-    assert( typeid(long)   == typeid(Common::sign(long   (-42))));
-    assert( typeid(float)  == typeid(Common::sign(float  (-42))));
-    assert( typeid(double) == typeid(Common::sign(double (-42))));
+    assert( typeid(char)   == typeid(Util::sign(char   (-42))));
+    assert( typeid(int)    == typeid(Util::sign(int    (-42))));
+    assert( typeid(short)  == typeid(Util::sign(short  (-42))));
+    assert( typeid(long)   == typeid(Util::sign(long   (-42))));
+    assert( typeid(float)  == typeid(Util::sign(float  (-42))));
+    assert( typeid(double) == typeid(Util::sign(double (-42))));
 
     /* homogeneous type comparisons */
-    assert( -1 == Common::sign( -42 ) );
-    assert(  1 == Common::sign(  42 ) );
-    assert(  1 == Common::sign(   0 ) );
+    assert( -1 == Util::sign( -42 ) );
+    assert(  1 == Util::sign(  42 ) );
+    assert(  1 == Util::sign(   0 ) );
 
-    assert( -1.0 == Common::sign( -42.0 ) );
-    assert(  1.0 == Common::sign(  42.0 ) );
-    assert(  1.0 == Common::sign(   0.0 ) );
+    assert( -1.0 == Util::sign( -42.0 ) );
+    assert(  1.0 == Util::sign(  42.0 ) );
+    assert(  1.0 == Util::sign(   0.0 ) );
 
     /* heterogenous type comparisons */
-    assert( -1.0 == Common::sign( -42 ) );
-    assert(  1.0 == Common::sign(  42 ) );
-    assert(  1.0 == Common::sign(   0 ) );
+    assert( -1.0 == Util::sign( -42 ) );
+    assert(  1.0 == Util::sign(  42 ) );
+    assert(  1.0 == Util::sign(   0 ) );
 
-    assert( -1 == Common::sign( -42.0 ) );
-    assert(  1 == Common::sign(  42.0 ) );
-    assert(  1 == Common::sign(   0.0 ) );
+    assert( -1 == Util::sign( -42.0 ) );
+    assert(  1 == Util::sign(  42.0 ) );
+    assert(  1 == Util::sign(   0.0 ) );
 
 
     return EXIT_SUCCESS ;
