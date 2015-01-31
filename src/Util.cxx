@@ -6,6 +6,7 @@
 #  error "missing config.h"
 #endif
 
+#include <algorithm>
 #include <climits>
 #include <unistd.h>
 

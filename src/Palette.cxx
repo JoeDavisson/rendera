@@ -19,12 +19,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include "Bitmap.H"
-#include "Common.H"
 #include "Blend.H"
 #include "FileSP.H"
 #include "Inline.H"
 #include "Octree.H"
 #include "Palette.H"
+#include "Util.H"
 #include "Widget.H"
 
 Palette::Palette()
@@ -194,7 +194,7 @@ int Palette::lookup(const int &c)
 
 void Palette::sort()
 {
-  Common::sortBy(data, data + max, getl);
+  Util::sortBy(data, data + max, getl);
 }
 
 int Palette::load(const char *fn)

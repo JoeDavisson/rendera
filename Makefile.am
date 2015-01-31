@@ -27,7 +27,6 @@ libren_la_SOURCES =       \
   src/CheckBox.cxx        \
   src/Clone.H             \
   src/Clone.cxx           \
-  src/Common.H            \
   src/Crop.H              \
   src/Crop.cxx            \
   src/Dialog.H            \

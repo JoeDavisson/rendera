@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Clone.H"
-#include "Common.H"
 #include "Gamma.H"
 #include "Gui.H"
 #include "Inline.H"
@@ -814,8 +813,8 @@ void Bitmap::fastStretch(Bitmap *dest,
 
   const int dx = ::ren::abs(yd2 - yd1);
   const int dy = ::ren::abs(ys2 - ys1) << 1;
-  const int sx = Common::sign(yd2 - yd1);
-  const int sy = Common::sign(ys2 - ys1);
+  const int sx = Util::sign(yd2 - yd1);
+  const int sy = Util::sign(ys2 - ys1);
   const int dx2 = dx << 1;
 
   int e = dy - dx;
@@ -824,8 +823,8 @@ void Bitmap::fastStretch(Bitmap *dest,
   {
     const int dx_1 = ::ren::abs(xd2 - xd1);
     const int dy_1 = ::ren::abs(xs2 - xs1) << 1;
-    const int sx_1 = Common::sign(xd2 - xd1);
-    const int sy_1 = Common::sign(xs2 - xs1);
+    const int sx_1 = Util::sign(xd2 - xd1);
+    const int sy_1 = Util::sign(xs2 - xs1);
     const int dx2_1 = dx_1 << 1;
 
     int e_1 = dy_1 - dx_1;
