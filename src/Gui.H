@@ -80,7 +80,10 @@ namespace Gui
   void palette3LevelRGB();
   void palette4LevelRGB();
   void palette332();
-  void checkClear();
+  void checkClearToPaintColor();
+  void checkClearToBlack();
+  void checkClearToWhite();
+  void checkClearToTransparent();
 
   View *getView();
   int getTool();

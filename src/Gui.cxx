@@ -197,8 +197,14 @@ void Gui::init()
     (Fl_Callback *)quit, 0, 0);
   menubar->add("&Edit/Undo (Ctrl+Z)", 0,
     (Fl_Callback *)Undo::pop, 0, FL_MENU_DIVIDER);
-  menubar->add("&Edit/Clear Image", 0,
-    (Fl_Callback *)checkClear, 0, 0);
+  menubar->add("&Edit/Clear to Paint Color", 0,
+    (Fl_Callback *)checkClearToPaintColor, 0, 0);
+  menubar->add("&Edit/Clear to Black", 0,
+    (Fl_Callback *)checkClearToBlack, 0, 0);
+  menubar->add("&Edit/Clear to White", 0,
+    (Fl_Callback *)checkClearToWhite, 0, 0);
+  menubar->add("&Edit/Clear to Transparent", 0,
+    (Fl_Callback *)checkClearToTransparent, 0, 0);
   menubar->add("Image/Flip Horizontal", 0,
     (Fl_Callback *)Transform::mirror, 0, 0);
   menubar->add("Image/Flip Vertical", 0,
@@ -1088,13 +1094,46 @@ void Gui::palette332()
   Project::palette->draw(palette);
 }
 
-void Gui::checkClear()
+void Gui::checkClearToPaintColor()
 {
   Undo::push();
 
   Bitmap *bmp = Project::bmp;
 
   bmp->rectfill(bmp->cl, bmp->ct, bmp->cr, bmp->cb, Project::brush->color, 0);
+  view->drawMain(true);
+}
+
+void Gui::checkClearToBlack()
+{
+  Undo::push();
+
+  Bitmap *bmp = Project::bmp;
+
+  bmp->rectfill(bmp->cl, bmp->ct, bmp->cr, bmp->cb, makeRgb(0, 0, 0), 0);
+  view->drawMain(true);
+}
+
+void Gui::checkClearToWhite()
+{
+  Undo::push();
+
+  Bitmap *bmp = Project::bmp;
+
+  bmp->rectfill(bmp->cl, bmp->ct, bmp->cr, bmp->cb, makeRgb(255, 255, 255), 0);
+  view->drawMain(true);
+}
+
+void Gui::checkClearToTransparent()
+{
+  Undo::push();
+
+  Bitmap *bmp = Project::bmp;
+
+  for(int y = bmp->ct; y <= bmp->cb; y++)
+    for(int x = bmp->cl; x <= bmp->cr; x++)
+      *(bmp->row[y] + x) = 0x00808080;
+
   view->drawMain(true);
 }
 
