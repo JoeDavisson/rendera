@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <typeinfo>
 
-#include "Util.H"
+#include "Math.H"
 
 #define FAST_SIGN(v) ( 1 | ( v >> ( sizeof(v) * CHAR_BIT - 1)))
 
@@ -44,30 +44,30 @@ main( int, char** )
     assert(  1 == FAST_SIGN(long (  0)) );
 
     /* sign works for all numeric type, returns the type it was passed */
-    assert( typeid(char)   == typeid(Util::sign(char   (-42))));
-    assert( typeid(int)    == typeid(Util::sign(int    (-42))));
-    assert( typeid(short)  == typeid(Util::sign(short  (-42))));
-    assert( typeid(long)   == typeid(Util::sign(long   (-42))));
-    assert( typeid(float)  == typeid(Util::sign(float  (-42))));
-    assert( typeid(double) == typeid(Util::sign(double (-42))));
+    assert( typeid(char)   == typeid(Math::sign(char   (-42))));
+    assert( typeid(int)    == typeid(Math::sign(int    (-42))));
+    assert( typeid(short)  == typeid(Math::sign(short  (-42))));
+    assert( typeid(long)   == typeid(Math::sign(long   (-42))));
+    assert( typeid(float)  == typeid(Math::sign(float  (-42))));
+    assert( typeid(double) == typeid(Math::sign(double (-42))));
 
     /* homogeneous type comparisons */
-    assert( -1 == Util::sign( -42 ) );
-    assert(  1 == Util::sign(  42 ) );
-    assert(  1 == Util::sign(   0 ) );
+    assert( -1 == Math::sign( -42 ) );
+    assert(  1 == Math::sign(  42 ) );
+    assert(  1 == Math::sign(   0 ) );
 
-    assert( -1.0 == Util::sign( -42.0 ) );
-    assert(  1.0 == Util::sign(  42.0 ) );
-    assert(  1.0 == Util::sign(   0.0 ) );
+    assert( -1.0 == Math::sign( -42.0 ) );
+    assert(  1.0 == Math::sign(  42.0 ) );
+    assert(  1.0 == Math::sign(   0.0 ) );
 
     /* heterogenous type comparisons */
-    assert( -1.0 == Util::sign( -42 ) );
-    assert(  1.0 == Util::sign(  42 ) );
-    assert(  1.0 == Util::sign(   0 ) );
+    assert( -1.0 == Math::sign( -42 ) );
+    assert(  1.0 == Math::sign(  42 ) );
+    assert(  1.0 == Math::sign(   0 ) );
 
-    assert( -1 == Util::sign( -42.0 ) );
-    assert(  1 == Util::sign(  42.0 ) );
-    assert(  1 == Util::sign(   0.0 ) );
+    assert( -1 == Math::sign( -42.0 ) );
+    assert(  1 == Math::sign(  42.0 ) );
+    assert(  1 == Math::sign(   0.0 ) );
 
 
     return EXIT_SUCCESS ;
