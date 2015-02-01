@@ -418,8 +418,8 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
   if(h >= 0)
     negy = true;
 
-  w = ::ren::abs(w);
-  h = ::ren::abs(h);
+  w = Util::abs(w);
+  h = Util::abs(h);
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
   std::vector<unsigned char> linebuf(w * mul + pad);

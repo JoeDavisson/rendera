@@ -41,7 +41,7 @@ namespace
     const int dx = x1 - *x2;
     const int dy = y1 - *y2;
 
-    if(::ren::abs(dy) > ::ren::abs(dx))
+    if(Util::abs(dy) > Util::abs(dx))
     {
       switch(px + py)
       {

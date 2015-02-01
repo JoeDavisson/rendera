@@ -207,8 +207,8 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
   int inx = dx > 0 ? 1 : -1;
   int iny = dy > 0 ? 1 : -1;
 
-  dx = ::ren::abs(dx);
-  dy = ::ren::abs(dy);
+  dx = Util::abs(dx);
+  dy = Util::abs(dy);
 
   if(dx >= dy)
   {
@@ -312,8 +312,8 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
   int inx = dx > 0 ? 1 : -1;
   int iny = dy > 0 ? 1 : -1;
 
-  dx = ::ren::abs(dx);
-  dy = ::ren::abs(dy);
+  dx = Util::abs(dx);
+  dy = Util::abs(dy);
 
   if(dx >= dy)
   {
@@ -811,8 +811,8 @@ void Bitmap::fastStretch(Bitmap *dest,
   yd2 += yd1;
   yd2--;
 
-  const int dx = ::ren::abs(yd2 - yd1);
-  const int dy = ::ren::abs(ys2 - ys1) << 1;
+  const int dx = Util::abs(yd2 - yd1);
+  const int dy = Util::abs(ys2 - ys1) << 1;
   const int sx = Util::sign(yd2 - yd1);
   const int sy = Util::sign(ys2 - ys1);
   const int dx2 = dx << 1;
@@ -821,8 +821,8 @@ void Bitmap::fastStretch(Bitmap *dest,
 
   for(int d = 0; d <= dx; d++)
   {
-    const int dx_1 = ::ren::abs(xd2 - xd1);
-    const int dy_1 = ::ren::abs(xs2 - xs1) << 1;
+    const int dx_1 = Util::abs(xd2 - xd1);
+    const int dy_1 = Util::abs(xs2 - xs1) << 1;
     const int sx_1 = Util::sign(xd2 - xd1);
     const int sy_1 = Util::sign(xs2 - xs1);
     const int dx2_1 = dx_1 << 1;
