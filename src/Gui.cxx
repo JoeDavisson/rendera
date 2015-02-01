@@ -125,7 +125,7 @@ namespace Gui
 
   // right
   Widget *palette;
-  Widget *color;
+  Widget *swatch;
   Widget *hue;
   Widget *satval;
   InputText *hexcolor;
@@ -523,9 +523,9 @@ void Gui::init()
                        "Color Palette", 6, 6,
                        (Fl_Callback *)checkPalette);
   y1 += 96 + 8;
-  color = new Widget(right, 8, y1, 96, 48,
-                       "Color Preview", 0, 0,
-                       0);
+  swatch = new Widget(right, 8, y1, 96, 48,
+                      "Color Swatch", 0, 0,
+                      0);
   y1 += 48 + 8;
   hexcolor = new InputText(right, 40, y1, 64, 24, "Hex:",
                            (Fl_Callback *)checkHexColor);
@@ -649,14 +649,14 @@ void Gui::checkHexColor()
   c |= 0xFF000000;
 
   updateColor(convertFormat((int)c, true));
-  updateHexColor(Project::brush->color);
+  updateHexColor();
 }
 
-void Gui::updateHexColor(int c)
+void Gui::updateHexColor()
 {
   char hex_string[8];
   snprintf(hex_string, sizeof(hex_string),
-           "%06x", (unsigned)convertFormat(c, true) & 0xFFFFFF);
+       "%06x", (unsigned)convertFormat(Project::brush->color, true) & 0xFFFFFF);
   hexcolor->value(hex_string);
 }
 
@@ -679,9 +679,25 @@ void Gui::updateColor(int c)
   hue->do_callback();
 
   Project::brush->color = c;
-  updateHexColor(Project::brush->color);
-  color->bitmap->clear(Project::brush->color);
-  color->redraw();
+  updateHexColor();
+  updateSwatch();
+}
+
+void Gui::updateSwatch()
+{
+  for(int y = 0; y < swatch->bitmap->h; y++)
+  {
+    int *p = swatch->bitmap->row[y];
+    for(int x = 0; x < swatch->bitmap->w; x++)
+    {
+      const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1)
+                            ? 0xA0A0A0 : 0x606060;
+
+      *p++ = blendFast(checker, Project::brush->color, Project::brush->trans);
+    }
+  }
+
+  swatch->redraw();
 }
 
 void Gui::updateGetColor(int c)
@@ -932,13 +948,12 @@ void Gui::checkColor(Widget *, void *)
     y = 43;
 
   satval->bitmap->xorRect(x - 4, y - 4, x + 4, y + 4);
-  color->bitmap->clear(Project::brush->color);
 
   hue->redraw();
   satval->redraw();
-  color->redraw();
 
-  updateHexColor(Project::brush->color);
+  updateSwatch();
+  updateHexColor();
 }
 
 void Gui::checkHue(Widget *, void *)

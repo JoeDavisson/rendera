@@ -35,8 +35,9 @@ namespace Gui
   void clearMenuItem(const char *);
 
   void checkHexColor();
-  void updateHexColor(int);
+  void updateHexColor();
   void updateColor(int);
+  void updateSwatch();
   void updateGetColor(int);
   void checkPalette(Widget *, void *);
   void drawPalette();
