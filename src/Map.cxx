@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <unistd.h>
 
 #include "Map.H"
-#include "Util.H"
+#include "Math.H"
 
 namespace
 {
@@ -151,8 +151,8 @@ void Map::line(int x1, int y1, int x2, int y2, int c)
   inx = dx > 0 ? 1 : -1;
   iny = dy > 0 ? 1 : -1;
 
-  dx = Util::abs(dx);
-  dy = Util::abs(dy);
+  dx = Math::abs(dx);
+  dy = Math::abs(dy);
 
   if(dx >= dy)
   {
@@ -200,8 +200,8 @@ void Map::line(int x1, int y1, int x2, int y2, int c)
 
 void Map::oval(int x1, int y1, int x2, int y2, int c)
 {
-  int w = Util::abs(x2 - x1);
-  int h = Util::abs(y2 - y1);
+  int w = Math::abs(x2 - x1);
+  int h = Math::abs(y2 - y1);
   int x, y;
   int ex, ey;
 
@@ -294,8 +294,8 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
 
 void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
 {
-  int w = Util::abs(x2 - x1);
-  int h = Util::abs(y2 - y1);
+  int w = Math::abs(x2 - x1);
+  int h = Math::abs(y2 - y1);
   int x, y;
   int ex, ey;
 
@@ -514,8 +514,8 @@ void Map::lineAA(int x1, int y1, int x2, int y2, int c)
   inx = dx > 0 ? 1 : -1;
   iny = dy > 0 ? 1 : -1;
 
-  dx = Util::abs(dx);
-  dy = Util::abs(dy);
+  dx = Math::abs(dx);
+  dy = Math::abs(dy);
 
   if(dx >= dy)
   {
@@ -566,8 +566,8 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
   x2 <<= 2;
   y2 <<= 2;
 
-  int w = Util::abs(x2 - x1);
-  int h = Util::abs(y2 - y1);
+  int w = Math::abs(x2 - x1);
+  int h = Math::abs(y2 - y1);
   int x, y;
   int ex, ey;
 
@@ -667,8 +667,8 @@ void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
   x2 <<= 2;
   y2 <<= 2;
 
-  int ww = Util::abs(x2 - x1);
-  int hh = Util::abs(y2 - y1);
+  int ww = Math::abs(x2 - x1);
+  int hh = Math::abs(y2 - y1);
   int x, y;
   int ex, ey;
 

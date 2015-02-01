@@ -31,11 +31,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Offset.H"
 #include "Paint.H"
 #include "Palette.H"
+#include "Path.H"
 #include "Project.H"
 #include "Stroke.H"
 #include "Text.H"
 #include "Tool.H"
-#include "Util.H"
 
 namespace Project
 {
@@ -65,7 +65,7 @@ namespace Project
 void Project::init()
 {
   // default to dark theme
-  std::string themedir_path = Util::usrdir_path() + "/share/rendera/data/";
+  std::string themedir_path = Path::usrdir() + "/share/rendera/data/";
   strcpy(theme_path, themedir_path.c_str() );
 
   newImage(640, 480);

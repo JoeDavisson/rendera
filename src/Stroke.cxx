@@ -26,9 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "Clone.H"
 #include "Map.H"
+#include "Math.H"
 #include "Project.H"
 #include "Stroke.H"
-#include "Util.H"
 
 namespace
 {
@@ -41,7 +41,7 @@ namespace
     const int dx = x1 - *x2;
     const int dy = y1 - *y2;
 
-    if(Util::abs(dy) > Util::abs(dx))
+    if(Math::abs(dy) > Math::abs(dx))
     {
       switch(px + py)
       {

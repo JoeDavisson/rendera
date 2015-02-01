@@ -43,12 +43,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gui.H"
 #include "Inline.H"
 #include "Map.H"
+#include "Math.H"
 #include "Palette.H"
 #include "Project.H"
 #include "Stroke.H"
 #include "Tool.H"
 #include "Undo.H"
-#include "Util.H"
 #include "View.H"
 #include "Widget.H"
 
@@ -418,8 +418,8 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
   if(h >= 0)
     negy = true;
 
-  w = Util::abs(w);
-  h = Util::abs(h);
+  w = Math::abs(w);
+  h = Math::abs(h);
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
   std::vector<unsigned char> linebuf(w * mul + pad);

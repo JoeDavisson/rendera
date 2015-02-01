@@ -24,8 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Inline.H"
+#include "Math.H"
 #include "Palette.H"
-#include "Util.H"
 
 namespace
 {
@@ -172,7 +172,7 @@ int Blend::colorize(const int &c1, const int &c2, const int &t)
 
 int Blend::colorizeHighlights(const int &c1, const int &c2, const int &t)
 {
-  const int dist = Util::abs(255 - getl(c1));
+  const int dist = Math::abs(255 - getl(c1));
   int c3 = transNoAlpha(c1, c2, std::min(t + dist * 2, 255));
 
   return keepLum(c3, getl(c1));
@@ -180,7 +180,7 @@ int Blend::colorizeHighlights(const int &c1, const int &c2, const int &t)
 
 int Blend::colorizeMidtones(const int &c1, const int &c2, const int &t)
 {
-  const int dist = Util::abs(128 - getl(c1));
+  const int dist = Math::abs(128 - getl(c1));
   int c3 = transNoAlpha(c1, c2, std::min(t + dist * 2, 255));
 
   return keepLum(c3, getl(c1));
@@ -188,7 +188,7 @@ int Blend::colorizeMidtones(const int &c1, const int &c2, const int &t)
 
 int Blend::colorizeShadows(const int &c1, const int &c2, const int &t)
 {
-  const int dist = Util::abs(0 - getl(c1));
+  const int dist = Math::abs(0 - getl(c1));
   int c3 = transNoAlpha(c1, c2, std::min(t + dist * 2, 255));
 
   return keepLum(c3, getl(c1));

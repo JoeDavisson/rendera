@@ -18,14 +18,24 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <algorithm>
+
 #include "Bitmap.H"
 #include "Blend.H"
 #include "FileSP.H"
 #include "Inline.H"
+#include "Math.H"
 #include "Octree.H"
 #include "Palette.H"
-#include "Util.H"
 #include "Widget.H"
+
+namespace
+{
+  bool sortByLum(const int &c1, const int &c2)
+  {
+    return getl(c1) < getl(c2);
+  }
+}
 
 Palette::Palette()
 {
@@ -194,7 +204,7 @@ int Palette::lookup(const int &c)
 
 void Palette::sort()
 {
-  Util::sortBy(data, data + max, getl);
+  std::sort(data, data + max, sortByLum);
 }
 
 int Palette::load(const char *fn)

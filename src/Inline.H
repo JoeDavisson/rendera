@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <climits>
 #include <stdint.h>
 
-// stuff for extracting all RGBA values quickly (thanks Rubicks!)
 #if ! defined( __BYTE_ORDER__ )
 #  error "__BYTE_ORDER__ undefined"
 #endif
@@ -37,6 +36,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #if ! defined( __ORDER_BIG_ENDIAN__ )
 #  error "__ORDER_BIG_ENDIAN__ undefined"
 #endif
+
+// stuff for extracting all RGBA values quickly
 struct rgba_type
 {
 #if 0

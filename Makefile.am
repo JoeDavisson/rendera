@@ -58,6 +58,7 @@ libren_la_SOURCES =       \
   src/InputText.cxx       \
   src/Map.H               \
   src/Map.cxx             \
+  src/Math.H              \
   src/Octree.H            \
   src/Octree.cxx          \
   src/Offset.H            \
@@ -66,6 +67,8 @@ libren_la_SOURCES =       \
   src/Paint.cxx           \
   src/Palette.H           \
   src/Palette.cxx         \
+  src/Path.H              \
+  src/Path.cxx            \
   src/Project.H           \
   src/Project.cxx         \
   src/Quantize.H          \
@@ -86,8 +89,6 @@ libren_la_SOURCES =       \
   src/Transform.cxx       \
   src/Undo.H              \
   src/Undo.cxx            \
-  src/Util.H              \
-  src/Util.cxx            \
   src/View.H              \
   src/View.cxx            \
   src/Widget.H            \
