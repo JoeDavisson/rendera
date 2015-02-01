@@ -25,10 +25,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace Path
 {
-  std::string readlink(std::string const &);
-  std::string parent(std::string const &);
-  std::string executable(void);
+  std::string basename(std::string const &);
   std::string bindir(void);
+  std::string executable(void);
+  std::string parent(std::string const &);
   std::string usrdir(void);
 }
 
