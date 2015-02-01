@@ -29,13 +29,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "CheckBox.H"
 #include "Dialog.H"
 #include "DialogWindow.H"
-#include "FastRnd.H"
 #include "FX.H"
 #include "Gamma.H"
 #include "Gui.H"
 #include "Inline.H"
 #include "InputInt.H"
 #include "Map.H"
+#include "Math.H"
 #include "Palette.H"
 #include "Project.H"
 #include "Separator.H"
@@ -1210,20 +1210,20 @@ namespace StainedGlass
     {
       if(Items::uniform->value())
       {
-        seedx[i] = FastRnd::get() % bmp->w; 
-        seedy[i] = FastRnd::get() % bmp->h; 
+        seedx[i] = Math::rnd() % bmp->w; 
+        seedy[i] = Math::rnd() % bmp->h; 
       }
       else
       {
-        seedx[i] = FastRnd::get() % bmp->w; 
-        seedy[i] = FastRnd::get() % bmp->h; 
+        seedx[i] = Math::rnd() % bmp->w; 
+        seedy[i] = Math::rnd() % bmp->h; 
   
         int count = 0;
 
         do
         {
-          seedx[i] = FastRnd::get() % bmp->w; 
-          seedy[i] = FastRnd::get() % bmp->h; 
+          seedx[i] = Math::rnd() % bmp->w; 
+          seedy[i] = Math::rnd() % bmp->h; 
           count++;
         }
         while(!isEdge(bmp, seedx[i], seedy[i], div) && count < 10000);

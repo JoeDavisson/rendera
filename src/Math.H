@@ -24,6 +24,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 #include <string>
 
+namespace
+{
+  int rnd_seed = 12345;
+}
+
 namespace Math
 {
   // sign, used by fastStretch in Bitmap.cxx
@@ -39,6 +44,13 @@ namespace Math
   inline T abs(T const n)
   {
     return (0 > n) ? -n : n;
+  }
+
+  // fast pseudo-random number
+  inline int rnd(void)
+  {
+    rnd_seed = (rnd_seed << 17) ^ (rnd_seed >> 13) ^ (rnd_seed << 5);
+    return rnd_seed;
   }
 }
 

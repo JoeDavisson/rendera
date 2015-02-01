@@ -33,7 +33,6 @@ libren_la_SOURCES =       \
   src/Dialog.cxx          \
   src/DialogWindow.H      \
   src/DialogWindow.cxx    \
-  src/FastRnd.H           \
   src/Fill.H              \
   src/Fill.cxx            \
   src/FX.H                \
