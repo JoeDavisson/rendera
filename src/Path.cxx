@@ -34,7 +34,7 @@ namespace
 {
   std::string _readlink(std::string const &path)
   {
-    char buf[ PATH_MAX ] = { 0 };
+    char buf[PATH_MAX] = { 0 };
     ssize_t count = readlink(path.c_str(), buf, PATH_MAX);
     return std::string(buf, std::max(count, ssize_t(0)));
   }
