@@ -18,6 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <vector>
+
 #include "Bitmap.H"
 #include "Clone.H"
 #include "Gui.H"
@@ -27,37 +29,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "View.H"
 
-#define MAX_UNDO 10
-
 namespace
 {
-  Bitmap *undo_stack[MAX_UNDO];
-  bool undo_resized[MAX_UNDO];
-  int undo_current;
+  std::vector<Bitmap *> undo_stack(10); 
+  int undo_levels = undo_stack.size();
+  std::vector<bool> undo_resized(undo_levels); 
+  int undo_current = undo_levels - 1;
 }
 
 void Undo::init()
 {
-  for(int i = 0; i < MAX_UNDO; i++)
+  for(int i = 0; i < undo_levels; i++)
   {
+    if(undo_stack[i])
+      delete undo_stack[i];
     undo_stack[i] = new Bitmap(8, 8);
     undo_resized[i] = false;
   }
 
-  undo_current = MAX_UNDO - 1;
-}
-
-void Undo::reset()
-{
-  // free some memory
-  for(int i = 0; i < MAX_UNDO; i++)
-  {
-    delete undo_stack[i];
-    undo_stack[i] = new Bitmap(8, 8);
-    undo_resized[i] = false;
-  }
-
-  undo_current = MAX_UNDO - 1;
+  undo_current = undo_levels - 1;
 }
 
 void Undo::push()
@@ -74,10 +64,10 @@ void Undo::push()
   {
     undo_current = 0;
 
-    Bitmap *temp_bmp = undo_stack[MAX_UNDO - 1];
-    bool temp_resized = undo_resized[MAX_UNDO - 1];
+    Bitmap *temp_bmp = undo_stack[undo_levels - 1];
+    bool temp_resized = undo_resized[undo_levels - 1];
 
-    for(int i = MAX_UNDO - 1; i > 0; i--)
+    for(int i = undo_levels - 1; i > 0; i--)
     {
       undo_stack[i] = undo_stack[i - 1];
       undo_resized[i] = undo_resized[i - 1];
@@ -128,10 +118,10 @@ void Undo::push(int x, int y, int w, int h)
   {
     undo_current = 0;
 
-    Bitmap *temp_bmp = undo_stack[MAX_UNDO - 1];
-    bool temp_resized = undo_resized[MAX_UNDO - 1];
+    Bitmap *temp_bmp = undo_stack[undo_levels - 1];
+    bool temp_resized = undo_resized[undo_levels - 1];
 
-    for(int i = MAX_UNDO - 1; i > 0; i--)
+    for(int i = undo_levels - 1; i > 0; i--)
     {
       undo_stack[i] = undo_stack[i - 1];
       undo_resized[i] = undo_resized[i - 1];
@@ -154,7 +144,7 @@ void Undo::push(int x, int y, int w, int h)
 
 void Undo::pop()
 {
-  if(undo_current >= MAX_UNDO - 1)
+  if(undo_current >= undo_levels - 1)
     return;
 
   undo_current++;
@@ -188,7 +178,7 @@ void Undo::pop()
 
 void Undo::free()
 {
-  for(int i = 0; i < MAX_UNDO; i++)
+  for(int i = 0; i < undo_levels; i++)
     if(undo_stack[i])
       delete undo_stack[i];
 }
