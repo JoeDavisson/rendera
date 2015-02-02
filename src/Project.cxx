@@ -58,8 +58,8 @@ namespace Project
   int overscroll = 64;
   int theme = THEME_DARK;
   char theme_path[PATH_MAX];
-  int theme_color;
-  Fl_Color fltk_theme_color; 
+  int theme_highlight_color;
+  Fl_Color fltk_theme_highlight_color; 
 }
 
 void Project::init()

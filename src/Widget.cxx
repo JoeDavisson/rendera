@@ -66,7 +66,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
 
   Blend::set(Blend::LIGHTEN);
   bitmap2->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1,
-                    Project::theme_color, 96);
+                    Project::theme_highlight_color, 96);
   Blend::set(Blend::TRANS);
 }
 

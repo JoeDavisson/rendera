@@ -78,12 +78,12 @@ namespace
     Fl::set_color(FL_FOREGROUND_COLOR, 248, 248, 248);
     Fl::set_color(FL_INACTIVE_COLOR, 128, 128, 128);
     Fl::set_color(FL_SELECTION_COLOR, 248, 248, 248);
-    Project::theme_color = makeRgb(0, 64, 128);
+    Project::theme_highlight_color = makeRgb(0, 64, 128);
     const int blend = Blend::lighten(makeRgb(80, 80, 80),
-                                     Project::theme_color, 96);
-    Project::fltk_theme_color = fl_rgb_color(getr(blend),
-                                             getg(blend),
-                                             getb(blend));
+                                     Project::theme_highlight_color, 96);
+    Project::fltk_theme_highlight_color = fl_rgb_color(getr(blend),
+                                                       getg(blend),
+                                                       getb(blend));
   }
 
   void setLightTheme()
@@ -94,12 +94,12 @@ namespace
     Fl::set_color(FL_FOREGROUND_COLOR, 0, 0, 0);
     Fl::set_color(FL_INACTIVE_COLOR, 128, 128, 128);
     Fl::set_color(FL_SELECTION_COLOR, 64, 64, 64);
-    Project::theme_color = makeRgb(0, 64, 128);
+    Project::theme_highlight_color = makeRgb(0, 64, 128);
     const int blend = Blend::darken(makeRgb(224, 224, 224),
-                                    Project::theme_color, 96);
-    Project::fltk_theme_color = fl_rgb_color(getr(blend),
-                                             getg(blend),
-                                             getb(blend));
+                                    Project::theme_highlight_color, 96);
+    Project::fltk_theme_highlight_color = fl_rgb_color(getr(blend),
+                                                       getg(blend),
+                                                       getb(blend));
   }
 
   struct _help_type {};
