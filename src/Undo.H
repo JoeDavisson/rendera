@@ -24,9 +24,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace Undo
 {
   void init();
+  void reset();
   void push();
   void push(int, int, int, int);
   void pop();
+  void free();
 }
 
 #endif

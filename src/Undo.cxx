@@ -40,6 +40,18 @@ void Undo::init()
 {
   for(int i = 0; i < MAX_UNDO; i++)
   {
+    undo_stack[i] = new Bitmap(8, 8);
+    undo_resized[i] = false;
+  }
+
+  undo_current = MAX_UNDO - 1;
+}
+
+void Undo::reset()
+{
+  // free some memory
+  for(int i = 0; i < MAX_UNDO; i++)
+  {
     delete undo_stack[i];
     undo_stack[i] = new Bitmap(8, 8);
     undo_resized[i] = false;
@@ -48,20 +60,53 @@ void Undo::init()
   undo_current = MAX_UNDO - 1;
 }
 
-// store entire image
 void Undo::push()
 {
-  const int x1 = Project::bmp->cl;
-  const int y1 = Project::bmp->ct;
-  const int x2 = Project::bmp->cr;
-  const int y2 = Project::bmp->cb;
+  int x1 = Project::bmp->cl;
+  int y1 = Project::bmp->ct;
+  int x2 = Project::bmp->cr;
+  int y2 = Project::bmp->cb;
 
-  push(x1, y1, x2, y2);
+  int w = (x2 - x1) + 1;
+  int h = (y2 - y1) + 1;
+
+  if(undo_current < 0)
+  {
+    undo_current = 0;
+
+    Bitmap *temp_bmp = undo_stack[MAX_UNDO - 1];
+    bool temp_resized = undo_resized[MAX_UNDO - 1];
+
+    for(int i = MAX_UNDO - 1; i > 0; i--)
+    {
+      undo_stack[i] = undo_stack[i - 1];
+      undo_resized[i] = undo_resized[i - 1];
+    }
+
+    undo_stack[0] = temp_bmp;
+    undo_resized[0] = temp_resized;
+  }
+
+  undo_resized[undo_current] = true;
+
+  delete undo_stack[undo_current];
+  undo_stack[undo_current] = new Bitmap(w, h);
+  undo_stack[undo_current]->x = x1;
+  undo_stack[undo_current]->y = y1;
+
+  Project::bmp->blit(undo_stack[undo_current], x1, y1, 0, 0, w, h);
+  undo_current--;
 }
 
-// store partial image
 void Undo::push(int x, int y, int w, int h)
 {
+  // store full image if wrap is enabled
+  if(Clone::wrap)
+  {
+    push();
+    return;
+  }
+
   int x1 = x;
   int y1 = y;
   int x2 = x + w - 1;
@@ -75,15 +120,6 @@ void Undo::push(int x, int y, int w, int h)
     x2 = Project::bmp->cr;
   if(y2 > Project::bmp->cb)
     y2 = Project::bmp->cb;
-
-  // store entire image if wrap is enabled
-  if(Clone::wrap)
-  {
-    x1 = Project::bmp->cl;
-    y1 = Project::bmp->ct;
-    x2 = Project::bmp->cr;
-    y2 = Project::bmp->cb;
-  }
 
   w = (x2 - x1) + 1;
   h = (y2 - y1) + 1;
@@ -148,5 +184,12 @@ void Undo::pop()
 
   Project::tool->reset();
   Gui::getView()->drawMain(true);
+}
+
+void Undo::free()
+{
+  for(int i = 0; i < MAX_UNDO; i++)
+    if(undo_stack[i])
+      delete undo_stack[i];
 }
 
