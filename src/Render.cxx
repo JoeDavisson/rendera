@@ -41,6 +41,9 @@ namespace
   Brush *brush;
   Stroke *stroke;
   View *view;
+  int color;
+  int trans;
+
 
   bool isEdge(Map *map, const int &x, const int &y)
   {
@@ -177,7 +180,7 @@ namespace
       for(int x = stroke->x1; x <= stroke->x2; x++)
       {
         if(*p++)
-          bmp->setpixel(x, y, brush->color, brush->trans);
+          bmp->setpixel(x, y, color, trans);
       }
 
       if(update(y) < 0)
@@ -194,7 +197,7 @@ namespace
       for(int x = stroke->x1; x <= stroke->x2; x++)
       {
         if(*p > 0)
-          bmp->setpixel(x, y, brush->color, scaleVal((255 - *p), brush->trans));
+          bmp->setpixel(x, y, color, scaleVal((255 - *p), trans));
 
         p++;
       }
@@ -208,7 +211,7 @@ namespace
   {
     float soft_trans = 255;
     const int j = (3 << brush->edge);
-    float soft_step = (float)(255 - brush->trans) / ((j >> 1) + 1);
+    float soft_step = (float)(255 - trans) / ((j >> 1) + 1);
     bool found = false;
 
     for(int i = 0; i < j; i++)
@@ -238,13 +241,13 @@ namespace
           shrinkBlock(s0, s1, s2, s3);
 
           if(!*s0 && d0)
-            bmp->setpixel(x, y, brush->color, soft_trans);
+            bmp->setpixel(x, y, color, soft_trans);
           if(!*s1 && d1)
-            bmp->setpixel(x + 1, y, brush->color, soft_trans);
+            bmp->setpixel(x + 1, y, color, soft_trans);
           if(!*s2 && d2)
-            bmp->setpixel(x, y + 1, brush->color, soft_trans);
+            bmp->setpixel(x, y + 1, color, soft_trans);
           if(!*s3 && d3)
-            bmp->setpixel(x + 1, y + 1, brush->color, soft_trans);
+            bmp->setpixel(x + 1, y + 1, color, soft_trans);
         }
       }
 
@@ -253,16 +256,16 @@ namespace
 
       soft_trans -= soft_step;
 
-      if(soft_trans < brush->trans)
+      if(soft_trans < trans)
       {
-        soft_trans = brush->trans;
+        soft_trans = trans;
 
         for(int y = stroke->y1; y <= stroke->y2; y++)
         {
           for(int x = stroke->x1; x <= stroke->x2; x++)
           {
             if(map->getpixel(x, y))
-              bmp->setpixel(x, y, brush->color, soft_trans);
+              bmp->setpixel(x, y, color, soft_trans);
           }
         }
 
@@ -325,9 +328,9 @@ namespace
           }
         }
 
-        bmp->setpixel(x, y, brush->color, sdist(x, y,
+        bmp->setpixel(x, y, color, sdist(x, y,
                       stroke->edgecachex[z], stroke->edgecachey[z],
-                      brush->edge, brush->trans));
+                      brush->edge, trans));
 
         p++;
       }
@@ -405,7 +408,7 @@ namespace
       for(int x = stroke->x1; x <= stroke->x2; x++)
       {
         if(*p > 0)
-          bmp->setpixel(x, y, brush->color, scaleVal((255 - *p), brush->trans));
+          bmp->setpixel(x, y, color, scaleVal((255 - *p), trans));
 
         p++;
       }
@@ -417,9 +420,9 @@ namespace
 
   void renderWatercolor()
   {
-    float soft_trans = brush->trans;
+    float soft_trans = trans;
     const int j = (3 << brush->edge);
-    float soft_step = (float)(255 - brush->trans) / ((j >> 1) + 1);
+    float soft_step = (float)(255 - trans) / ((j >> 1) + 1);
     bool found = false;
     int inc = 0;
 
@@ -428,7 +431,7 @@ namespace
       for(int x = stroke->x1; x <= stroke->x2; x++)
       {
         if(map->getpixel(x, y))
-          bmp->setpixel(x, y, brush->color, brush->trans);
+          bmp->setpixel(x, y, color, trans);
       }
     }
 
@@ -472,13 +475,13 @@ namespace
           }
 
           if(*s0 && !d0)
-            bmp->setpixel(x, yy, brush->color, soft_trans);
+            bmp->setpixel(x, yy, color, soft_trans);
           if(*s1 && !d1)
-            bmp->setpixel(x + 1, yy, brush->color, soft_trans);
+            bmp->setpixel(x + 1, yy, color, soft_trans);
           if(*s2 && !d2)
-            bmp->setpixel(x, yy + 1, brush->color, soft_trans);
+            bmp->setpixel(x, yy + 1, color, soft_trans);
           if(*s3 && !d3)
-            bmp->setpixel(x + 1, yy + 1, brush->color, soft_trans);
+            bmp->setpixel(x + 1, yy + 1, color, soft_trans);
         }
       }
 
@@ -499,7 +502,7 @@ namespace
   {
     float soft_trans = 255;
     const int j = (3 << brush->edge);
-    float soft_step = (float)(255 - brush->trans) / ((j >> 1) + 1);
+    float soft_step = (float)(255 - trans) / ((j >> 1) + 1);
     bool found = false;
 
     for(int i = 0; i < j; i++)
@@ -537,7 +540,7 @@ namespace
               t = 0;
             if(t > 255)
               t = 255;
-            bmp->setpixel(x, y, brush->color, t);
+            bmp->setpixel(x, y, color, t);
           }
 
           if(!*s1 && d1)
@@ -547,7 +550,7 @@ namespace
               t = 0;
             if(t > 255)
               t = 255;
-            bmp->setpixel(x + 1, y, brush->color, t);
+            bmp->setpixel(x + 1, y, color, t);
           }
 
           if(!*s2 && d2)
@@ -557,7 +560,7 @@ namespace
               t = 0;
             if(t > 255)
               t = 255;
-            bmp->setpixel(x, y + 1, brush->color, t);
+            bmp->setpixel(x, y + 1, color, t);
           }
 
           if(!*s3 && d3)
@@ -567,7 +570,7 @@ namespace
               t = 0;
             if(t > 255)
               t = 255;
-            bmp->setpixel(x + 1, y + 1, brush->color, t);
+            bmp->setpixel(x + 1, y + 1, color, t);
           }
         }
       }
@@ -577,9 +580,9 @@ namespace
 
       soft_trans -= soft_step;
 
-      if(soft_trans < brush->trans)
+      if(soft_trans < trans)
       {
-        soft_trans = brush->trans;
+        soft_trans = trans;
         for(int y = stroke->y1; y <= stroke->y2; y++)
         {
           for(int x = stroke->x1; x <= stroke->x2; x++)
@@ -591,7 +594,7 @@ namespace
                 t = 0;
               if(t > 255)
                 t = 255;
-              bmp->setpixel(x, y, brush->color, t);
+              bmp->setpixel(x, y, color, t);
             }
           }
         }
@@ -612,6 +615,8 @@ void Render::begin()
   map = Project::map;
   brush = Project::brush.get();
   stroke = Project::stroke.get();
+  color = brush->color;
+  trans = brush->trans;
 
   int size = 1;
 
