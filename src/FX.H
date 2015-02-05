@@ -39,6 +39,7 @@ namespace FX
   void stainedGlass();
   void blur();
   void sharpen();
+  void unsharpMask();
   void artistic();
 }
 

@@ -1372,23 +1372,23 @@ namespace Blur
   namespace Items
   {
     DialogWindow *dialog;
-    InputInt *amount;
+    InputInt *radius;
     InputInt *blend;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
 
-  void apply(int amount, int blend)
+  void apply(int radius, int blend)
   {
-    amount = (amount + 1) * 2 + 1;
+    radius = (radius + 1) * 2 + 1;
 
-    std::vector<int> kernel(amount);
+    std::vector<int> kernel(radius);
     int div = 0;
 
     // bell curve
-    const int b = amount / 2;
+    const int b = radius / 2;
 
-    for(int x = 0; x < amount; x++)
+    for(int x = 0; x < radius; x++)
     {
       kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) /
                                            ((b * b) / 2)));
@@ -1410,9 +1410,9 @@ namespace Blur
         int bb = 0;
         int aa = 0;
 
-        for(int i = 0; i < amount; i++) 
+        for(int i = 0; i < radius; i++) 
         {
-          rgba_type rgba = getRgba(bmp->getpixel(x - amount / 2 + i, y));
+          rgba_type rgba = getRgba(bmp->getpixel(x - radius / 2 + i, y));
           rr += Gamma::fix(rgba.r) * kernel[i];
           gg += Gamma::fix(rgba.g) * kernel[i];
           bb += Gamma::fix(rgba.b) * kernel[i];
@@ -1449,10 +1449,10 @@ namespace Blur
         int bb = 0;
         int aa = 0;
 
-        for(int i = 0; i < amount; i++) 
+        for(int i = 0; i < radius; i++) 
         {
           rgba_type rgba = getRgba(temp.getpixel(x - bmp->cl,
-                                                 y - amount / 2 + i - bmp->ct));
+                                                 y - radius / 2 + i - bmp->ct));
           rr += Gamma::fix(rgba.r) * kernel[i];
           gg += Gamma::fix(rgba.g) * kernel[i];
           bb += Gamma::fix(rgba.b) * kernel[i];
@@ -1481,7 +1481,7 @@ namespace Blur
 
   void close()
   {
-    if(Items::amount->limitValue(1, 100) < 0)
+    if(Items::radius->limitValue(1, 100) < 0)
       return;
 
     if(Items::blend->limitValue(0, 100) < 0)
@@ -1489,7 +1489,7 @@ namespace Blur
 
     Items::dialog->hide();
     pushUndo();
-    apply(atoi(Items::amount->value()), atoi(Items::blend->value()) * 2.55);
+    apply(atoi(Items::radius->value()), atoi(Items::blend->value()) * 2.55);
   }
 
   void quit()
@@ -1508,10 +1508,10 @@ namespace Blur
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Blur");
-    Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
+    Items::radius = new InputInt(Items::dialog, 0, y1, 72, 24, "Radius:", 0);
     y1 += 24 + 8;
-    Items::amount->value("1");
-    Items::amount->center();
+    Items::radius->value("1");
+    Items::radius->center();
     Items::blend = new InputInt(Items::dialog, 0, y1, 72, 24, "Blend:", 0);
     y1 += 24 + 8;
     Items::blend->value("0");
@@ -1607,6 +1607,186 @@ namespace Sharpen
     y1 += 24 + 8;
     Items::amount->value("10");
     Items::amount->center();
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
+  }
+}
+
+namespace UnsharpMask
+{
+  namespace Items
+  {
+    DialogWindow *dialog;
+    InputInt *radius;
+    InputInt *threshold;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
+
+  void apply(int radius, int threshold)
+  {
+    radius = (radius + 1) * 2 + 1;
+
+    std::vector<int> kernel(radius);
+    int div = 0;
+
+    // bell curve
+    const int b = radius / 2;
+
+    for(int x = 0; x < radius; x++)
+    {
+      kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) /
+                                           ((b * b) / 2)));
+      div += kernel[x];
+    }
+
+    Bitmap temp(bmp->cw, bmp->ch);
+    Gui::showProgress(bmp->h);
+
+    // x direction
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = temp.row[y - bmp->ct];
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        int rr = 0;
+        int gg = 0;
+        int bb = 0;
+        int aa = 0;
+
+        for(int i = 0; i < radius; i++) 
+        {
+          rgba_type rgba = getRgba(bmp->getpixel(x - radius / 2 + i, y));
+          rr += Gamma::fix(rgba.r) * kernel[i];
+          gg += Gamma::fix(rgba.g) * kernel[i];
+          bb += Gamma::fix(rgba.b) * kernel[i];
+          aa += rgba.a * kernel[i];
+        }
+
+        rr /= div;
+        gg /= div;
+        bb /= div;
+        aa /= div;
+
+        rr = Gamma::unfix(rr);
+        gg = Gamma::unfix(gg);
+        bb = Gamma::unfix(bb);
+
+        *p++ = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
+      }
+
+      if(Gui::updateProgress(y) < 0)
+        return;
+    }
+
+    Bitmap temp2(bmp->cw, bmp->ch);
+    temp.blit(&temp2, 0, 0, 0, 0, temp.w, temp.h);
+
+    Gui::showProgress(bmp->h);
+
+    // y direction
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = temp2.row[y - bmp->ct];
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        int rr = 0;
+        int gg = 0;
+        int bb = 0;
+        int aa = 0;
+
+        for(int i = 0; i < radius; i++) 
+        {
+          rgba_type rgba = getRgba(temp.getpixel(x - bmp->cl,
+                                                 y - radius / 2 + i - bmp->ct));
+          rr += Gamma::fix(rgba.r) * kernel[i];
+          gg += Gamma::fix(rgba.g) * kernel[i];
+          bb += Gamma::fix(rgba.b) * kernel[i];
+          aa += rgba.a * kernel[i];
+        }
+
+        rr /= div;
+        gg /= div;
+        bb /= div;
+        aa /= div;
+
+        rr = Gamma::unfix(rr);
+        gg = Gamma::unfix(gg);
+        bb = Gamma::unfix(bb);
+
+        *p++ = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
+      }
+
+      if(Gui::updateProgress(y) < 0)
+        return;
+    }
+
+    // threshold
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *d = bmp->row[y] + bmp->cl;
+      int *p = temp2.row[y - bmp->ct];
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+
+        int a = getl(*p);
+        int b = getl(*d);
+
+        int lum = a - (threshold * (a - b)); 
+        lum = std::min(std::max(lum, 0), 255);
+        *d = Blend::keepLum(*p, lum);
+
+        d++;
+        p++;
+      }
+    }
+
+    Gui::hideProgress();
+  }
+
+  void close()
+  {
+    if(Items::radius->limitValue(1, 100) < 0)
+      return;
+
+    if(Items::threshold->limitValue(0, 100) < 0)
+      return;
+
+    Items::dialog->hide();
+    pushUndo();
+    apply(atoi(Items::radius->value()), atoi(Items::threshold->value()) * 2.55);
+  }
+
+  void quit()
+  {
+    Gui::hideProgress();
+    Items::dialog->hide();
+  }
+
+  void begin()
+  {
+    Items::dialog->show();
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    Items::dialog = new DialogWindow(256, 0, "Unsharp Mask");
+    Items::radius = new InputInt(Items::dialog, 0, y1, 72, 24, "Radius:", 0);
+    y1 += 24 + 8;
+    Items::radius->value("1");
+    Items::radius->center();
+    Items::threshold = new InputInt(Items::dialog, 0, y1, 72, 24, "Threshold:", 0);
+    y1 += 24 + 8;
+    Items::threshold->value("0");
+    Items::threshold->center();
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
@@ -1727,6 +1907,7 @@ void FX::init()
   StainedGlass::init();
   Blur::init();
   Sharpen::init();
+  UnsharpMask::init();
   Artistic::init();
 }
 
@@ -1803,6 +1984,11 @@ void FX::blur()
 void FX::sharpen()
 {
   Sharpen::begin();
+}
+
+void FX::unsharpMask()
+{
+  UnsharpMask::begin();
 }
 
 void FX::artistic()
