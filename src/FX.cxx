@@ -1626,8 +1626,9 @@ namespace UnsharpMask
     Fl_Button *cancel;
   }
 
-  void apply(int radius, int threshold)
+  void apply(int radius, double threshold)
   {
+    threshold = std::sqrt(threshold);
     radius = (radius + 1) * 2 + 1;
 
     std::vector<int> kernel(radius);
@@ -1755,7 +1756,7 @@ namespace UnsharpMask
     if(Items::radius->limitValue(1, 100) < 0)
       return;
 
-    if(Items::threshold->limitValue(0, 100) < 0)
+    if(Items::threshold->limitValue(1, 100) < 0)
       return;
 
     Items::dialog->hide();
@@ -1785,7 +1786,7 @@ namespace UnsharpMask
     Items::radius->center();
     Items::threshold = new InputInt(Items::dialog, 0, y1, 72, 24, "Threshold:", 0);
     y1 += 24 + 8;
-    Items::threshold->value("0");
+    Items::threshold->value("1");
     Items::threshold->center();
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
