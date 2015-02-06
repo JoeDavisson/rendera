@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Brush.H"
 #include "CheckBox.H"
+#include "ConvolutionMatrix.H"
 #include "Dialog.H"
 #include "DialogWindow.H"
 #include "FX.H"
@@ -1533,14 +1534,7 @@ namespace Sharpen
     InputInt *amount;
     Fl_Button *ok;
     Fl_Button *cancel;
-}
-
-  const int matrix[3][3] =
-  {
-    { -1, -1, -1 },
-    { -1,  9, -1 },
-    { -1, -1, -1 }
-  };
+  }
 
   void apply(int amount)
   {
@@ -1559,7 +1553,8 @@ namespace Sharpen
         {
           for(int i = 0; i < 3; i++) 
           {
-            lum += getl(bmp->getpixel(x + i - 1, y + j - 1)) * matrix[i][j];
+            lum += getl(bmp->getpixel(x + i - 1, y + j - 1))
+                     * ConvolutionMatrix::sharpen[i][j];
           }
         }
 

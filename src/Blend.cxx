@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Blend.H"
+#include "ConvolutionMatrix.H"
 #include "Inline.H"
 #include "Math.H"
 #include "Palette.H"
@@ -251,13 +252,6 @@ int Blend::alphaAdd(const int &c1, const int &, const int &t)
 
 int Blend::smooth(const int &c1, const int &, const int &t)
 {
-  const int matrix[3][3] =
-  {
-    { 1, 2, 1 },
-    { 2, 3, 2 },
-    { 1, 2, 1 }
-  };
-
   int r = 0;
   int g = 0;
   int b = 0;
@@ -268,30 +262,23 @@ int Blend::smooth(const int &c1, const int &, const int &t)
     for(int i = 0; i < 3; i++)
     {
       const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
-      r += rgba.r * matrix[i][j];
-      g += rgba.g * matrix[i][j];
-      b += rgba.b * matrix[i][j];
-      a += rgba.a * matrix[i][j];
+      r += rgba.r * ConvolutionMatrix::gaussian[i][j];
+      g += rgba.g * ConvolutionMatrix::gaussian[i][j];
+      b += rgba.b * ConvolutionMatrix::gaussian[i][j];
+      a += rgba.a * ConvolutionMatrix::gaussian[i][j];
     }
   }
 
-  r /= 15;
-  g /= 15;
-  b /= 15;
-  a /= 15;
+  r /= 16;
+  g /= 16;
+  b /= 16;
+  a /= 16;
 
   return Blend::trans(c1, makeRgba(r, g, b, a), t);
 }
 
 int Blend::smoothColor(const int &c1, const int &, const int &t)
 {
-  const int matrix[3][3] =
-  {
-    { 1, 2, 1 },
-    { 2, 3, 2 },
-    { 1, 2, 1 }
-  };
-
   int r = 0;
   int g = 0;
   int b = 0;
@@ -302,17 +289,17 @@ int Blend::smoothColor(const int &c1, const int &, const int &t)
     for(int i = 0; i < 3; i++)
     {
       const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
-      r += rgba.r * matrix[i][j];
-      g += rgba.g * matrix[i][j];
-      b += rgba.b * matrix[i][j];
-      a += rgba.a * matrix[i][j];
+      r += rgba.r * ConvolutionMatrix::gaussian[i][j];
+      g += rgba.g * ConvolutionMatrix::gaussian[i][j];
+      b += rgba.b * ConvolutionMatrix::gaussian[i][j];
+      a += rgba.a * ConvolutionMatrix::gaussian[i][j];
     }
   }
 
-  r /= 15;
-  g /= 15;
-  b /= 15;
-  a /= 15;
+  r /= 16;
+  g /= 16;
+  b /= 16;
+  a /= 16;
 
   int c3 = Blend::trans(c1, makeRgba(r, g, b, a), t);
   return keepLum(c3, getl(c1));
@@ -320,20 +307,14 @@ int Blend::smoothColor(const int &c1, const int &, const int &t)
 
 int Blend::sharpen(const int &c1, const int &, const int &t)
 {
-  const int matrix[3][3] =
-  {
-    { -1, -1, -1 },
-    { -1,  9, -1 },
-    { -1, -1, -1 }
-  };
-
   int lum = 0;
 
   for(int j = 0; j < 3; j++)
   {
     for(int i = 0; i < 3; i++)
     {
-      lum += getl(bmp->getpixel(xpos + i - 1, ypos + j - 1)) * matrix[i][j];
+      lum += getl(bmp->getpixel(xpos + i - 1, ypos + j - 1))
+               * ConvolutionMatrix::sharpen[i][j];
     }
   }
 
