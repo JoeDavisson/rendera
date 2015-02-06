@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gamma.H"
 #include "Gui.H"
 #include "Inline.H"
+#include "InputFloat.H"
 #include "InputInt.H"
 #include "Map.H"
 #include "Math.H"
@@ -1621,16 +1622,15 @@ namespace UnsharpMask
   {
     DialogWindow *dialog;
     InputInt *radius;
+    InputFloat *amount;
     InputInt *threshold;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
 
-  void apply(int radius, double threshold)
+  void apply(int radius, double amount, int threshold)
   {
-    threshold = std::sqrt(threshold);
     radius = (radius + 1) * 2 + 1;
-
     std::vector<int> kernel(radius);
     int div = 0;
 
@@ -1727,7 +1727,7 @@ namespace UnsharpMask
         return;
     }
 
-    // threshold
+    // blend
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *d = bmp->row[y] + bmp->cl;
@@ -1739,9 +1739,12 @@ namespace UnsharpMask
         int a = getl(*p);
         int b = getl(*d);
 
-        int lum = a - (threshold * (a - b)); 
-        lum = std::min(std::max(lum, 0), 255);
-        *d = Blend::keepLum(*p, lum);
+        if(std::abs(a - b) >= threshold)
+        {
+          int lum = a - (amount * (a - b)); 
+          lum = std::min(std::max(lum, 0), 255);
+          *d = Blend::keepLum(*p, lum);
+        }
 
         d++;
         p++;
@@ -1756,12 +1759,17 @@ namespace UnsharpMask
     if(Items::radius->limitValue(1, 100) < 0)
       return;
 
-    if(Items::threshold->limitValue(1, 100) < 0)
+    if(Items::amount->limitValue(1.0, 10.0) < 0)
+      return;
+
+    if(Items::threshold->limitValue(0, 255) < 0)
       return;
 
     Items::dialog->hide();
     pushUndo();
-    apply(atoi(Items::radius->value()), atoi(Items::threshold->value()) * 2.55);
+    apply(atoi(Items::radius->value()),
+          atof(Items::amount->value()),
+          atoi(Items::threshold->value()));
   }
 
   void quit()
@@ -1784,9 +1792,13 @@ namespace UnsharpMask
     y1 += 24 + 8;
     Items::radius->value("1");
     Items::radius->center();
+    Items::amount = new InputFloat(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
+    y1 += 24 + 8;
+    Items::amount->value("1.5");
+    Items::amount->center();
     Items::threshold = new InputInt(Items::dialog, 0, y1, 72, 24, "Threshold:", 0);
     y1 += 24 + 8;
-    Items::threshold->value("1");
+    Items::threshold->value("0");
     Items::threshold->center();
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
