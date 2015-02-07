@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Blend.H"
-#include "ConvolutionMatrix.H"
+#include "FilterMatrix.H"
 #include "Inline.H"
 #include "Math.H"
 #include "Palette.H"
@@ -262,10 +262,10 @@ int Blend::smooth(const int &c1, const int &, const int &t)
     for(int i = 0; i < 3; i++)
     {
       const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
-      r += rgba.r * ConvolutionMatrix::gaussian[i][j];
-      g += rgba.g * ConvolutionMatrix::gaussian[i][j];
-      b += rgba.b * ConvolutionMatrix::gaussian[i][j];
-      a += rgba.a * ConvolutionMatrix::gaussian[i][j];
+      r += rgba.r * FilterMatrix::gaussian[i][j];
+      g += rgba.g * FilterMatrix::gaussian[i][j];
+      b += rgba.b * FilterMatrix::gaussian[i][j];
+      a += rgba.a * FilterMatrix::gaussian[i][j];
     }
   }
 
@@ -289,10 +289,10 @@ int Blend::smoothColor(const int &c1, const int &, const int &t)
     for(int i = 0; i < 3; i++)
     {
       const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
-      r += rgba.r * ConvolutionMatrix::gaussian[i][j];
-      g += rgba.g * ConvolutionMatrix::gaussian[i][j];
-      b += rgba.b * ConvolutionMatrix::gaussian[i][j];
-      a += rgba.a * ConvolutionMatrix::gaussian[i][j];
+      r += rgba.r * FilterMatrix::gaussian[i][j];
+      g += rgba.g * FilterMatrix::gaussian[i][j];
+      b += rgba.b * FilterMatrix::gaussian[i][j];
+      a += rgba.a * FilterMatrix::gaussian[i][j];
     }
   }
 
@@ -314,7 +314,7 @@ int Blend::sharpen(const int &c1, const int &, const int &t)
     for(int i = 0; i < 3; i++)
     {
       lum += getl(bmp->getpixel(xpos + i - 1, ypos + j - 1))
-               * ConvolutionMatrix::sharpen[i][j];
+               * FilterMatrix::sharpen[i][j];
     }
   }
 

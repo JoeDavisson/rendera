@@ -18,10 +18,10 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef CONVOLUTION_MATRIX_H
-#define CONVOLUTION_MATRIX_H
+#ifndef FILTER_MATRIX_H
+#define FILTER_MATRIX_H
 
-namespace ConvolutionMatrix
+namespace FilterMatrix
 {
   const int identity[3][3] =
   {

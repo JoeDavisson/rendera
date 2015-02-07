@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Brush.H"
 #include "CheckBox.H"
-#include "ConvolutionMatrix.H"
+#include "FilterMatrix.H"
 #include "Dialog.H"
 #include "DialogWindow.H"
 #include "FX.H"
@@ -1554,7 +1554,7 @@ namespace Sharpen
           for(int i = 0; i < 3; i++) 
           {
             lum += getl(bmp->getpixel(x + i - 1, y + j - 1))
-                     * ConvolutionMatrix::sharpen[i][j];
+                     * FilterMatrix::sharpen[i][j];
           }
         }
 

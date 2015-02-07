@@ -27,7 +27,6 @@ libren_la_SOURCES =       \
   src/CheckBox.cxx        \
   src/Clone.H             \
   src/Clone.cxx           \
-  src/ConvolutionMatrix.H \
   src/Crop.H              \
   src/Crop.cxx            \
   src/Dialog.H            \
@@ -36,6 +35,7 @@ libren_la_SOURCES =       \
   src/DialogWindow.cxx    \
   src/Fill.H              \
   src/Fill.cxx            \
+  src/FilterMatrix.H      \
   src/FX.H                \
   src/FX.cxx              \
   src/File.H              \
