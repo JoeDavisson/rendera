@@ -38,11 +38,16 @@ namespace
     ssize_t count = readlink(path.c_str(), buf, PATH_MAX);
     return std::string(buf, std::max(count, ssize_t(0)));
   }
+
+  std::string _executable( void )
+  {
+    return _readlink("/proc/self/exe");
+  }
 }
 
-std::string Path::readlink(std::string const &path)
+std::string Path::basename( std::string const&path )
 {
-  return _readlink(path);
+  return path.substr( path.find_last_of("/\\") + 1 );
 }
 
 std::string Path::parent(std::string const &path)
@@ -52,7 +57,7 @@ std::string Path::parent(std::string const &path)
 
 std::string Path::executable(void)
 {
-  return Path::readlink("/proc/self/exe");
+  return _executable();
 }
 
 std::string Path::bindir(void)

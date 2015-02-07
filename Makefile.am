@@ -125,6 +125,7 @@ nobase_dist_pkgdata_DATA =          \
 check_PROGRAMS =    \
   test_blend        \
   test_bresenham    \
+  test_pathexe      \
   test_fltk_version \
   test_endian       \
   test_numerics
@@ -137,10 +138,17 @@ libalgo_la_SOURCES = \
   src/Types.cxx
 
 test_blend_SOURCES = test/blend.C
+
 test_bresenham_SOURCES = test/bresenham.C
 test_bresenham_LDADD = libalgo.la
+
+test_pathexe_SOURCES = test/pathexe.C
+test_pathexe_LDADD = libren.la
+
 test_fltk_version_SOURCES = test/fltk_version.C
+
 test_endian_SOURCES = test/endian.C
+
 test_numerics_SOURCES = test/numerics.C
 
 
