@@ -1754,7 +1754,7 @@ namespace UnsharpMask
     if(Items::radius->limitValue(1, 100) < 0)
       return;
 
-    if(Items::amount->limitValue(1.0, 10.0) < 0)
+    if(Items::amount->limitValue(0.1, 10.0) < 0)
       return;
 
     if(Items::threshold->limitValue(0, 255) < 0)
