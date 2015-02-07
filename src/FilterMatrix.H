@@ -25,16 +25,16 @@ namespace FilterMatrix
 {
   const int identity[3][3] =
   {
-    { 0, 0, 0 },
-    { 0, 1, 0 },
-    { 0, 0, 0 }
+    {  0,  0,  0 },
+    {  0,  1,  0 },
+    {  0,  0,  0 }
   };
 
   const int blur[3][3] =
   {
-    { 1, 1, 1 },
-    { 1, 1, 1 },
-    { 1, 1, 1 }
+    {  1,  1,  1 },
+    {  1,  1,  1 },
+    {  1,  1,  1 }
   };
 
   const int sharpen[3][3] =
@@ -46,9 +46,9 @@ namespace FilterMatrix
 
   const int gaussian[3][3] =
   {
-    { 1, 2, 1 },
-    { 2, 4, 2 },
-    { 1, 2, 1 }
+    {  1,  2,  1 },
+    {  2,  4,  2 },
+    {  1,  2,  1 }
   };
 
   const int edge[3][3] =
@@ -56,6 +56,13 @@ namespace FilterMatrix
     { -1, -1, -1 },
     { -1,  8, -1 },
     { -1, -1, -1 }
+  };
+
+  const int emboss[3][3] =
+  {
+    { -2, -1,  0 },
+    { -1,  1,  1 },
+    {  0,  1,  2 }
   };
 }
 

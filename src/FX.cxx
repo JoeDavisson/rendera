@@ -1806,6 +1806,15 @@ namespace UnsharpMask
 
 namespace ConvolutionMatrix
 {
+  namespace Items
+  {
+    DialogWindow *dialog;
+    Fl_Choice *mode;
+    InputInt *amount;
+    CheckBox *lum_only;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
 
   void copyMatrix(const int src[3][3], int dest[3][3])
   {
@@ -1822,19 +1831,12 @@ namespace ConvolutionMatrix
   {
     BOX_BLUR,
     GAUSSIAN_BLUR,
-    SHARPEN
+    SHARPEN,
+    EDGE_DETECT,
+    EMBOSS
   };
  
-  namespace Items
-  {
-    DialogWindow *dialog;
-    Fl_Choice *mode;
-    InputInt *amount;
-    Fl_Button *ok;
-    Fl_Button *cancel;
-  }
-
-  void apply(int amount, int mode)
+  void apply(int amount, int mode, bool lum_only)
   {
     int div = 1;
     int matrix[3][3];
@@ -1853,6 +1855,14 @@ namespace ConvolutionMatrix
         copyMatrix(FilterMatrix::sharpen, matrix);
         div = 1;
         break;
+      case EDGE_DETECT:
+        copyMatrix(FilterMatrix::edge, matrix);
+        div = 1;
+        break;
+      case EMBOSS:
+        copyMatrix(FilterMatrix::emboss, matrix);
+        div = 1;
+        break;
     }
 
     Bitmap temp(bmp->cw, bmp->ch);
@@ -1864,32 +1874,54 @@ namespace ConvolutionMatrix
 
       for(int x = bmp->cl; x <= bmp->cr; x++)
       {
+        int lum = 0;
         int r = 0;
         int g = 0;
         int b = 0;
 
-        for(int j = 0; j < 3; j++) 
+        if(lum_only)
         {
-          for(int i = 0; i < 3; i++) 
+          for(int j = 0; j < 3; j++) 
           {
-            const rgba_type rgba = getRgba(bmp->getpixel(x + i - 1, y + j - 1));
-            r += rgba.r * matrix[i][j];
-            g += rgba.g * matrix[i][j];
-            b += rgba.b * matrix[i][j];
+            for(int i = 0; i < 3; i++) 
+            {
+              lum += getl(bmp->getpixel(x + i - 1, y + j - 1)) * matrix[i][j];
+            }
           }
+
+          lum /= div;
+          lum = std::min(std::max(lum, 0), 255);
+
+          const int c = bmp->getpixel(x, y);
+
+          *p++ = Blend::trans(c, Blend::keepLum(c, lum), 255 - amount * 2.55);
         }
+        else
+        {
+          for(int j = 0; j < 3; j++) 
+          {
+            for(int i = 0; i < 3; i++) 
+            {
+              const rgba_type rgba = getRgba(bmp->getpixel(x + i - 1,
+                                                           y + j - 1));
+              r += rgba.r * matrix[i][j];
+              g += rgba.g * matrix[i][j];
+              b += rgba.b * matrix[i][j];
+            }
+          }
 
-        r /= div;
-        g /= div;
-        b /= div;
+          r /= div;
+          g /= div;
+          b /= div;
 
-        r = std::min(std::max(r, 0), 255);
-        g = std::min(std::max(g, 0), 255);
-        b = std::min(std::max(b, 0), 255);
+          r = std::min(std::max(r, 0), 255);
+          g = std::min(std::max(g, 0), 255);
+          b = std::min(std::max(b, 0), 255);
 
-        const int c = bmp->getpixel(x, y);
+          const int c = bmp->getpixel(x, y);
 
-        *p++ = Blend::trans(c, makeRgba(r, g, b, geta(c)), 255 - amount * 2.55);
+          *p++ = Blend::trans(c, makeRgba(r, g, b, geta(c)), 255 - amount * 2.55);
+        }
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1908,7 +1940,9 @@ namespace ConvolutionMatrix
 
     Items::dialog->hide();
     pushUndo();
-    apply(atoi(Items::amount->value()), Items::mode->value());
+    apply(atoi(Items::amount->value()),
+               Items::mode->value(),
+               Items::lum_only->value());
   }
 
   void quit()
@@ -1933,12 +1967,17 @@ namespace ConvolutionMatrix
     Items::mode->add("Box Blur");
     Items::mode->add("Gaussian Blur");
     Items::mode->add("Sharpen");
+    Items::mode->add("Edge Detect");
+    Items::mode->add("Emboss");
     Items::mode->value(0);
     y1 += 24 + 8;
     Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
-    y1 += 24 + 8;
-    Items::amount->value("10");
+    Items::amount->value("100");
     Items::amount->center();
+    y1 += 24 + 8;
+    Items::lum_only = new CheckBox(Items::dialog, 0, y1, 16, 16, "Luminance Only", 0);
+    Items::lum_only->center();
+    y1 += 16 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
