@@ -269,6 +269,8 @@ void Gui::init()
     (Fl_Callback *)FX::sharpen, 0, 0);
   menubar->add("Effects/Unsharp Mask...", 0,
     (Fl_Callback *)FX::unsharpMask, 0, 0);
+  menubar->add("Effects/Convolution Matrix...", 0,
+    (Fl_Callback *)FX::convolutionMatrix, 0, 0);
   menubar->add("Effects/Artistic...", 0,
     (Fl_Callback *)FX::artistic, 0, 0);
   menubar->add("&Help/&About...", 0,

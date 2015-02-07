@@ -40,6 +40,7 @@ namespace FX
   void blur();
   void sharpen();
   void unsharpMask();
+  void convolutionMatrix();
   void artistic();
 }
 

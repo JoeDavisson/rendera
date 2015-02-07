@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <vector>
 
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Choice.H>
 
 #include "Bitmap.H"
 #include "Blend.H"
@@ -1803,6 +1804,149 @@ namespace UnsharpMask
   }
 }
 
+namespace ConvolutionMatrix
+{
+
+  void copyMatrix(const int src[3][3], int dest[3][3])
+  {
+    for(int j = 0; j < 3; j++) 
+    {
+      for(int i = 0; i < 3; i++) 
+      {
+        dest[i][j] = src[i][j];
+      }
+    }
+  }
+
+  enum
+  {
+    BOX_BLUR,
+    GAUSSIAN_BLUR,
+    SHARPEN
+  };
+ 
+  namespace Items
+  {
+    DialogWindow *dialog;
+    Fl_Choice *mode;
+    InputInt *amount;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
+
+  void apply(int amount, int mode)
+  {
+    int div = 1;
+    int matrix[3][3];
+
+    switch(mode)
+    {
+      case BOX_BLUR:
+        copyMatrix(FilterMatrix::blur, matrix);
+        div = 9;
+        break;
+      case GAUSSIAN_BLUR:
+        copyMatrix(FilterMatrix::gaussian, matrix);
+        div = 16;
+        break;
+      case SHARPEN:
+        copyMatrix(FilterMatrix::sharpen, matrix);
+        div = 1;
+        break;
+    }
+
+    Bitmap temp(bmp->cw, bmp->ch);
+    Gui::showProgress(bmp->h);
+
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = temp.row[y - bmp->cl];
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        int r = 0;
+        int g = 0;
+        int b = 0;
+
+        for(int j = 0; j < 3; j++) 
+        {
+          for(int i = 0; i < 3; i++) 
+          {
+            const rgba_type rgba = getRgba(bmp->getpixel(x + i - 1, y + j - 1));
+            r += rgba.r * matrix[i][j];
+            g += rgba.g * matrix[i][j];
+            b += rgba.b * matrix[i][j];
+          }
+        }
+
+        r /= div;
+        g /= div;
+        b /= div;
+
+        r = std::min(std::max(r, 0), 255);
+        g = std::min(std::max(g, 0), 255);
+        b = std::min(std::max(b, 0), 255);
+
+        const int c = bmp->getpixel(x, y);
+
+        *p++ = Blend::trans(c, makeRgba(r, g, b, geta(c)), 255 - amount * 2.55);
+      }
+
+      if(Gui::updateProgress(y) < 0)
+        return;
+    }
+
+    temp.blit(bmp, 0, 0, bmp->cl, bmp->ct, temp.w, temp.h);
+
+    Gui::hideProgress();
+  }
+
+  void close()
+  {
+    if(Items::amount->limitValue(1, 100) < 0)
+      return;
+
+    Items::dialog->hide();
+    pushUndo();
+    apply(atoi(Items::amount->value()), Items::mode->value());
+  }
+
+  void quit()
+  {
+    Gui::hideProgress();
+    Items::dialog->hide();
+  }
+
+  void begin()
+  {
+    Items::dialog->show();
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    Items::dialog = new DialogWindow(256, 0, "Convolution Matrix");
+    Items::mode = new Fl_Choice(96, y1, 128, 24, "Presets:");
+    Items::mode->tooltip("Presets");
+    Items::mode->textsize(10);
+    Items::mode->add("Box Blur");
+    Items::mode->add("Gaussian Blur");
+    Items::mode->add("Sharpen");
+    Items::mode->value(0);
+    y1 += 24 + 8;
+    Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
+    y1 += 24 + 8;
+    Items::amount->value("10");
+    Items::amount->center();
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
+  }
+}
+
 namespace Artistic
 {
   namespace Items
@@ -1916,6 +2060,7 @@ void FX::init()
   Blur::init();
   Sharpen::init();
   UnsharpMask::init();
+  ConvolutionMatrix::init();
   Artistic::init();
 }
 
@@ -1997,6 +2142,11 @@ void FX::sharpen()
 void FX::unsharpMask()
 {
   UnsharpMask::begin();
+}
+
+void FX::convolutionMatrix()
+{
+  ConvolutionMatrix::begin();
 }
 
 void FX::artistic()
