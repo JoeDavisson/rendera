@@ -533,6 +533,36 @@ namespace Invert
   }
 }
 
+namespace InvertAlpha
+{
+  void apply()
+  {
+    Gui::showProgress(bmp->h);
+
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = bmp->row[y] + bmp->cl;
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        const rgba_type rgba = getRgba(bmp->getpixel(x, y));
+        *p++ = makeRgba(rgba.r, rgba.g, rgba.b, 255 - rgba.a);
+      }
+
+      if(Gui::updateProgress(y) < 0)
+        return;
+    }
+
+    Gui::hideProgress();
+  }
+
+  void begin()
+  {
+    pushUndo();
+    apply();
+  }
+}
+
 // Corrects uneven dye fading in photographs (especially when there is a severe
 // color cast, such as when one of the dyes have faded almost completely).
 //
@@ -2131,6 +2161,11 @@ void FX::rotateHue()
 void FX::invert()
 {
   Invert::begin();
+}
+
+void FX::invertAlpha()
+{
+  InvertAlpha::begin();
 }
 
 void FX::restore()

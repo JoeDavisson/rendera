@@ -251,6 +251,8 @@ void Gui::init()
     (Fl_Callback *)FX::rotateHue, 0, 0);
   menubar->add("Effects/Invert", 0,
     (Fl_Callback *)FX::invert, 0, 0);
+  menubar->add("Effects/Invert Alpha", 0,
+    (Fl_Callback *)FX::invertAlpha, 0, 0);
   menubar->add("Effects/Restore...", 0,
     (Fl_Callback *)FX::restore, 0, 0);
   menubar->add("Effects/Correction Matrix", 0,

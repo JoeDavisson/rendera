@@ -30,6 +30,7 @@ namespace FX
   void saturate();
   void rotateHue();
   void invert();
+  void invertAlpha();
   void restore();
   void correctionMatrix();
   void removeDust();
