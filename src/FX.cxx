@@ -572,34 +572,6 @@ namespace CorrectionMatrix
 {
   void apply()
   {
-    float rr = 0;
-    float gg = 0;
-    float bb = 0;
-    int count = 0;
-
-    // determine overall color cast
-    for(int y = bmp->ct; y <= bmp->cb; y++)
-    {
-      for(int x = bmp->cl; x <= bmp->cr; x++)
-      {
-        const rgba_type rgba = getRgba(bmp->getpixel(x, y));
-
-        rr += rgba.r;
-        gg += rgba.g;
-        bb += rgba.b;
-
-        count++;
-      }
-    }
-
-    rr /= count;
-    gg /= count;
-    bb /= count;
-
-    // find hue of image
-    int hue, sat, val;
-    Blend::rgbToHsv(rr, gg, bb, &hue, &sat, &val);
-
     Gui::showProgress(bmp->h);
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -617,16 +589,6 @@ namespace CorrectionMatrix
         int b = rgba.b;
         int l = getl(c);
 
-        int h, s, v;
-        Blend::rgbToHsv(r, g, b, &h, &s, &v);
-        h -= hue;
-        h += 1536;
-        h %= 1536;
-        const int sat = s;
-        const int val = v;
-
-        Blend::hsvToRgb(h, sat, val, &r, &g, &b);
-
         // correction matrix
         int ra = r;
         int ga = (r * 4 + g * 8 + b * 1) / 13;
@@ -635,11 +597,6 @@ namespace CorrectionMatrix
         ra = std::max(std::min(ra, 255), 0);
         ga = std::max(std::min(ga, 255), 0);
         ba = std::max(std::min(ba, 255), 0);
-
-        Blend::rgbToHsv(ra, ga, ba, &h, &s, &v);
-        h += hue;
-        h %= 1536;
-        Blend::hsvToRgb(h, sat, val, &ra, &ga, &ba);
 
         *p++ = Blend::keepLum(makeRgba(ra, ga, ba, rgba.a), l);
       }
