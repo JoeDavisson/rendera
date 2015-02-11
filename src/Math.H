@@ -55,8 +55,8 @@ namespace Math
   }
 
   // fft routines
-  void forwardFFT(double *, double *, int);
-  void inverseFFT(double *, double *, int);
+  void forwardFFT(float *, float *, int);
+  void inverseFFT(float *, float *, int);
 }
 
 #endif
