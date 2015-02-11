@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cfloat>
 #include <climits>
 #include <cstdlib>
 #include <ctime>
@@ -69,6 +70,33 @@ main( int, char** )
     assert(  1 == Math::sign(  42.0 ) );
     assert(  1 == Math::sign(   0.0 ) );
 
+
+    /* absolute value stuff */
+
+    assert(  0 == Math::abs(   0 ) );
+    assert(  0 == Math::abs(  -0 ) );
+    assert( 42 == Math::abs(  42 ) );
+    assert( 42 == Math::abs( -42 ) );
+    assert( 42 == Math::abs(  42 ) );
+    assert( 42 == Math::abs( -42 ) );
+
+    assert( CHAR_MAX == Math::abs( 1 + CHAR_MIN ) );
+    assert( SHRT_MAX == Math::abs( 1 + SHRT_MIN ) );
+    assert(  INT_MAX == Math::abs( 1 +  INT_MIN ) );
+    assert( LONG_MAX == Math::abs( 1 + LONG_MIN ) );
+
+    assert(  FLT_MIN == Math::abs(    FLT_MIN ) );
+    assert(  FLT_MAX == Math::abs(    FLT_MAX ) );
+    assert(  FLT_MIN == Math::abs( -  FLT_MIN ) );
+    assert(  FLT_MAX == Math::abs( -  FLT_MAX ) );
+    assert(  DBL_MIN == Math::abs(    DBL_MIN ) );
+    assert(  DBL_MAX == Math::abs(    DBL_MAX ) );
+    assert(  DBL_MIN == Math::abs( -  DBL_MIN ) );
+    assert(  DBL_MAX == Math::abs( -  DBL_MAX ) );
+    assert( LDBL_MIN == Math::abs(   LDBL_MIN ) );
+    assert( LDBL_MAX == Math::abs(   LDBL_MAX ) );
+    assert( LDBL_MIN == Math::abs( - LDBL_MIN ) );
+    assert( LDBL_MAX == Math::abs( - LDBL_MAX ) );
 
     return EXIT_SUCCESS ;
 }
