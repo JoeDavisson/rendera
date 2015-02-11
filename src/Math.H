@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define MATH_H
 
 #include <algorithm>
+#include <cmath>
 #include <string>
 
 namespace
@@ -52,6 +53,10 @@ namespace Math
     rnd_seed = (rnd_seed << 17) ^ (rnd_seed >> 13) ^ (rnd_seed << 5);
     return rnd_seed;
   }
+
+  // fft routines
+  void forwardFFT(double *, double *, int);
+  void inverseFFT(double *, double *, int);
 }
 
 #endif

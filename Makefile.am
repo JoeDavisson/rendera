@@ -58,6 +58,7 @@ libren_la_SOURCES =       \
   src/InputText.cxx       \
   src/Map.H               \
   src/Map.cxx             \
+  src/Math.cxx            \
   src/Math.H              \
   src/Octree.H            \
   src/Octree.cxx          \
