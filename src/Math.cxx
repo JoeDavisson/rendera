@@ -20,14 +20,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Math.H"
 
-
 // fft routines adapted from those found here:
 // http://www.dspguide.com/ch12/3.htm
 void Math::forwardFFT(float *real, float *imag, int size)
 {
   int j = size / 2;
   int i = 0, k = 0;
-  const float pi = 3.14159265;
 
   for(i = 1; i <= size - 2; i++)
   {
@@ -59,8 +57,8 @@ void Math::forwardFFT(float *real, float *imag, int size)
 
     float ur = 1;
     float ui = 0;
-    float sr = cosf(pi / le2);
-    float si = -sinf(pi / le2);
+    float sr = cosf(M_PI / le2);
+    float si = -sinf(M_PI / le2);
 
     for(j = 1; j <= le2; j++)
     {
