@@ -21,37 +21,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef MATH_H
 #define MATH_H
 
-#include <algorithm>
-#include <cmath>
-#include <string>
-
-namespace
-{
-  int rnd_seed = 12345;
-}
-
 namespace Math
 {
   // sign, used by fastStretch in Bitmap.cxx
   template <typename T>
   inline T sign(T const &v)
   {
-    static T const zero(0);
-    return (zero > v) ? T(-1) : T(1);
+    return ( T(0) > v ) ? T(-1) : T(1) ;
   }
 
   // absolute value
   template <typename T>
   inline T abs(T const n)
   {
-    return (0 > n) ? -n : n;
+    return sign( n ) * n ;
   }
 
   // fast pseudo-random number
   inline int rnd(void)
   {
-    rnd_seed = (rnd_seed << 17) ^ (rnd_seed >> 13) ^ (rnd_seed << 5);
-    return rnd_seed;
+    static int seed = 12345 ;
+    seed ^= seed << 17 ;
+    seed ^= seed >> 13 ;
+    seed ^= seed <<  5 ;
+    return seed ;
   }
 
   // fft routines
