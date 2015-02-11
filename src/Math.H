@@ -34,7 +34,7 @@ namespace Math
   template <typename T>
   inline T abs(T const n)
   {
-    return sign( n ) * n ;
+    return (0 > n) ? -n : n;
   }
 
   // fast pseudo-random number
