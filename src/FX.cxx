@@ -2110,6 +2110,40 @@ namespace Artistic
   }
 }
 
+/*
+namespace ForwardFFT
+{
+  void apply()
+  {
+    int w = bmp->cw;
+    int h = bmp->ch;
+
+//FIXME make this operation a function
+    w--;
+    w |= w >> 1;
+    w |= w >> 2;
+    w |= w >> 4;
+    w |= w >> 8;
+    w |= w >> 16;
+    w++;
+
+    h--;
+    h |= h >> 1;
+    h |= h >> 2;
+    h |= h >> 4;
+    h |= h >> 8;
+    h |= h >> 16;
+    h++;
+  }
+
+  void begin()
+  {
+    pushUndo();
+    apply();
+  }
+}
+*/
+
 void FX::init()
 {
   RotateHue::init();
@@ -2218,4 +2252,16 @@ void FX::artistic()
 {
   Artistic::begin();
 }
+
+/*
+void FX::forwardFFT()
+{
+  ForwardFFT::begin();
+}
+
+void FX::inverseFFT()
+{
+  InverseFFT::begin();
+}
+*/
 
