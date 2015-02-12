@@ -27,9 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 void Math::forwardFFT(float *real, float *imag, int size)
 {
   int j = size / 2;
-  int i = 0, k = 0;
 
-  for(i = 1; i <= size - 2; i++)
+  for(int i = 1; i <= size - 2; i++)
   {
     if(i < j)
     {
@@ -41,7 +40,7 @@ void Math::forwardFFT(float *real, float *imag, int size)
       imag[i] = ti;
     }
 
-    k = size / 2;
+    int k = size / 2;
 
     while(k <= j)
     {
@@ -52,7 +51,7 @@ void Math::forwardFFT(float *real, float *imag, int size)
     j += k;
   }
 
-  for(k = 1; k <= (int)(logf(size) / logf(2)); k++)
+  for(int k = 1; k <= (int)(logf(size) / logf(2)); k++)
   {
     const int le = (int)(powf(2, k));
     const int le2 = le / 2;
@@ -62,9 +61,9 @@ void Math::forwardFFT(float *real, float *imag, int size)
     float sr = cosf(M_PI / le2);
     float si = -sinf(M_PI / le2);
 
-    for(j = 1; j <= le2; j++)
+    for(int j = 1; j <= le2; j++)
     {
-      for(i = j - 1; i < size; i += le)
+      for(int i = j - 1; i < size; i += le)
       {
         const int ip = i + le2;
         const float tr = real[ip] * ur - imag[ip] * ui;
