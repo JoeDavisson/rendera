@@ -2110,15 +2110,16 @@ namespace Artistic
   }
 }
 
-/*
-namespace ForwardFFT
+namespace FFT
 {
-  void apply()
+// FIXME this only works on a grayscale image
+  void apply(bool inverse)
   {
     int w = bmp->cw;
     int h = bmp->ch;
 
-//FIXME make this operation a function
+// FIXME needs to test that an image is a square of ^2 width/height
+// instead of this
     w--;
     w |= w >> 1;
     w |= w >> 2;
@@ -2134,15 +2135,85 @@ namespace ForwardFFT
     h |= h >> 8;
     h |= h >> 16;
     h++;
+
+    int size = w > h ? w : h;
+
+    std::vector<float> real(size * size, 0);
+    std::vector<float> imag(size * size, 0);
+    std::vector<float> real_line(size, 0);
+    std::vector<float> imag_line(size, 0);
+
+    // horizontal pass
+    for(int y = 0; y < size; y++)
+    {
+      for(int x = 0; x < size; x++)
+      {
+        real_line[x] = getv(bmp->getpixel(x, y));
+        imag_line[x] = 0;
+      }
+
+      if(inverse)
+        Math::inverseFFT(&real_line[0], &imag_line[0], size);
+      else
+        Math::forwardFFT(&real_line[0], &imag_line[0], size);
+
+      for(int x = 0; x < size; x++)
+      {
+        real[x + w * y] = real_line[x];
+        imag[x + w * y] = imag_line[x];
+      }
+    }
+
+    // vertical pass
+    for(int x = 0; x < size; x++)
+    {
+      for(int y = 0; y < size; y++)
+      {
+        real_line[y] = real[x + w * y];
+        imag_line[y] = imag[x + w * y];
+      }
+
+      if(inverse)
+        Math::inverseFFT(&real_line[0], &imag_line[0], size);
+      else
+        Math::forwardFFT(&real_line[0], &imag_line[0], size);
+
+      for(int y = 0; y < size; y++)
+      {
+        real[x + w * y] = real_line[y];
+        imag[x + w * y] = imag_line[y];
+      }
+    }
+
+    // draw
+    for(int y = 0; y < size; y++)
+    {
+      for(int x = 0; x < size; x++)
+      {
+        float r = real[x + w * y];
+        float i = imag[x + w * y];
+        int v = (int)(r * r + i * i) / 361;
+        v = std::min(std::max(v, 0), 255);
+// FIXME this value needs different interpretations for forward/inverse
+/*
+        if(inverse)
+        {
+        }
+        else
+        {
+        }
+*/
+        bmp->setpixelSolid(x + bmp->cl, y + bmp->ct, makeRgb(v, v, v), 0); 
+      }
+    }
   }
 
-  void begin()
+  void begin(bool inverse)
   {
     pushUndo();
-    apply();
+    apply(inverse);
   }
 }
-*/
 
 void FX::init()
 {
@@ -2253,15 +2324,13 @@ void FX::artistic()
   Artistic::begin();
 }
 
-/*
 void FX::forwardFFT()
 {
-  ForwardFFT::begin();
+  FFT::begin(false);
 }
 
 void FX::inverseFFT()
 {
-  InverseFFT::begin();
+  FFT::begin(true);
 }
-*/
 
