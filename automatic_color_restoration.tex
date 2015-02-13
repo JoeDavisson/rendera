@@ -1,0 +1,63 @@
+\documentclass{article}
+
+\title{Automatic Color Restoration}
+
+\author{Joe Davisson} %% \texttt{joe_7@sbcglobal.net}}
+
+\usepackage{amsmath}
+
+\begin{document}
+\maketitle
+
+This paper describes simple algorithms for automatically correcting the
+color in faded photographs or slides. Since color cast and loss of
+saturation are the primary culprits in making an image look bad, I
+present some algorithms for reversing these effects.
+
+
+Color Restore
+The dyes used in the photographic process do not fade evenly. Almost any
+color cast is possible depending on the storage environment and overall
+light exposure. Often there is no way to determine the film or
+photograph type, so a more general approach is required.
+
+This color restoration algorithm makes two assumptions: that the image
+is faded to some degree, and also has a color cast. I believe it is safe
+to assume that undesirable images have both of these traits.
+
+The first pass over the image is used to determine the overall color
+cast, which is a simple matter of averaging all the pixel values in the
+image. From this averaged value, we can calculate adjustment factors for
+each RGB component:
+
+\begin{align}
+r_{adjust} &= (256.0 / (256 - r_{average})) / sqrt(256.0 / (r_{average} + 1)); \\
+g_{adjust} &= (256.0 / (256 - g_{average})) / sqrt(256.0 / (g_{average} + 1)); \\
+b_{adjust} &= (256.0 / (256 - b_{average})) / sqrt(256.0 / (b_{average} + 1));
+\end{align}
+
+(The +1 is added to prevent division-by-zero errors in the computer.)
+
+The second pass is to apply these adjustment factors to each pixel in
+the source image:
+
+\begin{align}
+r &= 255 * pow(r / 255, r_{adjust}); \\
+g &= 255 * pow(g / 255, g_{adjust}); \\
+b &= 255 * pow(b / 255, b_{adjust});
+\end{align}
+
+(These are then clamped to the 0-255 range.)
+
+The power function in the second pass is intended to reverse fading. The
+adjustment factors employ a square root to ensure that over-correction
+does not occur during this step.
+
+
+Saturation Equalization
+Through some trial-and-error it was found that the saturation loss in
+faded images could usually be corrected by pushing the most saturated
+color to the maximum, and adjusting the other saturation levels
+accordingly -- essentially equalizing the saturation levels in the image.
+
+\end{document}
