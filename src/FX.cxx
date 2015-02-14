@@ -2110,16 +2110,13 @@ namespace Artistic
   }
 }
 
-namespace FFT
+namespace Descreen
 {
-// FIXME this only works on a grayscale image
-  void apply(bool inverse)
+  void apply()
   {
     int w = bmp->cw;
     int h = bmp->ch;
 
-// FIXME needs to test that an image is a square of ^2 width/height
-// instead of this
     w--;
     w |= w >> 1;
     w |= w >> 2;
@@ -2152,10 +2149,7 @@ namespace FFT
         imag_line[x] = 0;
       }
 
-      if(inverse)
-        Math::inverseFFT(&real_line[0], &imag_line[0], size);
-      else
-        Math::forwardFFT(&real_line[0], &imag_line[0], size);
+      Math::forwardFFT(&real_line[0], &imag_line[0], size);
 
       for(int x = 0; x < size; x++)
       {
@@ -2173,10 +2167,7 @@ namespace FFT
         imag_line[y] = imag[x + w * y];
       }
 
-      if(inverse)
-        Math::inverseFFT(&real_line[0], &imag_line[0], size);
-      else
-        Math::forwardFFT(&real_line[0], &imag_line[0], size);
+      Math::forwardFFT(&real_line[0], &imag_line[0], size);
 
       for(int y = 0; y < size; y++)
       {
@@ -2184,34 +2175,12 @@ namespace FFT
         imag[x + w * y] = imag_line[y];
       }
     }
-
-    // draw
-    for(int y = 0; y < size; y++)
-    {
-      for(int x = 0; x < size; x++)
-      {
-        float r = real[x + w * y];
-        float i = imag[x + w * y];
-        int v = (int)(r * r + i * i) / 361;
-        v = std::min(std::max(v, 0), 255);
-// FIXME this value needs different interpretations for forward/inverse
-/*
-        if(inverse)
-        {
-        }
-        else
-        {
-        }
-*/
-        bmp->setpixelSolid(x + bmp->cl, y + bmp->ct, makeRgb(v, v, v), 0); 
-      }
-    }
   }
 
-  void begin(bool inverse)
+  void begin()
   {
     pushUndo();
-    apply(inverse);
+    apply();
   }
 }
 
@@ -2324,13 +2293,8 @@ void FX::artistic()
   Artistic::begin();
 }
 
-void FX::forwardFFT()
+void FX::descreen()
 {
-  FFT::begin(false);
-}
-
-void FX::inverseFFT()
-{
-  FFT::begin(true);
+  Descreen::begin();
 }
 
