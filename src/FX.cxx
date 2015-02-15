@@ -2121,7 +2121,7 @@ namespace Descreen
     Fl_Button *cancel;
   }
 
-  void apply(int/* amount*/)
+  void apply(int amount)
   {
     int w = bmp->cw;
     int h = bmp->ch;
@@ -2200,6 +2200,26 @@ namespace Descreen
         {
           real[x + w * y] = real_col[y];
           imag[x + w * y] = imag_col[y];
+        }
+      }
+
+      // perform descreen
+      const int bx = 16;
+      const int by = 16;
+
+      for(int y = by; y < h - by; y++)
+      {
+        for(int x = bx; x < w - bx; x++)
+        {
+          float r = real[x + w * y];
+          float i = imag[x + w * y];
+          float mag = sqrtf(r * r + i * i);
+
+          if(mag > amount)
+          {
+            real[x + w * y] = 0;
+            imag[x + w * y] = 0;
+          }
         }
       }
 

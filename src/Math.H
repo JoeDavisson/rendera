@@ -47,6 +47,15 @@ namespace Math
     return seed ;
   }
 
+  // ^2 check
+  inline bool isPowerOfTwo(int x)
+  {
+    while(((x & 1) == 0) && x > 1)
+      x >>= 1;
+
+    return (x == 1);
+  }
+
   // fft routines
   void forwardFFT(float *, float *, int);
   void inverseFFT(float *, float *, int);
