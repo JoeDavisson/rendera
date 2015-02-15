@@ -2111,36 +2111,12 @@ namespace Artistic
   }
 }
 
-namespace Descreen
+namespace FFT
 {
-  namespace Items
-  {
-    DialogWindow *dialog;
-    InputInt *amount;
-    Fl_Button *ok;
-    Fl_Button *cancel;
-  }
-
-  void apply(int amount)
+  void apply(bool inverse)
   {
     int w = bmp->cw;
     int h = bmp->ch;
-
-    w--;
-    w |= w >> 1;
-    w |= w >> 2;
-    w |= w >> 4;
-    w |= w >> 8;
-    w |= w >> 16;
-    w++;
-
-    h--;
-    h |= h >> 1;
-    h |= h >> 2;
-    h |= h >> 4;
-    h |= h >> 8;
-    h |= h >> 16;
-    h++;
 
     std::vector<float> real(w * h, 0);
     std::vector<float> imag(w * h, 0);
@@ -2151,7 +2127,7 @@ namespace Descreen
 
     for(int rgb = 0; rgb < 3; rgb++)
     {
-      // forward horizontal pass
+      // horizontal pass
       for(int y = 0; y < h; y++)
       {
         int *p = bmp->row[y + bmp->ct] + bmp->cl;
@@ -2176,7 +2152,10 @@ namespace Descreen
           imag_row[x] = 0;
         }
 
-        Math::forwardFFT(&real_row[0], &imag_row[0], w);
+        if(inverse)
+          Math::inverseFFT(&real_row[0], &imag_row[0], w);
+        else
+          Math::forwardFFT(&real_row[0], &imag_row[0], w);
 
         for(int x = 0; x < w; x++)
         {
@@ -2185,7 +2164,7 @@ namespace Descreen
         }
       }
 
-      // forward vertical pass
+      // vertical pass
       for(int x = 0; x < w; x++)
       {
         for(int y = 0; y < h; y++)
@@ -2194,7 +2173,10 @@ namespace Descreen
           imag_col[y] = imag[x + w * y];
         }
 
-        Math::forwardFFT(&real_col[0], &imag_col[0], h);
+        if(inverse)
+          Math::inverseFFT(&real_col[0], &imag_col[0], h);
+        else
+          Math::forwardFFT(&real_col[0], &imag_col[0], h);
 
         for(int y = 0; y < h; y++)
         {
@@ -2203,63 +2185,7 @@ namespace Descreen
         }
       }
 
-      // perform descreen
-      const int bx = 16;
-      const int by = 16;
-
-      for(int y = by; y < h - by; y++)
-      {
-        for(int x = bx; x < w - bx; x++)
-        {
-          float r = real[x + w * y];
-          float i = imag[x + w * y];
-          float mag = sqrtf(r * r + i * i);
-
-          if(mag > amount)
-          {
-            real[x + w * y] = 0;
-            imag[x + w * y] = 0;
-          }
-        }
-      }
-
-      // inverse horizontal pass
-      for(int y = 0; y < h; y++)
-      {
-        for(int x = 0; x < w; x++)
-        {
-          real_row[x] = real[x + w * y];
-          imag_row[x] = imag[x + w * y];
-        }
-
-        Math::inverseFFT(&real_row[0], &imag_row[0], w);
-
-        for(int x = 0; x < w; x++)
-        {
-          real[x + w * y] = real_row[x];
-          imag[x + w * y] = imag_row[x];
-        }
-      }
-
-      // inverse vertical pass
-      for(int x = 0; x < w; x++)
-      {
-        for(int y = 0; y < h; y++)
-        {
-          real_col[y] = real[x + w * y];
-          imag_col[y] = imag[x + w * y];
-        }
-
-        Math::inverseFFT(&real_col[0], &imag_col[0], h);
-
-        for(int y = 0; y < h; y++)
-        {
-          real[x + w * y] = real_col[y];
-          imag[x + w * y] = imag_col[y];
-        }
-      }
-
-      // convert back to image
+      // convert to image
       for(int y = 0; y < h; y++)
       {
         int *p = bmp->row[y + bmp->ct] + bmp->cl;
@@ -2287,41 +2213,10 @@ namespace Descreen
     }
   }
 
-  void close()
+  void begin(bool inverse)
   {
-    if(Items::amount->limitValue(1, 100) < 0)
-      return;
-
-    Items::dialog->hide();
     pushUndo();
-    apply(atoi(Items::amount->value()));
-  }
-
-  void quit()
-  {
-    Gui::hideProgress();
-    Items::dialog->hide();
-  }
-
-  void begin()
-  {
-    Items::dialog->show();
-  }
-
-  void init()
-  {
-    int y1 = 8;
-
-    Items::dialog = new DialogWindow(256, 0, "Decreen");
-    Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
-    y1 += 24 + 8;
-    Items::amount->value("8");
-    Items::amount->center();
-    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
-    Items::ok->callback((Fl_Callback *)close);
-    Items::cancel->callback((Fl_Callback *)quit);
-    Items::dialog->set_modal();
-    Items::dialog->end();
+    apply(inverse);
   }
 }
 
@@ -2337,7 +2232,6 @@ void FX::init()
   UnsharpMask::init();
   ConvolutionMatrix::init();
   Artistic::init();
-  Descreen::init();
 }
 
 void FX::normalize()
@@ -2435,13 +2329,28 @@ void FX::artistic()
   Artistic::begin();
 }
 
-void FX::descreen()
+void FX::forwardFFT()
 {
   int w = Project::bmp->cw;
   int h = Project::bmp->ch;
   if(Math::isPowerOfTwo(w) && Math::isPowerOfTwo(h))
   {
-    Descreen::begin();
+    FFT::begin(false);
+  }
+  else
+  {
+    fl_message_title("Error");
+    fl_message("Image dimensions must be powers of two.");
+  }
+}
+
+void FX::inverseFFT()
+{
+  int w = Project::bmp->cw;
+  int h = Project::bmp->ch;
+  if(Math::isPowerOfTwo(w) && Math::isPowerOfTwo(h))
+  {
+    FFT::begin(true);
   }
   else
   {

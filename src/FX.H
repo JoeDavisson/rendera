@@ -43,7 +43,8 @@ namespace FX
   void unsharpMask();
   void convolutionMatrix();
   void artistic();
-  void descreen();
+  void forwardFFT();
+  void inverseFFT();
 }
 
 #endif

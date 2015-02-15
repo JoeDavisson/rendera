@@ -275,8 +275,10 @@ void Gui::init()
     (Fl_Callback *)FX::convolutionMatrix, 0, 0);
   menubar->add("Effects/Artistic...", 0,
     (Fl_Callback *)FX::artistic, 0, 0);
-//  menubar->add("Effects/Descreen...", 0,
-//    (Fl_Callback *)FX::descreen, 0, 0);
+  menubar->add("Effects/Forward FFT", 0,
+    (Fl_Callback *)FX::forwardFFT, 0, 0);
+  menubar->add("Effects/Inverse FFT", 0,
+    (Fl_Callback *)FX::inverseFFT, 0, 0);
   menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
 
