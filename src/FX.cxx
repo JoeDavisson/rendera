@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cmath>
 #include <vector>
 
+#include <FL/fl_ask.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Choice.H>
 
@@ -2112,7 +2113,15 @@ namespace Artistic
 
 namespace Descreen
 {
-  void apply()
+  namespace Items
+  {
+    DialogWindow *dialog;
+    InputInt *amount;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
+
+  void apply(int/* amount*/)
   {
     int w = bmp->cw;
     int h = bmp->ch;
@@ -2133,54 +2142,166 @@ namespace Descreen
     h |= h >> 16;
     h++;
 
-    int size = w > h ? w : h;
+    std::vector<float> real(w * h, 0);
+    std::vector<float> imag(w * h, 0);
+    std::vector<float> real_row(w, 0);
+    std::vector<float> imag_row(w, 0);
+    std::vector<float> real_col(h, 0);
+    std::vector<float> imag_col(h, 0);
 
-    std::vector<float> real(size * size, 0);
-    std::vector<float> imag(size * size, 0);
-    std::vector<float> real_line(size, 0);
-    std::vector<float> imag_line(size, 0);
-
-    // horizontal pass
-    for(int y = 0; y < size; y++)
+    for(int rgb = 0; rgb < 3; rgb++)
     {
-      for(int x = 0; x < size; x++)
+      // forward horizontal pass
+      for(int y = 0; y < h; y++)
       {
-        real_line[x] = getv(bmp->getpixel(x, y));
-        imag_line[x] = 0;
+        int *p = bmp->row[y + bmp->ct] + bmp->cl;
+
+        for(int x = 0; x < w; x++)
+        {
+          const rgba_type rgba = getRgba(*p++);
+
+          switch(rgb)
+          {
+            case 0:
+              real_row[x] = rgba.r;
+              break;
+            case 1:
+              real_row[x] = rgba.g;
+              break;
+            case 2:
+              real_row[x] = rgba.b;
+              break;
+          }
+
+          imag_row[x] = 0;
+        }
+
+        Math::forwardFFT(&real_row[0], &imag_row[0], w);
+
+        for(int x = 0; x < w; x++)
+        {
+          real[x + w * y] = real_row[x];
+          imag[x + w * y] = imag_row[x];
+        }
       }
 
-      Math::forwardFFT(&real_line[0], &imag_line[0], size);
-
-      for(int x = 0; x < size; x++)
+      // forward vertical pass
+      for(int x = 0; x < w; x++)
       {
-        real[x + w * y] = real_line[x];
-        imag[x + w * y] = imag_line[x];
+        for(int y = 0; y < h; y++)
+        {
+          real_col[y] = real[x + w * y];
+          imag_col[y] = imag[x + w * y];
+        }
+
+        Math::forwardFFT(&real_col[0], &imag_col[0], h);
+
+        for(int y = 0; y < h; y++)
+        {
+          real[x + w * y] = real_col[y];
+          imag[x + w * y] = imag_col[y];
+        }
       }
-    }
 
-    // vertical pass
-    for(int x = 0; x < size; x++)
-    {
-      for(int y = 0; y < size; y++)
+      // inverse horizontal pass
+      for(int y = 0; y < h; y++)
       {
-        real_line[y] = real[x + w * y];
-        imag_line[y] = imag[x + w * y];
+        for(int x = 0; x < w; x++)
+        {
+          real_row[x] = real[x + w * y];
+          imag_row[x] = imag[x + w * y];
+        }
+
+        Math::inverseFFT(&real_row[0], &imag_row[0], w);
+
+        for(int x = 0; x < w; x++)
+        {
+          real[x + w * y] = real_row[x];
+          imag[x + w * y] = imag_row[x];
+        }
       }
 
-      Math::forwardFFT(&real_line[0], &imag_line[0], size);
-
-      for(int y = 0; y < size; y++)
+      // inverse vertical pass
+      for(int x = 0; x < w; x++)
       {
-        real[x + w * y] = real_line[y];
-        imag[x + w * y] = imag_line[y];
+        for(int y = 0; y < h; y++)
+        {
+          real_col[y] = real[x + w * y];
+          imag_col[y] = imag[x + w * y];
+        }
+
+        Math::inverseFFT(&real_col[0], &imag_col[0], h);
+
+        for(int y = 0; y < h; y++)
+        {
+          real[x + w * y] = real_col[y];
+          imag[x + w * y] = imag_col[y];
+        }
+      }
+
+      // convert back to image
+      for(int y = 0; y < h; y++)
+      {
+        int *p = bmp->row[y + bmp->ct] + bmp->cl;
+
+        for(int x = 0; x < w; x++)
+        {
+          const rgba_type rgba = getRgba(*p);
+          int v = real[x + w * y];
+          v = std::max(std::min(v, 255), 0);
+
+          switch(rgb)
+          {
+            case 0:
+              *p++ = makeRgb(v, rgba.g, rgba.b);
+              break;
+            case 1:
+              *p++ = makeRgb(rgba.r, v, rgba.b);
+              break;
+            case 2:
+              *p++ = makeRgb(rgba.r, rgba.g, v);
+              break;
+          }
+        }
       }
     }
   }
 
+  void close()
+  {
+    if(Items::amount->limitValue(1, 100) < 0)
+      return;
+
+    Items::dialog->hide();
+    pushUndo();
+    apply(atoi(Items::amount->value()));
+  }
+
+  void quit()
+  {
+    Gui::hideProgress();
+    Items::dialog->hide();
+  }
+
   void begin()
   {
-    pushUndo();
-    apply();
+    Items::dialog->show();
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    Items::dialog = new DialogWindow(256, 0, "Decreen");
+    Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
+    y1 += 24 + 8;
+    Items::amount->value("8");
+    Items::amount->center();
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
   }
 }
 
@@ -2196,6 +2317,7 @@ void FX::init()
   UnsharpMask::init();
   ConvolutionMatrix::init();
   Artistic::init();
+  Descreen::init();
 }
 
 void FX::normalize()
@@ -2295,6 +2417,16 @@ void FX::artistic()
 
 void FX::descreen()
 {
-  Descreen::begin();
+  int w = Project::bmp->cw;
+  int h = Project::bmp->ch;
+  if(Math::isPowerOfTwo(w) && Math::isPowerOfTwo(h))
+  {
+    Descreen::begin();
+  }
+  else
+  {
+    fl_message_title("Error");
+    fl_message("Image dimensions must be powers of two.");
+  }
 }
 
