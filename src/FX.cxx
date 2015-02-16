@@ -2111,9 +2111,17 @@ namespace Artistic
   }
 }
 
-namespace ForwardFFT
+namespace Descreen
 {
-  void apply()
+  namespace Items
+  {
+    DialogWindow *dialog;
+    InputInt *amount;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
+
+  void apply(int amount)
   {
     int w = bmp->cw;
     int h = bmp->ch;
@@ -2127,7 +2135,7 @@ namespace ForwardFFT
 
     for(int rgb = 0; rgb < 3; rgb++)
     {
-      // horizontal pass
+      // forward horizontal pass
       for(int y = 0; y < h; y++)
       {
         int *p = bmp->row[y + bmp->ct] + bmp->cl;
@@ -2139,13 +2147,13 @@ namespace ForwardFFT
           switch(rgb)
           {
             case 0:
-              real_row[x] = (float)rgba.r;
+              real_row[x] = rgba.r;
               break;
             case 1:
-              real_row[x] = (float)rgba.g;
+              real_row[x] = rgba.g;
               break;
             case 2:
-              real_row[x] = (float)rgba.b;
+              real_row[x] = rgba.b;
               break;
           }
 
@@ -2161,7 +2169,7 @@ namespace ForwardFFT
         }
       }
 
-      // vertical pass
+      // forward vertical pass
       for(int x = 0; x < w; x++)
       {
         for(int y = 0; y < h; y++)
@@ -2179,94 +2187,40 @@ namespace ForwardFFT
         }
       }
 
-      // convert to image
-      for(int y = 0; y < h; y++)
+      // perform descreen
+      int bx = w / 10;
+      int by = w / 10;
+      for(int y = by; y < h - by; y++)
       {
-        int *p = bmp->row[y + bmp->ct] + bmp->cl;
-
-        for(int x = 0; x < w; x++)
+        for(int x = bx; x < w - bx; x++)
         {
           float r = real[x + w * y];
           float i = imag[x + w * y];
 
-          int mag = (int)sqrtf(r * r + i * i) / 4369;
-          int phase = (int)((atan2f(i, r) + 3.14159f) * 2.42f);
-//printf("mag = %d\t\t phase = %d\n", mag, phase);
-          mag = std::max(std::min(mag, 15), 0);
-          phase = std::max(std::min(phase, 15), 0);
-          int v = mag + (phase << 4);
+          float mag = sqrtf(r * r + i * i);
+          float phase = atan2(i, r); 
 
-          const rgba_type rgba = getRgba(*p);
-
-          switch(rgb)
+          if(mag > amount)
           {
-            case 0:
-              *p++ = makeRgb(v, rgba.g, rgba.b);
-              break;
-            case 1:
-              *p++ = makeRgb(rgba.r, v, rgba.b);
-              break;
-            case 2:
-              *p++ = makeRgb(rgba.r, rgba.g, v);
-              break;
+            mag = 0;
+            phase = 0;
           }
+
+          r = mag * cosf(phase);
+          i = mag * sinf(phase);
+
+          real[x + w * y] = r;
+          imag[x + w * y] = i;
         }
       }
-    }
-  }
 
-  void begin()
-  {
-    bmp = Project::bmp;
-    Undo::push();
-    apply();
-  }
-}
-
-namespace InverseFFT
-{
-  void apply()
-  {
-    int w = bmp->cw;
-    int h = bmp->ch;
-
-    std::vector<float> real(w * h, 0);
-    std::vector<float> imag(w * h, 0);
-    std::vector<float> real_row(w, 0);
-    std::vector<float> imag_row(w, 0);
-    std::vector<float> real_col(h, 0);
-    std::vector<float> imag_col(h, 0);
-
-    for(int rgb = 0; rgb < 3; rgb++)
-    {
-      // horizontal pass
+      // inverse horizontal pass
       for(int y = 0; y < h; y++)
       {
-        int *p = bmp->row[y + bmp->ct] + bmp->cl;
-
         for(int x = 0; x < w; x++)
         {
-          const rgba_type rgba = getRgba(*p++);
-          int v = 0;
-
-          switch(rgb)
-          {
-            case 0:
-              v = rgba.r;
-              break;
-            case 1:
-              v = rgba.g;
-              break;
-            case 2:
-              v = rgba.b;
-              break;
-          }
-
-          float mag = (float)((v & 15) * 4369);
-          float phase = (float)((v >> 4) / 2.42f) - 3.14159f;
-
-          real_row[x] = mag * cosf(phase);
-          imag_row[x] = mag * sinf(phase);
+          real_row[x] = real[x + w * y];
+          imag_row[x] = imag[x + w * y];
         }
 
         Math::inverseFFT(&real_row[0], &imag_row[0], w);
@@ -2278,7 +2232,7 @@ namespace InverseFFT
         }
       }
 
-      // vertical pass
+      // inverse vertical pass
       for(int x = 0; x < w; x++)
       {
         for(int y = 0; y < h; y++)
@@ -2303,26 +2257,21 @@ namespace InverseFFT
 
         for(int x = 0; x < w; x++)
         {
-          float r = real[x + w * y];
-//          float i = imag[x + w * y];
-
-          int v = (int)r + 16;
-//          int phase = (int)(atan2f(i, r) + 3.14159f);
-//printf("mag = %f\t\t phase = %f\n", mag, phase);
-          v = std::max(std::min(v, 255), 0);
+          int val = real[x + w * y];
+          val = std::max(std::min(val, 255), 0);
 
           const rgba_type rgba = getRgba(*p);
 
           switch(rgb)
           {
             case 0:
-              *p++ = makeRgb(v, rgba.g, rgba.b);
+              *p++ = makeRgb(val, rgba.g, rgba.b);
               break;
             case 1:
-              *p++ = makeRgb(rgba.r, v, rgba.b);
+              *p++ = makeRgb(rgba.r, val, rgba.b);
               break;
             case 2:
-              *p++ = makeRgb(rgba.r, rgba.g, v);
+              *p++ = makeRgb(rgba.r, rgba.g, val);
               break;
           }
         }
@@ -2330,11 +2279,41 @@ namespace InverseFFT
     }
   }
 
+  void close()
+  {
+    if(Items::amount->limitValue(1, 100) < 0)
+      return;
+
+    Items::dialog->hide();
+    pushUndo();
+    apply(atoi(Items::amount->value()));
+  }
+
+  void quit()
+  {
+    Gui::hideProgress();
+    Items::dialog->hide();
+  }
+
   void begin()
   {
-    bmp = Project::bmp;
-    Undo::push();
-    apply();
+    Items::dialog->show();
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    Items::dialog = new DialogWindow(256, 0, "Decreen");
+    Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
+    y1 += 24 + 8;
+    Items::amount->value("10");
+    Items::amount->center();
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
   }
 }
 
@@ -2350,6 +2329,7 @@ void FX::init()
   UnsharpMask::init();
   ConvolutionMatrix::init();
   Artistic::init();
+  Descreen::init();
 }
 
 void FX::normalize()
@@ -2447,28 +2427,13 @@ void FX::artistic()
   Artistic::begin();
 }
 
-void FX::forwardFFT()
+void FX::descreen()
 {
   int w = Project::bmp->cw;
   int h = Project::bmp->ch;
   if(Math::isPowerOfTwo(w) && Math::isPowerOfTwo(h))
   {
-    ForwardFFT::begin();
-  }
-  else
-  {
-    fl_message_title("Error");
-    fl_message("Image dimensions must be powers of two.");
-  }
-}
-
-void FX::inverseFFT()
-{
-  int w = Project::bmp->cw;
-  int h = Project::bmp->ch;
-  if(Math::isPowerOfTwo(w) && Math::isPowerOfTwo(h))
-  {
-    InverseFFT::begin();
+    Descreen::begin();
   }
   else
   {
