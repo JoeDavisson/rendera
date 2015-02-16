@@ -634,9 +634,9 @@ namespace Restore
 
   void apply()
   {
-    float rr = 0;
-    float gg = 0;
-    float bb = 0;
+    double rr = 0;
+    double gg = 0;
+    double bb = 0;
     int count = 0;
 
     const bool keep_lum = Items::color_only->value();
@@ -661,9 +661,9 @@ namespace Restore
     bb /= count;
 
     // adjustment factors
-    const float ra = (256.0f / (256 - rr)) / std::sqrt(256.0f / (rr + 1));
-    const float ga = (256.0f / (256 - gg)) / std::sqrt(256.0f / (gg + 1));
-    const float ba = (256.0f / (256 - bb)) / std::sqrt(256.0f / (bb + 1));
+    const double ra = (256.0f / (256 - rr)) / std::sqrt(256.0f / (rr + 1));
+    const double ga = (256.0f / (256 - gg)) / std::sqrt(256.0f / (gg + 1));
+    const double ba = (256.0f / (256 - bb)) / std::sqrt(256.0f / (bb + 1));
 
     // begin restore
     Gui::showProgress(bmp->h);
@@ -682,9 +682,9 @@ namespace Restore
         const int l = getl(c);
 
         // apply adjustments
-        r = 255 * powf((float)r / 255, ra);
-        g = 255 * powf((float)g / 255, ga);
-        b = 255 * powf((float)b / 255, ba);
+        r = 255 * pow((double)r / 255, ra);
+        g = 255 * pow((double)g / 255, ga);
+        b = 255 * pow((double)b / 255, ba);
 
         r = std::max(std::min(r, 255), 0);
         g = std::max(std::min(g, 255), 0);
@@ -2111,9 +2111,9 @@ namespace Artistic
   }
 }
 
-namespace FFT
+namespace ForwardFFT
 {
-  void apply(bool inverse)
+  void apply()
   {
     int w = bmp->cw;
     int h = bmp->ch;
@@ -2139,23 +2139,20 @@ namespace FFT
           switch(rgb)
           {
             case 0:
-              real_row[x] = rgba.r;
+              real_row[x] = (float)rgba.r;
               break;
             case 1:
-              real_row[x] = rgba.g;
+              real_row[x] = (float)rgba.g;
               break;
             case 2:
-              real_row[x] = rgba.b;
+              real_row[x] = (float)rgba.b;
               break;
           }
 
           imag_row[x] = 0;
         }
 
-        if(inverse)
-          Math::inverseFFT(&real_row[0], &imag_row[0], w);
-        else
-          Math::forwardFFT(&real_row[0], &imag_row[0], w);
+        Math::forwardFFT(&real_row[0], &imag_row[0], w);
 
         for(int x = 0; x < w; x++)
         {
@@ -2173,10 +2170,7 @@ namespace FFT
           imag_col[y] = imag[x + w * y];
         }
 
-        if(inverse)
-          Math::inverseFFT(&real_col[0], &imag_col[0], h);
-        else
-          Math::forwardFFT(&real_col[0], &imag_col[0], h);
+        Math::forwardFFT(&real_col[0], &imag_col[0], h);
 
         for(int y = 0; y < h; y++)
         {
@@ -2192,9 +2186,17 @@ namespace FFT
 
         for(int x = 0; x < w; x++)
         {
+          float r = real[x + w * y];
+          float i = imag[x + w * y];
+
+          int mag = (int)sqrtf(r * r + i * i) / 4369;
+          int phase = (int)((atan2f(i, r) + 3.14159f) * 2.42f);
+//printf("mag = %d\t\t phase = %d\n", mag, phase);
+          mag = std::max(std::min(mag, 15), 0);
+          phase = std::max(std::min(phase, 15), 0);
+          int v = mag + (phase << 4);
+
           const rgba_type rgba = getRgba(*p);
-          int v = real[x + w * y];
-          v = std::max(std::min(v, 255), 0);
 
           switch(rgb)
           {
@@ -2213,10 +2215,126 @@ namespace FFT
     }
   }
 
-  void begin(bool inverse)
+  void begin()
   {
-    pushUndo();
-    apply(inverse);
+    bmp = Project::bmp;
+    Undo::push();
+    apply();
+  }
+}
+
+namespace InverseFFT
+{
+  void apply()
+  {
+    int w = bmp->cw;
+    int h = bmp->ch;
+
+    std::vector<float> real(w * h, 0);
+    std::vector<float> imag(w * h, 0);
+    std::vector<float> real_row(w, 0);
+    std::vector<float> imag_row(w, 0);
+    std::vector<float> real_col(h, 0);
+    std::vector<float> imag_col(h, 0);
+
+    for(int rgb = 0; rgb < 3; rgb++)
+    {
+      // horizontal pass
+      for(int y = 0; y < h; y++)
+      {
+        int *p = bmp->row[y + bmp->ct] + bmp->cl;
+
+        for(int x = 0; x < w; x++)
+        {
+          const rgba_type rgba = getRgba(*p++);
+          int v = 0;
+
+          switch(rgb)
+          {
+            case 0:
+              v = rgba.r;
+              break;
+            case 1:
+              v = rgba.g;
+              break;
+            case 2:
+              v = rgba.b;
+              break;
+          }
+
+          float mag = (float)((v & 15) * 4369);
+          float phase = (float)((v >> 4) / 2.42f) - 3.14159f;
+
+          real_row[x] = mag * cosf(phase);
+          imag_row[x] = mag * sinf(phase);
+        }
+
+        Math::inverseFFT(&real_row[0], &imag_row[0], w);
+
+        for(int x = 0; x < w; x++)
+        {
+          real[x + w * y] = real_row[x];
+          imag[x + w * y] = imag_row[x];
+        }
+      }
+
+      // vertical pass
+      for(int x = 0; x < w; x++)
+      {
+        for(int y = 0; y < h; y++)
+        {
+          real_col[y] = real[x + w * y];
+          imag_col[y] = imag[x + w * y];
+        }
+
+        Math::inverseFFT(&real_col[0], &imag_col[0], h);
+
+        for(int y = 0; y < h; y++)
+        {
+          real[x + w * y] = real_col[y];
+          imag[x + w * y] = imag_col[y];
+        }
+      }
+
+      // convert to image
+      for(int y = 0; y < h; y++)
+      {
+        int *p = bmp->row[y + bmp->ct] + bmp->cl;
+
+        for(int x = 0; x < w; x++)
+        {
+          float r = real[x + w * y];
+//          float i = imag[x + w * y];
+
+          int v = (int)r + 16;
+//          int phase = (int)(atan2f(i, r) + 3.14159f);
+//printf("mag = %f\t\t phase = %f\n", mag, phase);
+          v = std::max(std::min(v, 255), 0);
+
+          const rgba_type rgba = getRgba(*p);
+
+          switch(rgb)
+          {
+            case 0:
+              *p++ = makeRgb(v, rgba.g, rgba.b);
+              break;
+            case 1:
+              *p++ = makeRgb(rgba.r, v, rgba.b);
+              break;
+            case 2:
+              *p++ = makeRgb(rgba.r, rgba.g, v);
+              break;
+          }
+        }
+      }
+    }
+  }
+
+  void begin()
+  {
+    bmp = Project::bmp;
+    Undo::push();
+    apply();
   }
 }
 
@@ -2335,7 +2453,7 @@ void FX::forwardFFT()
   int h = Project::bmp->ch;
   if(Math::isPowerOfTwo(w) && Math::isPowerOfTwo(h))
   {
-    FFT::begin(false);
+    ForwardFFT::begin();
   }
   else
   {
@@ -2350,7 +2468,7 @@ void FX::inverseFFT()
   int h = Project::bmp->ch;
   if(Math::isPowerOfTwo(w) && Math::isPowerOfTwo(h))
   {
-    FFT::begin(true);
+    InverseFFT::begin();
   }
   else
   {
