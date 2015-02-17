@@ -2126,6 +2126,10 @@ namespace Descreen
     int w = bmp->cw;
     int h = bmp->ch;
 
+    int larger = w > h ? w : h;
+    if(amount > larger / 4)
+      amount = larger / 4;
+
     std::vector<float> real(w * h, 0);
     std::vector<float> imag(w * h, 0);
     std::vector<float> real_row(w, 0);
@@ -2188,29 +2192,21 @@ namespace Descreen
       }
 
       // perform descreen
-      int bx = w / 10;
-      int by = w / 10;
-      for(int y = by; y < h - by; y++)
+      for(int y = 0; y < h; y++)
       {
-        for(int x = bx; x < w - bx; x++)
+        for(int x = 0; x < w; x++)
         {
-          float r = real[x + w * y];
-          float i = imag[x + w * y];
+          if(x < amount && y < amount)
+            continue;
+          if(x > w - amount || y < amount)
+            continue;
+          if(x < amount || y > h - amount)
+            continue;
+          if(x > w - amount || y > h - amount)
+            continue;
 
-          float mag = sqrtf(r * r + i * i);
-          float phase = atan2(i, r); 
-
-          if(mag > amount)
-          {
-            mag = 0;
-            phase = 0;
-          }
-
-          r = mag * cosf(phase);
-          i = mag * sinf(phase);
-
-          real[x + w * y] = r;
-          imag[x + w * y] = i;
+          real[x + w * y] = 0;
+          imag[x + w * y] = 0;
         }
       }
 
