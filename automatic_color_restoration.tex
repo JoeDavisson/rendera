@@ -9,15 +9,14 @@
 \begin{document}
 \maketitle
 
-A simple algorithm is presented for automatically correcting the
-color and contrast in faded or otherwise undesirable images.
-Because often the exact cause of the discoloration is unknown, this
-algorithm is based on correcting the problems of color-cast,
-contrast, and saturation loss individually.
+Some simple algorithms are presented for automatically correcting the
+color and contrast in faded images.  Because often the exact cause of the
+discoloration is unknown, the problems of color cast, contrast, and
+saturation loss are considered individually.
 
-\section{Color-Cast Removal}
+\section{Color Cast Removal}
 
-One way to correct color-cast is to create adjustment factors from an
+One way to correct color cast is to create adjustment factors from an
 average of all the pixels in an image:
 
 \[ R_{adjust} = (255 - R_{average}) \]
@@ -30,7 +29,7 @@ These are then averaged with each pixel in the image:
 \[ G_{new} = (G_{old} + G_{adjust}) / 2 \]
 \[ B_{new} = (B_{old} + B_{adjust}) / 2 \]
 
-While this corrects the colors cast, the image must be manually adjusted
+While this helps to fix the color cast, the image must be manually adjusted
 to restore contrast and saturation. We aim to do these automatically.
 
 \section{Contrast Correction}
@@ -44,7 +43,7 @@ blown-out highlights in the restored image.
 \[ G_{adjust} = (256 / (256 - G_{average})) / sqrt(256 / (G_{average} + 1)) \]
 \[ B_{adjust} = (256 / (256 - B_{average})) / sqrt(256 / (B_{average} + 1)) \]
 
-These are then applied to the image the source image:
+These are then applied to the source image:
 
 \[ R_{new} = 255 * pow(R_{old} / 255, R_{adjust}) \]
 \[ G_{new} = 255 * pow(G_{old} / 255, G_{adjust}) \]
