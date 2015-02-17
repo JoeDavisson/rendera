@@ -9,55 +9,53 @@
 \begin{document}
 \maketitle
 
-This paper describes simple algorithms for automatically correcting the
-color in faded photographs or slides. Since color cast and loss of
-saturation are the primary culprits in making an image look bad, I
-present some algorithms for reversing these effects.
+A simple algorithm is presented for automatically correcting the
+color and contrast in faded or otherwise undesirable images.
+Because often the exact cause of the discoloration is unknown, this
+algorithm is based on correcting the problems of color-cast,
+contrast, and saturation loss individually.
 
+\section{Color-Cast Removal}
 
-Color Restore
-The dyes used in the photographic process do not fade evenly. Almost any
-color cast is possible depending on the storage environment and overall
-light exposure. Often there is no way to determine the film or
-photograph type, so a more general approach is required.
+One way to correct color-cast is to create adjustment factors from an
+average of all the pixels in an image:
 
-This color restoration algorithm makes two assumptions: that the image
-is faded to some degree, and also has a color cast. I believe it is safe
-to assume that undesirable images have both of these traits.
+\[ R_{adjust} = (255 - R_{average}) \]
+\[ G_{adjust} = (255 - G_{average}) \]
+\[ B_{adjust} = (255 - B_{average}) \]
 
-The first pass over the image is used to determine the overall color
-cast, which is a simple matter of averaging all the pixel values in the
-image. From this averaged value, we can calculate adjustment factors for
-each RGB component:
+These are then averaged with each pixel in the image:
 
-\begin{align}
-r_{adjust} &= (256.0 / (256 - r_{average})) / sqrt(256.0 / (r_{average} + 1)); \\
-g_{adjust} &= (256.0 / (256 - g_{average})) / sqrt(256.0 / (g_{average} + 1)); \\
-b_{adjust} &= (256.0 / (256 - b_{average})) / sqrt(256.0 / (b_{average} + 1));
-\end{align}
+\[ R_{new} = (R_{old} + R_{adjust}) / 2 \]
+\[ G_{new} = (G_{old} + G_{adjust}) / 2 \]
+\[ B_{new} = (B_{old} + B_{adjust}) / 2 \]
 
-(The +1 is added to prevent division-by-zero errors in the computer.)
+While this corrects the colors cast, the image must be manually adjusted
+to restore contrast and saturation. We aim to do these automatically.
 
-The second pass is to apply these adjustment factors to each pixel in
-the source image:
+\section{Contrast Correction}
 
-\begin{align}
-r &= 255 * pow(r / 255, r_{adjust}); \\
-g &= 255 * pow(g / 255, g_{adjust}); \\
-b &= 255 * pow(b / 255, b_{adjust});
-\end{align}
+The means to restore constrast may be included in the adjustment factors if
+they are changed to power functions instead of simply a color to be averaged.
+The square root ensures that over-correction is not possible, preventing
+blown-out highlights in the restored image.
 
-(These are then clamped to the 0-255 range.)
+\[ R_{adjust} = (256 / (256 - R_{average})) / sqrt(256 / (R_{average} + 1)) \]
+\[ G_{adjust} = (256 / (256 - G_{average})) / sqrt(256 / (G_{average} + 1)) \]
+\[ B_{adjust} = (256 / (256 - B_{average})) / sqrt(256 / (B_{average} + 1)) \]
 
-The power function in the second pass is intended to reverse fading. The
-adjustment factors employ a square root to ensure that over-correction
-does not occur during this step.
+These are then applied to the image the source image:
 
+\[ R_{new} = 255 * pow(R_{old} / 255, R_{adjust}) \]
+\[ G_{new} = 255 * pow(G_{old} / 255, G_{adjust}) \]
+\[ B_{new} = 255 * pow(B_{old} / 255, B_{adjust}) \]
 
-Saturation Equalization
-Through some trial-and-error it was found that the saturation loss in
-faded images could usually be corrected by pushing the most saturated
-color to the maximum, and adjusting the other saturation levels
-accordingly -- essentially equalizing the saturation levels in the image.
+\section{Saturation Equalization}
+
+We make the assumption that the most saturated color in the original faded
+image should be pushed to the maximum value, and other saturation levels pushed in relation to that. This is similar to histogram equalization, which is also
+well-known and easy to implement.
+
+Histogram equalization is performed on saturation information only, with the option of preserving the luminance of the original image. The latter is important to ensure perceptual integrity.
 
 \end{document}
