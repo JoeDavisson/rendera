@@ -15,18 +15,10 @@ of the discoloration is unknown, the problems of color cast, contrast, and
 saturation loss are considered individually.
 
 \section{Color Cast Removal}
-Perhaps the simplest way to correct color cast is to create adjustment
-factors by negating the average of all the pixels in an image:
+Perhaps the simplest way to correct color cast is to simply average each
+pixel by the inverted average of all the pixels:
 
-\[ R_{adjust} = 255 - R_{average} \]
-\[ G_{adjust} = 255 - G_{average} \]
-\[ B_{adjust} = 255 - B_{average} \]
-
-These factors are then averaged with each pixel in the image:
-
-\[ R_{new} = \frac{R_{old} + R_{adjust} }{2} \]
-\[ G_{new} = \frac{G_{old} + G_{adjust} }{2} \]
-\[ B_{new} = \frac{B_{old} + B_{adjust} }{2} \]
+\[ C_{new} = \frac{C_{old} + \left(1.0 - C_{average}\right) }{2} \]
 
 While this serves to reverse the the color cast, the image must be manually
 adjusted to restore contrast and saturation. Therefore we aim to do these
@@ -37,18 +29,12 @@ The means to restore constrast may be included in the adjustment factors,
 combining color cast and contrast correction together. This is accomplished
 with the following formula:
 
-\[ R_{adjust} = \frac{\frac{256} {256 - R_{average}}}
-                     {\sqrt{\frac{256} { R_{average} + 1}}} \]
-\[ G_{adjust} = \frac{\frac{256} {256 - G_{average}}}
-                     {\sqrt{\frac{256} { G_{average} + 1}}} \]
-\[ B_{adjust} = \frac{\frac{256} {256 - B_{average}}}
-                     {\sqrt{\frac{256} { B_{average} + 1}}} \]
+\[ C_{adjust} = \frac{\left(\frac{1.0} {1.0 - C_{average}}\right)}
+                     {\sqrt{\frac{1.0} { C_{average} + 1}}} \]
 
 These adjustment factors are then applied as an exponent to the source pixels:
 
-\[ R_{new} = 255 * (\frac{ R_{old}}{255}) ^ {R_{adjust}} \]
-\[ G_{new} = 255 * (\frac{ G_{old}}{255}) ^ {G_{adjust}} \]
-\[ B_{new} = 255 * (\frac{ B_{old}}{255}) ^ {B_{adjust}} \]
+\[ C_{new} = 1.0 * \left(\frac{ C_{old}}{1.0}\right) ^ {C_{adjust}} \]
 
 \subsection{Additional Contrast Improvement}
 If the contrast needs further improving, a modified version of histogram
@@ -57,12 +43,8 @@ This enhances contrast without corrupting the colors.
 
 The equalization formula becomes:
 
-\[ R_{new} = \frac{R_{popularity} * (\frac{255}{pixel count}) * R_{average}
-                   + R_{old} * (255 - R_{average})}{255} \]
-\[ G_{new} = \frac{G_{popularity} * (\frac{255}{pixel count}) * G_{average}
-                   + G_{old} * (255 - G_{average})}{255} \]
-\[ B_{new} = \frac{B_{popularity} * (\frac{255}{pixel count}) * B_{average}
-                   + B_{old} * (255 - B_{average})}{255} \]
+\[ C_{new} = C_{popularity} * \left(\frac{1.0}{pixel count}\right) * C_{average}
+                   + C_{old} * \left(1.0 - C_{average}\right) \]
 
 \section{Saturation Equalization}
 We make the assumption that the most saturated color in the original faded
