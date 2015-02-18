@@ -15,7 +15,6 @@ of the discoloration is unknown, the problems of color cast, contrast, and
 saturation loss are considered individually.
 
 \section{Color Cast Removal}
-
 Perhaps the simplest way to correct color cast is to create adjustment
 factors by negating the average of all the pixels in an image:
 
@@ -25,16 +24,15 @@ factors by negating the average of all the pixels in an image:
 
 These factors are then averaged with each pixel in the image:
 
-\[ R_{new} = \frac{R_{old} + R_{adjust} } { 2 } \]
-\[ G_{new} = \frac{G_{old} + G_{adjust} } { 2 } \]
-\[ B_{new} = \frac{B_{old} + B_{adjust} } { 2 } \]
+\[ R_{new} = \frac{R_{old} + R_{adjust} }{2} \]
+\[ G_{new} = \frac{G_{old} + G_{adjust} }{2} \]
+\[ B_{new} = \frac{B_{old} + B_{adjust} }{2} \]
 
 While this serves to reverse the the color cast, the image must be manually
 adjusted to restore contrast and saturation. Therefore we aim to do these
 adjustments automatically.
 
 \section{Contrast Correction}
-
 The means to restore constrast may be included in the adjustment factors,
 combining color cast and contrast correction together. This is accomplished
 with the following formula:
@@ -52,8 +50,21 @@ These adjustment factors are then applied as an exponent to the source pixels:
 \[ G_{new} = 255 * (\frac{ G_{old}}{255}) ^ {G_{adjust}} \]
 \[ B_{new} = 255 * (\frac{ B_{old}}{255}) ^ {B_{adjust}} \]
 
-\section{Saturation Equalization}
+\subsection{Additional Contrast Improvement}
+If the contrast needs further improving, a modified version of histogram
+equalization may be used which preserves the overall color cast of the image.
+This enhances contrast without corrupting the colors.
 
+The equalization formula becomes:
+
+\[ R_{new} = \frac{R_{popularity} * (\frac{255}{pixel count}) * R_{average}
+                   + R_{old} * (255 - R_{average})}{255} \]
+\[ G_{new} = \frac{G_{popularity} * (\frac{255}{pixel count}) * G_{average}
+                   + G_{old} * (255 - G_{average})}{255} \]
+\[ B_{new} = \frac{B_{popularity} * (\frac{255}{pixel count}) * B_{average}
+                   + B_{old} * (255 - B_{average})}{255} \]
+
+\section{Saturation Equalization}
 We make the assumption that the most saturated color in the original faded
 image should be pushed to the maximum value, and other saturation levels
 pushed in relation to that. Histogram equalization is capable of doing this 
