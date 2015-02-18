@@ -18,7 +18,7 @@ saturation loss are considered individually.
 Perhaps the simplest way to correct color cast is to simply average each
 pixel by the inverted average of all the pixels:
 
-\[ C_{new} = \frac{C_{old} + \left(1.0 - C_{average}\right) }{2} \]
+\[ C_{new} = \frac{C_{old} + \left(255 - C_{average}\right) }{2} \]
 
 While this serves to reverse the the color cast, the image must be manually
 adjusted to restore contrast and saturation. Therefore we aim to do these
@@ -29,12 +29,12 @@ The means to restore constrast may be included in the adjustment factors,
 combining color cast and contrast correction together. This is accomplished
 with the following formula:
 
-\[ C_{adjust} = \frac{\left(\frac{1.0} {1.0 - C_{average}}\right)}
-                     {\sqrt{\frac{1.0} { C_{average} + 1}}} \]
+\[ C_{adjust} = \frac{\left(\frac{256} {256 - C_{average}}\right)}
+                     {\sqrt{\frac{256} { C_{average} + 1}}} \]
 
 These adjustment factors are then applied as an exponent to the source pixels:
 
-\[ C_{new} = 1.0 * \left(C_{old}\right) ^ {C_{adjust}} \]
+\[ C_{new} = 255 * \left(\frac{C_{old}}{255}\right) ^ {C_{adjust}} \]
 
 \subsection{Additional Contrast Improvement}
 If the contrast needs further improving, a modified version of histogram
@@ -43,8 +43,8 @@ This enhances contrast without corrupting the colors.
 
 The equalization formula becomes:
 
-\[ C_{new} = C_{popularity} * \left(\frac{1.0}{pixel count}\right) * C_{average}
-                   + C_{old} * \left(1.0 - C_{average}\right) \]
+\[ C_{new} = \frac{C_{popularity} * \left(\frac{255}{pixel count}\right) * C_{average}
+                   + C_{old} * \left(255 - C_{average}\right)}{255} \]
 
 \section{Saturation Equalization}
 We make the assumption that the most saturated color in the original faded
