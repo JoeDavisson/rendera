@@ -9,41 +9,41 @@
 \begin{document}
 \maketitle
 
-Some simple algorithms are presented for automatically correcting the
-color and contrast in faded images.  Because often the exact cause of the
-discoloration is unknown, the problems of color cast, contrast, and
+Some algorithms are presented for automatically correcting the
+color and contrast in faded images. Because often the exact nature or cause
+of the discoloration is unknown, the problems of color cast, contrast, and
 saturation loss are considered individually.
 
 \section{Color Cast Removal}
 
-One way to correct color cast is to create adjustment factors from an
-average of all the pixels in an image:
+One way to correct color cast is to simply create adjustment factors by
+negating the average of all the pixels in an image:
 
 \[ R_{adjust} = (255 - R_{average}) \]
 \[ G_{adjust} = (255 - G_{average}) \]
 \[ B_{adjust} = (255 - B_{average}) \]
 
-These are then averaged with each pixel in the image:
+Then average these with each pixel in the image:
 
 \[ R_{new} = (R_{old} + R_{adjust}) / 2 \]
 \[ G_{new} = (G_{old} + G_{adjust}) / 2 \]
 \[ B_{new} = (B_{old} + B_{adjust}) / 2 \]
 
-While this helps to fix the color cast, the image must be manually adjusted
-to restore contrast and saturation. We aim to do these automatically.
+While this serves to reverse the the color cast, the image must be manually
+adjusted to restore contrast and saturation. Therefore we aim to do these
+adjustments automatically.
 
 \section{Contrast Correction}
 
-The means to restore constrast may be included in the adjustment factors if
-they are changed to power factors instead of simply a color to be averaged.
-The square root ensures that over-correction is not possible, preventing
-blown-out highlights in the restored image.
+The means to restore constrast may be included in the adjustment factors,
+combining color cast and contrast correction together. This is accomplished
+with the following formula:
 
 \[ R_{adjust} = (256 / (256 - R_{average})) / sqrt(256 / (R_{average} + 1)) \]
 \[ G_{adjust} = (256 / (256 - G_{average})) / sqrt(256 / (G_{average} + 1)) \]
 \[ B_{adjust} = (256 / (256 - B_{average})) / sqrt(256 / (B_{average} + 1)) \]
 
-These are then applied to the source image:
+These adjustment factors are then applied to the source image as a power factor:
 
 \[ R_{new} = 255 * pow(R_{old} / 255, R_{adjust}) \]
 \[ G_{new} = 255 * pow(G_{old} / 255, G_{adjust}) \]
@@ -58,3 +58,4 @@ well-known and easy to implement.
 Histogram equalization is performed on saturation information only, with the option of preserving the luminance of the original image. The latter is important to ensure perceptual integrity.
 
 \end{document}
+
