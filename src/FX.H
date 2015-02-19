@@ -33,6 +33,7 @@ namespace FX
   void invertAlpha();
   void autoCorrect();
   void correctionMatrix();
+  void restore();
   void removeDust();
   void desaturate();
   void colorize();

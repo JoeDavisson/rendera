@@ -564,58 +564,6 @@ namespace InvertAlpha
   }
 }
 
-// Corrects uneven dye fading in photographs (especially when there is a severe
-// color cast, such as when one of the dyes have faded almost completely).
-//
-// Sometimes works better before or after the restore filter depending on
-// the image.
-namespace CorrectionMatrix
-{
-  void apply()
-  {
-    Gui::showProgress(bmp->h);
-
-    for(int y = bmp->ct; y <= bmp->cb; y++)
-    {
-      int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
-      {
-        const int c = bmp->getpixel(x, y);
-
-        rgba_type rgba = getRgba(c);
-
-        int r = rgba.r;
-        int g = rgba.g;
-        int b = rgba.b;
-        int l = getl(c);
-
-        // correction matrix
-        int ra = r;
-        int ga = (r * 4 + g * 8 + b * 1) / 13;
-        int ba = (r * 2 + g * 4 + b * 8) / 14;
-
-        ra = std::max(std::min(ra, 255), 0);
-        ga = std::max(std::min(ga, 255), 0);
-        ba = std::max(std::min(ba, 255), 0);
-
-        *p++ = Blend::keepLum(makeRgba(ra, ga, ba, rgba.a), l);
-      }
-
-      if(Gui::updateProgress(y) < 0)
-        return;
-    }
-
-    Gui::hideProgress();
-  }
-
-  void begin()
-  {
-    pushUndo();
-    apply();
-  }
-}
-
 // This algorithm assumes a picture both has a color cast and is faded.
 // In most cases (with a good scan) it can restore nearly all the color
 // to a faded photograph.
@@ -749,6 +697,70 @@ namespace AutoCorrect
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();
     Items::dialog->end();
+  }
+}
+
+namespace Restore
+{
+  void apply()
+  {
+//    SP<Palette> pal = new Palette();
+  }
+
+  void begin()
+  {
+  }
+}
+
+// Corrects uneven dye fading in photographs (especially when there is a severe
+// color cast, such as when one of the dyes have faded almost completely).
+//
+// Sometimes works better before or after the restore filter depending on
+// the image.
+namespace CorrectionMatrix
+{
+  void apply()
+  {
+    Gui::showProgress(bmp->h);
+
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = bmp->row[y] + bmp->cl;
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        const int c = bmp->getpixel(x, y);
+
+        rgba_type rgba = getRgba(c);
+
+        int r = rgba.r;
+        int g = rgba.g;
+        int b = rgba.b;
+        int l = getl(c);
+
+        // correction matrix
+        int ra = r;
+        int ga = (r * 4 + g * 8 + b * 1) / 13;
+        int ba = (r * 2 + g * 4 + b * 8) / 14;
+
+        ra = std::max(std::min(ra, 255), 0);
+        ga = std::max(std::min(ga, 255), 0);
+        ba = std::max(std::min(ba, 255), 0);
+
+        *p++ = Blend::keepLum(makeRgba(ra, ga, ba, rgba.a), l);
+      }
+
+      if(Gui::updateProgress(y) < 0)
+        return;
+    }
+
+    Gui::hideProgress();
+  }
+
+  void begin()
+  {
+    pushUndo();
+    apply();
   }
 }
 
@@ -2365,6 +2377,11 @@ void FX::autoCorrect()
 void FX::correctionMatrix()
 {
   CorrectionMatrix::begin();
+}
+
+void FX::restore()
+{
+  Restore::begin();
 }
 
 void FX::removeDust()
