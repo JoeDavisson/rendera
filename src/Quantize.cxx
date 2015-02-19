@@ -188,7 +188,7 @@ namespace
 // This version saves computation time by reducing the color table size
 // (and reducing it further if an image is very colorful, in which case color
 // accuracy is not as important).
-void Quantize::pca(Bitmap *src, int size)
+void Quantize::pca(Bitmap *src, Palette *pal, int size)
 {
   // popularity histogram
   Octree histogram;
@@ -357,23 +357,23 @@ void Quantize::pca(Bitmap *src, int size)
   {
     if(colors[i].active)
     {
-      Project::palette->data[index] =
+      pal->data[index] =
         makeRgb((int)colors[i].r, (int)colors[i].g, (int)colors[i].b);
 
       index++;
     }
   }
 
-  Project::palette->max = index;
+  pal->max = index;
 
   // sort palette
-  Project::palette->sort();
+  pal->sort();
 
   // stretch palette
-//  if(Project::palette->max != size)
+//  if(pal->max != size)
 //  {
-//    stretchPalette(Project::palette->data, Project::palette->max, size);
-//    Project::palette->max = size;
+//    stretchPalette(pal->data, pal->max, size);
+//    pal->max = size;
 //  }
 
   // redraw palette widget

@@ -22,10 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define QUANTIZE_H
 
 class Bitmap;
+class Palette;
 
 namespace Quantize
 {
-  void pca(Bitmap *, int);
+  void pca(Bitmap *, Palette *, int);
 }
 
 #endif

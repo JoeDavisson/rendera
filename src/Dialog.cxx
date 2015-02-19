@@ -294,7 +294,7 @@ namespace MakePalette
       return;
 
     Items::dialog->hide();
-    Quantize::pca(Project::bmp, atoi(Items::colors->value()));
+    Quantize::pca(Project::bmp, Project::palette.get(), atoi(Items::colors->value()));
   }
 
   void quit()
