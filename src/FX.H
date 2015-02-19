@@ -31,7 +31,7 @@ namespace FX
   void rotateHue();
   void invert();
   void invertAlpha();
-  void restore();
+  void autoCorrect();
   void correctionMatrix();
   void removeDust();
   void desaturate();

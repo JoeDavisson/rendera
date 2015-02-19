@@ -405,7 +405,7 @@ namespace RotateHue
   {
     DialogWindow *dialog;
     InputInt *angle;
-    CheckBox *preserve;
+    CheckBox *preserve_lum;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -413,7 +413,7 @@ namespace RotateHue
   void apply(int amount)
   {
     const int hh = amount * 4.277;
-    const bool keep_lum = Items::preserve->value();
+    const bool keep_lum = Items::preserve_lum->value();
 
     Gui::showProgress(bmp->h);
 
@@ -492,8 +492,8 @@ namespace RotateHue
     Items::angle->maximum_size(4);
     Items::angle->value("60");
     Items::angle->center();
-    Items::preserve = new CheckBox(Items::dialog, 0, y1, 16, 16, "Preserve Luminance", 0);
-    Items::preserve->center();
+    Items::preserve_lum = new CheckBox(Items::dialog, 0, y1, 16, 16, "Preserve Luminance", 0);
+    Items::preserve_lum->center();
     y1 += 16 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
@@ -619,15 +619,14 @@ namespace CorrectionMatrix
 // This algorithm assumes a picture both has a color cast and is faded.
 // In most cases (with a good scan) it can restore nearly all the color
 // to a faded photograph.
-namespace Restore
+namespace AutoCorrect
 {
   namespace Items
   {
     DialogWindow *dialog;
     CheckBox *normalize;
     CheckBox *invert;
-    CheckBox *correct;
-    CheckBox *color_only;
+    CheckBox *preserve_lum;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -639,7 +638,7 @@ namespace Restore
     double bb = 0;
     int count = 0;
 
-    const bool keep_lum = Items::color_only->value();
+    const bool keep_lum = Items::preserve_lum->value();
 
     // determine overall color cast
     for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -717,8 +716,6 @@ namespace Restore
 
     if(Items::invert->value())
       Invert::apply();
-    if(Items::correct->value())
-      CorrectionMatrix::apply();
   }
 
   void quit()
@@ -736,20 +733,17 @@ namespace Restore
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(256, 0, "Restore");
+    Items::dialog = new DialogWindow(256, 0, "Auto-Correct");
     Items::normalize = new CheckBox(Items::dialog, 0, y1, 16, 16, "Normalize First", 0);
     y1 += 16 + 8;
     Items::normalize->value(1);
     Items::normalize->center();
     Items::invert = new CheckBox(Items::dialog, 0, y1, 16, 16, "Invert First", 0);
-    y1 += 16 + 8;
     Items::invert->center();
-    Items::correct = new CheckBox(Items::dialog, 8, y1, 16, 16, "Use Correction Matrix", 0);
     y1 += 16 + 8;
-    Items::correct->center();
-    Items::color_only = new CheckBox(Items::dialog, 8, y1, 16, 16, "Affect Color Only", 0);
+    Items::preserve_lum = new CheckBox(Items::dialog, 8, y1, 16, 16, "Preserve Luminance", 0);
     y1 += 16 + 8;
-    Items::color_only->center();
+    Items::preserve_lum->center();
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
@@ -2316,7 +2310,7 @@ namespace Descreen
 void FX::init()
 {
   RotateHue::init();
-  Restore::init();
+  AutoCorrect::init();
   RemoveDust::init();
   ApplyPalette::init();
   StainedGlass::init();
@@ -2363,9 +2357,9 @@ void FX::invertAlpha()
   InvertAlpha::begin();
 }
 
-void FX::restore()
+void FX::autoCorrect()
 {
-  Restore::begin();
+  AutoCorrect::begin();
 }
 
 void FX::correctionMatrix()
