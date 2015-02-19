@@ -330,7 +330,7 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
       p += overscroll * 2;
     }
   }
-  else
+  else if(bytes == 1)
   {
     while(cinfo.output_scanline < cinfo.output_height)
     {
@@ -345,6 +345,13 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
 
       p += overscroll * 2;
     }
+  }
+  else
+  {
+    jpeg_finish_decompress(&cinfo);
+    jpeg_destroy_decompress(&cinfo);
+
+    return 0;
   }
 
   jpeg_finish_decompress(&cinfo);
