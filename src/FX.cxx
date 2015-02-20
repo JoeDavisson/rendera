@@ -42,6 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Math.H"
 #include "Palette.H"
 #include "Project.H"
+#include "Quantize.H"
 #include "Separator.H"
 #include "Undo.H"
 #include "View.H"
@@ -702,13 +703,94 @@ namespace AutoCorrect
 
 namespace Restore
 {
+  namespace
+  {
+    inline int level(const int &value, const int &max, const float &gamma)
+    {
+      int temp = 255 * powf((float)((value * max) / 255) / 255, gamma);
+      temp = std::max(std::min(temp, 255), 0);
+
+      return temp;
+    }
+
+    float percentile(int c, float f)
+    {
+      const rgba_type rgba = getRgba(c);
+      int n = 0;
+
+      if(rgba.r > 0)
+        n++;
+      if(rgba.g > 0)
+        n++;
+      if(rgba.b > 0)
+        n++;
+
+      int nf = (int)(n * f);
+      int m = -1;
+      int k = 0;
+
+      while(k < nf)
+      {
+        m++;
+        k = 0;
+
+        if(rgba.r > 0 && rgba.r <= m)
+          k++;
+        if(rgba.g > 0 && rgba.g <= m)
+          k++;
+        if(rgba.b > 0 && rgba.b <= m)
+          k++;
+      }
+
+      return (float)m;
+    }
+
+    void colormap(Bitmap *src, Palette *pal,
+                  float alpha[3], int m[3], float/* top*/, float/* bottom*/)
+    {
+      // make copy
+      int w = src->cw;
+      int h = src->ch;
+      Bitmap temp(w, h);
+      src->blit(&temp, src->cl, src->ct, 0, 0, w, h);
+
+      // trial restore
+      for(int y = 0; y < h; y++)
+      {
+        int *p = temp.row[y];
+
+        for(int x = 0; x < w; x++)
+        {
+          const rgba_type rgba = getRgba(*p);
+          const int r = level(rgba.r, m[0], alpha[0]);
+          const int g = level(rgba.g, m[1], alpha[1]);
+          const int b = level(rgba.b, m[2], alpha[2]);
+
+          *p++ = makeRgb(r, g, b);
+        }
+      }
+
+      // quantize
+      Quantize::pca(&temp, pal, 256); 
+
+      temp.blit(src, 0, 0, src->cl, src->ct, w, h);
+    }
+  }
+
   void apply()
   {
-//    SP<Palette> pal = new Palette();
+    SP<Palette> pal = new Palette();
+
+    int m[3] = { 128, 128, 128 };
+    float alpha[3] = { .4545f, .4545f, .4545f };
+
+    colormap(bmp, pal.get(), alpha, m, 0.1f, 1.0f);
   }
 
   void begin()
   {
+//    pushUndo();
+//    apply();
   }
 }
 
