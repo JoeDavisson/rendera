@@ -703,6 +703,7 @@ namespace AutoCorrect
 
 namespace Restore
 {
+/*
   namespace
   {
     inline int levels(const int &value, const int &max, const float &gamma)
@@ -771,7 +772,6 @@ namespace Restore
       }
 
       // quantize
-      temp.blit(src, 0, 0, src->cl, src->ct, w, h);
       Quantize::pca(&temp, pal, 256); 
 
       // get color range
@@ -793,13 +793,12 @@ namespace Restore
       }
     }
   }
+*/
 
   void apply()
   {
+/*
     SP<Palette> pal = new Palette();
-
-//    float init_alpha[3] = { 0, 0, 0 };
-//    int init_m[3] = { 0, 0, 0 };
 
     // get initial lower/upper percentiles
     float top = 1.0f;
@@ -810,12 +809,119 @@ namespace Restore
     float color_range[3];
 
     colormap(color_range, bmp, pal.get(), temp_alpha, temp_m, top, bottom);
+
+    // get initial m and alpha
+    float init_alpha[3] = { 0, 0, 0 };
+    int init_m[3] = { 0, 0, 0 };
+
+    for(int i = 0; i < 3; i++)
+    {
+      float hi, lo;
+      hi = lo = color_range[i];
+      init_m[i] = exp((log(top) * log(lo) - log(bottom) * log(hi))
+                     / (log(top) - log(bottom)));
+      init_alpha[i] = (log(lo) - log(init_m[i])) / log(bottom);
+    }
+
+    // iterate to obtain correct m and alpha
+    float alpha[3];
+    int m[3];
+
+    for(int i = 0; i < 3; i++)
+    {
+      alpha[i] = init_alpha[i];
+      m[i] = init_m[i];
+    }
+
+    float d_alpha[3] = { 1.0f, 1.0f, 1.0f };
+    int d_m[3] = { 0, 0, 0 };
+    int iter = 0;
+
+    while(std::max(std::abs(d_alpha[0]),
+                   std::max(std::abs(d_alpha[1]),
+                            std::abs(d_alpha[2]))) > 0.02f)
+    {
+      iter++;
+      if(iter == 10)
+        break;
+
+      for(int i = 0; i < 3; i++)
+      {
+        //if(alpha[i] < 0.1f || alpha[i] > 10.0f)
+        //{
+          // image has deteriorated too far to restore
+        //}
+
+        colormap(color_range, bmp, pal.get(), alpha, m, top, bottom);
+
+        for(int i = 0; i < 3; i++)
+        {
+          float hi, lo;
+          hi = lo = color_range[i];
+          d_alpha[i] = alpha[i] * alpha[i] * (lo / (255 * bottom) - 1)
+                       / log(bottom);
+          d_m[i] = alpha[i] * (hi - 255 * top);
+          if(std::abs(d_alpha[i]) > 0.2f * alpha[i])
+            d_alpha[i] = 0.2f * alpha[i] * d_alpha[i] / std::abs(d_alpha[i]);
+          alpha[i] += d_alpha[i];
+          m[i] += d_m[i];
+        }
+      }
+    }
+
+    // use original values if loop failed to converge
+    if(iter == 10)
+    {
+      // image has deteriorated
+      for(int i = 0; i < 3; i++)
+      {
+        alpha[i] = init_alpha[i];
+        m[i] = init_m[i];
+      }
+    }
+
+    // get colormap of  restore
+    int w = src->cw;
+    int h = src->ch;
+    Bitmap temp(w, h);
+    src->blit(&temp, src->cl, src->ct, 0, 0, w, h);
+
+    for(int y = 0; y < h; y++)
+    {
+      int *p = temp.row[y];
+
+      for(int x = 0; x < w; x++)
+        {
+          const rgba_type rgba = getRgba(*p);
+          const int r = levels(rgba.r, m[0], alpha[0]);
+          const int g = levels(rgba.g, m[1], alpha[1]);
+          const int b = levels(rgba.b, m[2], alpha[2]);
+
+          *p++ = makeRgb(r, g, b);
+        }
+      }
+    }
+
+    // quantize
+    Quantize::pca(&temp, pal->get(), 256); 
+
+    float newc[3] = { 0, 0, 0 };
+
+    for(int i = 0; i < 3; i++)
+    {
+      const rgba_type rgba = getRgba(pal->data[i]);
+      newc[i] = rgba
+    }
+    */
+
+   
+
   }
 
   void begin()
   {
-    pushUndo();
-    apply();
+//    pushUndo();
+//    apply();
   }
 }
 
