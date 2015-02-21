@@ -705,7 +705,7 @@ namespace Restore
 {
   namespace
   {
-    inline int level(const int &value, const int &max, const float &gamma)
+    inline int levels(const int &value, const int &max, const float &gamma)
     {
       int temp = 255 * powf((float)((value * max) / 255) / 255, gamma);
       temp = std::max(std::min(temp, 255), 0);
@@ -745,8 +745,8 @@ namespace Restore
       return (float)m;
     }
 
-    void colormap(Bitmap *src, Palette *pal,
-                  float alpha[3], int m[3], float/* top*/, float/* bottom*/)
+    void colormap(float color_range[3], Bitmap *src, Palette *pal,
+                  float alpha[3], int m[3], float top, float bottom)
     {
       // make copy
       int w = src->cw;
@@ -762,18 +762,35 @@ namespace Restore
         for(int x = 0; x < w; x++)
         {
           const rgba_type rgba = getRgba(*p);
-          const int r = level(rgba.r, m[0], alpha[0]);
-          const int g = level(rgba.g, m[1], alpha[1]);
-          const int b = level(rgba.b, m[2], alpha[2]);
+          const int r = levels(rgba.r, m[0], alpha[0]);
+          const int g = levels(rgba.g, m[1], alpha[1]);
+          const int b = levels(rgba.b, m[2], alpha[2]);
 
           *p++ = makeRgb(r, g, b);
         }
       }
 
       // quantize
+      temp.blit(src, 0, 0, src->cl, src->ct, w, h);
       Quantize::pca(&temp, pal, 256); 
 
-      temp.blit(src, 0, 0, src->cl, src->ct, w, h);
+      // get color range
+      int r, g, b;
+
+      for(int i = 0; i < 256; i++)
+      {
+        const rgba_type rgba = getRgba(pal->data[i]);
+        r = percentile(rgba.r, top);
+        r = percentile(rgba.r, bottom);
+        g = percentile(rgba.g, top);
+        g = percentile(rgba.g, bottom);
+        b = percentile(rgba.b, top);
+        b = percentile(rgba.b, bottom);
+
+        color_range[0] = r;
+        color_range[1] = g;
+        color_range[2] = b;
+      }
     }
   }
 
@@ -781,16 +798,24 @@ namespace Restore
   {
     SP<Palette> pal = new Palette();
 
-    int m[3] = { 128, 128, 128 };
-    float alpha[3] = { .4545f, .4545f, .4545f };
+//    float init_alpha[3] = { 0, 0, 0 };
+//    int init_m[3] = { 0, 0, 0 };
 
-    colormap(bmp, pal.get(), alpha, m, 0.1f, 1.0f);
+    // get initial lower/upper percentiles
+    float top = 1.0f;
+    float bottom = 0.1f;
+
+    float temp_alpha[3] = { 1.0f, 1.0f, 1.0f };
+    int temp_m[3] = { 255, 255, 255 };
+    float color_range[3];
+
+    colormap(color_range, bmp, pal.get(), temp_alpha, temp_m, top, bottom);
   }
 
   void begin()
   {
-//    pushUndo();
-//    apply();
+    pushUndo();
+    apply();
   }
 }
 
