@@ -702,6 +702,7 @@ namespace AutoCorrect
 }
 
 // implementation of Geoff Daniell's photo restoration algorithm
+// see original python source in redist directory
 namespace Restore
 {
   // for storing floating-point adjustment factors etc
