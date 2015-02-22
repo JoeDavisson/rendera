@@ -703,219 +703,113 @@ namespace AutoCorrect
 
 namespace Restore
 {
-/*
-  namespace
+  // for storing floating-point adjustment factors etc
+  struct triplet
   {
-    inline int levels(const int &value, const int &max, const float &gamma)
+    float r, g, b;
+  };
+
+  // this stores one channel from a palette into the destination buffer
+  void getPaletteSlice(const Palette *pal, const int channel, int *dest)
+  {
+    for(int i = 0; i < 256; i++)
     {
-      int temp = 255 * powf((float)((value * max) / 255) / 255, gamma);
-      temp = std::max(std::min(temp, 255), 0);
+      const rgba_type rgba = getRgba(pal->data[i]);
+      int index = 0;
 
-      return temp;
-    }
-
-    float percentile(int c, float f)
-    {
-      const rgba_type rgba = getRgba(c);
-      int n = 0;
-
-      if(rgba.r > 0)
-        n++;
-      if(rgba.g > 0)
-        n++;
-      if(rgba.b > 0)
-        n++;
-
-      int nf = (int)(n * f);
-      int m = -1;
-      int k = 0;
-
-      while(k < nf)
+      switch(channel)
       {
-        m++;
-        k = 0;
-
-        if(rgba.r > 0 && rgba.r <= m)
-          k++;
-        if(rgba.g > 0 && rgba.g <= m)
-          k++;
-        if(rgba.b > 0 && rgba.b <= m)
-          k++;
-      }
-
-      return (float)m;
-    }
-
-    void colormap(float color_range[3], Bitmap *src, Palette *pal,
-                  float alpha[3], int m[3], float top, float bottom)
-    {
-      // make copy
-      int w = src->cw;
-      int h = src->ch;
-      Bitmap temp(w, h);
-      src->blit(&temp, src->cl, src->ct, 0, 0, w, h);
-
-      // trial restore
-      for(int y = 0; y < h; y++)
-      {
-        int *p = temp.row[y];
-
-        for(int x = 0; x < w; x++)
-        {
-          const rgba_type rgba = getRgba(*p);
-          const int r = levels(rgba.r, m[0], alpha[0]);
-          const int g = levels(rgba.g, m[1], alpha[1]);
-          const int b = levels(rgba.b, m[2], alpha[2]);
-
-          *p++ = makeRgb(r, g, b);
-        }
-      }
-
-      // quantize
-      Quantize::pca(&temp, pal, 256); 
-
-      // get color range
-      int r, g, b;
-
-      for(int i = 0; i < 256; i++)
-      {
-        const rgba_type rgba = getRgba(pal->data[i]);
-        r = percentile(rgba.r, top);
-        r = percentile(rgba.r, bottom);
-        g = percentile(rgba.g, top);
-        g = percentile(rgba.g, bottom);
-        b = percentile(rgba.b, top);
-        b = percentile(rgba.b, bottom);
-
-        color_range[0] = r;
-        color_range[1] = g;
-        color_range[2] = b;
+        case 0:
+          dest[index++] = rgba.r;
+          break;
+        case 1:
+          dest[index++] = rgba.g;
+          break;
+        case 2:
+          dest[index++] = rgba.b;
+          break;
       }
     }
   }
-*/
 
-  void apply()
+  // adjust scale/gamma of a value
+  inline int levels_value(const int &value,
+                           const int &in_min, const int &in_max,
+                           const float &gamma,
+                           const int &out_min, const int &out_max)
   {
-/*
-    SP<Palette> pal = new Palette();
+            int v = (value - in_min) / ((in_max - in_min) + 1);
+            v = 255 * powf((float)v / 255, gamma);
+            v = v * (out_max - out_min) + out_min;
+            v = std::max(std::min(v, 255), 0);
 
-    // get initial lower/upper percentiles
-    float top = 1.0f;
-    float bottom = 0.1f;
+            return v;
+  }
 
-    float temp_alpha[3] = { 1.0f, 1.0f, 1.0f };
-    int temp_m[3] = { 255, 255, 255 };
-    float color_range[3];
-
-    colormap(color_range, bmp, pal.get(), temp_alpha, temp_m, top, bottom);
-
-    // get initial m and alpha
-    float init_alpha[3] = { 0, 0, 0 };
-    int init_m[3] = { 0, 0, 0 };
-
-    for(int i = 0; i < 3; i++)
+  // this emulates the levels function in GIMP
+  void levels(Bitmap *temp,
+              const int channel,
+              const int in_min, const int in_max,
+              const float gamma,
+              const int out_min, const int out_max)
+  {
+    for(int y = temp->ct; y < temp->cb; y++)
     {
-      float hi, lo;
-      hi = lo = color_range[i];
-      init_m[i] = exp((log(top) * log(lo) - log(bottom) * log(hi))
-                     / (log(top) - log(bottom)));
-      init_alpha[i] = (log(lo) - log(init_m[i])) / log(bottom);
-    }
+      int *p = temp->row[y] + temp->cl;
 
-    // iterate to obtain correct m and alpha
-    float alpha[3];
-    int m[3];
-
-    for(int i = 0; i < 3; i++)
-    {
-      alpha[i] = init_alpha[i];
-      m[i] = init_m[i];
-    }
-
-    float d_alpha[3] = { 1.0f, 1.0f, 1.0f };
-    int d_m[3] = { 0, 0, 0 };
-    int iter = 0;
-
-    while(std::max(std::abs(d_alpha[0]),
-                   std::max(std::abs(d_alpha[1]),
-                            std::abs(d_alpha[2]))) > 0.02f)
-    {
-      iter++;
-      if(iter == 10)
-        break;
-
-      for(int i = 0; i < 3; i++)
+      for(int x = temp->cl; x < temp->cr; x++)
       {
-        //if(alpha[i] < 0.1f || alpha[i] > 10.0f)
-        //{
-          // image has deteriorated too far to restore
-        //}
+        const rgba_type rgba = getRgba(*p);
+        int r = rgba.r;
+        int g = rgba.g;
+        int b = rgba.b;
 
-        colormap(color_range, bmp, pal.get(), alpha, m, top, bottom);
-
-        for(int i = 0; i < 3; i++)
+        switch(channel)
         {
-          float hi, lo;
-          hi = lo = color_range[i];
-          d_alpha[i] = alpha[i] * alpha[i] * (lo / (255 * bottom) - 1)
-                       / log(bottom);
-          d_m[i] = alpha[i] * (hi - 255 * top);
-          if(std::abs(d_alpha[i]) > 0.2f * alpha[i])
-            d_alpha[i] = 0.2f * alpha[i] * d_alpha[i] / std::abs(d_alpha[i]);
-          alpha[i] += d_alpha[i];
-          m[i] += d_m[i];
+          case 0:
+            r = levels_value(r, in_min, in_max, gamma, out_min, out_max);
+            break;
+          case 1:
+            g = levels_value(g, in_min, in_max, gamma, out_min, out_max);
+            break;
+          case 2:
+            b = levels_value(b, in_min, in_max, gamma, out_min, out_max);
+            break;
         }
+
+        *p++ = makeRgb(r, g, b);
       }
     }
+  }
 
-    // use original values if loop failed to converge
-    if(iter == 10)
+  // find m through successive approximation
+  float percentile(int *c, const int max, const float f)
+  {
+    int n = 0;
+
+    for(int i = 0; i < max; i++)
     {
-      // image has deteriorated
-      for(int i = 0; i < 3; i++)
+      if(c[i] > 0)
+        n++;
+    }
+
+    const int nf = (int)(n * f);
+    int m = -1;
+    int k = 0;
+
+    while(k < nf)
+    {
+      m++;
+      k = 0;
+
+      for(int i = 0; i < max; i++)
       {
-        alpha[i] = init_alpha[i];
-        m[i] = init_m[i];
+        if(c[i] > 0 && c[i] <= m)
+          k++;
       }
     }
 
-    // get colormap of  restore
-    int w = src->cw;
-    int h = src->ch;
-    Bitmap temp(w, h);
-    src->blit(&temp, src->cl, src->ct, 0, 0, w, h);
-
-    for(int y = 0; y < h; y++)
-    {
-      int *p = temp.row[y];
-
-      for(int x = 0; x < w; x++)
-        {
-          const rgba_type rgba = getRgba(*p);
-          const int r = levels(rgba.r, m[0], alpha[0]);
-          const int g = levels(rgba.g, m[1], alpha[1]);
-          const int b = levels(rgba.b, m[2], alpha[2]);
-
-          *p++ = makeRgb(r, g, b);
-        }
-      }
-    }
-
-    // quantize
-    Quantize::pca(&temp, pal->get(), 256); 
-
-    float newc[3] = { 0, 0, 0 };
-
-    for(int i = 0; i < 3; i++)
-    {
-      const rgba_type rgba = getRgba(pal->data[i]);
-      newc[i] = rgba
-    }
-    */
-
-   
-
+    return (float)m;
   }
 
   void begin()
