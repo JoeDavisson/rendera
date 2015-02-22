@@ -59,6 +59,7 @@ public:
   void mirror();
   void flip();
   void fastStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);
+  void scale(Bitmap *);
   void invert();
   void fill(int, int, int, int);
 };

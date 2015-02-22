@@ -859,6 +859,100 @@ void Bitmap::fastStretch(Bitmap *dest,
   }
 }
 
+void Bitmap::scale(Bitmap *dest)
+{
+  const int sx = cl;
+  const int sy = ct;
+  const int sw = cw;
+  const int sh = ch;
+  const int dx = dest->cl;
+  const int dy = dest->ct;
+  const int dw = dest->cw;
+  const int dh = dest->ch;
+
+  const float ax = ((float)sw / dw);
+  const float ay = ((float)sh / dh);
+
+  if(sw < 1 || sh < 1)
+    return;
+
+  if(dw < 1 || dh < 1)
+    return;
+
+  for(int y = 0; y < dh; y++) 
+  {
+    int *d = dest->row[dy + y] + dx;
+    const float vv = (y * ay);
+    const int v1 = vv;
+    const float v = vv - v1;
+
+    if(sy + v1 >= h - 1)
+      break;
+
+    int v2 = v1 + 1;
+
+    if(v2 >= sh)
+    {
+      v2--;
+    }
+
+    int *c[4];
+    c[0] = c[1] = row[sy + v1] + sx;
+    c[2] = c[3] = row[sy + v2] + sx;
+
+    for(int x = 0; x < dw; x++) 
+    {
+      const float uu = (x * ax);
+      const int u1 = uu;
+      const float u = uu - u1;
+
+      if(sx + u1 >= w - 1)
+        break;
+
+      int u2 = u1 + 1;
+
+      if(u2 >= sw)
+      {
+        u2--;
+      }
+
+      c[0] += u1;
+      c[1] += u2;
+      c[2] += u1;
+      c[3] += u2;
+
+      float f[4];
+
+      f[0] = (1.0f - u) * (1.0f - v);
+      f[1] = u * (1.0f - v);
+      f[2] = (1.0f - u) * v;
+      f[3] = u * v;
+
+      float r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f;
+
+      for(int i = 0; i < 4; i++)
+      {
+        rgba_type rgba = getRgba(*c[i]);
+        r += (float)Gamma::fix(rgba.r) * f[i];
+        g += (float)Gamma::fix(rgba.g) * f[i];
+        b += (float)Gamma::fix(rgba.b) * f[i];
+        a += rgba.a * f[i];
+      }
+
+      r = Gamma::unfix((int)r);
+      g = Gamma::unfix((int)g);
+      b = Gamma::unfix((int)b);
+
+      *d++ = makeRgba((int)r, (int)g, (int)b, (int)a);
+
+      c[0] -= u1;
+      c[1] -= u2;
+      c[2] -= u1;
+      c[3] -= u2;
+    }
+  }
+}
+
 void Bitmap::invert()
 {
   for(int i = 0; i < w * h; i++)

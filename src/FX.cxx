@@ -701,49 +701,73 @@ namespace AutoCorrect
   }
 }
 
+// implementation of Geoff Daniell's photo restoration algorithm
 namespace Restore
 {
   // for storing floating-point adjustment factors etc
-  struct triplet
+  class Triplet
   {
-    float r, g, b;
+  public:
+    Triplet(float x, float y, float z)
+    {
+      set(x, y, z);
+    }
+
+    ~Triplet()
+    {
+    }
+
+    void set(float x, float y, float z)
+    {
+      value[0] = x;
+      value[1] = y;
+      value[2] = z;
+    }
+
+    void copy(Triplet src)
+    {
+      value[0] = src.value[0];
+      value[1] = src.value[1];
+      value[2] = src.value[2];
+    }
+
+    float value[3];
   };
 
   // this stores one channel from a palette into the destination buffer
-  void getPaletteSlice(const Palette *pal, const int channel, int *dest)
+  void getSlice(const Palette *pal, const int channel, int *dest)
   {
     for(int i = 0; i < 256; i++)
     {
       const rgba_type rgba = getRgba(pal->data[i]);
-      int index = 0;
 
       switch(channel)
       {
         case 0:
-          dest[index++] = rgba.r;
+          dest[i] = rgba.r;
           break;
         case 1:
-          dest[index++] = rgba.g;
+          dest[i] = rgba.g;
           break;
         case 2:
-          dest[index++] = rgba.b;
+          dest[i] = rgba.b;
           break;
       }
     }
   }
 
-  // adjust scale/gamma of a value
+  // scale/gamma
   inline int levels_value(const int &value,
-                           const int &in_min, const int &in_max,
-                           const float &gamma,
-                           const int &out_min, const int &out_max)
+                          const int &in_min, const int &in_max,
+                          const float &gamma,
+                          const int &out_min, const int &out_max)
   {
-            int v = (value - in_min) / ((in_max - in_min) + 1);
-            v = 255 * powf((float)v / 255, gamma);
+            float v = (float)(value - in_min) / ((in_max - in_min) + 1);
+            v = powf(v, gamma);
             v = v * (out_max - out_min) + out_min;
-            v = std::max(std::min(v, 255), 0);
+            v = std::max(std::min((int)v, 255), 0);
 
-            return v;
+            return (int)v;
   }
 
   // this emulates the levels function in GIMP
@@ -783,11 +807,11 @@ namespace Restore
   }
 
   // find m through successive approximation
-  float percentile(int *c, const int max, const float f)
+  float percentile(int *c, const float f)
   {
     int n = 0;
 
-    for(int i = 0; i < max; i++)
+    for(int i = 0; i < 256; i++)
     {
       if(c[i] > 0)
         n++;
@@ -802,7 +826,7 @@ namespace Restore
       m++;
       k = 0;
 
-      for(int i = 0; i < max; i++)
+      for(int i = 0; i < 256; i++)
       {
         if(c[i] > 0 && c[i] <= m)
           k++;
@@ -812,10 +836,248 @@ namespace Restore
     return (float)m;
   }
 
+  struct color_range_type
+  {
+    float hi[3], lo[3];
+  };
+
+  struct color_range_type colormap(Bitmap *src, Triplet alpha, Triplet m, float top, float bot)
+  {
+    // duplicate image
+    Bitmap small_copy(src->w, src->h);
+    src->blit(&small_copy, 0, 0, 0, 0, src->w, src->h);
+
+    // restore
+    for(int i = 0; i < 3; i++)
+      levels(&small_copy, i, 0, m.value[i], alpha.value[i], 0, 255);
+
+    // get new colormap
+    Palette pal;
+    Quantize::pca(&small_copy, &pal, 256);
+
+    // return color range
+    int slice[256];
+    color_range_type color_range;
+
+    for(int i = 0; i < 3; i++)
+    {
+      getSlice(&pal, i, slice);
+      color_range.hi[i] = percentile(slice, top);
+      color_range.lo[i] = percentile(slice, bot);
+    }
+
+    return color_range;
+  }
+
+  void apply()
+  {
+    // make small copy
+    Bitmap small_image(bmp->w / 5, bmp->h / 5);
+    bmp->scale(&small_image);
+
+    // get initial percentiles
+    float top = 1.0f;
+    float bot = 0.1f;
+
+    struct color_range_type color_range;
+    color_range = colormap(&small_image,
+                           Triplet(1.0f, 1.0f, 1.0f),
+                           Triplet(255, 255, 255),
+                           top,
+                           bot);
+
+    // get initial m and alpha
+    Triplet init_alpha(0, 0, 0);
+    Triplet init_m(0, 0, 0);
+
+    for(int i = 0; i < 3; i++)
+    {
+      float hi = color_range.hi[i];
+      float lo = color_range.lo[i];
+
+      init_m.value[i] = expf((logf(top) * logf(lo) - logf(bot) * logf(hi)) / (logf(top) - logf(bot)));
+      init_alpha.value[i] = (logf(lo) - logf(init_m.value[i])) / logf(bot);
+    }
+
+    // iterate to get correct m and alpha
+    Triplet alpha(0, 0, 0);
+    alpha.copy(init_alpha);
+    Triplet m(0, 0, 0);
+    m.copy(init_m);
+    Triplet d_alpha(1.0f, 1.0f, 1.0f);
+    Triplet d_m(0, 0, 0);
+
+    int iter = 0;
+
+    while(std::max(std::abs(d_alpha.value[0]),
+                   std::max(std::abs(d_alpha.value[1]),
+                            std::abs(d_alpha.value[2]))) > 0.02f)
+    {
+      iter++;
+      if(iter == 10)
+        break;
+
+      for(int i = 0; i < 3; i++)
+      {
+        if(alpha.value[i] < 0.1f || alpha.value[i] > 10.0f)
+        {
+          // image has deteriorated too far to restore
+puts("image has deteriorated too far to restore");
+printf("iter = %d\n", iter);
+//          return;
+        }
+      }
+
+      color_range = colormap(&small_image, alpha, m, top, bot);
+        
+      for(int i = 0; i < 3; i++)
+      {
+        float hi = color_range.hi[i];
+        float lo = color_range.lo[i];
+
+        d_alpha.value[i] = alpha.value[i] * alpha.value[i] * (lo / (255 * bot) - 1) / logf(bot);
+        d_m.value[i] = alpha.value[i] * (hi - 255 * top);
+
+        if(std::abs(d_alpha.value[i]) > 0.2f * alpha.value[i])
+        {
+          d_alpha.value[i] = 0.2f * alpha.value[i] * d_alpha.value[i] / std::abs(d_alpha.value[i]);
+        }
+
+        alpha.value[i] += d_alpha.value[i];
+        m.value[i] += d_m.value[i];
+      }
+    }
+
+    // if loop failed to converge use initial values
+    if(iter == 10)
+    {
+      alpha.copy(init_alpha);
+      m.copy(init_m);
+    }
+
+    // create restored image
+    for(int i = 0; i < 3; i++)
+      levels(&small_image, i, 0, m.value[i], alpha.value[i], 0, 255);
+
+    // get color map of restored image
+    Palette pal;
+    Quantize::pca(&small_image, &pal, 256);
+
+    float newc[3][256];
+
+    for(int i = 0; i < 3; i++)
+    {
+      int temp[256];
+
+      getSlice(&pal, i, temp);
+
+      for(int j = 0; j < 256; j++)
+        newc[i][j] = (float)temp[j];
+    }
+
+    // average color
+    float av[256];
+
+    for(int i = 0; i < 256; i++)
+      av[i] = (newc[0][i] + newc[1][i] + newc[2][i]) / (3 * 255);
+
+    // tweak restoration
+    Triplet lambda(1.0f, 1.0f, 1.0f);
+    Triplet sigma(1.0f, 1.0f, 1.0f);
+
+    bool ok = true;
+
+    for(int i = 0; i < 3; i++)
+    {
+      float lambda_c = 1.0f;
+      float d_lambda_c = 1.0f;
+
+      float l[256]; 
+
+      for(int j = 0; j < 256; j++)
+        l[j] = logf((newc[i][j] + 1.0f) / 255);
+
+      iter = 0;
+      float sig = 0;
+
+      while(std::abs(d_lambda_c) > 1e-4f)
+      {
+        iter++;
+        if(iter >= 20)
+          break;
+
+        float pc[256];
+        for(int j = 0; j < 256; j++)
+          pc[j] = powf(newc[i][j] / 255, lambda_c);
+
+        float ppl = 0;
+        for(int j = 0; j < 256; j++)
+          ppl += pc[j] * pc[j] * l[j];
+
+        float ppll = 0;
+        for(int j = 0; j < 256; j++)
+          ppll += pc[j] * pc[j] * l[j] * l[j];
+
+        float pp = 0;
+        for(int j = 0; j < 256; j++)
+          pp += pc[j] * pc[j];
+
+        float ap = 0;
+        for(int j = 0; j < 256; j++)
+          ap += av[j] * pc[j];
+
+        float apl = 0;
+        for(int j = 0; j < 256; j++)
+          apl += av[j] * pc[j] * l[i];
+
+        float apll = 0;
+        for(int j = 0; j < 256; j++)
+          apll += av[j] * pc[j] * l[i] * l[i];
+
+        sig = ap / pp;
+        d_lambda_c = -(apl - sig * ppl) / (apll - 2 * sig * ppll);
+        lambda_c += d_lambda_c;
+      }   
+
+      lambda.value[i] = lambda_c;
+      sigma.value[i] = sig;
+
+      if(iter == 20)
+        ok = false;
+    }
+
+    // if loop fails to converge use default values
+    if(!ok)
+    {
+      lambda.set(1.0f, 1.0f, 1.0f);
+      sigma.set(1.0f, 1.0f, 1.0f);
+    }
+
+    float smin = std::min(sigma.value[0],
+                          std::min(sigma.value[1], sigma.value[2]));
+
+    // adjust parameters
+    for(int i = 0; i < 3; i++)
+    {
+      alpha.value[i] /= lambda.value[i];
+      sigma.value[i] /= smin;
+      m.value[i] /= powf(sigma.value[i], alpha.value[i]);
+    }
+
+    // implement degree of restoration and restore
+float contrast = 1.0f;
+    for(int i = 0; i < 3; i++)
+    {
+      alpha.value[i] = 1.0f - contrast * (1.0f - alpha.value[i]);
+      m.value[i] = 255.0f - contrast * (255.0f - m.value[i]);
+      levels(bmp, i, 0, m.value[i], alpha.value[i], 0, 255);
+    }
+  }
+
   void begin()
   {
-//    pushUndo();
-//    apply();
+    pushUndo();
+    apply();
   }
 }
 
