@@ -763,11 +763,10 @@ namespace Restore
                           const int &out_min, const int &out_max)
   {
             float v = (float)(value - in_min) / ((in_max - in_min) + 1);
-            v = powf(v, gamma);
+            v = powf(v, 1.0f / gamma);
             v = v * (out_max - out_min) + out_min;
-            v = std::max(std::min((int)v, 255), 0);
 
-            return (int)v;
+            return std::max(std::min((int)v, 255), 0);
   }
 
   // this emulates the levels function in GIMP
@@ -872,7 +871,7 @@ namespace Restore
   void apply()
   {
     // make small copy
-    Bitmap small_image(bmp->w / 5, bmp->h / 5);
+    Bitmap small_image(bmp->w / 10, bmp->h / 10);
     bmp->scale(&small_image);
 
     // get initial percentiles
@@ -901,8 +900,8 @@ namespace Restore
 
     // iterate to get correct m and alpha
     Triplet alpha(0, 0, 0);
-    alpha.copy(init_alpha);
     Triplet m(0, 0, 0);
+    alpha.copy(init_alpha);
     m.copy(init_m);
     Triplet d_alpha(1.0f, 1.0f, 1.0f);
     Triplet d_m(0, 0, 0);
@@ -924,7 +923,7 @@ namespace Restore
           // image has deteriorated too far to restore
 puts("image has deteriorated too far to restore");
 printf("iter = %d\n", iter);
-//          return;
+          return;
         }
       }
 
@@ -935,8 +934,8 @@ printf("iter = %d\n", iter);
         float hi = color_range.hi[i];
         float lo = color_range.lo[i];
 
-        d_alpha.value[i] = alpha.value[i] * alpha.value[i] * (lo / (255 * bot) - 1) / logf(bot);
-        d_m.value[i] = alpha.value[i] * (hi - 255 * top);
+        d_alpha.value[i] = alpha.value[i] * alpha.value[i] * (lo / (255.0f * bot) - 1) / logf(bot);
+        d_m.value[i] = alpha.value[i] * (hi - 255.0f * top);
 
         if(std::abs(d_alpha.value[i]) > 0.2f * alpha.value[i])
         {
@@ -991,7 +990,6 @@ printf("iter = %d\n", iter);
     {
       float lambda_c = 1.0f;
       float d_lambda_c = 1.0f;
-
       float l[256]; 
 
       for(int j = 0; j < 256; j++)
@@ -1028,11 +1026,11 @@ printf("iter = %d\n", iter);
 
         float apl = 0;
         for(int j = 0; j < 256; j++)
-          apl += av[j] * pc[j] * l[i];
+          apl += av[j] * pc[j] * l[j];
 
         float apll = 0;
         for(int j = 0; j < 256; j++)
-          apll += av[j] * pc[j] * l[i] * l[i];
+          apll += av[j] * pc[j] * l[j] * l[j];
 
         sig = ap / pp;
         d_lambda_c = -(apl - sig * ppl) / (apll - 2 * sig * ppll);
@@ -1072,6 +1070,55 @@ float contrast = 1.0f;
       m.value[i] = 255.0f - contrast * (255.0f - m.value[i]);
       levels(bmp, i, 0, m.value[i], alpha.value[i], 0, 255);
     }
+
+#if 0
+    // correct side absorptions
+    float delta_rg = 0.15f;
+    float delta_rb = 0.07f;
+    float delta_gr = 0.05f;
+    float delta_gb = 0.18f;
+    float delta_br = 0.05f;
+    float delta_bg = 0.03f;
+
+    float gr = (delta_gr * alpha.value[1]) / alpha.value[0];
+    float br = (delta_br * alpha.value[2]) / alpha.value[0];
+    float rg = (delta_rg * alpha.value[0]) / alpha.value[1];
+    float bg = (delta_bg * alpha.value[2]) / alpha.value[1];
+    float rb = (delta_rb * alpha.value[0]) / alpha.value[2];
+    float gb = (delta_gb * alpha.value[1]) / alpha.value[2];
+
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = bmp->row[y] + bmp->cl;
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        const rgba_type rgba = getRgba(*p);
+
+        float r = 255 - rgba.r;
+        float g = 255 - rgba.g;
+        float b = 255 - rgba.b;
+
+        int new_r = 0      + g * gr + b * br;
+        int new_g = r * rg + 0      + b * bg;
+        int new_b = r * rb + g * gb + 0;
+
+        new_r = std::max(std::min(new_r, 255), 0);
+        new_g = std::max(std::min(new_g, 255), 0);
+        new_b = std::max(std::min(new_b, 255), 0);
+
+        new_r = ((255 - r) * 256) / ((255 - new_r) + 1);
+        new_g = ((255 - g) * 256) / ((255 - new_g) + 1);
+        new_b = ((255 - b) * 256) / ((255 - new_b) + 1);
+
+        new_r = std::max(std::min(new_r, 255), 0);
+        new_g = std::max(std::min(new_g, 255), 0);
+        new_b = std::max(std::min(new_b, 255), 0);
+
+        *p++ = makeRgb(new_r, new_g, new_b);
+      }
+    }
+#endif
   }
 
   void begin()
