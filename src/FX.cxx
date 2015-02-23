@@ -1076,7 +1076,6 @@ namespace Restore
   void begin()
   {
     pushUndo();
-    Normalize::apply();
     apply();
   }
 }
