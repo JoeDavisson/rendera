@@ -257,8 +257,8 @@ void Gui::init()
     (Fl_Callback *)FX::autoCorrect, 0, 0);
   menubar->add("Effects/Correction Matrix", 0,
     (Fl_Callback *)FX::correctionMatrix, 0, 0);
-//  menubar->add("Effects/Restore", 0,
-//    (Fl_Callback *)FX::restore, 0, 0);
+  menubar->add("Effects/Restore", 0,
+    (Fl_Callback *)FX::restore, 0, 0);
   menubar->add("Effects/Remove Dust...", 0,
     (Fl_Callback *)FX::removeDust, 0, 0);
   menubar->add("Effects/Desaturate", 0,

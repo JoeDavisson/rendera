@@ -18,6 +18,7 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <algorithm>
 #include <vector>
 
 #include "Bitmap.H"
@@ -176,6 +177,20 @@ namespace
     for(int x = 0; x < target; x++)
       data[x] = temp[x];
   }
+
+/*
+  struct histogram_type
+  {
+    int color;
+    float freq;
+  };
+
+  bool sortByPopularity(const histogram_type &v1,
+                        const histogram_type &v2)
+  {
+    return v1.freq > v2.freq;
+  }
+*/
 }
 
 // Pairwise clustering quantization, adapted from the algorithm described here:
@@ -378,4 +393,119 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   Gui::drawPalette();
   Project::palette->fillTable();
 }
+
+// this only makes 256-color palettes
+void Quantize::fast(Bitmap *src, Palette *pal)
+{
+  Bitmap temp(16, 16);
+  src->scale(&temp);
+  int index = 0;
+
+  for(int y = 0; y < 16; y++)
+    for(int x = 0; x < 16; x++)
+      pal->data[index++] = temp.getpixel(x, y);
+
+  pal->max = 256;
+
+  // redraw palette widget
+  Gui::drawPalette();
+  Project::palette->fillTable();
+}
+/*
+void Quantize::fast(Bitmap *src, Palette *pal, int size)
+{
+  // popularity histogram
+  std::vector<histogram_type> histogram(262144);
+
+  for(int i = 0; i < 262144; i++)
+  {
+    histogram[i].color = i;
+    histogram[i].freq = 0;
+  }
+
+  // build histogram, inc is the weight of 1 pixel in the image
+  float inc = 1.0 / (src->cw * src->ch);
+  int count = 0;
+
+  // preserve lightest/darkest colors
+  int lightest = makeRgb(0, 0, 0);
+  int darkest = makeRgb(255, 255, 255);
+
+  for(int j = src->ct; j <= src->cb; j++)
+  {
+    int *p = src->row[j] + src->cl;
+
+    for(int i = src->cl; i <= src->cr; i++)
+    {
+      if(getl(*p) > getl(lightest))
+        lightest = *p;
+
+      if(getl(*p) < getl(darkest))
+        darkest = *p;
+
+      rgba_type rgba = getRgba(*p++);
+      int r = rgba.r >> 2;
+      int g = rgba.g >> 2;
+      int b = rgba.b >> 2;
+      int color = r | (g << 6) | (b << 12);
+
+      float freq = histogram[color].freq;
+
+      if(freq < inc)
+        count++;
+
+      histogram[color].freq = freq + inc;
+    }
+  }
+
+  // assign maximum frequency to lightest/darkest colors
+  rgba_type rgba;
+  rgba = getRgba(lightest);
+  int r = rgba.r >> 2;
+  int g = rgba.g >> 2;
+  int b = rgba.b >> 2;
+  int color = r | (g << 6) | (b << 12);
+  histogram[color].freq = 2.0f;
+  rgba = getRgba(darkest);
+  r = rgba.r >> 2;
+  g = rgba.g >> 2;
+  b = rgba.b >> 2;
+  color = r | (g << 6) | (b << 12);
+  histogram[color].freq = 2.0f;
+
+  std::sort(&histogram[0], &histogram[262144], sortByPopularity);
+
+  int stop1 = size / 2;
+  int stop2 = stop1 + size / 4;
+
+  for(int i = 0; i < size; i++)
+  {
+    if(histogram[i].freq > 0)
+    {
+      int c = histogram[i].color;
+      int r = c & 63;
+      int g = (c >> 6) & 63;
+      int b = (c >> 12) & 63;
+
+      pal->data[i] = makeRgb(r << 2, g << 2, b << 2);
+    }
+  }
+
+  pal->max = size;
+
+  // sort palette
+  pal->sort();
+
+  // stretch palette
+  if(pal->max != size)
+  {
+    stretchPalette(pal->data, pal->max, size);
+    pal->max = size;
+  }
+
+  // redraw palette widget
+  Gui::drawPalette();
+  Project::palette->fillTable();
+}
+*/
 

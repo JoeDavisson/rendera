@@ -855,7 +855,7 @@ namespace Restore
 
     // get new colormap
     Palette pal;
-    Quantize::pca(&small_copy, &pal, 256);
+    Quantize::fast(&small_copy, &pal);
 
     // return color range
     int slice[256];
@@ -1069,6 +1069,8 @@ namespace Restore
       m.value[i] = 255.0f - contrast * (255.0f - m.value[i]);
       levels(bmp, i, 0, m.value[i], alpha.value[i], 0, 255);
     }
+
+    Gui::hideProgress();
   }
 
   void begin()
