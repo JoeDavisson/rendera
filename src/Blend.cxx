@@ -318,7 +318,7 @@ int Blend::sharpen(const int &c1, const int &, const int &t)
     }
   }
 
-  lum = std::min(std::max(lum, 0), 255);
+  lum = clamp(lum, 255);
 
   return Blend::trans(c1, keepLum(c1, lum), 255 - (255 - t) / 16);
 }

@@ -278,8 +278,8 @@ int View::handle(int event)
       char coords[256];
       int coordx = imgx - Project::overscroll;
       int coordy = imgy - Project::overscroll;
-      coordx = std::max(std::min(coordx, Project::bmp->cw - 1), 0);
-      coordy = std::max(std::min(coordy, Project::bmp->ch - 1), 0);
+      coordx = clamp(coordx, Project::bmp->cw - 1);
+      coordy = clamp(coordy, Project::bmp->ch - 1);
       sprintf(coords, "(%d, %d)", coordx, coordy);
       Gui::updateCoords(coords);
 

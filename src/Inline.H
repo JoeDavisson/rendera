@@ -176,9 +176,9 @@ inline int convertFormat(const int &c, const bool &bgr_order)
     return c;
 }
 
-inline int clampByte(const int &v)
+inline int clamp(const int &value, const int ceiling)
 {
-  const int temp = v > 255 ? 255 : v;
+  const int temp = value > ceiling ? ceiling : value;
   return temp < 0 ? 0 : temp;
 }
 

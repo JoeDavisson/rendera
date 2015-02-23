@@ -295,9 +295,9 @@ namespace ValueStretch
         g = ((ga * gg) + (g * (255 - gg))) / 255;
         b = ((ba * bb) + (b * (255 - bb))) / 255;
 
-        r = std::min(std::max(r, 0), 255);
-        g = std::min(std::max(g, 0), 255);
-        b = std::min(std::max(b, 0), 255);
+        r = clamp(r, 255);
+        g = clamp(g, 255);
+        b = clamp(b, 255);
 
         *p++ = makeRgba(r, g, b, rgba.a);
       }
@@ -634,9 +634,9 @@ namespace AutoCorrect
         g = 255 * pow((double)g / 255, ga);
         b = 255 * pow((double)b / 255, ba);
 
-        r = std::max(std::min(r, 255), 0);
-        g = std::max(std::min(g, 255), 0);
-        b = std::max(std::min(b, 255), 0);
+        r = clamp(r, 255);
+        g = clamp(g, 255);
+        b = clamp(b, 255);
 
         if(keep_lum)
           *p++ = Blend::keepLum(makeRgba(r, g, b, rgba.a), l);
@@ -767,8 +767,7 @@ namespace Restore
     v = powf(v, 1.0f / gamma);
     v = v * (out_max - out_min) + out_min;
 
-//    return std::max(std::min((int)v, 255), 0);
-    return clampByte((int)v);
+    return clamp((int)v, 255);
   }
 
   // this emulates the levels function in GIMP
@@ -1111,9 +1110,9 @@ namespace CorrectionMatrix
         int ga = (r * 4 + g * 8 + b * 1) / 13;
         int ba = (r * 2 + g * 4 + b * 8) / 14;
 
-        ra = std::max(std::min(ra, 255), 0);
-        ga = std::max(std::min(ga, 255), 0);
-        ba = std::max(std::min(ba, 255), 0);
+        ra = clamp(ra, 255);
+        ga = clamp(ga, 255);
+        ba = clamp(ba, 255);
 
         *p++ = Blend::keepLum(makeRgba(ra, ga, ba, rgba.a), l);
       }
@@ -1480,15 +1479,15 @@ namespace ApplyPalette
 
               if(fix_gamma)
               {
-                r = Gamma::unfix(std::max(std::min(r, 65535), 0));
-                g = Gamma::unfix(std::max(std::min(g, 65535), 0));
-                b = Gamma::unfix(std::max(std::min(b, 65535), 0));
+                r = Gamma::unfix(clamp(r, 65535));
+                g = Gamma::unfix(clamp(g, 65535));
+                b = Gamma::unfix(clamp(b, 65535));
               }
               else
               {
-                r = std::max(std::min(r, 255), 0);
-                g = std::max(std::min(g, 255), 0);
-                b = std::max(std::min(b, 255), 0);
+                r = clamp(r, 255);
+                g = clamp(g, 255);
+                b = clamp(b, 255);
               }
 
               bmp->setpixelSolid(x - w / 2 + i, y + j,
@@ -1957,7 +1956,7 @@ namespace Sharpen
 
         const int c = bmp->getpixel(x, y);
 
-        lum = std::min(std::max(lum, 0), 255);
+        lum = clamp(lum, 255);
         *p++ = Blend::trans(c, Blend::keepLum(c, lum), 255 - amount * 2.55);
       }
 
@@ -2134,7 +2133,7 @@ namespace UnsharpMask
         if(std::abs(a - b) >= threshold)
         {
           int lum = a - (amount * (a - b)); 
-          lum = std::min(std::max(lum, 0), 255);
+          lum = clamp(lum, 255);
           *d = Blend::keepLum(*p, lum);
         }
 
@@ -2286,7 +2285,7 @@ namespace ConvolutionMatrix
           }
 
           lum /= div;
-          lum = std::min(std::max(lum, 0), 255);
+          lum = clamp(lum, 255);
 
           const int c = bmp->getpixel(x, y);
 
@@ -2310,9 +2309,9 @@ namespace ConvolutionMatrix
           g /= div;
           b /= div;
 
-          r = std::min(std::max(r, 0), 255);
-          g = std::min(std::max(g, 0), 255);
-          b = std::min(std::max(b, 0), 255);
+          r = clamp(r, 255);
+          g = clamp(g, 255);
+          b = clamp(b, 255);
 
           const int c = bmp->getpixel(x, y);
 
@@ -2628,7 +2627,7 @@ namespace Descreen
         for(int x = 0; x < w; x++)
         {
           int val = real[x + w * y];
-          val = std::max(std::min(val, 255), 0);
+          val = clamp(val, 255);
 
           const rgba_type rgba = getRgba(*p);
 
