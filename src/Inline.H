@@ -176,6 +176,12 @@ inline int convertFormat(const int &c, const bool &bgr_order)
     return c;
 }
 
+inline int clampByte(const int &v)
+{
+  const int temp = v > 255 ? 255 : v;
+  return temp < 0 ? 0 : temp;
+}
+
 // file access functions
 inline uint8_t parseUint8(unsigned char *&buffer)
 {

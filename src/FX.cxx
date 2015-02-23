@@ -767,7 +767,8 @@ namespace Restore
     v = powf(v, 1.0f / gamma);
     v = v * (out_max - out_min) + out_min;
 
-    return std::max(std::min((int)v, 255), 0);
+//    return std::max(std::min((int)v, 255), 0);
+    return clampByte((int)v);
   }
 
   // this emulates the levels function in GIMP
@@ -956,7 +957,7 @@ namespace Restore
     if(iter == 10)
     {
       fl_message_title("Error");
-      fl_message("The image has deteriorated badly, the restoration is probably poor but may be an improvement on the original.");
+      fl_message("The image has deteriorated badly, the restoration\n is probably poor but may be an improvement on the original.");
       alpha.copy(init_alpha);
       m.copy(init_m);
     }
