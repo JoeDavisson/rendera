@@ -25,22 +25,21 @@ adjusted to restore contrast and saturation. Therefore we aim to do these
 adjustments automatically.
 
 \section{Contrast Correction}
-The means to restore color and constrast may be combined together into a single
+Color and constrast correction may be combined together into a single
 adjustment factor. This is accomplished with the following formula:
 
 \[ C_{adjust} = \frac{\left(\frac{256} {256 - C_{average}}\right)}
                      {\sqrt{\frac{256} { C_{average} + 1}}} \]
 
-These adjustment factors are then applied as an exponent to the source pixels:
+This creates an exponent which is applied to each pixel in the original image. Employing a square root in the denominator prevents over-correction in the restored image. The adjustment factors are applied as follows:
 
 \[ C_{new} = 255 * \left(\frac{C_{old}}{255}\right) ^ {C_{adjust}} \]
 
 \subsection{Additional Contrast Improvement}
 If the contrast needs further improving, a modified version of histogram
 equalization may be used which preserves the overall color cast of the image.
-This enhances contrast without corrupting the colors.
-
-The equalization formula becomes:
+This enhances contrast without corrupting the colors. The following formula
+uses the average of all the pixels in the image to preserve the color balance: 
 
 \[ C_{new} = \frac{C_{popularity} * \left(\frac{255}{pixel count}\right) * C_{average}
                    + C_{old} * \left(255 - C_{average}\right)}{255} \]
@@ -49,7 +48,7 @@ The equalization formula becomes:
 We make the assumption that the most saturated color in the original faded
 image should be pushed to the maximum value, and other saturation levels
 pushed in relation to that. Histogram equalization is capable of doing this 
-automatically, and works well for most images.
+automatically, and works well for many images.
 
 Equalization is performed on saturation information only, while
 preserving the luminance of the original image. The latter is important to
