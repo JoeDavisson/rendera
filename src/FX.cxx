@@ -705,6 +705,14 @@ namespace AutoCorrect
 // see original python source in redist directory
 namespace Restore
 {
+  namespace Items
+  {
+    DialogWindow *dialog;
+    InputInt *contrast;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
+
   // for storing floating-point adjustment factors etc
   class Triplet
   {
@@ -807,7 +815,7 @@ namespace Restore
   }
 
   // find m through successive approximation
-  float percentile(int *c, const float f)
+  float percentile(const int *c, const float &f)
   {
     int n = 0;
 
@@ -871,7 +879,7 @@ namespace Restore
     return color_range;
   }
 
-  void apply()
+  void apply(float contrast)
   {
     // make small copy
     Bitmap small_image(bmp->w / 10, bmp->h / 10);
@@ -1061,7 +1069,7 @@ namespace Restore
     }
 
     // implement degree of restoration and restore
-    const float contrast = 1.0f;
+    contrast /= 100;
 
     for(int i = 0; i < 3; i++)
     {
@@ -1070,13 +1078,48 @@ namespace Restore
       levels(bmp, i, 0, m.value[i], alpha.value[i], 0, 255);
     }
 
+    // correct side absorptions
     Gui::hideProgress();
+  }
+
+  void close()
+  {
+    if(Items::contrast->limitValue(1, 150) < 0)
+      return;
+
+    Items::dialog->hide();
+    pushUndo();
+
+    apply(atoi(Items::contrast->value()));
+  }
+
+  void quit()
+  {
+    Gui::hideProgress();
+    Items::dialog->hide();
   }
 
   void begin()
   {
-    pushUndo();
-    apply();
+    Items::dialog->show();
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    Items::dialog = new DialogWindow(256, 0, "Restore");
+    Items::contrast = new InputInt(Items::dialog, 0, y1, 72, 24, "Contrast:", 0);
+    y1 += 24 + 8;
+    Items::contrast->maximum_size(4);
+    Items::contrast->value("100");
+    Items::contrast->center();
+    y1 += 16 + 8;
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
   }
 }
 
@@ -2691,6 +2734,7 @@ void FX::init()
 {
   RotateHue::init();
   AutoCorrect::init();
+  Restore::init();
   RemoveDust::init();
   ApplyPalette::init();
   StainedGlass::init();
