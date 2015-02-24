@@ -31,7 +31,9 @@ adjustment factor. This is accomplished with the following formula:
 \[ C_{adjust} = \frac{\left(\frac{256} {256 - C_{average}}\right)}
                      {\sqrt{\frac{256} { C_{average} + 1}}} \]
 
-This creates an exponent which is applied to each pixel in the original image. Employing a square root in the denominator prevents over-correction in the restored image. The adjustment factors are applied as follows:
+The result is an exponent which is applied to each pixel in the original image.
+(Employing a square root in the denominator prevents over-correction in the
+restored image.) The adjustment factors are applied as follows:
 
 \[ C_{new} = 255 * \left(\frac{C_{old}}{255}\right) ^ {C_{adjust}} \]
 
