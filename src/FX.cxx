@@ -565,9 +565,7 @@ namespace InvertAlpha
   }
 }
 
-// This algorithm assumes a picture both has a color cast and is faded.
-// In most cases (with a good scan) it can restore nearly all the color
-// to a faded photograph.
+// tries to automatically fix color/contrast problems
 namespace AutoCorrect
 {
   namespace Items
@@ -746,22 +744,20 @@ namespace Restore
   // this stores one channel from a palette into the destination buffer
   void getSlice(const Palette *pal, const int channel, int *dest)
   {
-    for(int i = 0; i < 256; i++)
+    switch(channel)
     {
-      const rgba_type rgba = getRgba(pal->data[i]);
-
-      switch(channel)
-      {
-        case 0:
-          dest[i] = rgba.r;
-          break;
-        case 1:
-          dest[i] = rgba.g;
-          break;
-        case 2:
-          dest[i] = rgba.b;
-          break;
-      }
+      case 0:
+        for(int i = 0; i < 256; i++)
+          dest[i] = getr(pal->data[i]);
+        break;
+      case 1:
+        for(int i = 0; i < 256; i++)
+          dest[i] = getg(pal->data[i]);
+        break;
+      case 2:
+        for(int i = 0; i < 256; i++)
+          dest[i] = getb(pal->data[i]);
+        break;
     }
   }
 
