@@ -2524,17 +2524,9 @@ namespace Artistic
   }
 }
 
-namespace Descreen
+namespace ForwardFFT
 {
-  namespace Items
-  {
-    DialogWindow *dialog;
-    InputInt *amount;
-    Fl_Button *ok;
-    Fl_Button *cancel;
-  }
-
-  void apply(int amount)
+  void apply()
   {
     int w = bmp->cw;
     int h = bmp->ch;
@@ -2600,7 +2592,8 @@ namespace Descreen
         }
       }
 
-      // perform descreen
+      // keep
+/*
       for(int y = 0; y < h; y++)
       {
         for(int x = 0; x < w; x++)
@@ -2608,46 +2601,14 @@ namespace Descreen
           float re = real[x + w * y];
           float im = imag[x + w * y];
           float mag = sqrtf(re * re + im * im);
-//          float phase = atan2(im, re);
+          float phase = atan2(im, re);
 
-          if(mag > 100 * amount)
-          {
-            for(int j = -4; j < 4; j++)
-            {
-              for(int i = -4; i < 4; i++)
-              {
-                int xx = x + i;
-                int yy = y + j;
-
-                if(xx >= 0 && xx < w && yy >= 0 && yy < h)
-                {
-                  const int size = 8;
-                  if(xx < size && yy < size)
-                    continue;
-                  if(xx > w - size && yy < size)
-                    continue;
-                  if(xx < size && yy > h - size)
-                    continue;
-                  if(xx > w - size && yy > h - size)
-                    continue;
-
-                  float re = real[xx + w * yy];
-                  float im = imag[xx + w * yy];
-                  float mag = sqrtf(re * re + im * im);
-                  float phase = atan2(im, re);
-
-                  real[x + w * y] = (mag / 2) * cos(phase);
-                  imag[x + w * y] = (mag / 2) * sin(phase);
-                  //real[x + w * y] = mag * cos(phase);
-                  //imag[x + w * y] = mag * sin(phase);
-                }
-              }
-            }
-          }
-
+          real[x + w * y] = mag * cos(phase);
+          imag[x + w * y] = mag * sin(phase);
         }
       }
-
+*/
+/*
       // inverse horizontal pass
       for(int y = 0; y < h; y++)
       {
@@ -2683,7 +2644,7 @@ namespace Descreen
           imag[x + w * y] = imag_col[y];
         }
       }
-
+*/
       // convert to image
       for(int y = 0; y < h; y++)
       {
@@ -2691,8 +2652,12 @@ namespace Descreen
 
         for(int x = 0; x < w; x++)
         {
-          int val = real[x + w * y];
-          val = clamp(val, 255);
+//          int val = real[x + w * y];
+          float re = real[x + w * y];
+          float im = imag[x + w * y];
+          float mag = logf(sqrtf(re * re + im * im)) * 16;
+//          float phase = atan2(im, re);
+          int val = clamp((int)mag, 255);
 
           const rgba_type rgba = getRgba(*p);
 
@@ -2713,41 +2678,10 @@ namespace Descreen
     }
   }
 
-  void close()
-  {
-    if(Items::amount->limitValue(1, 100) < 0)
-      return;
-
-    Items::dialog->hide();
-    pushUndo();
-    apply(atoi(Items::amount->value()));
-  }
-
-  void quit()
-  {
-    Gui::hideProgress();
-    Items::dialog->hide();
-  }
-
   void begin()
   {
-    Items::dialog->show();
-  }
-
-  void init()
-  {
-    int y1 = 8;
-
-    Items::dialog = new DialogWindow(256, 0, "Decreen");
-    Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
-    y1 += 24 + 8;
-    Items::amount->value("10");
-    Items::amount->center();
-    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
-    Items::ok->callback((Fl_Callback *)close);
-    Items::cancel->callback((Fl_Callback *)quit);
-    Items::dialog->set_modal();
-    Items::dialog->end();
+    pushUndo();
+    apply();
   }
 }
 
@@ -2764,7 +2698,6 @@ void FX::init()
   UnsharpMask::init();
   ConvolutionMatrix::init();
   Artistic::init();
-  Descreen::init();
 }
 
 void FX::normalize()
@@ -2867,13 +2800,14 @@ void FX::artistic()
   Artistic::begin();
 }
 
-void FX::descreen()
+void FX::forwardFFT()
 {
   int w = Project::bmp->cw;
   int h = Project::bmp->ch;
+
   if(Math::isPowerOfTwo(w) && Math::isPowerOfTwo(h))
   {
-    Descreen::begin();
+    ForwardFFT::begin();
   }
   else
   {
