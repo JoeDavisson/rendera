@@ -2534,7 +2534,7 @@ namespace Descreen
     Fl_Button *cancel;
   }
 
-  void apply(int/* amount*/)
+  void apply(int amount)
   {
     int w = bmp->cw;
     int h = bmp->ch;
@@ -2605,13 +2605,46 @@ namespace Descreen
       {
         for(int x = 0; x < w; x++)
         {
-          float r = real[x + w * y];
-          float i = imag[x + w * y];
-          float mag = sqrtf(r * r + i * i);
-          float phase = atan2(i, r);
+          float re = real[x + w * y];
+          float im = imag[x + w * y];
+          float mag = sqrtf(re * re + im * im);
+//          float phase = atan2(im, re);
 
-          real[x + w * y] = mag * cos(phase);
-          imag[x + w * y] = mag * sin(phase);
+          if(mag > 100 * amount)
+          {
+            for(int j = -4; j < 4; j++)
+            {
+              for(int i = -4; i < 4; i++)
+              {
+                int xx = x + i;
+                int yy = y + j;
+
+                if(xx >= 0 && xx < w && yy >= 0 && yy < h)
+                {
+                  const int size = 8;
+                  if(xx < size && yy < size)
+                    continue;
+                  if(xx > w - size && yy < size)
+                    continue;
+                  if(xx < size && yy > h - size)
+                    continue;
+                  if(xx > w - size && yy > h - size)
+                    continue;
+
+                  float re = real[xx + w * yy];
+                  float im = imag[xx + w * yy];
+                  float mag = sqrtf(re * re + im * im);
+                  float phase = atan2(im, re);
+
+                  real[x + w * y] = (mag / 2) * cos(phase);
+                  imag[x + w * y] = (mag / 2) * sin(phase);
+                  //real[x + w * y] = mag * cos(phase);
+                  //imag[x + w * y] = mag * sin(phase);
+                }
+              }
+            }
+          }
+
         }
       }
 
