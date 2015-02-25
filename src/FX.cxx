@@ -2534,14 +2534,10 @@ namespace Descreen
     Fl_Button *cancel;
   }
 
-  void apply(int amount)
+  void apply(int/* amount*/)
   {
     int w = bmp->cw;
     int h = bmp->ch;
-
-    int larger = w > h ? w : h;
-    if(amount > larger / 4)
-      amount = larger / 4;
 
     std::vector<float> real(w * h, 0);
     std::vector<float> imag(w * h, 0);
@@ -2609,17 +2605,13 @@ namespace Descreen
       {
         for(int x = 0; x < w; x++)
         {
-          if(x < amount && y < amount)
-            continue;
-          if(x > w - amount || y < amount)
-            continue;
-          if(x < amount || y > h - amount)
-            continue;
-          if(x > w - amount || y > h - amount)
-            continue;
+          float r = real[x + w * y];
+          float i = imag[x + w * y];
+          float mag = sqrtf(r * r + i * i);
+          float phase = atan2(i, r);
 
-          real[x + w * y] = 0;
-          imag[x + w * y] = 0;
+          real[x + w * y] = mag * cos(phase);
+          imag[x + w * y] = mag * sin(phase);
         }
       }
 
