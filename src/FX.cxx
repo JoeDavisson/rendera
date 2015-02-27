@@ -54,7 +54,8 @@ namespace
   void pushUndo()
   {
     bmp = Project::bmp;
-    Undo::push(bmp->cl, bmp->ct, bmp->cw, bmp->ch);
+//    Undo::push(bmp->cl, bmp->ct, bmp->cw, bmp->ch);
+    Undo::push();
   }
 }
 
@@ -2661,7 +2662,8 @@ namespace ForwardFFT
           float re = real[x + w * y];
           float im = imag[x + w * y];
           float mag = log10f(sqrtf(re * re + im * im)) * 32;
-          float phase = (atan2f(im, re) + 3.14159f) * 81.17f;
+//          float phase = (atan2f(im, re) + 3.14159f) * 81.17f;
+          float phase = (atan2f(im, re) + 3.14159f) * 32;
           int val1 = clamp((int)mag, 255);
           int val2 = clamp((int)phase, 255);
 
@@ -2738,7 +2740,8 @@ namespace InverseFFT
           }
 
           float mag = powf(10.0f, c1 / 32);
-          float phase = c2 / 81.17f - 3.14159f;
+//          float phase = c2 / 81.17f - 3.14159f;
+          float phase = c2 / 32 - 3.14159f;
 
           real[x + w * y] = mag * cosf(phase);
           imag[x + w * y] = mag * sinf(phase);
