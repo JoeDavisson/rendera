@@ -2531,6 +2531,10 @@ namespace ForwardFFT
     int w = bmp->cw;
     int h = bmp->ch;
 
+    // resize image
+    Project::resizeImage(w * 2, h);
+    bmp = Project::bmp;
+
     std::vector<float> real(w * h, 0);
     std::vector<float> imag(w * h, 0);
     std::vector<float> real_row(w, 0);
@@ -2645,32 +2649,36 @@ namespace ForwardFFT
         }
       }
 */
-      // convert to image
       for(int y = 0; y < h; y++)
       {
-        int *p = bmp->row[y + bmp->ct] + bmp->cl;
+        int *p1 = bmp->row[y + bmp->ct] + bmp->cl;
+        int *p2 = bmp->row[y + bmp->ct] + bmp->cl + w;
 
         for(int x = 0; x < w; x++)
         {
-//          int val = real[x + w * y];
           float re = real[x + w * y];
           float im = imag[x + w * y];
           float mag = logf(sqrtf(re * re + im * im)) * 16;
-//          float phase = atan2(im, re);
-          int val = clamp((int)mag, 255);
+          float phase = (atan2(im, re) + 3.14159f) * 81.17f;
+          int val1 = clamp((int)mag, 255);
+          int val2 = clamp((int)phase, 255);
 
-          const rgba_type rgba = getRgba(*p);
+          const rgba_type rgba1 = getRgba(*p1);
+          const rgba_type rgba2 = getRgba(*p2);
 
           switch(rgb)
           {
             case 0:
-              *p++ = makeRgb(val, rgba.g, rgba.b);
+              *p1++ = makeRgb(val1, rgba1.g, rgba1.b);
+              *p2++ = makeRgb(val2, rgba2.g, rgba2.b);
               break;
             case 1:
-              *p++ = makeRgb(rgba.r, val, rgba.b);
+              *p1++ = makeRgb(rgba1.r, val1, rgba1.b);
+              *p2++ = makeRgb(rgba2.r, val2, rgba2.b);
               break;
             case 2:
-              *p++ = makeRgb(rgba.r, rgba.g, val);
+              *p1++ = makeRgb(rgba1.r, rgba1.g, val1);
+              *p2++ = makeRgb(rgba2.r, rgba2.g, val2);
               break;
           }
         }

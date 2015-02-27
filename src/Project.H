@@ -57,6 +57,7 @@ namespace Project
   void init();
   void setTool(int);
   void newImage(int, int);
+  void resizeImage(int, int);
 }
 
 #endif

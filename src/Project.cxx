@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Crop.H"
 #include "Fill.H"
 #include "GetColor.H"
+#include "Inline.H"
 #include "Map.H"
 #include "Offset.H"
 #include "Paint.H"
@@ -115,3 +116,20 @@ void Project::newImage(int w, int h)
   map->clear(0);
 }
 
+void Project::resizeImage(int w, int h)
+{
+  Bitmap *temp = new Bitmap(w, h, overscroll);
+  bmp->blit(temp, overscroll, overscroll, overscroll, overscroll,
+            bmp->cw, bmp->ch);
+
+  if(bmp)
+    delete bmp;
+
+  bmp = temp;
+
+  if(map)
+    delete map;
+
+  map = new Map(bmp->w, bmp->h);
+  map->clear(0);
+}
