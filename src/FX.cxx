@@ -2649,6 +2649,8 @@ namespace ForwardFFT
         }
       }
 */
+
+      // convert to image
       for(int y = 0; y < h; y++)
       {
         int *p1 = bmp->row[y + bmp->ct] + bmp->cl;
@@ -2658,8 +2660,8 @@ namespace ForwardFFT
         {
           float re = real[x + w * y];
           float im = imag[x + w * y];
-          float mag = logf(sqrtf(re * re + im * im)) * 16;
-          float phase = (atan2(im, re) + 3.14159f) * 81.17f;
+          float mag = log10f(sqrtf(re * re + im * im)) * 32;
+          float phase = (atan2f(im, re) + 3.14159f) * 81.17f;
           int val1 = clamp((int)mag, 255);
           int val2 = clamp((int)phase, 255);
 
@@ -2684,6 +2686,131 @@ namespace ForwardFFT
         }
       }
     }
+  }
+
+  void begin()
+  {
+    pushUndo();
+    apply();
+  }
+}
+
+namespace InverseFFT
+{
+  void apply()
+  {
+    int w = bmp->cw / 2;
+    int h = bmp->ch;
+
+    std::vector<float> real(w * h, 0);
+    std::vector<float> imag(w * h, 0);
+    std::vector<float> real_row(w, 0);
+    std::vector<float> imag_row(w, 0);
+    std::vector<float> real_col(h, 0);
+    std::vector<float> imag_col(h, 0);
+
+    for(int rgb = 0; rgb < 3; rgb++)
+    {
+      // convert from image
+      for(int y = 0; y < h; y++)
+      {
+        int *p1 = bmp->row[y + bmp->ct] + bmp->cl;
+        int *p2 = bmp->row[y + bmp->ct] + bmp->cl + w;
+
+        for(int x = 0; x < w; x++)
+        {
+          float c1 = 0, c2 = 0;
+
+          switch(rgb)
+          {
+            case 0:
+              c1 = getr(*p1++);
+              c2 = getr(*p2++);
+              break;
+            case 1:
+              c1 = getg(*p1++);
+              c2 = getg(*p2++);
+              break;
+            case 2:
+              c1 = getb(*p1++);
+              c2 = getb(*p2++);
+              break;
+          }
+
+          float mag = powf(10.0f, c1 / 32);
+          float phase = c2 / 81.17f - 3.14159f;
+
+          real[x + w * y] = mag * cosf(phase);
+          imag[x + w * y] = mag * sinf(phase);
+        }
+      }
+
+      // inverse horizontal pass
+      for(int y = 0; y < h; y++)
+      {
+        for(int x = 0; x < w; x++)
+        {
+          real_row[x] = real[x + w * y];
+          imag_row[x] = imag[x + w * y];
+        }
+
+        Math::inverseFFT(&real_row[0], &imag_row[0], w);
+
+        for(int x = 0; x < w; x++)
+        {
+          real[x + w * y] = real_row[x];
+          imag[x + w * y] = imag_row[x];
+        }
+      }
+
+      // inverse vertical pass
+      for(int x = 0; x < w; x++)
+      {
+        for(int y = 0; y < h; y++)
+        {
+          real_col[y] = real[x + w * y];
+          imag_col[y] = imag[x + w * y];
+        }
+
+        Math::inverseFFT(&real_col[0], &imag_col[0], h);
+
+        for(int y = 0; y < h; y++)
+        {
+          real[x + w * y] = real_col[y];
+          imag[x + w * y] = imag_col[y];
+        }
+      }
+
+      // convert to image
+      for(int y = 0; y < h; y++)
+      {
+        int *p = bmp->row[y + bmp->ct] + bmp->cl;
+
+        for(int x = 0; x < w; x++)
+        {
+          float re = real[x + w * y];
+          int val = clamp((int)re, 255);
+
+          const rgba_type rgba = getRgba(*p);
+
+          switch(rgb)
+          {
+            case 0:
+              *p++ = makeRgb(val, rgba.g, rgba.b);
+              break;
+            case 1:
+              *p++ = makeRgb(rgba.r, val, rgba.b);
+              break;
+            case 2:
+              *p++ = makeRgb(rgba.r, rgba.g, val);
+              break;
+          }
+        }
+      }
+    }
+
+    Project::resizeImage(w, h);
+    bmp = Project::bmp;
   }
 
   void begin()
@@ -2816,6 +2943,22 @@ void FX::forwardFFT()
   if(Math::isPowerOfTwo(w) && Math::isPowerOfTwo(h))
   {
     ForwardFFT::begin();
+  }
+  else
+  {
+    fl_message_title("Error");
+    fl_message("Image dimensions must be powers of two.");
+  }
+}
+
+void FX::inverseFFT()
+{
+  int w = Project::bmp->cw;
+  int h = Project::bmp->ch;
+
+  if(Math::isPowerOfTwo(w) && Math::isPowerOfTwo(h))
+  {
+    InverseFFT::begin();
   }
   else
   {

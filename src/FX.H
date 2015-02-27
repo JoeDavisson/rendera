@@ -45,6 +45,7 @@ namespace FX
   void convolutionMatrix();
   void artistic();
   void forwardFFT();
+  void inverseFFT();
 }
 
 #endif
