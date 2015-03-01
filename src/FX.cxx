@@ -2597,92 +2597,38 @@ namespace ForwardFFT
         }
       }
 
-      // keep
-/*
-      for(int y = 0; y < h; y++)
-      {
-        for(int x = 0; x < w; x++)
-        {
-          float re = real[x + w * y];
-          float im = imag[x + w * y];
-          float mag = sqrtf(re * re + im * im);
-          float phase = atan2(im, re);
-
-          real[x + w * y] = mag * cos(phase);
-          imag[x + w * y] = mag * sin(phase);
-        }
-      }
-*/
-/*
-      // inverse horizontal pass
-      for(int y = 0; y < h; y++)
-      {
-        for(int x = 0; x < w; x++)
-        {
-          real_row[x] = real[x + w * y];
-          imag_row[x] = imag[x + w * y];
-        }
-
-        Math::inverseFFT(&real_row[0], &imag_row[0], w);
-
-        for(int x = 0; x < w; x++)
-        {
-          real[x + w * y] = real_row[x];
-          imag[x + w * y] = imag_row[x];
-        }
-      }
-
-      // inverse vertical pass
-      for(int x = 0; x < w; x++)
-      {
-        for(int y = 0; y < h; y++)
-        {
-          real_col[y] = real[x + w * y];
-          imag_col[y] = imag[x + w * y];
-        }
-
-        Math::inverseFFT(&real_col[0], &imag_col[0], h);
-
-        for(int y = 0; y < h; y++)
-        {
-          real[x + w * y] = real_col[y];
-          imag[x + w * y] = imag_col[y];
-        }
-      }
-*/
-
       // convert to image
       for(int y = 0; y < h; y++)
       {
-        int *p1 = bmp->row[y + bmp->ct] + bmp->cl;
-        int *p2 = bmp->row[y + bmp->ct] + bmp->cl + w;
-
         for(int x = 0; x < w; x++)
         {
           float re = real[x + w * y];
           float im = imag[x + w * y];
           float mag = log10f(sqrtf(re * re + im * im)) * 32;
-//          float phase = (atan2f(im, re) + 3.14159f) * 81.17f;
           float phase = (atan2f(im, re) + 3.14159f) * 32;
           int val1 = clamp((int)mag, 255);
           int val2 = clamp((int)phase, 255);
 
-          const rgba_type rgba1 = getRgba(*p1);
-          const rgba_type rgba2 = getRgba(*p2);
+          int xx = (x + w / 2) % w;
+          int yy = (y + h / 2) % h;
+          xx += bmp->cl;
+          yy += bmp->ct;
+          const rgba_type rgba1 = getRgba(bmp->getpixel(xx, yy));
+          const rgba_type rgba2 = getRgba(bmp->getpixel(xx + w, yy));
 
           switch(rgb)
           {
             case 0:
-              *p1++ = makeRgb(val1, rgba1.g, rgba1.b);
-              *p2++ = makeRgb(val2, rgba2.g, rgba2.b);
+              bmp->setpixelSolid(xx, yy, makeRgb(val1, rgba1.g, rgba1.b), 0);
+              bmp->setpixelSolid(xx + w, yy, makeRgb(val2, rgba2.g, rgba2.b), 0);
               break;
             case 1:
-              *p1++ = makeRgb(rgba1.r, val1, rgba1.b);
-              *p2++ = makeRgb(rgba2.r, val2, rgba2.b);
+              bmp->setpixelSolid(xx, yy, makeRgb(rgba1.r, val1, rgba1.b), 0);
+              bmp->setpixelSolid(xx + w, yy, makeRgb(rgba2.r, val2, rgba2.b), 0);
               break;
             case 2:
-              *p1++ = makeRgb(rgba1.r, rgba1.g, val1);
-              *p2++ = makeRgb(rgba2.r, rgba2.g, val2);
+              bmp->setpixelSolid(xx, yy, makeRgb(rgba1.r, rgba1.g, val1), 0);
+              bmp->setpixelSolid(xx + w, yy, makeRgb(rgba2.r, rgba2.g, val2), 0);
               break;
           }
         }
@@ -2716,31 +2662,34 @@ namespace InverseFFT
       // convert from image
       for(int y = 0; y < h; y++)
       {
-        int *p1 = bmp->row[y + bmp->ct] + bmp->cl;
-        int *p2 = bmp->row[y + bmp->ct] + bmp->cl + w;
-
         for(int x = 0; x < w; x++)
         {
+          int xx = (x + w / 2) % w;
+          int yy = (y + h / 2) % h;
+          xx += bmp->cl;
+          yy += bmp->ct;
+
+          int p1 = bmp->getpixel(xx, yy);
+          int p2 = bmp->getpixel(xx + w, yy);
           float c1 = 0, c2 = 0;
 
           switch(rgb)
           {
             case 0:
-              c1 = getr(*p1++);
-              c2 = getr(*p2++);
+              c1 = getr(p1);
+              c2 = getr(p2);
               break;
             case 1:
-              c1 = getg(*p1++);
-              c2 = getg(*p2++);
+              c1 = getg(p1);
+              c2 = getg(p2);
               break;
             case 2:
-              c1 = getb(*p1++);
-              c2 = getb(*p2++);
+              c1 = getb(p1);
+              c2 = getb(p2);
               break;
           }
 
           float mag = powf(10.0f, c1 / 32);
-//          float phase = c2 / 81.17f - 3.14159f;
           float phase = c2 / 32 - 3.14159f;
 
           real[x + w * y] = mag * cosf(phase);
