@@ -9,10 +9,11 @@
 \begin{document}
 \maketitle
 
-Some algorithms are presented for automatically correcting the
-color and contrast in faded images. Because often the exact nature or cause
-of the discoloration is unknown, the problems of color cast, contrast, and
-saturation loss are considered individually.
+A simple algorithm is presented for automatically correcting the
+color and contrast in faded images. Because the exact nature or cause
+of the discoloration is often unknown, a more general approach is pursued.
+
+There are at least three contributors to an undesirable image. These include the problems of color cast, contrast, and saturation loss. With these problems corrected, most images will appear "normal" to the eye.
 
 \section{Color Cast Removal}
 Perhaps the simplest way to correct color cast is to simply average each
@@ -37,24 +38,12 @@ restored image.) The adjustment factors are applied as follows:
 
 \[ C_{new} = 255 * \left(\frac{C_{old}}{255}\right) ^ {C_{adjust}} \]
 
-\subsection{Additional Contrast Improvement}
-If the contrast needs further improving, a modified version of histogram
-equalization may be used which preserves the overall color cast of the image.
-This enhances contrast without corrupting the colors. The following formula
-uses the average of all the pixels in the image to preserve the color balance: 
-
-\[ C_{new} = \frac{C_{popularity} * \left(\frac{255}{pixel count}\right) * C_{average}
-                   + C_{old} * \left(255 - C_{average}\right)}{255} \]
-
 \section{Saturation Equalization}
-We make the assumption that the most saturated color in the original faded
-image should be pushed to the maximum value, and other saturation levels
-pushed in relation to that. Histogram equalization is capable of doing this 
-automatically, and works well for many images.
-
-Equalization is performed on saturation information only, while
-preserving the luminance of the original image. The latter is important to
-ensure the final image doesn't become unrealistically saturated in the wrong areas.
+There are many approaches to restoring the color saturation in an image.
+It can be adjusted manually with imaging software, or an automatic algorithm
+may be used. In the case of the latter, equalizing the saturation levels works
+well with most images. It is advantageous to preserve the luminosity of the
+image to prevent unrealistic colors.
 
 \section{Examples}
 
