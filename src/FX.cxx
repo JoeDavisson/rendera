@@ -73,9 +73,10 @@ namespace Normalize
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      int *p = bmp->row[y] + bmp->cl;
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        rgba_type rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(*p);
 
         const int r = rgba.r;
         const int g = rgba.g;
@@ -113,16 +114,15 @@ namespace Normalize
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        rgba_type rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(*p);
 
         const int r = (rgba.r - r_low) * r_scale;
         const int g = (rgba.g - g_low) * g_scale;
         const int b = (rgba.b - b_low) * b_scale;
 
-        *p++ = makeRgba(r, g, b, rgba.a);
+        *p = makeRgba(r, g, b, rgba.a);
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -151,9 +151,10 @@ namespace Equalize
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      int *p = bmp->row[y] + bmp->cl;
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        rgba_type rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(*p);
 
         const int r = rgba.r;
         const int g = rgba.g;
@@ -182,10 +183,9 @@ namespace Equalize
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        rgba_type rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(*p);
 
         int r = rgba.r;
         int g = rgba.g;
@@ -195,7 +195,7 @@ namespace Equalize
         g = list_g[g] * scale;
         b = list_b[b] * scale;
 
-        *p++ = makeRgba(r, g, b, rgba.a);
+        *p = makeRgba(r, g, b, rgba.a);
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -248,9 +248,10 @@ namespace ValueStretch
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      int *p = bmp->row[y] + bmp->cl;
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        rgba_type rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(*p);
 
         const int r = rgba.r;
         const int g = rgba.g;
@@ -279,10 +280,9 @@ namespace ValueStretch
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        rgba_type rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(*p);
 
         int r = rgba.r;
         int g = rgba.g;
@@ -300,7 +300,7 @@ namespace ValueStretch
         g = clamp(g, 255);
         b = clamp(b, 255);
 
-        *p++ = makeRgba(r, g, b, rgba.a);
+        *p = makeRgba(r, g, b, rgba.a);
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -327,9 +327,10 @@ namespace Saturate
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      int *p = bmp->row[y] + bmp->cl;
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        rgba_type rgba = getRgba(bmp->getpixel(x, y));
+        rgba_type rgba = getRgba(*p);
 
         const int r = rgba.r;
         const int g = rgba.g;
@@ -353,28 +354,22 @@ namespace Saturate
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        const int c = bmp->getpixel(x, y);
-
-        rgba_type rgba = getRgba(c);
+        rgba_type rgba = getRgba(*p);
 
         int r = rgba.r;
         int g = rgba.g;
         int b = rgba.b;
 
-        const int l = getl(c);
+        const int l = getl(*p);
         int h, s, v;
 
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
 
         // don't try to saturate grays
         if(s == 0)
-        {
-          p++;
           continue;
-        }
 
         const int temp = s;
         s = list_s[s] * scale;
@@ -384,7 +379,6 @@ namespace Saturate
 
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
         *p = Blend::trans(*p, Blend::keepLum(makeRgba(r, g, b, rgba.a), l), 255 - s);
-        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -422,10 +416,9 @@ namespace RotateHue
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        int c = bmp->getpixel(x, y);
+        int c = *p;
 
         rgba_type rgba = getRgba(c);
 
@@ -445,9 +438,9 @@ namespace RotateHue
         c = makeRgba(r, g, b, rgba.a);
 
         if(keep_lum)
-          *p++ = Blend::keepLum(c, l);
+          *p = Blend::keepLum(c, l);
         else
-          *p++ = c;
+          *p = c;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -514,12 +507,9 @@ namespace Invert
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        int c = bmp->getpixel(x, y);
-
-        *p++ = Blend::invert(c, 0, 0);
+        *p = Blend::invert(*p, 0, 0);
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -545,11 +535,10 @@ namespace InvertAlpha
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        const rgba_type rgba = getRgba(bmp->getpixel(x, y));
-        *p++ = makeRgba(rgba.r, rgba.g, rgba.b, 255 - rgba.a);
+        const rgba_type rgba = getRgba(*p);
+        *p = makeRgba(rgba.r, rgba.g, rgba.b, 255 - rgba.a);
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -591,9 +580,10 @@ namespace AutoCorrect
     // determine overall color cast
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      int *p = bmp->row[y] + bmp->cl;
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        const rgba_type rgba = getRgba(bmp->getpixel(x, y));
+        const rgba_type rgba = getRgba(*p);
 
         rr += rgba.r;
         gg += rgba.g;
@@ -618,15 +608,13 @@ namespace AutoCorrect
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        const int c = bmp->getpixel(x, y);
-        const rgba_type rgba = getRgba(c);
+        const rgba_type rgba = getRgba(*p);
         int r = rgba.r;
         int g = rgba.g;
         int b = rgba.b;
-        const int l = getl(c);
+        const int l = getl(*p);
 
         // apply adjustments
         r = 255 * pow((double)r / 255, ra);
@@ -638,9 +626,9 @@ namespace AutoCorrect
         b = clamp(b, 255);
 
         if(keep_lum)
-          *p++ = Blend::keepLum(makeRgba(r, g, b, rgba.a), l);
+          *p = Blend::keepLum(makeRgba(r, g, b, rgba.a), l);
         else
-          *p++ = makeRgba(r, g, b, rgba.a);
+          *p = makeRgba(r, g, b, rgba.a);
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -785,8 +773,7 @@ namespace Restore
     for(int y = temp->ct; y < temp->cb; y++)
     {
       int *p = temp->row[y] + temp->cl;
-
-      for(int x = temp->cl; x < temp->cr; x++)
+      for(int x = temp->cl; x < temp->cr; x++, p++)
       {
         const rgba_type rgba = getRgba(*p);
         int r = rgba.r;
@@ -806,7 +793,7 @@ namespace Restore
             break;
         }
 
-        *p++ = makeRgb(r, g, b);
+        *p = makeRgb(r, g, b);
       }
     }
   }
@@ -1134,17 +1121,14 @@ namespace CorrectionMatrix
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        const int c = bmp->getpixel(x, y);
-
-        rgba_type rgba = getRgba(c);
+        rgba_type rgba = getRgba(*p);
 
         int r = rgba.r;
         int g = rgba.g;
         int b = rgba.b;
-        int l = getl(c);
+        int l = getl(*p);
 
         // correction matrix
         int ra = r;
@@ -1155,7 +1139,7 @@ namespace CorrectionMatrix
         ga = clamp(ga, 255);
         ba = clamp(ba, 255);
 
-        *p++ = Blend::keepLum(makeRgba(ra, ga, ba, rgba.a), l);
+        *p = Blend::keepLum(makeRgba(ra, ga, ba, rgba.a), l);
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1190,10 +1174,9 @@ namespace RemoveDust
     for(int y = bmp->ct + 1; y <= bmp->cb - 1; y++)
     {
       int *p = bmp->row[y] + bmp->cl + 1;
-
-      for(int x = bmp->cl + 1; x <= bmp->cr - 1; x++)
+      for(int x = bmp->cl + 1; x <= bmp->cr - 1; x++, p++)
       {
-        const int test = bmp->getpixel(x, y);
+        const int test = *p;
         int c[8];
 
         c[0] = bmp->getpixel(x + 1, y);
@@ -1221,8 +1204,6 @@ namespace RemoveDust
 
         if((getl(avg) - getl(test)) > amount)
           *p = avg;
-
-        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1289,13 +1270,11 @@ namespace Desaturate
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        const int c = bmp->getpixel(x, y);
-        const int l = getl(c);
+        const int l = getl(*p);
 
-        *p++ = makeRgba(l, l, l, geta(c));
+        *p = makeRgba(l, l, l, geta(*p));
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1323,12 +1302,9 @@ namespace Colorize
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        int c1 = bmp->getpixel(x, y);
-
-        rgba_type rgba = getRgba(c1);
+        rgba_type rgba = getRgba(*p);
 
         int r = rgba.r;
         int g = rgba.g;
@@ -1348,7 +1324,7 @@ namespace Colorize
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
         Blend::hsvToRgb(h, (sat * s) / (sat + s), v, &r, &g, &b);
 
-        *p++ = Blend::colorize(c1, makeRgba(r, g, b, rgba.a), 0);
+        *p = Blend::colorize(*p, makeRgba(r, g, b, rgba.a), 0);
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1383,12 +1359,9 @@ namespace ApplyPalette
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        const int c = (Project::palette->data[(int)Project::palette->lookup(*p)] & 0xFFFFFF) | (geta(*p) << 24);
-
-        *p++ = c;
+        *p = (Project::palette->data[(int)Project::palette->lookup(*p)] & 0xFFFFFF) | (geta(*p) << 24);
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1459,8 +1432,7 @@ namespace ApplyPalette
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
         rgba_type rgba = getRgba(*p);
         const int alpha = rgba.a;
@@ -1472,7 +1444,7 @@ namespace ApplyPalette
         const int c = Project::palette->data[pal_index];
 
         rgba = getRgba(c);
-        *p++ = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
+        *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
 
         const int new_r = rgba.r;
         const int new_g = rgba.g;
@@ -1677,8 +1649,7 @@ namespace StainedGlass
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
         // find nearest color
         int nearest = 999999999;
@@ -1713,8 +1684,6 @@ namespace StainedGlass
             *p = color[use];
           }
         }
-
-        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1739,12 +1708,11 @@ namespace StainedGlass
       for(int y = bmp->ct; y <= bmp->cb; y++)
       {
         int *p = bmp->row[y] + bmp->cl;
-
-        for(int x = bmp->cl; x <= bmp->cr; x++)
+        for(int x = bmp->cl; x <= bmp->cr; x++, p++)
         {
           const int c = map->getpixel(x, y);
 
-          *p++ = Blend::trans(bmp->getpixel(x, y), makeRgb(0, 0, 0), 255 - c);
+          *p = Blend::trans(*p, makeRgb(0, 0, 0), 255 - c);
         }
       }
     }
@@ -1841,8 +1809,7 @@ namespace Blur
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = temp.row[y - bmp->ct];
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
         int rr = 0;
         int gg = 0;
@@ -1867,7 +1834,7 @@ namespace Blur
         gg = Gamma::unfix(gg);
         bb = Gamma::unfix(bb);
 
-        *p++ = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
+        *p = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1880,8 +1847,7 @@ namespace Blur
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
         int rr = 0;
         int gg = 0;
@@ -1908,7 +1874,6 @@ namespace Blur
         bb = Gamma::unfix(bb);
 
         *p = Blend::trans(*p, makeRgba((int)rr, (int)gg, (int)bb, (int)aa), blend);
-        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1981,8 +1946,7 @@ namespace Sharpen
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = temp.row[y - bmp->cl];
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
         int lum = 0;
 
@@ -1998,7 +1962,7 @@ namespace Sharpen
         const int c = bmp->getpixel(x, y);
 
         lum = clamp(lum, 255);
-        *p++ = Blend::trans(c, Blend::keepLum(c, lum), 255 - amount * 2.55);
+        *p = Blend::trans(c, Blend::keepLum(c, lum), 255 - amount * 2.55);
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -2083,8 +2047,7 @@ namespace UnsharpMask
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = temp.row[y - bmp->ct];
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
         int rr = 0;
         int gg = 0;
@@ -2109,7 +2072,7 @@ namespace UnsharpMask
         gg = Gamma::unfix(gg);
         bb = Gamma::unfix(bb);
 
-        *p++ = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
+        *p = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -2125,8 +2088,7 @@ namespace UnsharpMask
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = temp2.row[y - bmp->ct];
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
         int rr = 0;
         int gg = 0;
@@ -2152,7 +2114,7 @@ namespace UnsharpMask
         gg = Gamma::unfix(gg);
         bb = Gamma::unfix(bb);
 
-        *p++ = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
+        *p = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -2307,8 +2269,7 @@ namespace ConvolutionMatrix
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = temp.row[y - bmp->cl];
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
         int lum = 0;
         int r = 0;
@@ -2330,7 +2291,7 @@ namespace ConvolutionMatrix
 
           const int c = bmp->getpixel(x, y);
 
-          *p++ = Blend::trans(c, Blend::keepLum(c, lum), 255 - amount * 2.55);
+          *p = Blend::trans(c, Blend::keepLum(c, lum), 255 - amount * 2.55);
         }
         else
         {
@@ -2356,7 +2317,7 @@ namespace ConvolutionMatrix
 
           const int c = bmp->getpixel(x, y);
 
-          *p++ = Blend::trans(c, makeRgba(r, g, b, geta(c)), 255 - amount * 2.55);
+          *p = Blend::trans(c, makeRgba(r, g, b, geta(c)), 255 - amount * 2.55);
         }
       }
 
@@ -2439,8 +2400,7 @@ namespace Artistic
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
         int r = 0;
         int g = 0;
@@ -2477,7 +2437,6 @@ namespace Artistic
         b /= count;
 
         *p = makeRgba(r, g, b, geta(*p));
-        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -2549,10 +2508,9 @@ namespace ForwardFFT
       for(int y = 0; y < h; y++)
       {
         int *p = bmp->row[y + bmp->ct] + bmp->cl;
-
-        for(int x = 0; x < w; x++)
+        for(int x = 0; x < w; x++, p++)
         {
-          const rgba_type rgba = getRgba(*p++);
+          const rgba_type rgba = getRgba(*p);
 
           switch(rgb)
           {
@@ -2737,8 +2695,7 @@ namespace InverseFFT
       for(int y = 0; y < h; y++)
       {
         int *p = bmp->row[y + bmp->ct] + bmp->cl;
-
-        for(int x = 0; x < w; x++)
+        for(int x = 0; x < w; x++, p++)
         {
           float re = real[x + w * y];
           int val = clamp((int)re, 255);
@@ -2748,13 +2705,13 @@ namespace InverseFFT
           switch(rgb)
           {
             case 0:
-              *p++ = makeRgb(val, rgba.g, rgba.b);
+              *p = makeRgb(val, rgba.g, rgba.b);
               break;
             case 1:
-              *p++ = makeRgb(rgba.r, val, rgba.b);
+              *p = makeRgb(rgba.r, val, rgba.b);
               break;
             case 2:
-              *p++ = makeRgb(rgba.r, rgba.g, val);
+              *p = makeRgb(rgba.r, rgba.g, val);
               break;
           }
         }
