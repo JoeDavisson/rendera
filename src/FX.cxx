@@ -2502,7 +2502,9 @@ namespace ForwardFFT
     std::vector<float> real_col(h, 0);
     std::vector<float> imag_col(h, 0);
 
-    for(int rgb = 0; rgb < 3; rgb++)
+    Gui::showProgress(3);
+
+    for(int channel = 0; channel < 3; channel++)
     {
       // forward horizontal pass
       for(int y = 0; y < h; y++)
@@ -2512,7 +2514,7 @@ namespace ForwardFFT
         {
           const rgba_type rgba = getRgba(*p);
 
-          switch(rgb)
+          switch(channel)
           {
             case 0:
               real_row[x] = rgba.r;
@@ -2574,24 +2576,29 @@ namespace ForwardFFT
           const rgba_type rgba1 = getRgba(bmp->getpixel(xx, yy));
           const rgba_type rgba2 = getRgba(bmp->getpixel(xx + w, yy));
 
-          switch(rgb)
+          switch(channel)
           {
             case 0:
-              bmp->setpixelSolid(xx, yy, makeRgb(val1, rgba1.g, rgba1.b), 0);
-              bmp->setpixelSolid(xx + w, yy, makeRgb(val2, rgba2.g, rgba2.b), 0);
+              bmp->setpixel(xx, yy, makeRgb(val1, rgba1.g, rgba1.b));
+              bmp->setpixel(xx + w, yy, makeRgb(val2, rgba2.g, rgba2.b));
               break;
             case 1:
-              bmp->setpixelSolid(xx, yy, makeRgb(rgba1.r, val1, rgba1.b), 0);
-              bmp->setpixelSolid(xx + w, yy, makeRgb(rgba2.r, val2, rgba2.b), 0);
+              bmp->setpixel(xx, yy, makeRgb(rgba1.r, val1, rgba1.b));
+              bmp->setpixel(xx + w, yy, makeRgb(rgba2.r, val2, rgba2.b));
               break;
             case 2:
-              bmp->setpixelSolid(xx, yy, makeRgb(rgba1.r, rgba1.g, val1), 0);
-              bmp->setpixelSolid(xx + w, yy, makeRgb(rgba2.r, rgba2.g, val2), 0);
+              bmp->setpixel(xx, yy, makeRgb(rgba1.r, rgba1.g, val1));
+              bmp->setpixel(xx + w, yy, makeRgb(rgba2.r, rgba2.g, val2));
               break;
           }
         }
       }
+
+      if(Gui::updateProgress(channel) < 0)
+        return;
     }
+
+    Gui::hideProgress();
   }
 
   void begin()
@@ -2615,7 +2622,9 @@ namespace InverseFFT
     std::vector<float> real_col(h, 0);
     std::vector<float> imag_col(h, 0);
 
-    for(int rgb = 0; rgb < 3; rgb++)
+    Gui::showProgress(3);
+
+    for(int channel = 0; channel < 3; channel++)
     {
       // convert from image
       for(int y = 0; y < h; y++)
@@ -2631,7 +2640,7 @@ namespace InverseFFT
           int p2 = bmp->getpixel(xx + w, yy);
           float c1 = 0, c2 = 0;
 
-          switch(rgb)
+          switch(channel)
           {
             case 0:
               c1 = getr(p1);
@@ -2702,7 +2711,7 @@ namespace InverseFFT
 
           const rgba_type rgba = getRgba(*p);
 
-          switch(rgb)
+          switch(channel)
           {
             case 0:
               *p = makeRgb(val, rgba.g, rgba.b);
@@ -2716,8 +2725,12 @@ namespace InverseFFT
           }
         }
       }
+
+      if(Gui::updateProgress(channel) < 0)
+        return;
     }
 
+    Gui::hideProgress();
     Project::resizeImage(w, h);
     bmp = Project::bmp;
   }
