@@ -433,6 +433,11 @@ void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
     xorHline(x1, y1, x2);
 }
 
+void Bitmap::setpixel(const int &x, const int &y, const int &c)
+{
+  *(row[y] + x) = c;
+}
+
 void Bitmap::setpixel(const int &x, const int &y, const int &c2, const int &t)
 {
   Blend::target(this, Project::palette.get(), x, y);

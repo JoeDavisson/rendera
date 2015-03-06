@@ -46,6 +46,7 @@ public:
   void xorHline(int, int, int);
   void xorRect(int, int, int, int);
   void xorRectfill(int, int, int, int);
+  void setpixel(const int &, const int &, const int &);
   void setpixel(const int &, const int &, const int &, const int &);
   void setpixelSolid(const int &, const int &, const int &, const int &);
   void setpixelWrap(const int &, const int &, const int &, const int &);
