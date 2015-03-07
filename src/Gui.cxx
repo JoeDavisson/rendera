@@ -267,8 +267,8 @@ void Gui::init()
     (Fl_Callback *)FX::colorize, 0, 0);
   menubar->add("Effects/Stained Glass...", 0,
     (Fl_Callback *)FX::stainedGlass, 0, 0);
-  menubar->add("Effects/Blur...", 0,
-    (Fl_Callback *)FX::blur, 0, 0);
+  menubar->add("Effects/Gaussian Blur...", 0,
+    (Fl_Callback *)FX::gaussianBlur, 0, 0);
   menubar->add("Effects/Sharpen...", 0,
     (Fl_Callback *)FX::sharpen, 0, 0);
   menubar->add("Effects/Unsharp Mask...", 0,

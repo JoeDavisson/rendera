@@ -1172,6 +1172,7 @@ namespace RemoveDust
   namespace Items
   {
     DialogWindow *dialog;
+    Fl_Box *box;
     InputInt *amount;
     CheckBox *invert;
     Fl_Button *ok;
@@ -1256,7 +1257,11 @@ namespace RemoveDust
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(256, 0, "Remove Dust");
+    Items::dialog = new DialogWindow(384, 0, "Remove Dust");
+    Items::box = new Fl_Box(FL_FLAT_BOX, 8, 8, 368, 32, "Removes dust from scanned images.");
+    Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP);
+    Items::box->labelsize(12);
+    y1 += 32;
     Items::amount = new InputInt(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
     y1 += 24 + 8;
     Items::amount->value("4");
@@ -1785,7 +1790,7 @@ namespace StainedGlass
   }
 }
 
-namespace Blur
+namespace GaussianBlur
 {
   namespace Items
   {
@@ -1922,7 +1927,7 @@ namespace Blur
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(256, 0, "Blur");
+    Items::dialog = new DialogWindow(256, 0, "Gaussian Blur");
     Items::radius = new InputInt(Items::dialog, 0, y1, 72, 24, "Radius:", 0);
     y1 += 24 + 8;
     Items::radius->value("1");
@@ -2761,7 +2766,7 @@ void FX::init()
   RemoveDust::init();
   ApplyPalette::init();
   StainedGlass::init();
-  Blur::init();
+  GaussianBlur::init();
   Sharpen::init();
   UnsharpMask::init();
   ConvolutionMatrix::init();
@@ -2843,9 +2848,9 @@ void FX::stainedGlass()
   StainedGlass::begin();
 }
 
-void FX::blur()
+void FX::gaussianBlur()
 {
-  Blur::begin();
+  GaussianBlur::begin();
 }
 
 void FX::sharpen()
