@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <vector>
 
 #include <FL/fl_ask.H>
+#include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Choice.H>
 
@@ -561,6 +562,7 @@ namespace AutoCorrect
   namespace Items
   {
     DialogWindow *dialog;
+    Fl_Box *box;
     CheckBox *normalize;
     CheckBox *invert;
     CheckBox *preserve_lum;
@@ -669,7 +671,11 @@ namespace AutoCorrect
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(256, 0, "Auto-Correct");
+    Items::dialog = new DialogWindow(384, 0, "Auto-Correct");
+    Items::box = new Fl_Box(FL_FLAT_BOX, 8, 8, 368, 32, "Automatically restores color/contrast to a bad image.");
+    Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP);
+    Items::box->labelsize(12);
+    y1 += 32;
     Items::normalize = new CheckBox(Items::dialog, 0, y1, 16, 16, "Normalize First", 0);
     y1 += 16 + 8;
     Items::normalize->value(1);
@@ -695,6 +701,7 @@ namespace Restore
   namespace Items
   {
     DialogWindow *dialog;
+    Fl_Box *box;
     InputInt *contrast;
     Fl_Button *ok;
     Fl_Button *cancel;
@@ -1092,13 +1099,17 @@ namespace Restore
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(256, 0, "Restore");
+    Items::dialog = new DialogWindow(384, 0, "Restore");
+    Items::box = new Fl_Box(FL_FLAT_BOX, 8, 8, 368, 48, "Restores faded color photographs and slides.\n (Algorithm by Geoff Daniell.)");
+    Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP);
+    Items::box->labelsize(12);
+    y1 += 48;
     Items::contrast = new InputInt(Items::dialog, 0, y1, 72, 24, "Contrast:", 0);
     y1 += 24 + 8;
     Items::contrast->maximum_size(4);
     Items::contrast->value("100");
     Items::contrast->center();
-    y1 += 16 + 8;
+//    y1 += 16 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
