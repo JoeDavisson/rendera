@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FileSP.H"
 
+// This is a C-style FILE pointer wrapped in a "smart pointer", which
+// automatically closes the file when the pointer goes out of scope.
 FileSP::FileSP(const char *fn, const char *mode)
 {
   f = fopen(fn, mode);
