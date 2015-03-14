@@ -120,7 +120,7 @@ namespace
 
 int main(int argc, char *argv[])
 {
-  // default to dark theme
+  // default to a nice dark theme
   setDarkTheme();
 
   // parse command line
