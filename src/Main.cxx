@@ -178,6 +178,7 @@ int main(int argc, char *argv[])
     }
   }
 
+  // fltk related inits
   Fl::visual(FL_DOUBLE | FL_RGB);
   Fl::scheme("gtk+");
 
@@ -189,6 +190,7 @@ int main(int argc, char *argv[])
 
   fl_message_hotspot(0);
 
+  // program inits
   Project::init();
   Undo::init();
   Dialog::init();
