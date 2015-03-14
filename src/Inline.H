@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <climits>
 #include <stdint.h>
 
+#ifndef __WIN32
 #if ! defined( __BYTE_ORDER__ )
 #  error "__BYTE_ORDER__ undefined"
 #endif
@@ -35,6 +36,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #endif
 #if ! defined( __ORDER_BIG_ENDIAN__ )
 #  error "__ORDER_BIG_ENDIAN__ undefined"
+#endif
+#else
+// assume little-endian if not defined
+#define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
 #endif
 
 // stuff for extracting all RGBA values quickly
@@ -236,14 +241,12 @@ inline void writeUint16(const uint16_t &num, FILE *out)
 {
 #if 0
   /*  */
-#elif ( BYTE_ORDER == LITTLE_ENDIAN )
+#elif ( __BYTE_ORDER__ == __LITTLE_ENDIAN__ )
   fputc(num & 0xff, out);
   fputc((num >> 8) & 0xff, out);
-#elif ( BYTE_ORDER == BIG_ENDIAN )
-  fputc((num >> 8) & 0xff, out);
-  fputc(num & 0xff, out);
 #else
-#  error "unsupported endianness"
+  fputc((num >> 8) & 0xff, out);
+  fputc(num & 0xff, out);
 #endif
 }
 
@@ -251,18 +254,16 @@ inline void writeUint32(const uint32_t &num, FILE *out)
 {
 #if 0
   /*  */
-#elif ( BYTE_ORDER == LITTLE_ENDIAN )
+#elif ( __BYTE_ORDER__ == __LITTLE_ENDIAN__ )
   fputc(num & 0xff, out);
   fputc((num >> 8) & 0xff, out);
   fputc((num >> 16) & 0xff, out);
   fputc((num >> 24) & 0xff, out);
-#elif ( BYTE_ORDER == BIG_ENDIAN )
-  fputc((num >> 24) & 0xff, out);
-  fputc((num >> 16) & 0xff, out);
-  fputc((num >> 8) & 0xff, out);
-  fputc(num & 0xff, out);
 #else
-#  error "unsupported endianness"
+  fputc((num >> 24) & 0xff, out);
+  fputc((num >> 16) & 0xff, out);
+  fputc((num >> 8) & 0xff, out);
+  fputc(num & 0xff, out);
 #endif
 }
 

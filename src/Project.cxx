@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include <climits>
+#include <string>
 
 #include <FL/Fl.H>
 
@@ -65,8 +66,12 @@ namespace Project
 
 void Project::init()
 {
-  // default to dark theme
+#ifdef __WIN32
+  std::string themedir_path = std::string("./data/");
+#else
   std::string themedir_path = Path::usrdir() + "/share/rendera/data/";
+#endif
+
   strcpy(theme_path, themedir_path.c_str() );
 
   newImage(640, 480);

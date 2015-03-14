@@ -18,6 +18,9 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+// skip this entirely on windows
+#ifndef __WIN32
+
 #if HAVE_CONFIG_H
 #  include "config.h"
 #else
@@ -69,4 +72,5 @@ std::string Path::usrdir(void)
 {
   return Path::parent(Path::bindir());
 }
+#endif
 

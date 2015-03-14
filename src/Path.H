@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef PATH_H
 #define PATH_H
 
+// skip this entirely on windows
+#ifndef __WIN32
+
 #include <string>
 
 namespace Path
@@ -31,6 +34,8 @@ namespace Path
   std::string parent(std::string const &);
   std::string usrdir(void);
 }
+
+#endif
 
 #endif
 

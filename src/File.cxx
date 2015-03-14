@@ -18,17 +18,26 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-//#ifdef _WIN32
-//#define HAVE_BOOLEAN
-//#endif
-
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <algorithm>
 #include <vector>
+
+#ifdef __WIN32
+#define HAVE_BOOLEAN
+#include "../fltk-1.3.3/png/png.h"
+// prevent jmorecfg.h from defining INT32
+#ifndef XMD_H
+#define XMD_H
+#endif
+#include "../fltk-1.3.3/jpeg/jpeglib.h"
+#else
 #include <png.h>
 #include <jpeglib.h>
+#endif
+
+// this must be included after pnglib
 #include <setjmp.h>
 
 #include <FL/fl_ask.H>
@@ -311,7 +320,7 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
 //printf("%d\n", cinfo.X_density);
 //printf("%d\n", cinfo.Y_density);
 
-  Bitmap *temp = new Bitmap(w, h, overscroll);
+  Bitmap *volatile temp = new Bitmap(w, h, overscroll);
   int *p = temp->row[overscroll] + overscroll;
 
   if(bytes == 3)
@@ -651,7 +660,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
   int channels = (int)png_get_channels(png_ptr, info_ptr);
 
-  Bitmap *temp = new Bitmap(w, h, overscroll);
+  Bitmap *volatile temp = new Bitmap(w, h, overscroll);
 
   if(interlace)
   {

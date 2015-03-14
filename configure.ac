@@ -145,17 +145,18 @@ case $host_os in
     FLTK_CONFIG_CXXFLAGS=$(fltk-config --cxxflags)
     FLTK_CONFIG_LDFLAGS=$(fltk-config --ldflags)
     AC_CHECK_LIB([X11],  [main],[],[AC_MSG_ERROR([libX11 missing])])
-    AC_CHECK_LIB([rt],   [main],[],[AC_MSG_ERROR([librt missing])])
+#    AC_CHECK_LIB([rt],   [main],[],[AC_MSG_ERROR([librt missing])])
     ;;
-  *mingw*)
-    AC_MSG_NOTICE([doing mingw stuff])
-    FLTK_CONFIG_INCLUDEDIR=$(fltk-config.exe --includedir)
-    FLTK_CONFIG_CXXFLAGS=$(fltk-config.exe --cxxflags)
-    FLTK_CONFIG_LDFLAGS=$(fltk-config.exe --ldflags)
-    AC_MSG_NOTICE([doing platform-specific stuff for mingw])
-    AC_CHECK_LIB([X11],  [main],[],[AC_MSG_ERROR([libX11 missing])])
-    AC_CHECK_LIB([rt],   [main],[],[AC_MSG_ERROR([librt missing])])
-    ;;
+#  *mingw*)
+#    AC_MSG_NOTICE([doing mingw stuff])
+#    FLTK_CONFIG_INCLUDEDIR=$(fltk-config.exe --includedir)
+#    FLTK_CONFIG_CXXFLAGS=$(fltk-config.exe --cxxflags)
+#    FLTK_CONFIG_LDFLAGS=$(fltk-config.exe --ldflags)
+#    FLTK_CONFIG_LDFLAGS+=" -lgdi32 -lcomdlg32"
+#    AC_MSG_NOTICE([doing platform-specific stuff for mingw])
+#    AC_CHECK_LIB([X11],  [main],[],[AC_MSG_ERROR([libX11 missing])])
+#    AC_CHECK_LIB([rt],   [main],[],[AC_MSG_ERROR([librt missing])])
+#    ;;
   *)
     AC_MSG_ERROR([unsupported host os: $host_os])
     ;;

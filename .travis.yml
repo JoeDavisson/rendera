@@ -10,7 +10,7 @@ install:
 env:
   - TRCC=gcc TRCXX=g++
   - TRCC=clang TRCXX=clang++
-  - TRCC=i586-mingw32msvc-gcc TRCXX=i586-mingw32msvc-g++
+#  - TRCC=i586-mingw32msvc-gcc TRCXX=i586-mingw32msvc-g++
 
 script:
   - export CC=$TRCC
@@ -20,5 +20,5 @@ script:
 matrix:
   allow_failures:
     - env: TRCC=clang TRCXX=clang++
-    - env: TRCC=i586-mingw32msvc-gcc TRCXX=i586-mingw32msvc-g++
+#    - env: TRCC=i586-mingw32msvc-gcc TRCXX=i586-mingw32msvc-g++
   fast_finish: true
