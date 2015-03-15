@@ -18,8 +18,17 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#ifndef __WIN32
+#if HAVE_CONFIG_H
+#  include "config.h"
+#else
+#  error "missing config.h"
+#endif
+#endif
+
 #include <algorithm>
 
+#include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Int_Input.H>
@@ -50,6 +59,7 @@ namespace About
   {
     DialogWindow *dialog;
     Widget *logo;
+    Fl_Box *box;
     Fl_Button *ok;
   }
 
@@ -80,6 +90,10 @@ namespace About
     Items::logo->align(FL_ALIGN_BOTTOM);
     Items::logo->measure_label(ww, hh);
     y1 += 96 + 8 + hh;
+    Items::box = new Fl_Box(FL_FLAT_BOX, 8, y1, 368, 32, PACKAGE_STRING);
+    Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP);
+    Items::box->labelsize(14);
+    y1 += 32;
     Items::dialog->addOkButton(&Items::ok, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::dialog->set_modal();
