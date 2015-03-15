@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cmath>
 #include <vector>
 
-#include <FL/fl_ask.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Choice.H>
@@ -923,8 +922,7 @@ namespace Restore
       {
         if(alpha.value[i] < 0.1f || alpha.value[i] > 10.0f)
         {
-          fl_message_title("Error");
-          fl_message("The image has deteriorated too far to restore.");
+          Dialog::message("Error", "The image has deteriorated too far to restore.");
           return;
         }
       }
@@ -954,8 +952,7 @@ namespace Restore
     // if loop failed to converge use initial values
     if(iter == 10)
     {
-      fl_message_title("Error");
-      fl_message("The image has deteriorated badly, the restoration\n is probably poor but may be an improvement on the original.");
+      Dialog::message("Error", "The image has deteriorated badly, the restoration\n is probably poor but may be an improvement on the original.");
       alpha.copy(init_alpha);
       m.copy(init_m);
     }
@@ -2884,8 +2881,7 @@ void FX::forwardFFT()
   }
   else
   {
-    fl_message_title("Error");
-    fl_message("Image dimensions must be powers of two.");
+    Dialog::message("Error", "Image dimensions must be powers of two.");
   }
 }
 
@@ -2900,8 +2896,7 @@ void FX::inverseFFT()
   }
   else
   {
-    fl_message_title("Error");
-    fl_message("Image dimensions must be powers of two.");
+    Dialog::message("Error", "Image dimensions must be powers of two.");
   }
 }
 

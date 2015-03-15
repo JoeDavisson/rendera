@@ -20,7 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <cmath>
 
-#include <FL/fl_ask.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Choice.H>
@@ -169,8 +168,7 @@ namespace Gui
   // quit program
   void quit()
   {
-    fl_message_title("Quit");
-    if(fl_choice("Are You Sure?", "No", "Yes", NULL) == 1)
+    if(!Dialog::choice("Quit", "Are You Sure?"))
       exit(0);
   }
 }
@@ -1162,6 +1160,11 @@ void Gui::checkClearToTransparent()
       *(bmp->row[y] + x) = 0x00808080;
 
   view->drawMain(true);
+}
+
+Fl_Double_Window *Gui::getWindow()
+{
+  return window;
 }
 
 View *Gui::getView()

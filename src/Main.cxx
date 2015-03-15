@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <getopt.h>
 #include <iostream>
 
-#include <FL/fl_ask.H>
 #include <FL/Fl_Shared_Image.H>
 
 #include "Bitmap.H"
@@ -189,8 +188,6 @@ int main(int argc, char *argv[])
   Fl_Shared_Image::add_handler(File::previewBmp);
   Fl_Shared_Image::add_handler(File::previewTarga);
   Fl_Shared_Image::add_handler(File::previewGimpPalette);
-
-  fl_message_hotspot(0);
 
   // program inits
   Project::init();

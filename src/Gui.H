@@ -26,6 +26,7 @@ class Button;
 class ToggleButton;
 class InputInt;
 class View;
+class Fl_Double_Window;
 
 namespace Gui
 {
@@ -86,6 +87,7 @@ namespace Gui
   void checkClearToWhite();
   void checkClearToTransparent();
 
+  Fl_Double_Window *getWindow();
   View *getView();
   int getTool();
   int getClone();

@@ -34,6 +34,8 @@ namespace Dialog
   void newImage();
   void makePalette();
   void editor();
+  void message(const char *, const char *);
+  bool choice(const char *, const char *);
 }
 
 #endif

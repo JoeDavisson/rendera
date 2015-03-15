@@ -32,6 +32,7 @@ public:
   ~DialogWindow();
   void addOkButton(Fl_Button **, int *);
   void addOkCancelButtons(Fl_Button **, Fl_Button **, int *);
+  void show();
 };
 
 #endif

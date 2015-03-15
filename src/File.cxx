@@ -40,7 +40,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // this must be included after pnglib
 #include <setjmp.h>
 
-#include <FL/fl_ask.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Native_File_Chooser.H>
@@ -149,8 +148,7 @@ namespace
   // show error dialog
   void errorMessage()
   {
-    fl_message_title("File Error");
-    fl_message("An error occured during the operation.");
+    Dialog::message("File Error", "An error occured during the operation.");
   }
 
   // check if trying to overwrite existing file
@@ -772,9 +770,11 @@ void File::save(Fl_Widget *, void *)
 
   if(fileExists(fn))
   {
-    fl_message_title("Replace File?");
-    if(fl_choice("Replace File?", "No", "Yes", NULL) == 0)
+    if(!Dialog::choice("Replace File?",
+                      "Do you want to overwrite this file?"))
+    {
       return;
+    }
   }
 
   int ret = 0;
@@ -926,9 +926,9 @@ int File::savePng(const char *fn)
 
   if(use_palette && use_alpha && pal->max * alpha_levels > 256)
   {
-    fl_message_title("PNG Error");
-    fl_message("Not enough palette entries left for this "
-               "many alpha channel levels.");
+    Dialog::message("PNG Error",
+                    "Not enough palette entries left for this "
+                    "many alpha channel levels.");
     return 0;
   }
 
@@ -1287,9 +1287,11 @@ void File::savePalette()
 
   if(fileExists(fn))
   {
-    fl_message_title("Replace File?");
-    if(fl_choice("Replace File?", "No", "Yes", NULL) == 0)
+    if(!Dialog::choice("Replace File?",
+                      "Do you want to overwrite this file?"))
+    {
       return;
+    }
   }
   
   if(Project::palette->save(fn) < 0)
