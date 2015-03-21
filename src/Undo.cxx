@@ -151,11 +151,25 @@ void Undo::pop()
 
   if(undo_resized[undo_current])
   {
-    Project::newImage(undo_stack[undo_current]->w,
-                      undo_stack[undo_current]->h);
+    int w = undo_stack[undo_current]->w;
+    int h = undo_stack[undo_current]->h;
 
-    Gui::getView()->ox = 0;
-    Gui::getView()->oy = 0;
+    Project::newImage(w, h);
+
+    int ox = Gui::getView()->ox;
+    int oy = Gui::getView()->oy;
+
+    if(ox < 0)
+      ox = 0;
+    if(ox > w - 1)
+      ox = w - 1;
+    if(oy < 0)
+      oy = 0;
+    if(oy > h - 1)
+      oy = h - 1;
+
+    Gui::getView()->ox = ox;
+    Gui::getView()->oy = oy;
 
     undo_stack[undo_current]->blit(Project::bmp, 0, 0,
                                    Project::bmp->overscroll,
