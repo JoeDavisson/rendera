@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "DialogWindow.H"
 #include "File.H"
 #include "Gui.H"
+#include "Images.H"
 #include "Inline.H"
 #include "InputInt.H"
 #include "Map.H"
@@ -81,7 +82,7 @@ namespace About
 
     Items::dialog = new DialogWindow(384, 0, "About");
     Items::logo = new Widget(Items::dialog, 32, y1, 320, 96,
-                           credits, File::themePath("logo_large.png"), -1, -1, 0);
+                           credits, __logo_large_png, -1, -1, 0);
     if(Project::theme == Project::THEME_LIGHT)
     {
       Items::logo->bitmap->invert();

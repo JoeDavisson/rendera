@@ -33,6 +33,7 @@ namespace File
   Bitmap *loadBmp(const char *, int);
   Bitmap *loadTarga(const char *, int);
   Bitmap *loadPng(const char *, int);
+  Bitmap *loadPngFromArray(const unsigned char *, int);
 
   void save(Fl_Widget *, void *);
   int saveBmp(const char *);
@@ -51,7 +52,6 @@ namespace File
 
   void decodeURI(char *);
   void getDirectory(char *, const char *);
-  char *themePath(const char *);
 }
 
 #endif

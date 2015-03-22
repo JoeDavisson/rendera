@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Offset.H"
 #include "Paint.H"
 #include "Palette.H"
-#include "Path.H"
 #include "Project.H"
 #include "Stroke.H"
 #include "Text.H"
@@ -66,16 +65,7 @@ namespace Project
 
 void Project::init()
 {
-#ifdef __WIN32
-  std::string themedir_path = std::string("./data/");
-#else
-  std::string themedir_path = Path::usrdir() + "/share/rendera/data/";
-#endif
-
-  strcpy(theme_path, themedir_path.c_str() );
-
   newImage(640, 480);
-
   setTool(Tool::PAINT);
 }
 

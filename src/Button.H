@@ -28,7 +28,7 @@ class Button : public Fl_Button
 {
 public:
   Button(Fl_Group *, int, int, int, int,
-         const char *, const char *, Fl_Callback *);
+         const char *, const unsigned char *, Fl_Callback *);
   ~Button();
 
   int var;

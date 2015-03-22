@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Project.H"
 
 Button::Button(Fl_Group *g, int x, int y, int w, int h,
-               const char *label, const char *filename, Fl_Callback *cb)
+               const char *label, const unsigned char *array, Fl_Callback *cb)
 : Fl_Button(x, y, w, h, label)
 {
   var = 0;
@@ -40,10 +40,11 @@ Button::Button(Fl_Group *g, int x, int y, int w, int h,
 
   group = g;
 
-  if(!(bitmap = File::loadPng(filename, 0)))
+  if(!(bitmap = File::loadPngFromArray(array, 0)))
   {
     fl_message_title("Error");
-    fl_message("Could not load %s, exiting.", filename);
+//    fl_message("Could not load %s, exiting.", filename);
+    fl_message("Could not load image.");
     exit(1);
   }
 

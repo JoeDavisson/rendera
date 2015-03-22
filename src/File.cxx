@@ -142,9 +142,6 @@ namespace
   char pal_load_dir[256];
   char pal_save_dir[256];
 
-  // buffer for theme path + icon filename
-  char theme_path_string[256];
-
   // show error dialog
   void errorMessage()
   {
@@ -193,6 +190,22 @@ namespace
   bool isGimpPalette(const unsigned char *header)
   {
     return (memcmp(header, "GIMP Palette", 12) == 0);
+  }
+
+  struct png_state
+  {
+    png_uint_32 pos;
+    png_uint_32 size;
+    const unsigned char *array;
+  };
+
+  // callback for reading PNG from byte array
+  void pngReadFromArray(png_structp png_ptr, png_bytep dest, png_uint_32 length)
+  {
+    struct png_state *src = (struct png_state *)png_get_io_ptr(png_ptr);
+
+    memcpy(dest, src->array + src->pos, length);
+    src->pos += length;
   }
 
   // reset directories
@@ -615,6 +628,171 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
 
   png_init_io(png_ptr, in.get());
   png_set_sig_bytes(png_ptr, 8);
+  png_read_info(png_ptr, info_ptr);
+  png_get_IHDR(png_ptr, info_ptr, &temp_w, &temp_h,
+               &bits_per_channel, &color_type,
+               &interlace_type, &compression_type, &filter_method);
+
+  int w = temp_w;
+  int h = temp_h;
+
+  // check interlace mode
+  bool interlace = png_set_interlace_handling(png_ptr) > 1 ? 1 : 0;
+
+  // expand paletted images to RGB
+  if(color_type == PNG_COLOR_TYPE_PALETTE)
+    png_set_expand(png_ptr);
+
+  // expand low-color images to RGB
+  if(color_type == PNG_COLOR_TYPE_GRAY && bits_per_channel < 8)
+    png_set_expand(png_ptr);
+
+  // check for alpha channel
+  if(png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+    png_set_expand(png_ptr);
+
+  // convert 16-bit images to 8
+  if(bits_per_channel == 16)
+    png_set_strip_16(png_ptr);
+
+  // expand grayscale images to RGB
+  if(color_type == PNG_COLOR_TYPE_GRAY ||
+     color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+    png_set_gray_to_rgb(png_ptr);
+
+  // perform gamma correction if the file requires it
+  // gonna ignore this for now
+//  double gamma = 0;
+//  if(png_get_gAMA(png_ptr, info_ptr, &gamma))
+//    png_set_gamma(png_ptr, 2.2, gamma);
+
+  png_read_update_info(png_ptr, info_ptr);
+
+  int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
+  int channels = (int)png_get_channels(png_ptr, info_ptr);
+
+  Bitmap *volatile temp = new Bitmap(w, h, overscroll);
+
+  if(interlace)
+  {
+    // interlaced images require a buffer the size of the entire image
+    std::vector<png_byte> data(rowbytes * h);
+    std::vector<png_bytep> row_pointers(h);
+
+    for(int y = 0; y < h; y++)
+      row_pointers[y] = &data[y * rowbytes];
+
+    // read image all at once
+    png_read_image(png_ptr, &row_pointers[0]);
+
+    // convert image
+    for(int y = 0; y < h; y++)
+    {
+      int *p = temp->row[y + overscroll] + overscroll;
+      int xx = 0;
+
+      png_bytep row = row_pointers[y];
+
+      for(int x = 0; x < w; x++)
+      {
+        if(channels == 3)
+        {
+          *p++ = makeRgb(row[xx + 0] & 0xFF,
+                         row[xx + 1] & 0xFF,
+                         row[xx + 2] & 0xFF);
+        }
+        else if(channels == 4)
+        {
+           *p++ = makeRgba(row[xx + 0] & 0xFF,
+                           row[xx + 1] & 0xFF,
+                           row[xx + 2] & 0xFF,
+                           row[xx + 3] & 0xFF);
+        }
+
+        xx += channels;
+      }
+    }
+  }
+  else
+  {
+    // non-interlace images can be read line-by-line
+    std::vector<png_byte> linebuf(rowbytes);
+
+    for(int y = 0; y < h; y++)
+    {
+      // read line
+      png_read_row(png_ptr, &linebuf[0], 0);
+
+      int *p = temp->row[y + overscroll] + overscroll;
+      int xx = 0;
+
+      // convert line
+      for(int x = 0; x < w; x++)
+      {
+        if(channels == 3)
+        {
+          *p++ = makeRgb(linebuf[xx + 0] & 0xFF,
+                         linebuf[xx + 1] & 0xFF,
+                         linebuf[xx + 2] & 0xFF);
+        }
+        else if(channels == 4)
+        {
+           *p++ = makeRgba(linebuf[xx + 0] & 0xFF,
+                           linebuf[xx + 1] & 0xFF,
+                           linebuf[xx + 2] & 0xFF,
+                           linebuf[xx + 3] & 0xFF);
+        }
+
+        xx += channels;
+      }
+    }
+  }
+
+  png_read_end(png_ptr, info_ptr);
+  png_destroy_read_struct(&png_ptr, &info_ptr, 0);
+
+  return temp;
+}
+
+Bitmap *File::loadPngFromArray(const unsigned char *array, int overscroll)
+{
+  png_structp png_ptr;
+  png_infop info_ptr;
+
+  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+  if(!png_ptr)
+    return 0;
+
+  info_ptr = png_create_info_struct(png_ptr);
+  if(!info_ptr)
+  {
+    png_destroy_read_struct(&png_ptr, 0, 0);
+    return 0;
+  }
+
+  if(setjmp(png_jmpbuf(png_ptr)))
+  {
+    // pnglib does a goto here if there is an error
+    png_destroy_read_struct(&png_ptr, &info_ptr, 0);
+    return 0;
+  }
+
+  struct png_state state;
+  state.array = array;
+  state.pos = 0;
+
+  png_uint_32 temp_w = 0;
+  png_uint_32 temp_h = 0;
+  int bits_per_channel = 0;
+  int color_type = 0;
+  int interlace_type = 0;
+  int compression_type = 0;
+  int filter_method = 0;
+
+  png_set_read_fn(png_ptr, &state, (png_rw_ptr)pngReadFromArray);
+
+//  png_init_io(png_ptr, in.get());
+//  png_set_sig_bytes(png_ptr, 8);
   png_read_info(png_ptr, info_ptr);
   png_get_IHDR(png_ptr, info_ptr, &temp_w, &temp_h,
                &bits_per_channel, &color_type,
@@ -1341,14 +1519,5 @@ void File::getDirectory(char *dest, const char *src)
       break;
     }
   }
-}
-
-// expand filename to include theme path
-char *File::themePath(const char *fn)
-{
-  strcpy(theme_path_string, Project::theme_path);
-  strcat(theme_path_string, fn);
-
-  return theme_path_string;
 }
 

@@ -49,6 +49,7 @@ libren_la_SOURCES =       \
   src/Group.cxx           \
   src/Gui.H               \
   src/Gui.cxx             \
+  src/Images.H            \
   src/Inline.H            \
   src/InputFloat.H        \
   src/InputFloat.cxx      \
@@ -68,8 +69,6 @@ libren_la_SOURCES =       \
   src/Paint.cxx           \
   src/Palette.H           \
   src/Palette.cxx         \
-  src/Path.H              \
-  src/Path.cxx            \
   src/Project.H           \
   src/Project.cxx         \
   src/Quantize.H          \
@@ -100,33 +99,9 @@ bin_PROGRAMS = ./bin/rendera
 __bin_rendera_SOURCES = src/Main.cxx
 __bin_rendera_LDADD = libren.la
 
-
-nobase_dist_pkgdata_DATA =          \
-  data/icon48x48.png                \
-  data/clone.png                    \
-  data/constrain.png                \
-  data/grid.png                     \
-  data/logo.png                     \
-  data/logo_large.png               \
-  data/mirror.png                   \
-  data/origin.png                   \
-  data/shape.png                    \
-  data/size.png                     \
-  data/soft_edge.png                \
-  data/stroke.png                   \
-  data/tools.png                    \
-  data/transparency.png             \
-  data/wrap.png                     \
-  data/zoom_fit.png                 \
-  data/zoom_in.png                  \
-  data/zoom_one.png                 \
-  data/zoom_out.png
-
-
 check_PROGRAMS =    \
   test_blend        \
   test_bresenham    \
-  test_pathexe      \
   test_fltk_version \
   test_endian       \
   test_numerics
@@ -143,9 +118,6 @@ test_blend_SOURCES = test/blend.C
 test_bresenham_SOURCES = test/bresenham.C
 test_bresenham_LDADD = libalgo.la
 
-test_pathexe_SOURCES = test/pathexe.C
-test_pathexe_LDADD = libren.la
-
 test_fltk_version_SOURCES = test/fltk_version.C
 
 test_endian_SOURCES = test/endian.C
@@ -158,5 +130,5 @@ TESTS = $(check_PROGRAMS)
 
 dist_man1_MANS = man/rendera.man
 
-EXTRA_DIST = Rendera.md
+EXTRA_DIST = images Rendera.md
 

@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 // load a PNG image from a file
 Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
-               const char *label, const char *filename,
+               const char *label, const unsigned char *array,
                int sx, int sy, Fl_Callback *cb)
 : Fl_Widget(x, y, w, h, label)
 {
@@ -44,10 +44,11 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   stepy = sy;
   group = g;
 
-  if(!(bitmap = File::loadPng(filename, 0)))
+  if(!(bitmap = File::loadPngFromArray(array, 0)))
   {
     fl_message_title("Error");
-    fl_message("Could not load %s, exiting.", filename);
+//    fl_message("Could not load %s, exiting.", filename);
+    fl_message("Could not load image.");
     exit(1);
   }
 

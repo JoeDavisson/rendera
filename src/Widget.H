@@ -31,7 +31,7 @@ class Widget : public Fl_Widget
 {
 public:
   Widget(Fl_Group *, int, int, int, int,
-         const char *, const char *, int, int, Fl_Callback *);
+         const char *, const unsigned char *, int, int, Fl_Callback *);
   Widget(Fl_Group *, int, int, int, int,
          const char *, int, int, Fl_Callback *);
   ~Widget();

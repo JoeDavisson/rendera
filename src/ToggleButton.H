@@ -31,7 +31,7 @@ class ToggleButton : public Fl_Button
 {
 public:
   ToggleButton(Fl_Group *, int, int, int, int,
-               const char *, const char *, Fl_Callback *);
+               const char *, const unsigned char *, Fl_Callback *);
   ~ToggleButton();
 
   int handle(int);
