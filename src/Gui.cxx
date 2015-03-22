@@ -169,7 +169,7 @@ namespace Gui
   // quit program
   void quit()
   {
-    if(!Dialog::choice("Quit", "Are You Sure?"))
+    if(Dialog::choice("Quit", "Are You Sure?"))
       exit(0);
   }
 }

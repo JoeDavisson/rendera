@@ -12,7 +12,7 @@ CXXFLAGS=-O2 -DPACKAGE_STRING=\"$(NAME)$(VERSION)\" $(INCLUDE_DIR)
 LDFLAGS=$(LIBS)
 CXX=i586-mingw32msvc-g++
 OBJDIR=./src
-OBJECTS=src/Bitmap.o src/Blend.o src/Brush.o src/Button.o src/CheckBox.o src/Clone.o src/Crop.o src/Dialog.o src/DialogWindow.o src/Fill.o src/FX.o src/File.o src/FileSP.o src/GetColor.o src/Group.o src/Gui.o src/InputFloat.o src/InputInt.o src/InputText.o src/Map.o src/Math.o src/Octree.o src/Offset.o src/Paint.o src/Palette.o src/Path.o src/Project.o src/Quantize.o src/Render.o src/Separator.o src/Stroke.o src/Text.o src/ToggleButton.o src/Transform.o src/Undo.o src/View.o src/Widget.o
+OBJECTS=src/Bitmap.o src/Blend.o src/Brush.o src/Button.o src/CheckBox.o src/Clone.o src/Crop.o src/Dialog.o src/DialogWindow.o src/Fill.o src/FX.o src/File.o src/FileSP.o src/GetColor.o src/Group.o src/Gui.o src/InputFloat.o src/InputInt.o src/InputText.o src/Map.o src/Math.o src/Octree.o src/Offset.o src/Paint.o src/Palette.o src/Project.o src/Quantize.o src/Render.o src/Separator.o src/Stroke.o src/Text.o src/ToggleButton.o src/Transform.o src/Undo.o src/View.o src/Widget.o
 
 default: $(OBJECTS)
 	$(CXX) -o ./rendera.exe src/Main.cxx \
