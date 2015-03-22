@@ -130,5 +130,5 @@ TESTS = $(check_PROGRAMS)
 
 dist_man1_MANS = man/rendera.man
 
-EXTRA_DIST = images Rendera.md README.images
+EXTRA_DIST = images Rendera.md Images.md
 
