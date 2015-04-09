@@ -4,25 +4,63 @@
 
 # obtain the current version number from git
 NAME="Rendera "
+
 VERSION=$(shell git describe --always --dirty)
+
 INCLUDE_DIR=$(shell ./fltk-1.3.3/fltk-config --use-images --cxxflags)
+
+CXX=i686-w64-mingw32-g++
+CXXFLAGS=-O2 -static-libgcc -static-libstdc++ -DPACKAGE_STRING=\"$(NAME)$(VERSION)\" $(INCLUDE_DIR)
+
 LIBS=$(shell ./fltk-1.3.3/fltk-config --use-images --ldflags)
 LIBS+=-lgdi32 -lcomctl32 -static -lpthread
-CXXFLAGS=-O2 -static-libgcc -static-libstdc++ -DPACKAGE_STRING=\"$(NAME)$(VERSION)\" $(INCLUDE_DIR)
-LDFLAGS=$(LIBS)
-CXX=i686-w64-mingw32-g++
-OBJDIR=./src
-OBJECTS=src/Bitmap.o src/Blend.o src/Brush.o src/Button.o src/CheckBox.o src/Clone.o src/Crop.o src/Dialog.o src/DialogWindow.o src/Fill.o src/FX.o src/File.o src/FileSP.o src/GetColor.o src/Group.o src/Gui.o src/InputFloat.o src/InputInt.o src/InputText.o src/Map.o src/Math.o src/Octree.o src/Offset.o src/Paint.o src/Palette.o src/Project.o src/Quantize.o src/Render.o src/Separator.o src/Stroke.o src/Text.o src/ToggleButton.o src/Transform.o src/Undo.o src/View.o src/Widget.o
 
-default: $(OBJECTS)
-	$(CXX) -o ./rendera.exe src/Main.cxx \
-	$(OBJECTS) \
-	$(CXXFLAGS) \
-	$(LDFLAGS)
+LDFLAGS=$(LIBS)
+
+OBJDIR=./src
+OBJ= \
+  src/Bitmap.o \
+  src/Blend.o \
+  src/Brush.o \
+  src/Button.o \
+  src/CheckBox.o \
+  src/Clone.o \
+  src/Crop.o \
+  src/Dialog.o \
+  src/DialogWindow.o \
+  src/Fill.o \
+  src/FX.o \
+  src/File.o \
+  src/FileSP.o \
+  src/GetColor.o \
+  src/Group.o \
+  src/Gui.o \
+  src/InputFloat.o \
+  src/InputInt.o \
+  src/InputText.o \
+  src/Map.o src/Math.o \
+  src/Octree.o \
+  src/Offset.o \
+  src/Paint.o \
+  src/Palette.o \
+  src/Project.o \
+  src/Quantize.o \
+  src/Render.o \
+  src/Separator.o \
+  src/Stroke.o \
+  src/Text.o \
+  src/ToggleButton.o \
+  src/Transform.o \
+  src/Undo.o \
+  src/View.o \
+  src/Widget.o
+
+default: $(OBJ)
+	$(CXX) -o ./rendera.exe src/Main.cxx $(OBJ) $(CXXFLAGS) $(LDFLAGS)
 
 $(OBJDIR)/%.o: $(OBJDIR)/%.cxx $(OBJDIR)/%.H
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	@rm -f ./src/*.o ./rendera.exe
+	@rm -f $(OBJDIR)/*.o ./rendera.exe
 
