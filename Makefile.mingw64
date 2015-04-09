@@ -66,4 +66,5 @@ $(OBJDIR)/%.o: $(OBJDIR)/%.cxx $(OBJDIR)/%.H
 
 clean:
 	@rm -f $(OBJDIR)/*.o ./rendera.exe
+	@echo "Clean."
 
