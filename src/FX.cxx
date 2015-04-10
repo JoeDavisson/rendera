@@ -1359,47 +1359,48 @@ namespace ApplyPalette
   namespace Items
   {
     DialogWindow *dialog;
-    CheckBox *dither;
+    Fl_Choice *mode;
     CheckBox *gamma;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
 
-  void applyNormal()
+  enum
   {
-    Gui::showProgress(bmp->h);
-
-    for(int y = bmp->ct; y <= bmp->cb; y++)
-    {
-      int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
-      {
-        *p = (Project::palette->data[(int)Project::palette->lookup(*p)] & 0xFFFFFF) | (geta(*p) << 24);
-      }
-
-      if(Gui::updateProgress(y) < 0)
-        return;
-    }
-
-    Gui::hideProgress();
-  }
-
-  void applyDither()
+    THRESHOLD,
+    FLOYD,
+    JARVIS,
+    STUCKI,
+    ATKINSON,
+    JOE
+  };
+ 
+  namespace Threshold
   {
-/*
-    // floyd
-    int matrix[2][3] =
+    int matrix[3][5] =
     {
-      { 0, 0, 7 },
-      { 3, 5, 1 },
+      { 0, 0, 0, 0, 0 },
+      { 0, 0, 0, 0, 0 },
+      { 0, 0, 0, 0, 0 },
     };
 
-    const int w = 3;
-    const int h = 2;
+    const int div = 1;
+  }
+
+  namespace Floyd
+  {
+    int matrix[3][5] =
+    {
+      { 0, 0, 0, 7, 0 },
+      { 0, 3, 5, 1, 0 },
+      { 0, 0, 0, 0, 0 },
+    };
+
     const int div = 16;
-*/
-/*
-    // jarvis
+  }
+
+  namespace Jarvis
+  {
     int matrix[3][5] =
     {
       { 0, 0, 0, 7, 5 },
@@ -1407,12 +1408,11 @@ namespace ApplyPalette
       { 1, 3, 5, 3, 1 }
     };
 
-    const int w = 5;
-    const int h = 3;
     const int div = 48;
-*/
-/*
-    // stucki
+  }
+
+  namespace Stucki
+  {
     int matrix[3][5] =
     {
       { 0, 0, 0, 8, 4 },
@@ -1420,22 +1420,70 @@ namespace ApplyPalette
       { 1, 2, 4, 2, 1 }
     };
 
-    const int w = 5;
-    const int h = 3;
     const int div = 42;
-*/
+  }
 
-    // atkinson
-    const int matrix[3][5] =
+  namespace Atkinson
+  {
+    int matrix[3][5] =
     {
       { 0, 0, 0, 1, 1 },
       { 0, 1, 1, 1, 0 },
       { 0, 0, 1, 0, 0 }
     };
 
-    const int w = 5;
-    const int h = 3;
     const int div = 8;
+  }
+
+  namespace Joe
+  {
+    int matrix[3][5] =
+    {
+      { 0, 0, 0, 2, 1 },
+      { 1, 2, 3, 2, 1 },
+      { 0, 1, 2, 1, 0 }
+    };
+
+    const int div = 16;
+  }
+
+  void apply(int mode)
+  {
+    int (*matrix)[5] = Threshold::matrix;
+    int w = 5, h = 3;
+    int div = 1;
+
+    switch(mode)
+    {
+      case THRESHOLD:
+        matrix = Threshold::matrix;
+        div = Threshold::div;
+        break;
+      case FLOYD:
+        matrix = Floyd::matrix;
+        div = Floyd::div;
+        break;
+      case JARVIS:
+        matrix = Jarvis::matrix;
+        div = Jarvis::div;
+        break;
+      case STUCKI:
+        matrix = Stucki::matrix;
+        div = Stucki::div;
+        break;
+      case ATKINSON:
+        matrix = Atkinson::matrix;
+        div = Atkinson::div;
+        break;
+      case JOE:
+        matrix = Joe::matrix;
+        div = Joe::div;
+        break;
+      default:
+        matrix = Threshold::matrix;
+        div = Threshold::div;
+        break;
+    }
 
     Bitmap *bmp = Project::bmp;
     const bool fix_gamma = Items::gamma->value();
@@ -1534,11 +1582,7 @@ namespace ApplyPalette
   {
     Items::dialog->hide();
     pushUndo();
-
-    if(Items::dither->value())
-      applyDither();
-    else
-      applyNormal();
+    apply(Items::mode->value());
   }
 
   void quit()
@@ -1554,11 +1598,6 @@ namespace ApplyPalette
 
   void dither_callback()
   {
-    if(Items::dither->value())
-      Items::gamma->activate();
-    else
-      Items::gamma->deactivate();
-
     Items::dialog->redraw();
   }
 
@@ -1567,12 +1606,18 @@ namespace ApplyPalette
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Apply Palette");
-    Items::dither = new CheckBox(Items::dialog, 0, y1, 16, 16, "Dithering", 0);
-    Items::dither->callback((Fl_Callback *)dither_callback);
-    Items::dither->center();
-    y1 += 16 + 8;
+    Items::mode = new Fl_Choice(96, y1, 128, 24, "Dither:");
+    Items::mode->tooltip("Dither");
+    Items::mode->textsize(10);
+    Items::mode->add("Threshold");
+    Items::mode->add("Floyd-Steinberg");
+    Items::mode->add("Jarvis, Judice and Ninke");
+    Items::mode->add("Stucki");
+    Items::mode->add("Atkinson");
+    Items::mode->add("Joe's Dither");
+    Items::mode->value(0);
+    y1 += 24 + 8;
     Items::gamma = new CheckBox(Items::dialog, 0, y1, 16, 16, "Gamma Correction", 0);
-    Items::gamma->deactivate();
     Items::gamma->center();
     y1 += 16 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
