@@ -213,58 +213,6 @@ namespace Scale
 
     Bitmap *temp = new Bitmap(dw, dh, overscroll);
   
-    // average colors if scaling down
-    int mipx = 1, mipy = 1;
-    if(sw > dw)
-      mipx = (sw / dw);
-    if(sh > dh)
-      mipy = (sh / dh);
-
-    const int div = mipx * mipy;
-
-    if((mipx > 1) || (mipy > 1))
-    {
-      for(int y = 0; y <= sh - mipy; y += mipy)
-      {
-        for(int x = 0; x <= sw - mipx; x += mipx)
-        {
-          int r = 0, g = 0, b = 0, a = 0;
-
-          for(int j = 0; j < mipy; j++)
-          {
-            for(int i = 0; i < mipx; i++)
-            {
-              const int c = bmp->getpixel(sx + x + i, sy + y + j);
-              rgba_type rgba = getRgba(c);
-              r += Gamma::fix(rgba.r);
-              g += Gamma::fix(rgba.g);
-              b += Gamma::fix(rgba.b);
-              a += rgba.a;
-            }
-          }
-
-          r /= div;
-          g /= div;
-          b /= div;
-          a /= div;
-
-          r = Gamma::unfix(r);
-          g = Gamma::unfix(g);
-          b = Gamma::unfix(b);
-
-          const int c = makeRgba(r, g, b, a);
-
-          for(int j = 0; j < mipy; j++)
-          {
-            for(int i = 0; i < mipx; i++)
-            {
-              *(bmp->row[sy + y + j] + sx + x + i) = c;
-            }
-          }
-        }
-      }
-    }
-
     Gui::showProgress(dh);
 
     for(int y = 0; y < dh; y++) 
