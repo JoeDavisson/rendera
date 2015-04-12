@@ -1452,18 +1452,17 @@ namespace ApplyPalette
   {
     const int matrix[64] =
     {
-      1, 49, 13, 61, 4, 52, 16, 64,
-      33, 17, 45, 29, 36, 20, 48, 32,
-      9, 57, 5, 53, 12, 60, 8, 56,
-      41, 25, 37, 21, 44, 28, 40, 24,
-      3, 51, 15, 63, 2, 50, 14, 62,
-      35, 19, 47, 31, 34, 18, 46, 30,
-      11, 59, 7, 55, 10, 58, 6, 54,
-      43, 27, 39, 23, 42, 26, 38, 22
-    };
+      0, 32, 8, 40, 2, 34, 10, 42,
+      48, 16, 56, 24, 50, 18, 58, 26,
+      12, 44, 4, 36, 14, 46, 6, 38,
+      60, 28, 52, 20, 62, 30, 54, 22,
+      3, 35, 11, 43, 1, 33, 9, 41,
+      51, 19, 59, 27, 49, 17, 57, 25,
+      15, 47, 7, 39, 13, 45, 5, 37,
+      63, 31, 55, 23, 61, 29, 53, 21
+    }; 
 
     Bitmap *bmp = Project::bmp;
-    //const bool fix_gamma = Items::gamma->value();
 
     Gui::showProgress(bmp->h);
 
@@ -1472,7 +1471,7 @@ namespace ApplyPalette
       int *p = bmp->row[y] + bmp->cl;
       for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        const int factor = (matrix[(x & 7) + 8 * (y & 7)] - 1) - 32;
+        const int factor = matrix[(x & 7) + 8 * (y & 7)] - 32;
         const int alpha = geta(*p);
 
         int oldl = getl(*p);
