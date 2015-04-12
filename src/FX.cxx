@@ -1372,7 +1372,7 @@ namespace ApplyPalette
     JARVIS,
     STUCKI,
     ATKINSON,
-    JOE
+    SIERRA
   };
  
   namespace Threshold
@@ -1435,16 +1435,16 @@ namespace ApplyPalette
     const int div = 8;
   }
 
-  namespace Joe
+  namespace Sierra
   {
     int matrix[3][5] =
     {
-      { 0, 0, 0, 2, 1 },
-      { 1, 2, 3, 2, 1 },
-      { 0, 1, 2, 1, 0 }
+      { 0, 0, 0, 5, 3 },
+      { 2, 4, 5, 4, 2 },
+      { 0, 2, 3, 2, 0 }
     };
 
-    const int div = 16;
+    const int div = 32;
   }
 
   void apply(int mode)
@@ -1475,9 +1475,9 @@ namespace ApplyPalette
         matrix = Atkinson::matrix;
         div = Atkinson::div;
         break;
-      case JOE:
-        matrix = Joe::matrix;
-        div = Joe::div;
+      case SIERRA:
+        matrix = Sierra::matrix;
+        div = Sierra::div;
         break;
       default:
         matrix = Threshold::matrix;
@@ -1614,7 +1614,7 @@ namespace ApplyPalette
     Items::mode->add("Jarvis, Judice and Ninke");
     Items::mode->add("Stucki");
     Items::mode->add("Atkinson");
-    Items::mode->add("Joe's Dither");
+    Items::mode->add("Sierra");
     Items::mode->value(0);
     y1 += 24 + 8;
     Items::gamma = new CheckBox(Items::dialog, 0, y1, 16, 16, "Gamma Correction", 0);
