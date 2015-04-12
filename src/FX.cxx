@@ -1472,24 +1472,20 @@ namespace ApplyPalette
       int *p = bmp->row[y] + bmp->cl;
       for(int x = bmp->cl; x <= bmp->cr; x++, p++)
       {
-        const int factor = matrix[(x & 7) + 8 * (y & 7)] - 32;
-        rgba_type rgba = getRgba(*p);
-        const int alpha = rgba.a;
+        const int factor = (matrix[(x & 7) + 8 * (y & 7)] - 1) - 32;
+        const int alpha = geta(*p);
 
-        int oldr = rgba.r + factor;
-        int oldg = rgba.g + factor;
-        int oldb = rgba.b + factor;
+        int oldl = getl(*p);
 
-        oldr = clamp(oldr, 255); 
-        oldg = clamp(oldg, 255); 
-        oldb = clamp(oldb, 255); 
+        oldl += factor;
+        oldl = clamp(oldl, 255); 
 
-        const int old = makeRgb(oldr, oldg, oldb);
+        const int old = Blend::keepLum(*p, oldl);
 
         const int pal_index = (int)Project::palette->lookup(old);
         const int c = Project::palette->data[pal_index];
 
-        rgba = getRgba(c);
+        rgba_type rgba = getRgba(c);
         *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
       }
 
