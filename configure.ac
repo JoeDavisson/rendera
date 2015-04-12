@@ -23,7 +23,6 @@ LT_PREREQ([2.4])
 LT_INIT([])
 
 
-
 # spit platform info
 
 AC_MSG_NOTICE([build_cpu     == $build_cpu])
@@ -47,12 +46,10 @@ AC_DEFINE_UNQUOTED([TARGET_VENDOR], [$target_vendor], [define target vendor])
 AC_DEFINE_UNQUOTED([TARGET_OS],     [$target_os],     [define target os])
 
 
-
 # spit executable extension
 
 AC_MSG_NOTICE([EXEEXT == $EXEEXT])
 AC_SUBST([EXEEXT])
-
 
 
 # Checks for programs.
@@ -61,9 +58,6 @@ AC_PROG_CXX
 AC_PROG_LN_S
 AC_PROG_MKDIR_P
 AC_CHECK_PROG([HAVE_FLTK_CONFIG],[fltk-config$EXEEXT],[yes],[no])
-# AX_CXX_COMPILE_STDCXX_11
-# AC_PROG_CC
-
 
 
 # Checks for libraries.
@@ -74,7 +68,6 @@ AC_CHECK_LIB([png],  [main],[],[AC_MSG_ERROR([libpng missing])])
 AC_CHECK_LIB([z],    [main],[],[AC_MSG_ERROR([libz missing])])
 
 
-
 # Checks for header files.
 
 AC_CHECK_HEADER([cstdlib],[],[AC_MSG_ERROR([cstdlib missing])])
@@ -82,7 +75,6 @@ AC_CHECK_HEADER([stdint.h],[],[AC_MSG_ERROR([stdint.h missing])])
 AC_CHECK_HEADER([unistd.h],[],[AC_MSG_ERROR([unistd.h missing])])
 AC_CHECK_HEADER([limits.h],[],[AC_MSG_ERROR([limits.h missing])])
 AC_CHECK_HEADER([getopt.h],[],[AC_MSG_ERROR([getopt.h missing])])
-
 
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -100,11 +92,9 @@ AC_TYPE_INT32_T
 AC_TYPE_INT64_T
 
 
-
 # Checks for library functions.
 
 AC_CHECK_FUNCS([pow sqrt strcasecmp readlink])
-
 
 
 # Checks for symbol declarations
@@ -118,17 +108,6 @@ AC_CHECK_DECLS([PATH_MAX],
   [],
   [AC_MSG_ERROR([PATH_MAX missing])],
   [[#include <limits.h>]])
-
-
-
-# futz the data path
-
-(
-  $MKDIR_P share/rendera && \
-  cd share/rendera       && \
-  $LN_S ../../"${srcdir}"/data
-)
-
 
 
 # platform-specific things
@@ -146,23 +125,11 @@ case $host_os in
     FLTK_CONFIG_CXXFLAGS=$(fltk-config --cxxflags)
     FLTK_CONFIG_LDFLAGS=$(fltk-config --ldflags)
     AC_CHECK_LIB([X11],  [main],[],[AC_MSG_ERROR([libX11 missing])])
-#    AC_CHECK_LIB([rt],   [main],[],[AC_MSG_ERROR([librt missing])])
     ;;
-#  *mingw*)
-#    AC_MSG_NOTICE([doing mingw stuff])
-#    FLTK_CONFIG_INCLUDEDIR=$(fltk-config.exe --includedir)
-#    FLTK_CONFIG_CXXFLAGS=$(fltk-config.exe --cxxflags)
-#    FLTK_CONFIG_LDFLAGS=$(fltk-config.exe --ldflags)
-#    FLTK_CONFIG_LDFLAGS+=" -lgdi32 -lcomdlg32"
-#    AC_MSG_NOTICE([doing platform-specific stuff for mingw])
-#    AC_CHECK_LIB([X11],  [main],[],[AC_MSG_ERROR([libX11 missing])])
-#    AC_CHECK_LIB([rt],   [main],[],[AC_MSG_ERROR([librt missing])])
-#    ;;
   *)
     AC_MSG_ERROR([unsupported host os: $host_os])
     ;;
 esac
-
 
 
 # spit fltk-config stuff
@@ -175,9 +142,9 @@ AC_SUBST([FLTK_CONFIG_CXXFLAGS])
 AC_SUBST([FLTK_CONFIG_LDFLAGS])
 
 
-
 AC_CONFIG_FILES([Makefile
                  tests/Makefile
                  tests/testsuite.at])
 
 AC_OUTPUT
+
