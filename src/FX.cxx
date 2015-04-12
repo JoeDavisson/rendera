@@ -1372,7 +1372,8 @@ namespace ApplyPalette
     JARVIS,
     STUCKI,
     ATKINSON,
-    SIERRA
+    SIERRA,
+    ORDERED
   };
  
   namespace Threshold
@@ -1447,6 +1448,58 @@ namespace ApplyPalette
     const int div = 32;
   }
 
+  void applyOrderedDither()
+  {
+    const int matrix[64] =
+    {
+      1, 49, 13, 61, 4, 52, 16, 64,
+      33, 17, 45, 29, 36, 20, 48, 32,
+      9, 57, 5, 53, 12, 60, 8, 56,
+      41, 25, 37, 21, 44, 28, 40, 24,
+      3, 51, 15, 63, 2, 50, 14, 62,
+      35, 19, 47, 31, 34, 18, 46, 30,
+      11, 59, 7, 55, 10, 58, 6, 54,
+      43, 27, 39, 23, 42, 26, 38, 22
+    };
+
+    Bitmap *bmp = Project::bmp;
+    //const bool fix_gamma = Items::gamma->value();
+
+    Gui::showProgress(bmp->h);
+
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = bmp->row[y] + bmp->cl;
+      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+      {
+        const int factor = matrix[(x & 7) + 8 * (y & 7)] - 32;
+        rgba_type rgba = getRgba(*p);
+        const int alpha = rgba.a;
+
+        int oldr = rgba.r + factor;
+        int oldg = rgba.g + factor;
+        int oldb = rgba.b + factor;
+
+        oldr = clamp(oldr, 255); 
+        oldg = clamp(oldg, 255); 
+        oldb = clamp(oldb, 255); 
+
+        const int old = makeRgb(oldr, oldg, oldb);
+
+        const int pal_index = (int)Project::palette->lookup(old);
+        const int c = Project::palette->data[pal_index];
+
+        rgba = getRgba(c);
+        *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
+      }
+
+      if(Gui::updateProgress(y) < 0)
+        return;
+    }
+
+    Gui::hideProgress();
+  }
+
   void apply(int mode)
   {
     int (*matrix)[5] = Threshold::matrix;
@@ -1479,6 +1532,9 @@ namespace ApplyPalette
         matrix = Sierra::matrix;
         div = Sierra::div;
         break;
+      case ORDERED:
+        applyOrderedDither();
+        return;
       default:
         matrix = Threshold::matrix;
         div = Threshold::div;
@@ -1615,6 +1671,7 @@ namespace ApplyPalette
     Items::mode->add("Stucki");
     Items::mode->add("Atkinson");
     Items::mode->add("Sierra");
+    Items::mode->add("Ordered");
     Items::mode->value(0);
     y1 += 24 + 8;
     Items::gamma = new CheckBox(Items::dialog, 0, y1, 16, 16, "Gamma Correction", 0);
