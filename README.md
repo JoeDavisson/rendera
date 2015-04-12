@@ -1,4 +1,4 @@
-Rendera [![Build Status](https://travis-ci.org/Mortis69/rendera.svg?branch=master)](https://travis-ci.org/Mortis69/rendera) [![PDF Status](https://www.sharelatex.com/github/repos/Mortis69/rendera/builds/latest/badge.svg)](https://www.sharelatex.com/github/repos/Mortis69/rendera/builds/latest/output.pdf)
+Rendera [![Build Status](https://travis-ci.org/Mortis69/rendera.svg?branch=master)](https://travis-ci.org/Mortis69/rendera)
 =======
 
 ![Screenshot](https://raw.githubusercontent.com/Mortis69/rendera/master/screenshots/screenshot.png)
