@@ -1373,8 +1373,7 @@ namespace ApplyPalette
     STUCKI,
     ATKINSON,
     SIERRA,
-    ORDERED,
-    PAIRED
+    ORDERED
   };
  
   namespace Threshold
@@ -1496,154 +1495,6 @@ namespace ApplyPalette
     Gui::hideProgress();
   }
 
-  void applyPairedDither()
-  {
-    Bitmap *bmp = Project::bmp;
-    Palette *pal = Project::palette.get();
-    std::vector<int> table(pal->max * pal->max);
-    const bool fix_gamma = Items::gamma->value();
-
-    if(fix_gamma)
-    {
-      for(int j = 0; j < pal->max; j++)
-      {
-        for(int i = 0; i < pal->max; i++)
-        {
-          if(i <= j)
-          {
-            int r1 = getr(pal->data[i]);
-            int g1 = getg(pal->data[i]);
-            int b1 = getb(pal->data[i]);
-
-            int r2 = getr(pal->data[j]);
-            int g2 = getg(pal->data[j]);
-            int b2 = getb(pal->data[j]);
-
-            r1 = Gamma::fix(r1);
-            g1 = Gamma::fix(g1);
-            b1 = Gamma::fix(b1);
-
-            r2 = Gamma::fix(r2);
-            g2 = Gamma::fix(g2);
-            b2 = Gamma::fix(b2);
-
-            int r = r2 + (32768 * (r1 - r2)) / 65535;
-            int g = g2 + (32768 * (g1 - g2)) / 65535;
-            int b = b2 + (32768 * (b1 - b2)) / 65535;
-
-            r = Gamma::unfix(r);
-            g = Gamma::unfix(g);
-            b = Gamma::unfix(b);
-
-            table[i + pal->max * j] = makeRgb(r, g, b);
-          }
-        }
-      }    
-    }
-    else
-    {
-      for(int j = 0; j < pal->max; j++)
-      {
-        for(int i = 0; i < pal->max; i++)
-        {
-          if(i <= j)
-          {
-            table[i + pal->max * j] =
-              Blend::trans(pal->data[i], pal->data[j], 128);
-          }
-        }
-      }    
-    }
-
-    Gui::showProgress(bmp->h);
-
-    for(int y = bmp->ct; y <= bmp->cb; y++)
-    {
-      int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
-      {
-        const int alpha = geta(*p);
-        int use1 = 0;
-        int use2 = 0;
-
-        if(fix_gamma)
-        {
-          uint64_t lowest = 0xFFFFFFFFF;
-          for(int j = 0; j < pal->max; j++)
-          {
-            for(int i = 0; i < pal->max; i++)
-            {
-              if(i <= j)
-              {
-                const struct rgba_type rgba1 = getRgba(*p);
-                const struct rgba_type rgba2 = getRgba(table[i + pal->max * j]);
-
-                int r1 = Gamma::fix(rgba1.r);
-                int g1 = Gamma::fix(rgba1.g);
-                int b1 = Gamma::fix(rgba1.b);
-
-                int r2 = Gamma::fix(rgba2.r);
-                int g2 = Gamma::fix(rgba2.g);
-                int b2 = Gamma::fix(rgba2.b);
-
-                const uint64_t r = r1 - r2;
-                const uint64_t g = g1 - g2;
-                const uint64_t b = b1 - b2;
-
-                uint64_t d = r * r + g * g + b * b;
-
-                if(d < lowest)
-                {
-                  lowest = d;
-                  use1 = i;
-                  use2 = j;
-                }
-              }
-            }
-          }
-        }
-        else
-        {
-          int lowest = 0xFFFFFF;
-
-          for(int j = 0; j < pal->max; j++)
-          {
-            for(int i = 0; i < pal->max; i++)
-            {
-              if(i <= j)
-              {
-                int d = diff24(*p, table[i + pal->max * j]);
-
-                if(d < lowest)
-                {
-                  lowest = d;
-                  use1 = i;
-                  use2 = j;
-                }
-              }
-            }
-          }
-        }
-
-        int c = 0;
-
-        // checkboard dither the colors
-        if((x & 1) ^ (y & 1))
-          c = Project::palette->data[use1];
-        else
-          c = Project::palette->data[use2];
-
-        rgba_type rgba = getRgba(c);
-        *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
-      }
-
-      if(Gui::updateProgress(y) < 0)
-        return;
-    }
-
-    Gui::hideProgress();
-  }
-
   void apply(int mode)
   {
     int (*matrix)[5] = Threshold::matrix;
@@ -1678,9 +1529,6 @@ namespace ApplyPalette
         break;
       case ORDERED:
         applyOrderedDither();
-        return;
-      case PAIRED:
-        applyPairedDither();
         return;
       default:
         matrix = Threshold::matrix;
@@ -1819,12 +1667,10 @@ namespace ApplyPalette
     Items::mode->add("Atkinson");
     Items::mode->add("Sierra");
     Items::mode->add("Ordered");
-    Items::mode->add("Paired");
     Items::mode->value(0);
     y1 += 24 + 8;
     Items::gamma = new CheckBox(Items::dialog, 0, y1, 16, 16, "Gamma Correction", 0);
     Items::gamma->center();
-    Items::gamma->value(1);
     y1 += 16 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
