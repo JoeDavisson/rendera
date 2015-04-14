@@ -1361,6 +1361,7 @@ namespace ApplyPalette
     DialogWindow *dialog;
     Fl_Choice *mode;
     CheckBox *gamma;
+    CheckBox *lum_only;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -1487,92 +1488,163 @@ namespace ApplyPalette
 
     Bitmap *bmp = Project::bmp;
     const bool fix_gamma = Items::gamma->value();
+    const bool lum_only = Items::lum_only->value();
 
     Gui::showProgress(bmp->h);
 
-    for(int y = bmp->ct; y <= bmp->cb; y++)
+    if(lum_only)
     {
-      int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+      for(int y = bmp->ct; y <= bmp->cb; y++)
       {
-        rgba_type rgba = getRgba(*p);
-        const int alpha = rgba.a;
-        const int old_r = rgba.r;
-        const int old_g = rgba.g;
-        const int old_b = rgba.b;
-
-        const int pal_index = (int)Project::palette->lookup(*p);
-        const int c = Project::palette->data[pal_index];
-
-        rgba = getRgba(c);
-        *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
-
-        const int new_r = rgba.r;
-        const int new_g = rgba.g;
-        const int new_b = rgba.b;
-        int er, eg, eb;
-
-        if(fix_gamma)
+        int *p = bmp->row[y] + bmp->cl;
+        for(int x = bmp->cl; x <= bmp->cr; x++, p++)
         {
-          er = Gamma::fix(old_r) - Gamma::fix(new_r);
-          eg = Gamma::fix(old_g) - Gamma::fix(new_g);
-          eb = Gamma::fix(old_b) - Gamma::fix(new_b);
-        }
-        else
-        {
-          er = old_r - new_r;
-          eg = old_g - new_g;
-          eb = old_b - new_b;
-        }
+          const int alpha = geta(*p);
+          const int old_l = getl(*p);
 
-        for(int j = 0; j < h; j++)
-        {
-          for(int i = 0; i < w; i++)
+          const int pal_index =
+            (int)Project::palette->lookup(Blend::keepLum(*p, old_l));
+          const int c = Project::palette->data[pal_index];
+
+          struct rgba_type rgba = getRgba(c);
+          *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
+
+          const int new_l = getl(*p);
+          int el;
+
+          if(fix_gamma)
           {
-            if(matrix[j][i] > 0)
+            el = Gamma::fix(old_l) - Gamma::fix(new_l);
+          }
+          else
+          {
+            el = old_l - new_l;
+          }
+
+          for(int j = 0; j < h; j++)
+          {
+            for(int i = 0; i < w; i++)
             {
-              rgba_type rgba = getRgba(bmp->getpixel(x - w / 2 + i, y + j));
-              int r, g, b;
-
-              if(fix_gamma)
+              if(matrix[j][i] > 0)
               {
-                r = Gamma::fix(rgba.r); 
-                g = Gamma::fix(rgba.g); 
-                b = Gamma::fix(rgba.b);
-              }
-              else
-              {
-                r = rgba.r; 
-                g = rgba.g; 
-                b = rgba.b; 
-              }
+                int c = bmp->getpixel(x - w / 2 + i, y + j);
+                int l = getl(c);
 
-              r += (er * matrix[j][i]) / div;
-              g += (eg * matrix[j][i]) / div;
-              b += (eb * matrix[j][i]) / div;
+                if(fix_gamma)
+                {
+                  l = Gamma::fix(l); 
+                }
 
-              if(fix_gamma)
-              {
-                r = Gamma::unfix(clamp(r, 65535));
-                g = Gamma::unfix(clamp(g, 65535));
-                b = Gamma::unfix(clamp(b, 65535));
-              }
-              else
-              {
-                r = clamp(r, 255);
-                g = clamp(g, 255);
-                b = clamp(b, 255);
-              }
+                l += (el * matrix[j][i]) / div;
 
-              bmp->setpixelSolid(x - w / 2 + i, y + j,
-                                 makeRgba(r, g, b, rgba.a), 0);
-            }  
+                if(fix_gamma)
+                {
+                  l = Gamma::unfix(clamp(l, 65535));
+                }
+                else
+                {
+                  l = clamp(l, 255);
+                }
+
+                rgba_type rgba = getRgba(Blend::keepLum(c, l));
+
+                bmp->setpixelSolid(x - w / 2 + i, y + j,
+                                 makeRgba(rgba.r, rgba.g, rgba.b, rgba.a), 0);
+              }  
+            }
           }
         }
-      }
 
-      if(Gui::updateProgress(y) < 0)
-        return;
+        if(Gui::updateProgress(y) < 0)
+          return;
+      }
+    }
+    else
+    {
+      for(int y = bmp->ct; y <= bmp->cb; y++)
+      {
+        int *p = bmp->row[y] + bmp->cl;
+        for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+        {
+          rgba_type rgba = getRgba(*p);
+          const int alpha = rgba.a;
+          const int old_r = rgba.r;
+          const int old_g = rgba.g;
+          const int old_b = rgba.b;
+
+          const int pal_index = (int)Project::palette->lookup(*p);
+          const int c = Project::palette->data[pal_index];
+
+          rgba = getRgba(c);
+          *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
+
+          const int new_r = rgba.r;
+          const int new_g = rgba.g;
+          const int new_b = rgba.b;
+          int er, eg, eb;
+
+          if(fix_gamma)
+          {
+            er = Gamma::fix(old_r) - Gamma::fix(new_r);
+            eg = Gamma::fix(old_g) - Gamma::fix(new_g);
+            eb = Gamma::fix(old_b) - Gamma::fix(new_b);
+          }
+          else
+          {
+            er = old_r - new_r;
+            eg = old_g - new_g;
+            eb = old_b - new_b;
+          }
+
+          for(int j = 0; j < h; j++)
+          {
+            for(int i = 0; i < w; i++)
+            {
+              if(matrix[j][i] > 0)
+              {
+                rgba_type rgba = getRgba(bmp->getpixel(x - w / 2 + i, y + j));
+                int r, g, b;
+
+                if(fix_gamma)
+                {
+                  r = Gamma::fix(rgba.r); 
+                  g = Gamma::fix(rgba.g); 
+                  b = Gamma::fix(rgba.b);
+                }
+                else
+                {
+                  r = rgba.r; 
+                  g = rgba.g; 
+                  b = rgba.b; 
+                }
+
+                r += (er * matrix[j][i]) / div;
+                g += (eg * matrix[j][i]) / div;
+                b += (eb * matrix[j][i]) / div;
+
+                if(fix_gamma)
+                {
+                  r = Gamma::unfix(clamp(r, 65535));
+                  g = Gamma::unfix(clamp(g, 65535));
+                  b = Gamma::unfix(clamp(b, 65535));
+                }
+                else
+                {
+                  r = clamp(r, 255);
+                  g = clamp(g, 255);
+                  b = clamp(b, 255);
+                }
+
+                bmp->setpixelSolid(x - w / 2 + i, y + j,
+                                 makeRgba(r, g, b, rgba.a), 0);
+              }  
+            }
+          }
+        }
+
+        if(Gui::updateProgress(y) < 0)
+          return;
+      }
     }
 
     Gui::hideProgress();
@@ -1619,6 +1691,9 @@ namespace ApplyPalette
     y1 += 24 + 8;
     Items::gamma = new CheckBox(Items::dialog, 0, y1, 16, 16, "Gamma Correction", 0);
     Items::gamma->center();
+    y1 += 16 + 8;
+    Items::lum_only = new CheckBox(Items::dialog, 0, y1, 16, 16, "Luminance Only", 0);
+    Items::lum_only->center();
     y1 += 16 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
