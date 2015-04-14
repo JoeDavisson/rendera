@@ -1372,8 +1372,7 @@ namespace ApplyPalette
     JARVIS,
     STUCKI,
     ATKINSON,
-    SIERRA,
-    ORDERED
+    SIERRA
   };
  
   namespace Threshold
@@ -1448,53 +1447,6 @@ namespace ApplyPalette
     const int div = 32;
   }
 
-  void applyOrderedDither()
-  {
-    const int matrix[64] =
-    {
-      0, 32, 8, 40, 2, 34, 10, 42,
-      48, 16, 56, 24, 50, 18, 58, 26,
-      12, 44, 4, 36, 14, 46, 6, 38,
-      60, 28, 52, 20, 62, 30, 54, 22,
-      3, 35, 11, 43, 1, 33, 9, 41,
-      51, 19, 59, 27, 49, 17, 57, 25,
-      15, 47, 7, 39, 13, 45, 5, 37,
-      63, 31, 55, 23, 61, 29, 53, 21
-    }; 
-
-    Bitmap *bmp = Project::bmp;
-
-    Gui::showProgress(bmp->h);
-
-    for(int y = bmp->ct; y <= bmp->cb; y++)
-    {
-      int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
-      {
-        const int factor = matrix[(x & 7) + 8 * (y & 7)] - 32;
-        const int alpha = geta(*p);
-
-        int oldl = getl(*p);
-
-        oldl += factor;
-        oldl = clamp(oldl, 255); 
-
-        const int old = Blend::keepLum(*p, oldl);
-
-        const int pal_index = (int)Project::palette->lookup(old);
-        const int c = Project::palette->data[pal_index];
-
-        rgba_type rgba = getRgba(c);
-        *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
-      }
-
-      if(Gui::updateProgress(y) < 0)
-        return;
-    }
-
-    Gui::hideProgress();
-  }
-
   void apply(int mode)
   {
     int (*matrix)[5] = Threshold::matrix;
@@ -1527,9 +1479,6 @@ namespace ApplyPalette
         matrix = Sierra::matrix;
         div = Sierra::div;
         break;
-      case ORDERED:
-        applyOrderedDither();
-        return;
       default:
         matrix = Threshold::matrix;
         div = Threshold::div;
@@ -1666,7 +1615,6 @@ namespace ApplyPalette
     Items::mode->add("Stucki");
     Items::mode->add("Atkinson");
     Items::mode->add("Sierra");
-    Items::mode->add("Ordered");
     Items::mode->value(0);
     y1 += 24 + 8;
     Items::gamma = new CheckBox(Items::dialog, 0, y1, 16, 16, "Gamma Correction", 0);
