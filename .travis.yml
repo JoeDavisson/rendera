@@ -1,0 +1,23 @@
+language: cpp
+
+before_install:
+  - uname -a
+  - lsb_release --all
+
+install:
+  - ${TRAVIS_BUILD_DIR}/install-dependencies.sh
+
+env:
+  - TRCC=gcc TRCXX=g++
+  - TRCC=clang TRCXX=clang++
+
+script:
+  - export CC=$TRCC
+  - export CXX=$TRCXX
+  - ${TRAVIS_BUILD_DIR}/build-o-matic.sh
+
+matrix:
+  allow_failures:
+    - env: TRCC=clang TRCXX=clang++
+  fast_finish: true
+

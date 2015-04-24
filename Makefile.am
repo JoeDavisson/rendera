@@ -4,16 +4,15 @@ SUBDIRS = tests
 
 ACLOCAL_AMFLAGS = -I m4
 
-INCLUDE=-IFile -IFX -IGraphics -IGui -IImages -IMain -ITools
+INCLUDE=-I$(top_srcdir)/File -I$(top_srcdir)/FX -I$(top_srcdir)/Graphics -I$(top_srcdir)/Gui -I$(top_srcdir)/Images -I$(top_srcdir)/Main -I$(top_srcdir)/Tools
 
-# AM_CXXFLAGS = -Wall -Wno-unused -fmax-errors=5
-AM_CPPFLAGS = $(INCLUDE) -isystem $(FLTK_CONFIG_INCLUDEDIR)
-AM_CXXFLAGS = -Wall -Wextra -Werror -pedantic-errors # -rdynamic
+AM_CPPFLAGS = -isystem $(FLTK_CONFIG_INCLUDEDIR)
+AM_CXXFLAGS = $(INCLUDE) -Wall -Wextra -Werror -pedantic-errors # -rdynamic
 
 
 noinst_LTLIBRARIES = libren.la
 
-libren_la_CXXFLAGS = $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
+libren_la_CXXFLAGS = $(INCLUDE) $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
 libren_la_LDFLAGS  = $(FLTK_CONFIG_LDFLAGS)  $(AM_LDFLAGS)
 
 libren_la_SOURCES =       \

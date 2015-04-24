@@ -1,4 +1,4 @@
-Rendera
+Rendera [![Build Status](https://travis-ci.org/Mortis69/rendera.svg?branch=master)](https://travis-ci.org/Mortis69/rendera)
 =======
 
 ![Screenshot](https://raw.githubusercontent.com/Mortis69/rendera/master/screenshots/screenshot.png)
@@ -13,7 +13,6 @@ penalty if Xlib is not available). Eventually we should have optimized versions
 for Win/Mac, but we aren't quite there yet.
 
 ## Build it from source
-<b>Note: ```make distcheck``` is broken at the moment</b>
 
 ```$ git clone https://github.com/Mortis69/rendera.git```
 
