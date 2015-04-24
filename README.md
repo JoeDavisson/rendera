@@ -13,7 +13,7 @@ penalty if Xlib is not available). Eventually we should have optimized versions
 for Win/Mac, but we aren't quite there yet.
 
 ## Build it from source
-Note: The build will be broken for a short time during code reorganization.
+Note: autoconf doesn't work right now, in the meantime please use the Makefiles (the static-linking makefiles for linux/windows are in the "make" directory.)
 
 ```$ git clone https://github.com/Mortis69/rendera.git```
 
