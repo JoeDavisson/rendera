@@ -1,4 +1,4 @@
-NAME="Rendera "
+# Makefile for dynamic linking on Linux
 
 DIR_FILE=file
 DIR_FX=fx
@@ -12,7 +12,9 @@ INCLUDE=-I$(DIR_FILE) -I$(DIR_FX) -I$(DIR_GRAPHICS) \
         -I$(DIR_GUI) -I$(DIR_MAIN) -I$(DIR_TOOLS) -I$(DIR_IMAGES)
 
 CXX=g++
+
 # obtain the current version number from git
+NAME="Rendera "
 VERSION=$(shell git describe --always --dirty)
 CXXFLAGS=-O2 -DPACKAGE_STRING=\"$(NAME)$(VERSION)\" $(INCLUDE)
 
