@@ -13,7 +13,7 @@ penalty if Xlib is not available). Eventually we should have optimized versions
 for Win/Mac, but we aren't quite there yet.
 
 ## Build it from source
-<b>Note: autoconf doesn't work right now, in the meantime please use the Makefile.</b>
+<b>Note: ```make distcheck``` is broken at the moment</b>
 
 ```$ git clone https://github.com/Mortis69/rendera.git```
 
