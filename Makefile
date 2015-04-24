@@ -1,89 +1,91 @@
-# obtain the current version number from git
 NAME="Rendera "
 
-VERSION=$(shell git describe --always --dirty)
+DIR_FILE=file
+DIR_FX=fx
+DIR_GRAPHICS=graphics
+DIR_GUI=gui
+DIR_MAIN=main
+DIR_TOOLS=tools
+DIR_IMAGES=images
 
-INCLUDE=-Ifile -Ifx -Igraphics -Igui -Imain -Itools -Iimages
+INCLUDE=-I$(DIR_FILE) -I$(DIR_FX) -I$(DIR_GRAPHICS) \
+        -I$(DIR_GUI) -I$(DIR_MAIN) -I$(DIR_TOOLS) -I$(DIR_IMAGES)
 
 CXX=g++
+# obtain the current version number from git
+VERSION=$(shell git describe --always --dirty)
 CXXFLAGS=-O2 -DPACKAGE_STRING=\"$(NAME)$(VERSION)\" $(INCLUDE)
 
 LIBS=-lfltk -lpng -ljpeg -lX11
 
 LDFLAGS=$(LIBS)
 
-OBJ_FILE=file
-OBJ_FX=fx
-OBJ_GRAPHICS=graphics
-OBJ_GUI=gui
-OBJ_MAIN=main
-OBJ_TOOLS=tools
 OBJ= \
-  graphics/Bitmap.o \
-  graphics/Blend.o \
-  main/Brush.o \
-  gui/Button.o \
-  gui/CheckBox.o \
-  main/Clone.o \
-  tools/Crop.o \
-  main/Dialog.o \
-  gui/DialogWindow.o \
-  tools/Fill.o \
-  fx/FX.o \
-  file/File.o \
-  file/FileSP.o \
-  tools/GetColor.o \
-  gui/Group.o \
-  main/Gui.o \
-  gui/InputFloat.o \
-  gui/InputInt.o \
-  gui/InputText.o \
-  graphics/Map.o \
-  main/Math.o \
-  graphics/Octree.o \
-  tools/Offset.o \
-  tools/Paint.o \
-  graphics/Palette.o \
-  main/Project.o \
-  graphics/Quantize.o \
-  main/Render.o \
-  gui/Separator.o \
-  main/Stroke.o \
-  tools/Text.o \
-  gui/ToggleButton.o \
-  fx/Transform.o \
-  main/Undo.o \
-  main/View.o \
-  gui/Widget.o
+  $(DIR_FILE)/File.o \
+  $(DIR_FILE)/FileSP.o \
+  $(DIR_FX)/FX.o \
+  $(DIR_FX)/Transform.o \
+  $(DIR_GRAPHICS)/Bitmap.o \
+  $(DIR_GRAPHICS)/Blend.o \
+  $(DIR_GRAPHICS)/Map.o \
+  $(DIR_GRAPHICS)/Octree.o \
+  $(DIR_GRAPHICS)/Palette.o \
+  $(DIR_GRAPHICS)/Quantize.o \
+  $(DIR_GUI)/Button.o \
+  $(DIR_GUI)/CheckBox.o \
+  $(DIR_GUI)/DialogWindow.o \
+  $(DIR_GUI)/Group.o \
+  $(DIR_GUI)/InputFloat.o \
+  $(DIR_GUI)/InputInt.o \
+  $(DIR_GUI)/InputText.o \
+  $(DIR_GUI)/Separator.o \
+  $(DIR_GUI)/ToggleButton.o \
+  $(DIR_GUI)/Widget.o \
+  $(DIR_MAIN)/Brush.o \
+  $(DIR_MAIN)/Clone.o \
+  $(DIR_MAIN)/Dialog.o \
+  $(DIR_MAIN)/Gui.o \
+  $(DIR_MAIN)/Math.o \
+  $(DIR_MAIN)/Project.o \
+  $(DIR_MAIN)/Render.o \
+  $(DIR_MAIN)/Stroke.o \
+  $(DIR_MAIN)/Undo.o \
+  $(DIR_MAIN)/View.o \
+  $(DIR_TOOLS)/Crop.o \
+  $(DIR_TOOLS)/Fill.o \
+  $(DIR_TOOLS)/GetColor.o \
+  $(DIR_TOOLS)/Offset.o \
+  $(DIR_TOOLS)/Paint.o \
+  $(DIR_TOOLS)/Text.o
 
 default: $(OBJ)
 	$(CXX) -o ./rendera main/Main.cxx $(OBJ) $(CXXFLAGS) $(LDFLAGS)
 
-$(OBJ_FILE)/%.o: $(OBJ_FILE)/%.cxx $(OBJ_FILE)/%.H
+$(DIR_FILE)/%.o: $(DIR_FILE)/%.cxx $(DIR_FILE)/%.H
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(OBJ_FX)/%.o: $(OBJ_FX)/%.cxx $(OBJ_FX)/%.H
+$(DIR_FX)/%.o: $(DIR_FX)/%.cxx $(DIR_FX)/%.H
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(OBJ_GRAPHICS)/%.o: $(OBJ_GRAPHICS)/%.cxx $(OBJ_GRAPHICS)/%.H
+$(DIR_GRAPHICS)/%.o: $(DIR_GRAPHICS)/%.cxx $(DIR_GRAPHICS)/%.H
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(OBJ_GUI)/%.o: $(OBJ_GUI)/%.cxx $(OBJ_GUI)/%.H
+$(DIR_GUI)/%.o: $(DIR_GUI)/%.cxx $(DIR_GUI)/%.H
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(OBJ_MAIN)/%.o: $(OBJ_MAIN)/%.cxx $(OBJ_MAIN)/%.H
+$(DIR_MAIN)/%.o: $(DIR_MAIN)/%.cxx $(DIR_MAIN)/%.H
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(OBJ_TOOLS)/%.o: $(OBJ_TOOLS)/%.cxx $(OBJ_TOOLS)/%.H
+$(DIR_TOOLS)/%.o: $(DIR_TOOLS)/%.cxx $(DIR_TOOLS)/%.H
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	@rm -f $(OBJ_FILE)/*.o 
-	@rm -f $(OBJ_FX)/*.o
-	@rm -f $(OBJ_GRAPHICS)/*.o
-	@rm -f $(OBJ_GUI)/*.o
-	@rm -f $(OBJ_MAIN)/*.o
-	@rm -f $(OBJ_TOOLS)/*.o
+	@rm -f $(DIR_FILE)/*.o 
+	@rm -f $(DIR_FX)/*.o
+	@rm -f $(DIR_GRAPHICS)/*.o
+	@rm -f $(DIR_GUI)/*.o
+	@rm -f $(DIR_MAIN)/*.o
+	@rm -f $(DIR_TOOLS)/*.o
 	@rm -f ./rendera 
 	@echo "Clean."
 
