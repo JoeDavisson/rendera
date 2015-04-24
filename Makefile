@@ -1,12 +1,12 @@
 # Makefile for dynamic linking on Linux
 
-DIR_FILE=file
-DIR_FX=fx
-DIR_GRAPHICS=graphics
-DIR_GUI=gui
-DIR_MAIN=main
-DIR_TOOLS=tools
-DIR_IMAGES=images
+DIR_FILE=File
+DIR_FX=FX
+DIR_GRAPHICS=Graphics
+DIR_GUI=Gui
+DIR_MAIN=Main
+DIR_TOOLS=Tools
+DIR_IMAGES=Images
 
 INCLUDE=-I$(DIR_FILE) -I$(DIR_FX) -I$(DIR_GRAPHICS) \
         -I$(DIR_GUI) -I$(DIR_MAIN) -I$(DIR_TOOLS) -I$(DIR_IMAGES)
@@ -61,7 +61,7 @@ OBJ= \
   $(DIR_TOOLS)/Text.o
 
 default: $(OBJ)
-	$(CXX) -o ./rendera main/Main.cxx $(OBJ) $(CXXFLAGS) $(LDFLAGS)
+	$(CXX) -o ./rendera $(DIR_MAIN)/Main.cxx $(OBJ) $(CXXFLAGS) $(LDFLAGS)
 
 $(DIR_FILE)/%.o: $(DIR_FILE)/%.cxx $(DIR_FILE)/%.H
 	$(CXX) $(CXXFLAGS) -c $< -o $@
