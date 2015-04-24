@@ -20,4 +20,3 @@ matrix:
   allow_failures:
     - env: TRCC=clang TRCXX=clang++
   fast_finish: true
-
