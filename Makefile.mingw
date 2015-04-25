@@ -1,4 +1,7 @@
-# Makefile for Linux
+# Makefile for mingw cross-compiler
+# put fltk-1.3.3 local to this directory and run "make fltk" first!
+
+HOST=i686-w64-mingw32
 
 # source directories
 DIR_FILE=File
@@ -10,15 +13,19 @@ DIR_TOOLS=Tools
 DIR_IMAGES=Images
 
 INCLUDE=-I$(DIR_FILE) -I$(DIR_FX) -I$(DIR_GRAPHICS) \
-        -I$(DIR_GUI) -I$(DIR_MAIN) -I$(DIR_TOOLS) -I$(DIR_IMAGES)
+        -I$(DIR_GUI) -I$(DIR_MAIN) -I$(DIR_TOOLS) -I$(DIR_IMAGES) \
+        -Ifltk-1.3.3
 
-CXX=g++
+CXX=$(HOST)-g++
 
 # obtain the current version number from git
 NAME="Rendera "
 VERSION=$(shell git describe --always --dirty)
-CXXFLAGS=-O2 -DPACKAGE_STRING=\"$(NAME)$(VERSION)\" $(INCLUDE)
-LIBS=-lfltk -lpng -ljpeg -lX11
+
+# static compile stuff
+CXXFLAGS=-O2 -static-libgcc -static-libstdc++ -DPACKAGE_STRING=\"$(NAME)$(VERSION)\" $(INCLUDE)
+LIBS=$(shell ./fltk-1.3.3/fltk-config --use-images --ldflags)
+LIBS+=-lgdi32 -lcomctl32 -static -lpthread
 
 OBJ= \
   $(DIR_FILE)/File.o \
@@ -58,9 +65,17 @@ OBJ= \
   $(DIR_TOOLS)/Paint.o \
   $(DIR_TOOLS)/Text.o
 
-# dynamic link
+# static link
 default: $(OBJ)
-	$(CXX) -o ./rendera $(DIR_MAIN)/Main.cxx $(OBJ) $(CXXFLAGS) $(LIBS)
+	$(CXX) -o ./rendera.exe $(DIR_MAIN)/Main.cxx $(OBJ) $(CXXFLAGS) $(LIBS)
+
+# builds fltk for static linking
+fltk:
+	@cd ./fltk-1.3.3; \
+	./configure --host=$(HOST) --enable-localjpeg --enable-localzlib --enable-localpng; \
+	make; \
+	cd ..
+	@echo "FLTK libs built!"
 
 $(DIR_FILE)/%.o: $(DIR_FILE)/%.cxx $(DIR_FILE)/%.H
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -87,6 +102,6 @@ clean:
 	@rm -f $(DIR_GUI)/*.o
 	@rm -f $(DIR_MAIN)/*.o
 	@rm -f $(DIR_TOOLS)/*.o
-	@rm -f ./rendera 
+	@rm -f ./rendera.exe
 	@echo "Clean!"
 
