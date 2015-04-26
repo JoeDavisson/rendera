@@ -59,7 +59,7 @@ namespace
 InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
                    const char *text, Fl_Callback *input_cb,
                    int val_min, int val_max)
-: Fl_Group(x, y, w, h, text),
+: Fl_Group(x, y, w, h, 0),
   input(x + 16, y, w - 32, h),
   dec(x, y, 16, h, "◂"),
   inc(x + w - 16, y, 16, h, "▸")
@@ -77,6 +77,7 @@ InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
   input.textsize(12);
   input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
   labelsize(12);
+  copy_label(text);
   resize(group->x() + x, group->y() + y, w, h);
 
   min = val_min;

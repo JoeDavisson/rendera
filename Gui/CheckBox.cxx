@@ -25,12 +25,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 CheckBox::CheckBox(Fl_Group *g, int x, int y, int w, int h,
                const char *label, Fl_Callback *cb)
-: Fl_Check_Button(x, y, w, h, label)
+: Fl_Check_Button(x, y, w, h, 0)
 {
   group = g;
 
   if(cb)
     callback(cb, &var);
+
+  copy_label(label);
 
   resize(group->x() + x, group->y() + y, w, h);
 }

@@ -711,8 +711,8 @@ namespace Choice
     Items::box->labelsize(14); 
     y1 += 64;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
-    Items::ok->label("Yes");
-    Items::cancel->label("No");
+    Items::ok->copy_label("Yes");
+    Items::cancel->copy_label("No");
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
     Items::dialog->set_modal();

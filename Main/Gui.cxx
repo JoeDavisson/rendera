@@ -1224,7 +1224,7 @@ int Gui::updateProgress(const int y)
     progress->value(progress_value);
     char percent[16];
     sprintf(percent, "%d%%", (int)progress_value);
-    progress->label(percent);
+    progress->copy_label(percent);
     Fl::check();
     progress_value += progress_step;
   }
@@ -1236,7 +1236,7 @@ void Gui::hideProgress()
 {
     view->drawMain(true);
     progress->value(0);
-    progress->label("");
+    progress->copy_label("");
     progress->redraw();
     progress->hide();
     info->show();
