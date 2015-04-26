@@ -46,6 +46,7 @@ OBJ= \
   $(DIR_GUI)/InputInt.o \
   $(DIR_GUI)/InputText.o \
   $(DIR_GUI)/Separator.o \
+  $(DIR_GUI)/StaticText.o \
   $(DIR_GUI)/ToggleButton.o \
   $(DIR_GUI)/Widget.o \
   $(DIR_MAIN)/Brush.o \

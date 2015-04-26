@@ -16,84 +16,86 @@ libren_la_CXXFLAGS = $(INCLUDE) $(FLTK_CONFIG_CXXFLAGS) $(AM_CXXFLAGS)
 libren_la_LDFLAGS  = $(FLTK_CONFIG_LDFLAGS)  $(AM_LDFLAGS)
 
 libren_la_SOURCES =       \
-  Graphics/Bitmap.H            \
-  Graphics/Bitmap.cxx          \
-  Graphics/Blend.H             \
-  Graphics/Blend.cxx           \
-  Main/Brush.H             \
-  Main/Brush.cxx           \
+  FX/FX.H                 \
+  FX/FX.cxx               \
+  FX/FilterMatrix.H       \
+  FX/Transform.H          \
+  FX/Transform.cxx        \
+  File/File.H             \
+  File/File.cxx           \
+  File/FileSP.H           \
+  File/FileSP.cxx         \
+  Graphics/Bitmap.H       \
+  Graphics/Bitmap.cxx     \
+  Graphics/Blend.H        \
+  Graphics/Blend.cxx      \
+  Graphics/Gamma.H        \
+  Graphics/Map.H          \
+  Graphics/Map.cxx        \
+  Graphics/Octree.H       \
+  Graphics/Octree.cxx     \
+  Graphics/Palette.H      \
+  Graphics/Palette.cxx    \
+  Graphics/Quantize.H     \
+  Graphics/Quantize.cxx   \
   Gui/Button.H            \
   Gui/Button.cxx          \
   Gui/CheckBox.H          \
   Gui/CheckBox.cxx        \
-  Main/Clone.H             \
-  Main/Clone.cxx           \
-  Tools/Crop.H              \
-  Tools/Crop.cxx            \
-  Main/Dialog.H            \
-  Main/Dialog.cxx          \
   Gui/DialogWindow.H      \
   Gui/DialogWindow.cxx    \
-  Tools/Fill.H              \
-  Tools/Fill.cxx            \
-  FX/FilterMatrix.H      \
-  FX/FX.H                \
-  FX/FX.cxx              \
-  File/File.H              \
-  File/File.cxx            \
-  File/FileSP.H            \
-  File/FileSP.cxx          \
-  Graphics/Gamma.H             \
-  Tools/GetColor.H          \
-  Tools/GetColor.cxx        \
   Gui/Group.H             \
   Gui/Group.cxx           \
-  Main/Gui.H               \
-  Main/Gui.cxx             \
-  Images/Images.H            \
-  Main/Inline.H            \
   Gui/InputFloat.H        \
   Gui/InputFloat.cxx      \
   Gui/InputInt.H          \
   Gui/InputInt.cxx        \
   Gui/InputText.H         \
   Gui/InputText.cxx       \
-  Graphics/Map.H               \
-  Graphics/Map.cxx             \
-  Main/Math.cxx            \
-  Main/Math.H              \
-  Graphics/Octree.H            \
-  Graphics/Octree.cxx          \
-  Tools/Offset.H            \
-  Tools/Offset.cxx          \
-  Tools/Paint.H             \
-  Tools/Paint.cxx           \
-  Graphics/Palette.H           \
-  Graphics/Palette.cxx         \
-  Main/Project.H           \
-  Main/Project.cxx         \
-  Graphics/Quantize.H          \
-  Graphics/Quantize.cxx        \
-  Main/Render.H            \
-  Main/Render.cxx          \
   Gui/Separator.H         \
   Gui/Separator.cxx       \
-  Main/SP.H                \
-  Main/Stroke.H            \
-  Main/Stroke.cxx          \
-  Tools/Text.H              \
-  Tools/Text.cxx            \
+  Gui/StaticText.H        \
+  Gui/StaticText.cxx      \
   Gui/ToggleButton.H      \
   Gui/ToggleButton.cxx    \
-  Tools/Tool.H              \
-  FX/Transform.H         \
-  FX/Transform.cxx       \
-  Main/Undo.H              \
-  Main/Undo.cxx            \
-  Main/View.H              \
-  Main/View.cxx            \
   Gui/Widget.H            \
-  Gui/Widget.cxx
+  Gui/Widget.cxx          \
+  Images/Images.H         \
+  Main/Brush.H            \
+  Main/Brush.cxx          \
+  Main/Clone.H            \
+  Main/Clone.cxx          \
+  Main/Dialog.H           \
+  Main/Dialog.cxx         \
+  Main/Gui.H              \
+  Main/Gui.cxx            \
+  Main/Inline.H           \
+  Main/Math.H             \
+  Main/Math.cxx           \
+  Main/Project.H          \
+  Main/Project.cxx        \
+  Main/Render.H           \
+  Main/Render.cxx         \
+  Main/SP.H               \
+  Main/Stroke.H           \
+  Main/Stroke.cxx         \
+  Main/Undo.H             \
+  Main/Undo.cxx           \
+  Main/View.H             \
+  Main/View.cxx           \
+  Tools/Crop.H            \
+  Tools/Crop.cxx          \
+  Tools/Fill.H            \
+  Tools/Fill.cxx          \
+  Tools/GetColor.H        \
+  Tools/GetColor.cxx      \
+  Tools/Offset.H          \
+  Tools/Offset.cxx        \
+  Tools/Paint.H           \
+  Tools/Paint.cxx         \
+  Tools/Text.H            \
+  Tools/Text.cxx          \
+  Tools/Tool.H
 
 
 bin_PROGRAMS = ./rendera

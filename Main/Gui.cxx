@@ -48,6 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Palette.H"
 #include "Project.H"
 #include "Separator.H"
+#include "StaticText.H"
 #include "Stroke.H"
 #include "ToggleButton.H"
 #include "Tool.H"
@@ -91,7 +92,7 @@ namespace Gui
   Button *zoom_one;
   Button *zoom_in;
   Button *zoom_out;
-  InputInt *zoom;
+  StaticText *zoom;
   ToggleButton *grid;
   InputInt *gridx;
   InputInt *gridy;
@@ -109,14 +110,14 @@ namespace Gui
 
   Widget *getcolor_color;
 
-  InputInt *crop_x;
-  InputInt *crop_y;
-  InputInt *crop_w;
-  InputInt *crop_h;
+  StaticText *crop_x;
+  StaticText *crop_y;
+  StaticText *crop_w;
+  StaticText *crop_h;
   Fl_Button *crop_do;
 
-  InputInt *offset_x;
-  InputInt *offset_y;
+  StaticText *offset_x;
+  StaticText *offset_y;
 
   Fl_Hold_Browser *font_browse;
   InputInt *font_size;
@@ -327,10 +328,8 @@ void Gui::init()
                         "Zoom Out", __zoom_out_png,
                         (Fl_Callback *)checkZoomOut);
   x1 += 24 + 8;
-  zoom = new InputInt(top_right, x1, 8, 88, 24, "", 0, 0, 64);
-  // make this inactive, display only for now
-  zoom->deactivate();
-  x1 += 88 + 6;
+  zoom = new StaticText(top_right, x1, 8, 56, 24, "");
+  x1 += 56 + 6;
   new Separator(top_right, x1, 2, 2, 36, "");
   x1 += 8;
   grid = new ToggleButton(top_right, x1, 8, 24, 24,
@@ -440,17 +439,17 @@ void Gui::init()
                    112, window->h() - top_right->h() - menubar->h() - status->h(),
                    "Crop");
   y1 = 20;
-  crop_x = new InputInt(crop, 24, y1, 72, 24, "X:", 0, 0, 0);
-  crop_x->deactivate();
+  new StaticText(crop, 8, y1, 32, 24, "X:");
+  crop_x = new StaticText(crop, 24, y1, 72, 24, 0);
   y1 += 24 + 6;
-  crop_y = new InputInt(crop, 24, y1, 72, 24, "Y:", 0, 0, 0);
-  crop_y->deactivate();
+  new StaticText(crop, 8, y1, 32, 24, "Y:");
+  crop_y = new StaticText(crop, 24, y1, 72, 24, 0);
   y1 += 24 + 6;
-  crop_w = new InputInt(crop, 24, y1, 72, 24, "W:", 0, 0, 0);
-  crop_w->deactivate();
+  new StaticText(crop, 8, y1, 32, 24, "W:");
+  crop_w = new StaticText(crop, 24, y1, 72, 24, 0);
   y1 += 24 + 6;
-  crop_h = new InputInt(crop, 24, y1, 72, 24, "H:", 0, 0, 0);
-  crop_h->deactivate();
+  new StaticText(crop, 8, y1, 32, 24, "H:");
+  crop_h = new StaticText(crop, 24, y1, 72, 24, 0);
   y1 += 24 + 6;
   crop_do = new Fl_Button(crop->x() + 16, crop->y() + y1, 72, 32, "Crop");
   crop_do->callback((Fl_Callback *)checkCropDo);
@@ -471,11 +470,11 @@ void Gui::init()
                      112, window->h() - top_right->h() - menubar->h() - status->h(),
                      "Offset");
   y1 = 20;
-  offset_x = new InputInt(offset, 24, y1, 72, 24, "X:", 0, 0, 0);
-  offset_x->deactivate();
+  new StaticText(offset, 8, y1, 32, 24, "X:");
+  offset_x = new StaticText(offset, 24, y1, 72, 24, 0);
   y1 += 24 + 6;
-  offset_y = new InputInt(offset, 24, y1, 72, 24, "Y:", 0, 0, 0);
-  offset_y->deactivate();
+  new StaticText(offset, 8, y1, 32, 24, "Y:");
+  offset_y = new StaticText(offset, 24, y1, 72, 24, 0);
   y1 += 24 + 6;
   offset->resizable(0);
   offset->end();
@@ -786,9 +785,9 @@ void Gui::checkZoomOne(Button *, void *)
 
 void Gui::checkZoom()
 {
-  char s[8];
+  char s[256];
   snprintf(s, sizeof(s), "%2.3f", view->zoom);
-  zoom->value(s);
+  zoom->copy_label(s);
   zoom->redraw();
 }
 
@@ -1018,35 +1017,35 @@ void Gui::checkCropDo()
 
 void Gui::checkCropValues(int x, int y, int w, int h)
 {
-  char s[8];
+  char s[256];
 
-  snprintf(s, sizeof(s), "%d", x);
-  crop_x->value(s);
+  snprintf(s, sizeof(s), "(%d)", x);
+  crop_x->copy_label(s);
   crop_x->redraw();
 
-  snprintf(s, sizeof(s), "%d", y);
-  crop_y->value(s);
+  snprintf(s, sizeof(s), "(%d)", y);
+  crop_y->copy_label(s);
   crop_y->redraw();
 
-  snprintf(s, sizeof(s), "%d", w);
-  crop_w->value(s);
+  snprintf(s, sizeof(s), "(%d)", w);
+  crop_w->copy_label(s);
   crop_w->redraw();
 
-  snprintf(s, sizeof(s), "%d", h);
-  crop_h->value(s);
+  snprintf(s, sizeof(s), "(%d)", h);
+  crop_h->copy_label(s);
   crop_h->redraw();
 }
 
 void Gui::checkOffsetValues(int x, int y)
 {
-  char s[8];
+  char s[256];
 
-  snprintf(s, sizeof(s), "%d", x);
-  offset_x->value(s);
+  snprintf(s, sizeof(s), "(%d)", x);
+  offset_x->copy_label(s);
   offset_x->redraw();
 
-  snprintf(s, sizeof(s), "%d", y);
-  offset_y->value(s);
+  snprintf(s, sizeof(s), "(%d)", y);
+  offset_y->copy_label(s);
   offset_y->redraw();
 }
 
