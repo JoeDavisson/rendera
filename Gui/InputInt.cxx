@@ -24,22 +24,53 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Int_Input.H>
+#include <FL/Fl_Repeat_Button.H>
+#include <FL/Fl_Widget.H>
 
 #include "InputInt.H"
 
+namespace
+{
+  char str[16];
+
+  void change(Fl_Widget *w, InputInt *i)
+  {
+    int val = std::atoi(i->input.value());
+
+    if(w == &i->dec)
+      val--;
+    else if(w == &i->inc)
+      val++;
+    else
+      return;
+
+    snprintf(str, sizeof(str), "%d", val);
+    i->input.value(str);
+    i->input.do_callback();
+  }
+}
+
 InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
                    const char *text, Fl_Callback *cb)
-: Fl_Int_Input(x, y, w, h, 0)
+: Fl_Group(x, y, w, h, text),
+  input(x + 16, y, w - 32, h),
+  dec(x, y, 16, h, "◂"),
+  inc(x + w - 16, y, 16, h, "▸")
 {
+  resizable(input);
+  end();
+  align(FL_ALIGN_LEFT);
+
   group = g;
   var = 0;
   if(cb)
-    callback(cb, &var);
-  maximum_size(5);
+    input.callback(cb, &var);
+  dec.callback((Fl_Callback *)change, this);
+  inc.callback((Fl_Callback *)change, this);
+  input.maximum_size(5);
+  input.textsize(12);
+  input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
   labelsize(12);
-  textsize(12);
-  label(text);
-  when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
   resize(group->x() + x, group->y() + y, w, h);
 }
 
@@ -47,18 +78,31 @@ InputInt::~InputInt()
 {
 }
 
+const char *InputInt::value()
+{
+  return input.value();
+}
+
+void InputInt::value(const char *s)
+{
+  input.value(s);
+}
+
+void InputInt::maximum_size(int size)
+{
+  input.maximum_size(size);
+}
+
 void InputInt::center()
 {
   int ww = 0, hh = 0;
 
-  this->measure_label(ww, hh);
-
+  measure_label(ww, hh);
   resize(parent()->w() / 2 - (ww + w()) / 2 + ww, y(), w(), h());
 }
 
 int InputInt::limitValue(int min, int max)
 {
-  char str[8];
   int val = std::atoi(value());
 
   if(val < min)

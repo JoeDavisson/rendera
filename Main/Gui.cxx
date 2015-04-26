@@ -327,22 +327,22 @@ void Gui::init()
                         "Zoom Out", __zoom_out_png,
                         (Fl_Callback *)checkZoomOut);
   x1 += 24 + 8;
-  zoom = new InputInt(top_right, x1, 8, 56, 24, "", 0);
+  zoom = new InputInt(top_right, x1, 8, 88, 24, "", 0);
   // make this inactive, display only for now
   zoom->deactivate();
-  x1 += 56 + 6;
+  x1 += 88 + 6;
   new Separator(top_right, x1, 2, 2, 36, "");
   x1 += 8;
   grid = new ToggleButton(top_right, x1, 8, 24, 24,
                           "Show Grid", __grid_png,
                           (Fl_Callback *)checkGrid);
   x1 += 24 + 48 + 8;
-  gridx = new InputInt(top_right, x1, 8, 32, 24,
+  gridx = new InputInt(top_right, x1, 8, 64, 24,
                        "Grid X:",
                        (Fl_Callback *)checkGridX);
   gridx->value("8");
-  x1 += 32 + 48 + 8;
-  gridy = new InputInt(top_right, x1, 8, 32, 24,
+  x1 += 64 + 48 + 8;
+  gridy = new InputInt(top_right, x1, 8, 64, 24,
                        "Grid Y:",
                        (Fl_Callback *)checkGridY);
   gridy->value("8");

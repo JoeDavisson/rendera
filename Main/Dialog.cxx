@@ -141,7 +141,7 @@ namespace JpegQuality
 
     Items::dialog = new DialogWindow(256, 0, "JPEG Quality");
     Items::dialog->callback(closeCallback);
-    Items::quality = new InputInt(Items::dialog, 0, y1, 72, 24, "Quality:", 0);
+    Items::quality = new InputInt(Items::dialog, 0, y1, 96, 24, "Quality:", 0);
     Items::quality->value("95");
     Items::quality->center();
     y1 += 24 + 8;
@@ -196,7 +196,7 @@ namespace PngOptions
 
     Items::dialog = new DialogWindow(256, 0, "PNG Options");
     Items::dialog->callback(closeCallback);
-    Items::alpha_levels = new InputInt(Items::dialog, 0, y1, 72, 24, "Alpha Levels:", 0);
+    Items::alpha_levels = new InputInt(Items::dialog, 0, y1, 96, 24, "Alpha Levels:", 0);
     Items::alpha_levels->value("2");
     Items::alpha_levels->center();
     y1 += 24 + 8;
@@ -263,9 +263,9 @@ namespace NewImage
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "New Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 72, 24, "Width:", 0);
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", 0);
     y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 72, 24, "Height:", 0);
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", 0);
     y1 += 24 + 8;
     Items::width->center();
     Items::height->center();
@@ -318,7 +318,7 @@ namespace MakePalette
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Create Palette");
-    Items::colors = new InputInt(Items::dialog, 0, 8, 72, 24, "Colors:", 0);
+    Items::colors = new InputInt(Items::dialog, 0, 8, 96, 24, "Colors:", 0);
     Items::colors->center();
     y1 += 24 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
