@@ -112,12 +112,6 @@ namespace Resize
 
   void close()
   {
-    if(Items::width->limitValue(1, 10000) < 0)
-      return;
-
-    if(Items::height->limitValue(1, 10000) < 0)
-      return;
-
     int w = atoi(Items::width->value());
     int h = atoi(Items::height->value());
 
@@ -153,11 +147,11 @@ namespace Resize
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Resize Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", 0);
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", 0, 1, 10000);
     Items::width->center();
     Items::width->callback((Fl_Callback *)checkWidth);
     y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", 0);
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", 0, 1, 10000);
     Items::height->center();
     Items::height->callback((Fl_Callback *)checkHeight);
     y1 += 24 + 8;
@@ -361,12 +355,6 @@ namespace Scale
 
   void close()
   {
-    if(Items::width->limitValue(1, 10000) < 0)
-      return;
-
-    if(Items::height->limitValue(1, 10000) < 0)
-      return;
-
     Items::dialog->hide();
     pushUndo();
     apply(atoi(Items::width->value()),
@@ -384,11 +372,11 @@ namespace Scale
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Scale Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", 0);
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", 0, 1, 10000);
     Items::width->center();
     Items::width->callback((Fl_Callback *)checkWidth);
     y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", 0);
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", 0, 1, 10000);
     Items::height->center();
     Items::height->callback((Fl_Callback *)checkHeight);
     y1 += 24 + 8;

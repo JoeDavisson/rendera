@@ -30,7 +30,8 @@ class Fl_Repeat_Button;
 class InputInt : public Fl_Group
 {
 public:
-  InputInt(Fl_Group *, int, int, int, int, const char *, Fl_Callback *);
+  InputInt(Fl_Group *, int, int, int, int, const char *,
+           Fl_Callback *, int, int);
   ~InputInt();
   const char *value();
   void value(const char *);
@@ -39,10 +40,13 @@ public:
   int limitValue(int, int);
 
   int var;
+  int min;
+  int max;
   Fl_Group *group;
   Fl_Int_Input input;
   Fl_Repeat_Button dec;
   Fl_Repeat_Button inc;
+  void (*cb)(Fl_Widget *, void *);
 };
 
 #endif

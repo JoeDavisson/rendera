@@ -41,17 +41,22 @@ namespace
       val--;
     else if(w == &i->inc)
       val++;
-    else
-      return;
+
+    if(val < i->min)
+      val = i->min;
+
+    if(val > i->max)
+      val = i->max;
 
     snprintf(str, sizeof(str), "%d", val);
     i->input.value(str);
-    i->input.do_callback();
+    i->cb(w, i);
   }
 }
 
 InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
-                   const char *text, Fl_Callback *cb)
+                   const char *text, Fl_Callback *input_cb,
+                   int val_min, int val_max)
 : Fl_Group(x, y, w, h, text),
   input(x + 16, y, w - 32, h),
   dec(x, y, 16, h, "◂"),
@@ -60,11 +65,10 @@ InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
   resizable(input);
   end();
   align(FL_ALIGN_LEFT);
-
   group = g;
   var = 0;
-  if(cb)
-    input.callback(cb, &var);
+  cb = input_cb;
+  input.callback((Fl_Callback *)change, this);
   dec.callback((Fl_Callback *)change, this);
   inc.callback((Fl_Callback *)change, this);
   input.maximum_size(5);
@@ -72,6 +76,9 @@ InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
   input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
   labelsize(12);
   resize(group->x() + x, group->y() + y, w, h);
+
+  min = val_min;
+  max = val_max;
 }
 
 InputInt::~InputInt()
@@ -99,26 +106,5 @@ void InputInt::center()
 
   measure_label(ww, hh);
   resize(parent()->w() / 2 - (ww + w()) / 2 + ww, y(), w(), h());
-}
-
-int InputInt::limitValue(int min, int max)
-{
-  int val = std::atoi(value());
-
-  if(val < min)
-  {
-    snprintf(str, sizeof(str), "%d", min);
-    value(str);
-    return -1;
-  }
-
-  if(val > max)
-  {
-    snprintf(str, sizeof(str), "%d", max);
-    value(str);
-    return -1;
-  }
-
-  return 0;
 }
 

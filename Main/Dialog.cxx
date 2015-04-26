@@ -126,11 +126,8 @@ namespace JpegQuality
       }
       else if(action == Items::ok)
       {
-        if(Items::quality->limitValue(1, 100) == 0)
-        {
-          Items::dialog->hide();
-          break;
-        }
+        Items::dialog->hide();
+        break;
       }
     }
   }
@@ -141,7 +138,7 @@ namespace JpegQuality
 
     Items::dialog = new DialogWindow(256, 0, "JPEG Quality");
     Items::dialog->callback(closeCallback);
-    Items::quality = new InputInt(Items::dialog, 0, y1, 96, 24, "Quality:", 0);
+    Items::quality = new InputInt(Items::dialog, 0, y1, 96, 24, "Quality:", 0, 1, 100);
     Items::quality->value("95");
     Items::quality->center();
     y1 += 24 + 8;
@@ -181,11 +178,8 @@ namespace PngOptions
       }
       else if(action == Items::ok)
       {
-        if(Items::alpha_levels->limitValue(2, 16) == 0)
-        {
-          Items::dialog->hide();
-          break;
-        }
+        Items::dialog->hide();
+        break;
       }
     }
   }
@@ -196,7 +190,7 @@ namespace PngOptions
 
     Items::dialog = new DialogWindow(256, 0, "PNG Options");
     Items::dialog->callback(closeCallback);
-    Items::alpha_levels = new InputInt(Items::dialog, 0, y1, 96, 24, "Alpha Levels:", 0);
+    Items::alpha_levels = new InputInt(Items::dialog, 0, y1, 96, 24, "Alpha Levels:", 0, 2, 16);
     Items::alpha_levels->value("2");
     Items::alpha_levels->center();
     y1 += 24 + 8;
@@ -236,12 +230,6 @@ namespace NewImage
 
   void close()
   {
-    if(Items::width->limitValue(1, 10000) < 0)
-      return;
-
-    if(Items::height->limitValue(1, 10000) < 0)
-      return;
-
     Items::dialog->hide();
 
     Project::newImage(atoi(Items::width->value()),
@@ -263,9 +251,9 @@ namespace NewImage
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "New Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", 0);
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", 0, 1, 10000);
     y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", 0);
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", 0, 1, 10000);
     y1 += 24 + 8;
     Items::width->center();
     Items::height->center();
@@ -301,9 +289,6 @@ namespace MakePalette
 
   void close()
   {
-    if(Items::colors->limitValue(1, 256) < 0)
-      return;
-
     Items::dialog->hide();
     Quantize::pca(Project::bmp, Project::palette.get(), atoi(Items::colors->value()));
   }
@@ -318,7 +303,7 @@ namespace MakePalette
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Create Palette");
-    Items::colors = new InputInt(Items::dialog, 0, 8, 96, 24, "Colors:", 0);
+    Items::colors = new InputInt(Items::dialog, 0, 8, 96, 24, "Colors:", 0, 1, 256);
     Items::colors->center();
     y1 += 24 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);

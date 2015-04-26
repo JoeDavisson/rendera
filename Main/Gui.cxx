@@ -327,7 +327,7 @@ void Gui::init()
                         "Zoom Out", __zoom_out_png,
                         (Fl_Callback *)checkZoomOut);
   x1 += 24 + 8;
-  zoom = new InputInt(top_right, x1, 8, 88, 24, "", 0);
+  zoom = new InputInt(top_right, x1, 8, 88, 24, "", 0, 0, 64);
   // make this inactive, display only for now
   zoom->deactivate();
   x1 += 88 + 6;
@@ -339,12 +339,12 @@ void Gui::init()
   x1 += 24 + 48 + 8;
   gridx = new InputInt(top_right, x1, 8, 64, 24,
                        "Grid X:",
-                       (Fl_Callback *)checkGridX);
+                       (Fl_Callback *)checkGridX, 1, 256);
   gridx->value("8");
   x1 += 64 + 48 + 8;
   gridy = new InputInt(top_right, x1, 8, 64, 24,
                        "Grid Y:",
-                       (Fl_Callback *)checkGridY);
+                       (Fl_Callback *)checkGridY, 1, 256);
   gridy->value("8");
   top_right->resizable(0);
   top_right->end();
@@ -440,16 +440,16 @@ void Gui::init()
                    112, window->h() - top_right->h() - menubar->h() - status->h(),
                    "Crop");
   y1 = 20;
-  crop_x = new InputInt(crop, 24, y1, 72, 24, "X:", 0);
+  crop_x = new InputInt(crop, 24, y1, 72, 24, "X:", 0, 0, 0);
   crop_x->deactivate();
   y1 += 24 + 6;
-  crop_y = new InputInt(crop, 24, y1, 72, 24, "Y:", 0);
+  crop_y = new InputInt(crop, 24, y1, 72, 24, "Y:", 0, 0, 0);
   crop_y->deactivate();
   y1 += 24 + 6;
-  crop_w = new InputInt(crop, 24, y1, 72, 24, "W:", 0);
+  crop_w = new InputInt(crop, 24, y1, 72, 24, "W:", 0, 0, 0);
   crop_w->deactivate();
   y1 += 24 + 6;
-  crop_h = new InputInt(crop, 24, y1, 72, 24, "H:", 0);
+  crop_h = new InputInt(crop, 24, y1, 72, 24, "H:", 0, 0, 0);
   crop_h->deactivate();
   y1 += 24 + 6;
   crop_do = new Fl_Button(crop->x() + 16, crop->y() + y1, 72, 32, "Crop");
@@ -471,10 +471,10 @@ void Gui::init()
                      112, window->h() - top_right->h() - menubar->h() - status->h(),
                      "Offset");
   y1 = 20;
-  offset_x = new InputInt(offset, 24, y1, 72, 24, "X:", 0);
+  offset_x = new InputInt(offset, 24, y1, 72, 24, "X:", 0, 0, 0);
   offset_x->deactivate();
   y1 += 24 + 6;
-  offset_y = new InputInt(offset, 24, y1, 72, 24, "Y:", 0);
+  offset_y = new InputInt(offset, 24, y1, 72, 24, "Y:", 0, 0, 0);
   offset_y->deactivate();
   y1 += 24 + 6;
   offset->resizable(0);
@@ -503,7 +503,7 @@ void Gui::init()
 
   // font size
   font_size = new InputInt(text, 40, y1, 64, 24, "Size:",
-                           (Fl_Callback *)textStartOver);
+                           (Fl_Callback *)textStartOver, 4, 512);
   font_size->value("12");
   y1 += 24 + 8;
 
@@ -801,14 +801,12 @@ void Gui::checkGrid(ToggleButton *, void *var)
 
 void Gui::checkGridX()
 {
-  gridx->limitValue(1, 256);
   view->gridx = atoi(gridx->value());
   view->drawMain(true);
 }
 
 void Gui::checkGridY()
 {
-  gridy->limitValue(1, 256);
   view->gridy = atoi(gridy->value());
   view->drawMain(true);
 }
@@ -1069,8 +1067,6 @@ int Gui::getFontFace()
 
 int Gui::getFontSize()
 {
-  font_size->limitValue(6, 512);
-
   return atoi(font_size->value());
 }
 

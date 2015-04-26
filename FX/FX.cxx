@@ -452,9 +452,6 @@ namespace RotateHue
 
   void close()
   {
-    if(Items::angle->limitValue(-359, 359) < 0)
-      return;
-
     Items::dialog->hide();
     pushUndo();
 
@@ -482,7 +479,7 @@ namespace RotateHue
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Rotate Hue");
-    Items::angle = new InputInt(Items::dialog, 0, y1, 96, 24, "Angle:", 0);
+    Items::angle = new InputInt(Items::dialog, 0, y1, 96, 24, "Angle:", 0, -359, 359);
     y1 += 24 + 8;
     Items::angle->maximum_size(4);
     Items::angle->value("60");
@@ -1072,9 +1069,6 @@ namespace Restore
 
   void close()
   {
-    if(Items::contrast->limitValue(1, 150) < 0)
-      return;
-
     Items::dialog->hide();
     pushUndo();
 
@@ -1101,7 +1095,7 @@ namespace Restore
     Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP);
     Items::box->labelsize(12);
     y1 += 48;
-    Items::contrast = new InputInt(Items::dialog, 0, y1, 96, 24, "Contrast:", 0);
+    Items::contrast = new InputInt(Items::dialog, 0, y1, 96, 24, "Contrast:", 0, 1, 150);
     y1 += 24 + 8;
     Items::contrast->maximum_size(4);
     Items::contrast->value("100");
@@ -1224,9 +1218,6 @@ namespace RemoveDust
 
   void close()
   {
-    if(Items::amount->limitValue(1, 10) < 0)
-      return;
-
     Items::dialog->hide();
     pushUndo();
 
@@ -1259,7 +1250,7 @@ namespace RemoveDust
     Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP);
     Items::box->labelsize(12);
     y1 += 32;
-    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0);
+    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0, 1, 10);
     y1 += 24 + 8;
     Items::amount->value("4");
     Items::amount->center();
@@ -1855,12 +1846,6 @@ namespace StainedGlass
 
   void close()
   {
-    if(Items::detail->limitValue(1, 50000) < 0)
-      return;
-
-    if(Items::edge->limitValue(1, 50) < 0)
-      return;
-
     Items::dialog->hide();
     pushUndo();
     apply(atoi(Items::detail->value()), atoi(Items::edge->value()));
@@ -1882,11 +1867,11 @@ namespace StainedGlass
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Stained Glass");
-    Items::detail = new InputInt(Items::dialog, 0, y1, 96, 24, "Detail:", 0);
+    Items::detail = new InputInt(Items::dialog, 0, y1, 96, 24, "Detail:", 0, 1, 50000);
     y1 += 24 + 8;
     Items::detail->value("5000");
     Items::detail->center();
-    Items::edge = new InputInt(Items::dialog, 0, y1, 96, 24, "Edge Detect:", 0);
+    Items::edge = new InputInt(Items::dialog, 0, y1, 96, 24, "Edge Detect:", 0, 1, 50);
     y1 += 24 + 8;
     Items::edge->value("16");
     Items::edge->center();
@@ -2018,12 +2003,6 @@ namespace GaussianBlur
 
   void close()
   {
-    if(Items::radius->limitValue(1, 100) < 0)
-      return;
-
-    if(Items::blend->limitValue(0, 100) < 0)
-      return;
-
     Items::dialog->hide();
     pushUndo();
     apply(atoi(Items::radius->value()), atoi(Items::blend->value()) * 2.55);
@@ -2045,11 +2024,11 @@ namespace GaussianBlur
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Gaussian Blur");
-    Items::radius = new InputInt(Items::dialog, 0, y1, 96, 24, "Radius:", 0);
+    Items::radius = new InputInt(Items::dialog, 0, y1, 96, 24, "Radius:", 0, 1, 100);
     y1 += 24 + 8;
     Items::radius->value("1");
     Items::radius->center();
-    Items::blend = new InputInt(Items::dialog, 0, y1, 96, 24, "Blend:", 0);
+    Items::blend = new InputInt(Items::dialog, 0, y1, 96, 24, "Blend:", 0, 0, 100);
     y1 += 24 + 8;
     Items::blend->value("0");
     Items::blend->center();
@@ -2109,9 +2088,6 @@ namespace Sharpen
 
   void close()
   {
-    if(Items::amount->limitValue(1, 100) < 0)
-      return;
-
     Items::dialog->hide();
     pushUndo();
     apply(atoi(Items::amount->value()));
@@ -2133,7 +2109,7 @@ namespace Sharpen
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Sharpen");
-    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0);
+    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0, 1, 100);
     y1 += 24 + 8;
     Items::amount->value("10");
     Items::amount->center();
@@ -2283,13 +2259,7 @@ namespace UnsharpMask
 
   void close()
   {
-    if(Items::radius->limitValue(1, 100) < 0)
-      return;
-
     if(Items::amount->limitValue(0.1, 10.0) < 0)
-      return;
-
-    if(Items::threshold->limitValue(0, 255) < 0)
       return;
 
     Items::dialog->hide();
@@ -2315,7 +2285,7 @@ namespace UnsharpMask
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Unsharp Mask");
-    Items::radius = new InputInt(Items::dialog, 0, y1, 96, 24, "Radius:", 0);
+    Items::radius = new InputInt(Items::dialog, 0, y1, 96, 24, "Radius:", 0, 1, 100);
     y1 += 24 + 8;
     Items::radius->value("1");
     Items::radius->center();
@@ -2323,7 +2293,7 @@ namespace UnsharpMask
     y1 += 24 + 8;
     Items::amount->value("1.5");
     Items::amount->center();
-    Items::threshold = new InputInt(Items::dialog, 0, y1, 72, 24, "Threshold:", 0);
+    Items::threshold = new InputInt(Items::dialog, 0, y1, 72, 24, "Threshold:", 0, 0, 255);
     y1 += 24 + 8;
     Items::threshold->value("0");
     Items::threshold->center();
@@ -2465,9 +2435,6 @@ namespace ConvolutionMatrix
 
   void close()
   {
-    if(Items::amount->limitValue(1, 100) < 0)
-      return;
-
     Items::dialog->hide();
     pushUndo();
     apply(atoi(Items::amount->value()),
@@ -2501,7 +2468,7 @@ namespace ConvolutionMatrix
     Items::mode->add("Emboss");
     Items::mode->value(0);
     y1 += 24 + 8;
-    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0);
+    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0, 1, 100);
     Items::amount->value("100");
     Items::amount->center();
     y1 += 24 + 8;
@@ -2581,9 +2548,6 @@ namespace Artistic
 
   void close()
   {
-    if(Items::amount->limitValue(1, 10) < 0)
-      return;
-
     Items::dialog->hide();
     pushUndo();
     apply(atoi(Items::amount->value()));
@@ -2605,7 +2569,7 @@ namespace Artistic
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Artistic");
-    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0);
+    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0, 1, 10);
     y1 += 24 + 8;
     Items::amount->value("3");
     Items::amount->center();
