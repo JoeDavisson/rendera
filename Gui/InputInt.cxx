@@ -108,6 +108,6 @@ void InputInt::center()
   int ww = 0, hh = 0;
 
   measure_label(ww, hh);
-  resize(parent()->w() / 2 - (ww + w()) / 2 + ww, y(), w(), h());
+  resize(parent()->w() / 2 - (w() + ww) / 2 + ww, y(), w(), h());
 }
 

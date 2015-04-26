@@ -27,17 +27,13 @@ CheckBox::CheckBox(Fl_Group *g, int x, int y, int w, int h,
                const char *label, Fl_Callback *cb)
 : Fl_Check_Button(x, y, w, h, 0)
 {
-  int ww = 0, hh = 0;
-
   group = g;
 
   if(cb)
     callback(cb, &var);
 
   copy_label(label);
-
-  measure_label(ww, hh);
-  resize(group->x() + x, group->y() + y, w + ww, h);
+  resize(group->x() + x, group->y() + y, w, h);
 }
 
 CheckBox::~CheckBox()
@@ -46,11 +42,10 @@ CheckBox::~CheckBox()
 
 void CheckBox::center()
 {
-//  int ww = 0, hh = 0;
+  int ww = 0, hh = 0;
 
-//  measure_label(ww, hh);
-//  resize((parent()->w() / 2) - ((ww + w()) / 2), y(), w(), h());
-  resize((parent()->w() / 2) - ((w()) / 2), y(), w(), h());
+  measure_label(ww, hh);
+  resize((parent()->w() / 2) - ((w() + ww) / 2), y(), w() + ww, h());
   redraw();
 }
 
