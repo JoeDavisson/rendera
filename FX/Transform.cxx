@@ -567,12 +567,6 @@ namespace Rotate
 
   void close()
   {
-    if(Items::angle->limitValue(-359.99, 359.99) < 0)
-      return;
-
-    if(Items::scale->limitValue(.1, 10.0) < 0)
-      return;
-
     Items::dialog->hide();
     pushUndo();
 
@@ -590,11 +584,11 @@ namespace Rotate
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Rotate Image");
-    Items::angle = new InputFloat(Items::dialog, 0, y1, 72, 24, "Angle:", 0);
+    Items::angle = new InputFloat(Items::dialog, 0, y1, 96, 24, "Angle:", 0, -359.99, 359.99);
     Items::angle->center();
     y1 += 24 + 8;
     Items::angle->value("0");
-    Items::scale = new InputFloat(Items::dialog, 0, y1, 72, 24, "Scale:", 0);
+    Items::scale = new InputFloat(Items::dialog, 0, y1, 96, 24, "Scale:", 0, 0.1, 10.0);
     Items::scale->center();
     y1 += 24 + 8;
     Items::scale->value("1.0");

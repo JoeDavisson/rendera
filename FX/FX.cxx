@@ -2259,9 +2259,6 @@ namespace UnsharpMask
 
   void close()
   {
-    if(Items::amount->limitValue(0.1, 10.0) < 0)
-      return;
-
     Items::dialog->hide();
     pushUndo();
     apply(atoi(Items::radius->value()),
@@ -2289,7 +2286,7 @@ namespace UnsharpMask
     y1 += 24 + 8;
     Items::radius->value("1");
     Items::radius->center();
-    Items::amount = new InputFloat(Items::dialog, 0, y1, 72, 24, "Amount:", 0);
+    Items::amount = new InputFloat(Items::dialog, 0, y1, 96, 24, "Amount:", 0, 0.1, 10.0);
     y1 += 24 + 8;
     Items::amount->value("1.5");
     Items::amount->center();

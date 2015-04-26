@@ -22,19 +22,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define INPUT_FLOAT_H
 
 #include <FL/Fl_Float_Input.H>
+#include <FL/Fl_Repeat_Button.H>
 
 class Fl_Group;
+class Fl_Repeat_Button;
 
-class InputFloat : public Fl_Float_Input
+class InputFloat : public Fl_Group
 {
 public:
-  InputFloat(Fl_Group *, int, int, int, int, const char *, Fl_Callback *);
+  InputFloat(Fl_Group *, int, int, int, int, const char *,
+           Fl_Callback *, double, double);
   ~InputFloat();
+  const char *value();
+  void value(const char *);
+  void maximum_size(int);
   void center();
-  int limitValue(double, double);
+  int limitValue(int, int);
 
   int var;
+  int min;
+  int max;
   Fl_Group *group;
+  Fl_Float_Input input;
+  Fl_Repeat_Button dec;
+  Fl_Repeat_Button inc;
+  void (*cb)(Fl_Widget *, void *);
 };
 
 #endif

@@ -22,59 +22,90 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cstdlib>
 #include <algorithm>
 
-#include <FL/Fl_Float_Input.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Float_Input.H>
+#include <FL/Fl_Repeat_Button.H>
+#include <FL/Fl_Widget.H>
 
 #include "InputFloat.H"
 
-InputFloat::InputFloat(Fl_Group *g, int x, int y, int w, int h,
-                       const char *text, Fl_Callback *cb)
-: Fl_Float_Input(x, y, w, h, 0)
+namespace
 {
+  char str[256];
+
+  void change(Fl_Widget *w, InputFloat *i)
+  {
+    double val = std::atof(i->input.value());
+
+    if(w == &i->dec)
+      val -= 1.0;
+    else if(w == &i->inc)
+      val += 1.0;
+
+    if(val < i->min)
+      val = i->min;
+
+    if(val > i->max)
+      val = i->max;
+
+    snprintf(str, sizeof(str), "%.2f", val);
+    i->input.value(str);
+    if(i->cb)
+      i->cb(w, i);
+  }
+}
+
+InputFloat::InputFloat(Fl_Group *g, int x, int y, int w, int h,
+                   const char *text, Fl_Callback *input_cb,
+                   double val_min, double val_max)
+: Fl_Group(x, y, w, h, text),
+  input(x + 16, y, w - 32, h),
+  dec(x, y, 16, h, "◂"),
+  inc(x + w - 16, y, 16, h, "▸")
+{
+  resizable(input);
+  end();
+  align(FL_ALIGN_LEFT);
   group = g;
   var = 0;
-  if(cb)
-    callback(cb, &var);
-  maximum_size(5);
+  cb = input_cb;
+  input.callback((Fl_Callback *)change, this);
+  dec.callback((Fl_Callback *)change, this);
+  inc.callback((Fl_Callback *)change, this);
+  input.maximum_size(5);
+  input.textsize(12);
+  input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
   labelsize(12);
-  textsize(12);
-  label(text);
-  when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
   resize(group->x() + x, group->y() + y, w, h);
+
+  min = val_min;
+  max = val_max;
 }
 
 InputFloat::~InputFloat()
 {
 }
 
+const char *InputFloat::value()
+{
+  return input.value();
+}
+
+void InputFloat::value(const char *s)
+{
+  input.value(s);
+}
+
+void InputFloat::maximum_size(int size)
+{
+  input.maximum_size(size);
+}
+
 void InputFloat::center()
 {
   int ww = 0, hh = 0;
 
-  this->measure_label(ww, hh);
-
+  measure_label(ww, hh);
   resize(parent()->w() / 2 - (ww + w()) / 2 + ww, y(), w(), h());
-}
-
-int InputFloat::limitValue(double min, double max)
-{
-  char str[8];
-  double val = std::atof(value());
-
-  if(val < min)
-  {
-    snprintf(str, sizeof(str), "%.2f", min);
-    value(str);
-    return -1;
-  }
-
-  if(val > max)
-  {
-    snprintf(str, sizeof(str), "%.2f", max);
-    value(str);
-    return -1;
-  }
-
-  return 0;
 }
 
