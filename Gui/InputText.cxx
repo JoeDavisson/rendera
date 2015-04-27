@@ -52,6 +52,6 @@ void InputText::center()
 
   this->measure_label(ww, hh);
 
-  resize(parent()->w() / 2 - (ww + w()) / 2 + ww, y(), w(), h());
+  resize(group->x() + group->w() / 2 - (ww + w()) / 2 + ww, y(), w(), h());
 }
 

@@ -514,6 +514,7 @@ void Gui::init()
   y1 += 24 + 8;
 
   text_smooth = new CheckBox(text, 12, y1, 16, 16, "Smooth", 0);
+  text_smooth->center();
   text_smooth->value(1);
 
   text->resizable(0);
