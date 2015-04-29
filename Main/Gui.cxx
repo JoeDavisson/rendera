@@ -57,10 +57,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
-namespace Gui
+class MainWin;
+
+namespace
 {
   // window
-  Fl_Double_Window *window;
+  MainWin *window;
 
   // main menu
   Fl_Menu_Bar *menubar;
