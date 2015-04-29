@@ -190,7 +190,6 @@ public:
   int handle(int event)
   {
     View *view = Gui::getView();
-    //bool shift;
     bool ctrl;
 
     switch(event)
@@ -200,9 +199,16 @@ public:
       case FL_UNFOCUS:
         return 1;
       case FL_KEYBOARD:
-        //shift = Fl::event_shift() ? true : false;
+        // give focus to the main menu
+        if(Fl::event_alt() > 0)
+        {
+          Gui::getMenuBar()->take_focus();
+          return 0;
+        }
+
         ctrl = Fl::event_ctrl() ? true : false;
 
+        // cancel current rendering operation
         if(Fl::event_key() == FL_Escape)
         {
           Project::tool->reset();
@@ -210,6 +216,7 @@ public:
           break;
         }
 
+        // misc keys
         switch(Fl::event_key())
         {
           case FL_Right:
@@ -1225,6 +1232,11 @@ void Gui::checkClearToTransparent()
 Fl_Double_Window *Gui::getWindow()
 {
   return window;
+}
+
+Fl_Menu_Bar *Gui::getMenuBar()
+{
+  return menubar;
 }
 
 View *Gui::getView()
