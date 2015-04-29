@@ -308,6 +308,7 @@ int View::handle(int event)
       return 1;
     }
 
+/*
     case FL_KEYDOWN:
     {
       if(Fl::event_key() == FL_Escape)
@@ -339,7 +340,7 @@ int View::handle(int event)
 
       return 1;
     }
-
+*/
     case FL_DND_ENTER:
     {
       return 1;

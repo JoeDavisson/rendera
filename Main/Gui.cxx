@@ -175,12 +175,74 @@ namespace Gui
   }
 }
 
+class MainWin : public Fl_Double_Window
+{
+public:
+  MainWin(int w, int h, const char *label)
+  : Fl_Double_Window(w, h, label)
+  {
+  }
+
+  ~MainWin()
+  {
+  }
+  
+  int handle(int event)
+  {
+    View *view = Gui::getView();
+    //bool shift;
+    bool ctrl;
+
+    switch(event)
+    {
+      case FL_FOCUS:
+        return 1;
+      case FL_UNFOCUS:
+        return 1;
+      case FL_KEYBOARD:
+        //shift = Fl::event_shift() ? true : false;
+        ctrl = Fl::event_ctrl() ? true : false;
+
+        if(Fl::event_key() == FL_Escape)
+        {
+          Project::tool->reset();
+          view->drawMain(true);
+          break;
+        }
+
+        switch(Fl::event_key())
+        {
+          case FL_Right:
+            view->scroll(0, 64);
+            break;
+          case FL_Left:
+            view->scroll(1, 64);
+            break;
+          case FL_Down:
+            view->scroll(2, 64);
+            break;
+          case FL_Up:
+            view->scroll(3, 64);
+            break;
+          case 'z':
+            if(ctrl)
+              Undo::pop();
+            break;
+        }
+
+        return 1;
+    }
+
+    return Fl_Double_Window::handle(event);
+  }
+};
+
 void Gui::init()
 {
   int x1, y1;
 
   // main window
-  window = new Fl_Double_Window(800, 600, "Rendera");
+  window = new MainWin(800, 600, "Rendera");
   window->callback(closeCallback);
 
   // menu
