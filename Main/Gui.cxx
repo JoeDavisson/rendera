@@ -235,6 +235,10 @@ public:
             if(ctrl)
               Undo::pop();
             break;
+          case 'e':
+            if(ctrl)
+              Dialog::editor();
+            break;
         }
 
         return 1;
@@ -274,81 +278,81 @@ void Gui::init()
     (Fl_Callback *)checkClearToBlack, 0, 0);
   menubar->add("&Edit/Clear/White", 0,
     (Fl_Callback *)checkClearToWhite, 0, 0);
-  menubar->add("Image/Flip Horizontal", 0,
+  menubar->add("&Image/Flip &Horizontal", 0,
     (Fl_Callback *)Transform::mirror, 0, 0);
-  menubar->add("Image/Flip Vertical", 0,
+  menubar->add("&Image/Flip &Vertical", 0,
     (Fl_Callback *)Transform::flip, 0, FL_MENU_DIVIDER);
-  menubar->add("Image/Resize...", 0,
+  menubar->add("&Image/Resize...", 0,
     (Fl_Callback *)Transform::resize, 0, 0);
-  menubar->add("Image/Scale...", 0,
+  menubar->add("&Image/Scale...", 0,
     (Fl_Callback *)Transform::scale, 0, 0);
-  menubar->add("Image/Rotate...", 0,
+  menubar->add("&Image/Rotate...", 0,
     (Fl_Callback *)Transform::rotate, 0, 0);
-  menubar->add("Palette/Load...", 0,
+  menubar->add("&Palette/&Open...", 0,
     (Fl_Callback *)File::loadPalette, 0, 0);
-  menubar->add("Palette/Save...", 0,
+  menubar->add("&Palette/&Save...", 0,
     (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);
-  menubar->add("Palette/Create From Image...", 0,
+  menubar->add("&Palette/&Create From Image...", 0,
     (Fl_Callback *)Dialog::makePalette, 0, 0);
-  menubar->add("Palette/Apply to Image...", 0,
+  menubar->add("&Palette/&Apply to Image...", 0,
     (Fl_Callback *)FX::applyPalette, 0, FL_MENU_DIVIDER);
-  menubar->add("Palette/Presets/Default", 0,
+  menubar->add("&Palette/Presets/Default", 0,
     (Fl_Callback *)paletteDefault, 0, 0);
   menubar->add("Palette/Presets/Black and White", 0,
     (Fl_Callback *)paletteBlackAndWhite, 0, 0);
-  menubar->add("Palette/Presets/Web Safe", 0,
+  menubar->add("&Palette/Presets/Web Safe", 0,
     (Fl_Callback *)paletteWebSafe, 0, 0);
-  menubar->add("Palette/Presets/3-level RGB", 0,
+  menubar->add("&Palette/Presets/3-level RGB", 0,
     (Fl_Callback *)palette3LevelRGB, 0, 0);
-  menubar->add("Palette/Presets/4-level RGB", 0,
+  menubar->add("&Palette/Presets/4-level RGB", 0,
     (Fl_Callback *)palette4LevelRGB, 0, 0);
-  menubar->add("Palette/Presets/3-3-2", 0,
+  menubar->add("&Palette/Presets/3-3-2", 0,
     (Fl_Callback *)palette332, 0, 0);
-  menubar->add("Palette/Sort", 0,
+  menubar->add("&Palette/Sort", 0,
     (Fl_Callback *)paletteSort, 0, FL_MENU_DIVIDER);
-  menubar->add("Palette/Editor...", 0,
+  menubar->add("&Palette/&Editor... (Ctrl+E)", 0,
     (Fl_Callback *)Dialog::editor, 0, 0);
-  menubar->add("Effects/Normalize", 0,
+  menubar->add("F&X/Normalize", 0,
     (Fl_Callback *)FX::normalize, 0, 0);
-  menubar->add("Effects/Equalize", 0,
+  menubar->add("F&X/Equalize", 0,
     (Fl_Callback *)FX::equalize, 0, 0);
-  menubar->add("Effects/Value Stretch", 0,
+  menubar->add("F&X/Value Stretch", 0,
     (Fl_Callback *)FX::valueStretch, 0, 0);
-  menubar->add("Effects/Saturate", 0,
+  menubar->add("F&X/Saturate", 0,
     (Fl_Callback *)FX::saturate, 0, 0);
-  menubar->add("Effects/Rotate Hue...", 0,
+  menubar->add("F&X/Rotate Hue...", 0,
     (Fl_Callback *)FX::rotateHue, 0, 0);
-  menubar->add("Effects/Invert", 0,
+  menubar->add("F&X/Invert", 0,
     (Fl_Callback *)FX::invert, 0, 0);
-  menubar->add("Effects/Invert Alpha", 0,
+  menubar->add("F&X/Invert Alpha", 0,
     (Fl_Callback *)FX::invertAlpha, 0, 0);
-  menubar->add("Effects/Auto-Correct...", 0,
+  menubar->add("F&X/Auto-Correct...", 0,
     (Fl_Callback *)FX::autoCorrect, 0, 0);
-  menubar->add("Effects/Correction Matrix", 0,
+  menubar->add("F&X/Correction Matrix", 0,
     (Fl_Callback *)FX::correctionMatrix, 0, 0);
-  menubar->add("Effects/Restore...", 0,
+  menubar->add("F&X/Restore...", 0,
     (Fl_Callback *)FX::restore, 0, 0);
-  menubar->add("Effects/Remove Dust...", 0,
+  menubar->add("F&X/Remove Dust...", 0,
     (Fl_Callback *)FX::removeDust, 0, 0);
-  menubar->add("Effects/Desaturate", 0,
+  menubar->add("F&X/Desaturate", 0,
     (Fl_Callback *)FX::desaturate, 0, 0);
-  menubar->add("Effects/Colorize", 0,
+  menubar->add("F&X/Colorize", 0,
     (Fl_Callback *)FX::colorize, 0, 0);
-  menubar->add("Effects/Stained Glass...", 0,
+  menubar->add("F&X/Stained Glass...", 0,
     (Fl_Callback *)FX::stainedGlass, 0, 0);
-  menubar->add("Effects/Gaussian Blur...", 0,
+  menubar->add("F&X/Gaussian Blur...", 0,
     (Fl_Callback *)FX::gaussianBlur, 0, 0);
-  menubar->add("Effects/Sharpen...", 0,
+  menubar->add("F&X/Sharpen...", 0,
     (Fl_Callback *)FX::sharpen, 0, 0);
-  menubar->add("Effects/Unsharp Mask...", 0,
+  menubar->add("F&X/Unsharp Mask...", 0,
     (Fl_Callback *)FX::unsharpMask, 0, 0);
-  menubar->add("Effects/Convolution Matrix...", 0,
+  menubar->add("F&X/Convolution Matrix...", 0,
     (Fl_Callback *)FX::convolutionMatrix, 0, 0);
-  menubar->add("Effects/Artistic...", 0,
+  menubar->add("F&X/Artistic...", 0,
     (Fl_Callback *)FX::artistic, 0, 0);
-  menubar->add("Effects/Forward FFT", 0,
+  menubar->add("F&X/Forward FFT", 0,
     (Fl_Callback *)FX::forwardFFT, 0, 0);
-  menubar->add("Effects/Inverse FFT", 0,
+  menubar->add("F&X/Inverse FFT", 0,
     (Fl_Callback *)FX::inverseFFT, 0, 0);
   menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
