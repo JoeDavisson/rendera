@@ -1054,6 +1054,21 @@ int File::saveTarga(const char *fn)
   int w = bmp->cw;
   int h = bmp->ch;
 
+/*
+    uint8_t id_length;
+    uint8_t color_map_type;
+    uint8_t data_type;
+    uint16_t color_map_origin;
+    uint16_t color_map_length;
+    uint8_t color_map_depth;
+    uint16_t x;
+    uint16_t y;
+    uint16_t w;
+    uint16_t h;
+    uint8_t bpp;
+    uint8_t descriptor;
+*/
+
   writeUint8(0, outp);
   writeUint8(0, outp);
   writeUint8(2, outp);

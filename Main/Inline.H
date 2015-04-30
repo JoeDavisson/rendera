@@ -202,9 +202,9 @@ inline uint16_t parseUint16(unsigned char *&buffer)
 
 #if 0
   /*  */
-#elif ( BYTE_ORDER == LITTLE_ENDIAN )
+#elif ( BYTE_ORDER == __ORDER_LITTLE_ENDIAN__ )
   num = buffer[0] | buffer[1] << 8;
-#elif ( BYTE_ORDER == BIG_ENDIAN )
+#elif ( BYTE_ORDER == __ORDER_BIG_ENDIAN__ )
   num = buffer[1] | buffer[0] << 8;
 #else
 #  error "unsupported endianness"
@@ -220,9 +220,9 @@ inline uint32_t parseUint32(unsigned char *&buffer)
 
 #if 0
   /*  */
-#elif ( BYTE_ORDER == LITTLE_ENDIAN )
+#elif ( BYTE_ORDER == __ORDER_LITTLE_ENDIAN__ )
   num = buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24;
-#elif ( BYTE_ORDER == BIG_ENDIAN )
+#elif ( BYTE_ORDER == __ORDER_BIG_ENDIAN__ )
   num = buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24;
 #else
 #  error "unsupported endianness"
@@ -241,7 +241,7 @@ inline void writeUint16(const uint16_t &num, FILE *out)
 {
 #if 0
   /*  */
-#elif ( __BYTE_ORDER__ == __LITTLE_ENDIAN__ )
+#elif ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
   fputc(num & 0xff, out);
   fputc((num >> 8) & 0xff, out);
 #else
@@ -254,7 +254,7 @@ inline void writeUint32(const uint32_t &num, FILE *out)
 {
 #if 0
   /*  */
-#elif ( __BYTE_ORDER__ == __LITTLE_ENDIAN__ )
+#elif ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
   fputc(num & 0xff, out);
   fputc((num >> 8) & 0xff, out);
   fputc((num >> 16) & 0xff, out);
