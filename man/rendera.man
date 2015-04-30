@@ -8,6 +8,8 @@ rendera \- A painting program.
 .SH DESCRIPTION
 .B rendera
 is a painting program suitable for photo-retouching, seamless tile production, and colorizing black-and-white photographs.
+.TP
+The author's original goal was to be able to retouch large, high-DPI images quickly. The program has been expanded to support other common tasks and image filters related to retouching and restoration work.
 .SH TOOLS
 .TP
 .B Paintbrush:
@@ -24,6 +26,9 @@ For making seamless tiles. Simply click and drag to change the image offset.
 .TP
 .B Text:
 Text placement tool, change the options and click to draw text.
+.TP
+.B Fill:
+Basic flood-fill. You can fill an area with a transparent color also.
 .SH BLENDING MODES
 .TP
 .B Normal:
