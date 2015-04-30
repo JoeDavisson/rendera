@@ -61,8 +61,8 @@ InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
                    int val_min, int val_max)
 : Fl_Group(x, y, w, h, 0),
   input(x + 16, y, w - 32, h),
-  dec(x, y, 16, h, "◂"),
-  inc(x + w - 16, y, 16, h, "▸")
+  dec(x, y, 16, h, "@<"),
+  inc(x + w - 16, y, 16, h, "@>")
 {
   resizable(input);
   end();

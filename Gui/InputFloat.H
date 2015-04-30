@@ -40,8 +40,8 @@ public:
   int limitValue(int, int);
 
   int var;
-  int min;
-  int max;
+  double min;
+  double max;
   Fl_Group *group;
   Fl_Float_Input input;
   Fl_Repeat_Button dec;
