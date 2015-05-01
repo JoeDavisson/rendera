@@ -202,9 +202,9 @@ inline uint16_t parseUint16(unsigned char *&buffer)
 
 #if 0
   /*  */
-#elif ( BYTE_ORDER == __ORDER_LITTLE_ENDIAN__ )
+#elif ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
   num = buffer[0] | buffer[1] << 8;
-#elif ( BYTE_ORDER == __ORDER_BIG_ENDIAN__ )
+#elif ( __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ )
   num = buffer[1] | buffer[0] << 8;
 #else
 #  error "unsupported endianness"
@@ -220,9 +220,9 @@ inline uint32_t parseUint32(unsigned char *&buffer)
 
 #if 0
   /*  */
-#elif ( BYTE_ORDER == __ORDER_LITTLE_ENDIAN__ )
+#elif ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
   num = buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24;
-#elif ( BYTE_ORDER == __ORDER_BIG_ENDIAN__ )
+#elif ( __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ )
   num = buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24;
 #else
 #  error "unsupported endianness"
