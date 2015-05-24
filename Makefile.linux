@@ -1,16 +1,9 @@
 # Makefile for Linux
 
 # source directories
-DIR_FILE=File
-DIR_FX=FX
-DIR_GRAPHICS=Graphics
-DIR_GUI=Gui
-DIR_MAIN=Main
-DIR_TOOLS=Tools
-DIR_IMAGES=Images
+SRC_DIR=src
 
-INCLUDE=-I$(DIR_FILE) -I$(DIR_FX) -I$(DIR_GRAPHICS) \
-        -I$(DIR_GUI) -I$(DIR_MAIN) -I$(DIR_TOOLS) -I$(DIR_IMAGES)
+INCLUDE=-I$(SRC_DIR)
 
 CXX=g++
 
@@ -21,73 +14,53 @@ CXXFLAGS=-O2 -DPACKAGE_STRING=\"$(NAME)$(VERSION)\" $(INCLUDE)
 LIBS=-lfltk -lpng -ljpeg -lX11
 
 OBJ= \
-  $(DIR_FILE)/File.o \
-  $(DIR_FILE)/FileSP.o \
-  $(DIR_FX)/FX.o \
-  $(DIR_FX)/Transform.o \
-  $(DIR_GRAPHICS)/Bitmap.o \
-  $(DIR_GRAPHICS)/Blend.o \
-  $(DIR_GRAPHICS)/Map.o \
-  $(DIR_GRAPHICS)/Octree.o \
-  $(DIR_GRAPHICS)/Palette.o \
-  $(DIR_GRAPHICS)/Quantize.o \
-  $(DIR_GUI)/Button.o \
-  $(DIR_GUI)/CheckBox.o \
-  $(DIR_GUI)/DialogWindow.o \
-  $(DIR_GUI)/Group.o \
-  $(DIR_GUI)/InputFloat.o \
-  $(DIR_GUI)/InputInt.o \
-  $(DIR_GUI)/InputText.o \
-  $(DIR_GUI)/Separator.o \
-  $(DIR_GUI)/StaticText.o \
-  $(DIR_GUI)/ToggleButton.o \
-  $(DIR_GUI)/Widget.o \
-  $(DIR_MAIN)/Brush.o \
-  $(DIR_MAIN)/Clone.o \
-  $(DIR_MAIN)/Dialog.o \
-  $(DIR_MAIN)/Gui.o \
-  $(DIR_MAIN)/Math.o \
-  $(DIR_MAIN)/Project.o \
-  $(DIR_MAIN)/Render.o \
-  $(DIR_MAIN)/Stroke.o \
-  $(DIR_MAIN)/Undo.o \
-  $(DIR_MAIN)/View.o \
-  $(DIR_TOOLS)/Crop.o \
-  $(DIR_TOOLS)/Fill.o \
-  $(DIR_TOOLS)/GetColor.o \
-  $(DIR_TOOLS)/Offset.o \
-  $(DIR_TOOLS)/Paint.o \
-  $(DIR_TOOLS)/Text.o
+  $(SRC_DIR)/File.o \
+  $(SRC_DIR)/FileSP.o \
+  $(SRC_DIR)/FX.o \
+  $(SRC_DIR)/Transform.o \
+  $(SRC_DIR)/Bitmap.o \
+  $(SRC_DIR)/Blend.o \
+  $(SRC_DIR)/Map.o \
+  $(SRC_DIR)/Octree.o \
+  $(SRC_DIR)/Palette.o \
+  $(SRC_DIR)/Quantize.o \
+  $(SRC_DIR)/Button.o \
+  $(SRC_DIR)/CheckBox.o \
+  $(SRC_DIR)/DialogWindow.o \
+  $(SRC_DIR)/Group.o \
+  $(SRC_DIR)/InputFloat.o \
+  $(SRC_DIR)/InputInt.o \
+  $(SRC_DIR)/InputText.o \
+  $(SRC_DIR)/Separator.o \
+  $(SRC_DIR)/StaticText.o \
+  $(SRC_DIR)/ToggleButton.o \
+  $(SRC_DIR)/Widget.o \
+  $(SRC_DIR)/Brush.o \
+  $(SRC_DIR)/Clone.o \
+  $(SRC_DIR)/Dialog.o \
+  $(SRC_DIR)/Gui.o \
+  $(SRC_DIR)/Math.o \
+  $(SRC_DIR)/Project.o \
+  $(SRC_DIR)/Render.o \
+  $(SRC_DIR)/Stroke.o \
+  $(SRC_DIR)/Undo.o \
+  $(SRC_DIR)/View.o \
+  $(SRC_DIR)/Crop.o \
+  $(SRC_DIR)/Fill.o \
+  $(SRC_DIR)/GetColor.o \
+  $(SRC_DIR)/Offset.o \
+  $(SRC_DIR)/Paint.o \
+  $(SRC_DIR)/Text.o
 
 # dynamic link
 default: $(OBJ)
-	$(CXX) -o ./rendera $(DIR_MAIN)/Main.cxx $(OBJ) $(CXXFLAGS) $(LIBS)
+	$(CXX) -o ./rendera $(SRC_DIR)/Main.cxx $(OBJ) $(CXXFLAGS) $(LIBS)
 
-$(DIR_FILE)/%.o: $(DIR_FILE)/%.cxx $(DIR_FILE)/%.H
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(DIR_FX)/%.o: $(DIR_FX)/%.cxx $(DIR_FX)/%.H
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(DIR_GRAPHICS)/%.o: $(DIR_GRAPHICS)/%.cxx $(DIR_GRAPHICS)/%.H
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(DIR_GUI)/%.o: $(DIR_GUI)/%.cxx $(DIR_GUI)/%.H
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(DIR_MAIN)/%.o: $(DIR_MAIN)/%.cxx $(DIR_MAIN)/%.H
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(DIR_TOOLS)/%.o: $(DIR_TOOLS)/%.cxx $(DIR_TOOLS)/%.H
+$(SRC_DIR)/%.o: $(SRC_DIR)/%.cxx $(SRC_DIR)/%.H
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	@rm -f $(DIR_FILE)/*.o 
-	@rm -f $(DIR_FX)/*.o
-	@rm -f $(DIR_GRAPHICS)/*.o
-	@rm -f $(DIR_GUI)/*.o
-	@rm -f $(DIR_MAIN)/*.o
-	@rm -f $(DIR_TOOLS)/*.o
+	@rm -f $(SRC_DIR)/*.o 
 	@rm -f ./rendera 
 	@echo "Clean!"
 

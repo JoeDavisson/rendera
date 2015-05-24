@@ -388,19 +388,19 @@ void Gui::init()
   top_right = new Group(0, menubar->h(), window->w(), 40, "");
   x1 = 8;
   zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24,
-                              "Fit In Window", __zoom_fit_png,
+                              "Fit In Window", images_zoom_fit_png,
                               (Fl_Callback *)checkZoomFit);
   x1 += 24 + 8;
   zoom_one = new Button(top_right, x1, 8, 24, 24,
-                        "Actual Size", __zoom_one_png,
+                        "Actual Size", images_zoom_one_png,
                         (Fl_Callback *)checkZoomOne);
   x1 += 24 + 8;
   zoom_in = new Button(top_right, x1, 8, 24, 24,
-                       "Zoom In", __zoom_in_png,
+                       "Zoom In", images_zoom_in_png,
                        (Fl_Callback *)checkZoomIn);
   x1 += 24 + 8;
   zoom_out = new Button(top_right, x1, 8, 24, 24,
-                        "Zoom Out", __zoom_out_png,
+                        "Zoom Out", images_zoom_out_png,
                         (Fl_Callback *)checkZoomOut);
   x1 += 24 + 8;
   zoom = new StaticText(top_right, x1, 8, 56, 24, "");
@@ -408,7 +408,7 @@ void Gui::init()
   new Separator(top_right, x1, 2, 2, 36, "");
   x1 += 8;
   grid = new ToggleButton(top_right, x1, 8, 24, 24,
-                          "Show Grid", __grid_png,
+                          "Show Grid", images_grid_png,
                           (Fl_Callback *)checkGrid);
   x1 += 24 + 48 + 8;
   gridx = new InputInt(top_right, x1, 8, 64, 24,
@@ -427,29 +427,29 @@ void Gui::init()
   bottom = new Group(160, window->h() - status->h() - 40, window->w() - 272, 40, "");
   x1 = 8;
   wrap = new ToggleButton(bottom, x1, 8, 24, 24,
-                          "Wrap Edges", __wrap_png,
+                          "Wrap Edges", images_wrap_png,
                           (Fl_Callback *)checkWrap);
   x1 += 24 + 6;
   new Separator(bottom, x1, 2, 2, 36, "");
   x1 += 8;
   clone = new ToggleButton(bottom, x1, 8, 24, 24,
                            "Clone Enable (Shift+Click sets clone target!)",
-                           __clone_png,
+                           images_clone_png,
                            (Fl_Callback *)checkClone);
   x1 += 24 + 8;
   mirror = new Widget(bottom, x1, 8, 96, 24,
-                      "Clone Mirroring", __mirror_png, 24, 24,
+                      "Clone Mirroring", images_mirror_png, 24, 24,
                       (Fl_Callback *)checkMirror);
   x1 += 96 + 6;
   new Separator(bottom, x1, 2, 2, 36, "");
   x1 += 8;
   origin = new ToggleButton(bottom, x1, 8, 24, 24,
-                            "Start Shape From Center", __origin_png,
+                            "Start Shape From Center", images_origin_png,
                             (Fl_Callback *)checkOrigin);
   x1 += 24 + 8;
   constrain = new ToggleButton(bottom, x1, 8, 24, 24,
                               "Lock Shape Proportions",
-                              __constrain_png,
+                              images_constrain_png,
                               (Fl_Callback *)checkConstrain);
   bottom->resizable(0);
   bottom->end();
@@ -460,7 +460,7 @@ void Gui::init()
                     "Tools");
   y1 = 20;
   tool = new Widget(tools, 8, y1, 32, 192,
-                    "Tools", __tools_png, 32, 32,
+                    "Tools", images_tools_png, 32, 32,
                     (Fl_Callback *)checkTool);
   y1 += 96 + 8;
   tools->resizable(0);
@@ -477,19 +477,19 @@ void Gui::init()
   paint_brush->bitmap->setpixelSolid(48, 48, makeRgb(192, 192, 192), 0);
   y1 += 96 + 8;
   paint_size = new Widget(paint, 8, y1, 96, 24,
-                          "Size", __size_png, 6, 24,
+                          "Size", images_size_png, 6, 24,
                           (Fl_Callback *)checkPaintSize);
   y1 += 24 + 8;
   paint_stroke = new Widget(paint, 8, y1, 96, 48,
-                            "Stroke", __stroke_png, 24, 24,
+                            "Stroke", images_stroke_png, 24, 24,
                             (Fl_Callback *)checkPaintStroke);
   y1 += 48 + 8;
   paint_shape = new Widget(paint, 8, y1, 96, 24,
-                           "Shape", __shape_png, 24, 24,
+                           "Shape", images_shape_png, 24, 24,
                            (Fl_Callback *)checkPaintShape);
   y1 += 24 + 8;
   paint_edge = new Widget(paint, 8, y1, 96, 24,
-                          "Soft Edge", __soft_edge_png, 12, 24,
+                          "Soft Edge", images_soft_edge_png, 12, 24,
                           (Fl_Callback *)checkPaintEdge);
   y1 += 24 + 8;
   paint_mode = new Fl_Choice(8, y1, 96, 24, "");
@@ -628,7 +628,7 @@ void Gui::init()
                       (Fl_Callback *)checkSatVal);
   y1 += 96 + 8;
   trans = new Widget(right, 8, y1, 96, 24,
-                     "Transparency", __transparency_png, 1, 24,
+                     "Transparency", images_transparency_png, 1, 24,
                      (Fl_Callback *)checkTrans);
   y1 += 24 + 8;
   blend = new Fl_Choice(8, y1, 96, 24, "");

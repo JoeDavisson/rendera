@@ -78,7 +78,7 @@ namespace About
 
     Items::dialog = new DialogWindow(384, 0, "About");
     Items::logo = new Widget(Items::dialog, 32, y1, 320, 96,
-                           credits, __logo_large_png, -1, -1, 0);
+                           credits, images_logo_large_png, -1, -1, 0);
     if(Project::theme == Project::THEME_LIGHT)
     {
       Items::logo->bitmap->invert();

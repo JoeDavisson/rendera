@@ -116,15 +116,11 @@ case $host_os in
   *darwin*)
     AC_MSG_NOTICE([doing darwin stuff])
     FLTK_CONFIG_INCLUDEDIR=$(fltk-config --includedir)
-# this is for compiling FLTK, not needed here
-#    FLTK_CONFIG_CXXFLAGS=$(fltk-config --cxxflags)
     FLTK_CONFIG_LDFLAGS=$(fltk-config --ldflags)
     ;;
   *linux*)
     AC_MSG_NOTICE([doing linux stuff])
     FLTK_CONFIG_INCLUDEDIR=$(fltk-config --includedir)
-# this is for compiling FLTK, not needed here
-#    FLTK_CONFIG_CXXFLAGS=$(fltk-config --cxxflags)
     FLTK_CONFIG_LDFLAGS=$(fltk-config --ldflags)
     AC_CHECK_LIB([X11],  [main],[],[AC_MSG_ERROR([libX11 missing])])
     ;;
