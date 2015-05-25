@@ -133,6 +133,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
     ximage = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
                           (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
   #elif defined WIN32
+    bgr_order = true;
     buffer_dc = CreateCompatibleDC(fl_gc);
     
     bi = new BITMAPINFO;
