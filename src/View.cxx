@@ -36,10 +36,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
+#if defined WIN32
+  #include <windows.h>
+#endif
+
 namespace
 {
-  #ifdef linux
+  #if defined linux
     XImage *ximage;
+  #elif defined WIN32
+    BITMAPINFO *bi;
+    HDC buffer_dc;
+    HBITMAP hbuffer;
+    int *backbuf_data;
   #else
     Fl_RGB_Image *wimage;
   #endif
@@ -84,8 +93,10 @@ namespace
 
   void screenBlit(int sx, int sy, int dx, int dy, int w, int h)
   {
-    #ifdef linux
+    #if defined linux
       XPutImage(fl_display, fl_window, fl_gc, ximage, sx, sy, dx, dy, w, h);
+    #elif defined WIN32
+      BitBlt(fl_gc, dx, dy, w, h, buffer_dc, sx, sy, SRCCOPY);
     #else
       fl_push_clip(dx, dy, w, h);
       wimage->draw(dx, dy, w, h, sx, sy);
@@ -112,18 +123,41 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   rendering = false;
   bgr_order = false;
 
-  backbuf = new Bitmap(Fl::w(), Fl::h());
+  #if defined linux
+    backbuf = new Bitmap(Fl::w(), Fl::h());
 
-  #ifdef linux
     // try to detect pixelformat (almost always RGB or BGR)
     if(fl_visual->visual->blue_mask == 0xFF)
       bgr_order = true;
 
     ximage = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
                           (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
+  #elif defined WIN32
+    buffer_dc = CreateCompatibleDC(fl_gc);
+    
+    bi = new BITMAPINFO;
+
+    ZeroMemory(&bi->bmiHeader, sizeof(BITMAPINFOHEADER));
+
+    bi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bi->bmiHeader.biBitCount = 32;
+
+    bi->bmiHeader.biPlanes = 1;
+    bi->bmiHeader.biClrUsed = 0;
+
+    bi->bmiHeader.biWidth = Fl::w();
+    bi->bmiHeader.biHeight = -Fl::h();
+
+    hbuffer = CreateDIBSection(buffer_dc, bi, DIB_RGB_COLORS,
+                               (void **)&backbuf_data, 0, 0);
+
+    backbuf = new Bitmap(Fl::w(), Fl::h(), backbuf_data);
+
+    SelectObject(buffer_dc, hbuffer);
   #else
+    backbuf = new Bitmap(Fl::w(), Fl::h());
     wimage = new Fl_RGB_Image((unsigned char *)backbuf->data,
-                             Fl::w(), Fl::h(), 4, 0);
+                                Fl::w(), Fl::h(), 4, 0);
   #endif
 
   resize(group->x() + x, group->y() + y, w, h);

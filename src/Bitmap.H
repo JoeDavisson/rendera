@@ -28,6 +28,7 @@ class Bitmap
 public:
   Bitmap(int, int);
   Bitmap(int, int, int);
+  Bitmap(int, int, int *);
   ~Bitmap();
 
   int x, y, w, h;

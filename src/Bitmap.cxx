@@ -147,6 +147,29 @@ Bitmap::Bitmap(int width, int height, int overscroll)
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
 }
 
+// makes bitmap from existing pixel data
+Bitmap::Bitmap(int width, int height, int *image_data)
+{
+  if(width < 1)
+    width = 1;
+  if(height < 1)
+    height = 1;
+
+  data = image_data;
+  row = new int *[height];
+
+  x = 0;
+  y = 0;
+  w = width;
+  h = height;
+  overscroll = 0;
+
+  setClip(0, 0, w - 1, h - 1);
+
+  for(int i = 0; i < height; i++)
+    row[i] = &data[width * i];
+}
+
 Bitmap::~Bitmap()
 {
   delete[] row;
