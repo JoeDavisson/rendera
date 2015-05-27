@@ -399,6 +399,25 @@ int View::handle(int event)
     case FL_PASTE:
     {
       // drag n drop
+#ifdef WIN32
+      char fn[256];
+
+      strcpy(fn, Fl::event_text());
+
+      // convert to utf-8 (e.g. %20 becomes space)
+      File::decodeURI(fn);
+
+      for(unsigned int i = 0, n = strlen(fn); i < n; i++)
+       {
+        if(fn[i] == '\r')
+          fn[i] = '\0';
+        if(fn[i] == '\n')
+          fn[i] = '\0';
+      }
+
+      // try to load the file
+      File::loadFile(fn);
+#else
       if(strncasecmp(Fl::event_text(), "file://", 7) == 0)
       {
         char fn[256];
@@ -420,10 +439,10 @@ int View::handle(int event)
         // try to load the file
         File::loadFile(fn);
       }
+#endif
 
       return 1;
     }
-
   }
 
   return 0;
