@@ -397,24 +397,20 @@ void Map::polyfill(int *px, int *py, int count,
     for(int x = x1; x < x2; x++)
     {
       int inside = 0;
-      int *px1 = &px[0];
-      int *px2 = &px[1];
-      int *py1 = &py[0];
-      int *py2 = &py[1];
 
-      for(int i = 0; i < count - 1; i++, px1++, px2++, py1++, py2++)
+      for(int i = 0, j = 1; i < count - 1; i++, j++)
       {
-        if(*py1 <= y)
+        if(py[i] <= y)
         {
-          if((*py2 > y) &&
-             ((*px2 - *px1) * (y - *py1) - (x - *px1) * (*py2 - *py1)) > 0)
-            inside++;
+          if((py[j] > y) &&
+            ((px[j] - px[i]) * (y - py[i]) - (x - px[i]) * (py[j] - py[i])) > 0)
+              inside++;
         }
         else
         {
-          if((*py2 <= y) &&
-             ((*px2 - *px1) * (y - *py1) - (x - *px1) * (*py2 - *py1)) < 0)
-            inside++;
+          if((py[j] <= y) &&
+            ((px[j] - px[i]) * (y - py[i]) - (x - px[i]) * (py[j] - py[i])) < 0)
+              inside++;
         }
       }
 
@@ -763,24 +759,20 @@ void Map::polyfillAA(int *px, int *py, int count,
     for(int x = x1; x < x2; x++)
     {
       int inside = 0;
-      int *px1 = &px[0];
-      int *px2 = &px[1];
-      int *py1 = &py[0];
-      int *py2 = &py[1];
 
-      for(int i = 0; i < count - 1; i++, px1++, px2++, py1++, py2++)
+      for(int i = 0, j = 1; i < count - 1; i++, j++)
       {
-        if(*py1 <= y)
+        if(py[i] <= y)
         {
-          if((*py2 > y) &&
-             ((*px2 - *px1) * (y - *py1) - (x - *px1) * (*py2 - *py1)) > 0)
-            inside++;
+          if((py[j] > y) &&
+            ((px[j] - px[i]) * (y - py[i]) - (x - px[i]) * (py[j] - py[i])) > 0)
+              inside++;
         }
         else
         {
-          if((*py2 <= y) &&
-             ((*px2 - *px1) * (y - *py1) - (x - *px1) * (*py2 - *py1)) < 0)
-            inside++;
+          if((py[j] <= y) &&
+            ((px[j] - px[i]) * (y - py[i]) - (x - px[i]) * (py[j] - py[i])) < 0)
+              inside++;
         }
       }
 
