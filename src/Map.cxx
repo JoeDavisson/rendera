@@ -25,67 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Map.H"
 #include "Math.H"
 
-namespace
-{
-  // add weighted value to real pixel
-  inline void _blendAA(const Map *map,
-                       const int &x, const int &y, const int &c)
-  {
-    int c1 = *(map->row[y] + x);
-
-    c1 += c;
-
-    if(c1 > 255)
-      c1 = 255;
-
-    *(map->row[y] + x) = c1;
-  }
-
-  // draw antialiased pixel
-  // each real pixel is treated like 4x4 virtual pixels
-  inline void _setpixelAA(const Map *map,
-                          const int &x, const int &y, const int &c)
-  {
-    if(c == 0 ||
-      x < 0 || x >= ((map->w - 1) << 2) ||
-      y < 0 || y >= ((map->h - 1) << 2))
-      return;
-
-    int shift1 = 4;
-    int shift2 = 20;
-
-    if(map->thick_aa)
-    {
-      shift1 = 2;
-      shift2 = 18;
-    }
-
-    const int uu = x << 2;
-    const int u = uu - ((uu >> 4) << 4);
-    const int u16 = 16 - u;
-    const int vv = y << 2;
-    const int v = vv - ((vv >> 4) << 4);
-    const int v16 = 16 - v;
-    const int a = (u16 | (u << 8)) * (v16 | (v16 << 8));
-    const int b = (u16 | (u << 8)) * (v | (v << 8));
-    const int xx = (x >> 2);
-    const int yy = (y >> 2);
-
-    _blendAA(map, xx, yy, (a & 0x000001FF) >> shift1);
-    _blendAA(map, xx + 1, yy, (a & 0x01FF0000) >> shift2);
-    _blendAA(map, xx, yy + 1, (b & 0x000001FF) >> shift1);
-    _blendAA(map, xx + 1, yy + 1, (b & 0x01FF0000) >> shift2);
-  }
-
-  // draw horizontal antialised line (used by filled oval/rectangle)
-  inline void _hlineAA(const Map *map,
-                       const int &x1, const int &y, const int &x2, const int &c)
-  {
-    for(int x = x1; x <= x2; x++)
-      _setpixelAA(map, x, y, c);
-  }
-}
-
 // The "Map" is an 8-bit image used to buffer brushstrokes
 // before being rendered.
 Map::Map(int width, int height)
@@ -450,7 +389,7 @@ void Map::vline(int y1, int x, int y2, int c)
   while(y2 >= y1);
 }
 
-void Map::polyfill(int *polycachex, int *polycachey, int polycount,
+void Map::polyfill(int *px, int *py, int count,
                    int x1, int y1, int x2, int y2, int c)
 {
   for(int y = y1; y < y2; y++)
@@ -458,30 +397,19 @@ void Map::polyfill(int *polycachex, int *polycachey, int polycount,
     for(int x = x1; x < x2; x++)
     {
       int inside = 0;
-      int *px1 = &polycachex[0];
-      int *py1 = &polycachey[0];
-      int *px2 = &polycachex[1];
-      int *py2 = &polycachey[1];
 
-      for(int i = 0; i < polycount - 1; i++)
+      for(int i = 0; i < count - 1; i++)
       {
-        if(*py1 <= y)
+        if(py[i] <= y)
         {
-          if((*py2 > y) &&
-             ((*px2 - *px1) * (y - *py1) - (x - *px1) * (*py2 - *py1)) > 0)
+          if((py[i + 1] > y) && ((px[i + 1] - px[i]) * (y - py[i]) - (x - px[i]) * (py[i + 1] - py[i])) > 0)
             inside++;
         }
         else
         {
-          if((*py2 <= y) &&
-             ((*px2 - *px1) * (y - *py1) - (x - *px1) * (*py2 - *py1)) < 0)
+          if((py[i + 1] <= y) && ((px[i + 1] - px[i]) * (y - py[i]) - (x - px[i]) * (py[i + 1] - py[i])) < 0)
             inside++;
         }
-
-        px1++;
-        py1++;
-        px2++;
-        py2++;
       }
 
       if(inside & 1)
@@ -490,9 +418,59 @@ void Map::polyfill(int *polycachex, int *polycachey, int polycount,
   }
 }
 
-void Map::setpixelAA(int x, int y, int c)
+// add weighted value to real pixel
+void Map::blendAA(const int &x, const int &y, const int &c)
 {
-  _setpixelAA(this, x, y, c);
+  int c1 = *(row[y] + x);
+
+  c1 += c;
+
+  if(c1 > 255)
+    c1 = 255;
+
+  *(row[y] + x) = c1;
+}
+
+// draw antialiased pixel
+// each real pixel is treated like 4x4 virtual pixels
+void Map::setpixelAA(const int &x, const int &y, const int &c)
+{
+  if(c == 0 ||
+    x < 0 || x >= ((w - 1) << 2) ||
+    y < 0 || y >= ((h - 1) << 2))
+    return;
+
+  int shift1 = 4;
+  int shift2 = 20;
+
+  if(thick_aa)
+  {
+    shift1 = 2;
+    shift2 = 18;
+  }
+
+  const int uu = x << 2;
+  const int u = uu - ((uu >> 4) << 4);
+  const int u16 = 16 - u;
+  const int vv = y << 2;
+  const int v = vv - ((vv >> 4) << 4);
+  const int v16 = 16 - v;
+  const int a = (u16 | (u << 8)) * (v16 | (v16 << 8));
+  const int b = (u16 | (u << 8)) * (v | (v << 8));
+  const int xx = (x >> 2);
+  const int yy = (y >> 2);
+
+  blendAA(xx, yy, (a & 0x000001FF) >> shift1);
+  blendAA(xx + 1, yy, (a & 0x01FF0000) >> shift2);
+  blendAA(xx, yy + 1, (b & 0x000001FF) >> shift1);
+  blendAA(xx + 1, yy + 1, (b & 0x01FF0000) >> shift2);
+}
+
+// draw horizontal antialised line (used by filled oval/rectangle)
+void Map::hlineAA(int x1, int y, int x2, int c)
+{
+  for(int x = x1; x <= x2; x++)
+    setpixelAA(x, y, c);
 }
 
 void Map::lineAA(int x1, int y1, int x2, int y2, int c)
@@ -520,7 +498,7 @@ void Map::lineAA(int x1, int y1, int x2, int y2, int c)
 
     while(x1 != x2)
     {
-      _setpixelAA(this, x1, y1, c);
+      setpixelAA(x1, y1, c);
 
       if(e >= 0)
       {
@@ -540,7 +518,7 @@ void Map::lineAA(int x1, int y1, int x2, int y2, int c)
 
     while(y1 != y2)
     {
-      _setpixelAA(this, x1, y1, c);
+      setpixelAA(x1, y1, c);
 
       if(e >= 0)
       {
@@ -581,16 +559,16 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
 
   if(w <= 1 && h <= 1)
   {
-    _setpixelAA(this, x1, y1, c);
-    _setpixelAA(this, x1 + ex, y1, c);
-    _setpixelAA(this, x1, y1 + ey, c);
-    _setpixelAA(this, x1 + ex, y1 + ey, c);
+    setpixelAA(x1, y1, c);
+    setpixelAA(x1 + ex, y1, c);
+    setpixelAA(x1, y1 + ey, c);
+    setpixelAA(x1 + ex, y1 + ey, c);
     return;
   }
 
   if(h <= 0 && w >= 0)
   {
-    _hlineAA(this, x1, y1, x2, c);
+    hlineAA(x1, y1, x2, c);
     return;
   }
 
@@ -606,10 +584,10 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
   s = a2 * (1 - 2 * b) + 2 * b2;
   t = b2 - 2 * a2 * (2 * b - 1);
 
-  _setpixelAA(this, x1 + x + ex, y1 + y + ey, c);
-  _setpixelAA(this, x1 - x, y1 + y + ey, c);
-  _setpixelAA(this, x1 - x, y1 - y, c);
-  _setpixelAA(this, x1 + x + ex, y1 - y, c);
+  setpixelAA(x1 + x + ex, y1 + y + ey, c);
+  setpixelAA(x1 - x, y1 + y + ey, c);
+  setpixelAA(x1 - x, y1 - y, c);
+  setpixelAA(x1 + x + ex, y1 - y, c);
 
   do
   {
@@ -636,22 +614,22 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
       }
     }
 
-    _setpixelAA(this, x1 + x + ex, y1 + y + ey, c);
-    _setpixelAA(this, x1 - x, y1 + y + ey, c);
-    _setpixelAA(this, x1 - x, y1 - y, c);
-    _setpixelAA(this, x1 + x + ex, y1 - y, c);
+    setpixelAA(x1 + x + ex, y1 + y + ey, c);
+    setpixelAA(x1 - x, y1 + y + ey, c);
+    setpixelAA(x1 - x, y1 - y, c);
+    setpixelAA(x1 + x + ex, y1 - y, c);
   }
   while(y > 1);
 
   y--;
 
-  _hlineAA(this, x1 - w / 2, y1, x1 - x, c);
-  _hlineAA(this, x1 + x + ex, y1, x1 + w / 2 + ex, c);
+  hlineAA(x1 - w / 2, y1, x1 - x, c);
+  hlineAA(x1 + x + ex, y1, x1 + w / 2 + ex, c);
 
   if(ey)
   {
-    _hlineAA(this, x1 - w / 2, y1 + 1, x1 - x, c);
-    _hlineAA(this, x1 + x + ex, y1 + 1, x1 + w / 2 + ex, c);
+    hlineAA(x1 - w / 2, y1 + 1, x1 - x, c);
+    hlineAA(x1 + x + ex, y1 + 1, x1 + w / 2 + ex, c);
   }
 }
 
@@ -722,8 +700,8 @@ void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
         y--;
       }
 
-      _hlineAA(this, x1 - x, y1 + y + ey, x1 + x + ex, c);
-      _hlineAA(this, x1 - x, y1 - y, x1 + x + ex, c);
+      hlineAA(x1 - x, y1 + y + ey, x1 + x + ex, c);
+      hlineAA(x1 - x, y1 - y, x1 + x + ex, c);
     }
   }
   while(y > 1);
@@ -731,9 +709,9 @@ void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
   y--;
 
   if(ey)
-    _hlineAA(this, x1 - x, y1 + y + ey, x1 + x + ex, c);
+    hlineAA(x1 - x, y1 + y + ey, x1 + x + ex, c);
 
-  _hlineAA(this, x1 - x, y1 - y, x1 + x + ex, c);
+  hlineAA(x1 - x, y1 - y, x1 + x + ex, c);
 }
 
 void Map::rectAA(int x1, int y1, int x2, int y2, int c)
@@ -757,10 +735,10 @@ void Map::rectfillAA(int x1, int y1, int x2, int y2, int c)
     std::swap(y1, y2);
 
   for(; y1 <= y2; y1++)
-    _hlineAA(this, x1, y1, x2, c);
+    hlineAA(x1, y1, x2, c);
 }
 
-void Map::polyfillAA(int *polycachex, int *polycachey, int polycount,
+void Map::polyfillAA(int *px, int *py, int count,
                      int x1, int y1, int x2, int y2, int c)
 {
   x1 <<= 2;
@@ -768,10 +746,10 @@ void Map::polyfillAA(int *polycachex, int *polycachey, int polycount,
   x2 <<= 2;
   y2 <<= 2;
 
-  for(int i = 0; i < polycount; i++)
+  for(int i = 0; i < count; i++)
   {
-    polycachex[i] <<= 2;
-    polycachey[i] <<= 2;
+    px[i] <<= 2;
+    py[i] <<= 2;
   }
 
   for(int y = y1; y < y2; y++)
@@ -779,34 +757,23 @@ void Map::polyfillAA(int *polycachex, int *polycachey, int polycount,
     for(int x = x1; x < x2; x++)
     {
       int inside = 0;
-      int *px1 = &polycachex[0];
-      int *py1 = &polycachey[0];
-      int *px2 = &polycachex[1];
-      int *py2 = &polycachey[1];
 
-      for(int i = 0; i < polycount - 1; i++)
+      for(int i = 0; i < count - 1; i++)
       {
-        if(*py1 <= y)
+        if(py[i] <= y)
         {
-          if((*py2 > y) &&
-             ((*px2 - *px1) * (y - *py1) - (x - *px1) * (*py2 - *py1)) > 0)
+          if((py[i + 1] > y) && ((px[i + 1] - px[i]) * (y - py[i]) - (x - px[i]) * (py[i + 1] - py[i])) > 0)
             inside++;
         }
         else
         {
-          if((*py2 <= y) &&
-             ((*px2 - *px1) * (y - *py1) - (x - *px1) * (*py2 - *py1)) < 0)
+          if((py[i + 1] <= y) && ((px[i + 1] - px[i]) * (y - py[i]) - (x - px[i]) * (py[i + 1] - py[i])) < 0)
             inside++;
         }
-
-        px1++;
-        py1++;
-        px2++;
-        py2++;
       }
 
       if(inside & 1)
-        _setpixelAA(this, x, y, c);
+        setpixelAA(x, y, c);
     }
   }
 }

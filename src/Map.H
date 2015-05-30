@@ -48,7 +48,9 @@ public:
   void polyfill(int *, int *, int, int, int, int, int, int);
 
   // antialiased versions
-  void setpixelAA(int, int, int);
+  void blendAA(const int &, const int &, const int &);
+  void setpixelAA(const int &, const int &, const int &);
+  void hlineAA(int, int, int, int);
   void lineAA(int, int, int, int, int);
   void ovalAA(int, int, int, int, int);
   void ovalfillAA(int, int, int, int, int);
