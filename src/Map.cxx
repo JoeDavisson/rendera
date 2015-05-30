@@ -84,13 +84,6 @@ namespace
     for(int x = x1; x <= x2; x++)
       _setpixelAA(map, x, y, c);
   }
-
-  // helper for polyfill
-  inline int isLeft(const int *x1, const int *y1, const int *x2,
-                           const int *y2, const int &x3, const int &y3)
-  {
-    return ((*x2 - *x1) * (y3 - *y1) - (x3 - *x1) * (*y2 - *y1));
-  }
 }
 
 // The "Map" is an 8-bit image used to buffer brushstrokes
@@ -474,12 +467,14 @@ void Map::polyfill(int *polycachex, int *polycachey, int polycount,
       {
         if(*py1 <= y)
         {
-          if((*py2 > y) && (isLeft(px1, py1, px2, py2, x, y) > 0))
+          if((*py2 > y) &&
+             ((*px2 - *px1) * (y - *py1) - (x - *px1) * (*py2 - *py1)) > 0)
             inside++;
         }
         else
         {
-          if((*py2 <= y) && (isLeft(px1, py1, px2, py2, x, y) < 0))
+          if((*py2 <= y) &&
+             ((*px2 - *px1) * (y - *py1) - (x - *px1) * (*py2 - *py1)) < 0)
             inside++;
         }
 
@@ -793,12 +788,14 @@ void Map::polyfillAA(int *polycachex, int *polycachey, int polycount,
       {
         if(*py1 <= y)
         {
-          if((*py2 > y) && (isLeft(px1, py1, px2, py2, x, y) > 0))
+          if((*py2 > y) &&
+             ((*px2 - *px1) * (y - *py1) - (x - *px1) * (*py2 - *py1)) > 0)
             inside++;
         }
         else
         {
-          if((*py2 <= y) && (isLeft(px1, py1, px2, py2, x, y) < 0))
+          if((*py2 <= y) &&
+             ((*px2 - *px1) * (y - *py1) - (x - *px1) * (*py2 - *py1)) < 0)
             inside++;
         }
 
