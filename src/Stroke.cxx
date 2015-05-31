@@ -568,7 +568,7 @@ void Stroke::end(int x, int y)
         polycachey[polycount] = beginy;
         polycount++;
         polycount &= 65535;
-        map->polyfillAA(polycachex, polycachey, polycount, x1, y1, x2, y2, 255);
+        map->polyfillAA(polycachex, polycachey, polycount, y1, y2, 255);
 
         break;
       }
@@ -598,7 +598,7 @@ void Stroke::end(int x, int y)
         polycachey[polycount] = beginy;
         polycount++;
         polycount &= 65535;
-        map->polyfillAA(polycachex, polycachey, polycount, x1, y1, x2, y2, 255);
+        map->polyfillAA(polycachex, polycachey, polycount, y1, y2, 255);
 
         break;
       }
@@ -702,7 +702,7 @@ void Stroke::end(int x, int y)
         polycachey[polycount] = beginy;
         polycount++;
         polycount &= 65535;
-        map->polyfill(polycachex, polycachey, polycount, x1, y1, x2, y2, 255);
+        map->polyfill(polycachex, polycachey, polycount, y1, y2, 255);
         break;
       }
 
