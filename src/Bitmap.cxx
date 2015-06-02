@@ -89,7 +89,8 @@ namespace
 
   inline bool inRange(const int &c1, const int &c2, const int &range)
   {
-    if(std::abs(getl(c1) - getl(c2)) <= range)
+//    if(std::abs(getl(c1) - getl(c2)) <= range)
+    if(std::sqrt(diff24(c1, c2)) <= range)
       return true;
     else
       return false;
@@ -998,63 +999,6 @@ void Bitmap::invert()
   }
 }
 
-/*
-void Bitmap::fill(int x, int y, int new_color, int old_color, int range)
-{
-  if(old_color == new_color)
-    return;
-
-  emptyStack();
-    
-  if(!push(x, y))
-    return;
-    
-  while(pop(&x, &y))
-  {    
-    int x1 = x;
-
-    while(x1 >= cl && getpixel(x1, y) == old_color)
-      x1--;
-
-    x1++;
-
-    bool span_t = false;
-    bool span_b = false;
-
-    while(x1 <= cr && getpixel(x1, y) == old_color)
-    {
-      setpixelSolid(x1, y, new_color, 0);
-
-      if((!span_t && y > ct) && (getpixel(x1, y - 1) == old_color)) 
-      {
-        if(!push(x1, y - 1))
-          return;
-
-        span_t = true;
-      }
-      else if((span_t && y > ct) && (getpixel(x1, y - 1) != old_color))
-      {
-        span_t = false;
-      }
-
-      if((!span_b && y < cb) && (getpixel(x1, y + 1) == old_color)) 
-      {
-        if(!push(x1, y + 1))
-          return;
-
-        span_b = true;
-      }
-      else if((span_b && y < cb) && (getpixel(x1, y + 1) != old_color))
-      {
-        span_b = false;
-      } 
-
-      x1++;
-    }
-  }
-}
-*/
-
 void Bitmap::fill(int x, int y, int new_color, int old_color, int range)
 {
   if(old_color == new_color)
@@ -1081,30 +1025,26 @@ void Bitmap::fill(int x, int y, int new_color, int old_color, int range)
     {
       setpixelSolid(x1, y, new_color, 0);
 
-      if((!span_t && y > ct) &&
-          inRange(getpixel(x1, y - 1), old_color, range)) 
+      if((!span_t && y > ct) && getpixel(x1, y - 1) == old_color) 
       {
         if(!push(x1, y - 1))
           return;
 
         span_t = true;
       }
-      else if((span_t && y > ct) &&
-               !inRange(getpixel(x1, y - 1), old_color, range))
+      else if((span_t && y > ct) && getpixel(x1, y - 1) != old_color)
       {
         span_t = false;
       }
 
-      if((!span_b && y < cb) &&
-          inRange(getpixel(x1, y + 1), old_color, range)) 
+      if((!span_b && y < cb) && getpixel(x1, y + 1) == old_color) 
       {
         if(!push(x1, y + 1))
           return;
 
         span_b = true;
       }
-      else if((span_b && y < cb) &&
-        !inRange(getpixel(x1, y + 1), old_color, range))
+      else if((span_b && y < cb) && getpixel(x1, y + 1) != old_color)
       {
         span_b = false;
       } 
@@ -1113,4 +1053,3 @@ void Bitmap::fill(int x, int y, int new_color, int old_color, int range)
     }
   }
 }
-

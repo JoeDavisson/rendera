@@ -604,7 +604,7 @@ void Gui::init()
   y1 = 40;
   fill_range = new InputInt(fill, 8, y1, 96, 24,
                             "Range:",
-                            0, 0, 32);
+                            0, 0, 100);
   fill_range->align(FL_ALIGN_TOP);
   fill_range->value("0");
   fill->end();
