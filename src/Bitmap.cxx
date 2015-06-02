@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gamma.H"
 #include "Gui.H"
 #include "Inline.H"
+#include "Map.H"
 #include "Palette.H"
 #include "Project.H"
 #include "Stroke.H"
@@ -87,10 +88,13 @@ namespace
     }
   }
 
-  inline bool inRange(const int &c1, const int &c2, const int &range)
+  inline bool inRange(const int &c1, const int &c2, const int &range, int *trans)
   {
-//    if(std::abs(getl(c1) - getl(c2)) <= range)
-    if(std::sqrt(diff24(c1, c2)) <= range)
+    int diff = std::abs(getl(c1) - getl(c2));
+
+    *trans = diff;
+
+    if(diff <= range)
       return true;
     else
       return false;
@@ -1009,11 +1013,21 @@ void Bitmap::fill(int x, int y, int new_color, int old_color, int range)
   if(!push(x, y))
     return;
 
+  // make copy
+  Bitmap temp(w, h);
+  blit(&temp, 0, 0, 0, 0, w, h);
+
+  // blending map
+  Map map(w, h);
+  map.clear(255);
+
+  int trans;
+
   while(pop(&x, &y))
   {    
     int x1 = x;
 
-    while(x1 >= cl && inRange(getpixel(x1, y), old_color, range))
+    while(x1 >= cl && inRange(temp.getpixel(x1, y), old_color, range, &trans))
       x1--;
 
     x1++;
@@ -1021,35 +1035,44 @@ void Bitmap::fill(int x, int y, int new_color, int old_color, int range)
     bool span_t = false;
     bool span_b = false;
 
-    while(x1 <= cr && inRange(getpixel(x1, y), old_color, range))
+    while(x1 <= cr && inRange(temp.getpixel(x1, y), old_color, range, &trans))
     {
-      setpixelSolid(x1, y, new_color, 0);
+      temp.setpixelSolid(x1, y, new_color, 0);
+      map.setpixel(x1, y, trans);
 
-      if((!span_t && y > ct) && getpixel(x1, y - 1) == old_color) 
+      if((!span_t && y > ct) && temp.getpixel(x1, y - 1) == old_color) 
       {
         if(!push(x1, y - 1))
           return;
 
         span_t = true;
       }
-      else if((span_t && y > ct) && getpixel(x1, y - 1) != old_color)
+      else if((span_t && y > ct) && temp.getpixel(x1, y - 1) != old_color)
       {
         span_t = false;
       }
 
-      if((!span_b && y < cb) && getpixel(x1, y + 1) == old_color) 
+      if((!span_b && y < cb) && temp.getpixel(x1, y + 1) == old_color) 
       {
         if(!push(x1, y + 1))
           return;
 
         span_b = true;
       }
-      else if((span_b && y < cb) && getpixel(x1, y + 1) != old_color)
+      else if((span_b && y < cb) && temp.getpixel(x1, y + 1) != old_color)
       {
         span_b = false;
       } 
 
       x1++;
+    }
+  }
+
+  for(int y = ct; y <= cb; y++)
+  {
+    for(int x = cl; x <= cr; x++)
+    {
+      setpixelSolid(x, y, new_color, map.getpixel(x, y));
     }
   }
 }
