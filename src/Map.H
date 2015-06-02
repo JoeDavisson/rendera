@@ -45,7 +45,7 @@ public:
   void rectfill(int, int, int, int, int);
   void hline(int, int, int, int);
   void vline(int, int, int, int);
-  void polyfill(int *, int *, int, int, int, int, int, int);
+  void polyfill(int *, int *, int, int, int, int);
 
   // antialiased versions
   void blendAA(const int &, const int &, const int &);
@@ -56,7 +56,7 @@ public:
   void ovalfillAA(int, int, int, int, int);
   void rectAA(int, int, int, int, int);
   void rectfillAA(int, int, int, int, int);
-  void polyfillAA(int *, int *, int, int, int, int, int, int);
+  void polyfillAA(int *, int *, int, int, int, int);
 };
 
 #endif

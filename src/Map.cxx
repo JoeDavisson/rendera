@@ -20,10 +20,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <algorithm>
 #include <cstdlib>
+#include <vector>
 #include <stdint.h>
 
 #include "Map.H"
 #include "Math.H"
+
+namespace
+{
+  // qsort callback for polyfill
+  int node_cmp(const void *a, const void *b)
+  {
+    return *(int *)a - *(int *)b;
+  }
+}
 
 // The "Map" is an 8-bit image used to buffer brushstrokes
 // before being rendered.
@@ -389,32 +399,31 @@ void Map::vline(int y1, int x, int y2, int c)
   while(y2 >= y1);
 }
 
-void Map::polyfill(int *px, int *py, int count,
-                   int x1, int y1, int x2, int y2, int c)
+void Map::polyfill(int *px, int *py, int count, int y1, int y2, int c)
 {
+  std::vector<int> nodex(65536);
+
   for(int y = y1; y < y2; y++)
   {
-    for(int x = x1; x < x2; x++)
-    {
-      int inside = 0;
+    int nodes = 0;
+    int j = count - 1;
 
-      for(int i = 0, j = 1; i < count - 1; i++, j++)
+    for(int i = 0; i < count; i++)
+    {
+      if((py[i] < y && py[j] >= y) || (py[j] < y && py[i] >= y))
       {
-        if(py[i] <= y)
-        {
-          if((py[j] > y) &&
-            ((px[j] - px[i]) * (y - py[i]) - (x - px[i]) * (py[j] - py[i])) > 0)
-              inside++;
-        }
-        else
-        {
-          if((py[j] <= y) &&
-            ((px[j] - px[i]) * (y - py[i]) - (x - px[i]) * (py[j] - py[i])) < 0)
-              inside++;
-        }
+        nodex[nodes++] =
+          (px[i] + (float)(y - py[i]) / (py[j] - py[i]) * (px[j] - px[i]));
       }
 
-      if(inside & 1)
+      j = i;
+    }
+
+    std::qsort(&nodex[0], nodes, sizeof(int), node_cmp);
+
+    for(int i = 0; i < nodes; i += 2)
+    {
+      for(int x = nodex[i]; x <= nodex[i + 1]; x++)
         setpixel(x, y, c);
     }
   }
@@ -740,43 +749,37 @@ void Map::rectfillAA(int x1, int y1, int x2, int y2, int c)
     hlineAA(x1, y1, x2, c);
 }
 
-void Map::polyfillAA(int *px, int *py, int count,
-                     int x1, int y1, int x2, int y2, int c)
+void Map::polyfillAA(int *px, int *py, int count, int y1, int y2, int c)
 {
-  x1 <<= 2;
-  y1 <<= 2;
-  x2 <<= 2;
-  y2 <<= 2;
-
   for(int i = 0; i < count; i++)
   {
     px[i] <<= 2;
     py[i] <<= 2;
   }
 
-  for(int y = y1; y < y2; y++)
-  {
-    for(int x = x1; x < x2; x++)
-    {
-      int inside = 0;
+  std::vector<int> nodex(65536);
 
-      for(int i = 0, j = 1; i < count - 1; i++, j++)
+  for(int y = (y1 << 2); y < (y2 << 2); y++)
+  {
+    int j = count - 1;
+    int nodes = 0;
+
+    for(int i = 0; i < count; i++)
+    {
+      if((py[i] < y && py[j] >= y) || (py[j] < y && py[i] >= y))
       {
-        if(py[i] <= y)
-        {
-          if((py[j] > y) &&
-            ((px[j] - px[i]) * (y - py[i]) - (x - px[i]) * (py[j] - py[i])) > 0)
-              inside++;
-        }
-        else
-        {
-          if((py[j] <= y) &&
-            ((px[j] - px[i]) * (y - py[i]) - (x - px[i]) * (py[j] - py[i])) < 0)
-              inside++;
-        }
+        nodex[nodes++] =
+          (px[i] + (double)(y - py[i]) / (py[j] - py[i]) * (px[j] - px[i]));
       }
 
-      if(inside & 1)
+      j = i;
+    }
+
+    std::qsort(&nodex[0], nodes, sizeof(int), node_cmp);
+
+    for(int i = 0; i < nodes; i += 2)
+    {
+      for(int x = nodex[i]; x <= nodex[i + 1]; x++)
         setpixelAA(x, y, c);
     }
   }
