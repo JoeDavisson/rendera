@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Brush.H"
 #include "Fill.H"
+#include "Gui.H"
 #include "Inline.H"
 #include "Project.H"
 #include "Undo.H"
@@ -61,7 +62,8 @@ void Fill::push(View *view)
     int target = Project::bmp->getpixel(view->imgx, view->imgy);
     rgba_type rgba = getRgba(Project::brush->color);
     int color = makeRgba(rgba.r, rgba.g, rgba.b, 255 - Project::brush->trans);
-    Project::bmp->fill(view->imgx, view->imgy, color, target);
+    int range = Gui::getFillRange();
+    Project::bmp->fill(view->imgx, view->imgy, color, target, range);
     view->drawMain(true);
   }
 }

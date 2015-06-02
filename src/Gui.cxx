@@ -126,6 +126,8 @@ namespace
   Fl_Input *text_input;
   CheckBox *text_smooth;
 
+  InputInt *fill_range;
+
   // right
   Widget *palette;
   Widget *swatch;
@@ -599,6 +601,12 @@ void Gui::init()
   fill = new Group(48, top_right->h() + menubar->h(),
                    112, window->h() - top_right->h() - menubar->h() - status->h(),
                    "Fill");
+  y1 = 40;
+  fill_range = new InputInt(fill, 8, y1, 96, 24,
+                            "Range:",
+                            0, 0, 32);
+  fill_range->align(FL_ALIGN_TOP);
+  fill_range->value("0");
   fill->end();
 
   // right
@@ -1276,6 +1284,11 @@ int Gui::getPaintMode()
 int Gui::getTextSmooth()
 {
   return text_smooth->value();
+}
+
+int Gui::getFillRange()
+{
+  return atoi(fill_range->value());
 }
 
 void Gui::showProgress(float step)

@@ -96,6 +96,7 @@ namespace Gui
   void checkPaintMode();
   int getPaintMode();
   int getTextSmooth();
+  int getFillRange();
 
   void showProgress(float);
   int updateProgress(const int);
