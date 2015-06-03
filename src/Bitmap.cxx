@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  const int stack_size = 0x100000;
+  const int stack_size = 4096;
   std::vector<int> stack_x(stack_size);
   std::vector<int> stack_y(stack_size);
   int sp = 0;
@@ -88,6 +88,7 @@ namespace
     }
   }
 
+  // determines if flood-fill is within range and sets transparency level
   inline bool inRange(const int &c1, const int &c2,
                       const int &range, int *trans)
   {
@@ -1006,8 +1007,8 @@ void Bitmap::invert()
 
 void Bitmap::fill(int x, int y, int new_color, int old_color, int range)
 {
-  if(old_color == new_color)
-    return;
+//  if(old_color == new_color)
+//    return;
 
   emptyStack();
     
@@ -1077,7 +1078,9 @@ void Bitmap::fill(int x, int y, int new_color, int old_color, int range)
   {
     for(int x = cl; x <= cr; x++)
     {
-      setpixelSolid(x, y, new_color, map.getpixel(x, y));
+      const int t = map.getpixel(x, y);
+      if(t < 255)
+        setpixelSolid(x, y, new_color, t);
     }
   }
 }
