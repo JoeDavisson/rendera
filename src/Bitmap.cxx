@@ -88,11 +88,12 @@ namespace
     }
   }
 
-  inline bool inRange(const int &c1, const int &c2, const int &range, int *trans)
+  inline bool inRange(const int &c1, const int &c2,
+                      const int &range, int *trans)
   {
     int diff = std::abs(getl(c1) - getl(c2));
 
-    *trans = diff;
+    *trans = diff * (256.0f / (range + 1));
 
     if(diff <= range)
       return true;
@@ -1040,26 +1041,30 @@ void Bitmap::fill(int x, int y, int new_color, int old_color, int range)
       temp.setpixelSolid(x1, y, new_color, 0);
       map.setpixel(x1, y, trans);
 
-      if((!span_t && y > ct) && temp.getpixel(x1, y - 1) == old_color) 
+      if((!span_t && y > ct) &&
+          inRange(temp.getpixel(x1, y - 1), old_color, range, &trans)) 
       {
         if(!push(x1, y - 1))
           return;
 
         span_t = true;
       }
-      else if((span_t && y > ct) && temp.getpixel(x1, y - 1) != old_color)
+      else if((span_t && y > ct) &&
+               !inRange(temp.getpixel(x1, y - 1), old_color,range, &trans))
       {
         span_t = false;
       }
 
-      if((!span_b && y < cb) && temp.getpixel(x1, y + 1) == old_color) 
+      if((!span_b && y < cb) &&
+          inRange(temp.getpixel(x1, y + 1), old_color,range, &trans)) 
       {
         if(!push(x1, y + 1))
           return;
 
         span_b = true;
       }
-      else if((span_b && y < cb) && temp.getpixel(x1, y + 1) != old_color)
+      else if((span_b && y < cb) &&
+               !inRange(temp.getpixel(x1, y + 1), old_color,range, &trans))
       {
         span_b = false;
       } 
