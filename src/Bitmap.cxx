@@ -92,7 +92,7 @@ namespace
   inline bool inRange(const int &c1, const int &c2,
                       const int &range, int *trans)
   {
-    int diff = std::abs(getl(c1) - getl(c2));
+    int diff = std::sqrt(diff24(c1, c2)) / 1.725f;
 
     *trans = diff * (256.0f / (range + 1));
 
@@ -1007,8 +1007,8 @@ void Bitmap::invert()
 
 void Bitmap::fill(int x, int y, int new_color, int old_color, int range)
 {
-//  if(old_color == new_color)
-//    return;
+  if(old_color == new_color)
+    return;
 
   emptyStack();
     
