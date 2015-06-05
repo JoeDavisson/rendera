@@ -92,7 +92,7 @@ namespace
   inline bool inRange(const int &c1, const int &c2,
                       const int &range, int *trans)
   {
-    int diff = std::sqrt(diff24(c1, c2)) / 1.725f;
+    int diff = std::sqrt(diff32(c1, c2)) / 2;
 
     *trans = diff * (256.0f / (range + 1));
 

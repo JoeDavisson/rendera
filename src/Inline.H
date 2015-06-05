@@ -160,6 +160,19 @@ inline int diff24(const int &c1, const int &c2)
   return r * r + g * g + b * b;
 }
 
+// 4D quadratic distance
+inline int diff32(const int &c1, const int &c2)
+{
+  const struct rgba_type rgba1 = getRgba(c1);
+  const struct rgba_type rgba2 = getRgba(c2);
+  const int r = rgba1.r - rgba2.r;
+  const int g = rgba1.g - rgba2.g;
+  const int b = rgba1.b - rgba2.b;
+  const int a = rgba1.a - rgba2.a;
+
+  return r * r + g * g + b * b + a * a;
+}
+
 // normal blend approximation (saves a multiply)
 inline int blendFast(const int &c1, const int &c2, const int &t)
 {
