@@ -2331,7 +2331,8 @@ namespace ConvolutionMatrix
     GAUSSIAN_BLUR,
     SHARPEN,
     EDGE_DETECT,
-    EMBOSS
+    EMBOSS,
+    EMBOSS_REVERSE
   };
  
   void apply(int amount, int mode, bool lum_only)
@@ -2359,6 +2360,10 @@ namespace ConvolutionMatrix
         break;
       case EMBOSS:
         copyMatrix(FilterMatrix::emboss, matrix);
+        div = 1;
+        break;
+      case EMBOSS_REVERSE:
+        copyMatrix(FilterMatrix::emboss_reverse, matrix);
         div = 1;
         break;
     }
@@ -2463,6 +2468,7 @@ namespace ConvolutionMatrix
     Items::mode->add("Sharpen");
     Items::mode->add("Edge Detect");
     Items::mode->add("Emboss");
+    Items::mode->add("Emboss (Inverse)");
     Items::mode->value(0);
     y1 += 24 + 8;
     Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0, 1, 100);

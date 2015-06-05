@@ -64,6 +64,13 @@ namespace FilterMatrix
     { -1,  1,  1 },
     {  0,  1,  2 }
   };
+
+  const int emboss_reverse[3][3] =
+  {
+    {  2,  1,  0 },
+    {  1,  1, -1 },
+    {  0, -1, -2 }
+  };
 }
 
 #endif
