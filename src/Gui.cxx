@@ -136,6 +136,7 @@ namespace
   InputText *hexcolor;
   Widget *trans;
   Fl_Choice *blend;
+  Fl_Choice *alpha_mask;
 
   // bottom
   ToggleButton *wrap;
@@ -660,6 +661,17 @@ void Gui::init()
   blend->value(0);
   blend->callback((Fl_Callback *)checkBlend);
   y1 += 24 + 8;
+  alpha_mask = new Fl_Choice(8, y1, 96, 24, "");
+  alpha_mask->tooltip("Masking Mode");
+  alpha_mask->textsize(10);
+  alpha_mask->resize(right->x() + 8, right->y() + y1, 96, 24);
+  alpha_mask->add("None");
+  alpha_mask->add("Alpha");
+  alpha_mask->add("Reverse Alpha");
+  alpha_mask->value(0);
+  alpha_mask->callback((Fl_Callback *)checkAlphaMask);
+  y1 += 16 + 8;
+
   right->resizable(0);
   right->end();
 
@@ -1067,6 +1079,11 @@ void Gui::checkTrans(Widget *, void *)
 void Gui::checkBlend(Widget *, void *)
 {
   checkColor(0, 0);
+}
+
+void Gui::checkAlphaMask()
+{
+  Project::brush->alpha_mask = alpha_mask->value();
 }
 
 void Gui::checkWrap(Widget *, void *var)

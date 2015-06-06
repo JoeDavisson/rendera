@@ -40,6 +40,7 @@ public:
   int trans;
   int blend;
   int aa;
+  int alpha_mask;
 };
 
 #endif

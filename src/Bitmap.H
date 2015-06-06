@@ -48,7 +48,7 @@ public:
   void xorRect(int, int, int, int);
   void xorRectfill(int, int, int, int);
   void setpixel(const int &, const int &, const int &);
-  void setpixel(const int &, const int &, const int &, const int &);
+  void setpixel(const int &, const int &, const int &, int);
   void setpixelSolid(const int &, const int &, const int &, const int &);
   void setpixelWrap(const int &, const int &, const int &, const int &);
   void setpixelClone(const int &, const int &, const int &, const int &);

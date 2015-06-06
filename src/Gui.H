@@ -63,6 +63,7 @@ namespace Gui
   void checkSatVal(Widget *, void *);
   void checkTrans(Widget *, void *);
   void checkBlend(Widget *, void *);
+  void checkAlphaMask();
   void checkWrap(Widget *, void *);
   void checkClone(Widget *, void *);
   void checkMirror(Widget *, void *);

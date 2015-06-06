@@ -25,9 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Blend.H"
+#include "Brush.H"
 #include "Clone.H"
 #include "Gamma.H"
-#include "Gui.H"
 #include "Inline.H"
 #include "Map.H"
 #include "Palette.H"
@@ -476,9 +476,14 @@ void Bitmap::setpixel(const int &x, const int &y, const int &c)
   *(row[y] + x) = c;
 }
 
-void Bitmap::setpixel(const int &x, const int &y, const int &c2, const int &t)
+void Bitmap::setpixel(const int &x, const int &y, const int &c2, int t)
 {
   Blend::target(this, Project::palette.get(), x, y);
+
+  if(Project::brush->alpha_mask == 1)
+    t = scaleVal(t, geta(getpixel(x, y)));
+  else if(Project::brush->alpha_mask == 2)
+    t = scaleVal(t, 255 - geta(getpixel(x, y)));
 
   switch(Clone::wrap | (Clone::active << 1))
   {

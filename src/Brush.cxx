@@ -37,6 +37,7 @@ Brush::Brush()
   color = makeRgb(255, 0, 0);
   trans = 0;
   aa = 0;
+  alpha_mask = 0;
   make(shape, size);
 }
 
