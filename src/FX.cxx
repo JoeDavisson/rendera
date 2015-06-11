@@ -690,8 +690,13 @@ namespace AutoCorrect
   }
 }
 
-// implementation of Geoff Daniell's photo restoration algorithm
-// see original python source in redist directory
+// Based on Geoff Daniell's restoration algorithm but differs from the
+// original Gimp plugin in the following ways:
+//
+// -Side absorption corrections are not implemented.
+// -The palette generator is not the same, and produces different results.
+//
+// Please refer to the original Gimp plugin source in redist directory.
 namespace Restore
 {
   namespace Items
@@ -1091,7 +1096,7 @@ namespace Restore
     int y1 = 8;
 
     Items::dialog = new DialogWindow(384, 0, "Restore");
-    Items::box = new Fl_Box(FL_FLAT_BOX, 8, 8, 368, 48, "Restores faded color photographs and slides.\n (Algorithm by Geoff Daniell.)");
+    Items::box = new Fl_Box(FL_FLAT_BOX, 8, 8, 368, 48, "Restores faded color photographs and slides.\n (Based Geoff Daniell's Restore algorithm, but is not identical.)");
     Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP);
     Items::box->labelsize(12);
     y1 += 48;
