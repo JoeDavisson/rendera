@@ -695,6 +695,7 @@ namespace AutoCorrect
 //
 // -Side absorption corrections are not implemented.
 // -The palette generator is not the same, and produces different results.
+// -No "make less blue" option.
 //
 // Please refer to the original Gimp plugin source in redist directory.
 namespace Restore
