@@ -380,18 +380,3 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   Project::palette->fillTable();
 }
 
-// this only makes 256-color palettes
-// designed for restore filter
-void Quantize::fast(Bitmap *src, Palette *pal)
-{
-  Bitmap temp(16, 16);
-  src->scale(&temp);
-  int index = 0;
-
-  for(int y = 0; y < 16; y++)
-    for(int x = 0; x < 16; x++)
-      pal->data[index++] = temp.getpixel(x, y);
-
-  pal->max = 256;
-}
-

@@ -745,15 +745,15 @@ namespace Restore
     switch(channel)
     {
       case 0:
-        for(int i = 0; i < 256; i++)
+        for(int i = 0; i < pal->max; i++)
           dest[i] = getr(pal->data[i]);
         break;
       case 1:
-        for(int i = 0; i < 256; i++)
+        for(int i = 0; i < pal->max; i++)
           dest[i] = getg(pal->data[i]);
         break;
       case 2:
-        for(int i = 0; i < 256; i++)
+        for(int i = 0; i < pal->max; i++)
           dest[i] = getb(pal->data[i]);
         break;
     }
@@ -765,11 +765,30 @@ namespace Restore
                           const float &gamma,
                           const int &out_min, const int &out_max)
   {
-    float v = (float)(value - in_min) / ((in_max - in_min) + 1);
-    v = powf(v, 1.0f / gamma);
-    v = v * (out_max - out_min) + out_min;
+//    float v = (float)(value - in_min) / ((in_max - in_min) + 1);
+//    v = powf(v, 1.0f / gamma);
+//    v = v * (out_max - out_min) + out_min;
+    float v;
 
-    return clamp((int)v, 255);
+    if(in_max != in_min)
+      v = (float)(value - in_min) / ((in_max - in_min) + 1);
+    else
+      v = (float)(value - in_min) / 255;
+
+    if(v > 1.0f)
+      v = 1.0f;
+    if(v < 0)
+      v = 0;
+
+    v = powf(v, 1.0f / gamma);
+
+    if(out_max >= out_min)
+      v = v * (out_max - out_min) + out_min;
+    else if(out_max < out_min)
+      v = out_min - v * (out_min - out_max);
+
+//    return clamp((int)v, 255);
+    return (int)v;
   }
 
   // this emulates the levels function in GIMP
@@ -808,11 +827,11 @@ namespace Restore
   }
 
   // find m through successive approximation
-  float percentile(const int *c, const float &f)
+  float percentile(const int *c, const float &f, const int &max)
   {
     int n = 0;
 
-    for(int i = 0; i < 256; i++)
+    for(int i = 0; i < max; i++)
     {
       if(c[i] > 0)
         n++;
@@ -827,7 +846,7 @@ namespace Restore
       m++;
       k = 0;
 
-      for(int i = 0; i < 256; i++)
+      for(int i = 0; i < max; i++)
       {
         if(c[i] > 0 && c[i] <= m)
           k++;
@@ -856,17 +875,17 @@ namespace Restore
 
     // get new colormap
     Palette pal;
-    Quantize::fast(&small_copy, &pal);
+    Quantize::pca(&small_copy, &pal, 64);
 
     // return color range
-    int slice[256];
+    int slice[64];
     color_range_type color_range;
 
     for(int i = 0; i < 3; i++)
     {
       getSlice(&pal, i, slice);
-      color_range.hi[i] = percentile(slice, top);
-      color_range.lo[i] = percentile(slice, bot);
+      color_range.hi[i] = percentile(slice, top, pal.max);
+      color_range.lo[i] = percentile(slice, bot, pal.max);
     }
 
     return color_range;
@@ -966,24 +985,24 @@ namespace Restore
 
     // get color map of restored image
     Palette pal;
-    Quantize::pca(&small_image, &pal, 256);
+    Quantize::pca(&small_image, &pal, 64);
 
-    float newc[3][256];
+    float newc[3][64];
 
     for(int i = 0; i < 3; i++)
     {
-      int temp[256];
+      int temp[64];
 
       getSlice(&pal, i, temp);
 
-      for(int j = 0; j < 256; j++)
+      for(int j = 0; j < pal.max; j++)
         newc[i][j] = (float)temp[j];
     }
 
     // average color
-    float av[256];
+    float av[64];
 
-    for(int i = 0; i < 256; i++)
+    for(int i = 0; i < pal.max; i++)
       av[i] = (newc[0][i] + newc[1][i] + newc[2][i]) / (3 * 255);
 
     // tweak restoration
@@ -996,9 +1015,9 @@ namespace Restore
     {
       float lambda_c = 1.0f;
       float d_lambda_c = 1.0f;
-      float l[256]; 
+      float l[64]; 
 
-      for(int j = 0; j < 256; j++)
+      for(int j = 0; j < pal.max; j++)
         l[j] = logf((newc[i][j] + 1.0f) / 255);
 
       iter = 0;
@@ -1010,7 +1029,7 @@ namespace Restore
         if(iter >= 20)
           break;
 
-        float pc[256];
+        float pc[64];
         float ppl = 0;
         float ppll = 0;
         float pp = 0;
@@ -1018,7 +1037,7 @@ namespace Restore
         float apl = 0;
         float apll = 0;
 
-        for(int j = 0; j < 256; j++)
+        for(int j = 0; j < pal.max; j++)
         {
           pc[j] = powf(newc[i][j] / 255, lambda_c);
           ppl += pc[j] * pc[j] * l[j];
