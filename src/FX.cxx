@@ -875,10 +875,10 @@ namespace Restore
 
     // get new colormap
     Palette pal;
-    Quantize::pca(&small_copy, &pal, 64);
+    Quantize::fast(&small_copy, &pal, 256);
 
     // return color range
-    int slice[64];
+    int slice[256];
     color_range_type color_range;
 
     for(int i = 0; i < 3; i++)
@@ -985,13 +985,13 @@ namespace Restore
 
     // get color map of restored image
     Palette pal;
-    Quantize::pca(&small_image, &pal, 64);
+    Quantize::fast(&small_image, &pal, 256);
 
-    float newc[3][64];
+    float newc[3][256];
 
     for(int i = 0; i < 3; i++)
     {
-      int temp[64];
+      int temp[256];
 
       getSlice(&pal, i, temp);
 
@@ -1000,7 +1000,7 @@ namespace Restore
     }
 
     // average color
-    float av[64];
+    float av[256];
 
     for(int i = 0; i < pal.max; i++)
       av[i] = (newc[0][i] + newc[1][i] + newc[2][i]) / (3 * 255);
@@ -1015,7 +1015,7 @@ namespace Restore
     {
       float lambda_c = 1.0f;
       float d_lambda_c = 1.0f;
-      float l[64]; 
+      float l[256]; 
 
       for(int j = 0; j < pal.max; j++)
         l[j] = logf((newc[i][j] + 1.0f) / 255);
@@ -1029,7 +1029,7 @@ namespace Restore
         if(iter >= 20)
           break;
 
-        float pc[64];
+        float pc[256];
         float ppl = 0;
         float ppll = 0;
         float pp = 0;
