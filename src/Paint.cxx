@@ -72,8 +72,8 @@ void Paint::push(View *view)
     stroke->begin(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
   }
 
-  stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
-  view->redraw();
+//  stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+//  view->redraw();
 
   active = true;
 }
@@ -86,7 +86,8 @@ void Paint::drag(View *view)
   {
     stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
     view->drawMain(false);
-    stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+    stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom,
+                     view->bgr_order);
     view->redraw();
   }
 }
@@ -138,7 +139,8 @@ void Paint::move(View *view)
                            stroke->x2, stroke->y2,
                            view->ox, view->oy, 96, view->zoom);
       view->drawMain(false);
-      stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+      stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom,
+                       view->bgr_order);
       view->redraw();
       break;
   }

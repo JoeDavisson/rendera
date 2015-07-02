@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Brush.H"
 #include "Clone.H"
+#include "Inline.H"
 #include "Map.H"
 #include "Math.H"
 #include "Project.H"
@@ -741,6 +742,7 @@ void Stroke::polyline(int x, int y, int ox, int oy, float zoom)
   lasty = y;
 }
 
+// always-visible XOR preview
 void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 {
   Map *map = Project::map;
@@ -769,6 +771,47 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
     {
       if(*p++)
         backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
+
+      xx1 += zoom;
+      xx2 += zoom;
+    }
+
+    yy1 += zoom;
+    yy2 += zoom;
+  }
+}
+
+// use paint color/transparency for preview
+void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
+{
+  Map *map = Project::map;
+  int color = convertFormat(Project::brush->color, bgr_order);
+  int trans = Project::brush->trans;
+
+  clip();
+
+  ox *= zoom;
+  oy *= zoom;
+
+  float yy1 = (float)y1 * zoom;
+  float yy2 = yy1 + zoom - 1;
+
+  // prevent overun when zoomed out
+  if(x2 > map->w - 2)
+    x2 = map->w - 2;
+  if(y2 > map->h - 2)
+    y2 = map->h - 2;
+
+  for(int y = y1; y <= y2; y++)
+  {
+    unsigned char *p = map->row[y] + x1;
+    float xx1 = (float)x1 * zoom;
+    float xx2 = xx1 + zoom - 1;
+
+    for(int x = x1; x <= x2; x++)
+    {
+      if(*p++)
+        backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, trans);
 
       xx1 += zoom;
       xx2 += zoom;
