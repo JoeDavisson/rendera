@@ -26,6 +26,8 @@ namespace Undo
   void init();
   void push();
   void pop();
+  void pushRedo();
+  void popRedo();
   void free();
 }
 

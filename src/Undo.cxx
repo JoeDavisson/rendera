@@ -32,21 +32,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace
 {
   std::vector<Bitmap *> undo_stack(10); 
-  int undo_levels = undo_stack.size();
-  int undo_current = undo_levels - 1;
+  std::vector<Bitmap *> redo_stack(10); 
+  int levels = undo_stack.size();
+  int undo_current = levels - 1;
+  int redo_current = levels - 1;
 }
 
 void Undo::init()
 {
-  for(int i = 0; i < undo_levels; i++)
+  for(int i = 0; i < levels; i++)
   {
     if(undo_stack[i])
       delete undo_stack[i];
 
+    if(redo_stack[i])
+      delete redo_stack[i];
+
     undo_stack[i] = new Bitmap(8, 8);
+    redo_stack[i] = new Bitmap(8, 8);
   }
 
-  undo_current = undo_levels - 1;
+  undo_current = levels - 1;
+  redo_current = levels - 1;
 }
 
 void Undo::push()
@@ -55,9 +62,9 @@ void Undo::push()
   {
     undo_current = 0;
 
-    Bitmap *temp_bmp = undo_stack[undo_levels - 1];
+    Bitmap *temp_bmp = undo_stack[levels - 1];
 
-    for(int i = undo_levels - 1; i > 0; i--)
+    for(int i = levels - 1; i > 0; i--)
       undo_stack[i] = undo_stack[i - 1];
 
     undo_stack[0] = temp_bmp;
@@ -74,9 +81,10 @@ void Undo::push()
 
 void Undo::pop()
 {
-  if(undo_current >= undo_levels - 1)
+  if(undo_current >= levels - 1)
     return;
 
+  pushRedo();
   undo_current++;
 
   int w = undo_stack[undo_current]->w;
@@ -105,10 +113,75 @@ void Undo::pop()
   Gui::getView()->drawMain(true);
 }
 
+void Undo::pushRedo()
+{
+  if(redo_current < 0)
+  {
+    redo_current = 0;
+
+    Bitmap *temp_bmp = redo_stack[levels - 1];
+
+    for(int i = levels - 1; i > 0; i--)
+      redo_stack[i] = redo_stack[i - 1];
+
+    redo_stack[0] = temp_bmp;
+  }
+
+  delete redo_stack[redo_current];
+  redo_stack[redo_current] = new Bitmap(Project::bmp->w, Project::bmp->h);
+
+  Project::bmp->blit(redo_stack[redo_current], 0, 0, 0, 0,
+                     Project::bmp->w, Project::bmp->h);
+
+  redo_current--;
+}
+
+void Undo::popRedo()
+{
+  if(redo_current >= levels - 1)
+    return;
+
+  if(redo_current >= undo_current)
+    return;
+
+  push();
+  redo_current++;
+
+  int w = redo_stack[redo_current]->w;
+  int h = redo_stack[redo_current]->h;
+
+  Project::newImage(w - Project::overscroll * 2, h - Project::overscroll * 2);
+
+  int ox = Gui::getView()->ox;
+  int oy = Gui::getView()->oy;
+
+  if(ox < 0)
+    ox = 0;
+  if(ox > w - 1)
+    ox = w - 1;
+  if(oy < 0)
+    oy = 0;
+  if(oy > h - 1)
+    oy = h - 1;
+
+  Gui::getView()->ox = ox;
+  Gui::getView()->oy = oy;
+
+  redo_stack[redo_current]->blit(Project::bmp, 0, 0, 0, 0, w, h);
+
+  Project::tool->reset();
+  Gui::getView()->drawMain(true);
+}
+
 void Undo::free()
 {
-  for(int i = 0; i < undo_levels; i++)
+  for(int i = 0; i < levels; i++)
+  {
     if(undo_stack[i])
       delete undo_stack[i];
+
+    if(redo_stack[i])
+      delete redo_stack[i];
+  }
 }
 

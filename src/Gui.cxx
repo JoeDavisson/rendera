@@ -275,6 +275,8 @@ void Gui::init()
     (Fl_Callback *)quit, 0, 0);
   menubar->add("&Edit/Undo (Ctrl+Z)", 0,
     (Fl_Callback *)Undo::pop, 0, FL_MENU_DIVIDER);
+  menubar->add("&Edit/Redo", 0,
+    (Fl_Callback *)Undo::popRedo, 0, FL_MENU_DIVIDER);
   menubar->add("&Edit/Clear/Transparent", 0,
     (Fl_Callback *)checkClearToTransparent, 0, 0);
   menubar->add("&Edit/Clear/Paint Color", 0,
