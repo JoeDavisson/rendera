@@ -641,10 +641,7 @@ void Render::begin()
                        stroke->x2, stroke->y2,
                        view->ox, view->oy, 1, view->zoom);
 
-  Undo::push(stroke->x1,
-             stroke->y1,
-             (stroke->x2 - stroke->x1) + 1,
-             (stroke->y2 - stroke->y1) + 1);
+  Undo::push();
 
   view->rendering = true;
 

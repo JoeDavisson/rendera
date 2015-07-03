@@ -25,7 +25,6 @@ namespace Undo
 {
   void init();
   void push();
-  void push(int, int, int, int);
   void pop();
   void free();
 }
