@@ -158,25 +158,26 @@ namespace
     32, 40, 48, 56, 64, 72, 80, 88
   };
 
+  // quit program
+  void quit()
+  {
+    if(Dialog::choice("Quit", "Are You Sure?"))
+      exit(0);
+  }
+
   // prevent escape from closing main window
   void closeCallback(Fl_Widget *widget, void *)
   {
     if((Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT)
        && Fl::event_key() == FL_Escape)
     {
-        return;
+      return;
     }
     else
     {
-      widget->hide();
+      if(Dialog::choice("Quit", "Are You Sure?"))
+        widget->hide();
     }
-  }
-
-  // quit program
-  void quit()
-  {
-    if(Dialog::choice("Quit", "Are You Sure?"))
-      exit(0);
   }
 }
 
