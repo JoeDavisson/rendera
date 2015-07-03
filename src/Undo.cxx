@@ -31,9 +31,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  std::vector<Bitmap *> undo_stack(10); 
-  std::vector<Bitmap *> redo_stack(10); 
-  int levels = undo_stack.size();
+  const int levels = 10;
+  std::vector<Bitmap *> undo_stack(levels); 
+  std::vector<Bitmap *> redo_stack(levels); 
   int undo_current = levels - 1;
   int redo_current = levels - 1;
 }
@@ -56,7 +56,7 @@ void Undo::init()
   redo_current = levels - 1;
 }
 
-void Undo::push()
+void Undo::doPush()
 {
   if(undo_current < 0)
   {
@@ -77,6 +77,14 @@ void Undo::push()
                      Project::bmp->w, Project::bmp->h);
 
   undo_current--;
+}
+
+void Undo::push()
+{
+  doPush();
+
+  // reset redo list since user performed some action
+  redo_current = levels - 1;
 }
 
 void Undo::pop()
@@ -141,10 +149,7 @@ void Undo::popRedo()
   if(redo_current >= levels - 1)
     return;
 
-  if(redo_current >= undo_current)
-    return;
-
-  push();
+  doPush();
   redo_current++;
 
   int w = redo_stack[redo_current]->w;
