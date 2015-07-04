@@ -196,7 +196,7 @@ public:
   int handle(int event)
   {
     View *view = Gui::getView();
-    bool ctrl;
+    bool shift, ctrl;
 
     switch(event)
     {
@@ -212,6 +212,7 @@ public:
           return 0;
         }
 
+        shift = Fl::event_shift() ? true : false;
         ctrl = Fl::event_ctrl() ? true : false;
 
         // cancel current rendering operation
@@ -238,7 +239,9 @@ public:
             view->scroll(3, 64);
             break;
           case 'z':
-            if(ctrl)
+            if(ctrl && shift)
+              Undo::popRedo();
+            else if(ctrl)
               Undo::pop();
             break;
           case 'e':
@@ -276,7 +279,7 @@ void Gui::init()
     (Fl_Callback *)quit, 0, 0);
   menubar->add("&Edit/Undo (Ctrl+Z)", 0,
     (Fl_Callback *)Undo::pop, 0, FL_MENU_DIVIDER);
-  menubar->add("&Edit/Redo", 0,
+  menubar->add("&Edit/Redo (Shift+Ctrl+Z)", 0,
     (Fl_Callback *)Undo::popRedo, 0, FL_MENU_DIVIDER);
   menubar->add("&Edit/Clear/Transparent", 0,
     (Fl_Callback *)checkClearToTransparent, 0, 0);
