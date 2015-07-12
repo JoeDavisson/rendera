@@ -55,15 +55,6 @@ void Blend::set(const int &mode)
     case COLORIZE:
       current_blend = colorize;
       break;
-    case COLORIZE_HIGHLIGHTS:
-      current_blend = colorizeHighlights;
-      break;
-    case COLORIZE_MIDTONES:
-      current_blend = colorizeMidtones;
-      break;
-    case COLORIZE_SHADOWS:
-      current_blend = colorizeShadows;
-      break;
     case ALPHA_ADD:
       current_blend = alphaAdd;
       break;
@@ -78,9 +69,6 @@ void Blend::set(const int &mode)
       break;
     case SHARPEN:
       current_blend = sharpen;
-      break;
-    case PALETTE_COLORS:
-      current_blend = paletteColors;
       break;
     default:
       current_blend = trans;
@@ -167,30 +155,6 @@ int Blend::lighten(const int &c1, const int &c2, const int &t)
 int Blend::colorize(const int &c1, const int &c2, const int &t)
 {
   int c3 = transNoAlpha(c1, c2, t);
-
-  return keepLum(c3, getl(c1));
-}
-
-int Blend::colorizeHighlights(const int &c1, const int &c2, const int &t)
-{
-  const int dist = Math::abs(255 - getl(c1));
-  int c3 = transNoAlpha(c1, c2, std::min(t + dist * 2, 255));
-
-  return keepLum(c3, getl(c1));
-}
-
-int Blend::colorizeMidtones(const int &c1, const int &c2, const int &t)
-{
-  const int dist = Math::abs(128 - getl(c1));
-  int c3 = transNoAlpha(c1, c2, std::min(t + dist * 2, 255));
-
-  return keepLum(c3, getl(c1));
-}
-
-int Blend::colorizeShadows(const int &c1, const int &c2, const int &t)
-{
-  const int dist = Math::abs(0 - getl(c1));
-  int c3 = transNoAlpha(c1, c2, std::min(t + dist * 2, 255));
 
   return keepLum(c3, getl(c1));
 }
@@ -321,15 +285,6 @@ int Blend::sharpen(const int &c1, const int &, const int &t)
   lum = clamp(lum, 255);
 
   return Blend::trans(c1, keepLum(c1, lum), 255 - (255 - t) / 16);
-}
-
-int Blend::paletteColors(const int &c1, const int &c2, const int &t)
-{
-  int c = pal->data[pal->lookup(transNoAlpha(c1, c2, t))];
-  c &= 0xFFFFFF;
-  c |= c1 & 0xFF000000;
-
-  return c;
 }
 
 int Blend::invert(const int &c1, const int &, const int &)

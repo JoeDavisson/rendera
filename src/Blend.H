@@ -33,15 +33,11 @@ namespace Blend
     DARKEN,
     LIGHTEN,
     COLORIZE,
-    COLORIZE_HIGHLIGHTS,
-    COLORIZE_MIDTONES,
-    COLORIZE_SHADOWS,
     ALPHA_ADD,
     ALPHA_SUB,
     SMOOTH,
     SMOOTH_COLOR,
-    SHARPEN,
-    PALETTE_COLORS
+    SHARPEN
   };
  
   void set(const int &);
@@ -53,16 +49,12 @@ namespace Blend
   int darken(const int &, const int &, const int &);
   int lighten(const int &, const int &, const int &);
   int colorize(const int &, const int &, const int &);
-  int colorizeHighlights(const int &, const int &, const int &);
-  int colorizeMidtones(const int &, const int &, const int &);
-  int colorizeShadows(const int &, const int &, const int &);
   int keepLum(const int &, const int &);
   int alphaAdd(const int &, const int &, const int &);
   int alphaSub(const int &, const int &, const int &);
   int smooth(const int &, const int &, const int &);
   int smoothColor(const int &, const int &, const int &);
   int sharpen(const int &, const int &, const int &);
-  int paletteColors(const int &, const int &, const int &);
   int invert(const int &, const int &, const int &);
   void rgbToHsv(const int &, const int &, const int &, int *, int *, int *);
   void hsvToRgb(const int &, const int &, const int &, int *, int *, int *);
