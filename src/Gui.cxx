@@ -47,6 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Map.H"
 #include "Palette.H"
 #include "Project.H"
+#include "Render.H"
 #include "Separator.H"
 #include "StaticText.H"
 #include "Stroke.H"
@@ -497,10 +498,6 @@ void Gui::init()
                            "Shape", images_shape_png, 24, 24,
                            (Fl_Callback *)checkPaintShape);
   y1 += 24 + 8;
-  paint_edge = new Widget(paint, 8, y1, 96, 24,
-                          "Soft Edge", images_soft_edge_png, 12, 24,
-                          (Fl_Callback *)checkPaintEdge);
-  y1 += 24 + 8;
   paint_mode = new Fl_Choice(8, y1, 96, 24, "");
   paint_mode->tooltip("Paint Mode");
   paint_mode->textsize(10);
@@ -514,6 +511,10 @@ void Gui::init()
   paint_mode->add("Chalk");
   paint_mode->value(0);
   paint_mode->callback((Fl_Callback *)checkPaintMode);
+  y1 += 24 + 8;
+  paint_edge = new Widget(paint, 8, y1, 96, 24,
+                          "Soft Edge", images_soft_edge_png, 12, 24,
+                          (Fl_Callback *)checkPaintEdge);
   y1 += 24 + 8;
   paint->resizable(0);
   paint->end();
@@ -655,15 +656,11 @@ void Gui::init()
   blend->add("Darken");
   blend->add("Lighten");
   blend->add("Colorize");
-  blend->add("Colorize (Highlights)");
-  blend->add("Colorize (Midtones)");
-  blend->add("Colorize (Shadows)");
   blend->add("Alpha Add");
   blend->add("Alpha Subtract");
   blend->add("Smooth");
   blend->add("Smooth (Color Only)");
   blend->add("Sharpen");
-  blend->add("Palette Colors");
   blend->value(0);
   blend->callback((Fl_Callback *)checkBlend);
   y1 += 24 + 8;
@@ -1293,10 +1290,32 @@ int Gui::getClone()
 
 void Gui::checkPaintMode()
 {
-  if(paint_mode->value() == 1)
-    Project::brush->aa = 1;
-  else
-    Project::brush->aa = 0;
+  Project::brush->aa = 0;
+  paint_edge->hide();
+
+  switch(paint_mode->value())
+  {
+    case Render::SOLID:
+      break;
+    case Render::ANTIALIASED:
+      Project::brush->aa = 1;
+      break;
+    case Render::COARSE:
+      paint_edge->show();
+      break;
+    case Render::FINE:
+      paint_edge->show();
+      break;
+    case Render::BLUR:
+      paint_edge->show();
+      break;
+    case Render::WATERCOLOR:
+      paint_edge->show();
+      break;
+    case Render::CHALK:
+      paint_edge->show();
+      break;
+  }
 }
 
 int Gui::getPaintMode()
