@@ -16,6 +16,7 @@ list of contributors and contact info.
 Uncompress the FLTK-1.3.3 source package here.
 
 The Makefile supports ```linux``` and ```mingw``` cross-compiler targets.
+(Edit the Makefile to choose.)
 
 ```$ make fltk```
 
