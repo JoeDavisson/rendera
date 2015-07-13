@@ -7,7 +7,6 @@ PLATFORM=linux
 #PLATFORM=mingw32
 #PLATFORM=mingw64
 
-# obtain the current version number from git
 NAME="Rendera "
 VERSION=$(shell git describe --always --dirty)
 
@@ -77,11 +76,9 @@ OBJ= \
   $(SRC_DIR)/Paint.o \
   $(SRC_DIR)/Text.o
 
-# static link
 default: $(OBJ)
 	$(CXX) -o ./$(EXE) $(SRC_DIR)/Main.cxx $(OBJ) $(CXXFLAGS) $(LIBS)
 
-# builds fltk for static linking
 fltk:
 	@cd ./fltk-1.3.3; \
 	make clean; \
