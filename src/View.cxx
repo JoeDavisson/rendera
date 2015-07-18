@@ -115,6 +115,8 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   zoom = 1;
   fit = false;
   moving = false;
+  last_ox = 0;
+  last_oy = 0;
   grid = 0;
   gridx = 8;
   gridy = 8;
@@ -254,10 +256,20 @@ int View::handle(int event)
         case 2:
           if(!moving)
           {
-            moving = true;
-            beginMove();
-            break;
+            if(shift)
+            {
+              moving = true;
+              beginMove();
+              break;
+            }
+            else
+            {
+              last_ox = (w() - 1 - mousex) / zoom - ox;
+              last_oy = (h() - 1 - mousey) / zoom - oy;
+              break;
+            }
           }
+
           break;
       } 
 
@@ -276,7 +288,26 @@ int View::handle(int event)
           break;
         case 2:
           if(moving)
+          {
             move();
+          }
+          else
+          {
+//            ox = mousex / zoom - last_ox;
+//            oy = mousey / zoom - last_oy; 
+            ox = (w() - 1 - mousex) / zoom - last_ox;
+            oy = (h() - 1 - mousey) / zoom - last_oy; 
+            if(ox < 0)
+              ox = 0;
+            if(oy < 0)
+              oy = 0;
+            if(ox > Project::bmp->w - 1)
+              ox = Project::bmp->w - 1;
+            if(oy > Project::bmp->h - 1)
+              oy = Project::bmp->h - 1;
+            drawMain(true);
+          }
+
           break;
       } 
 

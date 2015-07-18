@@ -53,6 +53,7 @@ public:
   int mousex, mousey;
   int imgx, imgy;
   int oldimgx, oldimgy;
+  int last_ox, last_oy;
   int ox, oy;
   float zoom;
   bool fit;
