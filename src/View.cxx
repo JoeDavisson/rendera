@@ -301,10 +301,10 @@ int View::handle(int event)
               ox = 0;
             if(oy < 0)
               oy = 0;
-            if(ox > Project::bmp->w - 1)
-              ox = Project::bmp->w - 1;
-            if(oy > Project::bmp->h - 1)
-              oy = Project::bmp->h - 1;
+            if(ox > Project::bmp->cr)
+              ox = Project::bmp->cr;
+            if(oy > Project::bmp->cb)
+              oy = Project::bmp->cb;
             drawMain(true);
           }
 
