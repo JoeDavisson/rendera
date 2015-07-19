@@ -70,9 +70,10 @@ namespace
 
   // containers
   Fl_Group *group_left;
+  Fl_Group *group_right;
 
   // panels
-  Group *top_right;
+  Group *top;
   Group *tools;
   Group *paint;
   Group *crop;
@@ -80,7 +81,8 @@ namespace
   Group *offset;
   Group *text;
   Group *fill;
-  Group *right;
+  Group *group_palette;
+  Group *colors;
   Group *bottom;
   Group *status;
   Fl_Group *middle;
@@ -90,7 +92,7 @@ namespace
   Fl_Box *coords;
   Fl_Box *info;
 
-  // top right
+  // top
   ToggleButton *zoom_fit;
   Button *zoom_one;
   Button *zoom_in;
@@ -129,7 +131,7 @@ namespace
 
   InputInt *fill_range;
 
-  // right
+  // colors
   Widget *palette;
   Widget *swatch;
   Widget *hue;
@@ -319,9 +321,9 @@ void Gui::init()
   menubar->add("&Palette/Presets/4-level RGB", 0,
     (Fl_Callback *)palette4LevelRGB, 0, 0);
   menubar->add("&Palette/Presets/3-3-2", 0,
-    (Fl_Callback *)palette332, 0, 0);
-  menubar->add("&Palette/Sort", 0,
-    (Fl_Callback *)paletteSort, 0, FL_MENU_DIVIDER);
+    (Fl_Callback *)palette332, 0, FL_MENU_DIVIDER);
+//  menubar->add("&Palette/Sort", 0,
+//    (Fl_Callback *)paletteSort, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/&Editor... (Ctrl+E)", 0,
     (Fl_Callback *)Dialog::editor, 0, 0);
   menubar->add("F&X/Normalize", 0,
@@ -394,47 +396,47 @@ void Gui::init()
   status->resizable(0);
   status->end();
 
-  // top right
-  top_right = new Group(0, menubar->h(), window->w(), 40, "");
+  // top
+  top = new Group(0, menubar->h(), window->w(), 40, "");
   x1 = 8;
-  zoom_fit = new ToggleButton(top_right, x1, 8, 24, 24,
+  zoom_fit = new ToggleButton(top, x1, 8, 24, 24,
                               "Fit In Window", images_zoom_fit_png,
                               (Fl_Callback *)checkZoomFit);
   x1 += 24 + 8;
-  zoom_one = new Button(top_right, x1, 8, 24, 24,
+  zoom_one = new Button(top, x1, 8, 24, 24,
                         "Actual Size", images_zoom_one_png,
                         (Fl_Callback *)checkZoomOne);
   x1 += 24 + 8;
-  zoom_in = new Button(top_right, x1, 8, 24, 24,
+  zoom_in = new Button(top, x1, 8, 24, 24,
                        "Zoom In", images_zoom_in_png,
                        (Fl_Callback *)checkZoomIn);
   x1 += 24 + 8;
-  zoom_out = new Button(top_right, x1, 8, 24, 24,
+  zoom_out = new Button(top, x1, 8, 24, 24,
                         "Zoom Out", images_zoom_out_png,
                         (Fl_Callback *)checkZoomOut);
   x1 += 24 + 8;
-  zoom = new StaticText(top_right, x1, 8, 56, 24, "");
+  zoom = new StaticText(top, x1, 8, 56, 24, "");
   x1 += 56 + 6;
-  new Separator(top_right, x1, 2, 2, 36, "");
+  new Separator(top, x1, 2, 2, 36, "");
   x1 += 8;
-  grid = new ToggleButton(top_right, x1, 8, 24, 24,
+  grid = new ToggleButton(top, x1, 8, 24, 24,
                           "Show Grid", images_grid_png,
                           (Fl_Callback *)checkGrid);
   x1 += 24 + 48 + 8;
-  gridx = new InputInt(top_right, x1, 8, 64, 24,
+  gridx = new InputInt(top, x1, 8, 64, 24,
                        "Grid X:",
                        (Fl_Callback *)checkGridX, 1, 256);
   gridx->value("8");
   x1 += 64 + 48 + 8;
-  gridy = new InputInt(top_right, x1, 8, 64, 24,
+  gridy = new InputInt(top, x1, 8, 64, 24,
                        "Grid Y:",
                        (Fl_Callback *)checkGridY, 1, 256);
   gridy->value("8");
-  top_right->resizable(0);
-  top_right->end();
+  top->resizable(0);
+  top->end();
 
   // bottom
-  bottom = new Group(160, window->h() - status->h() - 40, window->w() - 272, 40, "");
+  bottom = new Group(160, window->h() - status->h() - 40, window->w() - 272 - 80, 40, "");
   x1 = 8;
   wrap = new ToggleButton(bottom, x1, 8, 24, 24,
                           "Wrap Edges", images_wrap_png,
@@ -465,8 +467,8 @@ void Gui::init()
   bottom->end();
 
   // tools
-  tools = new Group(0, top_right->h() + menubar->h(),
-                    48, window->h() - (menubar->h() + top_right->h() + status->h()),
+  tools = new Group(0, top->h() + menubar->h(),
+                    48, window->h() - (menubar->h() + top->h() + status->h()),
                     "Tools");
   y1 = 20;
   tool = new Widget(tools, 8, y1, 32, 192,
@@ -477,8 +479,8 @@ void Gui::init()
   tools->end();
 
   // paint
-  paint = new Group(48, top_right->h() + menubar->h(),
-                    112, window->h() - top_right->h() - menubar->h() - status->h(),
+  paint = new Group(48, top->h() + menubar->h(),
+                    112, window->h() - top->h() - menubar->h() - status->h(),
                     "Painting");
   y1 = 20;
   paint_brush = new Widget(paint, 8, y1, 96, 96,
@@ -520,8 +522,8 @@ void Gui::init()
   paint->end();
 
   // crop
-  crop = new Group(48, top_right->h() + menubar->h(),
-                   112, window->h() - top_right->h() - menubar->h() - status->h(),
+  crop = new Group(48, top->h() + menubar->h(),
+                   112, window->h() - top->h() - menubar->h() - status->h(),
                    "Crop");
   y1 = 20;
   new StaticText(crop, 8, y1, 32, 24, "X:");
@@ -542,8 +544,8 @@ void Gui::init()
   crop->end();
 
   // getcolor
-  getcolor = new Group(48, top_right->h() + menubar->h(),
-                       112, window->h() - top_right->h() - menubar->h() - status->h(),
+  getcolor = new Group(48, top->h() + menubar->h(),
+                       112, window->h() - top->h() - menubar->h() - status->h(),
                        "GetColor");
   y1 = 20;
   getcolor_color = new Widget(getcolor, 8, y1, 96, 96, "Color", 0, 0, 0);
@@ -551,8 +553,8 @@ void Gui::init()
   getcolor->end();
 
   // offset
-  offset = new Group(48, top_right->h() + menubar->h(),
-                     112, window->h() - top_right->h() - menubar->h() - status->h(),
+  offset = new Group(48, top->h() + menubar->h(),
+                     112, window->h() - top->h() - menubar->h() - status->h(),
                      "Offset");
   y1 = 20;
   new StaticText(offset, 8, y1, 32, 24, "X:");
@@ -565,8 +567,8 @@ void Gui::init()
   offset->end();
 
   // text
-  text = new Group(48, top_right->h() + menubar->h(),
-                   112, window->h() - top_right->h() - menubar->h() - status->h(),
+  text = new Group(48, top->h() + menubar->h(),
+                   112, window->h() - top->h() - menubar->h() - status->h(),
                    "Text");
   y1 = 20;
   // add font names
@@ -606,8 +608,8 @@ void Gui::init()
   text->end();
 
   // fill
-  fill = new Group(48, top_right->h() + menubar->h(),
-                   112, window->h() - top_right->h() - menubar->h() - status->h(),
+  fill = new Group(48, top->h() + menubar->h(),
+                   112, window->h() - top->h() - menubar->h() - status->h(),
                    "Fill");
   y1 = 40;
   fill_range = new InputInt(fill, 8, y1, 96, 24,
@@ -617,40 +619,53 @@ void Gui::init()
   fill_range->value("0");
   fill->end();
 
-  // right
-  right = new Group(window->w() - 112, top_right->h() + menubar->h(),
-                    112, window->h() - top_right->h() - menubar->h() - status->h(),
-                    "Colors");
+  // group_palette
+  group_palette = new Group(window->w() - 112 - 80, top->h() + menubar->h(),
+                    80, window->h() - top->h() - menubar->h() - status->h(),
+                    "Palette");
   y1 = 20;
-  palette = new Widget(right, 8, y1, 96, 96,
-                       "Color Palette", 6, 6,
+  palette = new Widget(group_palette, 8, y1, 64, 256,
+                       "Color Palette", 8, 8,
                        (Fl_Callback *)checkPalette);
   y1 += 96 + 8;
-  swatch = new Widget(right, 8, y1, 96, 48,
+
+  group_palette->resizable(0);
+  group_palette->end();
+
+  // colors
+  colors = new Group(window->w() - 112, top->h() + menubar->h(),
+                    112, window->h() - top->h() - menubar->h() - status->h(),
+                    "Colors");
+  y1 = 20;
+//  palette = new Widget(colors, 8, y1, 96, 96,
+//                       "Color Palette", 6, 6,
+//                       (Fl_Callback *)checkPalette);
+//  y1 += 96 + 8;
+  swatch = new Widget(colors, 8, y1, 96, 48,
                       "Color Swatch", 0, 0,
                       0);
   y1 += 48 + 8;
-  hexcolor = new InputText(right, 40, y1, 64, 24, "Hex:",
+  hexcolor = new InputText(colors, 40, y1, 64, 24, "Hex:",
                            (Fl_Callback *)checkHexColor);
   hexcolor->maximum_size(6);
   hexcolor->textsize(14);
   y1 += 24 + 8;
   // satval overlaps the hue color wheel
-  hue = new Widget(right, 8, y1, 96, 96,
+  hue = new Widget(colors, 8, y1, 96, 96,
                    "Hue", 1, 1,
                    (Fl_Callback *)checkHue);
-  satval = new Widget(right, 32, y1 + 24, 48, 48,
+  satval = new Widget(colors, 32, y1 + 24, 48, 48,
                       "Saturation/Value", 1, 1,
                       (Fl_Callback *)checkSatVal);
   y1 += 96 + 8;
-  trans = new Widget(right, 8, y1, 96, 24,
+  trans = new Widget(colors, 8, y1, 96, 24,
                      "Transparency", images_transparency_png, 1, 24,
                      (Fl_Callback *)checkTrans);
   y1 += 24 + 8;
   blend = new Fl_Choice(8, y1, 96, 24, "");
   blend->tooltip("Blending Mode");
   blend->textsize(10);
-  blend->resize(right->x() + 8, right->y() + y1, 96, 24);
+  blend->resize(colors->x() + 8, colors->y() + y1, 96, 24);
   blend->add("Normal");
   blend->add("Normal (No Alpha)");
   blend->add("Darken");
@@ -667,7 +682,7 @@ void Gui::init()
   alpha_mask = new Fl_Choice(8, y1, 96, 24, "");
   alpha_mask->tooltip("Masking Mode");
   alpha_mask->textsize(10);
-  alpha_mask->resize(right->x() + 8, right->y() + y1, 96, 24);
+  alpha_mask->resize(colors->x() + 8, colors->y() + y1, 96, 24);
   alpha_mask->add("None");
   alpha_mask->add("Alpha");
   alpha_mask->add("Reverse Alpha");
@@ -675,20 +690,20 @@ void Gui::init()
   alpha_mask->callback((Fl_Callback *)checkAlphaMask);
   y1 += 16 + 8;
 
-  right->resizable(0);
-  right->end();
+  colors->resizable(0);
+  colors->end();
 
   // middle
-  middle = new Fl_Group(160, top_right->h() + menubar->h(),
-                        window->w() - 272, window->h() - (menubar->h() + top_right->h() + bottom->h() + status->h()));
+  middle = new Fl_Group(160, top->h() + menubar->h(),
+                        window->w() - 272 - 80, window->h() - (menubar->h() + top->h() + bottom->h() + status->h()));
   middle->box(FL_FLAT_BOX);
   view = new View(middle, 0, 0, middle->w(), middle->h(), "View");
   middle->resizable(view);
   middle->end();
 
   // container for left panels
-  group_left = new Fl_Group(0, top_right->h() + menubar->h(),
-                            160, window->h() - (menubar->h() + top_right->h() + bottom->h()));
+  group_left = new Fl_Group(0, top->h() + menubar->h(),
+                            160, window->h() - (menubar->h() + top->h() + bottom->h()));
   group_left->add(tools);
   group_left->add(paint);
   group_left->add(getcolor);
@@ -696,6 +711,12 @@ void Gui::init()
   group_left->add(offset);
   group_left->add(text);
   group_left->end();
+
+  // container for right panels
+  group_right = new Fl_Group(window->w() - 112 - 80, top->h() + menubar->h(),
+                            112 + 80, window->h() - (menubar->h() + top->h() + bottom->h()));
+  group_right->add(group_palette);
+  group_right->add(colors);
 
   window->size_range(640, 480, 0, 0, 0, 0, 0);
   window->resizable(view);

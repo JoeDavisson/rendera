@@ -52,40 +52,23 @@ Palette::~Palette()
 
 void Palette::draw(Widget *widget)
 {
-  int w = widget->w();
-
-  int step = 3;
-
   if(max > 256)
     return;
 
-  if(max <= 4)
-    step = 48;
-  else if(max <= 9)
-    step = 32;
-  else if(max <= 16)
-    step = 24;
-  else if(max <= 36)
-    step = 16;
-  else if(max <= 64)
-    step = 12;
-  else if(max <= 144)
-    step = 8;
-  else if(max <= 256)
-    step = 6;
+  int w = widget->w();
+  int h = widget->h();
 
-  // for large palette
-  if(widget->w() == 192)
-    step *= 2;
+  int step = std::sqrt((w * h) / max);
+
+  while((w % step) != 0)
+    step--;
 
   widget->stepx = step;
   widget->stepy = step;
 
-  int div = w / step;
-
   widget->bitmap->clear(makeRgb(0, 0, 0));
 
-  for(int y = 0; y < w; y += step)
+  for(int y = 0; y < h; y += step)
   {
     for(int x = 0; x < w; x += step)
     {
@@ -100,9 +83,9 @@ void Palette::draw(Widget *widget)
 
   int i = 0;
 
-  for(int y = 0; y < div; y++)
+  for(int y = 0; y < h / step; y++)
   {
-    for(int x = 0; x < div; x++)
+    for(int x = 0; x < w / step; x++)
     {
       if(i >= max)
         break;
@@ -282,23 +265,31 @@ void Palette::setDefault()
   int r, g, b;
   int index = 0;
 
-  const int sat[5] = { 255, 255, 255, 128, 64 };
-  const int val[5] = { 64, 128, 255, 255, 255 };
-
-  // colors
-  for(int v = 4; v >= 0; v--)
+  for(int h = 0; h < 31; h++)
   {
-    for(int h = 0; h < 12; h++)
+    for(int v = 0; v < 8; v++)
     {
-      Blend::hsvToRgb(h * 128, sat[v], val[v], &r, &g, &b);
+      int val = 16 + v * 32;
+      if(v == 0)
+        val = 24;
+      if(v == 7)
+        val = 232;
+      Blend::hsvToRgb(h * 49.55, 192, 16 + val, &r, &g, &b);
 
-      data[index++] = makeRgb(r, g, b);
+      data[index++] = Blend::keepLum(makeRgb(r, g, b), val);
     }
   }
 
   // grays
-  for(int v = 0; v < 12; v++)
-    data[index++] = makeRgb(v * 23.19, v * 23.19, v * 23.19);
+  for(int v = 0; v < 8; v++)
+  {
+    int val = 16 + v * 32;
+    if(v == 0)
+      val = 24;
+    if(v == 7)
+      val = 232;
+    data[index++] = makeRgb(val, val, val);
+  }
 
   max = index;
   fillTable();
