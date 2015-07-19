@@ -271,10 +271,10 @@ void Palette::setDefault()
     {
       int val = 16 + v * 32;
       if(v == 0)
-        val = 24;
+        val = 28;
       if(v == 7)
         val = 232;
-      Blend::hsvToRgb(h * 49.55, 192, 16 + val, &r, &g, &b);
+      Blend::hsvToRgb(h * 49.55, 255, val, &r, &g, &b);
 
       data[index++] = Blend::keepLum(makeRgb(r, g, b), val);
     }
@@ -283,11 +283,9 @@ void Palette::setDefault()
   // grays
   for(int v = 0; v < 8; v++)
   {
-    int val = 16 + v * 32;
-    if(v == 0)
-      val = 24;
+    int val = v * 32;
     if(v == 7)
-      val = 232;
+      val = 255;
     data[index++] = makeRgb(val, val, val);
   }
 
