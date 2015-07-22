@@ -23,19 +23,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <FL/Fl_Group.H>
 
-class Fl_RGB_Image;
-class Fl_Tiled_Image;
-class Bitmap;
-
 class Group : public Fl_Group
 {
 public:
   Group(int, int, int, int, const char *);
   ~Group();
-
-  Bitmap *bitmap;
-  Fl_RGB_Image *image;
-  Fl_Tiled_Image *tiled_image;
 
 protected:
   void draw();
