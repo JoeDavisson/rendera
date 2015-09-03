@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <stdint.h>
 
 #include "Map.H"
-#include "Math.H"
+#include "RenderaMath.H"
 
 namespace
 {
@@ -93,8 +93,8 @@ void Map::line(int x1, int y1, int x2, int y2, int c)
   inx = dx > 0 ? 1 : -1;
   iny = dy > 0 ? 1 : -1;
 
-  dx = Math::abs(dx);
-  dy = Math::abs(dy);
+  dx = RenderaMath::abs(dx);
+  dy = RenderaMath::abs(dy);
 
   if(dx >= dy)
   {
@@ -142,8 +142,8 @@ void Map::line(int x1, int y1, int x2, int y2, int c)
 
 void Map::oval(int x1, int y1, int x2, int y2, int c)
 {
-  int w = Math::abs(x2 - x1);
-  int h = Math::abs(y2 - y1);
+  int w = RenderaMath::abs(x2 - x1);
+  int h = RenderaMath::abs(y2 - y1);
   int x, y;
   int ex, ey;
 
@@ -236,8 +236,8 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
 
 void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
 {
-  int w = Math::abs(x2 - x1);
-  int h = Math::abs(y2 - y1);
+  int w = RenderaMath::abs(x2 - x1);
+  int h = RenderaMath::abs(y2 - y1);
   int x, y;
   int ex, ey;
 
@@ -498,8 +498,8 @@ void Map::lineAA(int x1, int y1, int x2, int y2, int c)
   inx = dx > 0 ? 1 : -1;
   iny = dy > 0 ? 1 : -1;
 
-  dx = Math::abs(dx);
-  dy = Math::abs(dy);
+  dx = RenderaMath::abs(dx);
+  dy = RenderaMath::abs(dy);
 
   if(dx >= dy)
   {
@@ -550,8 +550,8 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
   x2 <<= 2;
   y2 <<= 2;
 
-  int w = Math::abs(x2 - x1);
-  int h = Math::abs(y2 - y1);
+  int w = RenderaMath::abs(x2 - x1);
+  int h = RenderaMath::abs(y2 - y1);
   int x, y;
   int ex, ey;
 
@@ -651,8 +651,8 @@ void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
   x2 <<= 2;
   y2 <<= 2;
 
-  int ww = Math::abs(x2 - x1);
-  int hh = Math::abs(y2 - y1);
+  int ww = RenderaMath::abs(x2 - x1);
+  int hh = RenderaMath::abs(y2 - y1);
   int x, y;
   int ex, ey;
 

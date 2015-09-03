@@ -32,9 +32,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Map.H"
 #include "Palette.H"
 #include "Project.H"
+#include "RenderaMath.H"
 #include "Stroke.H"
 #include "Tool.H"
-#include "Math.H"
 #include "View.H"
 
 namespace
@@ -245,8 +245,8 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
   int inx = dx > 0 ? 1 : -1;
   int iny = dy > 0 ? 1 : -1;
 
-  dx = Math::abs(dx);
-  dy = Math::abs(dy);
+  dx = RenderaMath::abs(dx);
+  dy = RenderaMath::abs(dy);
 
   if(dx >= dy)
   {
@@ -350,8 +350,8 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
   int inx = dx > 0 ? 1 : -1;
   int iny = dy > 0 ? 1 : -1;
 
-  dx = Math::abs(dx);
-  dy = Math::abs(dy);
+  dx = RenderaMath::abs(dx);
+  dy = RenderaMath::abs(dy);
 
   if(dx >= dy)
   {
@@ -859,20 +859,20 @@ void Bitmap::fastStretch(Bitmap *dest,
   yd2 += yd1;
   yd2--;
 
-  const int dx = Math::abs(yd2 - yd1);
-  const int dy = Math::abs(ys2 - ys1) << 1;
-  const int sx = Math::sign(yd2 - yd1);
-  const int sy = Math::sign(ys2 - ys1);
+  const int dx = RenderaMath::abs(yd2 - yd1);
+  const int dy = RenderaMath::abs(ys2 - ys1) << 1;
+  const int sx = RenderaMath::sign(yd2 - yd1);
+  const int sy = RenderaMath::sign(ys2 - ys1);
   const int dx2 = dx << 1;
 
   int e = dy - dx;
 
   for(int d = 0; d <= dx; d++)
   {
-    const int dx_1 = Math::abs(xd2 - xd1);
-    const int dy_1 = Math::abs(xs2 - xs1) << 1;
-    const int sx_1 = Math::sign(xd2 - xd1);
-    const int sy_1 = Math::sign(xs2 - xs1);
+    const int dx_1 = RenderaMath::abs(xd2 - xd1);
+    const int dy_1 = RenderaMath::abs(xs2 - xs1) << 1;
+    const int sx_1 = RenderaMath::sign(xd2 - xd1);
+    const int sy_1 = RenderaMath::sign(xs2 - xs1);
     const int dx2_1 = dx_1 << 1;
 
     int e_1 = dy_1 - dx_1;

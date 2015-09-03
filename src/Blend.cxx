@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "FilterMatrix.H"
 #include "Inline.H"
-#include "Math.H"
 #include "Palette.H"
 
 namespace

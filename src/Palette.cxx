@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "FileSP.H"
 #include "Inline.H"
-#include "Math.H"
 #include "Octree.H"
 #include "Palette.H"
 #include "Widget.H"

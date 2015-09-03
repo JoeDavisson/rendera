@@ -39,9 +39,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "InputFloat.H"
 #include "InputInt.H"
 #include "Map.H"
-#include "Math.H"
 #include "Palette.H"
 #include "Project.H"
+#include "RenderaMath.H"
 #include "Quantize.H"
 #include "Separator.H"
 #include "Undo.H"
@@ -1770,20 +1770,20 @@ namespace StainedGlass
     {
       if(Items::uniform->value())
       {
-        seedx[i] = Math::rnd() % bmp->w; 
-        seedy[i] = Math::rnd() % bmp->h; 
+        seedx[i] = RenderaMath::rnd() % bmp->w; 
+        seedy[i] = RenderaMath::rnd() % bmp->h; 
       }
       else
       {
-        seedx[i] = Math::rnd() % bmp->w; 
-        seedy[i] = Math::rnd() % bmp->h; 
+        seedx[i] = RenderaMath::rnd() % bmp->w; 
+        seedy[i] = RenderaMath::rnd() % bmp->h; 
   
         int count = 0;
 
         do
         {
-          seedx[i] = Math::rnd() % bmp->w; 
-          seedy[i] = Math::rnd() % bmp->h; 
+          seedx[i] = RenderaMath::rnd() % bmp->w; 
+          seedy[i] = RenderaMath::rnd() % bmp->h; 
           count++;
         }
         while(!isEdge(bmp, seedx[i], seedy[i], div) && count < 10000);
@@ -2655,7 +2655,7 @@ namespace ForwardFFT
           imag_row[x] = 0;
         }
 
-        Math::forwardFFT(&real_row[0], &imag_row[0], w);
+        RenderaMath::forwardFFT(&real_row[0], &imag_row[0], w);
 
         for(int x = 0; x < w; x++)
         {
@@ -2673,7 +2673,7 @@ namespace ForwardFFT
           imag_col[y] = imag[x + w * y];
         }
 
-        Math::forwardFFT(&real_col[0], &imag_col[0], h);
+        RenderaMath::forwardFFT(&real_col[0], &imag_col[0], h);
 
         for(int y = 0; y < h; y++)
         {
@@ -2798,7 +2798,7 @@ namespace InverseFFT
           imag_row[x] = imag[x + w * y];
         }
 
-        Math::inverseFFT(&real_row[0], &imag_row[0], w);
+        RenderaMath::inverseFFT(&real_row[0], &imag_row[0], w);
 
         for(int x = 0; x < w; x++)
         {
@@ -2816,7 +2816,7 @@ namespace InverseFFT
           imag_col[y] = imag[x + w * y];
         }
 
-        Math::inverseFFT(&real_col[0], &imag_col[0], h);
+        RenderaMath::inverseFFT(&real_col[0], &imag_col[0], h);
 
         for(int y = 0; y < h; y++)
         {
@@ -2987,7 +2987,7 @@ void FX::forwardFFT()
   int w = Project::bmp->cw;
   int h = Project::bmp->ch;
 
-  if(Math::isPowerOfTwo(w) && Math::isPowerOfTwo(h))
+  if(RenderaMath::isPowerOfTwo(w) && RenderaMath::isPowerOfTwo(h))
   {
     ForwardFFT::begin();
   }
@@ -3002,7 +3002,7 @@ void FX::inverseFFT()
   int w = Project::bmp->cw;
   int h = Project::bmp->ch;
 
-  if(Math::isPowerOfTwo(w) && Math::isPowerOfTwo(h))
+  if(RenderaMath::isPowerOfTwo(w) && RenderaMath::isPowerOfTwo(h))
   {
     InverseFFT::begin();
   }

@@ -63,9 +63,9 @@ OBJ= \
   $(SRC_DIR)/Clone.o \
   $(SRC_DIR)/Dialog.o \
   $(SRC_DIR)/Gui.o \
-  $(SRC_DIR)/Math.o \
   $(SRC_DIR)/Project.o \
   $(SRC_DIR)/Render.o \
+  $(SRC_DIR)/RenderaMath.o \
   $(SRC_DIR)/Stroke.o \
   $(SRC_DIR)/Undo.o \
   $(SRC_DIR)/View.o \

@@ -50,7 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gui.H"
 #include "Inline.H"
 #include "Map.H"
-#include "Math.H"
+#include "RenderaMath.H"
 #include "Palette.H"
 #include "Project.H"
 #include "Stroke.H"
@@ -444,8 +444,8 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
   if(h >= 0)
     negy = true;
 
-  w = Math::abs(w);
-  h = Math::abs(h);
+  w = RenderaMath::abs(w);
+  h = RenderaMath::abs(h);
 
   Bitmap *temp = new Bitmap(w, h, overscroll);
   std::vector<unsigned char> linebuf(w * mul + pad);
