@@ -133,7 +133,7 @@ namespace
 
   // file extensions in the order they appear in the file chooser dialog
   // (used to automatically append a file extension)
-  const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
+  const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga", ".java" };
 
   // store previous directory paths
   char load_dir[256];
@@ -925,7 +925,8 @@ void File::save(Fl_Widget *, void *)
   fc.filter("PNG Image\t*.png\n"
             "JPEG Image\t*.jpg\n"
             "Bitmap Image\t*.bmp\n"
-            "Targa Image\t*.tga\n");
+            "Targa Image\t*.tga\n"
+            "Java Array\t*.java\n");
   fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc.directory(save_dir);
@@ -969,6 +970,9 @@ void File::save(Fl_Widget *, void *)
       break;
     case 3:
       ret = File::saveTarga(fn);
+      break;
+    case 4:
+      ret = File::saveJava(fn);
       break;
     default:
       ret = -1;
@@ -1295,6 +1299,47 @@ int File::saveJpeg(const char *fn)
   return 0;
 }
 
+int File::saveJava(const char *fn)
+{
+  FileSP out(fn, "w");
+  FILE *outp = out.get();
+  if(!outp)
+    return -1;
+
+  Bitmap *bmp = Project::bmp;
+  int overscroll = Project::overscroll;
+  int w = bmp->cw;
+  int h = bmp->ch;
+
+  fprintf(outp, "  static byte array[] = \n");
+  fprintf(outp, "  {\n");
+
+  int count = 0;
+
+  for(int y = bmp->ct; y <= bmp->cb; y++)
+  {
+    for(int x = bmp->cl; x <= bmp->cr; x++)
+    {
+      int c = Project::palette->lookup(bmp->getpixel(x, y));
+
+      if(count == 0)
+        fprintf(outp, "    ");
+
+      fprintf(outp, "%d, ", (char)c);
+      count++;
+
+      if(count >= 10)
+      {
+        fprintf(outp, "\n");
+        count = 0;
+      }
+    }
+  }
+
+  fprintf(outp, "\n  };\n");
+
+  return 0;
+}
 // callbacks for FLTK's file preview
 Fl_Image *File::previewPng(const char *fn, unsigned char *header, int)
 {
