@@ -1301,13 +1301,15 @@ int File::saveJpeg(const char *fn)
 
 int File::saveJava(const char *fn)
 {
+  static int bits[] = { 4, 8 };
+
   FileSP out(fn, "w");
   FILE *outp = out.get();
   if(!outp)
     return -1;
 
   Dialog::javaExport();
-  int bpp = Dialog::javaExportBpp();
+  int bpp = bits[Dialog::javaExportBpp()];
 
   Bitmap *bmp = Project::bmp;
   int overscroll = Project::overscroll;
@@ -1317,24 +1319,54 @@ int File::saveJava(const char *fn)
   fprintf(outp, "  static byte array[] = \n");
   fprintf(outp, "  {\n");
 
-  int count = 0;
-
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  if(bpp == 8)
   {
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    int count = 0;
+
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      int c = Project::palette->lookup(bmp->getpixel(x, y));
-
-      if(count == 0)
-        fprintf(outp, "    ");
-
-      fprintf(outp, "%d, ", (char)c);
-      count++;
-
-      if(count >= 10)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
-        fprintf(outp, "\n");
-        count = 0;
+        int c = Project::palette->lookup(bmp->getpixel(x, y));
+
+        if(count == 0)
+          fprintf(outp, "    ");
+
+        fprintf(outp, "%d, ", (char)c);
+        count++;
+
+        if(count >= 10)
+        {
+          fprintf(outp, "\n");
+          count = 0;
+        }
+      }
+    }
+  }
+  else if(bpp == 4)
+  {
+    int count = 0;
+
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      for(int x = bmp->cl; x <= bmp->cr - 1; x += 2)
+      {
+        int c1 = Project::palette->lookup(bmp->getpixel(x, y));
+        int c2 = Project::palette->lookup(bmp->getpixel(x + 1, y));
+        c1 &= 15;
+        c2 &= 15;
+
+        if(count == 0)
+          fprintf(outp, "    ");
+
+        fprintf(outp, "%d, ", (char)((c1 << 4) | c2));
+        count++;
+
+        if(count >= 10)
+        {
+          fprintf(outp, "\n");
+          count = 0;
+        }
       }
     }
   }

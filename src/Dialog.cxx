@@ -191,12 +191,8 @@ namespace JavaExport
     Items::bpp = new Fl_Choice(128, y1, 96, 24, "Bits Per Pixel");
     Items::bpp->tooltip("Bits Per Pixel");
     Items::bpp->textsize(10);
-//    Items::bpp->resize(Items::dialog->x() + 8, Items::dialog->y() + y1, 96, 24);
-    Items::bpp->add("1");
     Items::bpp->add("4");
     Items::bpp->add("8");
-    Items::bpp->add("16");
-    Items::bpp->add("32");
     Items::bpp->value(0);
     Items::dialog->callback(closeCallback);
     y1 += 24 + 8;
@@ -813,7 +809,7 @@ void Dialog::javaExport()
 
 int Dialog::javaExportBpp()
 {
-  JavaExport::Items::bpp->value();
+  return JavaExport::Items::bpp->value();
 }
 
 void Dialog::pngOptions()
