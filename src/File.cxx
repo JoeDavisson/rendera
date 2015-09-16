@@ -1306,6 +1306,9 @@ int File::saveJava(const char *fn)
   if(!outp)
     return -1;
 
+  Dialog::javaExport();
+  int bpp = Dialog::javaExportBpp();
+
   Bitmap *bmp = Project::bmp;
   int overscroll = Project::overscroll;
   int w = bmp->cw;

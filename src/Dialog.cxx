@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Choice.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Progress.H>
@@ -141,6 +142,63 @@ namespace JpegQuality
     Items::quality = new InputInt(Items::dialog, 0, y1, 96, 24, "Quality:", 0, 1, 100);
     Items::quality->value("95");
     Items::quality->center();
+    y1 += 24 + 8;
+    Items::dialog->addOkButton(&Items::ok, &y1);
+    Items::dialog->set_modal();
+    Items::dialog->end();
+  }
+}
+
+namespace JavaExport
+{
+  namespace Items
+  {
+    DialogWindow *dialog;
+    Fl_Choice *bpp;
+    Fl_Button *ok;
+  }
+
+  void closeCallback(Fl_Widget *, void *)
+  {
+    // needed to prevent dialog from being closed by window manager
+  }
+
+  void begin()
+  {
+    Items::dialog->show();
+
+    while(true)
+    {
+      Fl_Widget *action = Fl::readqueue();
+
+      if(!action)
+      {
+        Fl::wait();
+      }
+      else if(action == Items::ok)
+      {
+        Items::dialog->hide();
+        break;
+      }
+    }
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    Items::dialog = new DialogWindow(256, 0, "Export Java Array");
+    Items::bpp = new Fl_Choice(128, y1, 96, 24, "Bits Per Pixel");
+    Items::bpp->tooltip("Bits Per Pixel");
+    Items::bpp->textsize(10);
+//    Items::bpp->resize(Items::dialog->x() + 8, Items::dialog->y() + y1, 96, 24);
+    Items::bpp->add("1");
+    Items::bpp->add("4");
+    Items::bpp->add("8");
+    Items::bpp->add("16");
+    Items::bpp->add("32");
+    Items::bpp->value(0);
+    Items::dialog->callback(closeCallback);
     y1 += 24 + 8;
     Items::dialog->addOkButton(&Items::ok, &y1);
     Items::dialog->set_modal();
@@ -724,6 +782,7 @@ void Dialog::init()
 {
   About::init();
   JpegQuality::init();
+  JavaExport::init();
   PngOptions::init();
   NewImage::init();
   MakePalette::init();
@@ -745,6 +804,16 @@ void Dialog::jpegQuality()
 int Dialog::jpegQualityValue()
 {
   return atoi(JpegQuality::Items::quality->value());
+}
+
+void Dialog::javaExport()
+{
+  JavaExport::begin();
+}
+
+int Dialog::javaExportBpp()
+{
+  JavaExport::Items::bpp->value();
 }
 
 void Dialog::pngOptions()
