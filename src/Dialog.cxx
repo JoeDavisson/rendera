@@ -155,6 +155,7 @@ namespace JavaExport
   {
     DialogWindow *dialog;
     Fl_Choice *bpp;
+    Fl_Choice *order;
     Fl_Button *ok;
   }
 
@@ -191,9 +192,17 @@ namespace JavaExport
     Items::bpp = new Fl_Choice(128, y1, 96, 24, "Bits Per Pixel");
     Items::bpp->tooltip("Bits Per Pixel");
     Items::bpp->textsize(10);
+    Items::bpp->add("1");
     Items::bpp->add("4");
     Items::bpp->add("8");
     Items::bpp->value(0);
+    y1 += 24 + 8;
+    Items::order = new Fl_Choice(128, y1, 96, 24, "Pixel Order");
+    Items::order->tooltip("Pixel Order");
+    Items::order->textsize(10);
+    Items::order->add("MSB");
+    Items::order->add("LSB");
+    Items::order->value(0);
     Items::dialog->callback(closeCallback);
     y1 += 24 + 8;
     Items::dialog->addOkButton(&Items::ok, &y1);

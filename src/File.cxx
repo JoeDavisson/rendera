@@ -1301,7 +1301,7 @@ int File::saveJpeg(const char *fn)
 
 int File::saveJava(const char *fn)
 {
-  static int bits[] = { 4, 8 };
+  static int bits[] = { 1, 4, 8 };
 
   FileSP out(fn, "w");
   FILE *outp = out.get();
