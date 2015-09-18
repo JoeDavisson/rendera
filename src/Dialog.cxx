@@ -154,8 +154,7 @@ namespace JavaExport
   namespace Items
   {
     DialogWindow *dialog;
-    Fl_Choice *bpp;
-    Fl_Choice *order;
+    Fl_Choice *option;
     Fl_Button *ok;
   }
 
@@ -189,21 +188,22 @@ namespace JavaExport
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Export Java Array");
-    Items::bpp = new Fl_Choice(128, y1, 96, 24, "Bits Per Pixel");
-    Items::bpp->tooltip("Bits Per Pixel");
-    Items::bpp->textsize(10);
-    Items::bpp->add("1");
-    Items::bpp->add("4");
-    Items::bpp->add("8");
-    Items::bpp->value(0);
-    y1 += 24 + 8;
-    Items::order = new Fl_Choice(128, y1, 96, 24, "Pixel Order");
-    Items::order->tooltip("Pixel Order");
-    Items::order->textsize(10);
-    Items::order->add("MSB");
-    Items::order->add("LSB");
-    Items::order->value(0);
-    Items::dialog->callback(closeCallback);
+    Items::option = new Fl_Choice(64, y1, 128, 24, "");
+    Items::option->tooltip("Export Option");
+    Items::option->textsize(10);
+    Items::option->add("Raw Data/2 Colors");
+    Items::option->add("Raw Data/4 Colors");
+    Items::option->add("Raw Data/16 Colors");
+    Items::option->add("Raw Data/256 Colors");
+    Items::option->add("C64/Sprite/Hires");
+    Items::option->add("C64/Sprite/Multicolor");
+    Items::option->add("C64/Bitmap/Hires");
+    Items::option->add("C64/Bitmap/Multicolor");
+    Items::option->add("Apple IIgs/4 Colors)");
+    Items::option->add("Apple IIgs/16 Colors)");
+    Items::option->add("Sega Genesis/Sprite");
+    Items::option->add("TI99/Sprite");
+    Items::option->value(0);
     y1 += 24 + 8;
     Items::dialog->addOkButton(&Items::ok, &y1);
     Items::dialog->set_modal();
@@ -818,7 +818,7 @@ void Dialog::javaExport()
 
 int Dialog::javaExportBpp()
 {
-  return JavaExport::Items::bpp->value();
+  return JavaExport::Items::option->value();
 }
 
 void Dialog::pngOptions()
