@@ -268,12 +268,7 @@ void Palette::setDefault()
   {
     for(int v = 0; v < 8; v++)
     {
-      int val = 16 + v * 32;
-      if(v == 0)
-        val = 28;
-      if(v == 7)
-        val = 232;
-      Blend::hsvToRgb(h * 49.55, 255, 255, &r, &g, &b);
+      Blend::hsvToRgb(h * 48, 255, 255, &r, &g, &b);
 
       switch(v)
       {
