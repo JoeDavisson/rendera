@@ -732,6 +732,7 @@ void Gui::init()
   checkZoom();
   checkCropValues(0, 0, 0, 0);
   checkOffsetValues(0, 0);
+  checkPaintMode();
 
   // fix certain icons if using a light theme
   if(Project::theme == Project::THEME_LIGHT)
