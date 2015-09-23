@@ -273,9 +273,44 @@ void Palette::setDefault()
         val = 28;
       if(v == 7)
         val = 232;
-      Blend::hsvToRgb(h * 49.55, 255, val, &r, &g, &b);
+      Blend::hsvToRgb(h * 49.55, 255, 255, &r, &g, &b);
 
-      data[index++] = Blend::keepLum(makeRgb(r, g, b), val);
+      switch(v)
+      {
+        case 0:
+          data[index] = makeRgb(r, g, b);
+          data[index] = Blend::trans(data[index], makeRgb(0, 0, 0), 64);
+          break;
+        case 1:
+          data[index] = makeRgb(r, g, b);
+          data[index] = Blend::trans(data[index], makeRgb(0, 0, 0), 96);
+          break;
+        case 2:
+          data[index] = makeRgb(r, g, b);
+          data[index] = Blend::trans(data[index], makeRgb(0, 0, 0), 128);
+          break;
+        case 3:
+          data[index] = makeRgb(r, g, b);
+          data[index] = Blend::trans(data[index], makeRgb(0, 0, 0), 192);
+          break;
+        case 4:
+          data[index] = makeRgb(r, g, b);
+          break;
+        case 5:
+          data[index] = makeRgb(r, g, b);
+          data[index] = Blend::trans(data[index], makeRgb(255, 255, 255), 192);
+          break;
+        case 6:
+          data[index] = makeRgb(r, g, b);
+          data[index] = Blend::trans(data[index], makeRgb(255, 255, 255), 128);
+          break;
+        case 7:
+          data[index] = makeRgb(r, g, b);
+          data[index] = Blend::trans(data[index], makeRgb(255, 255, 255), 64);
+          break;
+      }
+
+      index++;
     }
   }
 
