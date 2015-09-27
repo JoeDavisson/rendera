@@ -191,18 +191,8 @@ namespace JavaExport
     Items::option = new Fl_Choice(64, y1, 128, 24, "");
     Items::option->tooltip("Export Option");
     Items::option->textsize(10);
-    Items::option->add("Raw Data/2 Colors");
-    Items::option->add("Raw Data/4 Colors");
-    Items::option->add("Raw Data/16 Colors");
-    Items::option->add("Raw Data/256 Colors");
-    Items::option->add("C64/Sprite/Hires");
-    Items::option->add("C64/Sprite/Multicolor");
-    Items::option->add("C64/Bitmap/Hires");
-    Items::option->add("C64/Bitmap/Multicolor");
-    Items::option->add("Apple IIgs/4 Colors)");
-    Items::option->add("Apple IIgs/16 Colors)");
-    Items::option->add("Sega Genesis/Sprite");
-    Items::option->add("TI99/Sprite");
+    Items::option->add("16 Colors (4-bit)");
+    Items::option->add("256 Colors (8-bit)");
     Items::option->value(0);
     y1 += 24 + 8;
     Items::dialog->addOkButton(&Items::ok, &y1);
@@ -816,7 +806,7 @@ void Dialog::javaExport()
   JavaExport::begin();
 }
 
-int Dialog::javaExportBpp()
+int Dialog::javaExportOption()
 {
   return JavaExport::Items::option->value();
 }

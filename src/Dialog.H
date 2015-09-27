@@ -28,7 +28,7 @@ namespace Dialog
   void jpegQuality();
   int jpegQualityValue();
   void javaExport();
-  int javaExportBpp();
+  int javaExportOption();
   void pngOptions();
   int pngUsePalette();
   int pngUseAlpha();

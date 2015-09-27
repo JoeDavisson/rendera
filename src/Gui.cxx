@@ -322,8 +322,8 @@ void Gui::init()
     (Fl_Callback *)palette4LevelRGB, 0, 0);
   menubar->add("&Palette/Presets/3-3-2", 0,
     (Fl_Callback *)palette332, 0, FL_MENU_DIVIDER);
-//  menubar->add("&Palette/Sort", 0,
-//    (Fl_Callback *)paletteSort, 0, FL_MENU_DIVIDER);
+  menubar->add("&Palette/Sort", 0,
+    (Fl_Callback *)paletteSort, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/&Editor... (Ctrl+E)", 0,
     (Fl_Callback *)Dialog::editor, 0, 0);
   menubar->add("F&X/Normalize", 0,

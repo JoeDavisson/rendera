@@ -925,8 +925,8 @@ void File::save(Fl_Widget *, void *)
   fc.filter("PNG Image\t*.png\n"
             "JPEG Image\t*.jpg\n"
             "Bitmap Image\t*.bmp\n"
-            "Targa Image\t*.tga\n");
-//            "Java Array\t*.java\n");
+            "Targa Image\t*.tga\n"
+            "Java Array\t*.java\n");
   fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc.directory(save_dir);
@@ -971,9 +971,9 @@ void File::save(Fl_Widget *, void *)
     case 3:
       ret = File::saveTarga(fn);
       break;
-//    case 4:
-//      ret = File::saveJava(fn);
- //     break;
+    case 4:
+      ret = File::saveJava(fn);
+      break;
     default:
       ret = -1;
   }
@@ -1308,6 +1308,7 @@ int File::saveJava(const char *fn)
     return -1;
 
   Dialog::javaExport();
+  int option = Dialog::javaExportOption();
 
   Bitmap *bmp = Project::bmp;
   int overscroll = Project::overscroll;
@@ -1319,27 +1320,55 @@ int File::saveJava(const char *fn)
 
   int count = 0;
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  if(option == 0)
   {
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      int c = Project::palette->lookup(bmp->getpixel(x, y));
-
-      if(count == 0)
-        fprintf(outp, "    ");
-
-      fprintf(outp, "%d, ", (char)c);
-      count++;
-
-      if(count >= 10)
+      for(int x = bmp->cl; x <= bmp->cr; x += 2)
       {
-        fprintf(outp, "\n");
-        count = 0;
+        int c1 = Project::palette->lookup(bmp->getpixel(x, y)) & 15;
+        int c2 = Project::palette->lookup(bmp->getpixel(x + 1, y)) & 15;
+
+        if(count == 0)
+          fprintf(outp, "    ");
+
+        fprintf(outp, "%d, ", (char)((c1 << 4) | c2));
+        count++;
+
+        if(count >= 10)
+        {
+          fprintf(outp, "\n");
+          count = 0;
+        }
       }
     }
-  }
 
-  fprintf(outp, "\n  };\n");
+    fprintf(outp, "\n  };\n");
+  }
+  else if(option == 1)
+  {
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        int c = Project::palette->lookup(bmp->getpixel(x, y));
+
+        if(count == 0)
+          fprintf(outp, "    ");
+
+        fprintf(outp, "%d, ", (char)c);
+        count++;
+
+        if(count >= 10)
+        {
+          fprintf(outp, "\n");
+          count = 0;
+        }
+      }
+    }
+
+    fprintf(outp, "\n  };\n");
+  }
 
   return 0;
 }
