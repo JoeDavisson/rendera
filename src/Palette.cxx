@@ -264,11 +264,13 @@ void Palette::setDefault()
   int r, g, b;
   int index = 0;
 
+  static int sat[] = { 128, 160 ,192, 224, 255, 255, 255, 255 };
+
   for(int h = 0; h < 31; h++)
   {
     for(int v = 0; v < 8; v++)
     {
-      Blend::hsvToRgb(h * 48, 255, 255, &r, &g, &b);
+      Blend::hsvToRgb(h * 48, sat[v], 255, &r, &g, &b);
 
       switch(v)
       {
