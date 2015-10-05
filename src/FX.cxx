@@ -932,9 +932,9 @@ namespace Restore
 
     int iter = 0;
 
-    while(std::max(std::abs(d_alpha.value[0]),
-                   std::max(std::abs(d_alpha.value[1]),
-                            std::abs(d_alpha.value[2]))) > 0.02f)
+    while(std::max(RenderaMath::abs(d_alpha.value[0]),
+                   std::max(RenderaMath::abs(d_alpha.value[1]),
+                            RenderaMath::abs(d_alpha.value[2]))) > 0.02f)
     {
       iter++;
       if(iter == 10)
@@ -960,10 +960,10 @@ namespace Restore
                            * (lo / (255.0f * bot) - 1) / logf(bot);
         d_m.value[i] = alpha.value[i] * (hi - 255.0f * top);
 
-        if(std::abs(d_alpha.value[i]) > 0.2f * alpha.value[i])
+        if(RenderaMath::abs(d_alpha.value[i]) > 0.2f * alpha.value[i])
         {
           d_alpha.value[i] = 0.2f * alpha.value[i] * d_alpha.value[i]
-                                    / std::abs(d_alpha.value[i]);
+                                    / RenderaMath::abs(d_alpha.value[i]);
         }
 
         alpha.value[i] += d_alpha.value[i];
@@ -1023,7 +1023,7 @@ namespace Restore
       iter = 0;
       float sig = 0;
 
-      while(std::abs(d_lambda_c) > 1e-4f)
+      while(RenderaMath::abs(d_lambda_c) > 1e-4f)
       {
         iter++;
         if(iter >= 20)
@@ -2267,7 +2267,7 @@ namespace UnsharpMask
         int a = getl(*p);
         int b = getl(*d);
 
-        if(std::abs(a - b) >= threshold)
+        if(RenderaMath::abs(a - b) >= threshold)
         {
           int lum = a - (amount * (a - b)); 
           lum = clamp(lum, 255);
