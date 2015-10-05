@@ -277,19 +277,19 @@ void Palette::setDefault()
       {
         case 0:
           data[index] = makeRgb(r, g, b);
-          data[index] = Blend::trans(data[index], makeRgb(0, 0, 0), 64);
+          data[index] = Blend::darken(data[index], makeRgb(255, 255, 255), 64);
           break;
         case 1:
           data[index] = makeRgb(r, g, b);
-          data[index] = Blend::trans(data[index], makeRgb(0, 0, 0), 96);
+          data[index] = Blend::darken(data[index], makeRgb(255, 255, 255), 96);
           break;
         case 2:
           data[index] = makeRgb(r, g, b);
-          data[index] = Blend::trans(data[index], makeRgb(0, 0, 0), 128);
+          data[index] = Blend::darken(data[index], makeRgb(255, 255, 255), 128);
           break;
         case 3:
           data[index] = makeRgb(r, g, b);
-          data[index] = Blend::trans(data[index], makeRgb(0, 0, 0), 192);
+          data[index] = Blend::darken(data[index], makeRgb(255, 255, 255), 192);
           break;
         case 4:
           data[index] = makeRgb(r, g, b);
