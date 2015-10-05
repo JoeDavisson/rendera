@@ -27,7 +27,7 @@ namespace RenderaMath
   template <typename T>
   inline T sign(T const &v)
   {
-    return ( T(0) > v ) ? T(-1) : T(1) ;
+    return ( T(0) > v ) ? T(-1) : T(1);
   }
 
   // absolute value
@@ -40,11 +40,11 @@ namespace RenderaMath
   // fast pseudo-random number
   inline int rnd(void)
   {
-    static int seed = 12345 ;
-    seed ^= seed << 17 ;
-    seed ^= seed >> 13 ;
-    seed ^= seed <<  5 ;
-    return seed ;
+    static int seed = 12345;
+    seed ^= seed << 17;
+    seed ^= seed >> 13;
+    seed ^= seed <<  5;
+    return seed;
   }
 
   // ^2 check
