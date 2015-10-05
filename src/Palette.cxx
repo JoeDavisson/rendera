@@ -264,7 +264,8 @@ void Palette::setDefault()
   int r, g, b;
   int index = 0;
 
-  static int sat[] = { 128, 160 ,192, 224, 255, 255, 255, 255 };
+//  static int sat[] = { 128, 160 ,192, 224, 255, 224, 192, 160 };
+  static int sat[] = { 96, 128 ,160, 192, 255, 224, 192, 160 };
 
   for(int h = 0; h < 31; h++)
   {
@@ -299,11 +300,11 @@ void Palette::setDefault()
           break;
         case 6:
           data[index] = makeRgb(r, g, b);
-          data[index] = Blend::trans(data[index], makeRgb(255, 255, 255), 128);
+          data[index] = Blend::trans(data[index], makeRgb(255, 255, 255), 160);
           break;
         case 7:
           data[index] = makeRgb(r, g, b);
-          data[index] = Blend::trans(data[index], makeRgb(255, 255, 255), 64);
+          data[index] = Blend::trans(data[index], makeRgb(255, 255, 255), 128);
           break;
       }
 
