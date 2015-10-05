@@ -205,9 +205,6 @@ int View::handle(int event)
 
     case FL_ENTER:
     {
-      if(Fl::focus() != this)
-        Fl::focus(this);
-
       switch(Gui::getTool())
       {
         case Tool::GETCOLOR:
