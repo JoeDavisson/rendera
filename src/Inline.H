@@ -27,9 +27,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <climits>
 #include <stdint.h>
 
+// use these if needed
+//#define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
+//#define __BYTE_ORDER__ __ORDER_BIG_ENDIAN__
+
 #if !defined(__BYTE_ORDER__)
-  #define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
-  #error "warning: __BYTE_ORDER__ undefined, defaulting to little-endian"
+  #error "warning: __BYTE_ORDER__ undefined"
 #endif
 
 // stuff for extracting all RGBA values quickly
@@ -37,33 +40,33 @@ struct rgba_type
 {
 #if 0
   /*  */
-#elif ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
-  uint8_t r ;
-  uint8_t g ;
-  uint8_t b ;
-  uint8_t a ;
-#elif ( __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ )
-  uint8_t a ;
-  uint8_t b ;
-  uint8_t g ;
-  uint8_t r ;
+#elif (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+  uint8_t a;
+#elif (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+  uint8_t a;
+  uint8_t b;
+  uint8_t g;
+  uint8_t r;
 #else
-#  error "unsupported endianness"
+#error "unsupported endianness"
 #endif
 };
 
 union un_rgba_type
 {
-  uint32_t uint32_ ;
-  rgba_type rgba_ ;
+  uint32_t uint32_;
+  rgba_type rgba_;
 };
 
 // get rgba values all at once
-inline rgba_type getRgba( uint32_t const &n )
+inline rgba_type getRgba(uint32_t const &n)
 {
-  un_rgba_type u ;
-  u.uint32_ = n ;
-  return u.rgba_ ;
+  un_rgba_type u;
+  u.uint32_ = n;
+  return u.rgba_;
 }
 
 // make RGB color with no alpha
