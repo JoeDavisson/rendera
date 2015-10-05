@@ -27,19 +27,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <climits>
 #include <stdint.h>
 
-#ifndef __WIN32
-#if ! defined( __BYTE_ORDER__ )
-#  error "__BYTE_ORDER__ undefined"
-#endif
-#if ! defined( __ORDER_LITTLE_ENDIAN__ )
-#  error "__ORDER_LITTLE_ENDIAN__ undefined"
-#endif
-#if ! defined( __ORDER_BIG_ENDIAN__ )
-#  error "__ORDER_BIG_ENDIAN__ undefined"
-#endif
-#else
-// assume little-endian if not defined
-#define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
+#if !defined(__BYTE_ORDER__)
+  #define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
+  #error "warning: __BYTE_ORDER__ undefined, defaulting to little-endian"
 #endif
 
 // stuff for extracting all RGBA values quickly
