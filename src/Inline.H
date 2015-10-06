@@ -27,12 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <climits>
 #include <stdint.h>
 
-// use these if needed
-//#define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
-//#define __BYTE_ORDER__ __ORDER_BIG_ENDIAN__
-
-#if !defined(__BYTE_ORDER__)
-  #error "warning: __BYTE_ORDER__ undefined"
+#ifndef __BYTE_ORDER__
+#define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
 #endif
 
 // stuff for extracting all RGBA values quickly
