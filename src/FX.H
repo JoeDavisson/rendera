@@ -37,7 +37,7 @@ namespace FX
   void removeDust();
   void desaturate();
   void colorize();
-  void applyPalette();
+  void ditherImage();
   void stainedGlass();
   void gaussianBlur();
   void sharpen();

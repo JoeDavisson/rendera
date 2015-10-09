@@ -280,6 +280,7 @@ void Gui::init()
     (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
   menubar->add("&File/&Quit...", 0,
     (Fl_Callback *)quit, 0, 0);
+
   menubar->add("&Edit/Undo (Ctrl+Z)", 0,
     (Fl_Callback *)Undo::pop, 0, 0);
   menubar->add("&Edit/Redo (Shift+Ctrl+Z)", 0,
@@ -292,30 +293,24 @@ void Gui::init()
     (Fl_Callback *)checkClearToBlack, 0, 0);
   menubar->add("&Edit/Clear/White", 0,
     (Fl_Callback *)checkClearToWhite, 0, 0);
-  menubar->add("&Image/Mode/&RGB", 0,
-    (Fl_Callback *)checkRGB, 0, 0);
-  menubar->add("&Image/Mode/&Indexed", 0,
-    (Fl_Callback *)checkIndexed, 0, 0);
-  menubar->add("&Image/Mode/&Grayscale", 0,
-    (Fl_Callback *)checkGrayscale, 0, 0);
-  menubar->add("&Image/Flip &Horizontal", 0,
-    (Fl_Callback *)Transform::mirror, 0, 0);
-  menubar->add("&Image/Flip &Vertical", 0,
-    (Fl_Callback *)Transform::flip, 0, FL_MENU_DIVIDER);
-  menubar->add("&Image/Resize...", 0,
-    (Fl_Callback *)Transform::resize, 0, 0);
-  menubar->add("&Image/Scale...", 0,
-    (Fl_Callback *)Transform::scale, 0, 0);
-  menubar->add("&Image/Rotate...", 0,
-    (Fl_Callback *)Transform::rotate, 0, 0);
+
+  menubar->add("&Mode/RGB", 0,
+    (Fl_Callback *)checkRGB, 0, FL_MENU_RADIO);
+  menubar->add("&Mode/Indexed", 0,
+    (Fl_Callback *)checkIndexed, 0, FL_MENU_RADIO);
+  menubar->add("&Mode/Grayscale", 0,
+    (Fl_Callback *)checkGrayscale, 0, FL_MENU_RADIO | FL_MENU_DIVIDER);
+  menubar->add("&Mode/Apply Mode to Image", 0,
+    (Fl_Callback *)checkApplyModeToImage, 0, 0);
+
   menubar->add("&Palette/&Open...", 0,
     (Fl_Callback *)File::loadPalette, 0, 0);
   menubar->add("&Palette/&Save...", 0,
     (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/&Create From Image...", 0,
     (Fl_Callback *)Dialog::makePalette, 0, 0);
-  menubar->add("&Palette/&Apply to Image...", 0,
-    (Fl_Callback *)FX::applyPalette, 0, FL_MENU_DIVIDER);
+  menubar->add("&Palette/&Dither Image...", 0,
+    (Fl_Callback *)FX::ditherImage, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/Presets/Default", 0,
     (Fl_Callback *)paletteDefault, 0, 0);
   menubar->add("Palette/Presets/Black and White", 0,
@@ -332,6 +327,18 @@ void Gui::init()
     (Fl_Callback *)paletteSort, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/&Editor... (Ctrl+E)", 0,
     (Fl_Callback *)Dialog::editor, 0, 0);
+
+  menubar->add("&Transform/Flip &Horizontal", 0,
+    (Fl_Callback *)Transform::mirror, 0, 0);
+  menubar->add("&Transform/Flip &Vertical", 0,
+    (Fl_Callback *)Transform::flip, 0, FL_MENU_DIVIDER);
+  menubar->add("&Transform/Resize...", 0,
+    (Fl_Callback *)Transform::resize, 0, 0);
+  menubar->add("&Transform/Scale...", 0,
+    (Fl_Callback *)Transform::scale, 0, 0);
+  menubar->add("&Transform/Rotate...", 0,
+    (Fl_Callback *)Transform::rotate, 0, 0);
+
   menubar->add("F&X/Normalize", 0,
     (Fl_Callback *)FX::normalize, 0, 0);
   menubar->add("F&X/Equalize", 0,
@@ -374,6 +381,7 @@ void Gui::init()
     (Fl_Callback *)FX::forwardFFT, 0, 0);
   menubar->add("F&X/Inverse FFT", 0,
     (Fl_Callback *)FX::inverseFFT, 0, 0);
+
   menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
 
@@ -739,6 +747,7 @@ void Gui::init()
   checkCropValues(0, 0, 0, 0);
   checkOffsetValues(0, 0);
   checkPaintMode();
+  checkRGB();
 
   // fix certain icons if using a light theme
   if(Project::theme == Project::THEME_LIGHT)
@@ -1293,19 +1302,67 @@ void Gui::checkClearToTransparent()
 
 void Gui::checkRGB()
 {
+  setMenuItem("&Mode/RGB");
+  clearMenuItem("&Mode/Indexed");
+  clearMenuItem("&Mode/Grayscale");
+
   Project::mode = Project::MODE_RGB;
   view->drawMain(true);
 }
 
 void Gui::checkIndexed()
 {
+  clearMenuItem("&Mode/RGB");
+  setMenuItem("&Mode/Indexed");
+  clearMenuItem("&Mode/Grayscale");
+
   Project::mode = Project::MODE_INDEXED;
   view->drawMain(true);
 }
 
 void Gui::checkGrayscale()
 {
+  clearMenuItem("&Mode/RGB");
+  clearMenuItem("&Mode/Indexed");
+  setMenuItem("&Mode/Grayscale");
+
   Project::mode = Project::MODE_GRAYSCALE;
+  view->drawMain(true);
+}
+
+void Gui::checkApplyModeToImage()
+{
+  Bitmap *bmp = Project::bmp;
+  Palette *pal = Project::palette.get();
+
+  Undo::push();
+
+  for(int y = bmp->ct; y <= bmp->cb; y++)
+  {
+    int *p = bmp->row[y] + bmp->cl;
+
+    for(int y = bmp->cl; y <= bmp->cr; y++)
+    {
+      if(Project::mode == Project::MODE_INDEXED)
+      {
+        *p = pal->data[pal->lookup(*p)];
+        p++;
+      }
+      else if(Project::mode == Project::MODE_GRAYSCALE)
+      {
+        const int l = getl(*p);
+        const int a = geta(*p);
+        
+        *p++ = makeRgba(l, l, l, a);
+      }
+      else
+      {
+        // no conversion necessary for truecolor
+      }
+    }
+  }
+
+  checkRGB();
   view->drawMain(true);
 }
 

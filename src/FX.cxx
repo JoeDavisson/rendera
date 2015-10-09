@@ -1370,7 +1370,7 @@ namespace Colorize
   }
 }
 
-namespace ApplyPalette
+namespace DitherImage
 {
   namespace Items
   {
@@ -1693,7 +1693,7 @@ namespace ApplyPalette
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(256, 0, "Apply Palette");
+    Items::dialog = new DialogWindow(256, 0, "Dither Image");
     Items::mode = new Fl_Choice(96, y1, 128, 24, "Dither:");
     Items::mode->tooltip("Dither");
     Items::mode->textsize(10);
@@ -2873,7 +2873,7 @@ void FX::init()
   AutoCorrect::init();
   Restore::init();
   RemoveDust::init();
-  ApplyPalette::init();
+  DitherImage::init();
   StainedGlass::init();
   GaussianBlur::init();
   Sharpen::init();
@@ -2947,9 +2947,9 @@ void FX::colorize()
   Colorize::begin();
 }
 
-void FX::applyPalette()
+void FX::ditherImage()
 {
-  ApplyPalette::begin();
+  DitherImage::begin();
 }
 
 void FX::stainedGlass()
