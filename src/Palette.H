@@ -30,13 +30,18 @@ public:
   Palette();
   ~Palette();
 
+  inline int lookup(const int &c)
+  {
+    return table[c & 0xFFFFFF];
+  }
+
   void draw(Widget *);
   void copy(Palette *);
   void insertColor(int, int);
   void deleteColor(int);
   void replaceColor(int, int);
   void fillTable();
-  int lookup(const int &);
+//  int lookup(const int &);
   void sort();
   int load(const char *);
   int save(const char *);

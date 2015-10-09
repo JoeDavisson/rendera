@@ -178,53 +178,11 @@ void Palette::fillTable()
 }
 
 /*
-void Palette::fillTable()
-{
-  delete table;
-  table = new Octree();
-
-  const int step = 4;
-
-  // each 4x4 block of the color cube gets a palette entry
-  // close enough and avoids a huge octree
-  for(int b = 0; b <= 256 - step; b += step)
-  {
-    for(int g = 0; g <= 256 - step; g += step)
-    {
-      for(int r = 0; r <= 256 - step; r += step)
-      {
-        int c = makeRgb24(r, g, b);
-        int smallest = 0xFFFFFF;
-        int use = 0;
-
-        for(int i = 0; i < max; i++)
-        {
-          int d = diff24(c, data[i]);
-          if(d < smallest)
-          {
-            smallest = d;
-            use = i;
-          }
-        }
-
-        table->writePath(r, g, b, use);
-      }
-    }
-  }
-
-  // put exact matches back in
-  for(int i = 0; i < max; i++)
-    table->writePath(getr(data[i]), getg(data[i]), getb(data[i]), i);
-}
-*/
-
 int Palette::lookup(const int &c)
 {
   return table[c & 0xFFFFFF];
-//  rgba_type rgba = getRgba(c);
-
-//  return table->read(rgba.r, rgba.g, rgba.b);
 }
+*/
 
 void Palette::sort()
 {
@@ -306,14 +264,13 @@ void Palette::setDefault()
   int r, g, b;
   int index = 0;
 
-//  static int sat[] = { 128, 160 ,192, 224, 255, 224, 192, 160 };
-//  static int sat[] = { 96, 128 ,160, 192, 255, 224, 192, 160 };
+  static int sat[] = { 96, 128 ,160, 192, 255, 224, 192, 160 };
 
   for(int h = 0; h < 31; h++)
   {
     for(int v = 0; v < 8; v++)
     {
-      Blend::hsvToRgb(h * 48, 255 /*sat[v]*/, 255, &r, &g, &b);
+      Blend::hsvToRgb(h * 48, sat[v], 255, &r, &g, &b);
 
       switch(v)
       {
