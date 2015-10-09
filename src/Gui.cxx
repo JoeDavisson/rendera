@@ -300,7 +300,7 @@ void Gui::init()
     (Fl_Callback *)checkIndexed, 0, FL_MENU_RADIO);
   menubar->add("&Mode/Grayscale", 0,
     (Fl_Callback *)checkGrayscale, 0, FL_MENU_RADIO | FL_MENU_DIVIDER);
-  menubar->add("&Mode/Apply Mode to Image", 0,
+  menubar->add("&Mode/Apply Mode to Image...", 0,
     (Fl_Callback *)checkApplyModeToImage, 0, 0);
 
   menubar->add("&Palette/&Open...", 0,
@@ -1364,6 +1364,8 @@ void Gui::checkApplyModeToImage()
 
   checkRGB();
   view->drawMain(true);
+  Dialog::message("Apply Mode to Image",
+                  "Image has been converted.\n");
 }
 
 Fl_Double_Window *Gui::getWindow()
