@@ -688,7 +688,8 @@ void Gui::init()
   blend->add("Alpha Add");
   blend->add("Alpha Subtract");
   blend->add("Smooth");
-  blend->add("Smooth (Color Only)");
+  blend->add("Smooth (Color)");
+  blend->add("Smooth (Luminosity)");
   blend->add("Sharpen");
   blend->value(0);
   blend->callback((Fl_Callback *)checkBlend);

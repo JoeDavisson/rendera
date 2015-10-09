@@ -66,6 +66,9 @@ void Blend::set(const int &mode)
     case SMOOTH_COLOR:
       current_blend = smoothColor;
       break;
+    case SMOOTH_LUMINOSITY:
+      current_blend = smoothLuminosity;
+      break;
     case SHARPEN:
       current_blend = sharpen;
       break;
@@ -160,14 +163,14 @@ int Blend::colorize(const int &c1, const int &c2, const int &t)
 
 int Blend::keepLum(const int &c, const int &dest)
 {
-  // these have to be in order of importance in the luminance calc: G, R, B
+  // these have to be in order of importance in the luminosity calc: G, R, B
   const rgba_type rgba = getRgba(c);
   int n[3];
   n[1] = rgba.r;
   n[0] = rgba.g;
   n[2] = rgba.b;
 
-  // iterate to find similar color with same luminance
+  // iterate to find similar color with same luminosity
   int src = getlUnpacked(n[1], n[0], n[2]);
 
   while(src < dest)
@@ -266,6 +269,24 @@ int Blend::smoothColor(const int &c1, const int &, const int &t)
 
   int c3 = Blend::trans(c1, makeRgba(r, g, b, a), t);
   return keepLum(c3, getl(c1));
+}
+
+int Blend::smoothLuminosity(const int &c1, const int &, const int &t)
+{
+  int lum = 0;
+
+  for(int j = 0; j < 3; j++)
+  {
+    for(int i = 0; i < 3; i++)
+    {
+      const int l = getl(bmp->getpixel(xpos + i - 1, ypos + j - 1));
+      lum += l * FilterMatrix::gaussian[i][j];
+    }
+  }
+
+  lum /= 16;
+
+  return Blend::trans(c1, keepLum(c1, lum), t);
 }
 
 int Blend::sharpen(const int &c1, const int &, const int &t)

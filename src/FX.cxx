@@ -484,7 +484,7 @@ namespace RotateHue
     Items::angle->maximum_size(4);
     Items::angle->value("60");
     Items::angle->center();
-    Items::preserve_lum = new CheckBox(Items::dialog, 0, y1, 16, 16, "Preserve Luminance", 0);
+    Items::preserve_lum = new CheckBox(Items::dialog, 0, y1, 16, 16, "Preserve Luminosity", 0);
     Items::preserve_lum->center();
     y1 += 16 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
@@ -679,7 +679,7 @@ namespace AutoCorrect
     Items::invert = new CheckBox(Items::dialog, 0, y1, 16, 16, "Invert First", 0);
     Items::invert->center();
     y1 += 16 + 8;
-    Items::preserve_lum = new CheckBox(Items::dialog, 8, y1, 16, 16, "Preserve Luminance", 0);
+    Items::preserve_lum = new CheckBox(Items::dialog, 8, y1, 16, 16, "Preserve Luminosity", 0);
     y1 += 16 + 8;
     Items::preserve_lum->center();
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
@@ -1708,7 +1708,7 @@ namespace DitherImage
     Items::gamma = new CheckBox(Items::dialog, 0, y1, 16, 16, "Gamma Correction", 0);
     Items::gamma->center();
     y1 += 16 + 8;
-    Items::lum_only = new CheckBox(Items::dialog, 0, y1, 16, 16, "Luminance Only", 0);
+    Items::lum_only = new CheckBox(Items::dialog, 0, y1, 16, 16, "Luminosity-Based", 0);
     Items::lum_only->center();
     y1 += 16 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
@@ -2500,7 +2500,7 @@ namespace ConvolutionMatrix
     Items::amount->value("100");
     Items::amount->center();
     y1 += 24 + 8;
-    Items::lum_only = new CheckBox(Items::dialog, 0, y1, 16, 16, "Luminance Only", 0);
+    Items::lum_only = new CheckBox(Items::dialog, 0, y1, 16, 16, "Luminosity-Based", 0);
     Items::lum_only->center();
     y1 += 16 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
