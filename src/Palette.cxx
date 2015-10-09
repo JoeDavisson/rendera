@@ -177,13 +177,6 @@ void Palette::fillTable()
     table[data[i] & 0xFFFFFF] = i;
 }
 
-/*
-int Palette::lookup(const int &c)
-{
-  return table[c & 0xFFFFFF];
-}
-*/
-
 void Palette::sort()
 {
   std::sort(data, data + max, sortByLum);
