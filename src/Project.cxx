@@ -56,6 +56,7 @@ namespace Project
   SP<Text> text = new Text();
   SP<Fill> fill = new Fill();
 
+  int mode = MODE_RGB;
   int overscroll = 64;
   int theme = THEME_DARK;
   char theme_path[PATH_MAX];

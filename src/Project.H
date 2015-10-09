@@ -40,6 +40,13 @@ namespace Project
     THEME_DARK
   };
 
+  enum
+  {
+    MODE_RGB,
+    MODE_INDEXED,
+    MODE_GRAYSCALE
+  };
+
   extern Bitmap *bmp;
   extern Map *map;
 
@@ -48,6 +55,7 @@ namespace Project
   extern SP<Stroke> stroke;
   extern Tool *tool;
 
+  extern int mode;
   extern int overscroll;
   extern int theme;
   extern char theme_path[];

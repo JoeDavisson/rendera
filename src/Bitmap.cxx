@@ -755,6 +755,8 @@ void Bitmap::pointStretch(Bitmap *dest,
                           int dx, int dy, int dw, int dh,
                           int overx, int overy, bool bgr_order)
 {
+  Palette *pal = Project::palette.get();
+
   const int ax = ((float)dw / sw) * 256;
   const int ay = ((float)dh / sh) * 256;
   const int bx = ((float)sw / dw) * 256;
@@ -804,18 +806,61 @@ void Bitmap::pointStretch(Bitmap *dest,
   if(dw < 1 || dh < 1)
     return;
 
-  for(int y = 0; y < dh; y++)
+  if(Project::mode == Project::MODE_INDEXED)
   {
-    const int y1 = sy + ((y * by) >> 8);
-    int *s = dest->row[dy + y] + dx;
-
-    for(int x = 0; x < dw; x++)
+    for(int y = 0; y < dh; y++)
     {
-      const int x1 = sx + ((x * bx) >> 8);
-      const int c = *(row[y1] + x1);
-      const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
+      const int y1 = sy + ((y * by) >> 8);
+      int *s = dest->row[dy + y] + dx;
 
-      *s++ = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
+      for(int x = 0; x < dw; x++)
+      {
+        const int x1 = sx + ((x * bx) >> 8);
+        const int c = *(row[y1] + x1);
+        int n = (c & 0xFF000000) | pal->data[pal->lookup(c)];
+      
+        const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
+
+        *s++ = convertFormat(blendFast(checker, n, 255 - geta(c)), bgr_order);
+      }
+    }
+  }
+  else if(Project::mode == Project::MODE_GRAYSCALE)
+  {
+    for(int y = 0; y < dh; y++)
+    {
+      const int y1 = sy + ((y * by) >> 8);
+      int *s = dest->row[dy + y] + dx;
+
+      for(int x = 0; x < dw; x++)
+      {
+        const int x1 = sx + ((x * bx) >> 8);
+        const int c = *(row[y1] + x1);
+        const int l = getl(c);
+        const int n = makeRgb24(l, l, l);
+      
+        const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
+
+        *s++ = convertFormat(blendFast(checker, n, 255 - geta(c)), bgr_order);
+      }
+    }
+  }
+  else
+  {
+    for(int y = 0; y < dh; y++)
+    {
+      const int y1 = sy + ((y * by) >> 8);
+      int *s = dest->row[dy + y] + dx;
+
+      for(int x = 0; x < dw; x++)
+      {
+        const int x1 = sx + ((x * bx) >> 8);
+        const int c = *(row[y1] + x1);
+      
+        const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
+
+        *s++ = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
+      }
     }
   }
 }

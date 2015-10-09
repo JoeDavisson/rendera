@@ -292,6 +292,12 @@ void Gui::init()
     (Fl_Callback *)checkClearToBlack, 0, 0);
   menubar->add("&Edit/Clear/White", 0,
     (Fl_Callback *)checkClearToWhite, 0, 0);
+  menubar->add("&Image/Mode/&RGB", 0,
+    (Fl_Callback *)checkRGB, 0, 0);
+  menubar->add("&Image/Mode/&Indexed", 0,
+    (Fl_Callback *)checkIndexed, 0, 0);
+  menubar->add("&Image/Mode/&Grayscale", 0,
+    (Fl_Callback *)checkGrayscale, 0, 0);
   menubar->add("&Image/Flip &Horizontal", 0,
     (Fl_Callback *)Transform::mirror, 0, 0);
   menubar->add("&Image/Flip &Vertical", 0,
@@ -1282,6 +1288,24 @@ void Gui::checkClearToTransparent()
     for(int x = bmp->cl; x <= bmp->cr; x++)
       *(bmp->row[y] + x) = 0x00808080;
 
+  view->drawMain(true);
+}
+
+void Gui::checkRGB()
+{
+  Project::mode = Project::MODE_RGB;
+  view->drawMain(true);
+}
+
+void Gui::checkIndexed()
+{
+  Project::mode = Project::MODE_INDEXED;
+  view->drawMain(true);
+}
+
+void Gui::checkGrayscale()
+{
+  Project::mode = Project::MODE_GRAYSCALE;
   view->drawMain(true);
 }
 

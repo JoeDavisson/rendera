@@ -49,7 +49,8 @@ public:
   void set332();
 
   int *data;
-  Octree *table;
+  int *table;
+//  Octree *table;
   int max;
 };
 

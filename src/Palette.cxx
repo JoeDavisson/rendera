@@ -39,13 +39,14 @@ namespace
 Palette::Palette()
 {
   data = new int[256];
-  table = new Octree();
+//  table = new Octree();
+  table = new int[16777216];
   setDefault();
 }
 
 Palette::~Palette()
 {
-  delete table;
+  delete[] table;
   delete[] data;
 }
 
@@ -140,6 +141,45 @@ void Palette::replaceColor(int color, int index)
 
 void Palette::fillTable()
 {
+  const int step = 4;
+
+  // fill lookup table in 4x4 blocks to save time
+  for(int b = 0; b <= 256 - step; b += step)
+  {
+    for(int g = 0; g <= 256 - step; g += step)
+    {
+      for(int r = 0; r <= 256 - step; r += step)
+      {
+        int c = makeRgb24(r, g, b);
+        int smallest = 0xFFFFFF;
+        int use = 0;
+
+        for(int i = 0; i < max; i++)
+        {
+          int d = diff24(c, data[i]);
+          if(d < smallest)
+          {
+            smallest = d;
+            use = i;
+          }
+        }
+
+        for(int k = b; k < b + step; k++)
+          for(int j = g; j < g + step; j++)
+            for(int i = r; i < r + step; i++)
+              table[makeRgb24(i, j, k)] = use;
+      }
+    }
+  }
+
+  // put exact matches back in
+  for(int i = 0; i < max; i++)
+    table[data[i] & 0xFFFFFF] = i;
+}
+
+/*
+void Palette::fillTable()
+{
   delete table;
   table = new Octree();
 
@@ -176,12 +216,14 @@ void Palette::fillTable()
   for(int i = 0; i < max; i++)
     table->writePath(getr(data[i]), getg(data[i]), getb(data[i]), i);
 }
+*/
 
 int Palette::lookup(const int &c)
 {
-  rgba_type rgba = getRgba(c);
+  return table[c & 0xFFFFFF];
+//  rgba_type rgba = getRgba(c);
 
-  return table->read(rgba.r, rgba.g, rgba.b);
+//  return table->read(rgba.r, rgba.g, rgba.b);
 }
 
 void Palette::sort()
@@ -265,13 +307,13 @@ void Palette::setDefault()
   int index = 0;
 
 //  static int sat[] = { 128, 160 ,192, 224, 255, 224, 192, 160 };
-  static int sat[] = { 96, 128 ,160, 192, 255, 224, 192, 160 };
+//  static int sat[] = { 96, 128 ,160, 192, 255, 224, 192, 160 };
 
   for(int h = 0; h < 31; h++)
   {
     for(int v = 0; v < 8; v++)
     {
-      Blend::hsvToRgb(h * 48, sat[v], 255, &r, &g, &b);
+      Blend::hsvToRgb(h * 48, 255 /*sat[v]*/, 255, &r, &g, &b);
 
       switch(v)
       {
