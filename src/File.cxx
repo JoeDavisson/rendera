@@ -925,8 +925,8 @@ void File::save(Fl_Widget *, void *)
   fc.filter("PNG Image\t*.png\n"
             "JPEG Image\t*.jpg\n"
             "Bitmap Image\t*.bmp\n"
-            "Targa Image\t*.tga\n"
-            "Java Array\t*.java\n");
+            "Targa Image\t*.tga\n");
+//            "Java Array\t*.java\n");
   fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc.directory(save_dir);
@@ -971,9 +971,9 @@ void File::save(Fl_Widget *, void *)
     case 3:
       ret = File::saveTarga(fn);
       break;
-    case 4:
-      ret = File::saveJava(fn);
-      break;
+//    case 4:
+//      ret = File::saveJava(fn);
+ //     break;
     default:
       ret = -1;
   }
