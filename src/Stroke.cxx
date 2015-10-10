@@ -349,6 +349,11 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
     {
       drawBrushLine(x, y, lastx, lasty, 255);
       makeBlitRect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
+
+      // without this slowly-drawn strokes don't look as nice
+      if(brush->aa && ((x == lastx) ^ (y == lasty)))
+        return;
+
       polycachex[polycount] = x;
       polycachey[polycount] = y;
       polycount++;
