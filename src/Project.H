@@ -40,13 +40,6 @@ namespace Project
     THEME_DARK
   };
 
-  enum
-  {
-    MODE_RGB,
-    MODE_INDEXED,
-    MODE_GRAYSCALE
-  };
-
   extern Bitmap *bmp;
   extern Map *map;
 

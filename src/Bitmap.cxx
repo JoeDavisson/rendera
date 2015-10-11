@@ -815,24 +815,9 @@ void Bitmap::pointStretch(Bitmap *dest,
     {
       const int x1 = sx + ((x * bx) >> 8);
       const int c = *(row[y1] + x1);
-      
       const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
 
-      if(Project::mode == Project::MODE_INDEXED)
-      {
-        *p++ = convertFormat(blendFast(checker, pal->data[pal->lookup(c)],
-                                       255 - geta(c)), bgr_order);
-      }
-      else if(Project::mode == Project::MODE_GRAYSCALE)
-      {
-        const int l = getl(c);
-        *p++ = convertFormat(blendFast(checker, makeRgb(l, l, l),
-                             255 - geta(c)), bgr_order);
-      }
-      else
-      {
-        *p++ = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
-      }
+      *p++ = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
     }
   }
 }
@@ -903,20 +888,7 @@ void Bitmap::fastStretch(Bitmap *dest,
       const int checker = ((d_1 >> 4) & 1) ^ ((yd1 >> 4) & 1)
                             ? 0xA0A0A0 : 0x606060;
 
-      if(Project::mode == Project::MODE_INDEXED)
-      {
-        *p = convertFormat(blendFast(checker, pal->data[pal->lookup(*q)],
-                                     255 - geta(*q)), bgr_order);
-      }
-      else if(Project::mode == Project::MODE_GRAYSCALE)
-      {
-        const int l = getl(*q);
-        *p = convertFormat(blendFast(checker, makeRgb(l, l, l), 255 - geta(*q)), bgr_order);
-      }
-      else
-      {
-        *p = convertFormat(blendFast(checker, *q, 255 - geta(*q)), bgr_order);
-      }
+      *p = convertFormat(blendFast(checker, *q, 255 - geta(*q)), bgr_order);
 
       while(e_1 >= 0)
       {

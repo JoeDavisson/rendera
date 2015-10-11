@@ -57,7 +57,6 @@ namespace Project
   SP<Text> text = new Text();
   SP<Fill> fill = new Fill();
 
-  int mode = MODE_RGB;
   int overscroll = 64;
   int theme = THEME_DARK;
   char theme_path[PATH_MAX];
@@ -132,3 +131,4 @@ void Project::resizeImage(int w, int h)
   map = new Map(bmp->w, bmp->h);
   map->clear(0);
 }
+

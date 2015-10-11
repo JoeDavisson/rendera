@@ -88,10 +88,8 @@ namespace Gui
   void checkClearToBlack();
   void checkClearToWhite();
   void checkClearToTransparent();
-  void checkRGB();
-  void checkIndexed();
-  void checkGrayscale();
-  void checkMode();
+  void checkConvertToIndexed();
+  void checkConvertToGrayscale();
 
   Fl_Double_Window *getWindow();
   Fl_Menu_Bar *getMenuBar();
