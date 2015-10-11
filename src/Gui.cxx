@@ -330,47 +330,47 @@ void Gui::init()
   menubar->add("&Palette/&Editor... (Ctrl+E)", 0,
     (Fl_Callback *)Dialog::editor, 0, 0);
 
-  menubar->add("F&X/Normalize", 0,
+  menubar->add("F&X/Color/Normalize", 0,
     (Fl_Callback *)FX::normalize, 0, 0);
-  menubar->add("F&X/Equalize", 0,
+  menubar->add("F&X/Color/Equalize", 0,
     (Fl_Callback *)FX::equalize, 0, 0);
-  menubar->add("F&X/Value Stretch", 0,
+  menubar->add("F&X/Color/Value Stretch", 0,
     (Fl_Callback *)FX::valueStretch, 0, 0);
-  menubar->add("F&X/Saturate", 0,
+  menubar->add("F&X/Color/Saturate", 0,
     (Fl_Callback *)FX::saturate, 0, 0);
-  menubar->add("F&X/Rotate Hue...", 0,
+  menubar->add("F&X/Color/Rotate Hue...", 0,
     (Fl_Callback *)FX::rotateHue, 0, 0);
-  menubar->add("F&X/Invert", 0,
+  menubar->add("F&X/Color/Invert", 0,
     (Fl_Callback *)FX::invert, 0, 0);
-  menubar->add("F&X/Invert Alpha", 0,
+  menubar->add("F&X/Color/Invert Alpha", 0,
     (Fl_Callback *)FX::invertAlpha, 0, 0);
-  menubar->add("F&X/Auto-Correct...", 0,
-    (Fl_Callback *)FX::autoCorrect, 0, 0);
-  menubar->add("F&X/Correction Matrix", 0,
-    (Fl_Callback *)FX::correctionMatrix, 0, 0);
-  menubar->add("F&X/Restore...", 0,
-    (Fl_Callback *)FX::restore, 0, 0);
-  menubar->add("F&X/Remove Dust...", 0,
-    (Fl_Callback *)FX::removeDust, 0, 0);
-  menubar->add("F&X/Desaturate", 0,
+  menubar->add("F&X/Color/Desaturate", 0,
     (Fl_Callback *)FX::desaturate, 0, 0);
-  menubar->add("F&X/Colorize", 0,
+  menubar->add("F&X/Color/Colorize", 0,
     (Fl_Callback *)FX::colorize, 0, 0);
-  menubar->add("F&X/Stained Glass...", 0,
-    (Fl_Callback *)FX::stainedGlass, 0, 0);
-  menubar->add("F&X/Gaussian Blur...", 0,
+  menubar->add("F&X/Filter/Gaussian Blur...", 0,
     (Fl_Callback *)FX::gaussianBlur, 0, 0);
-  menubar->add("F&X/Sharpen...", 0,
+  menubar->add("F&X/Filter/Sharpen...", 0,
     (Fl_Callback *)FX::sharpen, 0, 0);
-  menubar->add("F&X/Unsharp Mask...", 0,
+  menubar->add("F&X/Filter/Unsharp Mask...", 0,
     (Fl_Callback *)FX::unsharpMask, 0, 0);
-  menubar->add("F&X/Convolution Matrix...", 0,
+  menubar->add("F&X/Filter/Convolution Matrix...", 0,
     (Fl_Callback *)FX::convolutionMatrix, 0, 0);
-  menubar->add("F&X/Artistic...", 0,
-    (Fl_Callback *)FX::artistic, 0, 0);
-  menubar->add("F&X/Forward FFT", 0,
+  menubar->add("F&X/Photo/Auto-Correct...", 0,
+    (Fl_Callback *)FX::autoCorrect, 0, 0);
+  menubar->add("F&X/Photo/Correction Matrix", 0,
+    (Fl_Callback *)FX::correctionMatrix, 0, 0);
+  menubar->add("F&X/Photo/Restore...", 0,
+    (Fl_Callback *)FX::restore, 0, 0);
+  menubar->add("F&X/Photo/Remove Dust...", 0,
+    (Fl_Callback *)FX::removeDust, 0, 0);
+  menubar->add("F&X/Artistic/Stained Glass...", 0,
+    (Fl_Callback *)FX::stainedGlass, 0, 0);
+  menubar->add("F&X/Artistic/Painting...", 0,
+    (Fl_Callback *)FX::painting, 0, 0);
+  menubar->add("F&X/FFT/Forward FFT", 0,
     (Fl_Callback *)FX::forwardFFT, 0, 0);
-  menubar->add("F&X/Inverse FFT", 0,
+  menubar->add("F&X/FFT/Inverse FFT", 0,
     (Fl_Callback *)FX::inverseFFT, 0, 0);
 
   menubar->add("&Help/&About...", 0,

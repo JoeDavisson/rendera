@@ -110,8 +110,6 @@ void Project::newImage(int w, int h)
 
   map = new Map(bmp->w, bmp->h);
   map->clear(0);
-
-  Undo::init();
 }
 
 void Project::resizeImage(int w, int h)

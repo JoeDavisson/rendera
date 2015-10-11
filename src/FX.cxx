@@ -2511,7 +2511,7 @@ namespace ConvolutionMatrix
   }
 }
 
-namespace Artistic
+namespace Painting
 {
   namespace Items
   {
@@ -2596,7 +2596,7 @@ namespace Artistic
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(256, 0, "Artistic");
+    Items::dialog = new DialogWindow(256, 0, "Painting");
     Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0, 1, 10);
     y1 += 24 + 8;
     Items::amount->value("3");
@@ -2879,7 +2879,7 @@ void FX::init()
   Sharpen::init();
   UnsharpMask::init();
   ConvolutionMatrix::init();
-  Artistic::init();
+  Painting::init();
 }
 
 void FX::normalize()
@@ -2977,9 +2977,9 @@ void FX::convolutionMatrix()
   ConvolutionMatrix::begin();
 }
 
-void FX::artistic()
+void FX::painting()
 {
-  Artistic::begin();
+  Painting::begin();
 }
 
 void FX::forwardFFT()
