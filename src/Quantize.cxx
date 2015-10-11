@@ -240,7 +240,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   rgba = getRgba(darkest);
   histogram.write(rgba.r, rgba.g, rgba.b, 1.0f);
 
-  // if image uses more than 1/4 of the color cube then
+  // if image uses more than 1/2 of the color cube then
   // reduce table sizes to save time
   int color_metric_count = 0;
 
@@ -250,7 +250,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 
   int max_colors = 4096;
 
-  if(color_metric_count >= 256)
+  if(color_metric_count > 256)
     max_colors = 512;
 
   // color list
