@@ -365,9 +365,6 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 
   pal->max = index;
 
-  // sort palette
-  pal->sort();
-
   // stretch palette
   if(pal->max != size)
   {
@@ -393,9 +390,6 @@ void Quantize::fast(Bitmap *src, Palette *pal, int /* */)
       pal->data[index++] = temp.getpixel(x, y);
 
   pal->max = 256;
-
-  // sort palette
-  pal->sort();
 
   for(int i = 0; i < pal->max - 1; i++)
   {

@@ -41,8 +41,6 @@ public:
   void deleteColor(int);
   void replaceColor(int, int);
   void fillTable();
-//  int lookup(const int &);
-  void sort();
   int load(const char *);
   int save(const char *);
 
@@ -55,7 +53,6 @@ public:
 
   int *data;
   int *table;
-//  Octree *table;
   int max;
 };
 

@@ -28,18 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Palette.H"
 #include "Widget.H"
 
-namespace
-{
-  bool sortByLum(const int &c1, const int &c2)
-  {
-    return getl(c1) < getl(c2);
-  }
-}
-
 Palette::Palette()
 {
   data = new int[256];
-//  table = new Octree();
   table = new int[16777216];
   setDefault();
 }
@@ -175,11 +166,6 @@ void Palette::fillTable()
   // put exact matches back in
   for(int i = 0; i < max; i++)
     table[data[i] & 0xFFFFFF] = i;
-}
-
-void Palette::sort()
-{
-  std::sort(data, data + max, sortByLum);
 }
 
 int Palette::load(const char *fn)
