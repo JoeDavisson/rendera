@@ -300,8 +300,6 @@ void Gui::init()
     (Fl_Callback *)checkIndexed, 0, FL_MENU_RADIO);
   menubar->add("&Mode/Grayscale", 0,
     (Fl_Callback *)checkGrayscale, 0, FL_MENU_RADIO | FL_MENU_DIVIDER);
-  menubar->add("&Mode/Apply Mode to Image...", 0,
-    (Fl_Callback *)checkApplyModeToImage, 0, 0);
 
   menubar->add("&Palette/&Open...", 0,
     (Fl_Callback *)File::loadPalette, 0, 0);
@@ -748,7 +746,10 @@ void Gui::init()
   checkCropValues(0, 0, 0, 0);
   checkOffsetValues(0, 0);
   checkPaintMode();
-  checkRGB();
+
+  setMenuItem("&Mode/RGB");
+  clearMenuItem("&Mode/Indexed");
+  clearMenuItem("&Mode/Grayscale");
 
   // fix certain icons if using a light theme
   if(Project::theme == Project::THEME_LIGHT)
@@ -1303,40 +1304,56 @@ void Gui::checkClearToTransparent()
 
 void Gui::checkRGB()
 {
+  if(Project::mode == Project::MODE_RGB)
+    return;
+
   setMenuItem("&Mode/RGB");
   clearMenuItem("&Mode/Indexed");
   clearMenuItem("&Mode/Grayscale");
 
+  checkMode();
   Project::mode = Project::MODE_RGB;
   view->drawMain(true);
 }
 
 void Gui::checkIndexed()
 {
+  if(Project::mode == Project::MODE_INDEXED)
+    return;
+
   clearMenuItem("&Mode/RGB");
   setMenuItem("&Mode/Indexed");
   clearMenuItem("&Mode/Grayscale");
 
+  checkMode();
   Project::mode = Project::MODE_INDEXED;
   view->drawMain(true);
 }
 
 void Gui::checkGrayscale()
 {
+  if(Project::mode == Project::MODE_GRAYSCALE)
+    return;
+
   clearMenuItem("&Mode/RGB");
   clearMenuItem("&Mode/Indexed");
   setMenuItem("&Mode/Grayscale");
 
+  checkMode();
   Project::mode = Project::MODE_GRAYSCALE;
   view->drawMain(true);
 }
 
-void Gui::checkApplyModeToImage()
+void Gui::checkMode()
 {
   Bitmap *bmp = Project::bmp;
   Palette *pal = Project::palette.get();
 
-  Undo::push();
+  if(Dialog::choice("Change Mode",
+                    "This operation cannot be undone, are you sure?") < 0)
+  {
+    return;
+  }
 
   for(int y = bmp->ct; y <= bmp->cb; y++)
   {
@@ -1363,10 +1380,7 @@ void Gui::checkApplyModeToImage()
     }
   }
 
-  checkRGB();
-  view->drawMain(true);
-  Dialog::message("Apply Mode to Image",
-                  "Image has been converted.\n");
+  Undo::init();
 }
 
 Fl_Double_Window *Gui::getWindow()

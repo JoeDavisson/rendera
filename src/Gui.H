@@ -91,7 +91,7 @@ namespace Gui
   void checkRGB();
   void checkIndexed();
   void checkGrayscale();
-  void checkApplyModeToImage();
+  void checkMode();
 
   Fl_Double_Window *getWindow();
   Fl_Menu_Bar *getMenuBar();

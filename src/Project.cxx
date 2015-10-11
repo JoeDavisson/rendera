@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.H"
 #include "Text.H"
 #include "Tool.H"
+#include "Undo.H"
 
 namespace Project
 {
@@ -110,6 +111,8 @@ void Project::newImage(int w, int h)
 
   map = new Map(bmp->w, bmp->h);
   map->clear(0);
+
+  Undo::init();
 }
 
 void Project::resizeImage(int w, int h)
