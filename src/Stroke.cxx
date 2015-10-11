@@ -554,6 +554,11 @@ void Stroke::end(int x, int y)
     {
       case FREEHAND:
       {
+        polycachex[polycount] = x;
+        polycachey[polycount] = y;
+        polycount++;
+        polycount &= 65535;
+
         if(brush->size == 1)
           map->thick_aa = 1;
 
