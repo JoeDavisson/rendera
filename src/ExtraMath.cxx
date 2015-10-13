@@ -20,11 +20,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <cmath>
 
-#include "RenderaMath.H"
+#include "ExtraMath.H"
 
 // fft routines adapted from those found here:
 // http://www.dspguide.com/ch12/3.htm
-void RenderaMath::forwardFFT(float *real, float *imag, int size)
+void ExtraMath::forwardFFT(float *real, float *imag, int size)
 {
   int j = size / 2;
 
@@ -81,7 +81,7 @@ void RenderaMath::forwardFFT(float *real, float *imag, int size)
   }
 }
 
-void RenderaMath::inverseFFT(float *real, float *imag, int size)
+void ExtraMath::inverseFFT(float *real, float *imag, int size)
 {
   for(int k = 0; k < size; k++)
     imag[k] = -imag[k];

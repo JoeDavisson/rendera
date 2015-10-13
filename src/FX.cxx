@@ -41,7 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Map.H"
 #include "Palette.H"
 #include "Project.H"
-#include "RenderaMath.H"
+#include "ExtraMath.H"
 #include "Quantize.H"
 #include "Separator.H"
 #include "Undo.H"
@@ -932,9 +932,9 @@ namespace Restore
 
     int iter = 0;
 
-    while(std::max(RenderaMath::abs(d_alpha.value[0]),
-                   std::max(RenderaMath::abs(d_alpha.value[1]),
-                            RenderaMath::abs(d_alpha.value[2]))) > 0.02f)
+    while(std::max(ExtraMath::abs(d_alpha.value[0]),
+                   std::max(ExtraMath::abs(d_alpha.value[1]),
+                            ExtraMath::abs(d_alpha.value[2]))) > 0.02f)
     {
       iter++;
       if(iter == 10)
@@ -960,10 +960,10 @@ namespace Restore
                            * (lo / (255.0f * bot) - 1) / logf(bot);
         d_m.value[i] = alpha.value[i] * (hi - 255.0f * top);
 
-        if(RenderaMath::abs(d_alpha.value[i]) > 0.2f * alpha.value[i])
+        if(ExtraMath::abs(d_alpha.value[i]) > 0.2f * alpha.value[i])
         {
           d_alpha.value[i] = 0.2f * alpha.value[i] * d_alpha.value[i]
-                                    / RenderaMath::abs(d_alpha.value[i]);
+                                    / ExtraMath::abs(d_alpha.value[i]);
         }
 
         alpha.value[i] += d_alpha.value[i];
@@ -1023,7 +1023,7 @@ namespace Restore
       iter = 0;
       float sig = 0;
 
-      while(RenderaMath::abs(d_lambda_c) > 1e-4f)
+      while(ExtraMath::abs(d_lambda_c) > 1e-4f)
       {
         iter++;
         if(iter >= 20)
@@ -1770,20 +1770,20 @@ namespace StainedGlass
     {
       if(Items::uniform->value())
       {
-        seedx[i] = RenderaMath::rnd() % bmp->w; 
-        seedy[i] = RenderaMath::rnd() % bmp->h; 
+        seedx[i] = ExtraMath::rnd() % bmp->w; 
+        seedy[i] = ExtraMath::rnd() % bmp->h; 
       }
       else
       {
-        seedx[i] = RenderaMath::rnd() % bmp->w; 
-        seedy[i] = RenderaMath::rnd() % bmp->h; 
+        seedx[i] = ExtraMath::rnd() % bmp->w; 
+        seedy[i] = ExtraMath::rnd() % bmp->h; 
   
         int count = 0;
 
         do
         {
-          seedx[i] = RenderaMath::rnd() % bmp->w; 
-          seedy[i] = RenderaMath::rnd() % bmp->h; 
+          seedx[i] = ExtraMath::rnd() % bmp->w; 
+          seedy[i] = ExtraMath::rnd() % bmp->h; 
           count++;
         }
         while(!isEdge(bmp, seedx[i], seedy[i], div) && count < 10000);
@@ -2267,7 +2267,7 @@ namespace UnsharpMask
         int a = getl(*p);
         int b = getl(*d);
 
-        if(RenderaMath::abs(a - b) >= threshold)
+        if(ExtraMath::abs(a - b) >= threshold)
         {
           int lum = a - (amount * (a - b)); 
           lum = clamp(lum, 255);
@@ -2655,7 +2655,7 @@ namespace ForwardFFT
           imag_row[x] = 0;
         }
 
-        RenderaMath::forwardFFT(&real_row[0], &imag_row[0], w);
+        ExtraMath::forwardFFT(&real_row[0], &imag_row[0], w);
 
         for(int x = 0; x < w; x++)
         {
@@ -2673,7 +2673,7 @@ namespace ForwardFFT
           imag_col[y] = imag[x + w * y];
         }
 
-        RenderaMath::forwardFFT(&real_col[0], &imag_col[0], h);
+        ExtraMath::forwardFFT(&real_col[0], &imag_col[0], h);
 
         for(int y = 0; y < h; y++)
         {
@@ -2798,7 +2798,7 @@ namespace InverseFFT
           imag_row[x] = imag[x + w * y];
         }
 
-        RenderaMath::inverseFFT(&real_row[0], &imag_row[0], w);
+        ExtraMath::inverseFFT(&real_row[0], &imag_row[0], w);
 
         for(int x = 0; x < w; x++)
         {
@@ -2816,7 +2816,7 @@ namespace InverseFFT
           imag_col[y] = imag[x + w * y];
         }
 
-        RenderaMath::inverseFFT(&real_col[0], &imag_col[0], h);
+        ExtraMath::inverseFFT(&real_col[0], &imag_col[0], h);
 
         for(int y = 0; y < h; y++)
         {
@@ -2987,7 +2987,7 @@ void FX::forwardFFT()
   int w = Project::bmp->cw;
   int h = Project::bmp->ch;
 
-  if(RenderaMath::isPowerOfTwo(w) && RenderaMath::isPowerOfTwo(h))
+  if(ExtraMath::isPowerOfTwo(w) && ExtraMath::isPowerOfTwo(h))
   {
     ForwardFFT::begin();
   }
@@ -3002,7 +3002,7 @@ void FX::inverseFFT()
   int w = Project::bmp->cw;
   int h = Project::bmp->ch;
 
-  if(RenderaMath::isPowerOfTwo(w) && RenderaMath::isPowerOfTwo(h))
+  if(ExtraMath::isPowerOfTwo(w) && ExtraMath::isPowerOfTwo(h))
   {
     InverseFFT::begin();
   }

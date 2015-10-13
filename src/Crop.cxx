@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Crop.H"
 #include "Gui.H"
 #include "Map.H"
-#include "RenderaMath.H"
+#include "ExtraMath.H"
 #include "Project.H"
 #include "Stroke.H"
 #include "Tool.H"
@@ -114,25 +114,25 @@ void Crop::push(View *view)
         if(view->imgx < beginx)
         {
           side = 0;
-          offset = RenderaMath::abs(view->imgx - beginx);
+          offset = ExtraMath::abs(view->imgx - beginx);
           resize_started = true;
         }
         else if(view->imgx > lastx)
         {
           side = 1;
-          offset = RenderaMath::abs(view->imgx - lastx);
+          offset = ExtraMath::abs(view->imgx - lastx);
           resize_started = true;
         }
         else if(view->imgy < beginy)
         {
           side = 2;
-          offset = RenderaMath::abs(view->imgy - beginy);
+          offset = ExtraMath::abs(view->imgy - beginy);
           resize_started = true;
         }
         else if(view->imgy > lasty)
         {
           side = 3;
-          offset = RenderaMath::abs(view->imgy - lasty);
+          offset = ExtraMath::abs(view->imgy - lasty);
           resize_started = true;
         }
 

@@ -18,10 +18,10 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef RENDERAMATH_H
-#define RENDERAMATH_H
+#ifndef EXTRAMATH_H
+#define EXTRAMATH_H
 
-namespace RenderaMath
+namespace ExtraMath
 {
   // sign, used by fastStretch in Bitmap.cxx
   template <typename T>

@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Clone.H"
 #include "Inline.H"
 #include "Map.H"
-#include "RenderaMath.H"
+#include "ExtraMath.H"
 #include "Project.H"
 #include "Stroke.H"
 
@@ -42,7 +42,7 @@ namespace
     const int dx = x1 - *x2;
     const int dy = y1 - *y2;
 
-    if(RenderaMath::abs(dy) > RenderaMath::abs(dx))
+    if(ExtraMath::abs(dy) > ExtraMath::abs(dx))
     {
       switch(px + py)
       {
