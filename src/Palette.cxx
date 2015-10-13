@@ -31,13 +31,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 Palette::Palette()
 {
   data = new int[256];
-  table = new int[16777216];
+  table = new Octree();
   setDefault();
 }
 
 Palette::~Palette()
 {
-  delete[] table;
+  delete table;
   delete[] data;
 }
 
@@ -132,9 +132,13 @@ void Palette::replaceColor(int color, int index)
 
 void Palette::fillTable()
 {
+  delete table;
+  table = new Octree();
+
   const int step = 4;
 
-  // fill lookup table in 4x4 blocks to save time
+  // each 4x4 block of the color cube gets a palette entry
+  // close enough and avoids a huge octree
   for(int b = 0; b <= 256 - step; b += step)
   {
     for(int g = 0; g <= 256 - step; g += step)
@@ -155,17 +159,20 @@ void Palette::fillTable()
           }
         }
 
-        for(int k = b; k < b + step; k++)
-          for(int j = g; j < g + step; j++)
-            for(int i = r; i < r + step; i++)
-              table[makeRgb24(i, j, k)] = use;
+        table->writePath(r, g, b, use);
       }
     }
   }
 
   // put exact matches back in
   for(int i = 0; i < max; i++)
-    table[data[i] & 0xFFFFFF] = i;
+    table->writePath(getr(data[i]), getg(data[i]), getb(data[i]), i);
+}
+
+int Palette::lookup(const int &c)
+{
+  rgba_type rgba = getRgba(c);
+  return table->read(rgba.r, rgba.g, rgba.b);
 }
 
 int Palette::load(const char *fn)
