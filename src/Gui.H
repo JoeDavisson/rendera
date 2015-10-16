@@ -71,6 +71,7 @@ namespace Gui
   void checkConstrain(Widget *, void *);
   void checkKnifeCrop();
   void checkKnifeDuplicate();
+  void checkKnifeReset();
   void checkKnifeValues(int, int, int, int);
   void checkOffsetValues(int, int);
   void textStartOver();

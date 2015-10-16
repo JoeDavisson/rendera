@@ -121,6 +121,7 @@ namespace
   StaticText *knife_h;
   Fl_Button *knife_crop;
   Fl_Button *knife_duplicate;
+  Fl_Button *knife_reset;
 
   StaticText *offset_x;
   StaticText *offset_y;
@@ -543,10 +544,15 @@ void Gui::init()
   knife_h = new StaticText(knife, 24, y1, 72, 24, 0);
   y1 += 24 + 6;
   knife_crop = new Fl_Button(knife->x() + 12, knife->y() + y1, 80, 32, "Crop");
-  y1 += 32 + 8;
   knife_crop->callback((Fl_Callback *)checkKnifeCrop);
+  y1 += 32 + 8;
   knife_duplicate = new Fl_Button(knife->x() + 12, knife->y() + y1, 80, 32, "Duplicate");
   knife_duplicate->callback((Fl_Callback *)checkKnifeDuplicate);
+  y1 += 32 + 6;
+  new Separator(knife, 2, y1, 110, 2, "");
+  y1 += 8;
+  knife_reset = new Fl_Button(knife->x() + 12, knife->y() + y1, 80, 32, "Reset");
+  knife_reset->callback((Fl_Callback *)checkKnifeReset);
   y1 += 32 + 8;
   knife->resizable(0);
   knife->end();
@@ -1153,6 +1159,11 @@ void Gui::checkKnifeCrop()
 void Gui::checkKnifeDuplicate()
 {
   Project::tool->done(view, 1);
+}
+
+void Gui::checkKnifeReset()
+{
+  Project::tool->done(view, 2);
 }
 
 void Gui::checkKnifeValues(int x, int y, int w, int h)

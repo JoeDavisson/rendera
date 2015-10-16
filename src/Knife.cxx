@@ -119,6 +119,9 @@ namespace
     if(state == 3)
       return;
 
+    Stroke *stroke = Project::stroke.get();
+    drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
+
     Undo::push();
     state = 3;
 //    active = false;
@@ -334,6 +337,9 @@ void Knife::done(View *view, int mode)
     case 1:
       duplicate(view);
       break;
+    case 2:
+      reset();
+      break;
   }
 }
 
@@ -361,5 +367,7 @@ void Knife::reset()
 {
   active = false;
   state = 0;
+  Gui::checkKnifeValues(0, 0, 0, 0);
+  Gui::getView()->drawMain(true);
 }
 
