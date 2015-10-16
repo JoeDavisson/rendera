@@ -302,6 +302,7 @@ int View::handle(int event)
               ox = Project::bmp->cr;
             if(oy > Project::bmp->cb)
               oy = Project::bmp->cb;
+            ignore_tool = true;
             drawMain(true);
           }
 
