@@ -122,7 +122,6 @@ namespace
     Stroke *stroke = Project::stroke.get();
     drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
 
-    Undo::push();
     state = 3;
 //    active = false;
     absrect(&beginx, &beginy, &lastx, &lasty);
@@ -204,6 +203,7 @@ void Knife::push(View *view)
   }
   else if(state == 3)
   {
+    Undo::push();
     bmp->blit(Project::bmp,
               0, 0,
               view->imgx - bmp->w / 2, view->imgy - bmp->h / 2,
