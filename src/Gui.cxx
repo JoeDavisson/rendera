@@ -546,6 +546,7 @@ void Gui::init()
   y1 += 32 + 8;
   knife_crop->callback((Fl_Callback *)checkKnifeCrop);
   knife_duplicate = new Fl_Button(knife->x() + 12, knife->y() + y1, 80, 32, "Duplicate");
+  knife_duplicate->callback((Fl_Callback *)checkKnifeDuplicate);
   y1 += 32 + 8;
   knife->resizable(0);
   knife->end();
@@ -1146,7 +1147,12 @@ void Gui::checkConstrain(Widget *, void *var)
 
 void Gui::checkKnifeCrop()
 {
-  Project::tool->done(view);
+  Project::tool->done(view, 0);
+}
+
+void Gui::checkKnifeDuplicate()
+{
+  Project::tool->done(view, 1);
 }
 
 void Gui::checkKnifeValues(int x, int y, int w, int h)

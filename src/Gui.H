@@ -70,6 +70,7 @@ namespace Gui
   void checkOrigin(Widget *, void *);
   void checkConstrain(Widget *, void *);
   void checkKnifeCrop();
+  void checkKnifeDuplicate();
   void checkKnifeValues(int, int, int, int);
   void checkOffsetValues(int, int);
   void textStartOver();

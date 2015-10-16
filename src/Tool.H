@@ -52,7 +52,7 @@ public:
   virtual void move(View *) = 0;
 
   // call this to finish tool from external trigger
-  virtual void done(View *) = 0;
+  virtual void done(View *, int) = 0;
 
   // call this to redraw tool
   virtual void redraw(View *) = 0;

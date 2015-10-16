@@ -35,13 +35,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  int beginx = 0, beginy = 0, lastx = 0, lasty = 0;
+  int beginx = 0, beginy = 0, oldx = 0, oldy = 0, lastx = 0, lasty = 0;
   int state = 0;
   bool active = false;
   bool drag_started = false;
   bool resize_started = false;
   int side = 0;
   int offset = 0;
+  Bitmap *bmp = new Bitmap(8, 8);
 
   bool inbox(int x, int y, int x1, int y1, int x2, int y2)
   {
@@ -54,7 +55,7 @@ namespace
       return 1;
     else
       return 0;
-}
+  }
 
   void absrect(int *x1, int *y1, int *x2, int *y2)
   {
@@ -78,6 +79,64 @@ namespace
     absrect(&x1, &y1, &x2, &y2);
     Project::map->rect(x1, y1, x2, y2, color);
     stroke->size(x1, y1, x2, y2);
+  }
+
+  void crop(View *view)
+  {
+    if(state == 3)
+      return;
+
+    Undo::push();
+    state = 0;
+    active = false;
+    absrect(&beginx, &beginy, &lastx, &lasty);
+
+    int w = (lastx - beginx) + 1;
+    int h = (lasty - beginy) + 1;
+
+    if(w < 1)
+      w = 1;
+    if(h < 1)
+      h = 1;
+
+    Bitmap *temp = new Bitmap(w, h);
+    Project::bmp->blit(temp, beginx, beginy, 0, 0, w, h);
+
+    Project::newImage(w, h);
+    temp->blit(Project::bmp, 0, 0,
+               Project::overscroll, Project::overscroll, w, h);
+    delete temp;
+
+    view->zoom = 1;
+    view->ox = 0;
+    view->oy = 0;
+    view->drawMain(true);
+    Gui::checkKnifeValues(0, 0, 0, 0);
+  }
+
+  void duplicate(View *)
+  {
+    if(state == 3)
+      return;
+
+    Undo::push();
+    state = 3;
+//    active = false;
+    absrect(&beginx, &beginy, &lastx, &lasty);
+
+    int w = (lastx - beginx) + 1;
+    int h = (lasty - beginy) + 1;
+
+    if(w < 1)
+      w = 1;
+    if(h < 1)
+      h = 1;
+
+    delete(bmp);
+    bmp = new Bitmap(w, h);
+    Project::bmp->blit(bmp, beginx, beginy, 0, 0, w, h);
+
+    Gui::checkKnifeValues(0, 0, 0, 0);
   }
 }
 
@@ -139,6 +198,13 @@ void Knife::push(View *view)
         resize_started = true;
       }
     }
+  }
+  else if(state == 3)
+  {
+    bmp->blit(Project::bmp,
+              0, 0,
+              view->imgx - bmp->w / 2, view->imgy - bmp->h / 2,
+              bmp->w, bmp->h);
   }
 }
 
@@ -233,41 +299,42 @@ void Knife::release(View *view)
   Gui::checkKnifeValues(x, y, w, h);
 }
 
-void Knife::move(View *)
+void Knife::move(View *view)
 {
+  Stroke *stroke = Project::stroke.get();
+
+  if(state == 3)
+  {
+    beginx = view->imgx - bmp->w / 2;
+    beginy = view->imgy - bmp->h / 2;
+
+    drawHandles(stroke, oldx, oldy, lastx, lasty, 0);
+    drawHandles(stroke, beginx, beginy,
+                beginx + bmp->w - 1, beginy + bmp->h - 1, 255);
+
+    oldx = beginx;
+    oldy = beginy;
+    lastx = beginx + bmp->w - 1;
+    lasty = beginy + bmp->h - 1;
+
+    redraw(view);
+  }
 }
 
-void Knife::done(View *view)
+void Knife::done(View *view, int mode)
 {
   if(state == 0)
     return;
 
-  Undo::push();
-  state = 0;
-  active = false;
-  absrect(&beginx, &beginy, &lastx, &lasty);
-
-  int w = (lastx - beginx) + 1;
-  int h = (lasty - beginy) + 1;
-
-  if(w < 1)
-    w = 1;
-  if(h < 1)
-    h = 1;
-
-  Bitmap *temp = new Bitmap(w, h);
-  Project::bmp->blit(temp, beginx, beginy, 0, 0, w, h);
-
-  Project::newImage(w, h);
-  temp->blit(Project::bmp, 0, 0,
-             Project::overscroll, Project::overscroll, w, h);
-  delete temp;
-
-  view->zoom = 1;
-  view->ox = 0;
-  view->oy = 0;
-  view->drawMain(true);
-  Gui::checkKnifeValues(0, 0, 0, 0);
+  switch(mode)
+  {
+    case 0:
+      crop(view);
+      break;
+    case 1:
+      duplicate(view);
+      break;
+  }
 }
 
 void Knife::redraw(View *view)
@@ -295,5 +362,4 @@ void Knife::reset()
   active = false;
   state = 0;
 }
-
 

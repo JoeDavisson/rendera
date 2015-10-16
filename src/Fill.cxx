@@ -80,7 +80,7 @@ void Fill::move(View *)
 {
 }
 
-void Fill::done(View *)
+void Fill::done(View *, int)
 {
 }
 

@@ -143,7 +143,7 @@ void Paint::move(View *view)
   }
 }
 
-void Paint::done(View *)
+void Paint::done(View *, int)
 {
 }
 

@@ -204,7 +204,7 @@ void Text::move(View *view)
   redraw(view);
 }
 
-void Text::done(View*)
+void Text::done(View *, int)
 {
   if(temp)
   {

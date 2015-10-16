@@ -103,7 +103,7 @@ void Offset::move(View *)
 {
 }
 
-void Offset::done(View *)
+void Offset::done(View *, int)
 {
   if(offset_buffer)
     delete offset_buffer;
