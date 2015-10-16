@@ -529,7 +529,7 @@ void Gui::init()
   // knife
   knife = new Group(48, top->h() + menubar->h(),
                    112, window->h() - top->h() - menubar->h() - status->h(),
-                   "Knife");
+                   "Selection");
   y1 = 20;
   new StaticText(knife, 8, y1, 32, 24, "X:");
   knife_x = new StaticText(knife, 24, y1, 72, 24, 0);
