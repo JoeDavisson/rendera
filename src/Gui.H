@@ -69,8 +69,8 @@ namespace Gui
   void checkMirror(Widget *, void *);
   void checkOrigin(Widget *, void *);
   void checkConstrain(Widget *, void *);
-  void checkCropDo();
-  void checkCropValues(int, int, int, int);
+  void checkKnifeCrop();
+  void checkKnifeValues(int, int, int, int);
   void checkOffsetValues(int, int);
   void textStartOver();
   const char *getTextInput();

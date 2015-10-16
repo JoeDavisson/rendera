@@ -210,7 +210,7 @@ int View::handle(int event)
         case Tool::GETCOLOR:
           window()->cursor(FL_CURSOR_CROSS);
           break;
-        case Tool::CROP:
+        case Tool::KNIFE:
           window()->cursor(FL_CURSOR_CROSS);
           break;
         case Tool::OFFSET:

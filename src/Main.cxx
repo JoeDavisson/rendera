@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Brush.H"
-#include "Crop.H"
+#include "Knife.H"
 #include "Dialog.H"
 #include "FX.H"
 #include "File.H"

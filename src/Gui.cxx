@@ -76,7 +76,7 @@ namespace
   Group *top;
   Group *tools;
   Group *paint;
-  Group *crop;
+  Group *knife;
   Group *getcolor;
   Group *offset;
   Group *text;
@@ -115,11 +115,12 @@ namespace
 
   Widget *getcolor_color;
 
-  StaticText *crop_x;
-  StaticText *crop_y;
-  StaticText *crop_w;
-  StaticText *crop_h;
-  Fl_Button *crop_do;
+  StaticText *knife_x;
+  StaticText *knife_y;
+  StaticText *knife_w;
+  StaticText *knife_h;
+  Fl_Button *knife_crop;
+  Fl_Button *knife_duplicate;
 
   StaticText *offset_x;
   StaticText *offset_y;
@@ -524,27 +525,30 @@ void Gui::init()
   paint->resizable(0);
   paint->end();
 
-  // crop
-  crop = new Group(48, top->h() + menubar->h(),
+  // knife
+  knife = new Group(48, top->h() + menubar->h(),
                    112, window->h() - top->h() - menubar->h() - status->h(),
-                   "Crop");
+                   "Knife");
   y1 = 20;
-  new StaticText(crop, 8, y1, 32, 24, "X:");
-  crop_x = new StaticText(crop, 24, y1, 72, 24, 0);
+  new StaticText(knife, 8, y1, 32, 24, "X:");
+  knife_x = new StaticText(knife, 24, y1, 72, 24, 0);
   y1 += 24 + 6;
-  new StaticText(crop, 8, y1, 32, 24, "Y:");
-  crop_y = new StaticText(crop, 24, y1, 72, 24, 0);
+  new StaticText(knife, 8, y1, 32, 24, "Y:");
+  knife_y = new StaticText(knife, 24, y1, 72, 24, 0);
   y1 += 24 + 6;
-  new StaticText(crop, 8, y1, 32, 24, "W:");
-  crop_w = new StaticText(crop, 24, y1, 72, 24, 0);
+  new StaticText(knife, 8, y1, 32, 24, "W:");
+  knife_w = new StaticText(knife, 24, y1, 72, 24, 0);
   y1 += 24 + 6;
-  new StaticText(crop, 8, y1, 32, 24, "H:");
-  crop_h = new StaticText(crop, 24, y1, 72, 24, 0);
+  new StaticText(knife, 8, y1, 32, 24, "H:");
+  knife_h = new StaticText(knife, 24, y1, 72, 24, 0);
   y1 += 24 + 6;
-  crop_do = new Fl_Button(crop->x() + 16, crop->y() + y1, 72, 32, "Crop");
-  crop_do->callback((Fl_Callback *)checkCropDo);
-  crop->resizable(0);
-  crop->end();
+  knife_crop = new Fl_Button(knife->x() + 12, knife->y() + y1, 80, 32, "Crop");
+  y1 += 32 + 8;
+  knife_crop->callback((Fl_Callback *)checkKnifeCrop);
+  knife_duplicate = new Fl_Button(knife->x() + 12, knife->y() + y1, 80, 32, "Duplicate");
+  y1 += 32 + 8;
+  knife->resizable(0);
+  knife->end();
 
   // getcolor
   getcolor = new Group(48, top->h() + menubar->h(),
@@ -711,7 +715,7 @@ void Gui::init()
   group_left->add(tools);
   group_left->add(paint);
   group_left->add(getcolor);
-  group_left->add(crop);
+  group_left->add(knife);
   group_left->add(offset);
   group_left->add(text);
   group_left->end();
@@ -734,7 +738,7 @@ void Gui::init()
   drawPalette();
   tool->do_callback();
   checkZoom();
-  checkCropValues(0, 0, 0, 0);
+  checkKnifeValues(0, 0, 0, 0);
   checkOffsetValues(0, 0);
   checkPaintMode();
 
@@ -975,7 +979,7 @@ void Gui::checkTool(Widget *, void *var)
 {
   paint->hide();
   getcolor->hide();
-  crop->hide();
+  knife->hide();
   offset->hide();
   text->hide();
   fill->hide();
@@ -994,9 +998,9 @@ void Gui::checkTool(Widget *, void *var)
       getcolor->show();
       updateInfo((char *)"Click to grab a color from the image.");
       break;
-    case Tool::CROP:
-      Project::setTool(Tool::CROP);
-      crop->show();
+    case Tool::KNIFE:
+      Project::setTool(Tool::KNIFE);
+      knife->show();
       updateInfo((char *)"Draw a box, then click inside box to move, outside to change size.");
       break;
     case Tool::OFFSET:
@@ -1140,30 +1144,30 @@ void Gui::checkConstrain(Widget *, void *var)
   Project::stroke->constrain = *(int *)var;
 }
 
-void Gui::checkCropDo()
+void Gui::checkKnifeCrop()
 {
   Project::tool->done(view);
 }
 
-void Gui::checkCropValues(int x, int y, int w, int h)
+void Gui::checkKnifeValues(int x, int y, int w, int h)
 {
   char s[256];
 
   snprintf(s, sizeof(s), "(%d)", x);
-  crop_x->copy_label(s);
-  crop_x->redraw();
+  knife_x->copy_label(s);
+  knife_x->redraw();
 
   snprintf(s, sizeof(s), "(%d)", y);
-  crop_y->copy_label(s);
-  crop_y->redraw();
+  knife_y->copy_label(s);
+  knife_y->redraw();
 
   snprintf(s, sizeof(s), "(%d)", w);
-  crop_w->copy_label(s);
-  crop_w->redraw();
+  knife_w->copy_label(s);
+  knife_w->redraw();
 
   snprintf(s, sizeof(s), "(%d)", h);
-  crop_h->copy_label(s);
-  crop_h->redraw();
+  knife_h->copy_label(s);
+  knife_h->redraw();
 }
 
 void Gui::checkOffsetValues(int x, int y)

@@ -32,7 +32,7 @@ public:
   {
     PAINT,
     GETCOLOR,
-    CROP,
+    KNIFE,
     OFFSET,
     TEXT,
     FILL

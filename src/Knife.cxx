@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cstdlib>
 
 #include "Bitmap.H"
-#include "Crop.H"
+#include "Knife.H"
 #include "Gui.H"
 #include "Map.H"
 #include "ExtraMath.H"
@@ -81,15 +81,15 @@ namespace
   }
 }
 
-Crop::Crop()
+Knife::Knife()
 {
 }
 
-Crop::~Crop()
+Knife::~Knife()
 {
 }
 
-void Crop::push(View *view)
+void Knife::push(View *view)
 {
   if(state == 0)
   {
@@ -142,7 +142,7 @@ void Crop::push(View *view)
   }
 }
 
-void Crop::drag(View *view)
+void Knife::drag(View *view)
 {
   Stroke *stroke = Project::stroke.get();
 
@@ -211,10 +211,10 @@ void Crop::drag(View *view)
   const int w = abs(lastx - beginx) + 1;
   const int h = abs(lasty - beginy) + 1;
 
-  Gui::checkCropValues(x, y, w, h);
+  Gui::checkKnifeValues(x, y, w, h);
 }
 
-void Crop::release(View *view)
+void Knife::release(View *view)
 {
   if(state == 1)
     state = 2;
@@ -230,14 +230,14 @@ void Crop::release(View *view)
   const int w = abs(lastx - beginx) + 1;
   const int h = abs(lasty - beginy) + 1;
 
-  Gui::checkCropValues(x, y, w, h);
+  Gui::checkKnifeValues(x, y, w, h);
 }
 
-void Crop::move(View *)
+void Knife::move(View *)
 {
 }
 
-void Crop::done(View *view)
+void Knife::done(View *view)
 {
   if(state == 0)
     return;
@@ -267,10 +267,10 @@ void Crop::done(View *view)
   view->ox = 0;
   view->oy = 0;
   view->drawMain(true);
-  Gui::checkCropValues(0, 0, 0, 0);
+  Gui::checkKnifeValues(0, 0, 0, 0);
 }
 
-void Crop::redraw(View *view)
+void Knife::redraw(View *view)
 {
   Stroke *stroke = Project::stroke.get();
 
@@ -285,12 +285,12 @@ void Crop::redraw(View *view)
   }
 }
 
-bool Crop::isActive()
+bool Knife::isActive()
 {
   return active;
 }
 
-void Crop::reset()
+void Knife::reset()
 {
   active = false;
   state = 0;
