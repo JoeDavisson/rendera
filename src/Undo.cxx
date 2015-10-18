@@ -117,6 +117,7 @@ void Undo::pop()
 
   undo_stack[undo_current]->blit(Project::bmp, 0, 0, 0, 0, w, h);
 
+  Gui::getView()->ignore_tool = true;
   Gui::getView()->drawMain(true);
 }
 
@@ -173,6 +174,7 @@ void Undo::popRedo()
 
   redo_stack[redo_current]->blit(Project::bmp, 0, 0, 0, 0, w, h);
 
+  Gui::getView()->ignore_tool = true;
   Gui::getView()->drawMain(true);
 }
 

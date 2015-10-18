@@ -275,7 +275,6 @@ void Selection::drag(View *view)
   }
   else if(state == 3)
   {
-    Undo::push();
     const int w = Project::brush_bmp->w;
     const int h = Project::brush_bmp->h;
 
