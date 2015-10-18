@@ -118,11 +118,7 @@ namespace
     if(state == 3)
       return;
 
-//    Stroke *stroke = Project::stroke.get();
-//    drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
-
     state = 3;
-//    absrect(&beginx, &beginy, &lastx, &lasty);
 
     int w = (lastx - beginx) + 1;
     int h = (lasty - beginy) + 1;
@@ -333,30 +329,12 @@ void Selection::move(View *view)
     const int y2 = y1 + h - 1;
 
     stroke->size(x1, y1, x2, y2);
-//    stroke->makeBlitRect(x1, y1, x2, y2, view->ox, view->oy, 0, view->zoom);
 
-    view->drawMain(true);
+    view->drawMain(false);
     stroke->previewBrush(view->backbuf, view->ox, view->oy, view->zoom,
                          view->bgr_order);
     view->ignore_tool = true;
     view->redraw();
-/*
-    const int w = Project::brush_bmp->w;
-    const int h = Project::brush_bmp->h;
-
-    beginx = view->imgx - w / 2;
-    beginy = view->imgy - h / 2;
-
-    drawHandles(stroke, oldx, oldy, lastx, lasty, 0);
-    drawHandles(stroke, beginx, beginy, beginx + w - 1, beginy + h - 1, 255);
-
-    oldx = beginx;
-    oldy = beginy;
-    lastx = beginx + w - 1;
-    lasty = beginy + h - 1;
-
-    redraw(view);
-*/
   }
 }
 
@@ -381,9 +359,15 @@ void Selection::done(View *view, int mode)
 
 void Selection::redraw(View *view)
 {
+  if(state == 3)
+  {
+    move(view);
+    return;
+  }
+
   Stroke *stroke = Project::stroke.get();
 
-  if(active && state != 3)
+  if(active)
   {
     active = false;
     drawHandles(stroke, beginx, beginy, lastx, lasty, 255);
