@@ -837,3 +837,50 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
   }
 }
 
+// preview brush
+void Stroke::previewBrush(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
+{
+  Map *map = Project::map;
+
+  clip();
+
+  ox *= zoom;
+  oy *= zoom;
+
+  float yy1 = (float)y1 * zoom;
+  float yy2 = yy1 + zoom - 1;
+
+  // prevent overun when zoomed out
+  if(x2 > map->w - 2)
+    x2 = map->w - 2;
+  if(y2 > map->h - 2)
+    y2 = map->h - 2;
+
+  int sy = 0;
+
+  for(int y = y1; y <= y2; y++)
+  {
+    unsigned char *p = map->row[y] + x1;
+    float xx1 = (float)x1 * zoom;
+    float xx2 = xx1 + zoom - 1;
+
+    int sx = 0;
+
+    for(int x = x1; x <= x2; x++)
+    {
+      const int c = Project::brush_bmp->getpixel(sx, sy);
+      const int c1 = convertFormat(c, bgr_order);
+      backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
+              c1 | 0xFF000000, scaleVal(255 - geta(c), Project::brush->trans));
+
+      xx1 += zoom;
+      xx2 += zoom;
+      sx++;
+    }
+
+    yy1 += zoom;
+    yy2 += zoom;
+    sy++;
+  }
+}
+

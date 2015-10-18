@@ -808,7 +808,8 @@ void Bitmap::drawBrush(Bitmap *dest,
     for(int x = 0; x < ww; x++)
     {
       const int c = getpixel(sx + x, sy + y);
-      dest->setpixel(dx + x, dy + y, c | 0xFF000000, scaleVal(255 - geta(c), Project::brush->trans));
+      dest->setpixel(dx + x, dy + y, c | 0xFF000000,
+                     scaleVal(255 - geta(c), Project::brush->trans));
     }
   }
 

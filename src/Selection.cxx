@@ -118,11 +118,11 @@ namespace
     if(state == 3)
       return;
 
-    Stroke *stroke = Project::stroke.get();
-    drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
+//    Stroke *stroke = Project::stroke.get();
+//    drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
 
     state = 3;
-    absrect(&beginx, &beginy, &lastx, &lasty);
+//    absrect(&beginx, &beginy, &lastx, &lasty);
 
     int w = (lastx - beginx) + 1;
     int h = (lasty - beginy) + 1;
@@ -207,6 +207,9 @@ void Selection::push(View *view)
 
     Project::brush_bmp->drawBrush(Project::bmp,
                0, 0, view->imgx - w / 2, view->imgy - h / 2, w, h);
+
+    view->ignore_tool = true;
+    view->drawMain(true);
   }
 }
 
@@ -225,6 +228,8 @@ void Selection::drag(View *view)
     view->drawMain(false);
     stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
     view->redraw();
+
+    redraw(view);
   }
   else if(state == 2)
   {
@@ -269,6 +274,8 @@ void Selection::drag(View *view)
           break;
       }
     }
+
+    redraw(view);
   }
   else if(state == 3)
   {
@@ -278,9 +285,9 @@ void Selection::drag(View *view)
 
     Project::brush_bmp->drawBrush(Project::bmp,
                0, 0, view->imgx - w / 2, view->imgy - h / 2, w, h);
+    view->ignore_tool = true;
+    view->drawMain(true);
   }
-
-  redraw(view);
 
   const int overscroll = Project::overscroll;
   const int x = beginx - overscroll;
@@ -299,6 +306,7 @@ void Selection::release(View *view)
   drag_started = false;
   resize_started = false;
   absrect(&beginx, &beginy, &lastx, &lasty);
+
   redraw(view);
 
   const int overscroll = Project::overscroll;
@@ -319,6 +327,23 @@ void Selection::move(View *view)
     const int w = Project::brush_bmp->w;
     const int h = Project::brush_bmp->h;
 
+    const int x1 = view->imgx - w / 2;
+    const int y1 = view->imgy - h / 2;
+    const int x2 = x1 + w - 1;
+    const int y2 = y1 + h - 1;
+
+    stroke->size(x1, y1, x2, y2);
+//    stroke->makeBlitRect(x1, y1, x2, y2, view->ox, view->oy, 0, view->zoom);
+
+    view->drawMain(true);
+    stroke->previewBrush(view->backbuf, view->ox, view->oy, view->zoom,
+                         view->bgr_order);
+    view->ignore_tool = true;
+    view->redraw();
+/*
+    const int w = Project::brush_bmp->w;
+    const int h = Project::brush_bmp->h;
+
     beginx = view->imgx - w / 2;
     beginy = view->imgy - h / 2;
 
@@ -331,6 +356,7 @@ void Selection::move(View *view)
     lasty = beginy + h - 1;
 
     redraw(view);
+*/
   }
 }
 
@@ -357,7 +383,7 @@ void Selection::redraw(View *view)
 {
   Stroke *stroke = Project::stroke.get();
 
-  if(active)
+  if(active && state != 3)
   {
     active = false;
     drawHandles(stroke, beginx, beginy, lastx, lasty, 255);
