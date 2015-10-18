@@ -27,26 +27,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <FL/Fl_Shared_Image.H>
 
-#include "Bitmap.H"
 #include "Blend.H"
-#include "Brush.H"
-#include "Knife.H"
 #include "Dialog.H"
-#include "FX.H"
 #include "File.H"
-#include "GetColor.H"
+#include "FX.H"
 #include "Gui.H"
 #include "Inline.H"
-#include "Map.H"
-#include "Offset.H"
-#include "Paint.H"
-#include "Palette.H"
 #include "Project.H"
-#include "Text.H"
-#include "Tool.H"
 #include "Transform.H"
 #include "Undo.H"
-#include "Widget.H"
 
 namespace
 {

@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Brush.H"
-#include "Knife.H"
+#include "Selection.H"
 #include "Fill.H"
 #include "GetColor.H"
 #include "Inline.H"
@@ -52,7 +52,7 @@ namespace Project
   Tool *tool = 0;
   SP<Paint> paint = new Paint();
   SP<GetColor> getcolor = new GetColor();
-  SP<Knife> knife = new Knife();
+  SP<Selection> selection = new Selection();
   SP<Offset> offset = new Offset();
   SP<Text> text = new Text();
   SP<Fill> fill = new Fill();
@@ -81,7 +81,7 @@ void Project::setTool(int num)
       tool = getcolor.get(); 
       break;
     case Tool::KNIFE:
-      tool = knife.get(); 
+      tool = selection.get(); 
       break;
     case Tool::OFFSET:
       tool = offset.get(); 

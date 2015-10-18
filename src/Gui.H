@@ -69,10 +69,10 @@ namespace Gui
   void checkMirror(Widget *, void *);
   void checkOrigin(Widget *, void *);
   void checkConstrain(Widget *, void *);
-  void checkKnifeCrop();
-  void checkKnifeDuplicate();
-  void checkKnifeReset();
-  void checkKnifeValues(int, int, int, int);
+  void checkSelectionCrop();
+  void checkSelectionDuplicate();
+  void checkSelectionReset();
+  void checkSelectionValues(int, int, int, int);
   void checkOffsetValues(int, int);
   void textStartOver();
   const char *getTextInput();

@@ -18,18 +18,18 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef KNIFE_H
-#define KNIFE_H
+#ifndef SELECTION_H
+#define SELECTION_H
 
 #include "Tool.H"
 
 class View;
 
-class Knife : public Tool
+class Selection : public Tool
 {
 public:
-  Knife();
-  ~Knife();
+  Selection();
+  ~Selection();
 
   void push(View *);
   void drag(View *);

@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cstdlib>
 
 #include "Bitmap.H"
-#include "Knife.H"
+#include "Selection.H"
 #include "Gui.H"
 #include "Map.H"
 #include "ExtraMath.H"
@@ -111,7 +111,7 @@ namespace
     view->ox = 0;
     view->oy = 0;
     view->drawMain(true);
-    Gui::checkKnifeValues(0, 0, 0, 0);
+    Gui::checkSelectionValues(0, 0, 0, 0);
   }
 
   void duplicate(View *)
@@ -138,19 +138,19 @@ namespace
     bmp = new Bitmap(w, h);
     Project::bmp->blit(bmp, beginx, beginy, 0, 0, w, h);
 
-    Gui::checkKnifeValues(0, 0, 0, 0);
+    Gui::checkSelectionValues(0, 0, 0, 0);
   }
 }
 
-Knife::Knife()
+Selection::Selection()
 {
 }
 
-Knife::~Knife()
+Selection::~Selection()
 {
 }
 
-void Knife::push(View *view)
+void Selection::push(View *view)
 {
   if(state == 0)
   {
@@ -211,7 +211,7 @@ void Knife::push(View *view)
   }
 }
 
-void Knife::drag(View *view)
+void Selection::drag(View *view)
 {
   Stroke *stroke = Project::stroke.get();
 
@@ -280,10 +280,10 @@ void Knife::drag(View *view)
   const int w = abs(lastx - beginx) + 1;
   const int h = abs(lasty - beginy) + 1;
 
-  Gui::checkKnifeValues(x, y, w, h);
+  Gui::checkSelectionValues(x, y, w, h);
 }
 
-void Knife::release(View *view)
+void Selection::release(View *view)
 {
   if(state == 1)
     state = 2;
@@ -299,10 +299,10 @@ void Knife::release(View *view)
   const int w = abs(lastx - beginx) + 1;
   const int h = abs(lasty - beginy) + 1;
 
-  Gui::checkKnifeValues(x, y, w, h);
+  Gui::checkSelectionValues(x, y, w, h);
 }
 
-void Knife::move(View *view)
+void Selection::move(View *view)
 {
   Stroke *stroke = Project::stroke.get();
 
@@ -324,7 +324,7 @@ void Knife::move(View *view)
   }
 }
 
-void Knife::done(View *view, int mode)
+void Selection::done(View *view, int mode)
 {
   if(state == 0)
     return;
@@ -343,7 +343,7 @@ void Knife::done(View *view, int mode)
   }
 }
 
-void Knife::redraw(View *view)
+void Selection::redraw(View *view)
 {
   Stroke *stroke = Project::stroke.get();
 
@@ -358,16 +358,16 @@ void Knife::redraw(View *view)
   }
 }
 
-bool Knife::isActive()
+bool Selection::isActive()
 {
   return active;
 }
 
-void Knife::reset()
+void Selection::reset()
 {
   active = false;
   state = 0;
-  Gui::checkKnifeValues(0, 0, 0, 0);
+  Gui::checkSelectionValues(0, 0, 0, 0);
   Gui::getView()->drawMain(true);
 }
 
