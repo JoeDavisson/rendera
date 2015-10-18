@@ -31,6 +31,7 @@ namespace ExtraMath
   }
 
   // absolute value
+  // std::abs doesn't seem to work right on some platforms
   template <typename T>
   inline T abs(T const n)
   {

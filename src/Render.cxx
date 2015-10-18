@@ -44,7 +44,7 @@ namespace
   int color;
   int trans;
 
-
+  // returns true if pixel is on a boundary
   bool isEdge(Map *map, const int &x, const int &y)
   {
     if(x < 1 || x >= map->w - 1 || y < 1 || y >= map->h - 1)
@@ -59,6 +59,7 @@ namespace
       return 1;
   }
 
+  // fast quadratic 2D distance, used by fine airbrush
   inline int fdist(const int &x1, const int &y1, const int &x2, const int &y2)
   {
     const int dx = (x1 - x2);
@@ -67,6 +68,7 @@ namespace
     return dx * dx + dy * dy;
   }
 
+  // used by fine airbrush for the final render 
   inline int sdist(const int &x1, const int &y1,
                    const int &x2, const int &y2,
                    const int &edge, const int &trans)
@@ -85,6 +87,8 @@ namespace
     return temp;
   }
 
+  // "shrinks" a 2x2 block based on a marching-squares type algorithm
+  // used for feathering edges quickly
   inline void shrinkBlock(unsigned char *s0, unsigned char *s1,
                           unsigned char *s2, unsigned char *s3)
   {
@@ -119,6 +123,8 @@ namespace
     *s3 = 0;
   }
 
+  // "grows" a 2x2 block based on a marching-squares type algorithm
+  // used for feathering edges quickly
   inline void growBlock(unsigned char *s0, unsigned char *s1,
                         unsigned char *s2, unsigned char *s3)
   {
@@ -153,6 +159,7 @@ namespace
     *s3 = 1;
   }
 
+  // updates the viewport during rendering
   int update(int pos)
   {
     // user cancelled operation
@@ -171,6 +178,7 @@ namespace
     return 0;
   }
 
+  // solid rendering
   void renderSolid()
   {
     for(int y = stroke->y1; y <= stroke->y2; y++)
@@ -188,6 +196,7 @@ namespace
     }
   }
 
+  // antialiased rendering
   void renderAntialiased()
   {
     for(int y = stroke->y1; y <= stroke->y2; y++)
@@ -207,6 +216,7 @@ namespace
     }
   }
 
+  // coarse airbrush rendering
   void renderCoarse()
   {
     float soft_trans = 255;
@@ -277,6 +287,7 @@ namespace
     }
   }
 
+  // fine airbrush rendering
   void renderFine()
   {
     int count = 0;
@@ -340,6 +351,7 @@ namespace
     }
   }
 
+  // gaussian blur rendering
   void renderBlur()
   {
     const int amount = (brush->edge + 2) * (brush->edge + 2) + 1;
@@ -418,6 +430,7 @@ namespace
     }
   }
 
+  // simulated watercolor rendering
   void renderWatercolor()
   {
     float soft_trans = trans;
@@ -498,6 +511,7 @@ namespace
     }
   }
 
+  // simulated chalk rendering
   void renderChalk()
   {
     float soft_trans = 255;
@@ -608,6 +622,7 @@ namespace
   }
 }
 
+// start the rendering process
 void Render::begin()
 {
   view = Gui::getView();

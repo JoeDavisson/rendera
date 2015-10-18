@@ -46,6 +46,7 @@ namespace
     return ret;
   }
 
+  // force tables to auto-initialize
   static const int *table_fix = init_table_fix();
   static const int *table_unfix = init_table_unfix();
 }

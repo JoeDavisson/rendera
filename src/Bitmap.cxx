@@ -39,11 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  const int stack_size = 4096;
-  std::vector<int> stack_x(stack_size);
-  std::vector<int> stack_y(stack_size);
-  int sp = 0;
-
   // XOR checkerboard pattern (for brushstroke previews)
   inline int xorValue(const int &x, const int &y)
   {
@@ -52,6 +47,11 @@ namespace
   }
 
   // flood-fill related stack routines
+  const int stack_size = 4096;
+  std::vector<int> stack_x(stack_size);
+  std::vector<int> stack_y(stack_size);
+  int sp = 0;
+
   inline bool pop(int *x, int *y)
   {
     if(sp > 0)
@@ -103,6 +103,7 @@ namespace
   }
 }
 
+// creates bitmap
 Bitmap::Bitmap(int width, int height)
 {
   if(width < 1)
@@ -125,6 +126,7 @@ Bitmap::Bitmap(int width, int height)
     row[i] = &data[width * i];
 }
 
+// creates bitmap with a border
 Bitmap::Bitmap(int width, int height, int overscroll)
 {
   width += overscroll * 2;
@@ -162,7 +164,7 @@ Bitmap::Bitmap(int width, int height, int overscroll)
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
 }
 
-// makes bitmap from existing pixel data
+// creates bitmap from existing pixel data
 Bitmap::Bitmap(int width, int height, int *image_data)
 {
   if(width < 1)
@@ -471,6 +473,7 @@ void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
     xorHline(x1, y1, x2);
 }
 
+// faster non-blending version
 void Bitmap::setpixel(const int &x, const int &y, const int &c)
 {
   *(row[y] + x) = c;
@@ -662,6 +665,7 @@ int Bitmap::getpixel(int x, int y)
   return *(row[y] + x);
 }
 
+// clips coordinates to the writable image area
 void Bitmap::clip(int *x1, int *y1, int *x2, int *y2)
 {
   if(*x1 < cl)
@@ -674,6 +678,7 @@ void Bitmap::clip(int *x1, int *y1, int *x2, int *y2)
     *y2 = cb;
 }
 
+// sets the image's writeable area
 void Bitmap::setClip(int x1, int y1, int x2, int y2)
 {
   cl = x1;
@@ -684,6 +689,7 @@ void Bitmap::setClip(int x1, int y1, int x2, int y2)
   ch = (cb - ct) + 1;
 }
 
+// copies part of one image to another, performs clipping
 void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 {
   if((sx >= w) || (sy >= h) || (dx > dest->cr) || (dy > dest->cb))
@@ -750,6 +756,7 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
   }
 }
 
+// same as blit, but draws using the current blending mode and transparency
 void Bitmap::drawBrush(Bitmap *dest,
                        int sx, int sy, int dx, int dy, int ww, int hh)
 {
@@ -816,6 +823,7 @@ void Bitmap::drawBrush(Bitmap *dest,
   Blend::set(Blend::TRANS);
 }
 
+// draws the main viewport
 void Bitmap::pointStretch(Bitmap *dest,
                           int sx, int sy, int sw, int sh,
                           int dx, int dy, int dw, int dh,
@@ -881,6 +889,7 @@ void Bitmap::pointStretch(Bitmap *dest,
     {
       const int x1 = sx + ((x * bx) >> 8);
       const int c = *(row[y1] + x1);
+      // generate checkboard pattern for transparent areas
       const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
 
       *p++ = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
@@ -914,6 +923,7 @@ void Bitmap::flip()
   }
 }
 
+// bresenham stretching, used for the navigator preview image
 void Bitmap::fastStretch(Bitmap *dest,
                          int xs1, int ys1, int xs2, int ys2,
                          int xd1, int yd1, int xd2, int yd2, bool bgr_order)
@@ -951,6 +961,7 @@ void Bitmap::fastStretch(Bitmap *dest,
 
     for(int d_1 = 0; d_1 <= dx_1; d_1++)
     {
+      // generate checkboard pattern for transparent areas
       const int checker = ((d_1 >> 4) & 1) ^ ((yd1 >> 4) & 1)
                             ? 0xA0A0A0 : 0x606060;
 
@@ -977,6 +988,7 @@ void Bitmap::fastStretch(Bitmap *dest,
   }
 }
 
+// scales an image with bilinear filtering and gamma-correction
 void Bitmap::scale(Bitmap *dest)
 {
   const int sx = cl;
@@ -1080,6 +1092,7 @@ void Bitmap::invert()
   }
 }
 
+// flood-fill with range option
 void Bitmap::fill(int x, int y, int new_color, int old_color, int range)
 {
   if(old_color == new_color)
@@ -1159,3 +1172,4 @@ void Bitmap::fill(int x, int y, int new_color, int old_color, int range)
     }
   }
 }
+

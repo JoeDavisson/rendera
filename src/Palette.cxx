@@ -30,8 +30,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Palette::Palette()
 {
+  // palette color data
   data = new int[256];
+
+  // data structure for fast color lookup
   table = new Octree();
+
+  // use a default palette
   setDefault();
 }
 
@@ -41,6 +46,7 @@ Palette::~Palette()
   delete[] data;
 }
 
+// draw palette swatches to a widget, and try to fill the space optimally
 void Palette::draw(Widget *widget)
 {
   if(max > 256)
@@ -93,6 +99,7 @@ void Palette::draw(Widget *widget)
   widget->redraw();
 }
 
+// functions to modify palette (be sure to call fillTable afterwards)
 void Palette::copy(Palette *dest)
 {
   for(int i = 0; i < 256; i++)
@@ -130,6 +137,7 @@ void Palette::replaceColor(int color, int index)
   data[index] = color;
 }
 
+// generate color lookup table
 void Palette::fillTable()
 {
   delete table;
@@ -138,7 +146,7 @@ void Palette::fillTable()
   const int step = 4;
 
   // each 4x4 block of the color cube gets a palette entry
-  // close enough and avoids a huge octree
+  // close enough, and avoids a huge data structure
   for(int b = 0; b <= 256 - step; b += step)
   {
     for(int g = 0; g <= 256 - step; g += step)
@@ -169,6 +177,7 @@ void Palette::fillTable()
     table->writePath(getr(data[i]), getg(data[i]), getb(data[i]), i);
 }
 
+// return the nearest palette entry for an RGB color
 int Palette::lookup(const int &c)
 {
   rgba_type rgba = getRgba(c);

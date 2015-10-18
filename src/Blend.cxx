@@ -35,6 +35,7 @@ namespace
   int xpos, ypos;
 }
 
+// sets the blending mode for future operations
 void Blend::set(const int &mode)
 {
   switch(mode)
@@ -78,6 +79,7 @@ void Blend::set(const int &mode)
   }
 }
 
+// sets the target coordinates used by some blending modes
 void Blend::target(Bitmap *b, Palette *p, const int &x, const int &y)
 {
   bmp = b;
@@ -86,6 +88,7 @@ void Blend::target(Bitmap *b, Palette *p, const int &x, const int &y)
   ypos = y;
 }
 
+// returns the current blending mode
 int Blend::current(const int &c1, const int &c2, const int &t)
 {
   return (*current_blend)(c1, c2, t);
@@ -312,7 +315,7 @@ int Blend::invert(const int &c1, const int &, const int &)
   return makeRgba(255 - getr(c1), 255 - getg(c1), 255 - getb(c1), geta(c1));
 }
 
-// RGB<->HSV conversions use the following ranges:
+// integer-based RGB<->HSV conversions use the following ranges:
 // hue 0-1535
 // sat 0-255
 // val 0-255
@@ -347,6 +350,10 @@ void Blend::rgbToHsv(const int &r, const int &g, const int &b, int *h, int *s, i
   }
 }
 
+// integer-based RGB<->HSV conversions use the following ranges:
+// hue 0-1535
+// sat 0-255
+// val 0-255
 void Blend::hsvToRgb(const int &h, const int &s, const int &v, int *r, int *g, int *b)
 {
   if(s == 0)

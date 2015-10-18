@@ -55,7 +55,6 @@ namespace
 
   int oldx1 = 0;
   int oldy1 = 0;
-//  bool ignore_tool = 0;
 
   inline void gridSetpixel(const Bitmap *bmp, const int &x, const int &y,
                            const int &c, const int &t)
@@ -291,8 +290,6 @@ int View::handle(int event)
           }
           else
           {
-//            ox = mousex / zoom - last_ox;
-//            oy = mousey / zoom - last_oy; 
             ox = (w() - 1 - mousex) / zoom - last_ox;
             oy = (h() - 1 - mousey) / zoom - last_oy; 
             if(ox < 0)
@@ -373,39 +370,6 @@ int View::handle(int event)
       return 1;
     }
 
-/*
-    case FL_KEYDOWN:
-    {
-      if(Fl::event_key() == FL_Escape)
-      {
-        Project::tool->reset();
-        drawMain(true);
-        break;
-      }
-
-      switch(Fl::event_key())
-      {
-        case FL_Right:
-          scroll(0, 64);
-          break;
-        case FL_Left:
-          scroll(1, 64);
-          break;
-        case FL_Down:
-          scroll(2, 64);
-          break;
-        case FL_Up:
-          scroll(3, 64);
-          break;
-        case 'z':
-          if(ctrl)
-            Undo::pop();
-          break;
-      }
-
-      return 1;
-    }
-*/
     case FL_DND_ENTER:
     {
       return 1;
@@ -489,6 +453,8 @@ void View::resize(int x, int y, int w, int h)
   drawMain(true);
 }
 
+// when a tool is active, set ignore_tool=true before
+// calling if the entire view should be updated 
 void View::redraw()
 {
   damage(FL_DAMAGE_ALL);
@@ -915,6 +881,7 @@ void View::scroll(int dir, int amount)
     drawMain(true);
 }
 
+// do not call directly, call redraw() instead
 void View::draw()
 {
   if(Project::tool->isActive())

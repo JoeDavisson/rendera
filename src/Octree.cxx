@@ -71,9 +71,7 @@ void Octree::write(const int &r, const int &g, const int &b,
   node->value = value;
 }
 
-// Sets entire path to value.
-// This allows the octree to be used in a different way.
-// (Needed for palette lookup.)
+// this allows the octree to be used in the context of a palette lookup table
 void Octree::writePath(const int &r, const int &g, const int &b,
                        const float &value)
 {

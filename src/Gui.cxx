@@ -153,6 +153,7 @@ namespace
   // view
   View *view;
 
+  // progress indicator related
   float progress_value = 0;
   float progress_step = 0;
 
@@ -186,6 +187,7 @@ namespace
   }
 }
 
+// custom class to control window behavior
 class MainWin : public Fl_Double_Window
 {
 public:
@@ -262,6 +264,7 @@ public:
   }
 };
 
+// initialize main gui
 void Gui::init()
 {
   int x1, y1;
@@ -270,7 +273,7 @@ void Gui::init()
   window = new MainWin(800, 600, "Rendera");
   window->callback(closeCallback);
 
-  // menu
+  // generate menu
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
   menubar->box(FL_THIN_UP_BOX);
 
@@ -658,10 +661,6 @@ void Gui::init()
                     112, window->h() - top->h() - menubar->h() - status->h(),
                     "Colors");
   y1 = 20;
-//  palette = new Widget(colors, 8, y1, 96, 96,
-//                       "Color Palette", 6, 6,
-//                       (Fl_Callback *)checkPalette);
-//  y1 += 96 + 8;
   swatch = new Widget(colors, 8, y1, 96, 48,
                       "Color Swatch", 0, 0,
                       0);
@@ -768,11 +767,13 @@ void Gui::init()
   }
 }
 
+// show the main program window (called after gui is constructed)
 void Gui::show()
 {
   window->show();
 }
 
+// draw checkmark next to a menu item
 void Gui::setMenuItem(const char *s)
 {
   Fl_Menu_Item *m;
@@ -782,6 +783,7 @@ void Gui::setMenuItem(const char *s)
     m->set();
 }
 
+// remove checkmark from menu item
 void Gui::clearMenuItem(const char *s)
 {
   Fl_Menu_Item *m;
@@ -791,6 +793,7 @@ void Gui::clearMenuItem(const char *s)
     m->clear();
 }
 
+// begin callback functions
 void Gui::checkHexColor()
 {
   unsigned int c;
@@ -1217,9 +1220,9 @@ void Gui::checkOffsetValues(int x, int y)
   offset_y->redraw();
 }
 
+// start text tool over if font changed
 void Gui::textStartOver()
 {
-  // start text tool over if font changed
   Project::tool->reset();
 }
 

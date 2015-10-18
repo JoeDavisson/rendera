@@ -35,6 +35,7 @@ namespace Clone
   Bitmap *bmp = 0;
 }
 
+// change the clone target
 void Clone::move(int xx, int yy)
 {
   if(moved)
@@ -45,6 +46,7 @@ void Clone::move(int xx, int yy)
   }
 }
 
+// set clone buffer bitmap to the correct size
 void Clone::refresh(int x1, int y1, int x2, int y2)
 {
   const int w = x2 - x1;

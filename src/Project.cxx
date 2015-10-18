@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Tool.H"
 #include "Undo.H"
 
+// container for commonly-used objects and related functions
 namespace Project
 {
   Bitmap *bmp = 0;
@@ -65,6 +66,7 @@ namespace Project
   Fl_Color fltk_theme_highlight_color; 
 }
 
+// called when the program starts
 void Project::init()
 {
   newImage(640, 480);

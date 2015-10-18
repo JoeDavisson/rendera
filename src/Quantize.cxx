@@ -378,7 +378,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 }
 
 // this only makes 256-color palettes
-// designed for restore filter
+// used by restore filter
 void Quantize::fast(Bitmap *src, Palette *pal, int /* */)
 {
   Bitmap temp(16, 16);
