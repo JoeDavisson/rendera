@@ -41,6 +41,7 @@ namespace Project
   };
 
   extern Bitmap *bmp;
+  extern Bitmap *brush_bmp;
   extern Map *map;
 
   extern SP<Brush> brush;

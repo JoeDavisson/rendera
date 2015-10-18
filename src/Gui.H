@@ -70,7 +70,9 @@ namespace Gui
   void checkOrigin(Widget *, void *);
   void checkConstrain(Widget *, void *);
   void checkSelectionCrop();
-  void checkSelectionDuplicate();
+  void checkSelectionMakeBrush();
+  void checkBrushFlip();
+  void checkBrushMirror();
   void checkSelectionReset();
   void checkSelectionValues(int, int, int, int);
   void checkOffsetValues(int, int);

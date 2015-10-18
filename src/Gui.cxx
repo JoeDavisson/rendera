@@ -120,7 +120,7 @@ namespace
   StaticText *selection_w;
   StaticText *selection_h;
   Fl_Button *selection_crop;
-  Fl_Button *selection_duplicate;
+  Fl_Button *selection_make_brush;
   Fl_Button *selection_reset;
 
   StaticText *offset_x;
@@ -306,6 +306,11 @@ void Gui::init()
     (Fl_Callback *)Transform::scale, 0, 0);
   menubar->add("&Image/Rotate...", 0,
     (Fl_Callback *)Transform::rotate, 0, 0);
+
+  menubar->add("&Brush/Flip &Horizontal", 0,
+    (Fl_Callback *)0, 0, 0);
+  menubar->add("&Brush/Flip &Vertical", 0,
+    (Fl_Callback *)0, 0, 0);
 
   menubar->add("&Palette/&Open...", 0,
     (Fl_Callback *)File::loadPalette, 0, 0);
@@ -543,15 +548,17 @@ void Gui::init()
   new StaticText(selection, 8, y1, 32, 24, "H:");
   selection_h = new StaticText(selection, 24, y1, 72, 24, 0);
   y1 += 24 + 6;
-  selection_crop = new Fl_Button(selection->x() + 12, selection->y() + y1, 80, 32, "Crop");
+  new Separator(selection, 2, y1, 110, 2, "");
+  y1 += 8;
+  selection_crop = new Fl_Button(selection->x() + 8, selection->y() + y1, 96, 32, "Crop");
   selection_crop->callback((Fl_Callback *)checkSelectionCrop);
   y1 += 32 + 8;
-  selection_duplicate = new Fl_Button(selection->x() + 12, selection->y() + y1, 80, 32, "Duplicate");
-  selection_duplicate->callback((Fl_Callback *)checkSelectionDuplicate);
+  selection_make_brush = new Fl_Button(selection->x() + 8, selection->y() + y1, 96, 32, "Make Brush");
+  selection_make_brush->callback((Fl_Callback *)checkSelectionMakeBrush);
   y1 += 32 + 6;
   new Separator(selection, 2, y1, 110, 2, "");
   y1 += 8;
-  selection_reset = new Fl_Button(selection->x() + 12, selection->y() + y1, 80, 32, "Reset");
+  selection_reset = new Fl_Button(selection->x() + 8, selection->y() + y1, 96, 32, "Reset");
   selection_reset->callback((Fl_Callback *)checkSelectionReset);
   y1 += 32 + 8;
   selection->resizable(0);
@@ -1156,9 +1163,17 @@ void Gui::checkSelectionCrop()
   Project::tool->done(view, 0);
 }
 
-void Gui::checkSelectionDuplicate()
+void Gui::checkSelectionMakeBrush()
 {
   Project::tool->done(view, 1);
+}
+
+void Gui::checkBrushFlip()
+{
+}
+
+void Gui::checkBrushMirror()
+{
 }
 
 void Gui::checkSelectionReset()

@@ -42,6 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace Project
 {
   Bitmap *bmp = 0;
+  Bitmap *brush_bmp = new Bitmap(8, 8);
   Map *map = 0;
 
   SP<Brush> brush = new Brush();

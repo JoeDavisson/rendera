@@ -42,7 +42,6 @@ namespace
   bool resize_started = false;
   int side = 0;
   int offset = 0;
-  Bitmap *bmp = new Bitmap(8, 8);
 
   bool inbox(int x, int y, int x1, int y1, int x2, int y2)
   {
@@ -123,7 +122,6 @@ namespace
     drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
 
     state = 3;
-//    active = false;
     absrect(&beginx, &beginy, &lastx, &lasty);
 
     int w = (lastx - beginx) + 1;
@@ -134,9 +132,9 @@ namespace
     if(h < 1)
       h = 1;
 
-    delete(bmp);
-    bmp = new Bitmap(w, h);
-    Project::bmp->blit(bmp, beginx, beginy, 0, 0, w, h);
+    delete(Project::brush_bmp);
+    Project::brush_bmp = new Bitmap(w, h);
+    Project::bmp->blit(Project::brush_bmp, beginx, beginy, 0, 0, w, h);
 
     Gui::checkSelectionValues(0, 0, 0, 0);
   }
@@ -204,10 +202,10 @@ void Selection::push(View *view)
   else if(state == 3)
   {
     Undo::push();
-    bmp->blit(Project::bmp,
-              0, 0,
-              view->imgx - bmp->w / 2, view->imgy - bmp->h / 2,
-              bmp->w, bmp->h);
+    const int w = Project::brush_bmp->w;
+    const int h = Project::brush_bmp->h;
+    Project::brush_bmp->blit(Project::bmp,
+               0, 0, view->imgx - w / 2, view->imgy - h / 2, w, h);
   }
 }
 
@@ -308,17 +306,19 @@ void Selection::move(View *view)
 
   if(state == 3)
   {
-    beginx = view->imgx - bmp->w / 2;
-    beginy = view->imgy - bmp->h / 2;
+    const int w = Project::brush_bmp->w;
+    const int h = Project::brush_bmp->h;
+
+    beginx = view->imgx - w / 2;
+    beginy = view->imgy - h / 2;
 
     drawHandles(stroke, oldx, oldy, lastx, lasty, 0);
-    drawHandles(stroke, beginx, beginy,
-                beginx + bmp->w - 1, beginy + bmp->h - 1, 255);
+    drawHandles(stroke, beginx, beginy, beginx + w - 1, beginy + h - 1, 255);
 
     oldx = beginx;
     oldy = beginy;
-    lastx = beginx + bmp->w - 1;
-    lasty = beginy + bmp->h - 1;
+    lastx = beginx + w - 1;
+    lasty = beginy + h - 1;
 
     redraw(view);
   }
