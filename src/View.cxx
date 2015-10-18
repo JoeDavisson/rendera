@@ -55,7 +55,7 @@ namespace
 
   int oldx1 = 0;
   int oldy1 = 0;
-  bool ignore_tool = 0;
+//  bool ignore_tool = 0;
 
   inline void gridSetpixel(const Bitmap *bmp, const int &x, const int &y,
                            const int &c, const int &t)
@@ -124,6 +124,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   oldimgy = 0;
   rendering = false;
   bgr_order = false;
+  ignore_tool = false;
 
   #if defined linux
     backbuf = new Bitmap(Fl::w(), Fl::h());

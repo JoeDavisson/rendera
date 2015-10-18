@@ -750,6 +750,71 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
   }
 }
 
+void Bitmap::drawBrush(Bitmap *dest,
+                       int sx, int sy, int dx, int dy, int ww, int hh)
+{
+  if((sx >= w) || (sy >= h) || (dx > dest->cr) || (dy > dest->cb))
+    return;
+
+  if(sx < 0)
+  {
+    ww += sx;
+    dx -= sx;
+    sx = 0;
+  }
+
+  if(sy < 0)
+  {
+    hh += sy;
+    dy -= sy;
+    sy = 0;
+  }
+
+  if((sx + ww) > w)
+    ww = w - sx;
+
+  if((sy + hh) > h)
+    hh = h - sy;
+
+  if(dx < dest->cl)
+  {
+    dx -= dest->cl;
+    ww += dx;
+    sx -= dx;
+    dx = dest->cl;
+  }
+
+  if(dy < dest->ct)
+  {
+    dy -= dest->ct;
+    hh += dy;
+    sy -= dy;
+    dy = dest->ct;
+  }
+
+  if((dx + ww - 1) > dest->cr)
+    ww = dest->cr - dx + 1;
+
+  if((dy + hh - 1) > dest->cb)
+    hh = dest->cb - dy + 1;
+
+  if(ww < 1 || hh < 1)
+    return;
+
+  Blend::set(Project::brush->blend);
+
+  for(int y = 0; y < hh; y++)
+  {
+    for(int x = 0; x < ww; x++)
+    {
+      const int c = getpixel(sx + x, sy + y);
+      dest->setpixel(dx + x, dy + y, c | 0xFF000000, scaleVal(255 - geta(c), Project::brush->trans));
+    }
+  }
+
+  Blend::set(Blend::TRANS);
+}
+
 void Bitmap::pointStretch(Bitmap *dest,
                           int sx, int sy, int sw, int sh,
                           int dx, int dy, int dw, int dh,

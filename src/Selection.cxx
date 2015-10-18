@@ -204,7 +204,8 @@ void Selection::push(View *view)
     Undo::push();
     const int w = Project::brush_bmp->w;
     const int h = Project::brush_bmp->h;
-    Project::brush_bmp->blit(Project::bmp,
+
+    Project::brush_bmp->drawBrush(Project::bmp,
                0, 0, view->imgx - w / 2, view->imgy - h / 2, w, h);
   }
 }
@@ -268,6 +269,15 @@ void Selection::drag(View *view)
           break;
       }
     }
+  }
+  else if(state == 3)
+  {
+    Undo::push();
+    const int w = Project::brush_bmp->w;
+    const int h = Project::brush_bmp->h;
+
+    Project::brush_bmp->drawBrush(Project::bmp,
+               0, 0, view->imgx - w / 2, view->imgy - h / 2, w, h);
   }
 
   redraw(view);

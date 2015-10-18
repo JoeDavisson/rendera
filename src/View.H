@@ -52,6 +52,7 @@ public:
   Bitmap *backbuf;
   int mousex, mousey;
   int imgx, imgy;
+  bool ignore_tool;
   int oldimgx, oldimgy;
   int last_ox, last_oy;
   int ox, oy;

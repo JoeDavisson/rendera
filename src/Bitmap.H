@@ -57,6 +57,7 @@ public:
   void clip(int *, int *, int *, int *);
   void setClip(int, int, int, int);
   void blit(Bitmap *, int, int, int, int, int, int);
+  void drawBrush(Bitmap *, int, int, int, int, int, int);
   void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, bool);
   void mirror();
   void flip();

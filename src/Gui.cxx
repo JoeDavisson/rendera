@@ -1034,7 +1034,7 @@ void Gui::checkTool(Widget *, void *var)
       break;
   }
 
-  Project::tool->reset();
+  view->ignore_tool = true;
   view->drawMain(true);
 }
 
