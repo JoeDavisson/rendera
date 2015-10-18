@@ -308,9 +308,9 @@ void Gui::init()
     (Fl_Callback *)Transform::rotate, 0, 0);
 
   menubar->add("&Brush/Flip &Horizontal", 0,
-    (Fl_Callback *)0, 0, 0);
+    (Fl_Callback *)checkBrushMirror, 0, 0);
   menubar->add("&Brush/Flip &Vertical", 0,
-    (Fl_Callback *)0, 0, 0);
+    (Fl_Callback *)checkBrushFlip, 0, 0);
 
   menubar->add("&Palette/&Open...", 0,
     (Fl_Callback *)File::loadPalette, 0, 0);
@@ -1170,10 +1170,12 @@ void Gui::checkSelectionMakeBrush()
 
 void Gui::checkBrushFlip()
 {
+  Project::brush_bmp->flip();
 }
 
 void Gui::checkBrushMirror()
 {
+  Project::brush_bmp->mirror();
 }
 
 void Gui::checkSelectionReset()
