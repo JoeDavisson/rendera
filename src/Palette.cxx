@@ -28,6 +28,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Palette.H"
 #include "Widget.H"
 
+namespace
+{
+  bool sortByLum(const int &c1, const int &c2)
+  {
+    return getl(c1) < getl(c2);
+  }
+}
+
 Palette::Palette()
 {
   // palette color data
@@ -182,6 +190,11 @@ int Palette::lookup(const int &c)
 {
   rgba_type rgba = getRgba(c);
   return table->read(rgba.r, rgba.g, rgba.b);
+}
+
+void Palette::sort()
+{
+  std::sort(data, data + max, sortByLum);
 }
 
 int Palette::load(const char *fn)

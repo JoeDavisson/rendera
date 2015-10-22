@@ -390,11 +390,14 @@ void Quantize::fast(Bitmap *src, Palette *pal, int /* */)
       pal->data[index++] = temp.getpixel(x, y);
 
   pal->max = 256;
+  pal->sort();
 
   for(int i = 0; i < pal->max - 1; i++)
   {
     if(diff24(pal->data[i], pal->data[i + 1]) < 512)
       pal->deleteColor(i);
   }
+
+  pal->fillTable();
 }
 
