@@ -29,7 +29,6 @@ namespace Blend
   enum
   {
     TRANS,
-    TRANS_NO_ALPHA,
     DARKEN,
     LIGHTEN,
     COLORIZE,

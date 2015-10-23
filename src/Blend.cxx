@@ -43,9 +43,6 @@ void Blend::set(const int &mode)
     case TRANS:
       current_blend = trans;
       break;
-    case TRANS_NO_ALPHA:
-      current_blend = transNoAlpha;
-      break;
     case DARKEN:
       current_blend = darken;
       break;
