@@ -856,7 +856,7 @@ void Stroke::previewBrush(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 
     for(int x = x1; x <= x2; x++)
     {
-      const int c = Project::brush_bmp->getpixel(sx, sy);
+      const int c = Project::select_bmp->getpixel(sx, sy);
       const int c1 = convertFormat(c, bgr_order);
       backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
               c1 | 0xFF000000, scaleVal(255 - geta(c), Project::brush->trans));

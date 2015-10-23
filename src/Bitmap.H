@@ -59,8 +59,8 @@ public:
   void blit(Bitmap *, int, int, int, int, int, int);
   void drawBrush(Bitmap *, int, int, int, int, int, int);
   void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, bool);
-  void mirror();
-  void flip();
+  void flipHorizontal();
+  void flipVertical();
   void fastStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);
   void scale(Bitmap *);
   void invert();

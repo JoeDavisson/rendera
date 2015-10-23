@@ -610,17 +610,19 @@ void Transform::init()
   Rotate::init();
 }
 
-void Transform::mirror()
+void Transform::flipHorizontal()
 {
   pushUndo();
-  Project::bmp->mirror();
+  Project::bmp->flipHorizontal();
+  Gui::getView()->ignore_tool = true;
   Gui::getView()->drawMain(true);
 }
 
-void Transform::flip()
+void Transform::flipVertical()
 {
   pushUndo();
-  Project::bmp->flip();
+  Project::bmp->flipVertical();
+  Gui::getView()->ignore_tool = true;
   Gui::getView()->drawMain(true);
 }
 

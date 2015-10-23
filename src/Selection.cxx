@@ -113,7 +113,7 @@ namespace
     Gui::checkSelectionValues(0, 0, 0, 0);
   }
 
-  void duplicate(View *)
+  void select(View *)
   {
     if(state == 3)
       return;
@@ -128,9 +128,9 @@ namespace
     if(h < 1)
       h = 1;
 
-    delete(Project::brush_bmp);
-    Project::brush_bmp = new Bitmap(w, h);
-    Project::bmp->blit(Project::brush_bmp, beginx, beginy, 0, 0, w, h);
+    delete(Project::select_bmp);
+    Project::select_bmp = new Bitmap(w, h);
+    Project::bmp->blit(Project::select_bmp, beginx, beginy, 0, 0, w, h);
 
     Gui::checkSelectionValues(0, 0, 0, 0);
   }
@@ -198,10 +198,10 @@ void Selection::push(View *view)
   else if(state == 3)
   {
     Undo::push();
-    const int w = Project::brush_bmp->w;
-    const int h = Project::brush_bmp->h;
+    const int w = Project::select_bmp->w;
+    const int h = Project::select_bmp->h;
 
-    Project::brush_bmp->drawBrush(Project::bmp,
+    Project::select_bmp->drawBrush(Project::bmp,
                0, 0, view->imgx - w / 2, view->imgy - h / 2, w, h);
 
     view->ignore_tool = true;
@@ -275,10 +275,10 @@ void Selection::drag(View *view)
   }
   else if(state == 3)
   {
-    const int w = Project::brush_bmp->w;
-    const int h = Project::brush_bmp->h;
+    const int w = Project::select_bmp->w;
+    const int h = Project::select_bmp->h;
 
-    Project::brush_bmp->drawBrush(Project::bmp,
+    Project::select_bmp->drawBrush(Project::bmp,
                0, 0, view->imgx - w / 2, view->imgy - h / 2, w, h);
     view->ignore_tool = true;
     view->drawMain(true);
@@ -319,8 +319,8 @@ void Selection::move(View *view)
 
   if(state == 3)
   {
-    const int w = Project::brush_bmp->w;
-    const int h = Project::brush_bmp->h;
+    const int w = Project::select_bmp->w;
+    const int h = Project::select_bmp->h;
 
     const int x1 = view->imgx - w / 2;
     const int y1 = view->imgy - h / 2;
@@ -348,7 +348,7 @@ void Selection::done(View *view, int mode)
       crop(view);
       break;
     case 1:
-      duplicate(view);
+      select(view);
       break;
     case 2:
       reset();

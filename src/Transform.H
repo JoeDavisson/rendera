@@ -24,8 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace Transform
 {
   void init();
-  void mirror();
-  void flip();
+  void flipHorizontal();
+  void flipVertical();
   void resize();
   void scale();
   void rotate();

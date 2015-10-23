@@ -120,7 +120,7 @@ namespace
   StaticText *selection_w;
   StaticText *selection_h;
   Fl_Button *selection_crop;
-  Fl_Button *selection_make_brush;
+  Fl_Button *selection_select;
   Fl_Button *selection_reset;
 
   StaticText *offset_x;
@@ -300,9 +300,9 @@ void Gui::init()
     (Fl_Callback *)checkClearToWhite, 0, 0);
 
   menubar->add("&Image/Flip &Horizontal", 0,
-    (Fl_Callback *)Transform::mirror, 0, 0);
+    (Fl_Callback *)Transform::flipHorizontal, 0, 0);
   menubar->add("&Image/Flip &Vertical", 0,
-    (Fl_Callback *)Transform::flip, 0, FL_MENU_DIVIDER);
+    (Fl_Callback *)Transform::flipVertical, 0, FL_MENU_DIVIDER);
   menubar->add("&Image/Resize...", 0,
     (Fl_Callback *)Transform::resize, 0, 0);
   menubar->add("&Image/Scale...", 0,
@@ -310,10 +310,10 @@ void Gui::init()
   menubar->add("&Image/Rotate...", 0,
     (Fl_Callback *)Transform::rotate, 0, 0);
 
-  menubar->add("&Brush/Flip &Horizontal", 0,
-    (Fl_Callback *)checkBrushMirror, 0, 0);
-  menubar->add("&Brush/Flip &Vertical", 0,
-    (Fl_Callback *)checkBrushFlip, 0, 0);
+  menubar->add("&Selection/Flip &Horizontal", 0,
+    (Fl_Callback *)checkSelectionFlipHorizontal, 0, 0);
+  menubar->add("&Selection/Flip &Vertical", 0,
+    (Fl_Callback *)checkSelectionFlipVertical, 0, 0);
 
   menubar->add("&Palette/&Open...", 0,
     (Fl_Callback *)File::loadPalette, 0, 0);
@@ -556,8 +556,8 @@ void Gui::init()
   selection_crop = new Fl_Button(selection->x() + 8, selection->y() + y1, 96, 32, "Crop");
   selection_crop->callback((Fl_Callback *)checkSelectionCrop);
   y1 += 32 + 8;
-  selection_make_brush = new Fl_Button(selection->x() + 8, selection->y() + y1, 96, 32, "Make Brush");
-  selection_make_brush->callback((Fl_Callback *)checkSelectionMakeBrush);
+  selection_select = new Fl_Button(selection->x() + 8, selection->y() + y1, 96, 32, "Select");
+  selection_select->callback((Fl_Callback *)checkSelectionSelect);
   y1 += 32 + 6;
   new Separator(selection, 2, y1, 110, 2, "");
   y1 += 8;
@@ -1166,19 +1166,19 @@ void Gui::checkSelectionCrop()
   Project::tool->done(view, 0);
 }
 
-void Gui::checkSelectionMakeBrush()
+void Gui::checkSelectionSelect()
 {
   Project::tool->done(view, 1);
 }
 
-void Gui::checkBrushFlip()
+void Gui::checkSelectionFlipHorizontal()
 {
-  Project::brush_bmp->flip();
+  Project::select_bmp->flipHorizontal();
 }
 
-void Gui::checkBrushMirror()
+void Gui::checkSelectionFlipVertical()
 {
-  Project::brush_bmp->mirror();
+  Project::select_bmp->flipVertical();
 }
 
 void Gui::checkSelectionReset()

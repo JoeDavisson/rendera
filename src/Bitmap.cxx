@@ -897,7 +897,7 @@ void Bitmap::pointStretch(Bitmap *dest,
   }
 }
 
-void Bitmap::mirror()
+void Bitmap::flipHorizontal()
 {
   for(int y = ct; y <= cb; y++)
   {
@@ -910,7 +910,7 @@ void Bitmap::mirror()
   }
 }
 
-void Bitmap::flip()
+void Bitmap::flipVertical()
 {
   for(int y = ct; y < h / 2; y++)
   {
