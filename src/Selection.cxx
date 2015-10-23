@@ -201,7 +201,7 @@ void Selection::push(View *view)
     const int w = Project::select_bmp->w;
     const int h = Project::select_bmp->h;
 
-    Project::select_bmp->drawBrush(Project::bmp,
+    Project::select_bmp->blit(Project::bmp,
                0, 0, view->imgx - w / 2, view->imgy - h / 2, w, h);
 
     view->ignore_tool = true;
@@ -278,7 +278,7 @@ void Selection::drag(View *view)
     const int w = Project::select_bmp->w;
     const int h = Project::select_bmp->h;
 
-    Project::select_bmp->drawBrush(Project::bmp,
+    Project::select_bmp->blit(Project::bmp,
                0, 0, view->imgx - w / 2, view->imgy - h / 2, w, h);
     view->ignore_tool = true;
     view->drawMain(true);
