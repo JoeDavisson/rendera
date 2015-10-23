@@ -512,9 +512,9 @@ void View::drawGrid()
   x2 = w() - 1;
   y2 = h() - 1;
 
-  d = 224 - zoom;
-  if(d < 128)
-    d = 128;
+  d = 216 - zoom;
+  if(d < 96)
+    d = 96;
 
   int zx = zoom * gridx;
   int zy = zoom * gridy;
