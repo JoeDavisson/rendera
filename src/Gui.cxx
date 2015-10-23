@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "CheckBox.H"
 #include "Clone.H"
 #include "Dialog.H"
+#include "DitherMatrix.H"
 #include "FX.H"
 #include "File.H"
 #include "Group.H"
@@ -111,6 +112,8 @@ namespace
   Widget *paint_stroke;
   Widget *paint_shape;
   Widget *paint_edge;
+  Widget *paint_dither_pattern;
+  CheckBox *paint_dither_relative;
   Fl_Choice *paint_mode;
 
   Widget *getcolor_color;
@@ -530,7 +533,12 @@ void Gui::init()
   paint_edge = new Widget(paint, 8, y1, 96, 24,
                           "Soft Edge", images_soft_edge_png, 12, 24,
                           (Fl_Callback *)checkPaintEdge);
-  y1 += 24 + 8;
+  paint_dither_pattern = new Widget(paint, 8, y1, 96, 48,
+                                    "Dither Pattern", 24, 24,
+                                    (Fl_Callback *)0);
+  y1 += 48 + 8;
+  paint_dither_relative = new CheckBox(paint, 12, y1, 16, 16, "Relative", 0);
+  y1 += 16 + 8;
   paint->resizable(0);
   paint->end();
 
@@ -753,6 +761,24 @@ void Gui::init()
   checkSelectionValues(0, 0, 0, 0);
   checkOffsetValues(0, 0);
   checkPaintMode();
+
+  // create dither pattern image from data in DitherMatrix.H
+  paint_dither_pattern->bitmap->clear(makeRgb(192, 192, 192));
+
+  for(int z = 0; z < 8; z++)
+  {
+    for(int y = 0; y < 4; y++)
+    {
+      const int yy = ((z / 4) * 4 + y) * 6;
+      for(int x = 0; x < 4; x++)
+      {
+        const int xx = ((z & 3) * 4 + x) * 6;
+        if(DitherMatrix::pattern[z][y][x] == 1)
+          paint_dither_pattern->bitmap->rectfill(xx, yy, xx + 5, yy + 5,
+                                         makeRgb(0, 0, 0), 0);
+      }
+    }
+  }
 
   // fix certain icons if using a light theme
   if(Project::theme == Project::THEME_LIGHT)
@@ -1352,10 +1378,14 @@ void Gui::checkPaintMode()
 {
   Project::brush->aa = 0;
   paint_edge->hide();
+  paint_dither_pattern->hide();
+  paint_dither_relative->hide();
 
   switch(paint_mode->value())
   {
     case Render::SOLID:
+      paint_dither_pattern->show();
+      paint_dither_relative->show();
       break;
     case Render::ANTIALIASED:
       Project::brush->aa = 1;
@@ -1391,6 +1421,16 @@ int Gui::getTextSmooth()
 int Gui::getFillRange()
 {
   return atoi(fill_range->value());
+}
+
+int Gui::getDitherPattern()
+{
+  return paint_dither_pattern->var;
+}
+
+int Gui::getDitherRelative()
+{
+  return paint_dither_relative->value();
 }
 
 void Gui::showProgress(float step)

@@ -172,13 +172,13 @@ void Widget::draw()
   if(use_highlight)
   {
     image2->draw(x() + offsetx, y() + offsety, stepx, stepy,
-                offsetx + 1, offsety + 1);
+                offsetx + 0, offsety + 0);
     image2->uncache();
   }
   else
   {
     image->draw(x() + offsetx, y() + offsety, stepx, stepy,
-                offsetx + 1, offsety + 1);
+                offsetx + 0, offsety + 0);
     image->uncache();
   }
 

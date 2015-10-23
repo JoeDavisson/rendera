@@ -104,6 +104,8 @@ namespace Gui
   int getPaintMode();
   int getTextSmooth();
   int getFillRange();
+  int getDitherPattern();
+  int getDitherRelative();
 
   void showProgress(float);
   int updateProgress(const int);
