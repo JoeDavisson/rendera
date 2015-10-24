@@ -538,6 +538,7 @@ void Gui::init()
                                     (Fl_Callback *)0);
   y1 += 48 + 8;
   paint_dither_relative = new CheckBox(paint, 12, y1, 16, 16, "Relative", 0);
+  paint_dither_relative->center();
   y1 += 16 + 8;
   paint->resizable(0);
   paint->end();
@@ -763,19 +764,19 @@ void Gui::init()
   checkPaintMode();
 
   // create dither pattern image from data in DitherMatrix.H
-  paint_dither_pattern->bitmap->clear(makeRgb(192, 192, 192));
+  paint_dither_pattern->bitmap->clear(makeRgb(0, 0, 0));
 
   for(int z = 0; z < 8; z++)
   {
-    for(int y = 0; y < 4; y++)
+    for(int y = 0; y < 8; y++)
     {
-      const int yy = ((z / 4) * 4 + y) * 6;
-      for(int x = 0; x < 4; x++)
+      const int yy = (z / 4) * 24 + y * 3;
+      for(int x = 0; x < 8; x++)
       {
-        const int xx = ((z & 3) * 4 + x) * 6;
-        if(DitherMatrix::pattern[z][y][x] == 1)
-          paint_dither_pattern->bitmap->rectfill(xx, yy, xx + 5, yy + 5,
-                                         makeRgb(0, 0, 0), 0);
+        const int xx = (z % 4) * 24 + x * 3;
+        if(DitherMatrix::pattern[z][(y & 3)][(x & 3)] == 1)
+          paint_dither_pattern->bitmap->rectfill(xx, yy, xx + 2, yy + 2,
+                                         makeRgb(208, 208, 208), 0);
       }
     }
   }
