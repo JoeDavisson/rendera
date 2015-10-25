@@ -452,7 +452,7 @@ void Gui::init()
   top->end();
 
   // bottom
-  bottom = new Group(160, window->h() - status->h() - 40, window->w() - 272 - 80, 40, "");
+  bottom = new Group(160, window->h() - status->h() - 40, window->w() - 272 - 72, 40, "");
   x1 = 8;
   wrap = new ToggleButton(bottom, x1, 8, 24, 24,
                           "Wrap Edges", images_wrap_png,
@@ -653,14 +653,14 @@ void Gui::init()
   fill->end();
 
   // group_palette
-  group_palette = new Group(window->w() - 112 - 80, top->h() + menubar->h(),
-                    80, window->h() - top->h() - menubar->h() - status->h(),
+  group_palette = new Group(window->w() - 112 - 72, top->h() + menubar->h(),
+                    72, window->h() - top->h() - menubar->h() - status->h(),
                     "Palette");
   y1 = 20;
-  palette = new Widget(group_palette, 8, y1, 64, 256,
+  palette = new Widget(group_palette, 8, y1, 60, 192,
                        "Color Palette", 8, 8,
                        (Fl_Callback *)checkPalette);
-  y1 += 96 + 8;
+  y1 += 192 + 8;
 
   group_palette->resizable(0);
   group_palette->end();
@@ -724,7 +724,7 @@ void Gui::init()
 
   // middle
   middle = new Fl_Group(160, top->h() + menubar->h(),
-                        window->w() - 272 - 80, window->h() - (menubar->h() + top->h() + bottom->h() + status->h()));
+                        window->w() - 272 - 72, window->h() - (menubar->h() + top->h() + bottom->h() + status->h()));
   middle->box(FL_FLAT_BOX);
   view = new View(middle, 0, 0, middle->w(), middle->h(), "View");
   middle->resizable(view);
@@ -742,8 +742,8 @@ void Gui::init()
   group_left->end();
 
   // container for right panels
-  group_right = new Fl_Group(window->w() - 112 - 80, top->h() + menubar->h(),
-                            112 + 80, window->h() - (menubar->h() + top->h() + bottom->h()));
+  group_right = new Fl_Group(window->w() - 112 - 72, top->h() + menubar->h(),
+                            112 + 72, window->h() - (menubar->h() + top->h() + bottom->h()));
   group_right->add(group_palette);
   group_right->add(colors);
 

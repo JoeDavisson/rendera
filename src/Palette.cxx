@@ -269,99 +269,34 @@ int Palette::save(const char *fn)
 
 void Palette::setDefault()
 {
-  int r, g, b;
+  static int hue[] = { 0, 110, 166, 234, 315, 417, 630, 775, 839, 869, 903, 1077, 1252, 1337, 1435 };
+  static int sat[] = { 255, 255, 255, 255, 255, 224, 255, 255, 255, 255, 255, 224, 255, 255, 255 };
+  static int val[] = { 192, 224, 240, 255, 192, 160, 128, 128, 224, 160, 128, 96, 96, 128, 192 };
   int index = 0;
 
-  for(int h = 0; h < 31; h++)
+  for(int h = 0; h < 15; h++)
   {
-    for(int v = 0; v <= 7; v++)
-    {
-      static int sat[] = { 96, 128 ,160, 192, 255, 224, 192, 160 };
-      Blend::hsvToRgb(h * 48, sat[v], 255, &r, &g, &b);
-      int c = makeRgb(r, g, b);
+    int r, g, b;
+    Blend::hsvToRgb(hue[h], sat[h], val[h], &r, &g, &b);
+    const int c = makeRgb(r, g, b);
 
-      data[index++] = Blend::keepLum(c, 32 + v * 27.43);
-    }
+    data[index++] = blendFast(c, makeRgb(0, 0, 0), 96);
+    data[index++] = blendFast(c, makeRgb(0, 0, 0), 160);
+    data[index++] = c;
+    data[index++] = blendFast(c, makeRgb(255, 255, 255), 160);
+    data[index++] = blendFast(c, makeRgb(255, 255, 255), 96);
   }
 
   // grays
-  for(int v = 0; v <= 7; v++)
+  for(int v = 0; v < 5; v++)
   {
-    int val = v * 32;
-    if(v == 7)
-      val = 255;
+    int val = v * 63.75;
     data[index++] = makeRgb(val, val, val);
   }
 
   max = index;
   fillTable();
 }
-/*
-void Palette::setDefault()
-{
-  int r, g, b;
-  int index = 0;
-
-  static int sat[] = { 96, 128 ,160, 192, 255, 224, 192, 160 };
-
-  for(int h = 0; h < 31; h++)
-  {
-    for(int v = 0; v < 8; v++)
-    {
-      Blend::hsvToRgb(h * 48, sat[v], 255, &r, &g, &b);
-
-      switch(v)
-      {
-        case 0:
-          data[index] = makeRgb(r, g, b);
-          data[index] = Blend::darken(data[index], makeRgb(255, 255, 255), 64);
-          break;
-        case 1:
-          data[index] = makeRgb(r, g, b);
-          data[index] = Blend::darken(data[index], makeRgb(255, 255, 255), 96);
-          break;
-        case 2:
-          data[index] = makeRgb(r, g, b);
-          data[index] = Blend::darken(data[index], makeRgb(255, 255, 255), 128);
-          break;
-        case 3:
-          data[index] = makeRgb(r, g, b);
-          data[index] = Blend::darken(data[index], makeRgb(255, 255, 255), 192);
-          break;
-        case 4:
-          data[index] = makeRgb(r, g, b);
-          break;
-        case 5:
-          data[index] = makeRgb(r, g, b);
-          data[index] = Blend::trans(data[index], makeRgb(255, 255, 255), 192);
-          break;
-        case 6:
-          data[index] = makeRgb(r, g, b);
-          data[index] = Blend::trans(data[index], makeRgb(255, 255, 255), 160);
-          break;
-        case 7:
-          data[index] = makeRgb(r, g, b);
-          data[index] = Blend::trans(data[index], makeRgb(255, 255, 255), 128);
-          break;
-      }
-
-      index++;
-    }
-  }
-
-  // grays
-  for(int v = 0; v < 8; v++)
-  {
-    int val = v * 32;
-    if(v == 7)
-      val = 255;
-    data[index++] = makeRgb(val, val, val);
-  }
-
-  max = index;
-  fillTable();
-}
-*/
 
 void Palette::setBlackAndWhite()
 {
