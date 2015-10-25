@@ -272,6 +272,36 @@ void Palette::setDefault()
   int r, g, b;
   int index = 0;
 
+  for(int h = 0; h < 31; h++)
+  {
+    for(int v = 0; v <= 7; v++)
+    {
+      static int sat[] = { 96, 128 ,160, 192, 255, 224, 192, 160 };
+      Blend::hsvToRgb(h * 48, sat[v], 255, &r, &g, &b);
+      int c = makeRgb(r, g, b);
+
+      data[index++] = Blend::keepLum(c, 32 + v * 27.43);
+    }
+  }
+
+  // grays
+  for(int v = 0; v <= 7; v++)
+  {
+    int val = v * 32;
+    if(v == 7)
+      val = 255;
+    data[index++] = makeRgb(val, val, val);
+  }
+
+  max = index;
+  fillTable();
+}
+/*
+void Palette::setDefault()
+{
+  int r, g, b;
+  int index = 0;
+
   static int sat[] = { 96, 128 ,160, 192, 255, 224, 192, 160 };
 
   for(int h = 0; h < 31; h++)
@@ -331,6 +361,7 @@ void Palette::setDefault()
   max = index;
   fillTable();
 }
+*/
 
 void Palette::setBlackAndWhite()
 {
