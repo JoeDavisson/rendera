@@ -172,8 +172,9 @@ int Blend::keepLum(const int &c, const int &dest)
 
   // iterate to find similar color with same luminosity
   int src = getlUnpacked(n[1], n[0], n[2]);
+  int count = 0;
 
-  while(src < dest)
+  while(src < dest && count < 256)
   {
     for(int i = 0; i < 3; i++)
     {
@@ -185,9 +186,11 @@ int Blend::keepLum(const int &c, const int &dest)
           break;
       }
     }
+
+    count++;
   }
 
-  while(src > dest)
+  while(src > dest && count < 256)
   {
     for(int i = 0; i < 3; i++)
     {
@@ -199,6 +202,8 @@ int Blend::keepLum(const int &c, const int &dest)
           break;
       }
     }
+
+    count++;
   }
 
   return makeRgba(n[1], n[0], n[2], rgba.a);
