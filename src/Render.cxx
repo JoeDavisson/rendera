@@ -664,6 +664,9 @@ namespace
       }
     }
 
+    if(count == 0)
+      return;
+
     r /= count;
     g /= count;
     b /= count;
