@@ -527,6 +527,7 @@ void Gui::init()
   paint_mode->add("Gaussian Blur");
   paint_mode->add("Watercolor");
   paint_mode->add("Chalk");
+  paint_mode->add("Average");
   paint_mode->value(0);
   paint_mode->callback((Fl_Callback *)checkPaintMode);
   y1 += 24 + 8;
@@ -1405,6 +1406,8 @@ void Gui::checkPaintMode()
       break;
     case Render::CHALK:
       paint_edge->show();
+      break;
+    case Render::AVERAGE:
       break;
   }
 }

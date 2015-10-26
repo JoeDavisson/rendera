@@ -637,6 +637,54 @@ namespace
         break;
     }
   }
+
+  // averaging rendering
+  void renderAverage()
+  {
+    int r = 0;
+    int g = 0;
+    int b = 0;
+    int count = 0;
+
+    for(int y = stroke->y1; y <= stroke->y2; y++)
+    {
+      unsigned char *p = map->row[y] + stroke->x1;
+
+      for(int x = stroke->x1; x <= stroke->x2; x++)
+      {
+        if(*p++)
+        {
+          const int c = bmp->getpixel(x, y);
+          rgba_type rgba = getRgba(c);
+          r += rgba.r;
+          g += rgba.g;
+          b += rgba.b;
+          count++; 
+        }
+      }
+    }
+
+    r /= count;
+    g /= count;
+    b /= count;
+    const int c = makeRgb(r, g, b);
+
+    for(int y = stroke->y1; y <= stroke->y2; y++)
+    {
+      unsigned char *p = map->row[y] + stroke->x1;
+
+      for(int x = stroke->x1; x <= stroke->x2; x++)
+      {
+        if(*p++)
+        {
+          bmp->setpixel(x, y, c, trans);
+        }
+      }
+
+      if(update(y) < 0)
+        break;
+    }
+  }
 }
 
 // start the rendering process
@@ -699,6 +747,9 @@ void Render::begin()
       break;
     case CHALK:
       renderChalk();
+      break;
+    case AVERAGE:
+      renderAverage();
       break;
     default:
       break;

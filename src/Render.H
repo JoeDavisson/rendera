@@ -33,7 +33,8 @@ namespace Render
     FINE,
     BLUR,
     WATERCOLOR,
-    CHALK
+    CHALK,
+    AVERAGE
   };
  
   void begin();
