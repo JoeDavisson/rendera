@@ -205,9 +205,6 @@ int View::handle(int event)
 
     case FL_ENTER:
     {
-      if(Fl::focus() != this)
-        Fl::focus(this);
-
       switch(Gui::getTool())
       {
         case Tool::GETCOLOR:
@@ -239,6 +236,9 @@ int View::handle(int event)
 
     case FL_PUSH:
     {
+      if(Fl::focus() != this)
+        Fl::focus(this);
+
       switch(button)
       {
         case 1:
@@ -281,6 +281,9 @@ int View::handle(int event)
 
     case FL_DRAG:
     {
+      if(Fl::focus() != this)
+        Fl::focus(this);
+
       switch(button)
       {
         case 1:
