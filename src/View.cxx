@@ -90,7 +90,7 @@ namespace
     }
   }
 
-  void screenBlit(int sx, int sy, int dx, int dy, int w, int h)
+  void updateView(int sx, int sy, int dx, int dy, int w, int h)
   {
     #if defined linux
       XPutImage(fl_display, fl_window, fl_gc, ximage, sx, sy, dx, dy, w, h);
@@ -206,6 +206,7 @@ int View::handle(int event)
 
     case FL_ENTER:
     {
+      // change cursor
       switch(Gui::getTool())
       {
         case Tool::GETCOLOR:
@@ -237,6 +238,7 @@ int View::handle(int event)
 
     case FL_PUSH:
     {
+      // gives viewport focus when clicked on
       if(Fl::focus() != this)
         Fl::focus(this);
 
@@ -245,6 +247,7 @@ int View::handle(int event)
         case 1:
           if(shift)
           {
+            // update clone target
             Clone::x = imgx;
             Clone::y = imgy;
             Clone::moved = true;
@@ -259,12 +262,14 @@ int View::handle(int event)
           {
             if(shift)
             {
+              // begin image navigation
               moving = true;
               beginMove();
               break;
             }
             else
             {
+              // begin image panning
               last_ox = (w() - 1 - mousex) / zoom - ox;
               last_oy = (h() - 1 - mousey) / zoom - oy;
               break;
@@ -282,6 +287,7 @@ int View::handle(int event)
 
     case FL_DRAG:
     {
+      // gives viewport focus when clicked on
       if(Fl::focus() != this)
         Fl::focus(this);
 
@@ -293,10 +299,12 @@ int View::handle(int event)
         case 2:
           if(moving)
           {
+            // continue image navigation
             move();
           }
           else
           {
+            // continue image panning
             panning = true;
             ox = (w() - 1 - mousex) / zoom - last_ox;
             oy = (h() - 1 - mousey) / zoom - last_oy; 
@@ -348,6 +356,7 @@ int View::handle(int event)
     {
       Project::tool->move(this);
 
+      // update coordinates display
       char coords[256];
       int coordx = imgx - Project::overscroll;
       int coordy = imgy - Project::overscroll;
@@ -363,6 +372,7 @@ int View::handle(int event)
 
     case FL_MOUSEWHEEL:
     {
+      // ignore wheel during image navigation
       if(moving || panning)
         break;
 
@@ -404,37 +414,16 @@ int View::handle(int event)
     case FL_PASTE:
     {
       // drag n drop
-#ifdef WIN32
-      char fn[256];
-
-      strcpy(fn, Fl::event_text());
-
-      // convert to utf-8 (e.g. %20 becomes space)
-      File::decodeURI(fn);
-
-      for(unsigned int i = 0, n = strlen(fn); i < n; i++)
-       {
-        if(fn[i] == '\r')
-          fn[i] = '\0';
-        if(fn[i] == '\n')
-          fn[i] = '\0';
-      }
-
-      // try to load the file
-      File::loadFile(fn);
-#else
-      if(strncasecmp(Fl::event_text(), "file://", 7) == 0)
-      {
+      #ifdef WIN32
         char fn[256];
 
-        // remove "file://" from path
-        strcpy(fn, Fl::event_text() + 7);
+        strcpy(fn, Fl::event_text());
 
         // convert to utf-8 (e.g. %20 becomes space)
         File::decodeURI(fn);
 
         for(unsigned int i = 0, n = strlen(fn); i < n; i++)
-        {
+         {
           if(fn[i] == '\r')
             fn[i] = '\0';
           if(fn[i] == '\n')
@@ -443,8 +432,29 @@ int View::handle(int event)
 
         // try to load the file
         File::loadFile(fn);
-      }
-#endif
+      #else
+        if(strncasecmp(Fl::event_text(), "file://", 7) == 0)
+        {
+          char fn[256];
+
+          // remove "file://" from path
+          strcpy(fn, Fl::event_text() + 7);
+
+          // convert to utf-8 (e.g. %20 becomes space)
+          File::decodeURI(fn);
+
+          for(unsigned int i = 0, n = strlen(fn); i < n; i++)
+          {
+            if(fn[i] == '\r')
+              fn[i] = '\0';
+            if(fn[i] == '\n')
+              fn[i] = '\0';
+          }
+
+          // try to load the file
+          File::loadFile(fn);
+        }
+      #endif
 
       return 1;
     }
@@ -511,7 +521,7 @@ void View::drawMain(bool refresh)
 
 void View::drawGrid()
 {
-  int x1, y1, x2, y2, d, i;
+  int x1, y1, x2, y2, t, i;
   int offx = 0, offy = 0;
 
   if(zoom < 1)
@@ -523,9 +533,9 @@ void View::drawGrid()
   x2 = w() - 1;
   y2 = h() - 1;
 
-  d = 216 - zoom;
-  if(d < 96)
-    d = 96;
+  t = 216 - zoom;
+  if(t < 96)
+    t = 96;
 
   int zx = zoom * gridx;
   int zy = zoom * gridy;
@@ -537,8 +547,8 @@ void View::drawGrid()
   do
   {
     x1 = 0 - zx + (offx * zoom) + qx - (int)(ox * zoom) % zx;
-    gridHline(backbuf, x1, y1, x2, makeRgb(255, 255, 255), d);
-    gridHline(backbuf, x1, y1 + zy - 1, x2, makeRgb(0, 0, 0), d);
+    gridHline(backbuf, x1, y1, x2, makeRgb(255, 255, 255), t);
+    gridHline(backbuf, x1, y1 + zy - 1, x2, makeRgb(0, 0, 0), t);
     i = 0;
 
     do
@@ -547,8 +557,8 @@ void View::drawGrid()
 
       do
       {
-        gridSetpixel(backbuf, x1, y1, makeRgb(255, 255, 255), d);
-        gridSetpixel(backbuf, x1 + zx - 1, y1, makeRgb(0, 0, 0), d);
+        gridSetpixel(backbuf, x1, y1, makeRgb(255, 255, 255), t);
+        gridSetpixel(backbuf, x1 + zx - 1, y1, makeRgb(0, 0, 0), t);
         x1 += zx;
       }
       while(x1 <= x2);
@@ -607,9 +617,9 @@ void View::drawCloneCursor()
   backbuf->xorRectfill(x1 - 12, y1, x1 + 13, y1);
   backbuf->xorRectfill(x1, y1 - 12, x1, y1 + 13);
 
-  screenBlit(oldx1 - 12, oldy1 - 12,
+  updateView(oldx1 - 12, oldy1 - 12,
              this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
-  screenBlit(x1 - 12, y1 - 12,
+  updateView(x1 - 12, y1 - 12,
              this->x() + x1 - 12, this->y() + y1 - 12, 26, 26);
 
   oldx1 = x1;
@@ -711,6 +721,7 @@ void View::move()
   if(bh < 1)
     bh = 1;
 
+  // draw bounding box
   backbuf->xorRect(lastbx, lastby, lastbx + lastbw - 1, lastby + lastbh - 1);
   backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
@@ -794,9 +805,9 @@ void View::zoomOut(int x, int y)
   Gui::checkZoom();
 }
 
-void View::zoomFit(bool fitting)
+void View::zoomFit(bool fit_to_view)
 {
-  if(!fitting)
+  if(!fit_to_view)
   {
     fit = false;
     zoom = 1;
@@ -900,7 +911,7 @@ void View::draw()
     if(ignore_tool)
     {
       ignore_tool = false;
-      screenBlit(0, 0, x(), y(), w(), h());
+      updateView(0, 0, x(), y(), w(), h());
       if(Gui::getClone())
         drawCloneCursor();
       return;
@@ -923,7 +934,7 @@ void View::draw()
       if(blitw < 1 || blith < 1)
         return;
 
-      screenBlit(blitx, blity, x() + blitx, y() + blity, blitw, blith);
+      updateView(blitx, blity, x() + blitx, y() + blity, blitw, blith);
 
       if(Gui::getClone())
         drawCloneCursor();
@@ -931,7 +942,7 @@ void View::draw()
   }
   else
   {
-    screenBlit(0, 0, x(), y(), w(), h());
+    updateView(0, 0, x(), y(), w(), h());
     if(Gui::getClone())
       drawCloneCursor();
   }
