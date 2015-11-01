@@ -114,6 +114,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   zoom = 1;
   fit = false;
   moving = false;
+  panning = false;
   last_ox = 0;
   last_oy = 0;
   grid = 0;
@@ -296,6 +297,7 @@ int View::handle(int event)
           }
           else
           {
+            panning = true;
             ox = (w() - 1 - mousex) / zoom - last_ox;
             oy = (h() - 1 - mousey) / zoom - last_oy; 
             if(ox < 0)
@@ -333,6 +335,9 @@ int View::handle(int event)
           drawMain(true);
       }
 
+      if(panning)
+        panning = false;
+
       if(Project::tool->isActive())
         Project::tool->redraw(this);
 
@@ -358,7 +363,7 @@ int View::handle(int event)
 
     case FL_MOUSEWHEEL:
     {
-      if(moving)
+      if(moving || panning)
         break;
 
       if(Fl::event_dy() >= 0)

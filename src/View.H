@@ -59,6 +59,7 @@ public:
   float zoom;
   bool fit;
   bool moving;
+  bool panning;
   int grid, gridx, gridy;
   int px, py, pw, ph;
   int bx, by, bw, bh;
