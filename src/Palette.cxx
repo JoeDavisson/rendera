@@ -128,6 +128,7 @@ void Palette::insertColor(int color, int index)
     data[i] = data[i - 1];
 
   data[index] = color;
+  fillTable();
 }
 
 void Palette::deleteColor(int index)
@@ -139,11 +140,13 @@ void Palette::deleteColor(int index)
     data[i] = data[i + 1];
 
   max--;
+  fillTable();
 }
 
 void Palette::replaceColor(int color, int index)
 {
   data[index] = color;
+  fillTable();
 }
 
 // generate color lookup table

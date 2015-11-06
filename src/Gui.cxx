@@ -138,13 +138,12 @@ namespace
   InputInt *fill_range;
 
   // palette
+  Palette *undo_palette;
+  bool begin_palette_undo = false;
   Widget *palette_swatches;
   Fl_Button *palette_insert;
   Fl_Button *palette_delete;
-  Fl_Button *palette_replace;
   Fl_Button *palette_undo;
-  Fl_Button *palette_rgb_ramp;
-  Fl_Button *palette_hsv_ramp;
 
   // colors
   Widget *swatch;
@@ -395,6 +394,9 @@ void Gui::init()
 
   menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
+
+  // initialize undo palette
+  undo_palette = new Palette();
 
   // status
   status = new Group(0, window->h() - 24, window->w(), 24, "");
@@ -676,11 +678,18 @@ void Gui::init()
                                  28, 24, "+"); 
   palette_insert->tooltip("Insert Swatch");
   palette_insert->callback((Fl_Callback *)checkPaletteInsert);
+
   palette_delete = new Fl_Button(palette->x() + 44, palette->y() + pos,
                                  28, 24, "-"); 
   palette_delete->tooltip("Delete Swatch");
   palette_delete->callback((Fl_Callback *)checkPaletteDelete);
+
   pos += 24 + 8;
+
+  palette_undo = new Fl_Button(palette->x() + 8, palette->y() + pos,
+                                 64, 24, "Undo");
+  palette_undo->tooltip("Undo Last Change");
+  palette_undo->callback((Fl_Callback *)checkPaletteUndo);
 
   palette->resizable(0);
   palette->end();
@@ -943,6 +952,8 @@ void Gui::checkPaletteSwatches(Widget *widget, void *var)
 
 void Gui::checkPaletteInsert(Widget *widget, void *var)
 {
+  Project::palette->copy(undo_palette);
+  begin_palette_undo = true;
   Project::palette->insertColor(Project::brush->color, palette_swatches->var);
   Project::palette->draw(palette_swatches);
   palette_swatches->do_callback();
@@ -950,11 +961,27 @@ void Gui::checkPaletteInsert(Widget *widget, void *var)
 
 void Gui::checkPaletteDelete(Widget *widget, void *var)
 {
+  Project::palette->copy(undo_palette);
+  begin_palette_undo = true;
   Project::palette->deleteColor(palette_swatches->var);
   Project::palette->draw(palette_swatches);
+
   if(palette_swatches->var > Project::palette->max - 1)
     palette_swatches->var = Project::palette->max - 1;
+
   palette_swatches->do_callback();
+}
+
+void Gui::checkPaletteUndo(Widget *widget, void *var)
+{
+  if(begin_palette_undo)
+  {
+    begin_palette_undo = false;
+    undo_palette->copy(Project::palette.get());
+    Project::palette->draw(palette_swatches);
+    Gui::drawPalette();
+    palette_swatches->do_callback();
+  }
 }
 
 void Gui::drawPalette()
