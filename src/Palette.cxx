@@ -98,8 +98,9 @@ void Palette::draw(Widget *widget)
       int y1 = y * step;
 
       widget->bitmap->rectfill(x1, y1, x1 + step - 1, y1 + step - 1, data[i], 0);
-      widget->bitmap->hline(x1, y1, x1 + step - 1, makeRgb(0, 0, 0), 128);
-      widget->bitmap->vline(y1 + 1, x1, y1 + step - 1, makeRgb(0, 0, 0), 128);
+//      widget->bitmap->hline(x1, y1, x1 + step - 1, makeRgb(0, 0, 0), 128);
+//      widget->bitmap->vline(y1 + 1, x1, y1 + step - 1, makeRgb(0, 0, 0), 128);
+      widget->bitmap->rect(x1, y1, x1 + step - 1, y1 + step - 1, makeRgb(0, 0, 0), 128);
       i++;
     }
   }
@@ -269,7 +270,7 @@ int Palette::save(const char *fn)
 
 void Palette::setDefault()
 {
-  static int hue[] = { 0, 110, 166, 234, 315, 417, 630, 775, 839, 869, 903, 1077, 1252, 1337, 1435 };
+  static int hue[] = { 0, 110, 166, 234, 300, 402, 615, 775, 839, 869, 903, 1077, 1252, 1337, 1435 };
   static int sat[] = { 255, 255, 255, 255, 255, 208, 255, 255, 255, 255, 255, 224, 255, 255, 255 };
   static int val[] = { 192, 224, 240, 255, 192, 172, 160, 160, 224, 172, 160, 128, 128, 160, 192 };
   int index = 0;
@@ -280,17 +281,16 @@ void Palette::setDefault()
     Blend::hsvToRgb(hue[h], sat[h], val[h], &r, &g, &b);
     const int c = makeRgb(r, g, b);
 
-    data[index++] = blendFast(c, makeRgb(0, 0, 0), 96);
-    data[index++] = blendFast(c, makeRgb(0, 0, 0), 160);
+    data[index++] = blendFast(c, makeRgb(0, 0, 0), 128);
     data[index++] = c;
     data[index++] = blendFast(c, makeRgb(255, 255, 255), 160);
     data[index++] = blendFast(c, makeRgb(255, 255, 255), 96);
   }
 
   // grays
-  for(int v = 0; v < 5; v++)
+  for(int v = 0; v < 4; v++)
   {
-    int val = v * 63.75;
+    int val = v * 85;
     data[index++] = makeRgb(val, val, val);
   }
 

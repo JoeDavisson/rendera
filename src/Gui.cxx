@@ -455,7 +455,7 @@ void Gui::init()
   top->end();
 
   // bottom
-  bottom = new Group(160, window->h() - status->h() - 40, window->w() - 272 - 76, 40, "");
+  bottom = new Group(160, window->h() - status->h() - 40, window->w() - 272 - 80, 40, "");
   pos = 8;
   wrap = new ToggleButton(bottom, pos, 8, 24, 24,
                           "Wrap Edges", images_wrap_png,
@@ -657,11 +657,11 @@ void Gui::init()
   fill->end();
 
   // palette
-  palette = new Group(window->w() - 112 - 76, top->h() + menubar->h(),
-                    76, window->h() - top->h() - menubar->h() - status->h(),
+  palette = new Group(window->w() - 112 - 80, top->h() + menubar->h(),
+                    80, window->h() - top->h() - menubar->h() - status->h(),
                     "Palette");
   pos = 20;
-  palette_swatches = new Widget(palette, 8, pos, 60, 192,
+  palette_swatches = new Widget(palette, 8, pos, 64, 256,
                        "Color Palette", 8, 8,
                        (Fl_Callback *)checkPaletteSwatches);
   pos += 192 + 8;
@@ -728,7 +728,7 @@ void Gui::init()
 
   // middle
   middle = new Fl_Group(160, top->h() + menubar->h(),
-                        window->w() - 272 - 76, window->h() - (menubar->h() + top->h() + bottom->h() + status->h()));
+                        window->w() - 272 - 80, window->h() - (menubar->h() + top->h() + bottom->h() + status->h()));
   middle->box(FL_FLAT_BOX);
   view = new View(middle, 0, 0, middle->w(), middle->h(), "View");
   middle->resizable(view);
