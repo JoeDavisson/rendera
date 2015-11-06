@@ -550,7 +550,7 @@ namespace Editor
       return;
     }
 
-    Gui::checkPalette(widget, var);
+    Gui::checkPaletteSwatches(widget, var);
     ramp_begin = *(int *)var;
     setHsvSliders();
     setHsv(1);
@@ -673,7 +673,7 @@ namespace Editor
     Items::hsv_ramp->callback((Fl_Callback *)hsvRamp);
     Items::palette = new Widget(Items::dialog, 408, 8, 192, 192,
                                 "Palette", 24, 24,
-                                (Fl_Callback *)checkPalette);
+                                (Fl_Callback *)Gui::checkPaletteSwatches);
     Items::color = new Widget(Items::dialog, 408, 208, 192, 56, "Color", 0, 0, 0);
     new Separator(Items::dialog, 2, 272, 604, 2, "");
     Items::done = new Fl_Button(504, 280, 96, 24, "Done");

@@ -660,7 +660,7 @@ void Gui::init()
   y1 = 20;
   palette = new Widget(group_palette, 8, y1, 60, 192,
                        "Color Palette", 8, 8,
-                       (Fl_Callback *)checkPalette);
+                       (Fl_Callback *)checkPaletteSwatches);
   y1 += 192 + 8;
 
   group_palette->resizable(0);
@@ -890,7 +890,7 @@ void Gui::updateGetColor(int c)
   getcolor_color->redraw();
 }
 
-void Gui::checkPalette(Widget *widget, void *var)
+void Gui::checkPaletteSwatches(Widget *widget, void *var)
 {
   Palette *palette = Project::palette.get();
   int pos = *(int *)var;
