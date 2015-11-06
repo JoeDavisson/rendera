@@ -955,6 +955,7 @@ void Gui::checkPaletteInsert(Widget *widget, void *var)
   Project::palette->copy(undo_palette);
   begin_palette_undo = true;
   Project::palette->insertColor(Project::brush->color, palette_swatches->var);
+  Project::palette->fillTable();
   Project::palette->draw(palette_swatches);
   palette_swatches->do_callback();
 }
@@ -964,6 +965,7 @@ void Gui::checkPaletteDelete(Widget *widget, void *var)
   Project::palette->copy(undo_palette);
   begin_palette_undo = true;
   Project::palette->deleteColor(palette_swatches->var);
+  Project::palette->fillTable();
   Project::palette->draw(palette_swatches);
 
   if(palette_swatches->var > Project::palette->max - 1)

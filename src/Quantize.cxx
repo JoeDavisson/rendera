@@ -397,7 +397,5 @@ void Quantize::fast(Bitmap *src, Palette *pal, int /* */)
     if(diff24(pal->data[i], pal->data[i + 1]) < 512)
       pal->deleteColor(i);
   }
-
-  pal->fillTable();
 }
 
