@@ -71,8 +71,8 @@ namespace
   Fl_Menu_Bar *menubar;
 
   // containers
-  Fl_Group *container_left;
-  Fl_Group *container_right;
+  Fl_Group *left;
+  Fl_Group *right;
 
   // panels
   Group *top;
@@ -735,21 +735,21 @@ void Gui::init()
   middle->end();
 
   // container for left panels
-  container_left = new Fl_Group(0, top->h() + menubar->h(),
+  left = new Fl_Group(0, top->h() + menubar->h(),
                             160, window->h() - (menubar->h() + top->h() + bottom->h()));
-  container_left->add(tools);
-  container_left->add(paint);
-  container_left->add(getcolor);
-  container_left->add(selection);
-  container_left->add(offset);
-  container_left->add(text);
-  container_left->end();
+  left->add(tools);
+  left->add(paint);
+  left->add(getcolor);
+  left->add(selection);
+  left->add(offset);
+  left->add(text);
+  left->end();
 
   // container for right panels
-  container_right = new Fl_Group(window->w() - 112 - 72, top->h() + menubar->h(),
+  right = new Fl_Group(window->w() - 112 - 72, top->h() + menubar->h(),
                             112 + 72, window->h() - (menubar->h() + top->h() + bottom->h()));
-  container_right->add(palette);
-  container_right->add(colors);
+  right->add(palette);
+  right->add(colors);
 
   window->size_range(640, 480, 0, 0, 0, 0, 0);
   window->resizable(view);
