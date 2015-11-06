@@ -978,6 +978,7 @@ void Gui::checkPaletteUndo(Widget *widget, void *var)
   {
     begin_palette_undo = false;
     undo_palette->copy(Project::palette.get());
+    Project::palette->fillTable();
     Project::palette->draw(palette_swatches);
     Gui::drawPalette();
     palette_swatches->do_callback();
