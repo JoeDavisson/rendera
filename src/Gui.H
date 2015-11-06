@@ -42,6 +42,8 @@ namespace Gui
   void updateSwatch();
   void updateGetColor(int);
   void checkPaletteSwatches(Widget *, void *);
+  void checkPaletteInsert(Widget *, void *);
+  void checkPaletteDelete(Widget *, void *);
   void drawPalette();
   void checkZoomIn(Button *, void *);
   void checkZoomOut(Button *, void *);

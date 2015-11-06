@@ -139,6 +139,12 @@ namespace
 
   // palette
   Widget *palette_swatches;
+  Fl_Button *palette_insert;
+  Fl_Button *palette_delete;
+  Fl_Button *palette_replace;
+  Fl_Button *palette_undo;
+  Fl_Button *palette_rgb_ramp;
+  Fl_Button *palette_hsv_ramp;
 
   // colors
   Widget *swatch;
@@ -566,17 +572,17 @@ void Gui::init()
   pos += 24 + 6;
   new Separator(selection, 2, pos, 110, 2, "");
   pos += 8;
-  selection_crop = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Crop");
+  selection_crop = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 24, "Crop");
   selection_crop->callback((Fl_Callback *)checkSelectionCrop);
-  pos += 32 + 8;
-  selection_select = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Select");
+  pos += 24 + 8;
+  selection_select = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 24, "Select");
   selection_select->callback((Fl_Callback *)checkSelectionSelect);
-  pos += 32 + 6;
+  pos += 24 + 6;
   new Separator(selection, 2, pos, 110, 2, "");
   pos += 8;
-  selection_reset = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Reset");
+  selection_reset = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 24, "Reset");
   selection_reset->callback((Fl_Callback *)checkSelectionReset);
-  pos += 32 + 8;
+  pos += 24 + 8;
   selection->resizable(0);
   selection->end();
 
@@ -664,7 +670,17 @@ void Gui::init()
   palette_swatches = new Widget(palette, 8, pos, 64, 256,
                        "Color Palette", 8, 8,
                        (Fl_Callback *)checkPaletteSwatches);
-  pos += 192 + 8;
+  pos += 256 + 8;
+
+  palette_insert = new Fl_Button(palette->x() + 8, palette->y() + pos,
+                                 28, 24, "+"); 
+  palette_insert->tooltip("Insert Swatch");
+  palette_insert->callback((Fl_Callback *)checkPaletteInsert);
+  palette_delete = new Fl_Button(palette->x() + 44, palette->y() + pos,
+                                 28, 24, "-"); 
+  palette_delete->tooltip("Delete Swatch");
+  palette_delete->callback((Fl_Callback *)checkPaletteDelete);
+  pos += 24 + 8;
 
   palette->resizable(0);
   palette->end();
@@ -923,6 +939,22 @@ void Gui::checkPaletteSwatches(Widget *widget, void *var)
 
   int c = widget->bitmap->getpixel(x * step + 1, y * step + 1);
   updateColor(c);
+}
+
+void Gui::checkPaletteInsert(Widget *widget, void *var)
+{
+  Project::palette->insertColor(Project::brush->color, palette_swatches->var);
+  Project::palette->draw(palette_swatches);
+  palette_swatches->do_callback();
+}
+
+void Gui::checkPaletteDelete(Widget *widget, void *var)
+{
+  Project::palette->deleteColor(palette_swatches->var);
+  Project::palette->draw(palette_swatches);
+  if(palette_swatches->var > Project::palette->max - 1)
+    palette_swatches->var = Project::palette->max - 1;
+  palette_swatches->do_callback();
 }
 
 void Gui::drawPalette()
