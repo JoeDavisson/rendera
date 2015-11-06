@@ -155,7 +155,7 @@ void Palette::fillTable()
   delete table;
   table = new Octree();
 
-  const int step = 4;
+  const int step = 8;
 
   // each 4x4 block of the color cube gets a palette entry
   // close enough, and avoids a huge data structure
