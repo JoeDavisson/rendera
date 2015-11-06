@@ -70,8 +70,8 @@ namespace
   Fl_Menu_Bar *menubar;
 
   // containers
-  Fl_Group *group_left;
-  Fl_Group *group_right;
+  Fl_Group *container_left;
+  Fl_Group *container_right;
 
   // panels
   Group *top;
@@ -82,7 +82,7 @@ namespace
   Group *offset;
   Group *text;
   Group *fill;
-  Group *group_palette;
+  Group *palette;
   Group *colors;
   Group *bottom;
   Group *status;
@@ -136,8 +136,10 @@ namespace
 
   InputInt *fill_range;
 
+  // palette
+  Widget *palette_swatches;
+
   // colors
-  Widget *palette;
   Widget *swatch;
   Widget *hue;
   Widget *satval;
@@ -653,18 +655,18 @@ void Gui::init()
   fill_range->value("0");
   fill->end();
 
-  // group_palette
-  group_palette = new Group(window->w() - 112 - 76, top->h() + menubar->h(),
+  // palette
+  palette = new Group(window->w() - 112 - 76, top->h() + menubar->h(),
                     76, window->h() - top->h() - menubar->h() - status->h(),
                     "Palette");
   y1 = 20;
-  palette = new Widget(group_palette, 8, y1, 60, 192,
+  palette_swatches = new Widget(palette, 8, y1, 60, 192,
                        "Color Palette", 8, 8,
                        (Fl_Callback *)checkPaletteSwatches);
   y1 += 192 + 8;
 
-  group_palette->resizable(0);
-  group_palette->end();
+  palette->resizable(0);
+  palette->end();
 
   // colors
   colors = new Group(window->w() - 112, top->h() + menubar->h(),
@@ -732,21 +734,21 @@ void Gui::init()
   middle->end();
 
   // container for left panels
-  group_left = new Fl_Group(0, top->h() + menubar->h(),
+  container_left = new Fl_Group(0, top->h() + menubar->h(),
                             160, window->h() - (menubar->h() + top->h() + bottom->h()));
-  group_left->add(tools);
-  group_left->add(paint);
-  group_left->add(getcolor);
-  group_left->add(selection);
-  group_left->add(offset);
-  group_left->add(text);
-  group_left->end();
+  container_left->add(tools);
+  container_left->add(paint);
+  container_left->add(getcolor);
+  container_left->add(selection);
+  container_left->add(offset);
+  container_left->add(text);
+  container_left->end();
 
   // container for right panels
-  group_right = new Fl_Group(window->w() - 112 - 72, top->h() + menubar->h(),
+  container_right = new Fl_Group(window->w() - 112 - 72, top->h() + menubar->h(),
                             112 + 72, window->h() - (menubar->h() + top->h() + bottom->h()));
-  group_right->add(group_palette);
-  group_right->add(colors);
+  container_right->add(palette);
+  container_right->add(colors);
 
   window->size_range(640, 480, 0, 0, 0, 0, 0);
   window->resizable(view);
@@ -892,7 +894,7 @@ void Gui::updateGetColor(int c)
 
 void Gui::checkPaletteSwatches(Widget *widget, void *var)
 {
-  Palette *palette = Project::palette.get();
+  Palette *pal = Project::palette.get();
   int pos = *(int *)var;
 
   int step = widget->stepx;
@@ -901,18 +903,18 @@ void Gui::checkPaletteSwatches(Widget *widget, void *var)
   int x = pos % div;
   int y = pos / div;
 
-  if(y > (palette->max - 1) / div)
+  if(y > (pal->max - 1) / div)
   {
-    y = (palette->max - 1) / div;
+    y = (pal->max - 1) / div;
     pos = x + div * y;
     x = pos % div;
     y = pos / div;
     widget->var = pos;
   }
 
-  if(pos > palette->max - 1)
+  if(pos > pal->max - 1)
   {
-    pos = palette->max - 1;
+    pos = pal->max - 1;
     x = pos % div;
     y = pos / div;
     widget->var = pos;
@@ -924,10 +926,10 @@ void Gui::checkPaletteSwatches(Widget *widget, void *var)
 
 void Gui::drawPalette()
 {
-  Project::palette->draw(palette);
-  palette->var = 0;
-  palette->redraw();
-  palette->do_callback();
+  Project::palette->draw(palette_swatches);
+  palette_swatches->var = 0;
+  palette_swatches->redraw();
+  palette_swatches->do_callback();
 }
 
 void Gui::checkZoomIn(Button *, void *)
@@ -1275,37 +1277,37 @@ const char *Gui::getTextInput()
 void Gui::paletteDefault()
 {
   Project::palette->setDefault();
-  Project::palette->draw(palette);
+  Project::palette->draw(palette_swatches);
 }
 
 void Gui::paletteBlackAndWhite()
 {
   Project::palette->setBlackAndWhite();
-  Project::palette->draw(palette);
+  Project::palette->draw(palette_swatches);
 }
 
 void Gui::paletteWebSafe()
 {
   Project::palette->setWebSafe();
-  Project::palette->draw(palette);
+  Project::palette->draw(palette_swatches);
 }
 
 void Gui::palette3LevelRGB()
 {
   Project::palette->set3LevelRGB();
-  Project::palette->draw(palette);
+  Project::palette->draw(palette_swatches);
 }
 
 void Gui::palette4LevelRGB()
 {
   Project::palette->set4LevelRGB();
-  Project::palette->draw(palette);
+  Project::palette->draw(palette_swatches);
 }
 
 void Gui::palette332()
 {
   Project::palette->set332();
-  Project::palette->draw(palette);
+  Project::palette->draw(palette_swatches);
 }
 
 void Gui::checkClearToPaintColor()
