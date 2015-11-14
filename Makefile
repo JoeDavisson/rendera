@@ -3,6 +3,8 @@
 # The fltk-1.3.3 source tree must be available in this directory.
 # Please run "make fltk" first to build the library before running "make".
 
+# you MUST have libxft-dev installed before compiling FLTK on linux
+# (otherwise you'll have ugly, non-resizable fonts)
 PLATFORM=linux
 #PLATFORM=mingw32
 #PLATFORM=mingw64

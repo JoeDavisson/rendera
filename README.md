@@ -27,6 +27,7 @@ The Makefile supports ```linux``` and ```mingw``` cross-compiler targets.
 ### Libraries
 
  * FLTK-1.3.3
+ * libxft-dev (required for font rendering)
 
 ### Toolchain
 
