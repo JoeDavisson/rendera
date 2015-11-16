@@ -273,6 +273,7 @@ void Selection::drag(View *view)
 
     redraw(view);
   }
+/*
   else if(state == 3)
   {
     const int w = Project::select_bmp->w;
@@ -283,6 +284,7 @@ void Selection::drag(View *view)
     view->ignore_tool = true;
     view->drawMain(true);
   }
+*/
 
   const int overscroll = Project::overscroll;
   const int x = beginx - overscroll;
