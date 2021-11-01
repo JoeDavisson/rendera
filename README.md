@@ -37,6 +37,6 @@ Everything is statically linked resulting in a standalone executable.
 
 Rendera is built with ```gcc-5.4```.
 
-Barry is used to create the header for the embedded PNG icons:
+```Barry``` is used to create the header for the embedded PNG icons:
 
 ```$ git clone https://github.com/rubicks/barry```
