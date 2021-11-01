@@ -4,12 +4,11 @@ Rendera
 ![Screenshot](https://raw.githubusercontent.com/Mortis69/rendera/master/screenshots/screenshot.png)
 
 Rendera is a painting program suitable for photo-retouching and making seamless
-textures. Originally for Windows, it has been rewritten from scratch using
-C++/FLTK. Please see the Wiki for a list of features, and the credits file for a
-list of contributors and contact info.
+textures. Originally a C program for Windows, it has been rewritten from scratch using
+C++/FLTK.
 
 ## Build it from source
-```$ git clone https://github.com/Mortis69/rendera.git```
+```$ git clone https://github.com/JoeDavisson/rendera.git```
 
 ```$ cd rendera```
 
@@ -22,15 +21,22 @@ The Makefile supports ```linux``` and ```mingw``` cross-compiler targets.
 
 ```$ make```
 
+*Note: Compilation can be sped up by including ```-j <threads>``` after ```make```.*
+
 ## Dependencies
 
 ### Libraries
 
  * FLTK-1.3.3
  * libxft-dev (required for font rendering)
+ * PNG and JPEG libraries are included in the FLTK source package.
+
+Everything is statically linked resulting in a standalone executable.
 
 ### Toolchain
 
-Rendera is built with ```gcc-4.6```. While ```clang-3.4``` usually works, it's
-not "officially" supported.
+Rendera is built with ```gcc-5.4```.
 
+Barry is used to create the header for the embedded PNG icons:
+
+```$ git clone https://github.com/rubicks/barry```
