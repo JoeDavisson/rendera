@@ -43,8 +43,7 @@ void Octree::clear(node_type *node)
   delete node;
 }
 
-void Octree::write(const int &r, const int &g, const int &b,
-                   const float &value)
+void Octree::write(const int r, const int g, const int b, const float value)
 {
   node_type *node = root;
 
@@ -71,9 +70,7 @@ void Octree::write(const int &r, const int &g, const int &b,
   node->value = value;
 }
 
-// this allows the octree to be used in the context of a palette lookup table
-void Octree::writePath(const int &r, const int &g, const int &b,
-                       const float &value)
+void Octree::writePath(const int r, const int g, const int b, const float value)
 {
   node_type *node = root;
 
@@ -98,7 +95,7 @@ void Octree::writePath(const int &r, const int &g, const int &b,
   }
 }
 
-float Octree::read(const int &r, const int &g, const int &b)
+float Octree::read(const int r, const int g, const int b)
 {
   node_type *node = root;
 
@@ -117,3 +114,21 @@ float Octree::read(const int &r, const int &g, const int &b)
   return node->value;
 }
 
+int Octree::read(const int c)
+{
+  node_type *node = root;
+
+  for(int i = 7; i >= 0; i--)
+  {
+    const int index = (((c & 255) >> i) & 1) << 0 |
+                      ((((c >> 8) & 255) >> i) & 1) << 1 |
+                      ((((c >> 16) & 255) >> i) & 1) << 2;
+
+    if(node->child[index])
+      node = node->child[index];
+    else
+      break;
+  }
+
+  return (int)node->value;
+}

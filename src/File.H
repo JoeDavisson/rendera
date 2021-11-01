@@ -27,6 +27,7 @@ class Bitmap;
 
 namespace File
 {
+  void init();
   void load(Fl_Widget *, void *);
   int loadFile(const char *);
   Bitmap *loadJpeg(const char *, int);
@@ -40,7 +41,8 @@ namespace File
   int saveTarga(const char *);
   int savePng(const char *);
   int saveJpeg(const char *);
-  int saveJava(const char *);
+//  int saveJavaArray(const char *);
+//  int saveSTL(const char *);
 
   void loadPalette();
   void savePalette();

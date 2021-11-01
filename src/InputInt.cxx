@@ -67,15 +67,17 @@ InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
   resizable(input);
   end();
   align(FL_ALIGN_LEFT);
+  when(FL_WHEN_NOT_CHANGED);
   group = g;
   var = 0;
   cb = input_cb;
   input.callback((Fl_Callback *)change, this);
+  input.when(FL_WHEN_CHANGED);
   dec.callback((Fl_Callback *)change, this);
   inc.callback((Fl_Callback *)change, this);
   input.maximum_size(5);
   input.textsize(12);
-  input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
+  input.cursor_color(FL_FOREGROUND_COLOR);
   labelsize(12);
   copy_label(text);
   resize(group->x() + x, group->y() + y, w, h);
@@ -109,6 +111,5 @@ void InputInt::center()
 
   measure_label(ww, hh);
   resize(group->x() + group->w() / 2 - (w() + ww) / 2 + ww, y(), w(), h());
-//  resize(parent()->w() / 2 - (w() + ww) / 2 + ww, y(), w(), h());
 }
 

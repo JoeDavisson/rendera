@@ -18,6 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <string.h>
+
 #include <FL/Fl_Check_Button.H>
 #include <FL/Fl_Group.H>
 
@@ -28,11 +30,18 @@ CheckBox::CheckBox(Fl_Group *g, int x, int y, int w, int h,
 : Fl_Check_Button(x, y, w, h, 0)
 {
   group = g;
+  clear_visible_focus();
 
   if(cb)
     callback(cb, &var);
 
-  copy_label(label);
+  char s[32];
+
+  strncpy(&s[1], label, strlen(label));
+  s[0] = ' ';
+  s[strlen(label) + 1] = '\0';
+
+  copy_label(s);
   resize(group->x() + x, group->y() + y, w, h);
 }
 
@@ -45,7 +54,7 @@ void CheckBox::center()
   int ww = 0, hh = 0;
 
   measure_label(ww, hh);
-  resize((group->x() + group->w() / 2) - ((w() + ww) / 2), y(), w() + ww, h());
+  resize((group->x() + group->w() / 2) - (w() + ww) / 2 - 2, y(), w() + ww, h());
   redraw();
 }
 

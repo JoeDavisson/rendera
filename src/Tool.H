@@ -51,6 +51,9 @@ public:
   // in the case of an tool that requires multiple steps (such as crop)
   virtual void move(View *) = 0;
 
+  // called when a key is pressed
+  virtual void key(View *) = 0;
+
   // call this to finish tool from external trigger
   virtual void done(View *, int) = 0;
 

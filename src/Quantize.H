@@ -27,7 +27,6 @@ class Palette;
 namespace Quantize
 {
   void pca(Bitmap *, Palette *, int);
-  void fast(Bitmap *, Palette *, int);
 }
 
 #endif

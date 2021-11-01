@@ -18,34 +18,59 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include <algorithm>
 #include <vector>
+#include <algorithm>
 
+#include "Blend.H"
 #include "Bitmap.H"
 #include "Dialog.H"
+#include "Gamma.H"
 #include "Gui.H"
 #include "Inline.H"
 #include "Octree.H"
 #include "Palette.H"
 #include "Project.H"
 #include "Quantize.H"
+#include "View.H"
 #include "Widget.H"
 
 namespace
 {
-  // color struct, stores RGB values as floats for increased
-  // accuracy, also stores the frequency of the color in the image
+/*
+  int getMsb(int val)
+  {
+    if(val == 0)
+      return 0;
+
+    val /= 2;
+
+    int msb = 0;
+
+    while(val != 0)
+    {
+      val /= 2;
+      msb++;
+    }
+
+    return msb;
+  }
+*/
+
+/*
+  bool sortByLum(const int c1, const int c2)
+  {
+    return getl(c1) < getl(c2);
+  }
+*/
+
   struct color_type
   {
-    float r, g, b;
-    float freq;
+    float r, g, b, freq;
     bool active;
   };
 
-  // create a color_type structure
-  inline void makeColor(color_type *c,
-                        const float &r, const float &g, const float &b,
-                        const float &freq)
+  void makeColor(color_type *c,
+                 const float r, const float g, const float b, const float freq)
   {
     c->r = r;
     c->g = g;
@@ -55,7 +80,7 @@ namespace
   }
 
   // compute quantization error
-  inline float error(color_type *c1, color_type *c2)
+  float error(color_type *c1, color_type *c2)
   {
     const float r = c1->r - c2->r;
     const float g = c1->g - c2->g;
@@ -66,24 +91,20 @@ namespace
   }
 
   // merge two colors
-  inline void merge(color_type *c1, color_type *c2)
+  void merge(color_type *c1, color_type *c2)
   {
     const float mul = 1.0f / (c1->freq + c2->freq);
+
     c1->r = (c1->freq * c1->r + c2->freq * c2->r) * mul;
     c1->g = (c1->freq * c1->g + c2->freq * c2->g) * mul;
     c1->b = (c1->freq * c1->b + c2->freq * c2->b) * mul;
-
     c1->freq += c2->freq;  
   }
 
   // reduces color count by averaging sections of the color cube
-  int limitColors(Octree *histogram, color_type *colors, int max_colors)
+  int limitColors(Octree *histogram, color_type *colors, int step)
   {
     int count = 0;
-    int step = 16;
-
-    if(max_colors == 512)
-      step = 32;
 
     for(int b = 0; b <= 256 - step; b += step)
     {
@@ -98,18 +119,23 @@ namespace
 
           for(int k = 0; k < step; k++)
           {
+            const int bk = b + k;
+
             for(int j = 0; j < step; j++)
             {
+              const int gj = g + j;
+
               for(int i = 0; i < step; i++)
               {
-                const float d = histogram->read(r + i, g + j, b + k);
+                const int ri = r + i;
+                const float d = histogram->read(ri, gj, bk);
 
                 if(d > 0)
-                  histogram->write(r + i, g + j, b + k, 0);
+                  histogram->write(ri, gj, bk, 0);
 
-                rr += d * (r + i);
-                gg += d * (g + j);
-                bb += d * (b + k);
+                rr += d * ri;
+                gg += d * gj;
+                bb += d * bk;
                 div += d;
               }
             }
@@ -129,8 +155,10 @@ namespace
 
     return count;
   }
+}
 
   // stretch a palette to obtain the exact number of colors desired
+/*
   void stretchPalette(int *data, int current, int target)
   {
     std::vector<int> temp(target);
@@ -178,15 +206,13 @@ namespace
       data[x] = temp[x];
   }
 }
+*/
 
 // Pairwise clustering quantization, adapted from the algorithm described here:
 //
 // http://www.visgraf.impa.br/Projects/quantization/quant.html
 // http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 //
-// This version saves computation time by reducing the color table size
-// (and reducing it further if an image is very colorful, in which case color
-// accuracy is not as important).
 void Quantize::pca(Bitmap *src, Palette *pal, int size)
 {
   // popularity histogram
@@ -199,26 +225,12 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   float inc = 1.0 / (src->cw * src->ch);
   int count = 0;
 
-  // measure of how colorful an image is
-  // more colorful images fill more spaces in the table
-  std::vector<int> color_metric(512, 0);
-
-  // preserve lightest/darkest colors
-  int lightest = makeRgb(0, 0, 0);
-  int darkest = makeRgb(255, 255, 255);
-
   for(int j = src->ct; j <= src->cb; j++)
   {
     int *p = src->row[j] + src->cl;
 
     for(int i = src->cl; i <= src->cr; i++)
     {
-      if(getl(*p) > getl(lightest))
-        lightest = *p;
-
-      if(getl(*p) < getl(darkest))
-        darkest = *p;
-
       rgba_type rgba = getRgba(*p++);
       float freq = histogram.read(rgba.r, rgba.g, rgba.b);
 
@@ -226,41 +238,17 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
         count++;
 
       histogram.write(rgba.r, rgba.g, rgba.b, freq + inc);
-
-      color_metric[((int)rgba.r >> 5) << 0 |
-                   ((int)rgba.g >> 5) << 3 |
-                   ((int)rgba.b >> 5) << 6] = 1;
     }
   }
 
-  // assign maximum frequency to lightest/darkest colors
-  rgba_type rgba;
-  rgba = getRgba(lightest);
-  histogram.write(rgba.r, rgba.g, rgba.b, 1.0f);
-  rgba = getRgba(darkest);
-  histogram.write(rgba.r, rgba.g, rgba.b, 1.0f);
-
-  // if image uses more than 1/2 of the color cube then
-  // reduce table sizes to save time
-  int color_metric_count = 0;
-
-  for(int i = 0; i < 512; i++)
-    if(color_metric[i])
-      color_metric_count++;
-
-  int max_colors = 4096;
-
-  if(color_metric_count > 256)
-    max_colors = 512;
-
   // color list
-  std::vector<color_type> colors(max_colors);
+  std::vector<color_type> colors(4096);
 
-  for(int i = 0; i < max_colors; i++)
+  for(int i = 0; i < 4096; i++)
     colors[i].active = false;
 
   // quantization error matrix
-  std::vector<float> err_data(((max_colors + 1) * max_colors) / 2);
+  std::vector<float> err_data(((4096 + 1) * 4096) / 2);
 
   // skip if already enough colors
   if(count <= rep)
@@ -281,8 +269,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   }
   else
   {
-    // limit color count to 4096
-    count = limitColors(&histogram, &colors[0], max_colors);
+    count = limitColors(&histogram, &colors[0], 16);
   }
 
   // set max
@@ -365,37 +352,17 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 
   pal->max = index;
 
+/*
   // stretch palette
   if(pal->max != size)
   {
     stretchPalette(pal->data, pal->max, size);
     pal->max = size;
   }
+*/
 
   // redraw palette widget
   Gui::drawPalette();
   Project::palette->fillTable();
-}
-
-// this only makes 256-color palettes
-// used by restore filter
-void Quantize::fast(Bitmap *src, Palette *pal, int /* */)
-{
-  Bitmap temp(16, 16);
-  src->scale(&temp);
-  int index = 0;
-
-  for(int y = 0; y < 16; y++)
-    for(int x = 0; x < 16; x++)
-      pal->data[index++] = temp.getpixel(x, y);
-
-  pal->max = 256;
-  pal->sort();
-
-  for(int i = 0; i < pal->max - 1; i++)
-  {
-    if(diff24(pal->data[i], pal->data[i + 1]) < 512)
-      pal->deleteColor(i);
-  }
 }
 

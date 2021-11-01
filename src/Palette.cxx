@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  bool sortByLum(const int &c1, const int &c2)
+  bool sortByLum(const int c1, const int c2)
   {
     return getl(c1) < getl(c2);
   }
@@ -41,7 +41,7 @@ Palette::Palette()
   // palette color data
   data = new int[256];
 
-  // data structure for fast color lookup
+  // data structure for color lookup
   table = new Octree();
 
   // use a default palette
@@ -70,7 +70,6 @@ void Palette::draw(Widget *widget)
 
   widget->stepx = step;
   widget->stepy = step;
-
   widget->bitmap->clear(makeRgb(0, 0, 0));
 
   for(int y = 0; y < h; y += step)
@@ -78,11 +77,11 @@ void Palette::draw(Widget *widget)
     for(int x = 0; x < w; x += step)
     {
       widget->bitmap->rect(x, y, x + step, y + step,
-                           makeRgb(64, 64, 64), 0);
+                           makeRgb(255, 255, 255), 160);
       widget->bitmap->line(x, y, x + step - 1, y + step - 1,
-                           makeRgb(64, 64, 64), 0);
+                           makeRgb(255, 255, 255), 160);
       widget->bitmap->line(w - 1 - x, y, w - 1 - (x + step - 1), y + step - 1,
-                           makeRgb(64, 64, 64), 0);
+                           makeRgb(255, 255, 255), 160);
     }
   }
 
@@ -98,12 +97,35 @@ void Palette::draw(Widget *widget)
       int y1 = y * step;
 
       widget->bitmap->rectfill(x1, y1, x1 + step - 1, y1 + step - 1, data[i], 0);
-//      widget->bitmap->hline(x1, y1, x1 + step - 1, makeRgb(0, 0, 0), 128);
-//      widget->bitmap->vline(y1 + 1, x1, y1 + step - 1, makeRgb(0, 0, 0), 128);
-      widget->bitmap->rect(x1, y1, x1 + step - 1, y1 + step - 1, makeRgb(0, 0, 0), 128);
       i++;
     }
   }
+
+  for(int y = 0; y < h; y += step)
+  {
+    for(int x = 0; x < w; x += step)
+    {
+      widget->bitmap->hline(x, y, x + step - 1, makeRgb(0, 0, 0), 128);
+      widget->bitmap->vline(y, x, y + step - 1, makeRgb(0, 0, 0), 128);
+    }
+  }
+
+//  widget->bitmap->hline(0, h - 1, w - 1, makeRgb(0, 0, 0), 128);
+//  widget->bitmap->vline(0, w - 1, h - 1, makeRgb(0, 0, 0), 128);
+
+  int div = widget->w() / step;
+  int px = widget->var % div;
+  int py = widget->var / div;
+
+  int x = px * step;
+  int y = py * step;
+
+  widget->bitmap->rect(0, 0, w - 1, h - 1, makeRgb(0, 0, 0), 0);
+  widget->bitmap->rectfill(x, y, x + step - 1, y + step - 1, data[widget->var], 0);
+  widget->bitmap->rect(x, y, x + step - 1, y + step - 1, makeRgb(0, 0, 0), 0);
+  widget->bitmap->rect(x - 1, y - 1, x + step, y + step, makeRgb(0, 0, 0), 96);
+  widget->bitmap->rect(x - 2, y - 2, x + step + 1, y + step + 1, makeRgb(0, 0, 0), 160);
+  widget->bitmap->xorRect(x, y, x + step - 1, y + step - 1);
 
   widget->redraw();
 }
@@ -146,6 +168,14 @@ void Palette::replaceColor(int color, int index)
   data[index] = color;
 }
 
+void Palette::swapColor(int c1, int c2)
+{
+  int temp = data[c1];
+
+  data[c1] = data[c2];
+  data[c2] = temp;
+}
+
 // generate color lookup table
 void Palette::fillTable()
 {
@@ -154,21 +184,20 @@ void Palette::fillTable()
 
   const int step = 8;
 
-  // each 4x4 block of the color cube gets a palette entry
-  // close enough, and avoids a huge data structure
   for(int b = 0; b <= 256 - step; b += step)
   {
     for(int g = 0; g <= 256 - step; g += step)
     {
       for(int r = 0; r <= 256 - step; r += step)
       {
-        int c = makeRgb24(r, g, b);
+        int c = makeRgb24(r + step / 2, g + step / 2, b + step / 2);
         int smallest = 0xFFFFFF;
         int use = 0;
 
         for(int i = 0; i < max; i++)
         {
           int d = diff24(c, data[i]);
+
           if(d < smallest)
           {
             smallest = d;
@@ -187,10 +216,12 @@ void Palette::fillTable()
 }
 
 // return the nearest palette entry for an RGB color
-int Palette::lookup(const int &c)
+int Palette::lookup(const int c)
 {
-  rgba_type rgba = getRgba(c);
-  return table->read(rgba.r, rgba.g, rgba.b);
+//  rgba_type rgba = getRgba(c);
+//  return table->read(rgba.r, rgba.g, rgba.b);
+//  return table->read(c & 255, (c >> 8) & 255, (c >> 16) & 255);
+  return table->read(c);
 }
 
 void Palette::sort()
@@ -270,28 +301,29 @@ int Palette::save(const char *fn)
 
 void Palette::setDefault()
 {
-  static int hue[] = { 0, 110, 166, 234, 300, 402, 615, 775, 839, 869, 903, 1077, 1252, 1337, 1435 };
-  static int sat[] = { 255, 255, 255, 255, 255, 208, 255, 255, 255, 255, 255, 224, 255, 255, 255 };
-  static int val[] = { 192, 224, 240, 255, 192, 172, 160, 160, 224, 172, 160, 128, 128, 160, 192 };
+  static int hue[] = { 0, 109, 192, 256, 328, 364, 512, 657, 768, 864, 940, 1024, 1160, 1280, 1425 }; 
+
+  static int sat[] = { 192, 255, 144, 96 };
+  static int val[] = { 128, 255, 255, 255 };
+
   int index = 0;
 
+  // grays
+  data[index++] = makeRgb(255, 255, 255);
+  data[index++] = makeRgb(160, 160, 160);
+  data[index++] = makeRgb(96, 96, 96);
+  data[index++] = makeRgb(0, 0, 0);
+
+  //colors
   for(int h = 0; h < 15; h++)
   {
-    int r, g, b;
-    Blend::hsvToRgb(hue[h], sat[h], val[h], &r, &g, &b);
-    const int c = makeRgb(r, g, b);
+    for(int v = 3; v >= 0; v--)
+    {
+      int r, g, b;
 
-    data[index++] = blendFast(c, makeRgb(0, 0, 0), 128);
-    data[index++] = c;
-    data[index++] = blendFast(c, makeRgb(255, 255, 255), 160);
-    data[index++] = blendFast(c, makeRgb(255, 255, 255), 96);
-  }
-
-  // grays
-  for(int v = 0; v < 4; v++)
-  {
-    int val = v * 85;
-    data[index++] = makeRgb(val, val, val);
+      Blend::hsvToRgb(hue[h] / 32 * 32, sat[v], val[v], &r, &g, &b);
+      data[index++] = makeRgb(r, g, b);
+    }
   }
 
   max = index;
@@ -358,25 +390,6 @@ void Palette::set4LevelRGB()
       for(int b = 0; b < 4; b++)
       {
         data[index++] = makeRgb(r * 85, g * 85, b * 85);
-      }
-    }
-  }
-
-  max = index;
-  fillTable();
-}
-
-void Palette::set332()
-{
-  int index = 0;
-
-  for(int b = 0; b < 4; b++)
-  {
-    for(int g = 0; g < 8; g++)
-    {
-      for(int r = 0; r < 8; r++)
-      {
-        data[index++] = makeRgb(r * 36.43, g * 36.43, b * 85);
       }
     }
   }

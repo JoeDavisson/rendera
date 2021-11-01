@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Clone.H"
+#include "Dialog.H"
 #include "Gui.H"
 #include "Map.H"
 #include "Project.H"
@@ -90,7 +91,10 @@ void Undo::push()
 void Undo::pop()
 {
   if(undo_current >= levels - 1)
+  {
+    Dialog::message("Undo", "No more undo levels.");
     return;
+  }
 
   pushRedo();
   undo_current++;

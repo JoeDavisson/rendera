@@ -30,6 +30,7 @@ class DialogWindow : public Fl_Double_Window
 public:
   DialogWindow(int, int, const char *);
   ~DialogWindow();
+
   void addOkButton(Fl_Button **, int *);
   void addOkCancelButtons(Fl_Button **, Fl_Button **, int *);
   void show();

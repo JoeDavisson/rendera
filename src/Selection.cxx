@@ -21,12 +21,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 #include <cstdlib>
 
+#include <FL/Fl_Window.H>
+
+#include "Blend.H"
 #include "Bitmap.H"
-#include "Selection.H"
+#include "Brush.H"
 #include "Gui.H"
 #include "Map.H"
 #include "ExtraMath.H"
+#include "Inline.H"
 #include "Project.H"
+#include "Selection.H"
 #include "Stroke.H"
 #include "Tool.H"
 #include "Undo.H"
@@ -35,13 +40,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  int beginx = 0, beginy = 0, oldx = 0, oldy = 0, lastx = 0, lasty = 0;
+  int beginx = 0, beginy = 0, lastx = 0, lasty = 0;
   int state = 0;
   bool active = false;
   bool drag_started = false;
   bool resize_started = false;
   int side = 0;
-  int offset = 0;
+  int offsetx = 0;
+  int offsety = 0;
 
   bool inbox(int x, int y, int x1, int y1, int x2, int y2)
   {
@@ -73,11 +79,63 @@ namespace
       *y2 = Project::bmp->cb;
   }
 
+/*
   void drawHandles(Stroke *stroke, int x1, int y1, int x2, int y2, int color)
   {
+    int d = 8;
+    int s = 16;
+
     absrect(&x1, &y1, &x2, &y2);
-    Project::map->rect(x1, y1, x2, y2, color);
+    Project::map->rect(x1 - 1, y1 - 1, x2 + 1, y2 + 1, color);
+
+    Project::map->hline(x1 - s - 1, y1 - 1, x1 - d - 1, color);
+    Project::map->vline(y1 - s - 1, x1 - 1, y1 - d - 1, color);
+
+    Project::map->hline(x2 + d, y1 - 1, x2 + s, color);
+    Project::map->vline(y1 - s - 1, x2 + 1, y1 - d - 1, color);
+
+    Project::map->hline(x1 - s - 1, y2 + 1, x1 - d - 1, color);
+    Project::map->vline(y2 + d + 1, x1 - 1, y2 + s + 1, color);
+
+    Project::map->hline(x2 + d + 1, y2 + 1, x2 + s + 1, color);
+
+    Project::map->vline(y2 + d + 1, x2 + 1, y2 + s + 1, color);
+
+    stroke->size(x1 - s, y1 - s, x2 + s, y2 + s);
+  }
+*/
+
+  void drawHandles(View *view, Stroke *stroke, int x1, int y1, int x2, int y2)
+  {
+    int d = 8;
+    int s = 16;
+
+    Bitmap *backbuf = view->backbuf;
+    float zoom = view->zoom;
+    int ox = view->ox * zoom;
+    int oy = view->oy * zoom;
+
+    absrect(&x1, &y1, &x2, &y2);
     stroke->size(x1, y1, x2, y2);
+
+    x1 = x1 * zoom - ox;
+    y1 = y1 * zoom - oy;
+    x2 = x2 * zoom - ox + zoom;
+    y2 = y2 * zoom - oy + zoom;
+
+    backbuf->xorHline(x1 - s - 1, y1 - 1, x1 - d - 1);
+    backbuf->xorVline(y1 - s - 1, x1 - 1, y1 - d - 1);
+
+    backbuf->xorHline(x2 + d, y1 - 1, x2 + s);
+    backbuf->xorVline(y1 - s - 1, x2 + 1, y1 - d - 1);
+
+    backbuf->xorHline(x1 - s - 1, y2 + 1, x1 - d - 1);
+    backbuf->xorVline(y2 + d + 1, x1 - 1, y2 + s + 1);
+
+    backbuf->xorHline(x2 + d + 1, y2 + 1, x2 + s + 1);
+    backbuf->xorVline(y2 + d + 1, x2 + 1, y2 + s + 1);
+
+    backbuf->xorRect(x1 - 1, y1 - 1, x2 + 1, y2 + 1);
   }
 
   void crop(View *view)
@@ -146,6 +204,9 @@ Selection::~Selection()
 
 void Selection::push(View *view)
 {
+  if(!view->button1)
+    return;
+
   if(state == 0)
   {
     Project::map->clear(0);
@@ -166,28 +227,59 @@ void Selection::push(View *view)
       }
       else
       {
-        if(view->imgx < beginx)
+        // corners
+        if(view->imgx < beginx && view->imgy < beginy)
+        {
+          side = 4;
+          offsetx = ExtraMath::abs(view->imgx - beginx);
+          offsety = ExtraMath::abs(view->imgy - beginy);
+          resize_started = true;
+        }
+        else if(view->imgx > lastx && view->imgy < beginy)
+        {
+          side = 5;
+          offsetx = ExtraMath::abs(view->imgx - lastx);
+          offsety = ExtraMath::abs(view->imgy - beginy);
+          resize_started = true;
+        }
+        else if(view->imgx < beginx && view->imgy > lasty)
+        {
+          side = 6;
+          offsetx = ExtraMath::abs(view->imgx - beginx);
+          offsety = ExtraMath::abs(view->imgy - lasty);
+          resize_started = true;
+        }
+        else if(view->imgx > lastx && view->imgy > lasty)
+        {
+          side = 7;
+          offsetx = ExtraMath::abs(view->imgx - lastx);
+          offsety = ExtraMath::abs(view->imgy - lasty);
+          resize_started = true;
+        }
+
+        // sides
+        else if(view->imgx < beginx)
         {
           side = 0;
-          offset = ExtraMath::abs(view->imgx - beginx);
+          offsetx = ExtraMath::abs(view->imgx - beginx);
           resize_started = true;
         }
         else if(view->imgx > lastx)
         {
           side = 1;
-          offset = ExtraMath::abs(view->imgx - lastx);
+          offsetx = ExtraMath::abs(view->imgx - lastx);
           resize_started = true;
         }
         else if(view->imgy < beginy)
         {
           side = 2;
-          offset = ExtraMath::abs(view->imgy - beginy);
+          offsety = ExtraMath::abs(view->imgy - beginy);
           resize_started = true;
         }
         else if(view->imgy > lasty)
         {
           side = 3;
-          offset = ExtraMath::abs(view->imgy - lasty);
+          offsety = ExtraMath::abs(view->imgy - lasty);
           resize_started = true;
         }
 
@@ -204,6 +296,17 @@ void Selection::push(View *view)
     Project::select_bmp->blit(Project::bmp,
                0, 0, view->imgx - w / 2, view->imgy - h / 2, w, h);
 
+/*
+    for(int y = 0; y < h; y++)
+    {
+      for(int x = 0; x < w; x++)
+      {
+        Project::bmp->setpixelSolid(view->imgx - w / 2 + x, view->imgy - h / 2 + y, Project::select_bmp->getpixel(x, y), Project::brush->trans);
+      }
+    }
+*/
+
+    Blend::set(Blend::TRANS);
     view->ignore_tool = true;
     view->drawMain(true);
   }
@@ -215,21 +318,32 @@ void Selection::drag(View *view)
 
   if(state == 1)
   {
-    drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
-    drawHandles(stroke, beginx, beginy, view->imgx, view->imgy, 255);
+    view->drawMain(false);
+    drawHandles(view, stroke, beginx, beginy, lastx, lasty);
+    drawHandles(view, stroke, beginx, beginy, view->imgx, view->imgy);
 
     lastx = view->imgx;
     lasty = view->imgy;
 
-    view->drawMain(false);
-    stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+//    view->drawMain(false);
+
+//    stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+
+/*
+    int temp = Project::brush->color;
+    Project::brush->color = makeRgb(128, 128, 128);
+    stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom, view->bgr_order);
+    Project::brush->color = temp;
+*/
+
     view->redraw();
 
     redraw(view);
   }
   else if(state == 2)
   {
-    drawHandles(stroke, beginx, beginy, lastx, lasty, 0);
+    view->drawMain(false);
+    drawHandles(view, stroke, beginx, beginy, lastx, lasty);
 
     if(drag_started)
     {
@@ -256,17 +370,36 @@ void Selection::drag(View *view)
     {
       switch(side)
       {
+        // sides
         case 0:
-          beginx = view->imgx + offset;
+          beginx = view->imgx + offsetx;
           break;
         case 1:
-          lastx = view->imgx - offset;
+          lastx = view->imgx - offsetx;
           break;
         case 2:
-          beginy = view->imgy + offset;
+          beginy = view->imgy + offsety;
           break;
         case 3:
-          lasty = view->imgy - offset;
+          lasty = view->imgy - offsety;
+          break;
+
+        // corners
+        case 4:
+          beginx = view->imgx + offsetx;
+          beginy = view->imgy + offsety;
+          break;
+        case 5:
+          lastx = view->imgx - offsetx;
+          beginy = view->imgy + offsety;
+          break;
+        case 6:
+          beginx = view->imgx + offsetx;
+          lasty = view->imgy - offsety;
+          break;
+        case 7:
+          lastx = view->imgx - offsetx;
+          lasty = view->imgy - offsety;
           break;
       }
     }
@@ -312,7 +445,8 @@ void Selection::release(View *view)
   const int w = abs(lastx - beginx) + 1;
   const int h = abs(lasty - beginy) + 1;
 
-  Gui::checkSelectionValues(x, y, w, h);
+  if(state != 3)
+    Gui::checkSelectionValues(x, y, w, h);
 }
 
 void Selection::move(View *view)
@@ -329,6 +463,7 @@ void Selection::move(View *view)
     const int x2 = x1 + w - 1;
     const int y2 = y1 + h - 1;
 
+    view->window()->cursor(FL_CURSOR_HAND);
     stroke->size(x1, y1, x2, y2);
 
     view->drawMain(false);
@@ -337,6 +472,37 @@ void Selection::move(View *view)
     view->ignore_tool = true;
     view->redraw();
   }
+  else if(state == 2)
+  {
+    if(view->imgx < stroke->x1 && view->imgy < stroke->y1)
+      view->window()->cursor(FL_CURSOR_NW);
+    else if(view->imgx > stroke->x2 && view->imgy < stroke->y1)
+      view->window()->cursor(FL_CURSOR_NE);
+    else if(view->imgx < stroke->x1 && view->imgy > stroke->y2)
+      view->window()->cursor(FL_CURSOR_SW);
+    else if(view->imgx > stroke->x2 && view->imgy > stroke->y2)
+      view->window()->cursor(FL_CURSOR_SE);
+
+    else if(view->imgx < stroke->x1)
+      view->window()->cursor(FL_CURSOR_W);
+    else if(view->imgx > stroke->x2)
+      view->window()->cursor(FL_CURSOR_E);
+    else if(view->imgy < stroke->y1)
+      view->window()->cursor(FL_CURSOR_N);
+    else if(view->imgy > stroke->y2)
+      view->window()->cursor(FL_CURSOR_S);
+
+    else
+      view->window()->cursor(FL_CURSOR_HAND);
+  }
+  else
+  {
+    view->window()->cursor(FL_CURSOR_CROSS);
+  }
+}
+
+void Selection::key(View *view)
+{
 }
 
 void Selection::done(View *view, int mode)
@@ -371,9 +537,10 @@ void Selection::redraw(View *view)
   if(active)
   {
     active = false;
-    drawHandles(stroke, beginx, beginy, lastx, lasty, 255);
     view->drawMain(false);
-    stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+    drawHandles(view, stroke, beginx, beginy, lastx, lasty);
+//    view->drawMain(false);
+//    stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
     view->redraw();
     active = true;
   }

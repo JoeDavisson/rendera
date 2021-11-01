@@ -21,8 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cmath>
 #include <vector>
 
+#include <FL/fl_draw.H>
+
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Repeat_Button.H>
 #include <FL/Fl_Choice.H>
 
 #include "Bitmap.H"
@@ -46,6 +49,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Separator.H"
 #include "Undo.H"
 #include "View.H"
+#include "Widget.H"
 
 namespace
 {
@@ -54,8 +58,69 @@ namespace
   void pushUndo()
   {
     bmp = Project::bmp;
-//    Undo::push(bmp->cl, bmp->ct, bmp->cw, bmp->ch);
     Undo::push();
+  }
+
+  void drawPreview(Bitmap *dest)
+  {
+    Bitmap *src = Project::bmp;
+    int overscroll = Project::overscroll;
+
+    if(src->w >= src->h)
+    {
+      float aspect = (float)(src->h - overscroll * 2) / (src->w - overscroll * 2);
+      int height = (float)dest->w * aspect;
+
+      dest->clear(getFltkColor(FL_BACKGROUND2_COLOR));
+      src->fastStretch(dest, overscroll, overscroll,
+                      src->w - overscroll * 2, src->h - overscroll * 2,
+                      0, (dest->h - height) / 2, dest->w, height, false);
+      dest->rect(0, (dest->h - height) / 2, dest->w, ((dest->h - height) / 2) + height, makeRgb(0, 0, 0), 0);
+    }
+    else
+    {
+      float aspect = (float)(src->w - overscroll * 2) / (src->h - overscroll * 2);
+      int width = (float)dest->h * aspect;
+
+      dest->clear(getFltkColor(FL_BACKGROUND2_COLOR));
+      src->fastStretch(dest, overscroll, overscroll,
+                      src->w - overscroll * 2, src->h - overscroll * 2,
+                      (dest->w - width) / 2, 0, width, dest->w, false);
+      dest->rect((dest->w - width) / 2, 0, ((dest->w - width) / 2) + width, dest->w, makeRgb(0, 0, 0), 0);
+    }
+
+    dest->rect(0, 0, dest->w - 1, dest->h - 1, makeRgb(0, 0, 0), 128);
+  }
+}
+
+namespace Test
+{
+  void apply()
+  {
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = bmp->row[y] + bmp->cl;
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        rgba_type rgba = getRgba(*p);
+
+        const int r = rgba.r;
+        const int g = rgba.g;
+        const int b = rgba.b;
+        const int l = getl(makeRgb(r, g, b));
+
+        *p = makeRgb((r | l) & 255, (g | l) & 255, (b | l) & 255);
+
+        p++;
+      }
+    }
+  }
+
+  void begin()
+  {
+    pushUndo();
+    apply();
   }
 }
 
@@ -74,7 +139,8 @@ namespace Normalize
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(*p);
 
@@ -94,6 +160,8 @@ namespace Normalize
           b_low = b;
         if(b > b_high)
           b_high = b;
+
+        p++;
       }
     }
 
@@ -114,7 +182,8 @@ namespace Normalize
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(*p);
 
@@ -123,6 +192,7 @@ namespace Normalize
         const int b = (rgba.b - b_low) * b_scale;
 
         *p = makeRgba(r, g, b, rgba.a);
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -152,7 +222,8 @@ namespace Equalize
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(*p);
 
@@ -163,6 +234,7 @@ namespace Equalize
         list_r[r]++;
         list_g[g]++;
         list_b[b]++;
+        p++;
       }
     }
 
@@ -183,7 +255,8 @@ namespace Equalize
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(*p);
 
@@ -196,6 +269,7 @@ namespace Equalize
         b = list_b[b] * scale;
 
         *p = makeRgba(r, g, b, rgba.a);
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -249,7 +323,8 @@ namespace ValueStretch
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(*p);
 
@@ -260,6 +335,8 @@ namespace ValueStretch
         list_r[r]++;
         list_g[g]++;
         list_b[b]++;
+
+        p++;
       }
     }
 
@@ -280,7 +357,8 @@ namespace ValueStretch
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(*p);
 
@@ -301,6 +379,7 @@ namespace ValueStretch
         b = clamp(b, 255);
 
         *p = makeRgba(r, g, b, rgba.a);
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -328,7 +407,7 @@ namespace Saturate
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(*p);
 
@@ -340,6 +419,7 @@ namespace Saturate
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
 
         list_s[s]++;
+        p++;
       }
     }
 
@@ -354,7 +434,8 @@ namespace Saturate
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(*p);
 
@@ -369,7 +450,10 @@ namespace Saturate
 
         // don't try to saturate grays
         if(s == 0)
+        {
+          p++;
           continue;
+        }
 
         const int temp = s;
         s = list_s[s] * scale;
@@ -378,7 +462,10 @@ namespace Saturate
           s = temp;
 
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
-        *p = Blend::trans(*p, Blend::keepLum(makeRgba(r, g, b, rgba.a), l), 255 - s);
+
+        const int c1 = *p;
+        *p = Blend::colorize(c1, Blend::keepLum(makeRgba(r, g, b, rgba.a), l), 255 - s);
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -400,23 +487,30 @@ namespace RotateHue
   namespace Items
   {
     DialogWindow *dialog;
-    InputInt *angle;
+    Widget *preview;
+    Widget *hue;
+    Fl_Repeat_Button *inc_hue;
+    Fl_Repeat_Button *dec_hue;
     CheckBox *preserve_lum;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
 
-  void apply(int amount)
+  void render(Bitmap *dest, bool show_progress)
   {
-    const int hh = amount * 4.277;
+    const int hh = (((Items::hue->var + 180) % 360) * 6) * .712;
     const bool keep_lum = Items::preserve_lum->value();
 
-    Gui::showProgress(bmp->h);
+    drawPreview(Items::preview->bitmap);
 
-    for(int y = bmp->ct; y <= bmp->cb; y++)
+    if(show_progress)
+      Gui::showProgress(bmp->h);
+
+    for(int y = dest->ct; y <= dest->cb; y++)
     {
-      int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+      int *p = dest->row[y] + dest->cl;
+
+      for(int x = dest->cl; x <= dest->cr; x++)
       {
         int c = *p;
 
@@ -430,9 +524,7 @@ namespace RotateHue
 
         Blend::rgbToHsv(r, g, b, &h, &s, &v);
         h += hh;
-
-        if(h >= 1536)
-          h -= 1536;
+        h %= 1536;
 
         Blend::hsvToRgb(h, s, v, &r, &g, &b);
         c = makeRgba(r, g, b, rgba.a);
@@ -441,26 +533,73 @@ namespace RotateHue
           *p = Blend::keepLum(c, l);
         else
           *p = c;
+
+        p++;
       }
 
-      if(Gui::updateProgress(y) < 0)
-        return;
+      if(show_progress)
+        if(Gui::updateProgress(y) < 0)
+          return;
     }
 
     Gui::hideProgress();
+  }
+
+  void setHue()
+  {
+    int hx = Items::hue->var % 360;
+
+    Items::hue->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
+
+    for(int x = 0; x < 360; x++)
+    {
+      if(!(x % 60))
+        Items::hue->bitmap->vline(8, x, 23, getFltkColor(FL_FOREGROUND_COLOR), 160);
+      else if(!(x % 30))
+        Items::hue->bitmap->vline(16, x, 23, getFltkColor(FL_FOREGROUND_COLOR), 160);
+      else if(!(x % 15))
+        Items::hue->bitmap->vline(20, x, 23, getFltkColor(FL_FOREGROUND_COLOR), 160);
+    }
+
+    Items::hue->bitmap->rect(0, 0, Items::hue->bitmap->w - 1, Items::hue->bitmap->h - 1, makeRgb(0, 0, 0), 0);
+    Items::hue->bitmap->xorVline(0, hx, 23);
+    Items::hue->redraw();
+
+    char degree[16];
+
+    Items::hue->copy_label("                ");
+    sprintf(degree, "%d\xB0",
+             (int)(hx - 180));
+
+    Items::hue->copy_label(degree);
+    render(Items::preview->bitmap, false);
+    Items::preview->redraw();
+  }
+
+  void incHue()
+  {
+    Items::hue->var++;
+//    Items::hue->var %= 360;
+    if(Items::hue->var > 359)
+      Items::hue->var = 359;
+    setHue();
+  }
+
+  void decHue()
+  {
+    Items::hue->var--;
+//    Items::hue->var %= 360;
+
+    if(Items::hue->var < 0)
+      Items::hue->var = 0;
+    setHue();
   }
 
   void close()
   {
     Items::dialog->hide();
     pushUndo();
-
-    int angle = atoi(Items::angle->value());
-
-    if(angle < 0)
-      angle += 360;
-
-    apply(angle);
+    render(Project::bmp, true);
   }
 
   void quit()
@@ -471,6 +610,11 @@ namespace RotateHue
 
   void begin()
   {
+    bmp = Project::bmp;
+    Items::hue->var = 180;
+    drawPreview(Items::preview->bitmap);
+    Items::preview->redraw();
+    Items::hue->do_callback();
     Items::dialog->show();
   }
 
@@ -478,13 +622,18 @@ namespace RotateHue
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(256, 0, "Rotate Hue");
-    Items::angle = new InputInt(Items::dialog, 0, y1, 96, 24, "Angle:", 0, -359, 359);
-    y1 += 24 + 8;
-    Items::angle->maximum_size(4);
-    Items::angle->value("60");
-    Items::angle->center();
-    Items::preserve_lum = new CheckBox(Items::dialog, 0, y1, 16, 16, "Preserve Luminosity", 0);
+    Items::dialog = new DialogWindow(424, 0, "Rotate Hue");
+    Items::preview = new Widget(Items::dialog, 8, y1, 408, 408, 0, 1, 1, 0);
+    y1 += 408 + 8;
+    Items::dec_hue = new Fl_Repeat_Button(8, y1, 20, 24, "@<");
+    Items::dec_hue->callback((Fl_Callback *)decHue);
+    Items::hue = new Widget(Items::dialog, 8 + 20 + 4, y1, 360, 24, 0, 1, 24, (Fl_Callback *)setHue);
+    Items::hue->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
+    Items::hue->labelfont(FL_COURIER);
+    Items::inc_hue = new Fl_Repeat_Button(8 + 16 + 4 + 360 + 8, y1, 20, 24, "@>");
+    Items::inc_hue->callback((Fl_Callback *)incHue);
+    y1 += 24 + 8 + 24;
+    Items::preserve_lum = new CheckBox(Items::dialog, 0, y1, 16, 16, "Preserve Luminosity", (Fl_Callback *)setHue);
     Items::preserve_lum->center();
     y1 += 16 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
@@ -504,9 +653,11 @@ namespace Invert
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         *p = Blend::invert(*p, 0, 0);
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -532,10 +683,12 @@ namespace InvertAlpha
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         const rgba_type rgba = getRgba(*p);
         *p = makeRgba(rgba.r, rgba.g, rgba.b, 255 - rgba.a);
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -553,7 +706,7 @@ namespace InvertAlpha
 }
 
 // tries to automatically fix color/contrast problems
-namespace AutoCorrect
+namespace Restore
 {
   namespace Items
   {
@@ -579,7 +732,8 @@ namespace AutoCorrect
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         const rgba_type rgba = getRgba(*p);
 
@@ -588,6 +742,7 @@ namespace AutoCorrect
         bb += rgba.b;
 
         count++;
+        p++;
       }
     }
 
@@ -596,9 +751,9 @@ namespace AutoCorrect
     bb /= count;
 
     // adjustment factors
-    const double ra = (256.0f / (256 - rr)) / std::sqrt(256.0f / (rr + 1));
-    const double ga = (256.0f / (256 - gg)) / std::sqrt(256.0f / (gg + 1));
-    const double ba = (256.0f / (256 - bb)) / std::sqrt(256.0f / (bb + 1));
+    const double ra = (256.0 / (256 - rr)) / std::sqrt(256.0 / (rr + 1));
+    const double ga = (256.0 / (256 - gg)) / std::sqrt(256.0 / (gg + 1));
+    const double ba = (256.0 / (256 - bb)) / std::sqrt(256.0 / (bb + 1));
 
     // begin restore
     Gui::showProgress(bmp->h);
@@ -606,7 +761,8 @@ namespace AutoCorrect
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         const rgba_type rgba = getRgba(*p);
         int r = rgba.r;
@@ -627,6 +783,8 @@ namespace AutoCorrect
           *p = Blend::keepLum(makeRgba(r, g, b, rgba.a), l);
         else
           *p = makeRgba(r, g, b, rgba.a);
+
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -667,14 +825,14 @@ namespace AutoCorrect
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(384, 0, "Auto-Correct");
-    Items::box = new Fl_Box(FL_FLAT_BOX, 8, 8, 368, 32, "Automatically restores color/contrast to a bad image.");
+    Items::dialog = new DialogWindow(384, 0, "Restore");
+    Items::box = new Fl_Box(FL_FLAT_BOX, 8, 8, 368, 32, "Attempts to correct color fading.");
     Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-    Items::box->labelsize(12);
+//    Items::box->labelsize(12);
     y1 += 32;
     Items::normalize = new CheckBox(Items::dialog, 0, y1, 16, 16, "Normalize First", 0);
     y1 += 16 + 8;
-    Items::normalize->value(1);
+    Items::normalize->value(0);
     Items::normalize->center();
     Items::invert = new CheckBox(Items::dialog, 0, y1, 16, 16, "Invert First", 0);
     Items::invert->center();
@@ -690,456 +848,10 @@ namespace AutoCorrect
   }
 }
 
-// Based on Geoff Daniell's restoration algorithm but differs from the
-// original Gimp plugin in the following ways:
-//
-// -Side absorption corrections are not implemented.
-// -The palette generator is not the same, and produces different results.
-// -No "make less blue" option.
-//
-// Please refer to the original Gimp plugin source in redist directory.
-namespace Restore
-{
-  namespace Items
-  {
-    DialogWindow *dialog;
-    Fl_Box *box;
-    InputInt *contrast;
-    Fl_Button *ok;
-    Fl_Button *cancel;
-  }
-
-  // for storing floating-point adjustment factors etc
-  class Triplet
-  {
-  public:
-    Triplet(float x, float y, float z)
-    {
-      set(x, y, z);
-    }
-
-    ~Triplet()
-    {
-    }
-
-    void set(float x, float y, float z)
-    {
-      value[0] = x;
-      value[1] = y;
-      value[2] = z;
-    }
-
-    void copy(Triplet src)
-    {
-      value[0] = src.value[0];
-      value[1] = src.value[1];
-      value[2] = src.value[2];
-    }
-
-    float value[3];
-  };
-
-  // this stores one channel from a palette into the destination buffer
-  void getSlice(const Palette *pal, const int channel, int *dest)
-  {
-    switch(channel)
-    {
-      case 0:
-        for(int i = 0; i < pal->max; i++)
-          dest[i] = getr(pal->data[i]);
-        break;
-      case 1:
-        for(int i = 0; i < pal->max; i++)
-          dest[i] = getg(pal->data[i]);
-        break;
-      case 2:
-        for(int i = 0; i < pal->max; i++)
-          dest[i] = getb(pal->data[i]);
-        break;
-    }
-  }
-
-  // scale/gamma
-  inline int levels_value(const int &value,
-                          const int &in_min, const int &in_max,
-                          const float &gamma,
-                          const int &out_min, const int &out_max)
-  {
-//    float v = (float)(value - in_min) / ((in_max - in_min) + 1);
-//    v = powf(v, 1.0f / gamma);
-//    v = v * (out_max - out_min) + out_min;
-    float v;
-
-    if(in_max != in_min)
-      v = (float)(value - in_min) / ((in_max - in_min) + 1);
-    else
-      v = (float)(value - in_min) / 255;
-
-    if(v > 1.0f)
-      v = 1.0f;
-    if(v < 0)
-      v = 0;
-
-    v = powf(v, 1.0f / gamma);
-
-    if(out_max >= out_min)
-      v = v * (out_max - out_min) + out_min;
-    else if(out_max < out_min)
-      v = out_min - v * (out_min - out_max);
-
-//    return clamp((int)v, 255);
-    return (int)v;
-  }
-
-  // this emulates the levels function in GIMP
-  void levels(Bitmap *temp,
-              const int channel,
-              const int in_min, const int in_max,
-              const float gamma,
-              const int out_min, const int out_max)
-  {
-    for(int y = temp->ct; y < temp->cb; y++)
-    {
-      int *p = temp->row[y] + temp->cl;
-      for(int x = temp->cl; x < temp->cr; x++, p++)
-      {
-        const rgba_type rgba = getRgba(*p);
-        int r = rgba.r;
-        int g = rgba.g;
-        int b = rgba.b;
-
-        switch(channel)
-        {
-          case 0:
-            r = levels_value(r, in_min, in_max, gamma, out_min, out_max);
-            break;
-          case 1:
-            g = levels_value(g, in_min, in_max, gamma, out_min, out_max);
-            break;
-          case 2:
-            b = levels_value(b, in_min, in_max, gamma, out_min, out_max);
-            break;
-        }
-
-        *p = makeRgb(r, g, b);
-      }
-    }
-  }
-
-  // find m through successive approximation
-  float percentile(const int *c, const float &f, const int &max)
-  {
-    int n = 0;
-
-    for(int i = 0; i < max; i++)
-    {
-      if(c[i] > 0)
-        n++;
-    }
-
-    const int nf = (int)(n * f);
-    int m = -1;
-    int k = 0;
-
-    while(k < nf)
-    {
-      m++;
-      k = 0;
-
-      for(int i = 0; i < max; i++)
-      {
-        if(c[i] > 0 && c[i] <= m)
-          k++;
-      }
-    }
-
-    return (float)m;
-  }
-
-  struct color_range_type
-  {
-    float hi[3], lo[3];
-  };
-
-  struct color_range_type colormap(Bitmap *src,
-                                   Triplet alpha, Triplet m,
-                                   float top, float bot)
-  {
-    // duplicate image
-    Bitmap small_copy(src->w, src->h);
-    src->blit(&small_copy, 0, 0, 0, 0, src->w, src->h);
-
-    // restore
-    for(int i = 0; i < 3; i++)
-      levels(&small_copy, i, 0, m.value[i], alpha.value[i], 0, 255);
-
-    // get new colormap
-    Palette pal;
-    Quantize::fast(&small_copy, &pal, 256);
-
-    // return color range
-    int slice[256];
-    color_range_type color_range;
-
-    for(int i = 0; i < 3; i++)
-    {
-      getSlice(&pal, i, slice);
-      color_range.hi[i] = percentile(slice, top, pal.max);
-      color_range.lo[i] = percentile(slice, bot, pal.max);
-    }
-
-    return color_range;
-  }
-
-  void apply(float contrast)
-  {
-    // make small copy
-    Bitmap small_image(bmp->w / 10, bmp->h / 10);
-    bmp->scale(&small_image);
-
-    // get initial percentiles
-    float top = 1.0f;
-    float bot = 0.1f;
-
-    struct color_range_type color_range;
-    color_range = colormap(&small_image,
-                           Triplet(1.0f, 1.0f, 1.0f),
-                           Triplet(255, 255, 255),
-                           top,
-                           bot);
-
-    // get initial m and alpha
-    Triplet init_alpha(0, 0, 0);
-    Triplet init_m(0, 0, 0);
-
-    for(int i = 0; i < 3; i++)
-    {
-      float hi = color_range.hi[i];
-      float lo = color_range.lo[i];
-
-      init_m.value[i] = expf((logf(top) * logf(lo) - logf(bot) * logf(hi))
-                            / (logf(top) - logf(bot)));
-      init_alpha.value[i] = (logf(lo) - logf(init_m.value[i])) / logf(bot);
-    }
-
-    // iterate to get correct m and alpha
-    Triplet alpha(0, 0, 0);
-    Triplet m(0, 0, 0);
-    alpha.copy(init_alpha);
-    m.copy(init_m);
-    Triplet d_alpha(1.0f, 1.0f, 1.0f);
-    Triplet d_m(0, 0, 0);
-
-    int iter = 0;
-
-    while(std::max(ExtraMath::abs(d_alpha.value[0]),
-                   std::max(ExtraMath::abs(d_alpha.value[1]),
-                            ExtraMath::abs(d_alpha.value[2]))) > 0.02f)
-    {
-      iter++;
-      if(iter == 10)
-        break;
-
-      for(int i = 0; i < 3; i++)
-      {
-        if(alpha.value[i] < 0.1f || alpha.value[i] > 10.0f)
-        {
-          Dialog::message("Error", "The image has deteriorated too far to restore.");
-          return;
-        }
-      }
-
-      color_range = colormap(&small_image, alpha, m, top, bot);
-        
-      for(int i = 0; i < 3; i++)
-      {
-        float hi = color_range.hi[i];
-        float lo = color_range.lo[i];
-
-        d_alpha.value[i] = alpha.value[i] * alpha.value[i]
-                           * (lo / (255.0f * bot) - 1) / logf(bot);
-        d_m.value[i] = alpha.value[i] * (hi - 255.0f * top);
-
-        if(ExtraMath::abs(d_alpha.value[i]) > 0.2f * alpha.value[i])
-        {
-          d_alpha.value[i] = 0.2f * alpha.value[i] * d_alpha.value[i]
-                                    / ExtraMath::abs(d_alpha.value[i]);
-        }
-
-        alpha.value[i] += d_alpha.value[i];
-        m.value[i] += d_m.value[i];
-      }
-    }
-
-    // if loop failed to converge use initial values
-    if(iter == 10)
-    {
-      Dialog::message("Error", "The image has deteriorated badly, the restoration\n is probably poor but may be an improvement on the original.");
-      alpha.copy(init_alpha);
-      m.copy(init_m);
-    }
-
-    // create restored image
-    for(int i = 0; i < 3; i++)
-      levels(&small_image, i, 0, m.value[i], alpha.value[i], 0, 255);
-
-    // get color map of restored image
-    Palette pal;
-    Quantize::fast(&small_image, &pal, 256);
-
-    float newc[3][256];
-
-    for(int i = 0; i < 3; i++)
-    {
-      int temp[256];
-
-      getSlice(&pal, i, temp);
-
-      for(int j = 0; j < pal.max; j++)
-        newc[i][j] = (float)temp[j];
-    }
-
-    // average color
-    float av[256];
-
-    for(int i = 0; i < pal.max; i++)
-      av[i] = (newc[0][i] + newc[1][i] + newc[2][i]) / (3 * 255);
-
-    // tweak restoration
-    Triplet lambda(1.0f, 1.0f, 1.0f);
-    Triplet sigma(1.0f, 1.0f, 1.0f);
-
-    bool ok = true;
-
-    for(int i = 0; i < 3; i++)
-    {
-      float lambda_c = 1.0f;
-      float d_lambda_c = 1.0f;
-      float l[256]; 
-
-      for(int j = 0; j < pal.max; j++)
-        l[j] = logf((newc[i][j] + 1.0f) / 255);
-
-      iter = 0;
-      float sig = 0;
-
-      while(ExtraMath::abs(d_lambda_c) > 1e-4f)
-      {
-        iter++;
-        if(iter >= 20)
-          break;
-
-        float pc[256];
-        float ppl = 0;
-        float ppll = 0;
-        float pp = 0;
-        float ap = 0;
-        float apl = 0;
-        float apll = 0;
-
-        for(int j = 0; j < pal.max; j++)
-        {
-          pc[j] = powf(newc[i][j] / 255, lambda_c);
-          ppl += pc[j] * pc[j] * l[j];
-          ppll += pc[j] * pc[j] * l[j] * l[j];
-          pp += pc[j] * pc[j];
-          ap += av[j] * pc[j];
-          apl += av[j] * pc[j] * l[j];
-          apll += av[j] * pc[j] * l[j] * l[j];
-        }
-
-        sig = ap / pp;
-        d_lambda_c = -(apl - sig * ppl) / (apll - 2 * sig * ppll);
-        lambda_c += d_lambda_c;
-      }   
-
-      lambda.value[i] = lambda_c;
-      sigma.value[i] = sig;
-
-      if(iter == 20)
-        ok = false;
-    }
-
-    // if loop fails to converge use default values
-    if(!ok)
-    {
-      lambda.set(1.0f, 1.0f, 1.0f);
-      sigma.set(1.0f, 1.0f, 1.0f);
-    }
-
-    float smin = std::min(sigma.value[0],
-                          std::min(sigma.value[1], sigma.value[2]));
-
-    // adjust parameters
-    for(int i = 0; i < 3; i++)
-    {
-      alpha.value[i] /= lambda.value[i];
-      sigma.value[i] /= smin;
-      m.value[i] /= powf(sigma.value[i], alpha.value[i]);
-    }
-
-    // implement degree of restoration and restore
-    contrast /= 100;
-
-    for(int i = 0; i < 3; i++)
-    {
-      alpha.value[i] = 1.0f - contrast * (1.0f - alpha.value[i]);
-      m.value[i] = 255.0f - contrast * (255.0f - m.value[i]);
-      levels(bmp, i, 0, m.value[i], alpha.value[i], 0, 255);
-    }
-
-    // correct side absorptions
-    Gui::hideProgress();
-  }
-
-  void close()
-  {
-    Items::dialog->hide();
-    pushUndo();
-
-    apply(atoi(Items::contrast->value()));
-  }
-
-  void quit()
-  {
-    Gui::hideProgress();
-    Items::dialog->hide();
-  }
-
-  void begin()
-  {
-    Items::dialog->show();
-  }
-
-  void init()
-  {
-    int y1 = 8;
-
-    Items::dialog = new DialogWindow(384, 0, "Restore");
-    Items::box = new Fl_Box(FL_FLAT_BOX, 8, 8, 368, 48, "Restores faded color photographs and slides.\n (Based Geoff Daniell's Restore algorithm, but is not identical.)");
-    Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-    Items::box->labelsize(12);
-    y1 += 48;
-    Items::contrast = new InputInt(Items::dialog, 0, y1, 96, 24, "Contrast:", 0, 1, 150);
-    y1 += 24 + 8;
-    Items::contrast->maximum_size(4);
-    Items::contrast->value("100");
-    Items::contrast->center();
-//    y1 += 16 + 8;
-    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
-    Items::ok->callback((Fl_Callback *)close);
-    Items::cancel->callback((Fl_Callback *)quit);
-    Items::dialog->set_modal();
-    Items::dialog->end();
-  }
-}
-
-// Corrects uneven dye fading in photographs (especially when there is a severe
-// color cast, such as when one of the dyes have faded almost completely).
-//
+// Attempes to correct side-absorptions in color photographs.
 // Sometimes works better before or after the restore filter depending on
 // the image.
-namespace CorrectionMatrix
+namespace SideAbsorptions
 {
   void apply()
   {
@@ -1148,16 +860,18 @@ namespace CorrectionMatrix
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(*p);
 
         int r = rgba.r;
         int g = rgba.g;
         int b = rgba.b;
-        int l = getl(*p);
+        int h, s, v, old_s;
 
-        // correction matrix
+        Blend::rgbToHsv(r, g, b, &h, &old_s, &v);
+
         int ra = r;
         int ga = (r * 4 + g * 8 + b * 1) / 13;
         int ba = (r * 2 + g * 4 + b * 8) / 14;
@@ -1166,7 +880,11 @@ namespace CorrectionMatrix
         ga = clamp(ga, 255);
         ba = clamp(ba, 255);
 
-        *p = Blend::keepLum(makeRgba(ra, ga, ba, rgba.a), l);
+        Blend::rgbToHsv(ra, ga, ba, &h, &s, &v);
+        Blend::hsvToRgb(h, old_s, v, &ra, &ga, &ba);
+
+        *p = makeRgba(ra, ga, ba, rgba.a);
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1202,7 +920,8 @@ namespace RemoveDust
     for(int y = bmp->ct + 1; y <= bmp->cb - 1; y++)
     {
       int *p = bmp->row[y] + bmp->cl + 1;
-      for(int x = bmp->cl + 1; x <= bmp->cr - 1; x++, p++)
+
+      for(int x = bmp->cl + 1; x <= bmp->cr - 1; x++)
       {
         const int test = *p;
         int c[8];
@@ -1232,6 +951,8 @@ namespace RemoveDust
 
         if((getl(avg) - getl(test)) > amount)
           *p = avg;
+
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1271,11 +992,11 @@ namespace RemoveDust
     int y1 = 8;
 
     Items::dialog = new DialogWindow(384, 0, "Remove Dust");
-    Items::box = new Fl_Box(FL_FLAT_BOX, 8, 8, 368, 32, "Removes dust from scanned images.");
+    Items::box = new Fl_Box(FL_FLAT_BOX, 8, 8, 368, 32, "Cleans up scanned images.");
     Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-    Items::box->labelsize(12);
+//    Items::box->labelsize(12);
     y1 += 32;
-    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0, 1, 10);
+    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount (1-10)", 0, 1, 10);
     y1 += 24 + 8;
     Items::amount->value("4");
     Items::amount->center();
@@ -1299,11 +1020,13 @@ namespace Desaturate
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         const int l = getl(*p);
 
         *p = makeRgba(l, l, l, geta(*p));
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1331,7 +1054,8 @@ namespace Colorize
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         rgba_type rgba = getRgba(*p);
 
@@ -1354,6 +1078,114 @@ namespace Colorize
         Blend::hsvToRgb(h, (sat * s) / (sat + s), v, &r, &g, &b);
 
         *p = Blend::colorize(*p, makeRgba(r, g, b, rgba.a), 0);
+        p++;
+      }
+
+      if(Gui::updateProgress(y) < 0)
+        return;
+    }
+
+    Gui::hideProgress();
+  }
+
+  void begin()
+  {
+    pushUndo();
+    apply();
+  }
+}
+
+namespace PaletteColors
+{
+  void apply()
+  {
+    Palette *pal = Project::palette.get();
+
+    Gui::showProgress(bmp->h);
+
+    const float inc = 1.0 / (bmp->cw * bmp->ch);
+
+    float freq[256];
+
+    for(int i = 0; i < pal->max; i++)
+      freq[i] = 0;
+
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = bmp->row[y] + bmp->cl;
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        rgba_type rgba = getRgba(*p);
+
+        rgba.r = (rgba.r >> 3);
+        rgba.g = (rgba.g >> 3);
+        rgba.b = (rgba.b >> 3);
+
+        rgba.r = (rgba.r << 3) + rgba.r;
+        rgba.g = (rgba.g << 3) + rgba.g;
+        rgba.b = (rgba.b << 3) + rgba.b;
+
+        int c = makeRgb(rgba.r, rgba.g, rgba.b);
+
+        freq[pal->lookup(c)] += inc;
+        p++;
+      }
+    }
+
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = bmp->row[y] + bmp->cl;
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        int lowest = 999999;
+        int use1 = 0;
+        int use2 = 0;
+
+        for(int i = 0; i < pal->max; i++)
+        {
+          int d = diff24(*p, pal->data[i]);
+
+          if(d < lowest)
+          {
+            lowest = d;
+            use1 = i;
+          }
+        }
+
+        lowest = 999999;
+
+        for(int i = 0; i < pal->max; i++)
+        {
+          if(i == use1)
+            continue;
+
+          int d = diff24(*p, pal->data[i]);
+
+          if(d < lowest)
+          {
+            lowest = d;
+            use2 = i;
+          }
+        }
+
+        int c1 = pal->data[use1];
+        int c2 = pal->data[use2];
+
+        rgba_type rgba1 = getRgba(c1);
+        rgba_type rgba2 = getRgba(c2);
+
+        const float mul = 1.0f / (freq[use1] + freq[use2]);
+
+        rgba1.r = (freq[use1] * rgba1.r + freq[use2] * rgba2.r) * mul; 
+        rgba1.g = (freq[use1] * rgba1.g + freq[use2] * rgba2.g) * mul; 
+        rgba1.b = (freq[use1] * rgba1.b + freq[use2] * rgba2.b) * mul; 
+
+        int l = getl(*p);
+
+        *p = Blend::keepLum(makeRgb(rgba1.r, rgba1.g, rgba1.b), l);
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1513,7 +1345,8 @@ namespace DitherImage
       for(int y = bmp->ct; y <= bmp->cb; y++)
       {
         int *p = bmp->row[y] + bmp->cl;
-        for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+        for(int x = bmp->cl; x <= bmp->cr; x++)
         {
           const int alpha = geta(*p);
           const int old_l = getl(*p);
@@ -1569,6 +1402,8 @@ namespace DitherImage
               }  
             }
           }
+
+          p++;
         }
 
         if(Gui::updateProgress(y) < 0)
@@ -1580,7 +1415,8 @@ namespace DitherImage
       for(int y = bmp->ct; y <= bmp->cb; y++)
       {
         int *p = bmp->row[y] + bmp->cl;
-        for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+        for(int x = bmp->cl; x <= bmp->cr; x++)
         {
           rgba_type rgba = getRgba(*p);
           const int alpha = rgba.a;
@@ -1655,7 +1491,10 @@ namespace DitherImage
                                  makeRgba(r, g, b, rgba.a), 0);
               }  
             }
+
           }
+
+          p++;
         }
 
         if(Gui::updateProgress(y) < 0)
@@ -1693,22 +1532,25 @@ namespace DitherImage
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(256, 0, "Dither Image");
-    Items::mode = new Fl_Choice(96, y1, 128, 24, "Dither:");
+    Items::dialog = new DialogWindow(256, 0, "Apply Palette to Image");
+    Items::mode = new Fl_Choice(0, y1, 128, 24, "Dither:");
     Items::mode->tooltip("Dither");
     Items::mode->textsize(10);
-    Items::mode->add("Threshold");
+    Items::mode->add("No Dithering");
     Items::mode->add("Floyd-Steinberg");
-    Items::mode->add("Jarvis, Judice and Ninke");
+    Items::mode->add("Jarvis-Judice-Ninke");
     Items::mode->add("Stucki");
     Items::mode->add("Atkinson");
     Items::mode->add("Sierra");
     Items::mode->value(0);
+    int ww, hh;
+    Items::mode->measure_label(ww, hh);
+    Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
     y1 += 24 + 8;
     Items::gamma = new CheckBox(Items::dialog, 0, y1, 16, 16, "Gamma Correction", 0);
     Items::gamma->center();
     y1 += 16 + 8;
-    Items::lum_only = new CheckBox(Items::dialog, 0, y1, 16, 16, "Luminosity-Based", 0);
+    Items::lum_only = new CheckBox(Items::dialog, 0, y1, 16, 16, "Luminosity Based", 0);
     Items::lum_only->center();
     y1 += 16 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
@@ -1733,8 +1575,7 @@ namespace StainedGlass
     Fl_Button *cancel;
   }
 
-  inline int isEdge(Bitmap *b, const int &x, const int &y,
-                           const int &div)
+  inline int isEdge(Bitmap *b, const int x, const int y, const int div)
   {
     const int c0 = getl(b->getpixel(x, y)) / div;
     const int c1 = getl(b->getpixel(x + 1, y)) / div;
@@ -1747,7 +1588,7 @@ namespace StainedGlass
       return 1;
   }
 
-  inline int isSegmentEdge(Bitmap *b, const int &x, const int &y)
+  inline int isSegmentEdge(Bitmap *b, const int x, const int y)
   {
     const int c0 = b->getpixel(x, y);
     const int c1 = b->getpixel(x + 1, y);
@@ -1798,7 +1639,8 @@ namespace StainedGlass
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         // find nearest color
         int nearest = 999999999;
@@ -1833,6 +1675,8 @@ namespace StainedGlass
             *p = color[use];
           }
         }
+
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1844,24 +1688,34 @@ namespace StainedGlass
     {
       Map *map = Project::map;
       map->clear(0);
-
-      for(int y = bmp->ct * 4; y <= bmp->cb * 4; y++)
+//      for(int y = bmp->ct * 4; y <= bmp->cb * 4; y++)
+//      {
+//        for(int x = bmp->cl * 4; x <= bmp->cr * 4; x++)
+//        {
+      for(int y = bmp->ct; y <= bmp->cb; y++)
       {
-        for(int x = bmp->cl * 4; x <= bmp->cr * 4; x++)
+        for(int x = bmp->cl; x <= bmp->cr; x++)
         {
-          if(isSegmentEdge(bmp, x / 4, y / 4))
-            map->setpixelAA(x, y, 255);
+          if(isSegmentEdge(bmp, x, y))
+            map->setpixel(x, y, 1);
+//            map->setpixelAA(x, y, 255);
         }
       }
 
       for(int y = bmp->ct; y <= bmp->cb; y++)
       {
         int *p = bmp->row[y] + bmp->cl;
-        for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+        for(int x = bmp->cl; x <= bmp->cr; x++)
         {
           const int c = map->getpixel(x, y);
 
-          *p = Blend::trans(*p, makeRgb(0, 0, 0), 255 - c);
+//          *p = Blend::trans(*p, makeRgb(0, 0, 0), 255 - c);
+          if(c)
+            *p = Blend::trans(*p, makeRgb(0, 0, 0), 160);
+//            *p = makeRgb(0, 0, 0);
+
+          p++;
         }
       }
     }
@@ -1892,11 +1746,11 @@ namespace StainedGlass
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Stained Glass");
-    Items::detail = new InputInt(Items::dialog, 0, y1, 96, 24, "Detail:", 0, 1, 50000);
+    Items::detail = new InputInt(Items::dialog, 0, y1, 96, 24, "Detail (1-50000)", 0, 1, 50000);
     y1 += 24 + 8;
     Items::detail->value("5000");
     Items::detail->center();
-    Items::edge = new InputInt(Items::dialog, 0, y1, 96, 24, "Edge Detect:", 0, 1, 50);
+    Items::edge = new InputInt(Items::dialog, 0, y1, 96, 24, "Edge Detect (1-50)", 0, 1, 50);
     y1 += 24 + 8;
     Items::edge->value("16");
     Items::edge->center();
@@ -1924,13 +1778,16 @@ namespace GaussianBlur
     DialogWindow *dialog;
     InputInt *radius;
     InputInt *blend;
+    Fl_Choice *mode;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
 
   void apply(int radius, int blend)
   {
-    radius = (radius + 1) * 2 + 1;
+    radius = (radius + 1) * 2;
+
+    int mode = Items::mode->value();
 
     std::vector<int> kernel(radius);
     int div = 0;
@@ -1952,7 +1809,8 @@ namespace GaussianBlur
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = temp.row[y - bmp->ct];
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         int rr = 0;
         int gg = 0;
@@ -1961,23 +1819,22 @@ namespace GaussianBlur
 
         for(int i = 0; i < radius; i++) 
         {
+          const int mul = kernel[i];
           rgba_type rgba = getRgba(bmp->getpixel(x - radius / 2 + i, y));
-          rr += Gamma::fix(rgba.r) * kernel[i];
-          gg += Gamma::fix(rgba.g) * kernel[i];
-          bb += Gamma::fix(rgba.b) * kernel[i];
-          aa += rgba.a * kernel[i];
+
+          rr += Gamma::fix(rgba.r) * mul;
+          gg += Gamma::fix(rgba.g) * mul;
+          bb += Gamma::fix(rgba.b) * mul;
+          aa += rgba.a * mul;
         }
 
-        rr /= div;
-        gg /= div;
-        bb /= div;
+        rr = Gamma::unfix(rr / div);
+        gg = Gamma::unfix(gg / div);
+        bb = Gamma::unfix(bb / div);
         aa /= div;
 
-        rr = Gamma::unfix(rr);
-        gg = Gamma::unfix(gg);
-        bb = Gamma::unfix(bb);
-
-        *p = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
+        *p = makeRgba(rr, gg, bb, aa);
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -1990,7 +1847,8 @@ namespace GaussianBlur
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         int rr = 0;
         int gg = 0;
@@ -1999,24 +1857,31 @@ namespace GaussianBlur
 
         for(int i = 0; i < radius; i++) 
         {
+          const int mul = kernel[i];
           rgba_type rgba = getRgba(temp.getpixel(x - bmp->cl,
                                                  y - radius / 2 + i - bmp->ct));
-          rr += Gamma::fix(rgba.r) * kernel[i];
-          gg += Gamma::fix(rgba.g) * kernel[i];
-          bb += Gamma::fix(rgba.b) * kernel[i];
-          aa += rgba.a * kernel[i];
+
+          rr += Gamma::fix(rgba.r) * mul;
+          gg += Gamma::fix(rgba.g) * mul;
+          bb += Gamma::fix(rgba.b) * mul;
+          aa += rgba.a * mul;
         }
 
-        rr /= div;
-        gg /= div;
-        bb /= div;
+        rr = Gamma::unfix(rr / div);
+        gg = Gamma::unfix(gg / div);
+        bb = Gamma::unfix(bb / div);
         aa /= div;
 
-        rr = Gamma::unfix(rr);
-        gg = Gamma::unfix(gg);
-        bb = Gamma::unfix(bb);
+        int c3 = makeRgba(rr, gg, bb, aa);
 
-        *p = Blend::trans(*p, makeRgba((int)rr, (int)gg, (int)bb, (int)aa), blend);
+        if(mode == 1)
+          *p = Blend::trans(*p, Blend::keepLum(c3, getl(*p)), blend);
+        else if(mode == 2)
+          *p = Blend::transAlpha(*p, c3, blend);
+        else
+          *p = Blend::trans(*p, c3, blend);
+
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -2030,7 +1895,7 @@ namespace GaussianBlur
   {
     Items::dialog->hide();
     pushUndo();
-    apply(atoi(Items::radius->value()), atoi(Items::blend->value()) * 2.55);
+    apply(atoi(Items::radius->value()), 255 - atoi(Items::blend->value()) * 2.55);
   }
 
   void quit()
@@ -2049,14 +1914,185 @@ namespace GaussianBlur
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Gaussian Blur");
-    Items::radius = new InputInt(Items::dialog, 0, y1, 96, 24, "Radius:", 0, 1, 100);
+    Items::radius = new InputInt(Items::dialog, 0, y1, 96, 24, "Radius (1-100)", 0, 1, 100);
     y1 += 24 + 8;
     Items::radius->value("1");
     Items::radius->center();
-    Items::blend = new InputInt(Items::dialog, 0, y1, 96, 24, "Blend:", 0, 0, 100);
-    y1 += 24 + 8;
-    Items::blend->value("0");
+    Items::blend = new InputInt(Items::dialog, 0, y1, 96, 24, "Blend %", 0, 0, 100);
+    Items::blend->value("100");
     Items::blend->center();
+    y1 += 24 + 8;
+    Items::mode = new Fl_Choice(0, y1, 96, 24, "Mode:");
+    Items::mode->labelsize(12);
+    Items::mode->textsize(12);
+    Items::mode->add("Normal");
+    Items::mode->add("Color Only");
+    Items::mode->add("Alpha Only");
+    Items::mode->value(0);
+    Items::mode->align(FL_ALIGN_LEFT);
+    int ww, hh;
+    Items::mode->measure_label(ww, hh);
+    Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
+    y1 += 24 + 8;
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
+  }
+}
+
+namespace Bloom
+{
+  namespace Items
+  {
+    DialogWindow *dialog;
+    InputInt *radius;
+    InputInt *blend;
+    InputInt *threshold;
+//    Fl_Choice *mode;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
+
+  void apply(int radius, int threshold, int blend)
+  {
+    radius = (radius + 1) * 2;
+
+    std::vector<int> kernel(radius);
+    int div = 0;
+
+    // bell curve
+    const int b = radius / 2;
+
+    for(int x = 0; x < radius; x++)
+    {
+      kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) /
+                                           ((b * b) / 2)));
+      div += kernel[x];
+    }
+
+    Bitmap temp(bmp->cw, bmp->ch);
+    Gui::showProgress(bmp->h);
+
+    // x direction
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = temp.row[y - bmp->ct];
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        int rr = 0;
+        int gg = 0;
+        int bb = 0;
+        int aa = 0;
+
+        for(int i = 0; i < radius; i++) 
+        {
+          const int mul = kernel[i];
+          rgba_type rgba = getRgba(bmp->getpixel(x - radius / 2 + i, y));
+
+          if(getlUnpacked(rgba.r, rgba.g, rgba.b) > threshold)
+          {
+            rr += Gamma::fix(rgba.r) * mul;
+            gg += Gamma::fix(rgba.g) * mul;
+            bb += Gamma::fix(rgba.b) * mul;
+            aa += rgba.a * mul;
+          }
+        }
+
+        rr = Gamma::unfix(rr / div);
+        gg = Gamma::unfix(gg / div);
+        bb = Gamma::unfix(bb / div);
+        aa /= div;
+
+        *p = makeRgba(rr, gg, bb, aa);
+        p++;
+      }
+
+      if(Gui::updateProgress(y) < 0)
+        return;
+    }
+
+    Gui::showProgress(bmp->h);
+
+    // y direction
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = bmp->row[y] + bmp->cl;
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        int rr = 0;
+        int gg = 0;
+        int bb = 0;
+        int aa = 0;
+
+        for(int i = 0; i < radius; i++) 
+        {
+          const int mul = kernel[i];
+          rgba_type rgba = getRgba(temp.getpixel(x - bmp->cl,
+                                                 y - radius / 2 + i - bmp->ct));
+
+          rr += Gamma::fix(rgba.r) * mul;
+          gg += Gamma::fix(rgba.g) * mul;
+          bb += Gamma::fix(rgba.b) * mul;
+          aa += rgba.a * mul;
+        }
+
+        rr = Gamma::unfix(rr / div);
+        gg = Gamma::unfix(gg / div);
+        bb = Gamma::unfix(bb / div);
+        aa /= div;
+
+        int c3 = makeRgba(rr, gg, bb, aa);
+
+        *p = Blend::lighten(*p, c3, blend);
+        p++;
+      }
+
+      if(Gui::updateProgress(y) < 0)
+        return;
+    }
+
+    Gui::hideProgress();
+  }
+
+  void close()
+  {
+    Items::dialog->hide();
+    pushUndo();
+    apply(atoi(Items::radius->value()), atoi(Items::threshold->value()), 255 - atoi(Items::blend->value()) * 2.55);
+  }
+
+  void quit()
+  {
+    Gui::hideProgress();
+    Items::dialog->hide();
+  }
+
+  void begin()
+  {
+    Items::dialog->show();
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    Items::dialog = new DialogWindow(256, 0, "Bloom");
+    Items::radius = new InputInt(Items::dialog, 0, y1, 96, 24, "Radius (0-100)", 0, 1, 100);
+    Items::radius->value("16");
+    Items::radius->center();
+    y1 += 24 + 8;
+    Items::threshold = new InputInt(Items::dialog, 0, y1, 96, 24, "Threshold (0-255)", 0, 0, 255);
+    Items::threshold->value("128");
+    Items::threshold->center();
+    y1 += 24 + 8;
+    Items::blend = new InputInt(Items::dialog, 0, y1, 96, 24, "Blend %", 0, 0, 100);
+    Items::blend->value("25");
+    Items::blend->center();
+    y1 += 24 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
@@ -2083,7 +2119,8 @@ namespace Sharpen
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = temp.row[y - bmp->cl];
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         int lum = 0;
 
@@ -2100,6 +2137,7 @@ namespace Sharpen
 
         lum = clamp(lum, 255);
         *p = Blend::trans(c, Blend::keepLum(c, lum), 255 - amount * 2.55);
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -2134,9 +2172,9 @@ namespace Sharpen
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Sharpen");
-    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0, 1, 100);
+    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount %", 0, 0, 100);
     y1 += 24 + 8;
-    Items::amount->value("10");
+    Items::amount->value("25");
     Items::amount->center();
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
@@ -2181,7 +2219,8 @@ namespace UnsharpMask
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = temp.row[y - bmp->ct];
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         int rr = 0;
         int gg = 0;
@@ -2207,6 +2246,7 @@ namespace UnsharpMask
         bb = Gamma::unfix(bb);
 
         *p = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -2222,7 +2262,8 @@ namespace UnsharpMask
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = temp2.row[y - bmp->ct];
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         int rr = 0;
         int gg = 0;
@@ -2249,6 +2290,7 @@ namespace UnsharpMask
         bb = Gamma::unfix(bb);
 
         *p = makeRgba((int)rr, (int)gg, (int)bb, (int)aa);
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -2307,15 +2349,15 @@ namespace UnsharpMask
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Unsharp Mask");
-    Items::radius = new InputInt(Items::dialog, 0, y1, 96, 24, "Radius:", 0, 1, 100);
+    Items::radius = new InputInt(Items::dialog, 0, y1, 96, 24, "Radius (1-100)", 0, 1, 100);
     y1 += 24 + 8;
     Items::radius->value("1");
     Items::radius->center();
-    Items::amount = new InputFloat(Items::dialog, 0, y1, 96, 24, "Amount:", 0, 0.1, 10.0);
+    Items::amount = new InputFloat(Items::dialog, 0, y1, 96, 24, "Amount (0-10)", 0, 0, 10);
     y1 += 24 + 8;
     Items::amount->value("1.5");
     Items::amount->center();
-    Items::threshold = new InputInt(Items::dialog, 0, y1, 72, 24, "Threshold:", 0, 0, 255);
+    Items::threshold = new InputInt(Items::dialog, 0, y1, 72, 24, "Threshold (0-255)", 0, 0, 255);
     y1 += 24 + 8;
     Items::threshold->value("0");
     Items::threshold->center();
@@ -2334,7 +2376,6 @@ namespace ConvolutionMatrix
     DialogWindow *dialog;
     Fl_Choice *mode;
     InputInt *amount;
-    CheckBox *lum_only;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -2357,10 +2398,11 @@ namespace ConvolutionMatrix
     SHARPEN,
     EDGE_DETECT,
     EMBOSS,
-    EMBOSS_REVERSE
+    EMBOSS_REVERSE,
+//    TEST
   };
  
-  void apply(int amount, int mode, bool lum_only)
+  void apply(int amount, int mode/*, bool lum_only*/)
   {
     int div = 1;
     int matrix[3][3];
@@ -2391,6 +2433,10 @@ namespace ConvolutionMatrix
         copyMatrix(FilterMatrix::emboss_reverse, matrix);
         div = 1;
         break;
+//      case TEST:
+//        copyMatrix(FilterMatrix::test, matrix);
+//        div = 1;
+//        break;
     }
 
     Bitmap temp(bmp->cw, bmp->ch);
@@ -2399,56 +2445,37 @@ namespace ConvolutionMatrix
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = temp.row[y - bmp->cl];
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
-        int lum = 0;
         int r = 0;
         int g = 0;
         int b = 0;
 
-        if(lum_only)
+        for(int j = 0; j < 3; j++) 
         {
-          for(int j = 0; j < 3; j++) 
+          for(int i = 0; i < 3; i++) 
           {
-            for(int i = 0; i < 3; i++) 
-            {
-              lum += getl(bmp->getpixel(x + i - 1, y + j - 1)) * matrix[i][j];
-            }
+            const rgba_type rgba = getRgba(bmp->getpixel(x + i - 1, y + j - 1));
+
+            r += rgba.r * matrix[i][j];
+            g += rgba.g * matrix[i][j];
+            b += rgba.b * matrix[i][j];
           }
-
-          lum /= div;
-          lum = clamp(lum, 255);
-
-          const int c = bmp->getpixel(x, y);
-
-          *p = Blend::trans(c, Blend::keepLum(c, lum), 255 - amount * 2.55);
         }
-        else
-        {
-          for(int j = 0; j < 3; j++) 
-          {
-            for(int i = 0; i < 3; i++) 
-            {
-              const rgba_type rgba = getRgba(bmp->getpixel(x + i - 1,
-                                                           y + j - 1));
-              r += rgba.r * matrix[i][j];
-              g += rgba.g * matrix[i][j];
-              b += rgba.b * matrix[i][j];
-            }
-          }
 
-          r /= div;
-          g /= div;
-          b /= div;
+        r /= div;
+        g /= div;
+        b /= div;
 
-          r = clamp(r, 255);
-          g = clamp(g, 255);
-          b = clamp(b, 255);
+        r = clamp(r, 255);
+        g = clamp(g, 255);
+        b = clamp(b, 255);
 
-          const int c = bmp->getpixel(x, y);
+        const int c = bmp->getpixel(x, y);
 
-          *p = Blend::trans(c, makeRgba(r, g, b, geta(c)), 255 - amount * 2.55);
-        }
+        *p = Blend::trans(c, makeRgba(r, g, b, geta(c)), 255 - amount * 2.55);
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -2465,8 +2492,7 @@ namespace ConvolutionMatrix
     Items::dialog->hide();
     pushUndo();
     apply(atoi(Items::amount->value()),
-               Items::mode->value(),
-               Items::lum_only->value());
+               Items::mode->value());
   }
 
   void quit()
@@ -2484,9 +2510,8 @@ namespace ConvolutionMatrix
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(256, 0, "Convolution Matrix");
-    Items::mode = new Fl_Choice(96, y1, 128, 24, "Presets:");
-    Items::mode->tooltip("Presets");
+    Items::dialog = new DialogWindow(256, 0, "Box Filters");
+    Items::mode = new Fl_Choice(0, y1, 128, 24, "Filter:");
     Items::mode->textsize(10);
     Items::mode->add("Box Blur");
     Items::mode->add("Gaussian Blur");
@@ -2494,15 +2519,123 @@ namespace ConvolutionMatrix
     Items::mode->add("Edge Detect");
     Items::mode->add("Emboss");
     Items::mode->add("Emboss (Inverse)");
+//    Items::mode->add("Test");
     Items::mode->value(0);
+    int ww, hh;
+    Items::mode->measure_label(ww, hh);
+    Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
     y1 += 24 + 8;
-    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0, 1, 100);
+    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount %", 0, 0, 100);
+    Items::amount->value("50");
+    Items::amount->center();
+    y1 += 24 + 8;
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+    Items::cancel->callback((Fl_Callback *)quit);
+    Items::dialog->set_modal();
+    Items::dialog->end();
+  }
+}
+
+namespace Sobel
+{
+  namespace Items
+  {
+    DialogWindow *dialog;
+    InputInt *amount;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
+
+  void apply(int amount)
+  {
+    int div = 1;
+
+    Bitmap temp(bmp->cw, bmp->ch);
+    Gui::showProgress(bmp->h);
+
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = temp.row[y - bmp->cl];
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        int r1 = 0;
+        int g1 = 0;
+        int b1 = 0;
+        int r2 = 0;
+        int g2 = 0;
+        int b2 = 0;
+
+        for(int j = 0; j < 3; j++) 
+        {
+          for(int i = 0; i < 3; i++) 
+          {
+            const rgba_type rgba = getRgba(bmp->getpixel(x + i - 1, y + j - 1));
+
+            r1 += rgba.r * FilterMatrix::sobel1[i][j];
+            r2 += rgba.r * FilterMatrix::sobel2[i][j];
+            g1 += rgba.g * FilterMatrix::sobel1[i][j];
+            g2 += rgba.g * FilterMatrix::sobel2[i][j];
+            b1 += rgba.b * FilterMatrix::sobel1[i][j];
+            b2 += rgba.b * FilterMatrix::sobel2[i][j];
+          }
+        }
+
+        int r = std::sqrt(r1 * r1 + r2 * r2);
+        int g = std::sqrt(g1 * g1 + g2 * g2);
+        int b = std::sqrt(b1 * b1 + b2 * b2);
+
+        r /= div;
+        g /= div;
+        b /= div;
+
+        r = clamp(r, 255);
+        g = clamp(g, 255);
+        b = clamp(b, 255);
+
+        const int c = bmp->getpixel(x, y);
+
+        *p = Blend::trans(c, makeRgba(r, g, b, geta(c)), 255 - amount * 2.55);
+        p++;
+      }
+
+      if(Gui::updateProgress(y) < 0)
+        return;
+    }
+
+    temp.blit(bmp, 0, 0, bmp->cl, bmp->ct, temp.w, temp.h);
+
+    Gui::hideProgress();
+  }
+
+  void close()
+  {
+    Items::dialog->hide();
+    pushUndo();
+    apply(atoi(Items::amount->value()));
+  }
+
+  void quit()
+  {
+    Gui::hideProgress();
+    Items::dialog->hide();
+  }
+
+  void begin()
+  {
+    Items::dialog->show();
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    Items::dialog = new DialogWindow(256, 0, "Sobel Edge Detection");
+    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount %", 0, 0, 100);
     Items::amount->value("100");
     Items::amount->center();
     y1 += 24 + 8;
-    Items::lum_only = new CheckBox(Items::dialog, 0, y1, 16, 16, "Luminosity-Based", 0);
-    Items::lum_only->center();
-    y1 += 16 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
@@ -2528,20 +2661,21 @@ namespace Painting
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
-      for(int x = bmp->cl; x <= bmp->cr; x++, p++)
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
       {
         int r = 0;
         int g = 0;
         int b = 0;
         int count = 0;
 
-        for(int v = -amount; v <= amount; v++) 
+        for(int j = -amount; j <= amount; j++) 
         {
-          for(int u = -amount; u <= amount; u++) 
+          for(int i = -amount; i <= amount; i++) 
           {
             const int c3 = *p;
-            const int c1 = bmp->getpixel(x + u, y + v);
-            const int c2 = bmp->getpixel(x - u, y - v);
+            const int c1 = bmp->getpixel(x + i, y + j);
+            const int c2 = bmp->getpixel(x - i, y - j);
 
             if(diff24(c3, c1) < diff24(c3, c2))
             {
@@ -2565,6 +2699,7 @@ namespace Painting
         b /= count;
 
         *p = makeRgba(r, g, b, geta(*p));
+        p++;
       }
 
       if(Gui::updateProgress(y) < 0)
@@ -2597,7 +2732,7 @@ namespace Painting
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Painting");
-    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount:", 0, 1, 10);
+    Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount (1-10)", 0, 1, 10);
     y1 += 24 + 8;
     Items::amount->value("3");
     Items::amount->center();
@@ -2609,277 +2744,25 @@ namespace Painting
   }
 }
 
-namespace ForwardFFT
-{
-  void apply()
-  {
-    int w = bmp->cw;
-    int h = bmp->ch;
-
-    // resize image
-    Project::resizeImage(w * 2, h);
-    bmp = Project::bmp;
-
-    std::vector<float> real(w * h, 0);
-    std::vector<float> imag(w * h, 0);
-    std::vector<float> real_row(w, 0);
-    std::vector<float> imag_row(w, 0);
-    std::vector<float> real_col(h, 0);
-    std::vector<float> imag_col(h, 0);
-
-    Gui::showProgress(3);
-
-    for(int channel = 0; channel < 3; channel++)
-    {
-      // forward horizontal pass
-      for(int y = 0; y < h; y++)
-      {
-        int *p = bmp->row[y + bmp->ct] + bmp->cl;
-        for(int x = 0; x < w; x++, p++)
-        {
-          const rgba_type rgba = getRgba(*p);
-
-          switch(channel)
-          {
-            case 0:
-              real_row[x] = rgba.r;
-              break;
-            case 1:
-              real_row[x] = rgba.g;
-              break;
-            case 2:
-              real_row[x] = rgba.b;
-              break;
-          }
-
-          imag_row[x] = 0;
-        }
-
-        ExtraMath::forwardFFT(&real_row[0], &imag_row[0], w);
-
-        for(int x = 0; x < w; x++)
-        {
-          real[x + w * y] = real_row[x];
-          imag[x + w * y] = imag_row[x];
-        }
-      }
-
-      // forward vertical pass
-      for(int x = 0; x < w; x++)
-      {
-        for(int y = 0; y < h; y++)
-        {
-          real_col[y] = real[x + w * y];
-          imag_col[y] = imag[x + w * y];
-        }
-
-        ExtraMath::forwardFFT(&real_col[0], &imag_col[0], h);
-
-        for(int y = 0; y < h; y++)
-        {
-          real[x + w * y] = real_col[y];
-          imag[x + w * y] = imag_col[y];
-        }
-      }
-
-      // convert to image
-      for(int y = 0; y < h; y++)
-      {
-        for(int x = 0; x < w; x++)
-        {
-          float re = real[x + w * y];
-          float im = imag[x + w * y];
-          float mag = log10f(sqrtf(re * re + im * im)) * 32;
-          float phase = (atan2f(im, re) + 3.14159f) * 32;
-          int val1 = clamp((int)mag, 255);
-          int val2 = clamp((int)phase, 255);
-
-          int xx = (x + w / 2) % w;
-          int yy = (y + h / 2) % h;
-          xx += bmp->cl;
-          yy += bmp->ct;
-          const rgba_type rgba1 = getRgba(bmp->getpixel(xx, yy));
-          const rgba_type rgba2 = getRgba(bmp->getpixel(xx + w, yy));
-
-          switch(channel)
-          {
-            case 0:
-              bmp->setpixel(xx, yy, makeRgb(val1, rgba1.g, rgba1.b));
-              bmp->setpixel(xx + w, yy, makeRgb(val2, rgba2.g, rgba2.b));
-              break;
-            case 1:
-              bmp->setpixel(xx, yy, makeRgb(rgba1.r, val1, rgba1.b));
-              bmp->setpixel(xx + w, yy, makeRgb(rgba2.r, val2, rgba2.b));
-              break;
-            case 2:
-              bmp->setpixel(xx, yy, makeRgb(rgba1.r, rgba1.g, val1));
-              bmp->setpixel(xx + w, yy, makeRgb(rgba2.r, rgba2.g, val2));
-              break;
-          }
-        }
-      }
-
-      if(Gui::updateProgress(channel) < 0)
-        return;
-    }
-
-    Gui::hideProgress();
-  }
-
-  void begin()
-  {
-    pushUndo();
-    apply();
-  }
-}
-
-namespace InverseFFT
-{
-  void apply()
-  {
-    int w = bmp->cw / 2;
-    int h = bmp->ch;
-
-    std::vector<float> real(w * h, 0);
-    std::vector<float> imag(w * h, 0);
-    std::vector<float> real_row(w, 0);
-    std::vector<float> imag_row(w, 0);
-    std::vector<float> real_col(h, 0);
-    std::vector<float> imag_col(h, 0);
-
-    Gui::showProgress(3);
-
-    for(int channel = 0; channel < 3; channel++)
-    {
-      // convert from image
-      for(int y = 0; y < h; y++)
-      {
-        for(int x = 0; x < w; x++)
-        {
-          int xx = (x + w / 2) % w;
-          int yy = (y + h / 2) % h;
-          xx += bmp->cl;
-          yy += bmp->ct;
-
-          int p1 = bmp->getpixel(xx, yy);
-          int p2 = bmp->getpixel(xx + w, yy);
-          float c1 = 0, c2 = 0;
-
-          switch(channel)
-          {
-            case 0:
-              c1 = getr(p1);
-              c2 = getr(p2);
-              break;
-            case 1:
-              c1 = getg(p1);
-              c2 = getg(p2);
-              break;
-            case 2:
-              c1 = getb(p1);
-              c2 = getb(p2);
-              break;
-          }
-
-          float mag = powf(10.0f, c1 / 32);
-          float phase = c2 / 32 - 3.14159f;
-
-          real[x + w * y] = mag * cosf(phase);
-          imag[x + w * y] = mag * sinf(phase);
-        }
-      }
-
-      // inverse horizontal pass
-      for(int y = 0; y < h; y++)
-      {
-        for(int x = 0; x < w; x++)
-        {
-          real_row[x] = real[x + w * y];
-          imag_row[x] = imag[x + w * y];
-        }
-
-        ExtraMath::inverseFFT(&real_row[0], &imag_row[0], w);
-
-        for(int x = 0; x < w; x++)
-        {
-          real[x + w * y] = real_row[x];
-          imag[x + w * y] = imag_row[x];
-        }
-      }
-
-      // inverse vertical pass
-      for(int x = 0; x < w; x++)
-      {
-        for(int y = 0; y < h; y++)
-        {
-          real_col[y] = real[x + w * y];
-          imag_col[y] = imag[x + w * y];
-        }
-
-        ExtraMath::inverseFFT(&real_col[0], &imag_col[0], h);
-
-        for(int y = 0; y < h; y++)
-        {
-          real[x + w * y] = real_col[y];
-          imag[x + w * y] = imag_col[y];
-        }
-      }
-
-      // convert to image
-      for(int y = 0; y < h; y++)
-      {
-        int *p = bmp->row[y + bmp->ct] + bmp->cl;
-        for(int x = 0; x < w; x++, p++)
-        {
-          float re = real[x + w * y];
-          int val = clamp((int)re, 255);
-
-          const rgba_type rgba = getRgba(*p);
-
-          switch(channel)
-          {
-            case 0:
-              *p = makeRgb(val, rgba.g, rgba.b);
-              break;
-            case 1:
-              *p = makeRgb(rgba.r, val, rgba.b);
-              break;
-            case 2:
-              *p = makeRgb(rgba.r, rgba.g, val);
-              break;
-          }
-        }
-      }
-
-      if(Gui::updateProgress(channel) < 0)
-        return;
-    }
-
-    Gui::hideProgress();
-    Project::resizeImage(w, h);
-    bmp = Project::bmp;
-  }
-
-  void begin()
-  {
-    pushUndo();
-    apply();
-  }
-}
-
 void FX::init()
 {
   RotateHue::init();
-  AutoCorrect::init();
   Restore::init();
   RemoveDust::init();
   DitherImage::init();
   StainedGlass::init();
   GaussianBlur::init();
+  Bloom::init();
   Sharpen::init();
   UnsharpMask::init();
   ConvolutionMatrix::init();
+  Sobel::init();
   Painting::init();
+}
+
+void FX::test()
+{
+  Test::begin();
 }
 
 void FX::normalize()
@@ -2917,19 +2800,14 @@ void FX::invertAlpha()
   InvertAlpha::begin();
 }
 
-void FX::autoCorrect()
-{
-  AutoCorrect::begin();
-}
-
-void FX::correctionMatrix()
-{
-  CorrectionMatrix::begin();
-}
-
 void FX::restore()
 {
   Restore::begin();
+}
+
+void FX::sideAbsorptions()
+{
+  SideAbsorptions::begin();
 }
 
 void FX::removeDust()
@@ -2947,6 +2825,11 @@ void FX::colorize()
   Colorize::begin();
 }
 
+void FX::paletteColors()
+{
+  PaletteColors::begin();
+}
+
 void FX::ditherImage()
 {
   DitherImage::begin();
@@ -2960,6 +2843,11 @@ void FX::stainedGlass()
 void FX::gaussianBlur()
 {
   GaussianBlur::begin();
+}
+
+void FX::bloom()
+{
+  Bloom::begin();
 }
 
 void FX::sharpen()
@@ -2977,38 +2865,13 @@ void FX::convolutionMatrix()
   ConvolutionMatrix::begin();
 }
 
+void FX::sobel()
+{
+  Sobel::begin();
+}
+
 void FX::painting()
 {
   Painting::begin();
-}
-
-void FX::forwardFFT()
-{
-  int w = Project::bmp->cw;
-  int h = Project::bmp->ch;
-
-  if(ExtraMath::isPowerOfTwo(w) && ExtraMath::isPowerOfTwo(h))
-  {
-    ForwardFFT::begin();
-  }
-  else
-  {
-    Dialog::message("Error", "Image dimensions must be powers of two.");
-  }
-}
-
-void FX::inverseFFT()
-{
-  int w = Project::bmp->cw;
-  int h = Project::bmp->ch;
-
-  if(ExtraMath::isPowerOfTwo(w) && ExtraMath::isPowerOfTwo(h))
-  {
-    InverseFFT::begin();
-  }
-  else
-  {
-    Dialog::message("Error", "Image dimensions must be powers of two.");
-  }
 }
 

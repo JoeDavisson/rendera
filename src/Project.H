@@ -32,6 +32,13 @@ class Palette;
 class Tool;
 class Stroke;
 
+class Paint;
+class GetColor;
+class Selection;
+class Offset;
+class Text;
+class Fill;
+
 namespace Project
 {
   enum
@@ -47,6 +54,14 @@ namespace Project
   extern SP<Brush> brush;
   extern SP<Palette> palette;
   extern SP<Stroke> stroke;
+
+  extern SP<Paint> paint;
+  extern SP<GetColor> getcolor;
+  extern SP<Selection> selection;
+  extern SP<Offset> offset;
+  extern SP<Text> text;
+  extern SP<Fill> fill;
+
   extern Tool *tool;
 
   extern int mode;
@@ -55,6 +70,8 @@ namespace Project
   extern char theme_path[];
   extern int theme_highlight_color;
   extern Fl_Color fltk_theme_highlight_color;
+  extern Fl_Color fltk_theme_bevel_up;
+  extern Fl_Color fltk_theme_bevel_down;
 
   void init();
   void setTool(int);

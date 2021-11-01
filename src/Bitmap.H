@@ -37,6 +37,7 @@ public:
   int *data;
   int **row;
 
+  bool isEdge(int, int);
   void clear(int);
   void hline(int, int, int, int, int);
   void vline(int, int, int, int, int);
@@ -45,26 +46,29 @@ public:
   void rectfill(int, int, int, int, int, int);
   void xorLine(int, int, int, int);
   void xorHline(int, int, int);
+  void xorVline(int, int, int);
   void xorRect(int, int, int, int);
   void xorRectfill(int, int, int, int);
-  void setpixel(const int &, const int &, const int &);
-  void setpixel(const int &, const int &, const int &, int);
-  void setpixelSolid(const int &, const int &, const int &, const int &);
-  void setpixelWrap(const int &, const int &, const int &, const int &);
-  void setpixelClone(const int &, const int &, const int &, const int &);
-  void setpixelWrapClone(const int &, const int &, const int &, const int &);
+  void setpixel(const int, const int, const int);
+  void setpixel(const int, const int, const int, const int);
+  void setpixelSolid(const int, const int, const int, const int);
+  void setpixelWrap(const int, const int, const int, const int);
+  void setpixelClone(const int, const int, const int, const int);
+  void setpixelWrapClone(const int, const int, const int, const int);
   int getpixel(int, int);
   void clip(int *, int *, int *, int *);
   void setClip(int, int, int, int);
+  void swapRedBlue();
   void blit(Bitmap *, int, int, int, int, int, int);
   void drawBrush(Bitmap *, int, int, int, int, int, int);
   void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, bool);
   void flipHorizontal();
   void flipVertical();
+  void rotate180();
   void fastStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);
+  void blur(int, int);
   void scale(Bitmap *);
   void invert();
-  void fill(int, int, int, int, int);
 };
 
 #endif

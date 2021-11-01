@@ -29,36 +29,45 @@ namespace Blend
   enum
   {
     TRANS,
-    DARKEN,
     LIGHTEN,
+    DARKEN,
     COLORIZE,
+    LUMINOSITY,
     ALPHA_ADD,
     ALPHA_SUB,
     SMOOTH,
-    SMOOTH_COLOR,
-    SMOOTH_LUMINOSITY,
-    SHARPEN
+//    SMOOTH_COLOR,
+//    SMOOTH_LUMINOSITY,
+    SHARPEN,
+    FAST,
+    TRANS_ALPHA,
+    TRANS_NO_ALPHA,
   };
  
-  void set(const int &);
-  void target(Bitmap *, Palette *, const int &, const int &);
-  int current(const int &, const int &, const int &);
-  int invert(const int &, const int &, const int &);
-  int transNoAlpha(const int &, const int &, const int &);
-  int trans(const int &, const int &, const int &);
-  int darken(const int &, const int &, const int &);
-  int lighten(const int &, const int &, const int &);
-  int colorize(const int &, const int &, const int &);
-  int keepLum(const int &, const int &);
-  int alphaAdd(const int &, const int &, const int &);
-  int alphaSub(const int &, const int &, const int &);
-  int smooth(const int &, const int &, const int &);
-  int smoothColor(const int &, const int &, const int &);
-  int smoothLuminosity(const int &, const int &, const int &);
-  int sharpen(const int &, const int &, const int &);
-  int invert(const int &, const int &, const int &);
-  void rgbToHsv(const int &, const int &, const int &, int *, int *, int *);
-  void hsvToRgb(const int &, const int &, const int &, int *, int *, int *);
+  void set(const int);
+  void target(Bitmap *, Palette *, const int, const int);
+  int current(const int, const int, const int);
+  int invert(const int, const int, const int);
+  int transAlpha(const int, const int, const int);
+  int transNoAlpha(const int, const int, const int);
+  int trans(const int, const int, const int);
+  int lighten(const int, const int, const int);
+  int darken(const int, const int, const int);
+  int colorize(const int, const int, const int);
+  int luminosity(const int, const int, const int);
+  int keepLum(const int, const int);
+  int alphaAdd(const int, const int, const int);
+  int alphaSub(const int, const int, const int);
+  int smooth(const int, const int, const int);
+  int smoothColor(const int, const int, const int);
+  int smoothLuminosity(const int, const int, const int);
+  int sharpen(const int, const int, const int);
+  int fast(const int, const int, const int);
+  int invert(const int, const int, const int);
+  void rgbToHsv(const int, const int, const int, int *, int *, int *);
+  void hsvToRgb(const int, const int, const int, int *, int *, int *);
+  void rgbToYcc(const int, const int, const int, float *, float *, float *);
+  void yccToRgb(const float, const float, const float, int *, int *, int *);
 }
 
 #endif

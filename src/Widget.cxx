@@ -47,28 +47,58 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   if(!(bitmap = File::loadPngFromArray(array, 0)))
   {
     fl_message_title("Error");
-//    fl_message("Could not load %s, exiting.", filename);
     fl_message("Could not load image.");
     exit(1);
   }
 
+  bitmap2 = new Bitmap(bitmap->w, bitmap->h);
+  bitmap->blit(bitmap2, 0, 0, 0, 0, bitmap->w, bitmap->h);
+  Blend::set(Blend::LIGHTEN);
+  bitmap2->rectfill(0, 0, bitmap2->w - 1, bitmap2->h - 1,
+                    Project::theme_highlight_color, 192);
+  Blend::set(Blend::TRANS);
+
+  if((stepx > 1) && (stepy > 1))
+  {
+    for(int y1 = 0; y1 < bitmap2->h; y1 += stepy)
+    {
+      for(int x1 = 0; x1 < bitmap2->w; x1 += stepx)
+      {
+        bitmap2->xorRect(x1 + 1, y1 + 1, x1 + stepx - 2, y1 + stepy - 2);
+        bitmap2->rect(x1, y1, x1 + stepx - 1, y1 + stepy - 1, makeRgb(0, 0, 0), 0);
+      }
+    }
+  }
+
   image = new Fl_RGB_Image((unsigned char *)bitmap->data, bitmap->w, bitmap->h, 4, 0);
 
-  bitmap2 = new Bitmap(bitmap->w, bitmap->h);
   image2 = new Fl_RGB_Image((unsigned char *)bitmap2->data, bitmap2->w, bitmap2->h, 4, 0);
-  bitmap->blit(bitmap2, 0, 0, 0, 0, bitmap->w, bitmap->h);
+
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
+  use_highlight = true;
+}
 
-  if(sx > 0 && sy > 0)
-    use_highlight = true;
-  else
-    use_highlight = false;
+// load static PNG image from file
+Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
+               const char *label, const unsigned char *array)
+: Fl_Widget(x, y, w, h, label)
+{
+  stepx = 0;
+  stepy = 0;
+  group = g;
 
-  Blend::set(Blend::LIGHTEN);
-  bitmap2->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1,
-                    Project::theme_highlight_color, 96);
-  Blend::set(Blend::TRANS);
+  if(!(bitmap = File::loadPngFromArray(array, 0)))
+  {
+    fl_message_title("Error");
+    fl_message("Could not load image.");
+    exit(1);
+  }
+
+  bitmap2 = 0;
+  image = new Fl_RGB_Image((unsigned char *)bitmap->data, bitmap->w, bitmap->h, 4, 0);
+
+  resize(group->x() + x, group->y() + y, w, h);
 }
 
 // use a blank bitmap
@@ -129,6 +159,10 @@ int Widget::handle(int event)
         y1 = 0;
 
       var = x1 + (w() / stepx) * y1;
+
+      x1 *= stepx;
+      y1 *= stepy;
+
       do_callback();
       redraw();
       return 1;
@@ -139,20 +173,14 @@ int Widget::handle(int event)
 
 void Widget::draw()
 {
-  if(stepx >= 0 && stepy >= 0)
-    fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
+//  if(stepx > 0 && stepy > 0)
+//    fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
+  if(stepx > 0 && stepy > 0)
+    fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), 42);
 
-  if(use_highlight && (stepx <= 1 || stepy <= 1))
-  {
-    image2->draw(x(), y());
-    image2->uncache();
-  }
-  else
-  {
-    image->draw(x(), y());
-    image->uncache();
-  }
-    
+  image->draw(x(), y());
+  image->uncache();
+
   if(stepx >= 0 && stepx <= 1 && stepy >= 0 && stepy <= 1)
     return;
 
@@ -171,26 +199,15 @@ void Widget::draw()
 
   if(use_highlight)
   {
-    image2->draw(x() + offsetx, y() + offsety, stepx, stepy,
-                offsetx + 0, offsety + 0);
+    image2->draw(x() + offsetx, y() + offsety, stepx, stepy, offsetx, offsety);
     image2->uncache();
   }
   else
   {
-    image->draw(x() + offsetx, y() + offsety, stepx, stepy,
-                offsetx + 0, offsety + 0);
+    image->draw(x() + offsetx, y() + offsety, stepx, stepy, offsetx, offsety);
     image->uncache();
   }
 
   fl_pop_clip();
-
-  int tempx = stepx > 1 ? stepx : 2;
-  int tempy = stepy > 1 ? stepy : 2;
-
-  if(stepx >= 0 && stepy >= 0)
-  {
-    fl_draw_box(FL_BORDER_FRAME,
-                x() + offsetx, y() + offsety, tempx, tempy, FL_INACTIVE_COLOR);
-  }
 }
 

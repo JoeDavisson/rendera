@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "File.H"
 #include "Gui.H"
 #include "Inline.H"
+#include "Map.H"
 #include "Palette.H"
 #include "Project.H"
 #include "Stroke.H"
@@ -56,8 +57,8 @@ namespace
   int oldx1 = 0;
   int oldy1 = 0;
 
-  inline void gridSetpixel(const Bitmap *bmp, const int &x, const int &y,
-                           const int &c, const int &t)
+  inline void gridSetpixel(const Bitmap *bmp, const int x, const int y,
+                           const int c, const int t)
   {
     if(x < 0 || y < 0 || x >= bmp->w || y >= bmp->h)
       return;
@@ -66,8 +67,8 @@ namespace
     *p = blendFast(*p, c, t);
   }
 
-  inline void gridHline(Bitmap *bmp, int x1, const int &y, int &x2,
-                        const int &c, const int &t)
+  inline void gridHline(Bitmap *bmp, int x1, const int y, int x2,
+                        const int c, const int t)
   {
     if(y < 0 || y >= bmp->h)
       return;
@@ -222,7 +223,7 @@ int View::handle(int event)
           window()->cursor(FL_CURSOR_CROSS);
           break;
         default:
-          window()->cursor(FL_CURSOR_DEFAULT);
+          window()->cursor(FL_CURSOR_CROSS);
           break;
       }
 
@@ -275,7 +276,10 @@ int View::handle(int event)
               break;
             }
           }
-
+        case 4:
+          Project::tool->push(this);
+          break;
+        default:
           break;
       } 
 
@@ -316,8 +320,13 @@ int View::handle(int event)
               ox = Project::bmp->cr;
             if(oy > Project::bmp->cb)
               oy = Project::bmp->cb;
-            ignore_tool = true;
-            drawMain(true);
+
+            if(Project::tool->isActive())
+              Project::tool->redraw(this);
+            else
+              drawMain(true);
+//            ignore_tool = true;
+//            drawMain(true);
           }
 
           break;
@@ -367,6 +376,7 @@ int View::handle(int event)
 
       oldimgx = imgx;
       oldimgy = imgy;
+
       return 1;
     }
 
@@ -470,6 +480,7 @@ void View::resize(int x, int y, int w, int h)
   if(fit)
     zoomFit(true);
 
+  Project::tool->reset();
   ignore_tool = true;
   drawMain(true);
 }
@@ -614,8 +625,12 @@ void View::drawCloneCursor()
     y1 = (y - oy) * zoom;
   }
 
-  backbuf->xorRectfill(x1 - 12, y1, x1 + 13, y1);
-  backbuf->xorRectfill(x1, y1 - 12, x1, y1 + 13);
+  backbuf->rect(x1 - 9, y1 - 1, x1 + 9, y1 + 1, makeRgb(0, 0, 0), 64);
+  backbuf->rect(x1 - 10, y1 - 2, x1 + 10, y1 + 2, makeRgb(0, 0, 0), 160);
+  backbuf->rect(x1 - 1, y1 - 9, x1 + 1, y1 + 9, makeRgb(0, 0, 0), 64);
+  backbuf->rect(x1 - 2, y1 - 10, x1 + 2, y1 + 10, makeRgb(0, 0, 0), 160);
+  backbuf->xorRectfill(x1 - 8, y1, x1 + 8, y1);
+  backbuf->xorRectfill(x1, y1 - 8, x1, y1 + 8);
 
   updateView(oldx1 - 12, oldy1 - 12,
              this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
@@ -663,7 +678,7 @@ void View::beginMove()
   // pos.y = by + bh / 2;
   // warp mouse here... (unsupported in fltk)
 
-  backbuf->clear(getFltkColor(FL_BACKGROUND2_COLOR));
+  backbuf->clear(convertFormat(getFltkColor(FL_BACKGROUND2_COLOR), true));
 
   Project::bmp->fastStretch(backbuf,
                              0, 0, Project::bmp->w, Project::bmp->h,
@@ -814,6 +829,7 @@ void View::zoomFit(bool fit_to_view)
     ox = 0;
     oy = 0;
     drawMain(true);
+    Gui::checkZoom();
     return;
   }
 

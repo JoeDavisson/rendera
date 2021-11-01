@@ -34,9 +34,10 @@ public:
   ~Octree();
 
   void clear(node_type *);
-  void write(const int &, const int &, const int &, const float &);
-  void writePath(const int &, const int &, const int &, const float &);
-  float read(const int &, const int &, const int &);
+  void write(const int, const int, const int, const float);
+  void writePath(const int, const int, const int, const float);
+  float read(const int, const int, const int);
+  int read(const int);
 
 private:
   node_type *root;

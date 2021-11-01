@@ -31,9 +31,10 @@ namespace Render
     ANTIALIASED,
     COARSE,
     FINE,
-    BLUR,
+    BLURRY,
     WATERCOLOR,
     CHALK,
+    TEXTURE,
     AVERAGE
   };
  

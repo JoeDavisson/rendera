@@ -32,12 +32,20 @@ Brush::Brush()
   hollow_count = 0;
   size = 1;
   shape = 0;
-  edge = 0;
+  coarse_edge = 0;
+  fine_edge = 0;
+  blurry_edge = 0;
+  watercolor_edge = 0;
+  chalk_edge = 0;
+  texture_edge = 0;
+  texture_marb = 0;
+  texture_turb = 0;
+  average_edge = 0;
   blend = 0;
   color = makeRgb(255, 0, 0);
   trans = 0;
   aa = 0;
-  alpha_mask = 0;
+//  alpha_mask = false;
   make(shape, size);
 }
 
@@ -49,7 +57,7 @@ Brush::~Brush()
   delete[] hollowy;
 }
 
-void Brush::make(int shape, int s)
+void Brush::make(int s, float round)
 {
   size = s;
 
@@ -67,6 +75,7 @@ void Brush::make(int shape, int s)
   Map *map = new Map(96, 96);
   map->clear(0);
 
+/*
   switch(shape)
   {
     case 0:
@@ -84,6 +93,34 @@ void Brush::make(int shape, int s)
     default:
       break;
   }
+*/
+  if(s == 1)
+  {
+    map->setpixel(x1, y1, 255);
+  }
+  else if(s == 2)
+  {
+    map->rectfill(x1, y1, x2, y2, 255);
+  }
+  else if(s == 3)
+  {
+    if(round > .5)
+      map->ovalfill(x1, y1, x2, y2, 255);
+    else
+      map->rectfill(x1, y1, x2, y2, 255);
+  }
+  else
+  {
+    int rr = (s - 1) * round;
+
+    map->rectfill(x1, y1 + rr / 2 + 1, x2, y2 - rr / 2 - 1, 255);
+    map->rectfill(x1 + rr / 2 + 1, y1, x2 - rr / 2 - 1, y2, 255);
+    map->ovalfill(x1, y1, x1 + rr, y1 + rr, 255);
+    map->ovalfill(x2, y1, x2 - rr, y1 + rr, 255);
+    map->ovalfill(x1, y2, x1 + rr, y2 - rr, 255);
+    map->ovalfill(x2, y2, x2 - rr, y2 - rr, 255);
+  }
+
 
   for(int y = 0; y < 96; y++)
   {
@@ -98,6 +135,7 @@ void Brush::make(int shape, int s)
     }
   }
 
+/*
   if(size > 8)
   {
     switch(shape)
@@ -112,6 +150,7 @@ void Brush::make(int shape, int s)
         break;
     }
   }
+*/
 
   for(int y = 0; y < 96; y++)
   {

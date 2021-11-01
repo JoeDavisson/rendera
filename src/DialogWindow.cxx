@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Double_Window.H>
+#include <FL/fl_draw.H>
 
 #include "DialogWindow.H"
 #include "Gui.H"
@@ -58,11 +59,6 @@ void DialogWindow::addOkCancelButtons(Fl_Button **ok, Fl_Button **cancel, int *y
 
 void DialogWindow::show()
 {
-  Fl_Double_Window *parent = Gui::getWindow();
-
-  position(parent->x() + parent->w() / 2 - w() / 2,
-           parent->y() + parent->h() / 2 - h() / 2);
-
   Fl_Double_Window::show();
 }
 

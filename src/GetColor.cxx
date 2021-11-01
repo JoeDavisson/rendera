@@ -75,6 +75,10 @@ void GetColor::move(View *)
 {
 }
 
+void GetColor::key(View *)
+{
+}
+
 void GetColor::done(View *, int)
 {
 }

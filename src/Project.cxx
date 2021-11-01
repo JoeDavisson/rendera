@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <FL/Fl.H>
 
+#include "Blend.H"
 #include "Bitmap.H"
 #include "Brush.H"
 #include "Selection.H"
@@ -52,6 +53,7 @@ namespace Project
 
   // tools
   Tool *tool = 0;
+
   SP<Paint> paint = new Paint();
   SP<GetColor> getcolor = new GetColor();
   SP<Selection> selection = new Selection();
@@ -64,6 +66,8 @@ namespace Project
   char theme_path[PATH_MAX];
   int theme_highlight_color;
   Fl_Color fltk_theme_highlight_color; 
+  Fl_Color fltk_theme_bevel_up; 
+  Fl_Color fltk_theme_bevel_down; 
 }
 
 // called when the program starts

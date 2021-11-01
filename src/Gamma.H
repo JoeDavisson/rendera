@@ -46,7 +46,7 @@ namespace
     return ret;
   }
 
-  // force tables to auto-initialize
+  // initialize tables when program starts
   static const int *table_fix = init_table_fix();
   static const int *table_unfix = init_table_unfix();
 }
@@ -54,13 +54,13 @@ namespace
 namespace Gamma
 {
   // convert to gamma-corrected colorspace
-  inline int fix(const int &val)
+  inline int fix(const int val)
   {
     return table_fix[val];
   }
 
   // return to linear colorspace
-  inline int unfix(const int &val)
+  inline int unfix(const int val)
   {
     return table_unfix[val];
   }

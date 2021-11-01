@@ -28,7 +28,9 @@ namespace Transform
   void flipVertical();
   void resize();
   void scale();
-  void rotate();
+  void rotateArbitrary();
+  void rotate90();
+  void rotate180();
 }
 
 #endif

@@ -36,8 +36,9 @@ public:
 
   // drawing functions
   void clear(int);
-  void setpixel(const int &, const int &, const int &);
-  int getpixel(const int &, const int &);
+  void invert();
+  void setpixel(const int, const int, const int);
+  int getpixel(const int, const int);
   void line(int, int, int, int, int);
   void oval(int, int, int, int, int);
   void ovalfill(int, int, int, int, int);
@@ -48,8 +49,8 @@ public:
   void polyfill(int *, int *, int, int, int, int);
 
   // antialiased versions
-  void blendAA(const int &, const int &, const int &);
-  void setpixelAA(const int &, const int &, const int &);
+  void blendAA(const int, const int, const int);
+  void setpixelAA(const int, const int, const int);
   void hlineAA(int, int, int, int);
   void lineAA(int, int, int, int, int);
   void ovalAA(int, int, int, int, int);

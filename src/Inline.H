@@ -58,7 +58,7 @@ union un_rgba_type
 };
 
 // get rgba values all at once
-inline rgba_type getRgba(uint32_t const &n)
+inline rgba_type getRgba(const uint32_t n)
 {
   un_rgba_type u;
   u.uint32_ = n;
@@ -66,79 +66,91 @@ inline rgba_type getRgba(uint32_t const &n)
 }
 
 // make RGB color with no alpha
-inline int makeRgb(const int &r, const int &g, const int &b)
+inline int makeRgb(const int r, const int g, const int b)
 {
   return r | g << 8 | b << 16 | 0xFF000000;
 }
 
 // make RGBA color
-inline int makeRgba(const int &r, const int &g, const int &b, const int &a)
+inline int makeRgba(const int r, const int g, const int b, const int a)
 {
   return r | g << 8 | b << 16 | a << 24;
 }
 
 // make RGB color, 24-bits only
-inline int makeRgb24(const int &r, const int &g, const int &b)
+inline int makeRgb24(const int r, const int g, const int b)
 {
   return r | g << 8 | b << 16;
 }
 
 // get red channel
-inline int getr(const int &c)
+inline int getr(const int c)
 {
   return c & 255;
 }
 
 // get green channel
-inline int getg(const int &c)
+inline int getg(const int c)
 {
   return (c >> 8) & 255;
 }
 
 // get blue channel
-inline int getb(const int &c)
+inline int getb(const int c)
 {
   return (c >> 16) & 255;
 }
 
 // get alpha channel
-inline int geta(const int &c)
+inline int geta(const int c)
 {
   return (c >> 24) & 255;
 }
 
 // get value
-inline int getv(const int &c)
+inline int getv(const int c)
 {
   return (getr(c) + getg(c) + getb(c)) / 3;
 }
 
 // get rec 601 luminance
-inline int getl(const int &c)
+inline int getl(const int c)
 {
   return ((76 * getr(c)) + (150 * getg(c)) + (29 * getb(c))) / 255;
+
+/*
+  const rgba_type rgba = getRgba(c);
+
+  return ((((rgba.r << 6) + (rgba.r << 3) + (rgba.r << 2)) +
+           ((rgba.g << 7) + (rgba.g << 4) + (rgba.g << 2) + (rgba.g >> 1)) +
+           ((rgba.b << 4) + (rgba.b << 3) + (rgba.b << 2) + (rgba.b)))) >> 8;
+*/
 }
 
 // get rec 601 luminance from unpacked RGB values
-inline int getlUnpacked(const int &r, const int &g, const int &b)
+inline int getlUnpacked(const int r, const int g, const int b)
 {
   return (76 * r + 150 * g + 29 * b) / 255;
+/*
+  return ((((r << 6) + (r << 3) + (r << 2)) +
+           ((g << 7) + (g << 4) + (g << 2) + (g >> 1)) +
+           ((b << 4) + (b << 3) + (b << 2) + (b)))) >> 8;
+*/
 }
 
+// 76 (r << 6) + (r << 3) + (r << 2) // 76
+// 150 (g << 7) + (g << 4) + (g << 2) + (g >> 1)
+// 29  (b << 4) + (b << 3) + (b << 2) + (b)
+
+
 // scales a gray value to a particular level
-inline int scaleVal(const int &a, const int &b)
+inline int scaleVal(const int a, const int b)
 {
   return (a * (255 - b) / 255) + b;
 }
 
-// get an FLTK color
-inline int getFltkColor(const int &c)
-{
-  return (Fl::get_color(c) >> 8) | 0xFF000000;
-}
-
 // 3D quadratic distance
-inline int diff24(const int &c1, const int &c2)
+inline int diff24(const int c1, const int c2)
 {
   const struct rgba_type rgba1 = getRgba(c1);
   const struct rgba_type rgba2 = getRgba(c2);
@@ -150,7 +162,7 @@ inline int diff24(const int &c1, const int &c2)
 }
 
 // 4D quadratic distance
-inline int diff32(const int &c1, const int &c2)
+inline int diff32(const int c1, const int c2)
 {
   const struct rgba_type rgba1 = getRgba(c1);
   const struct rgba_type rgba2 = getRgba(c2);
@@ -162,8 +174,8 @@ inline int diff32(const int &c1, const int &c2)
   return r * r + g * g + b * b + a * a;
 }
 
-// normal blend approximation (saves a multiply)
-inline int blendFast(const int &c1, const int &c2, const int &t)
+// blend approximation
+inline int blendFast(const int c1, const int c2, const int t)
 {
   const int rb =
     (((((c1 & 0xFF00FF) - (c2 & 0xFF00FF)) * t) >> 8) + c2) & 0xFF00FF;
@@ -175,18 +187,31 @@ inline int blendFast(const int &c1, const int &c2, const int &t)
 // convert internal RGB format to whatever the graphics card needs
 // currently only supporting RGB/BGR as I don't think anything
 // else really exists
-inline int convertFormat(const int &c, const bool &bgr_order)
+inline int convertFormat(const int c, const bool bgr_order)
 {
   if(bgr_order)
-    return makeRgb(getb(c), getg(c), getr(c));
+    return makeRgba(getb(c), getg(c), getr(c), geta(c));
   else
     return c;
 }
 
-inline int clamp(const int &value, const int &ceiling)
+// get an FLTK color
+inline int getFltkColor(const int c)
 {
-  const int temp = value > ceiling ? ceiling : value;
-  return temp < 0 ? 0 : temp;
+  return (Fl::get_color(c) >> 8) | 0xFF000000;
+}
+
+inline int clamp(const int value, const int ceiling)
+{
+  if(value < 0)
+    return 0;
+  else if(value > ceiling)
+    return ceiling;
+  else
+    return value;
+
+//  const int temp = value > ceiling ? ceiling : value;
+//  return temp < 0 ? 0 : temp;
 }
 
 // file access functions
@@ -234,12 +259,12 @@ inline uint32_t parseUint32(unsigned char *&buffer)
   return num;
 }
 
-inline void writeUint8(const uint8_t &num, FILE *out)
+inline void writeUint8(const uint8_t num, FILE *out)
 {
   fputc(num, out);
 }
 
-inline void writeUint16(const uint16_t &num, FILE *out)
+inline void writeUint16(const uint16_t num, FILE *out)
 {
 #if 0
   /*  */
@@ -252,7 +277,7 @@ inline void writeUint16(const uint16_t &num, FILE *out)
 #endif
 }
 
-inline void writeUint32(const uint32_t &num, FILE *out)
+inline void writeUint32(const uint32_t num, FILE *out)
 {
 #if 0
   /*  */

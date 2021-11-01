@@ -51,8 +51,9 @@ void Paint::push(View *view)
 
   if(active && stroke->type == 3)
   {
-    if(view->dclick)
+    if(view->dclick || view->button3)
     {
+//      stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
       stroke->end(view->imgx, view->imgy);
       Blend::set(Project::brush->blend);
       Render::begin();
@@ -62,17 +63,17 @@ void Paint::push(View *view)
       view->drawMain(true);
       return;
     }
-    else
+    else if(view->button1)
     {
       stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
     }
   }
-  else
+  else if(view->button1)
   {
     stroke->begin(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
+    active = true;
   }
 
-  active = true;
 }
 
 void Paint::drag(View *view)
@@ -116,8 +117,9 @@ void Paint::move(View *view)
       {
         stroke->polyline(view->imgx, view->imgy,
                          view->ox, view->oy, view->zoom);
+        
         view->drawMain(false);
-        stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+        stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom, view->bgr_order);
         view->redraw();
       }
       break;
@@ -143,6 +145,10 @@ void Paint::move(View *view)
   }
 }
 
+void Paint::key(View *)
+{
+}
+
 void Paint::done(View *, int)
 {
 }
@@ -155,7 +161,7 @@ void Paint::redraw(View *view)
   {
     active = false;
     view->drawMain(false);
-    stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+    stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom, view->bgr_order);
     view->redraw();
     active = true;
   }

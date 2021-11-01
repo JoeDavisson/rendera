@@ -38,7 +38,7 @@ namespace ExtraMath
     return (0 > n) ? -n : n;
   }
 
-  // fast pseudo-random number
+  // pseudo-random number
   inline int rnd(void)
   {
     static int seed = 12345;
@@ -55,6 +55,19 @@ namespace ExtraMath
       x >>= 1;
 
     return (x == 1);
+  }
+
+  inline int nextPowerOfTwo(unsigned int v)
+  {
+    v--;
+    v |= v >> 1;
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+    v++;
+
+    return v;
   }
 
   // fft routines

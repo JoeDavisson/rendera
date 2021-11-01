@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace
 {
   int beginx = 0, beginy = 0;
-
   Bitmap *offset_buffer = 0;
 }
 
@@ -96,6 +95,10 @@ void Offset::drag(View *view)
 
 void Offset::release(View *)
 {
+  if(offset_buffer)
+    delete offset_buffer;
+
+  offset_buffer = 0;
   Gui::checkOffsetValues(0, 0);
 }
 
@@ -103,12 +106,12 @@ void Offset::move(View *)
 {
 }
 
+void Offset::key(View *)
+{
+}
+
 void Offset::done(View *, int)
 {
-  if(offset_buffer)
-    delete offset_buffer;
-
-  offset_buffer = 0;
 }
 
 void Offset::redraw(View *)

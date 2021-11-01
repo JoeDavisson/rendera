@@ -20,19 +20,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Group.H>
+#include <FL/Fl.H>
+#include <FL/Fl_Repeat_Button.H>
+#include <FL/Fl_RGB_Image.H>
 
 #include "Blend.H"
 #include "Bitmap.H"
+#include "RepeatButton.H"
 #include "File.H"
 #include "Project.H"
-#include "ToggleButton.H"
 
-ToggleButton::ToggleButton(Fl_Group *g, int x, int y, int w, int h,
-                           const char *label, const unsigned char *array,
-                           Fl_Callback *cb)
-: Fl_Button(x, y, w, h, label)
+RepeatButton::RepeatButton(Fl_Group *g, int x, int y, int w, int h,
+               const char *label, const unsigned char *array, Fl_Callback *cb)
+: Fl_Repeat_Button(x, y, w, h, label)
 {
   var = 0;
 
@@ -55,40 +55,20 @@ ToggleButton::ToggleButton(Fl_Group *g, int x, int y, int w, int h,
   tooltip(label);
 }
 
-ToggleButton::~ToggleButton()
+RepeatButton::~RepeatButton()
 {
 }
 
-int ToggleButton::handle(int event)
+void RepeatButton::draw()
 {
-  switch(event)
-  {
-    case FL_ENTER:
-      return 1;
-    case FL_PUSH:
-      switch(Fl::event_button())
-      {
-        case 1:
-          var = 1 - var;
-          do_callback();
-          redraw();
-          return 1;
-      }
-  }
-
-  return 0;
-}
-
-void ToggleButton::draw()
-{
-//  fl_draw_box(FL_FLAT_BOX, x(), y(), w(), h(),
-//              var ? Project::fltk_theme_highlight_color : FL_BACKGROUND_COLOR);
   fl_draw_box(FL_FLAT_BOX, x(), y(), w(), h(),
-              var ? Project::fltk_theme_highlight_color : 42);
+              value() ? Project::fltk_theme_highlight_color : 42);
+  //fl_draw_box(FL_FLAT_BOX, x(), y(), w(), h(),
+  //            value() ? Project::fltk_theme_highlight_color : FL_BACKGROUND_COLOR);
 
   fl_push_clip(x(), y(), w(), h());
 
-  if(var)
+  if(value())
     image->draw(x() + 1, y() + 1);
   else
     image->draw(x(), y());
@@ -103,22 +83,26 @@ void ToggleButton::draw()
   int y1 = y();
   int y2 = y() + h() - 1;
 
-  fl_color(var ? Project::fltk_theme_bevel_down : Project::fltk_theme_bevel_up);
+  fl_color(value() ? Project::fltk_theme_bevel_down : Project::fltk_theme_bevel_up);
   fl_xyline(x1, y1, x2);
   fl_yxline(x1, y1, y2);
 
-  if(var)
+  if(value())
   {
     fl_xyline(x1 + 1, y1 + 1, x2 - 1);
     fl_yxline(x1 + 1, y1 + 1, y2 - 1);
   }
 
-  fl_color(var ? Project::fltk_theme_bevel_up : Project::fltk_theme_bevel_down);
+  fl_color(value() ? Project::fltk_theme_bevel_up : Project::fltk_theme_bevel_down);
   fl_xyline(x1, y2, x2);
   fl_yxline(x2, y1 + 1, y2);
 
   fl_color(old);
 
-//  fl_draw_box(var ? FL_DOWN_FRAME : FL_UP_FRAME, x(), y(), w(), h(), FL_BLACK);
+/*
+  fl_draw_box(value() ? FL_DOWN_FRAME : FL_UP_FRAME,
+              x(), y(), w(), h(),
+              FL_BLACK);
+*/
 }
 

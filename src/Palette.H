@@ -35,8 +35,9 @@ public:
   void insertColor(int, int);
   void deleteColor(int);
   void replaceColor(int, int);
+  void swapColor(int, int);
   void fillTable();
-  int lookup(const int &);
+  int lookup(const int);
   void sort();
   int load(const char *);
   int save(const char *);
@@ -46,7 +47,6 @@ public:
   void setWebSafe();
   void set3LevelRGB();
   void set4LevelRGB();
-  void set332();
 
   int *data;
   Octree *table;

@@ -27,7 +27,7 @@ public:
   Brush();
   ~Brush();
 
-  void make(int, int);
+  void make(int, float);
 
   int *solidx, *solidy;
   int *hollowx, *hollowy;
@@ -35,12 +35,20 @@ public:
   int hollow_count;
   int size;
   int shape;
-  int edge;
+  int coarse_edge;
+  int fine_edge;
+  int blurry_edge;
+  int watercolor_edge;
+  int chalk_edge;
+  int texture_edge;
+  int texture_marb;
+  int texture_turb;
+  int average_edge;
   int color;
   int trans;
   int blend;
   int aa;
-  int alpha_mask;
+//  bool alpha_mask;
 };
 
 #endif

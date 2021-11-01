@@ -28,8 +28,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "Clone.H"
 #include "Gamma.H"
+#include "FilterMatrix.H"
 #include "Inline.H"
 #include "Map.H"
+#include "Octree.H"
 #include "Palette.H"
 #include "Project.H"
 #include "ExtraMath.H"
@@ -39,67 +41,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
+
   // XOR checkerboard pattern (for brushstroke previews)
-  inline int xorValue(const int &x, const int &y)
+  inline int xorValue(const int x, const int y)
   {
-    static const int c[2] = { 0x00FFFFFF, 0x00808080 };
-    return c[(x & 1) ^ (y & 1)];
-  }
+//    static const int xor_colors[2] = { 0xFFFFFFFF, 0xFF000000 };
+    static const unsigned int xor_colors[2] = { 0x00000000, 0xFFFFFFFF };
 
-  // flood-fill related stack routines
-  const int stack_size = 4096;
-  std::vector<int> stack_x(stack_size);
-  std::vector<int> stack_y(stack_size);
-  int sp = 0;
-
-  inline bool pop(int *x, int *y)
-  {
-    if(sp > 0)
-    {
-      *x = stack_x[sp];
-      *y = stack_y[sp];
-      sp--;
-      return true;
-    }
-
-    return false;
-  }
-
-  inline bool push(const int &x, const int &y)
-  {
-    if(sp < stack_size - 1)
-    {
-      sp++;
-      stack_x[sp] = x;
-      stack_y[sp] = y;
-      return true;
-    }
-
-    return false;
-  }
-
-  inline void emptyStack()
-  {
-    int x, y;
-
-    while(pop(&x, &y))
-    {
-      // loop until pop returns false
-    }
-  }
-
-  // determines if flood-fill is within range and sets transparency level
-  inline bool inRange(const int &c1, const int &c2,
-                      const int &range, int *trans)
-  {
-    int diff = std::sqrt(diff32(c1, c2)) / 2;
-
-    *trans = diff * (256.0f / (range + 1));
-
-    if(diff <= range)
-      return true;
-    else
-      return false;
+    return xor_colors[(x & 1) ^ (y & 1)];
   }
 }
 
@@ -150,16 +99,18 @@ Bitmap::Bitmap(int width, int height, int overscroll)
     row[i] = &data[width * i];
 
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
-  clear(getFltkColor(FL_BACKGROUND2_COLOR));
+  clear(convertFormat(getFltkColor(FL_BACKGROUND_COLOR), true));
   rectfill(cl, ct, cr, cb, makeRgb(0, 0, 0), 0);
   setClip(0, 0, w - 1, h - 1);
 
+/*
   for(int i = 0; i < 4; i++)
   {
     rect(overscroll - 1 - i, overscroll - 1 - i,
          w - overscroll + i, h - overscroll + i,
-         getFltkColor(FL_BACKGROUND_COLOR), 0);
+         convertFormat(getFltkColor(FL_BACKGROUND2_COLOR), true), 0);
   }
+*/
 
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
 }
@@ -181,16 +132,36 @@ Bitmap::Bitmap(int width, int height, int *image_data)
   h = height;
   overscroll = 0;
 
-  setClip(0, 0, w - 1, h - 1);
-
   for(int i = 0; i < height; i++)
     row[i] = &data[width * i];
+
+  setClip(0, 0, w - 1, h - 1);
 }
 
 Bitmap::~Bitmap()
 {
   delete[] row;
   delete[] data;
+}
+
+bool getm(int c)
+{
+    return (geta(c) > 0) ? true : false;
+}
+
+bool Bitmap::isEdge(int x, int y)
+{
+  if(x < cl || x > cr || y < ct || y > cb)
+    return false;
+
+  if((getm(getpixel(x, y)) &&
+    (!getm(getpixel(x - 1, y)) ||
+    !getm(getpixel(x + 1, y)) ||
+    !getm(getpixel(x, y - 1)) ||
+    !getm(getpixel(x, y + 1)))))
+    return true;
+  else
+    return false;
 }
 
 void Bitmap::clear(int c)
@@ -363,7 +334,8 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 
     while(x1 != x2)
     {
-      *(row[y1] + x1) ^= xorValue(x1, y1);
+      *(row[y1] + x1) = xorValue(x1, y1);
+//      *(row[y1] + x1) ^= xorValue(x1, y1);
 
       if(e >= 0)
       {
@@ -383,7 +355,8 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 
     while(y1 != y2)
     {
-      *(row[y1] + x1) ^= xorValue(x1, y1);
+      *(row[y1] + x1) = xorValue(x1, y1);
+//      *(row[y1] + x1) ^= xorValue(x1, y1);
 
       if(e >= 0)
       {
@@ -396,7 +369,8 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
     }
   }
 
-  *(row[y1] + x1) ^= xorValue(x1, y1);
+//  *(row[y1] + x1) ^= xorValue(x1, y1);
+  *(row[y1] + x1) = xorValue(x1, y1);
 }
 
 void Bitmap::xorHline(int x1, int y, int x2)
@@ -416,7 +390,32 @@ void Bitmap::xorHline(int x1, int y, int x2)
   int *p = row[y] + x1;
 
   for(; x1 <= x2; x1++)
-    *p++ ^= xorValue(x1, y);
+    *p++ = xorValue(x1, y);
+//    *p++ ^= xorValue(x1, y);
+}
+
+void Bitmap::xorVline(int y1, int x, int y2)
+{
+  if(y1 > y2)
+    std::swap(y1, y2);
+
+  if(x < cl || x > cr)
+    return;
+  if(y1 > cb)
+    return;
+  if(y2 < ct)
+    return;
+
+  clip(&x, &y1, &x, &y2);
+
+  int *p = row[y1] + x;
+
+  for(; y1 <= y2; y1++)
+  {
+//    *p ^= xorValue(x, y1);
+    *p = xorValue(x, y1);
+    p += w;
+  }
 }
 
 void Bitmap::xorRect(int x1, int y1, int x2, int y2)
@@ -446,8 +445,10 @@ void Bitmap::xorRect(int x1, int y1, int x2, int y2)
 
   for(; y1 < y2; y1++)
   {
-    *(row[y1] + x1) ^= xorValue(x1, y1);
-    *(row[y1] + x2) ^= xorValue(x1, y1);
+    *(row[y1] + x1) = xorValue(x1, y1);
+    *(row[y1] + x2) = xorValue(x1, y1);
+//    *(row[y1] + x1) ^= xorValue(x1, y1);
+//    *(row[y1] + x2) ^= xorValue(x1, y1);
   }
 }
 
@@ -473,20 +474,21 @@ void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
     xorHline(x1, y1, x2);
 }
 
-// faster non-blending version
-void Bitmap::setpixel(const int &x, const int &y, const int &c)
+// non-blending version
+void Bitmap::setpixel(const int x, const int y, const int c)
 {
+  if(x < cl || x > cr || y < ct || y > cb)
+    return;
+
   *(row[y] + x) = c;
 }
 
-void Bitmap::setpixel(const int &x, const int &y, const int &c2, int t)
+void Bitmap::setpixel(const int x, const int y, const int c2, const int t)
 {
   Blend::target(this, Project::palette.get(), x, y);
 
-  if(Project::brush->alpha_mask == 1)
-    t = scaleVal(t, geta(getpixel(x, y)));
-  else if(Project::brush->alpha_mask == 2)
-    t = scaleVal(t, 255 - geta(getpixel(x, y)));
+//  if(Project::brush->alpha_mask)
+//    t = scaleVal(t, 255 - geta(getpixel(x, y)));
 
   switch(Clone::wrap | (Clone::active << 1))
   {
@@ -508,8 +510,7 @@ void Bitmap::setpixel(const int &x, const int &y, const int &c2, int t)
   }
 }
 
-void Bitmap::setpixelSolid(const int &x, const int &y,
-                           const int &c2, const int &t)
+void Bitmap::setpixelSolid(const int x, const int y, const int c2, const int t)
 {
   if(x < cl || x > cr || y < ct || y > cb)
     return;
@@ -519,8 +520,7 @@ void Bitmap::setpixelSolid(const int &x, const int &y,
   *c1 = Blend::current(*c1, c2, t);
 }
 
-void Bitmap::setpixelWrap(const int &x, const int &y,
-                          const int &c2, const int &t)
+void Bitmap::setpixelWrap(const int x, const int y, const int c2, const int t)
 {
   int x1 = x; 
   int y1 = y; 
@@ -539,8 +539,7 @@ void Bitmap::setpixelWrap(const int &x, const int &y,
   *c1 = Blend::current(*c1, c2, t);
 }
 
-void Bitmap::setpixelClone(const int &x, const int &y,
-                           const int &, const int &t)
+void Bitmap::setpixelClone(const int x, const int y, const int, const int t)
 {
   if(x < cl || x > cr || y < ct || y > cb)
     return;
@@ -586,8 +585,7 @@ void Bitmap::setpixelClone(const int &x, const int &y,
   *c1 = Blend::current(*c1, c2, t);
 }
 
-void Bitmap::setpixelWrapClone(const int &x, const int &y,
-                               const int &, const int &t)
+void Bitmap::setpixelWrapClone(const int x, const int y, const int, const int t)
 {
   int x1 = x; 
   int y1 = y;
@@ -687,6 +685,20 @@ void Bitmap::setClip(int x1, int y1, int x2, int y2)
   cb = y2;
   cw = (cr - cl) + 1;
   ch = (cb - ct) + 1;
+}
+
+void Bitmap::swapRedBlue()
+{
+  for(int y = 0; y < h; y++)
+  {
+    int *p = row[y];
+
+    for(int x = 0; x < w; x++)
+    {
+      *p = convertFormat(*p, true);
+      p++;
+    }
+  }
 }
 
 // copies part of one image to another, performs clipping
@@ -829,12 +841,12 @@ void Bitmap::pointStretch(Bitmap *dest,
                           int dx, int dy, int dw, int dh,
                           int overx, int overy, bool bgr_order)
 {
-  Palette *pal = Project::palette.get();
+  //Palette *pal = Project::palette.get();
 
-  const int ax = ((float)dw / sw) * 256;
-  const int ay = ((float)dh / sh) * 256;
-  const int bx = ((float)sw / dw) * 256;
-  const int by = ((float)sh / dh) * 256;
+  const int ax = ((float)dw / sw) * 65536;
+  const int ay = ((float)dh / sh) * 65536;
+  const int bx = ((float)sw / dw) * 65536;
+  const int by = ((float)sh / dh) * 65536;
 
   dw -= overx;
   dh -= overy;
@@ -844,15 +856,15 @@ void Bitmap::pointStretch(Bitmap *dest,
     const int d = dest->cl - dx;
     dx = dest->cl;
     dw -= d;
-    sx += (d * ax) >> 8;
-    sw -= (d * ax) >> 8;
+    sx += (d * ax) >> 16;
+    sw -= (d * ax) >> 16;
   }
 
   if(dx + dw > dest->cr)
   {
     const int d = dx + dw - dest->cr;
     dw -= d;
-    sw -= (d * ax) >> 8;
+    sw -= (d * ax) >> 16;
   }
 
   if(dy < dest->ct)
@@ -860,19 +872,19 @@ void Bitmap::pointStretch(Bitmap *dest,
     const int d = dest->ct - dy;
     dy = dest->ct;
     dh -= d;
-    sy += (d * ay) >> 8;
-    sh -= (d * ay) >> 8;
+    sy += (d * ay) >> 16;
+    sh -= (d * ay) >> 16;
   }
 
   if(dy + dh > dest->cb)
   {
     const int d = dy + dh - dest->cb;
     dh -= d;
-    sh -= (d * ay) >> 8;
+    sh -= (d * ay) >> 16;
   }
 
-  dw -= (dw - ((sw * ax) >> 8));
-  dh -= (dh - ((sh * ay) >> 8));
+  dw -= (dw - ((sw * ax) >> 16));
+  dh -= (dh - ((sh * ay) >> 16));
 
   if(sw < 1 || sh < 1)
     return;
@@ -882,26 +894,28 @@ void Bitmap::pointStretch(Bitmap *dest,
 
   for(int y = 0; y < dh; y++)
   {
-    const int y1 = sy + ((y * by) >> 8);
+    const int y1 = sy + ((y * by) >> 16);
     int *p = dest->row[dy + y] + dx;
 
     for(int x = 0; x < dw; x++)
     {
-      const int x1 = sx + ((x * bx) >> 8);
+      const int x1 = sx + ((x * bx) >> 16);
       const int c = *(row[y1] + x1);
-      // generate checkboard pattern for transparent areas
-      const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
+//      const int c = pal->data[pal->table->read(*(row[y1] + x1))];
 
-      *p++ = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
+      const int checker = ((x >> 4) ^ (y >> 4)) & 1 ? 0xA0A0A0 : 0x606060;
+
+      *p = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
+      p++;
     }
   }
 }
 
 void Bitmap::flipHorizontal()
 {
-  for(int y = ct; y <= cb; y++)
+  for(int y = 0; y < h; y++)
   {
-    for(int x = cl; x < w / 2; x++)
+    for(int x = 0; x < w / 2; x++)
     {
       const int temp = *(row[y] + x);
       *(row[y] + x) = *(row[y] + w - 1 - x);
@@ -912,9 +926,9 @@ void Bitmap::flipHorizontal()
 
 void Bitmap::flipVertical()
 {
-  for(int y = ct; y < h / 2; y++)
+  for(int y = 0; y < h / 2; y++)
   {
-    for(int x = cl; x <= cr; x++)
+    for(int x = 0; x < w; x++)
     {
       const int temp = *(row[y] + x);
       *(row[y] + x) = *(row[h - 1 - y] + x);
@@ -923,13 +937,33 @@ void Bitmap::flipVertical()
   }
 }
 
-// bresenham stretching, used for the navigator preview image
+void Bitmap::rotate180()
+{
+  const int size = (w * h) / 2;
+  int count = 0;
+
+  for(int y = 0; y < h; y++)
+  {
+    for(int x = 0; x < w; x++)
+    {
+      const int temp = *(row[y] + x);
+      *(row[y] + x) = *(row[h - 1 - y] + w - 1 - x);
+      *(row[h - 1 - y] + w - 1 - x) = temp;
+      count++;
+      if(count >= size)
+        break; 
+    }
+
+    if(count >= size)
+      break; 
+  }
+}
+
+// bresenham stretching
 void Bitmap::fastStretch(Bitmap *dest,
                          int xs1, int ys1, int xs2, int ys2,
                          int xd1, int yd1, int xd2, int yd2, bool bgr_order)
 {
-  Palette *pal = Project::palette.get();
-
   xs2 += xs1;
   xs2--;
   ys2 += ys1;
@@ -962,8 +996,7 @@ void Bitmap::fastStretch(Bitmap *dest,
     for(int d_1 = 0; d_1 <= dx_1; d_1++)
     {
       // generate checkboard pattern for transparent areas
-      const int checker = ((d_1 >> 4) & 1) ^ ((yd1 >> 4) & 1)
-                            ? 0xA0A0A0 : 0x606060;
+      const int checker = ((d_1 >> 4) ^ (yd1 >> 4)) & 1 ? 0xA0A0A0 : 0x606060;
 
       *p = convertFormat(blendFast(checker, *q, 255 - geta(*q)), bgr_order);
 
@@ -985,6 +1018,97 @@ void Bitmap::fastStretch(Bitmap *dest,
 
     yd1 += sx;
     e += dy;
+  }
+}
+
+void Bitmap::blur(int radius, int amount)
+{
+  radius = (radius + 1) * 2;
+
+  std::vector<int> kernel(radius);
+  int div = 0;
+
+  // bell curve
+  const int b = radius / 2;
+
+  for(int x = 0; x < radius; x++)
+  {
+    kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) /
+					 ((b * b) / 2)));
+    div += kernel[x];
+  }
+
+  Bitmap temp(this->cw, this->ch);
+
+  // x direction
+  for(int y = this->ct; y <= this->cb; y++)
+  {
+    int *p = temp.row[y - this->ct];
+
+    for(int x = this->cl; x <= this->cr; x++)
+    {
+      int rr = 0;
+      int gg = 0;
+      int bb = 0;
+      int aa = 0;
+
+      for(int i = 0; i < radius; i++) 
+      {
+	const int mul = kernel[i];
+	rgba_type rgba = getRgba(this->getpixel(x - radius / 2 + i, y));
+
+	rr += Gamma::fix(rgba.r) * mul;
+	gg += Gamma::fix(rgba.g) * mul;
+	bb += Gamma::fix(rgba.b) * mul;
+	aa += rgba.a * mul;
+      }
+
+      rr = Gamma::unfix(rr / div);
+      gg = Gamma::unfix(gg / div);
+      bb = Gamma::unfix(bb / div);
+      aa /= div;
+
+      *p = makeRgba(rr, gg, bb, aa);
+      p++;
+    }
+  }
+
+  // y direction
+  for(int y = this->ct; y <= this->cb; y++)
+  {
+    int *p = this->row[y] + this->cl;
+
+    for(int x = this->cl; x <= this->cr; x++)
+    {
+      int rr = 0;
+      int gg = 0;
+      int bb = 0;
+      int aa = 0;
+
+      for(int i = 0; i < radius; i++) 
+      {
+	const int mul = kernel[i];
+	rgba_type rgba = getRgba(temp.getpixel(x - this->cl,
+					       y - radius / 2 + i - this->ct));
+
+	rr += Gamma::fix(rgba.r) * mul;
+	gg += Gamma::fix(rgba.g) * mul;
+	bb += Gamma::fix(rgba.b) * mul;
+	aa += rgba.a * mul;
+      }
+
+      rr = Gamma::unfix(rr / div);
+      gg = Gamma::unfix(gg / div);
+      bb = Gamma::unfix(bb / div);
+      aa /= div;
+
+      int c1 = *p;
+      int c2 = makeRgba(rr, gg, bb, aa);
+
+      *p = blendFast(c1, c2, amount);
+
+      p++;
+    }
   }
 }
 
@@ -1092,84 +1216,4 @@ void Bitmap::invert()
   }
 }
 
-// flood-fill with range option
-void Bitmap::fill(int x, int y, int new_color, int old_color, int range)
-{
-  if(old_color == new_color)
-    return;
-
-  emptyStack();
-    
-  if(!push(x, y))
-    return;
-
-  // make copy
-  Bitmap temp(w, h);
-  blit(&temp, 0, 0, 0, 0, w, h);
-
-  // blending map
-  Map map(w, h);
-  map.clear(255);
-
-  int trans;
-
-  while(pop(&x, &y))
-  {    
-    int x1 = x;
-
-    while(x1 >= cl && inRange(temp.getpixel(x1, y), old_color, range, &trans))
-      x1--;
-
-    x1++;
-
-    bool span_t = false;
-    bool span_b = false;
-
-    while(x1 <= cr && inRange(temp.getpixel(x1, y), old_color, range, &trans))
-    {
-      temp.setpixelSolid(x1, y, new_color, 0);
-      map.setpixel(x1, y, trans);
-
-      if((!span_t && y > ct) &&
-          inRange(temp.getpixel(x1, y - 1), old_color, range, &trans)) 
-      {
-        if(!push(x1, y - 1))
-          return;
-
-        span_t = true;
-      }
-      else if((span_t && y > ct) &&
-               !inRange(temp.getpixel(x1, y - 1), old_color,range, &trans))
-      {
-        span_t = false;
-      }
-
-      if((!span_b && y < cb) &&
-          inRange(temp.getpixel(x1, y + 1), old_color,range, &trans)) 
-      {
-        if(!push(x1, y + 1))
-          return;
-
-        span_b = true;
-      }
-      else if((span_b && y < cb) &&
-               !inRange(temp.getpixel(x1, y + 1), old_color,range, &trans))
-      {
-        span_b = false;
-      } 
-
-      x1++;
-    }
-  }
-
-  for(int y = ct; y <= cb; y++)
-  {
-    for(int x = cl; x <= cr; x++)
-    {
-      const int t = map.getpixel(x, y);
-      if(t < 255)
-        setpixelSolid(x, y, new_color, t);
-    }
-  }
-}
 

@@ -18,28 +18,26 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef FILL_H
-#define FILL_H
+#ifndef REPEAT_BUTTON_H
+#define REPEAT_BUTTON_H
 
-class View;
+class Bitmap;
+class Fl_Group;
 
-#include "Tool.H"
-
-class Fill : public Tool
+class RepeatButton : public Fl_Repeat_Button
 {
 public:
-  Fill();
-  ~Fill();
+  RepeatButton(Fl_Group *, int, int, int, int,
+         const char *, const unsigned char *, Fl_Callback *);
+  ~RepeatButton();
 
-  void push(View *);
-  void drag(View *);
-  void release(View *);
-  void move(View *);
-  void key(View *);
-  void done(View *, int);
-  void redraw(View *);
-  bool isActive();
-  void reset();
+  int var;
+  Fl_Group *group;
+  Bitmap *bitmap;
+  Fl_RGB_Image *image;
+
+protected:
+  void draw();
 };
 
 #endif

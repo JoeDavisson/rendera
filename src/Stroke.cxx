@@ -25,11 +25,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Brush.H"
 #include "Clone.H"
+#include "Gui.H"
 #include "Inline.H"
 #include "Map.H"
 #include "ExtraMath.H"
 #include "Project.H"
+#include "Render.H"
 #include "Stroke.H"
+#include "View.H"
 
 namespace
 {
@@ -78,6 +81,18 @@ namespace
           break;
       }
     }
+  }
+
+  bool isEdge(Map *map, const int x, const int y)
+  {
+    if((map->getpixel(x, y) &&
+       (!map->getpixel(x - 1, y) ||
+       !map->getpixel(x + 1, y) ||
+       !map->getpixel(x, y - 1) ||
+       !map->getpixel(x, y + 1))))
+      return true;
+    else
+      return false;
   }
 }
 
@@ -252,8 +267,24 @@ void Stroke::drawBrushAA(int x, int y, int c)
 
   for(int i = 0; i < brush->solid_count; i++)
   {
-    map->setpixelAA((x + brush->solidx[i]) << 2,
-                    (y + brush->solidy[i]) << 2, c);
+/*
+    map->setpixelAA(((x + brush->solidx[i]) << 2) - 1,
+                    ((y + brush->solidy[i]) << 2), c);
+    map->setpixelAA(((x + brush->solidx[i]) << 2) + 1,
+                    ((y + brush->solidy[i]) << 2), c);
+    map->setpixelAA(((x + brush->solidx[i]) << 2),
+                    ((y + brush->solidy[i]) << 2) - 1, c);
+    map->setpixelAA(((x + brush->solidx[i]) << 2),
+                    ((y + brush->solidy[i]) << 2) + 1, c);
+*/
+    map->setpixelAA(((x + brush->solidx[i]) << 2) - 1,
+                    ((y + brush->solidy[i]) << 2) - 1, c);
+    map->setpixelAA(((x + brush->solidx[i]) << 2) + 1,
+                    ((y + brush->solidy[i]) << 2) - 1, c);
+    map->setpixelAA(((x + brush->solidx[i]) << 2) - 1,
+                    ((y + brush->solidy[i]) << 2) + 1, c);
+    map->setpixelAA(((x + brush->solidx[i]) << 2) + 1,
+                    ((y + brush->solidy[i]) << 2) + 1, c);
   }
 }
 
@@ -407,6 +438,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
     case POLYGON:
     {
       map->line(oldx, oldy, lastx, lasty, 0);
+//      map->rectfill(oldx - 1, oldy - 1, oldx + 1, oldy + 1, 255);
       makeBlitRect(x, y, lastx, lasty, ox, oy, 1, zoom);
       polycachex[polycount] = x;
       polycachey[polycount] = y;
@@ -559,18 +591,19 @@ void Stroke::end(int x, int y)
         polycount++;
         polycount &= 65535;
 
-        if(brush->size == 1)
+        if(brush->size < 5)
           map->thick_aa = 1;
 
-        if(polycount < 2)
+        if(polycount < 3)
         {
           map->thick_aa = 1;
-          drawBrushAA(x, y, 255);
-          drawBrushAA(x, y, 255);
+          drawBrushAA(x, y, 64);
         }
 
         for(int i = 1; i < polycount; i++)
         {
+//          drawBrushAA(polycachex[i], polycachey[i], 64);
+//          drawBrushAA(polycachex[i - 1], polycachey[i - 1], 64);
           drawBrushLineAA(polycachex[i], polycachey[i],
                           polycachex[i - 1], polycachey[i - 1], 255);
         }
@@ -610,11 +643,13 @@ void Stroke::end(int x, int y)
 
       case POLYGON:
       {
+        map->clear(0);
         polycachex[polycount] = beginx;
         polycachey[polycount] = beginy;
         polycount++;
         polycount &= 65535;
-        map->polyfillAA(polycachex, polycachey, polycount, y1, y2, 255);
+        if(polycount > 3)
+          map->polyfillAA(polycachex, polycachey, polycount, y1, y2, 255);
 
         break;
       }
@@ -714,11 +749,21 @@ void Stroke::end(int x, int y)
       case REGION:
       case POLYGON:
       {
+        map->clear(0);
         polycachex[polycount] = beginx;
         polycachey[polycount] = beginy;
         polycount++;
         polycount &= 65535;
-        map->polyfill(polycachex, polycachey, polycount, y1, y2, 255);
+        if(polycount > 3)
+        {
+          map->polyfill(polycachex, polycachey, polycount, y1, y2, 255);
+
+          for(int i = 0; i < polycount - 1; i++)
+          {
+            map->line(polycachex[i], polycachey[i],
+                polycachex[i + 1], polycachey[i + 1], 255);
+          }
+        }
         break;
       }
 
@@ -742,14 +787,15 @@ void Stroke::polyline(int x, int y, int ox, int oy, float zoom)
     y2 = y + 1;
 
   map->line(oldx, oldy, lastx, lasty, 0);
+  map->line(oldx, oldy, x, y, 255);
 
   for(int i = 0; i < polycount - 1; i++)
   {
     map->line(polycachex[i], polycachey[i],
               polycachex[i + 1], polycachey[i + 1], 255);
+//    map->rectfill(polycachex[i] - 1, polycachey[i] - 1, polycachex[i] + 1, polycachey[i] + 1, 255);
+//    map->rectfill(polycachex[i + 1] - 1, polycachey[i + 1] - 1, polycachex[i + 1] + 1, polycachey[i + 1] + 1, 255);
   }
-
-  map->line(oldx, oldy, x, y, 255);
 
   makeBlitRect(x1, y1, x2, y2, ox, oy, 1, zoom);
 
@@ -785,7 +831,10 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
     for(int x = x1; x <= x2; x++)
     {
       if(*p++)
+      {
         backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
+        backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, makeRgb(128, 128, 128), 128);
+      }
 
       xx1 += zoom;
       xx2 += zoom;
@@ -796,26 +845,23 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
   }
 }
 
-// use paint color/transparency for preview
+// use paint color for preview
 void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
 {
   Map *map = Project::map;
-  int color = convertFormat(Project::brush->color, bgr_order);
-  int trans = Project::brush->trans;
-
   clip();
 
   ox *= zoom;
   oy *= zoom;
-
-  float yy1 = (float)y1 * zoom;
-  float yy2 = yy1 + zoom - 1;
 
   // prevent overun when zoomed out
   if(x2 > map->w - 2)
     x2 = map->w - 2;
   if(y2 > map->h - 2)
     y2 = map->h - 2;
+
+  float yy1 = (float)y1 * zoom;
+  float yy2 = yy1 + zoom - 1;
 
   for(int y = y1; y <= y2; y++)
   {
@@ -825,9 +871,31 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 
     for(int x = x1; x <= x2; x++)
     {
-      if(*p++)
-        backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, trans);
+      if(*p)
+      {
+        switch(type)
+        {
+          case FREEHAND:
+          case LINE:
+          case RECT:
+          case FILLED_RECT:
+          case OVAL:
+          case FILLED_OVAL:
+            backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
+            backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, makeRgb(128, 128, 128), 128);
+            break;
+          case REGION:
+          case POLYGON:
+            if(isEdge(map, x, y) == true)
+            {
+              backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
+              backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, makeRgb(128, 128, 128), 128);
+            }
+            break;
+        }
+      }
 
+      p++;
       xx1 += zoom;
       xx2 += zoom;
     }
@@ -835,6 +903,8 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
     yy1 += zoom;
     yy2 += zoom;
   }
+
+  Blend::set(Blend::TRANS);
 }
 
 // preview custom brush
@@ -860,9 +930,8 @@ void Stroke::previewBrush(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
       // generate checkboard pattern for transparent areas
       const int checker = ((((int)xx1 - ox) >> 4) & 1) ^ ((((int)yy1 - oy) >> 4) & 1) ? 0xA0A0A0 : 0x606060;
 
-
       backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
-                        convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order), 0);
+             convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order), 0);
 
       xx1 += zoom;
       xx2 += zoom;
@@ -873,5 +942,7 @@ void Stroke::previewBrush(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
     yy2 += zoom;
     sy++;
   }
+
+  backbuf->xorRect(x1 * zoom - ox - 1, y1 * zoom - oy - 1, x2 * zoom - ox + zoom + 0, y2 * zoom - oy + zoom + 0);
 }
 

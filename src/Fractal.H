@@ -18,29 +18,20 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef FILL_H
-#define FILL_H
+#ifndef FRACTAL_H
+#define FRACTAL_H
 
-class View;
+#include <FL/Fl_Widget.H>
 
-#include "Tool.H"
+#include "Map.H"
 
-class Fill : public Tool
+namespace Fractal
 {
-public:
-  Fill();
-  ~Fill();
-
-  void push(View *);
-  void drag(View *);
-  void release(View *);
-  void move(View *);
-  void key(View *);
-  void done(View *, int);
-  void redraw(View *);
-  bool isActive();
-  void reset();
-};
+  void marble(Map *, Map *, Map *, Map *, float, int);
+  void plasma(Map *, int);
+  int adjust(Map *, int, int, int, int, int, int);
+  void divide(Map *, int, int, int, int);
+}
 
 #endif
 

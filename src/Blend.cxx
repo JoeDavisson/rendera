@@ -24,33 +24,37 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "FilterMatrix.H"
+#include "Gamma.H"
 #include "Inline.H"
 #include "Palette.H"
 
 namespace
 {
-  int (*current_blend)(const int &, const int &, const int &) = &Blend::trans;
+  int (*current_blend)(const int, const int, const int) = &Blend::trans;
   Bitmap *bmp;
   Palette *pal;
   int xpos, ypos;
 }
 
 // sets the blending mode for future operations
-void Blend::set(const int &mode)
+void Blend::set(const int mode)
 {
   switch(mode)
   {
     case TRANS:
       current_blend = trans;
       break;
-    case DARKEN:
-      current_blend = darken;
-      break;
     case LIGHTEN:
       current_blend = lighten;
       break;
+    case DARKEN:
+      current_blend = darken;
+      break;
     case COLORIZE:
       current_blend = colorize;
+      break;
+    case LUMINOSITY:
+      current_blend = luminosity;
       break;
     case ALPHA_ADD:
       current_blend = alphaAdd;
@@ -61,14 +65,20 @@ void Blend::set(const int &mode)
     case SMOOTH:
       current_blend = smooth;
       break;
-    case SMOOTH_COLOR:
-      current_blend = smoothColor;
-      break;
-    case SMOOTH_LUMINOSITY:
-      current_blend = smoothLuminosity;
-      break;
+//    case SMOOTH_COLOR:
+//      current_blend = smoothColor;
+//      break;
+//    case SMOOTH_LUMINOSITY:
+//      current_blend = smoothLuminosity;
+//      break;
     case SHARPEN:
       current_blend = sharpen;
+      break;
+    case TRANS_ALPHA:
+      current_blend = transAlpha;
+      break;
+    case TRANS_NO_ALPHA:
+      current_blend = transNoAlpha;
       break;
     default:
       current_blend = trans;
@@ -77,7 +87,7 @@ void Blend::set(const int &mode)
 }
 
 // sets the target coordinates used by some blending modes
-void Blend::target(Bitmap *b, Palette *p, const int &x, const int &y)
+void Blend::target(Bitmap *b, Palette *p, const int x, const int y)
 {
   bmp = b;
   pal = p;
@@ -86,12 +96,21 @@ void Blend::target(Bitmap *b, Palette *p, const int &x, const int &y)
 }
 
 // returns the current blending mode
-int Blend::current(const int &c1, const int &c2, const int &t)
+int Blend::current(const int c1, const int c2, const int t)
 {
   return (*current_blend)(c1, c2, t);
 }
 
-int Blend::transNoAlpha(const int &c1, const int &c2, const int &t)
+int Blend::transAlpha(const int c1, const int c2, const int t)
+{
+  const rgba_type rgba1 = getRgba(c1);
+  const rgba_type rgba2 = getRgba(c2);
+
+  return makeRgba(rgba1.r, rgba1.g, rgba1.b,
+                  rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
+}
+
+int Blend::transNoAlpha(const int c1, const int c2, const int t)
 {
   const rgba_type rgba1 = getRgba(c1);
   const rgba_type rgba2 = getRgba(c2);
@@ -102,7 +121,7 @@ int Blend::transNoAlpha(const int &c1, const int &c2, const int &t)
                   rgba1.a);
 }
 
-int Blend::trans(const int &c1, const int &c2, const int &t)
+int Blend::trans(const int c1, const int c2, const int t)
 {
   const rgba_type rgba1 = getRgba(c1);
   const rgba_type rgba2 = getRgba(c2);
@@ -113,12 +132,28 @@ int Blend::trans(const int &c1, const int &c2, const int &t)
                   rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
 }
 
-int Blend::darken(const int &c1, const int &c2, const int &t)
+int Blend::lighten(const int c1, const int c2, const int t)
 {
   const rgba_type rgba1 = getRgba(c1);
   const rgba_type rgba2 = getRgba(c2);
 
-  int r, g, b;
+  int r = rgba1.r + (rgba2.r * (255 - t)) / 255;
+  int g = rgba1.g + (rgba2.g * (255 - t)) / 255;
+  int b = rgba1.b + (rgba2.b * (255 - t)) / 255;
+
+  r = std::min(r, 255);
+  g = std::min(g, 255);
+  b = std::min(b, 255);
+
+  return makeRgba(r, g, b, rgba1.a);
+}
+
+int Blend::darken(const int c1, const int c2, const int t)
+{
+  const rgba_type rgba1 = getRgba(c1);
+  const rgba_type rgba2 = getRgba(c2);
+
+  int r = 0, g = 0, b = 0;
   int h = 0, s = 0, v = 0;
 
   rgbToHsv(rgba2.r, rgba2.g, rgba2.b, &h, &s, &v);
@@ -138,31 +173,30 @@ int Blend::darken(const int &c1, const int &c2, const int &t)
   return makeRgba(r, g, b, rgba1.a);
 }
 
-int Blend::lighten(const int &c1, const int &c2, const int &t)
-{
-  const rgba_type rgba1 = getRgba(c1);
-  const rgba_type rgba2 = getRgba(c2);
-
-  int r = rgba1.r + (rgba2.r * (255 - t)) / 255;
-  int g = rgba1.g + (rgba2.g * (255 - t)) / 255;
-  int b = rgba1.b + (rgba2.b * (255 - t)) / 255;
-
-  r = std::min(r, 255);
-  g = std::min(g, 255);
-  b = std::min(b, 255);
-
-  return makeRgba(r, g, b, rgba1.a);
-}
-
-int Blend::colorize(const int &c1, const int &c2, const int &t)
+int Blend::colorize(const int c1, const int c2, const int t)
 {
   int c3 = transNoAlpha(c1, c2, t);
 
   return keepLum(c3, getl(c1));
 }
 
-int Blend::keepLum(const int &c, const int &dest)
+int Blend::luminosity(const int c1, const int c2, const int t)
 {
+  return trans(c1, keepLum(c1, getl(c2)), t);
+}
+
+int Blend::keepLum(const int c, const int lum)
+{
+/*
+  float y, cb, cr;
+  rgba_type rgba1 = getRgba(c);
+  rgbToYcc(rgba1.r, rgba1.g, rgba1.b, &y, &cb, &cr);
+  yccToRgb(lum, cb, cr, &r, &g, &b);
+
+  return makeRgba(r, g, b, rgba1.a);
+  int c1 = makeRgba(r, g, b, rgba1.a);
+*/
+
   // these have to be in order of importance in the luminosity calc: G, R, B
   const rgba_type rgba = getRgba(c);
   int n[3];
@@ -174,7 +208,7 @@ int Blend::keepLum(const int &c, const int &dest)
   int src = getlUnpacked(n[1], n[0], n[2]);
   int count = 0;
 
-  while(src < dest && count < 256)
+  while(src < lum && count < 1000)
   {
     for(int i = 0; i < 3; i++)
     {
@@ -182,7 +216,7 @@ int Blend::keepLum(const int &c, const int &dest)
       {
         n[i]++;
         src = getlUnpacked(n[1], n[0], n[2]);
-        if(src >= dest)
+        if(src >= lum)
           break;
       }
     }
@@ -190,7 +224,9 @@ int Blend::keepLum(const int &c, const int &dest)
     count++;
   }
 
-  while(src > dest && count < 256)
+  count = 0;
+
+  while(src > lum && count < 1000)
   {
     for(int i = 0; i < 3; i++)
     {
@@ -198,7 +234,7 @@ int Blend::keepLum(const int &c, const int &dest)
       {
         n[i]--;
         src = getlUnpacked(n[1], n[0], n[2]);
-        if(src <= dest)
+        if(src <= lum)
           break;
       }
     }
@@ -209,30 +245,28 @@ int Blend::keepLum(const int &c, const int &dest)
   return makeRgba(n[1], n[0], n[2], rgba.a);
 }
 
-int Blend::alphaSub(const int &c1, const int &, const int &t)
+int Blend::alphaSub(const int c1, const int, const int t)
 {
   const rgba_type rgba = getRgba(c1);
   return makeRgba(rgba.r, rgba.g, rgba.b, (rgba.a * t) / 255);
 }
 
-int Blend::alphaAdd(const int &c1, const int &, const int &t)
+int Blend::alphaAdd(const int c1, const int, const int t)
 {
   const rgba_type rgba = getRgba(c1);
   return makeRgba(rgba.r, rgba.g, rgba.b, 255 - ((255 - rgba.a) * t) / 255);
 }
 
-int Blend::smooth(const int &c1, const int &, const int &t)
+int Blend::smooth(const int c1, const int, const int t)
 {
-  int r = 0;
-  int g = 0;
-  int b = 0;
-  int a = 0;
+  int r = 0, g = 0, b = 0, a = 0;
 
   for(int j = 0; j < 3; j++)
   {
     for(int i = 0; i < 3; i++)
     {
       const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
+
       r += rgba.r * FilterMatrix::gaussian[i][j];
       g += rgba.g * FilterMatrix::gaussian[i][j];
       b += rgba.b * FilterMatrix::gaussian[i][j];
@@ -248,35 +282,45 @@ int Blend::smooth(const int &c1, const int &, const int &t)
   return Blend::trans(c1, makeRgba(r, g, b, a), t);
 }
 
-int Blend::smoothColor(const int &c1, const int &, const int &t)
+int Blend::smoothColor(const int c1, const int, const int t)
 {
+  const int matrix[5][5] = {
+    {  1,  4,  7,  4,  1 },
+    {  4, 16, 26, 16,  4 },
+    {  7, 26, 41, 26,  7 },
+    {  4, 16, 26, 16,  4 },
+    {  1 , 4,  7,  4,  1 }
+  };
+    
   int r = 0;
   int g = 0;
   int b = 0;
   int a = 0;
 
-  for(int j = 0; j < 3; j++)
+  for(int j = 0; j < 5; j++)
   {
-    for(int i = 0; i < 3; i++)
+    for(int i = 0; i < 5; i++)
     {
-      const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
-      r += rgba.r * FilterMatrix::gaussian[i][j];
-      g += rgba.g * FilterMatrix::gaussian[i][j];
-      b += rgba.b * FilterMatrix::gaussian[i][j];
-      a += rgba.a * FilterMatrix::gaussian[i][j];
+      const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 2, ypos + j - 2));
+
+      r += rgba.r * matrix[i][j];
+      g += rgba.g * matrix[i][j];
+      b += rgba.b * matrix[i][j];
+      a += rgba.a * matrix[i][j];
     }
   }
 
-  r /= 16;
-  g /= 16;
-  b /= 16;
-  a /= 16;
+  r /= 273;
+  g /= 273;
+  b /= 273;
+  a /= 273;
 
   int c3 = Blend::trans(c1, makeRgba(r, g, b, a), t);
+
   return keepLum(c3, getl(c1));
 }
 
-int Blend::smoothLuminosity(const int &c1, const int &, const int &t)
+int Blend::smoothLuminosity(const int c1, const int, const int t)
 {
   int lum = 0;
 
@@ -294,25 +338,43 @@ int Blend::smoothLuminosity(const int &c1, const int &, const int &t)
   return Blend::trans(c1, keepLum(c1, lum), t);
 }
 
-int Blend::sharpen(const int &c1, const int &, const int &t)
+int Blend::sharpen(const int c1, const int, const int t)
 {
-  int lum = 0;
+//  int lum = 0;
+
+  int r = 0, g = 0, b = 0, a = 0;
 
   for(int j = 0; j < 3; j++)
   {
     for(int i = 0; i < 3; i++)
     {
-      lum += getl(bmp->getpixel(xpos + i - 1, ypos + j - 1))
-               * FilterMatrix::sharpen[i][j];
+      const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
+      r += rgba.r * FilterMatrix::sharpen[i][j];
+      g += rgba.g * FilterMatrix::sharpen[i][j];
+      b += rgba.b * FilterMatrix::sharpen[i][j];
+      a += rgba.a * FilterMatrix::sharpen[i][j];
     }
   }
 
-  lum = clamp(lum, 255);
+  r = clamp(r, 255);
+  g = clamp(g, 255);
+  b = clamp(b, 255);
+  a = clamp(a, 255);
 
-  return Blend::trans(c1, keepLum(c1, lum), 255 - (255 - t) / 16);
+//  return Blend::trans(c1, makeRgba(r, g, b, a), 255 - (255 - t) / 16);
+  return Blend::transNoAlpha(c1, makeRgb(r, g, b), 255 - (255 - t) / 16);
 }
 
-int Blend::invert(const int &c1, const int &, const int &)
+int Blend::fast(const int c1, const int c2, const int t)
+{
+  const int rb =
+    (((((c1 & 0xFF00FF) - (c2 & 0xFF00FF)) * t) >> 8) + c2) & 0xFF00FF;
+  const int g = (((((c1 & 0xFF00) - (c2 & 0xFF00)) * t) >> 8) + c2) & 0xFF00;
+
+  return rb | g | 0xFF000000;
+}
+
+int Blend::invert(const int c1, const int, const int)
 {
   return makeRgba(255 - getr(c1), 255 - getg(c1), 255 - getb(c1), geta(c1));
 }
@@ -321,7 +383,7 @@ int Blend::invert(const int &c1, const int &, const int &)
 // hue 0-1535
 // sat 0-255
 // val 0-255
-void Blend::rgbToHsv(const int &r, const int &g, const int &b, int *h, int *s, int *v)
+void Blend::rgbToHsv(const int r, const int g, const int b, int *h, int *s, int *v)
 {
   int max = std::max(r, std::max(g, b));
   int min = std::min(r, std::min(g, b));
@@ -356,7 +418,7 @@ void Blend::rgbToHsv(const int &r, const int &g, const int &b, int *h, int *s, i
 // hue 0-1535
 // sat 0-255
 // val 0-255
-void Blend::hsvToRgb(const int &h, const int &s, const int &v, int *r, int *g, int *b)
+void Blend::hsvToRgb(const int h, const int s, const int v, int *r, int *g, int *b)
 {
   if(s == 0)
   {
@@ -405,5 +467,23 @@ void Blend::hsvToRgb(const int &h, const int &s, const int &v, int *r, int *g, i
       *b = y;
       break;
   }
+}
+
+void Blend::yccToRgb(const float y, const float cb, const float cr, int *r, int *g, int *b)
+{
+    *r  = y +                       + (cr - 128) *  1.40200;
+    *g  = y + (cb - 128) * -0.34414 + (cr - 128) * -0.71414;
+    *b  = y + (cb - 128) *  1.77200;
+
+    *r = clamp(*r, 255);
+    *g = clamp(*g, 255);
+    *b = clamp(*b, 255);
+}
+
+void Blend::rgbToYcc(const int r, const int g, const int b, float *y, float *cb, float *cr)
+{
+    *y  = r *  0.301 + g *  0.586 + b *  0.113;
+    *cb = r * -0.168 + g * -0.332 + b *  0.500 + 128;
+    *cr = r *  0.500 + g * -0.417 + b * -0.082 + 128;
 }
 

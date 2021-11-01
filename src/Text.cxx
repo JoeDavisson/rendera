@@ -36,7 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  int state = 0;
   Bitmap *temp = 0;
 }
 
@@ -52,8 +51,7 @@ void Text::push(View *view)
 {
   Stroke *stroke = Project::stroke.get();
 
-  if(state == 0)
-    move(view);
+  move(view);
 
   Undo::push();
 
@@ -110,7 +108,7 @@ void Text::push(View *view)
 
   Blend::set(Blend::TRANS);
 
-  state = 0;
+  //state = 0;
   view->drawMain(true);
 }
 
@@ -127,58 +125,59 @@ void Text::move(View *view)
   Stroke *stroke = Project::stroke.get();
 
   // write text string to FLTK's offscreen image
-  if(state == 0)
+  int face = Gui::getFontFace();
+  int size = Gui::getFontSize();
+  const char *s = Gui::getTextInput();
+
+  if(size > 256)
+    size = 256;
+  if(size < 4)
+    size = 4;
+
+  if(strlen(s) > 250)
+    return;
+
+  // add a space before and after string, or some
+  // scripty fonts won't render propery on the sides
+  char string[256];
+  string[0] = ' ';
+
+  unsigned int i = 0;
+
+  for( ; i <= strlen(s); i++)
+    string[i + 1] = s[i];
+
+  string[i++] = ' ';
+  string[i] = '\0';
+
+  fl_font(face, size);
+
+  // measure size of image we need
+  int tw = 0, th = 0;
+  fl_measure(string, tw, th, 1);
+
+  // draw text string to offscreen image
+  Fl_Offscreen offscreen = fl_create_offscreen(tw, th);
+
+  if(temp)
   {
-    int face = Gui::getFontFace();
-    int size = Gui::getFontSize();
-    const char *s = Gui::getTextInput();
-    if(strlen(s) > 250)
-      return;
-
-    state = 1;
-
-    // add a space before and after string, or some
-    // scripty fonts won't render propery on the sides
-    char string[256];
-    string[0] = ' ';
-
-    unsigned int i = 0;
-
-    for( ; i <= strlen(s); i++)
-      string[i + 1] = s[i];
-
-    string[i++] = ' ';
-    string[i] = '\0';
-
-    fl_font(face, size);
-
-    // measure size of image we need
-    int tw = 0, th = 0;
-    fl_measure(string, tw, th, 1);
-
-    // draw text string to offscreen image
-    Fl_Offscreen offscreen = fl_create_offscreen(tw, th);
-
-    if(temp)
-    {
-      delete temp;
-      temp = 0;
-    }
-
-    temp = new Bitmap(tw, th);
-    temp->clear(makeRgb(255, 255, 255));
-
-    fl_begin_offscreen(offscreen);
-    fl_color(FL_WHITE);
-    fl_rectf(0, 0, tw, th);
-    fl_color(FL_BLACK);
-    fl_draw(string, 0, th - 1 - fl_descent());
-
-    fl_read_image((unsigned char *)temp->data, 0, 0, tw, th, 255);
-
-    fl_end_offscreen();
-    fl_delete_offscreen(offscreen);
+    delete temp;
+    temp = 0;
   }
+
+  temp = new Bitmap(tw, th);
+  temp->clear(makeRgb(255, 255, 255));
+
+  fl_begin_offscreen(offscreen);
+  fl_color(FL_WHITE);
+  fl_rectf(0, 0, tw, th);
+  fl_color(FL_BLACK);
+  fl_draw(string, 0, th - 1 - fl_descent());
+
+  fl_read_image((unsigned char *)temp->data, 0, 0, tw, th, 255);
+
+  fl_end_offscreen();
+  fl_delete_offscreen(offscreen);
 
   // create preview map
   int imgx = view->imgx;
@@ -202,6 +201,10 @@ void Text::move(View *view)
   stroke->size(imgx - temp->w / 2, imgy - temp->h / 2,
                imgx + temp->w / 2, imgy + temp->h / 2);
   redraw(view);
+}
+
+void Text::key(View *view)
+{
 }
 
 void Text::done(View *, int)
@@ -229,6 +232,5 @@ bool Text::isActive()
 
 void Text::reset()
 {
-  state = 0;
 }
 

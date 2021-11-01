@@ -37,20 +37,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Transform.H"
 #include "Undo.H"
 
+#include "Palette.H"
+
 namespace
 {
   enum
   {
-    OPTION_THEME,
     OPTION_VERSION,
     OPTION_HELP
   };
 
   int verbose_flag;
+  int hue = 0;
+  int sat = 0;
 
   struct option long_options[] =
   {
-    { "theme",   required_argument, &verbose_flag, OPTION_THEME   },
     { "version", no_argument,       &verbose_flag, OPTION_VERSION },
     { "help",    no_argument,       &verbose_flag, OPTION_HELP    },
     { 0, 0, 0, 0 }
@@ -58,34 +60,43 @@ namespace
 
   void setDarkTheme()
   {
-    Project::theme = Project::THEME_DARK;
-    Fl::set_color(FL_BACKGROUND_COLOR, 80, 80, 80);
-    Fl::set_color(FL_BACKGROUND2_COLOR, 64, 64, 64);
-    Fl::set_color(FL_FOREGROUND_COLOR, 248, 248, 248);
-    Fl::set_color(FL_INACTIVE_COLOR, 128, 128, 128);
-    Fl::set_color(FL_SELECTION_COLOR, 248, 248, 248);
-    Project::theme_highlight_color = makeRgb(0, 64, 128);
-    const int blend = Blend::lighten(makeRgb(80, 80, 80),
-                                     Project::theme_highlight_color, 96);
-    Project::fltk_theme_highlight_color = fl_rgb_color(getr(blend),
-                                                       getg(blend),
-                                                       getb(blend));
-  }
+    int r, g, b, h = hue, s = sat;
 
-  void setLightTheme()
-  {
-    Project::theme = Project::THEME_LIGHT;
-    Fl::set_color(FL_BACKGROUND_COLOR, 224, 224, 224);
-    Fl::set_color(FL_BACKGROUND2_COLOR, 192, 192, 192);
-    Fl::set_color(FL_FOREGROUND_COLOR, 0, 0, 0);
-    Fl::set_color(FL_INACTIVE_COLOR, 128, 128, 128);
-    Fl::set_color(FL_SELECTION_COLOR, 64, 64, 64);
-    Project::theme_highlight_color = makeRgb(0, 64, 128);
-    const int blend = Blend::darken(makeRgb(224, 224, 224),
-                                    Project::theme_highlight_color, 96);
+    // 32 - 55
+    for(int i = 0; i < 24; i++)
+    {
+      int v = i * 6;
+      Fl::set_color(32 + i, fl_rgb_color(v, v, v));
+    }
+
+    Project::theme = Project::THEME_DARK;
+
+    Blend::hsvToRgb(h, s, 64, &r, &g, &b);
+    Fl::set_color(FL_BACKGROUND_COLOR, fl_rgb_color(r, g, b));
+
+    Blend::hsvToRgb(h, s, 48, &r, &g, &b);
+    Fl::set_color(FL_BACKGROUND2_COLOR, fl_rgb_color(r, g, b));
+
+    Blend::hsvToRgb(h, s, 208, &r, &g, &b);
+    Fl::set_color(FL_FOREGROUND_COLOR, fl_rgb_color(r, g, b));
+
+    Blend::hsvToRgb(h, s, 56, &r, &g, &b);
+    Fl::set_color(FL_INACTIVE_COLOR, fl_rgb_color(r, g, b));
+
+    Blend::hsvToRgb(h, s, 208, &r, &g, &b);
+    Fl::set_color(FL_SELECTION_COLOR, fl_rgb_color(r, g, b));
+
+    Blend::hsvToRgb(0, 0, 128, &r, &g, &b);
+    Project::theme_highlight_color = makeRgb(r, g, b);
+
+    const int blend = Project::theme_highlight_color;
     Project::fltk_theme_highlight_color = fl_rgb_color(getr(blend),
                                                        getg(blend),
                                                        getb(blend));
+    Blend::hsvToRgb(h, s, 128, &r, &g, &b);
+    Project::fltk_theme_bevel_up = fl_rgb_color(r, g, b);
+    Blend::hsvToRgb(h, s, 16, &r, &g, &b);
+    Project::fltk_theme_bevel_down = fl_rgb_color(r, g, b);
   }
 
   struct _help_type {};
@@ -97,16 +108,13 @@ namespace
       os
       << std::endl << "Usage: rendera [OPTIONS] filename"
       << std::endl
-      << std::endl << "Options:"
-      << std::endl << "  --theme=dark\t\t use dark theme"
-      << std::endl << "  --theme=light\t\t use light theme"
+      << std::endl << "  --version\t\t version information"
       << std::endl << std::endl;
   }
 }
 
 int main(int argc, char *argv[])
 {
-  // default to a nice dark theme
   setDarkTheme();
 
   // parse command line
@@ -124,22 +132,6 @@ int main(int argc, char *argv[])
       {
         switch(option_index)
         {
-          case OPTION_THEME:
-            if(strcmp(optarg, "dark") == 0)
-            {
-              setDarkTheme();
-              break;
-            }
-            if(strcmp(optarg, "light") == 0)
-            {
-              setLightTheme();
-              break;
-            }
-            std::cerr
-              << "Unknown theme: \"" << optarg << "\"" << std::endl
-              << _help_type();
-            return EXIT_FAILURE;
-
           case OPTION_HELP:
             std::cout << _help_type();
             return EXIT_SUCCESS;
@@ -175,6 +167,7 @@ int main(int argc, char *argv[])
   Fl_Shared_Image::add_handler(File::previewGimpPalette);
 
   // program inits
+  File::init();
   Project::init();
   Undo::init();
   Dialog::init();
@@ -194,6 +187,18 @@ int main(int argc, char *argv[])
 
   // delay showing main gui until after all arguments are checked
   Gui::show();
+
+
+/*
+  // view theme palette (for testing)
+  Project::palette->max = 256;
+  for(int i = 20; i < 256; i++)
+  {
+    int c = getFltkColor(i);
+    Project::palette->data[i] = c;
+  }
+  Gui::drawPalette();
+*/
 
   int ret = Fl::run();
   return ret;

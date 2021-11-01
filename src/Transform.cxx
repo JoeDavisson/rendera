@@ -102,14 +102,6 @@ namespace Resize
     }
   }
 
-  void checkKeepAspect()
-  {
-    if(Items::keep_aspect->value())
-    {
-      checkWidth();
-    }
-  }
-
   void close()
   {
     int w = atoi(Items::width->value());
@@ -122,6 +114,7 @@ namespace Resize
     int overscroll = bmp->overscroll;
     Bitmap *temp = new Bitmap(w, h, overscroll);
 
+    temp->rectfill(temp->cl, temp->ct, temp->cr, temp->cb, makeRgba(0, 0, 0, 0), 0);
     bmp->blit(temp, overscroll, overscroll, overscroll, overscroll,
                     bmp->cw, bmp->ch);
 
@@ -147,20 +140,17 @@ namespace Resize
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Resize Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", 0, 1, 10000);
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", (Fl_Callback *)checkWidth, 1, 10000);
     Items::width->center();
-    Items::width->callback((Fl_Callback *)checkWidth);
     y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", 0, 1, 10000);
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", (Fl_Callback *)checkHeight, 1, 10000);
     Items::height->center();
-    Items::height->callback((Fl_Callback *)checkHeight);
     y1 += 24 + 8;
     Items::width->maximum_size(8);
     Items::height->maximum_size(8);
     Items::width->value("640");
     Items::height->value("480");
     Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
-    Items::keep_aspect->callback((Fl_Callback *)checkKeepAspect);
     Items::keep_aspect->center();
     y1 += 16 + 8;
     Items::keep_aspect->value();
@@ -180,6 +170,7 @@ namespace Scale
     InputInt *width;
     InputInt *height;
     CheckBox *keep_aspect;
+    CheckBox *bilinear;
     CheckBox *wrap;
     Fl_Button *ok;
     Fl_Button *cancel;
@@ -209,86 +200,117 @@ namespace Scale
   
     Gui::showProgress(dh);
 
-    for(int y = 0; y < dh; y++) 
+    if(Items::bilinear->value() == false)
     {
-      int *d = temp->row[dy + y] + dx;
-      const float vv = (y * ay);
-      const int v1 = vv;
-      const float v = vv - v1;
-
-      if(sy + v1 >= bmp->h - 1)
-        break;
-
-      int v2 = v1 + 1;
-
-      if(v2 >= sh)
+      for(int y = 0; y < dh; y++) 
       {
-        if(wrap_edges)
-          v2 -= sh;
-        else
-          v2--;
+        int *d = temp->row[dy + y] + dx;
+
+        for(int x = 0; x < dw; x++) 
+        {
+          int yy = y * ay;
+          int xx = x * ax;
+
+          *d++ = *(bmp->row[yy + sy] + xx + sx);
+        }
+      }
+    }
+    else
+    {
+      int mipx = 1, mipy = 1;
+      if(sw > dw)
+        mipx = (sw / dw);
+      if(sh > dh)
+        mipy = (sh / dh);
+
+      if(mipx > 1 || mipy > 1)
+      {
+        int radius = mipx > mipy ? mipx : mipy;
+
+        bmp->blur(std::sqrt(radius), 0);
       }
 
-      int *c[4];
-      c[0] = c[1] = bmp->row[sy + v1] + sx;
-      c[2] = c[3] = bmp->row[sy + v2] + sx;
-
-      for(int x = 0; x < dw; x++) 
+      for(int y = 0; y < dh; y++) 
       {
-        const float uu = (x * ax);
-        const int u1 = uu;
-        const float u = uu - u1;
+        int *d = temp->row[dy + y] + dx;
+        const float vv = (y * ay);
+        const int v1 = vv;
+        const float v = vv - v1;
 
-        if(sx + u1 >= bmp->w - 1)
+        if(sy + v1 >= bmp->h - 1)
           break;
 
-        int u2 = u1 + 1;
+        int v2 = v1 + 1;
 
-        if(u2 >= sw)
+        if(v2 >= sh)
         {
           if(wrap_edges)
-            u2 -= sw;
+            v2 -= sh;
           else
-            u2--;
+            v2--;
         }
 
-        c[0] += u1;
-        c[1] += u2;
-        c[2] += u1;
-        c[3] += u2;
+        int *c[4];
+        c[0] = c[1] = bmp->row[sy + v1] + sx;
+        c[2] = c[3] = bmp->row[sy + v2] + sx;
 
-        float f[4];
-
-        f[0] = (1.0f - u) * (1.0f - v);
-        f[1] = u * (1.0f - v);
-        f[2] = (1.0f - u) * v;
-        f[3] = u * v;
-
-        float r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f;
-
-        for(int i = 0; i < 4; i++)
+        for(int x = 0; x < dw; x++) 
         {
-          rgba_type rgba = getRgba(*c[i]);
-          r += (float)Gamma::fix(rgba.r) * f[i];
-          g += (float)Gamma::fix(rgba.g) * f[i];
-          b += (float)Gamma::fix(rgba.b) * f[i];
-          a += rgba.a * f[i];
+          const float uu = (x * ax);
+          const int u1 = uu;
+          const float u = uu - u1;
+
+          if(sx + u1 >= bmp->w - 1)
+            break;
+
+          int u2 = u1 + 1;
+
+          if(u2 >= sw)
+          {
+            if(wrap_edges)
+              u2 -= sw;
+            else
+              u2--;
+          }
+
+          c[0] += u1;
+          c[1] += u2;
+          c[2] += u1;
+          c[3] += u2;
+
+          float f[4];
+
+          f[0] = (1.0f - u) * (1.0f - v);
+          f[1] = u * (1.0f - v);
+          f[2] = (1.0f - u) * v;
+          f[3] = u * v;
+
+          float r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f;
+
+          for(int i = 0; i < 4; i++)
+          {
+            rgba_type rgba = getRgba(*c[i]);
+            r += (float)Gamma::fix(rgba.r) * f[i];
+            g += (float)Gamma::fix(rgba.g) * f[i];
+            b += (float)Gamma::fix(rgba.b) * f[i];
+            a += rgba.a * f[i];
+          }
+
+          r = Gamma::unfix((int)r);
+          g = Gamma::unfix((int)g);
+          b = Gamma::unfix((int)b);
+
+          *d++ = makeRgba((int)r, (int)g, (int)b, (int)a);
+
+          c[0] -= u1;
+          c[1] -= u2;
+          c[2] -= u1;
+          c[3] -= u2;
         }
 
-        r = Gamma::unfix((int)r);
-        g = Gamma::unfix((int)g);
-        b = Gamma::unfix((int)b);
-
-        *d++ = makeRgba((int)r, (int)g, (int)b, (int)a);
-
-        c[0] -= u1;
-        c[1] -= u2;
-        c[2] -= u1;
-        c[3] -= u2;
+        if(Gui::updateProgress(y) < 0)
+          break;
       }
-
-      if(Gui::updateProgress(y) < 0)
-        break;
     }
 
     Gui::hideProgress();
@@ -345,14 +367,6 @@ namespace Scale
     }
   }
 
-  void checkKeepAspect()
-  {
-    if(Items::keep_aspect->value())
-    {
-      checkWidth();
-    }
-  }
-
   void close()
   {
     Items::dialog->hide();
@@ -372,20 +386,22 @@ namespace Scale
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Scale Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", 0, 1, 10000);
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", (Fl_Callback *)checkWidth, 1, 10000);
     Items::width->center();
-    Items::width->callback((Fl_Callback *)checkWidth);
     y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", 0, 1, 10000);
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", (Fl_Callback *)checkHeight, 1, 10000);
     Items::height->center();
-    Items::height->callback((Fl_Callback *)checkHeight);
     y1 += 24 + 8;
     Items::width->maximum_size(8);
     Items::height->maximum_size(8);
     Items::width->value("640");
     Items::height->value("480");
     Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
-    Items::keep_aspect->callback((Fl_Callback *)checkKeepAspect);
+    Items::keep_aspect->value(1);
+    y1 += 16 + 8;
+    Items::bilinear = new CheckBox(Items::dialog, 0, y1, 16, 16, "Filtering", 0);
+    Items::bilinear->center();
+    Items::bilinear->value(1);
     y1 += 16 + 8;
     Items::keep_aspect->center();
     Items::wrap = new CheckBox(Items::dialog, 0, y1, 16, 16, "Wrap Edges", 0);
@@ -399,19 +415,19 @@ namespace Scale
   }
 }
 
-namespace Rotate
+namespace RotateArbitrary
 {
   namespace Items
   {
     DialogWindow *dialog;
     InputFloat *angle;
     InputFloat *scale;
-    CheckBox *tile;
+//    CheckBox *tile;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
 
-  void apply(float angle, float scale, int overscroll, bool tile)
+  void apply(double angle, double scale, int overscroll/*, bool tile*/)
   {
     Bitmap *bmp = Project::bmp;
 
@@ -419,8 +435,8 @@ namespace Rotate
     angle += 90;
 
     // rotation
-    int du_col = (int)((std::sin(angle * (3.14159f / 180)) * scale) * 65536);
-    int dv_col = (int)((std::sin((angle + 90) * (3.14159f / 180)) * scale) * 65536);
+    int du_col = (int)((std::sin(angle * (3.14159 / 180)) * scale) * 65536);
+    int dv_col = (int)((std::sin((angle + 90) * (3.14159 / 180)) * scale) * 65536);
     int du_row = -dv_col;
     int dv_row = du_col;
 
@@ -480,8 +496,8 @@ namespace Rotate
     bh /= 2;
 
     // rotation
-    du_col = (int)((std::sin(angle * (3.14159f / 180)) / scale) * 65536);
-    dv_col = (int)((std::sin((angle + 90) * (3.14159f / 180)) / scale) * 65536);
+    du_col = (int)((std::sin(angle * (3.14159 / 180)) / scale) * 65536);
+    dv_col = (int)((std::sin((angle + 90) * (3.14159 / 180)) / scale) * 65536);
     du_row = -dv_col;
     dv_row = du_col;
 
@@ -515,22 +531,23 @@ namespace Rotate
         v += dv_col;
 
         // clip source image
-        if(tile)
+/*        if(tile)
         {
           while(uu < bmp->cl)
-            uu += (bmp->cr - bmp->cl) + 1;
+            uu += (bmp->cr - bmp->cl) + 0;
           while(vv < bmp->ct)
-            vv += (bmp->cb - bmp->ct) + 1;
+            vv += (bmp->cb - bmp->ct) + 0;
           while(uu > bmp->cr)
-            uu -= (bmp->cr - bmp->cl) + 1;
+            uu -= (bmp->cr - bmp->cl) + 0;
           while(vv > bmp->cb)
-            vv -= (bmp->cb - bmp->ct) + 1;
+            vv -= (bmp->cb - bmp->ct) + 0;
         }
         else
         {
+*/
           if(uu < bmp->cl || uu > bmp->cr || vv < bmp->ct || vv > bmp->cb)
             continue;
-        }
+//        }
 
         const int xx = ((temp->cw) / 2) + x;
         if(xx < temp->cl || xx > temp->cr)
@@ -555,7 +572,7 @@ namespace Rotate
     Gui::getView()->oy = 0;
     Gui::getView()->zoomFit(0);
     Gui::getView()->drawMain(true);
-}
+  }
 
   void begin()
   {
@@ -571,7 +588,7 @@ namespace Rotate
     pushUndo();
 
     apply(atof(Items::angle->value()), atof(Items::scale->value()),
-          Project::overscroll, Items::tile->value());
+          Project::overscroll/*, Items::tile->value()*/);
   }
 
   void quit()
@@ -583,18 +600,18 @@ namespace Rotate
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(256, 0, "Rotate Image");
+    Items::dialog = new DialogWindow(256, 0, "Arbitrary Rotation");
     Items::angle = new InputFloat(Items::dialog, 0, y1, 96, 24, "Angle:", 0, -359.99, 359.99);
     Items::angle->center();
     y1 += 24 + 8;
     Items::angle->value("0");
-    Items::scale = new InputFloat(Items::dialog, 0, y1, 96, 24, "Scale:", 0, 0.1, 10.0);
+    Items::scale = new InputFloat(Items::dialog, 0, y1, 96, 24, "Scale:", 0, 1, 4);
     Items::scale->center();
     y1 += 24 + 8;
     Items::scale->value("1.0");
-    Items::tile = new CheckBox(Items::dialog, 0, y1, 16, 16, "Tile", 0);
+//    Items::tile = new CheckBox(Items::dialog, 0, y1, 16, 16, "Tile", 0);
     y1 += 16 + 8;
-    Items::tile->center();
+//    Items::tile->center();
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
@@ -607,7 +624,7 @@ void Transform::init()
 {
   Resize::init();
   Scale::init();
-  Rotate::init();
+  RotateArbitrary::init();
 }
 
 void Transform::flipHorizontal()
@@ -636,8 +653,46 @@ void Transform::scale()
   Scale::begin();
 }
 
-void Transform::rotate()
+void Transform::rotateArbitrary()
 {
-  Rotate::begin();
+  RotateArbitrary::begin();
+}
+
+void Transform::rotate90()
+{
+  pushUndo();
+
+  int w = Project::bmp->w;
+  int h = Project::bmp->h;
+
+  // make copy
+  Bitmap temp(w, h);
+  Project::bmp->blit(&temp, 0, 0, 0, 0, w, h);
+
+  // create rotated image
+  delete Project::bmp;
+  Project::bmp = new Bitmap(h, w);
+
+  int *p = &temp.data[0];
+
+  for(int y = 0; y < h; y++)
+  {
+    for(int x = 0; x < w; x++)
+    {
+//       *(Project::bmp->row[w - 1 - x] + y) = *p++;   
+       *(Project::bmp->row[x] + h - 1 - y) = *p++;   
+    } 
+  } 
+
+  Gui::getView()->ignore_tool = true;
+  Gui::getView()->drawMain(true);
+}
+
+void Transform::rotate180()
+{
+  pushUndo();
+  Project::bmp->rotate180();
+  Gui::getView()->ignore_tool = true;
+  Gui::getView()->drawMain(true);
 }
 

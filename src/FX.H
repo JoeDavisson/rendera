@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace FX
 {
   void init();
+  void test();
   void normalize();
   void equalize();
   void valueStretch();
@@ -31,21 +32,21 @@ namespace FX
   void rotateHue();
   void invert();
   void invertAlpha();
-  void autoCorrect();
-  void correctionMatrix();
   void restore();
+  void sideAbsorptions();
   void removeDust();
   void desaturate();
   void colorize();
+  void paletteColors();
   void ditherImage();
   void stainedGlass();
   void gaussianBlur();
+  void bloom();
   void sharpen();
   void unsharpMask();
   void convolutionMatrix();
+  void sobel();
   void painting();
-  void forwardFFT();
-  void inverseFFT();
 }
 
 #endif

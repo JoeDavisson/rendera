@@ -33,6 +33,8 @@ public:
   Widget(Fl_Group *, int, int, int, int,
          const char *, const unsigned char *, int, int, Fl_Callback *);
   Widget(Fl_Group *, int, int, int, int,
+         const char *, const unsigned char *);
+  Widget(Fl_Group *, int, int, int, int,
          const char *, int, int, Fl_Callback *);
   ~Widget();
 

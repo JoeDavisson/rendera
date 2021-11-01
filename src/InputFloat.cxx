@@ -38,9 +38,9 @@ namespace
     double val = std::atof(i->input.value());
 
     if(w == &i->dec)
-      val -= 1.0;
+      val -= 1;
     else if(w == &i->inc)
-      val += 1.0;
+      val += 1;
 
     if(val < i->min)
       val = i->min;
