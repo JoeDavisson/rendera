@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Dialog.H"
 #include "DitherMatrix.H"
 #include "FX.H"
+#include "FX2.H"
 #include "File.H"
 #include "Gamma.H"
 #include "Group.H"
@@ -156,6 +157,7 @@ namespace
   CheckBox *text_smooth;
 
   InputInt *fill_range;
+  InputInt *fill_blur;
 
   // palette
 //  Palette *undo_palette;
@@ -466,6 +468,8 @@ void Gui::init()
     (Fl_Callback *)FX::stainedGlass, 0, 0);
   menubar->add("F&X/Artistic/Painting...", 0,
     (Fl_Callback *)FX::painting, 0, 0);
+  menubar->add("F&X/Artistic/Marble...", 0,
+    (Fl_Callback *)FX2::marble, 0, 0);
 
   menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
@@ -787,12 +791,22 @@ void Gui::init()
   fill = new Group(48, top->h() + menubar->h(),
                    112, window->h() - top->h() - menubar->h() - status->h(),
                    "Fill");
-  pos = 48;
+  pos = 28 + 16;
   fill_range = new InputInt(fill, 8, pos, 96, 24,
-                            "Feather:",
-                            0, 0, 255);
+                            "Range (0-100)",
+                            0, 0, 100);
   fill_range->align(FL_ALIGN_TOP);
+  fill_range->labelsize(11);
   fill_range->value("0");
+  pos += 40 + 8;
+  fill_blur = new InputInt(fill, 8, pos, 96, 24,
+                            "Blur (0-100)",
+                            0, 0, 100);
+  fill_blur->align(FL_ALIGN_TOP);
+  fill_blur->labelsize(11);
+  fill_blur->value("0");
+
+  fill->resizable(0);
   fill->end();
 
   // palette
@@ -1944,6 +1958,11 @@ int Gui::getTextSmooth()
 int Gui::getFillRange()
 {
   return atoi(fill_range->value());
+}
+
+int Gui::getFillBlur()
+{
+  return atoi(fill_blur->value());
 }
 
 /*

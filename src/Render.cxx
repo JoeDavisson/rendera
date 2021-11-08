@@ -72,7 +72,7 @@ namespace
     x1 -= x2;
     y1 -= y2;
 
-    const float d = __builtin_sqrtf(x1 * x1 + y1 * y1);
+    const float d = std::sqrt(x1 * x1 + y1 * y1);
     const int s = (255 - trans) / (((3 << edge) >> 1) + 1);
     const int temp = 255 - s * d;
 
@@ -350,7 +350,6 @@ namespace
 
     std::vector<int> kernel(amount);
     int div = 0;
-
     int b = amount / 2;
 
     for(int x = 0; x < amount; x++)
@@ -642,7 +641,7 @@ namespace
     Fractal::plasma(&plasma, (brush->texture_turb + 1) << 10);
     Fractal::plasma(&marbx, (brush->texture_turb + 1) << 10);
     Fractal::plasma(&marby, (brush->texture_turb + 1) << 10);
-    Fractal::marble(&plasma, &marble, &marbx, &marby, brush->texture_marb << 2, 100);
+    Fractal::marble(&plasma, &marble, &marbx, &marby, brush->texture_marb << 2, 100, 0);
 
     Map *src = &marble;
 

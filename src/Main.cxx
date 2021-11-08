@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Dialog.H"
 #include "File.H"
 #include "FX.H"
+#include "FX2.H"
 #include "Gui.H"
 #include "Inline.H"
 #include "Project.H"
@@ -172,6 +173,7 @@ int main(int argc, char *argv[])
   Undo::init();
   Dialog::init();
   FX::init();
+  FX2::init();
   Transform::init();
   Gui::init();
 

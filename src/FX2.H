@@ -18,19 +18,13 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef FRACTAL_H
-#define FRACTAL_H
+#ifndef FX2_H
+#define FX2_H
 
-#include <FL/Fl_Widget.H>
-
-#include "Map.H"
-
-namespace Fractal
+namespace FX2
 {
-  void marble(Map *, Map *, Map *, Map *, float, float, int);
-  void plasma(Map *, int);
-  int adjust(Map *, int, int, int, int, int, int);
-  void divide(Map *, int, int, int, int);
+  void init();
+  void marble();
 }
 
 #endif

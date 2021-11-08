@@ -951,11 +951,8 @@ void File::save(Fl_Widget *, void *)
 
   if(fileExists(fn))
   {
-    if(!Dialog::choice("Replace File?",
-                      "Overwrite?"))
-    {
+    if(!Dialog::choice("Replace File?", "Overwrite?"))
       return;
-    }
   }
 
   int ret = 0;

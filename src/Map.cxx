@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <algorithm>
 #include <cstdlib>
+#include <cmath>
 #include <vector>
 #include <stdint.h>
 
@@ -789,6 +790,68 @@ void Map::polyfillAA(int *px, int *py, int count, int y1, int y2, int c)
     {
       for(int x = nodex[i]; x <= nodex[i + 1]; x++)
         setpixelAA(x, y, c);
+    }
+  }
+}
+
+void Map::blur(int radius)
+{
+  radius = (radius + 1) * 2;
+
+  Map temp(w, h);
+  temp.clear(0);
+
+  std::vector<int> kernel(radius);
+  int div = 0;
+  int b = radius / 2;
+
+  for(int x = 0; x < radius; x++)
+  {
+    kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) / ((b * b) / 2)));
+    div += kernel[x];
+  }
+
+  // x direction
+  for(int y = 0; y < h; y++)
+  {
+    const int y1 = y;
+
+    for(int x = 0; x < w; x++)
+    {
+      int xx = x - radius / 2;
+      int val = 0;
+
+      for(int i = 0; i < radius; i++)
+      {
+        if(xx >= 0 && xx < this->w)
+          val += *(this->row[y1] + xx) * kernel[i];
+
+        xx++;
+      }
+
+      val /= div;
+      temp.setpixel(x, y, val);
+    }
+  }
+
+  // y direction
+  for(int y = 0; y < h; y++)
+  {
+    for(int x = 0; x < w; x++)
+    {
+      int yy = y - radius / 2;
+      int val = 0;
+
+      for(int i = 0; i < radius; i++)
+      {
+        if(yy >= 0 && yy < h)
+          val += *(temp.row[yy] + x) * kernel[i];
+
+        yy++;
+      }
+
+      val /= div;
+      this->setpixel(x, y, val);
     }
   }
 }

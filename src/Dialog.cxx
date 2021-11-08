@@ -143,7 +143,7 @@ namespace JpegQuality
     Items::dialog = new DialogWindow(256, 0, "JPEG Quality");
     Items::dialog->callback(closeCallback);
     Items::quality = new InputInt(Items::dialog, 0, y1, 96, 24, "Quality:", 0, 1, 100);
-    Items::quality->value("95");
+    Items::quality->value("90");
     Items::quality->center();
     y1 += 24 + 8;
     Items::dialog->addOkButton(&Items::ok, &y1);
@@ -270,6 +270,7 @@ namespace NewImage
     DialogWindow *dialog;
     InputInt *width;
     InputInt *height;
+    CheckBox *keep_aspect;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -282,6 +283,36 @@ namespace NewImage
     snprintf(s, sizeof(s), "%d", Project::bmp->ch);
     Items::height->value(s);
     Items::dialog->show();
+  }
+
+  void checkWidth()
+  {
+    if(Items::keep_aspect->value())
+    {
+      int ww = Project::bmp->cw;
+      int hh = Project::bmp->ch;
+      float aspect = (float)hh / ww;
+      char s[8];
+      int w = atoi(Items::width->value());
+      int h = w * aspect;
+      snprintf(s, sizeof(s), "%d", h);
+      Items::height->value(s);
+    }
+  }
+
+  void checkHeight()
+  {
+    if(Items::keep_aspect->value())
+    {
+      int ww = Project::bmp->cw;
+      int hh = Project::bmp->ch;
+      float aspect = (float)ww / hh;
+      char s[8];
+      int h = atoi(Items::height->value());
+      int w = h * aspect;
+      snprintf(s, sizeof(s), "%d", w);
+      Items::width->value(s);
+    }
   }
 
   void close()
@@ -308,14 +339,17 @@ namespace NewImage
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "New Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", 0, 1, 10000);
-    y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", 0, 1, 10000);
-    y1 += 24 + 8;
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", (Fl_Callback *)checkWidth, 1, 10000);
     Items::width->center();
-    Items::height->center();
     Items::width->maximum_size(8);
+    y1 += 24 + 8;
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", (Fl_Callback *)checkHeight, 1, 10000);
+    Items::height->center();
     Items::height->maximum_size(8);
+    y1 += 24 + 8;
+    Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
+    Items::keep_aspect->center();
+    y1 += 16 + 8;
     Items::width->value("640");
     Items::height->value("480");
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
@@ -895,6 +929,8 @@ namespace Editor
     ramp_state = 0;
     updateInfo((char *)"  Hold shift to swap, control to copy.");
     updateIndex(Items::palette->var);
+    while(Items::dialog->shown())
+      Fl::wait();
   }
 
   void close()

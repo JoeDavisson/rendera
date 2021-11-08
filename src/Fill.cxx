@@ -91,13 +91,10 @@ namespace
   }
 
   // determines if flood-fill is within range and sets transparency level
-  inline bool inRange(const int c1, const int c2,
+/*
+  bool inRange(const int c1, const int c2,
                       const int range, int *trans)
   {
-/*    int diff = std::sqrt(diff32(c1, c2)) / 2;
-
-    *trans = diff * (256.0f / (range + 1));
-*/
     int diff = std::abs(getl(c1) - getl(c2));
 
     *trans = diff * (256.0f / (range + 1));
@@ -107,6 +104,7 @@ namespace
     else
       return false;
   }
+*/
 
   // "grows" a 2x2 block based on a marching-squares type algorithm
   // used for feathering edges quickly
@@ -135,7 +133,7 @@ namespace
     *s0 = *s1 = *s2 = *s3 = 1;
   }
 
-  void fill(Bitmap *bmp, int x, int y, int new_color, int old_color, int range)
+  void fill(Bitmap *bmp, int x, int y, int new_color, int old_color, int range, int blur)
   {
     if(old_color == new_color)
       return;
@@ -150,8 +148,12 @@ namespace
     bmp->blit(&temp, 0, 0, 0, 0, bmp->w, bmp->h);
 
     // blending map
-    Map map(bmp->w, bmp->h);
-    map.clear(0);
+    Map map_blend(bmp->w, bmp->h);
+    map_blend.clear(0);
+
+    // main map
+    Map *map_main = Project::map; 
+    map_main->clear(0);
 
     int cl = bmp->cl;
     int cr = bmp->cr;
@@ -173,8 +175,8 @@ namespace
       while(x1 <= cr && (temp.getpixel(x1, y) == old_color))
       {
         temp.setpixel(x1, y, new_color);
-        //setpixelSolid(x1, y, new_color, 0);
-        map.setpixel(x1, y, 1);
+        map_blend.setpixel(x1, y, 1);
+        map_main->setpixel(x1, y, 255);
 
         if((!span_t && y > ct) && (temp.getpixel(x1, y - 1) == old_color))
         {
@@ -203,11 +205,8 @@ namespace
         x1++;
       }
     }
-
     float soft_trans = Project::brush->trans;
-    //const int j = (3 << range);
     float soft_step = (float)(255.0 - soft_trans) / (range + 1);
-    //float soft_step = (float)(255.0 - soft_trans) / (range + 1);
     bool found = false;
     int inc = 0;
 
@@ -215,8 +214,11 @@ namespace
     {
       for(int x = cl; x <= cr; x++)
       {
-        if(map.getpixel(x, y))
+        if(map_blend.getpixel(x, y))
+        {
           bmp->setpixelSolid(x, y, new_color, soft_trans);
+          map_main->setpixel(x, y, 255 - soft_trans);
+        }
       }
     }
 
@@ -228,10 +230,10 @@ namespace
       {
         for(int x = cl + (inc & 1); x < cr - 1; x += 2)
         {
-          unsigned char *s0 = map.row[y] + x;
-          unsigned char *s1 = map.row[y] + x + 1;
-          unsigned char *s2 = map.row[y + 1] + x;
-          unsigned char *s3 = map.row[y + 1] + x + 1;
+          unsigned char *s0 = map_blend.row[y] + x;
+          unsigned char *s1 = map_blend.row[y] + x + 1;
+          unsigned char *s2 = map_blend.row[y + 1] + x;
+          unsigned char *s3 = map_blend.row[y + 1] + x + 1;
 
           *s0 &= 1;
           *s1 &= 1;
@@ -249,13 +251,13 @@ namespace
           growBlock(s0, s1, s2, s3);
 
           if(*s0 && !d0)
-            bmp->setpixelSolid(x, y, new_color, soft_trans);
+            map_main->setpixel(x, y, 255 - soft_trans);
           if(*s1 && !d1)
-            bmp->setpixelSolid(x + 1, y, new_color, soft_trans);
+            map_main->setpixel(x + 1, y, 255 - soft_trans);
           if(*s2 && !d2)
-            bmp->setpixelSolid(x, y + 1, new_color, soft_trans);
+            map_main->setpixel(x, y + 1, 255 - soft_trans);
           if(*s3 && !d3)
-            bmp->setpixelSolid(x + 1, y + 1, new_color, soft_trans);
+            map_main->setpixel(x + 1, y + 1, 255 - soft_trans);
         }
       }
 
@@ -266,6 +268,22 @@ namespace
 
       if(soft_trans > 255)
         break;
+    }
+
+    if(blur > 0)
+      map_main->blur(blur);
+
+    for(int y = 0; y < bmp->h; y++)
+    {
+      unsigned char *p = map_main->row[y];
+
+      for(int x = 0; x < bmp->w; x++)
+      {
+        if(*p > 0)
+          bmp->setpixel(x, y, new_color, scaleVal(255 - *p, Project::brush->trans));
+
+        p++;
+      }
     }
   }
 }
@@ -288,8 +306,9 @@ void Fill::push(View *view)
     rgba_type rgba = getRgba(Project::brush->color);
     int color = makeRgba(rgba.r, rgba.g, rgba.b, 255 - Project::brush->trans);
     int range = Gui::getFillRange();
+    int blur = Gui::getFillBlur();
     Blend::set(Project::brush->blend);
-    fill(Project::bmp, view->imgx, view->imgy, color, target, range);
+    fill(Project::bmp, view->imgx, view->imgy, color, target, range, blur);
     //Project::bmp->fill(view->imgx, view->imgy, color, target, range);
     Blend::set(Blend::TRANS);
     view->drawMain(true);

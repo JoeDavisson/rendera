@@ -124,6 +124,7 @@ namespace Gui
   int getPaintMode();
   int getTextSmooth();
   int getFillRange();
+  int getFillBlur();
 //  int getDitherPattern();
 //  int getDitherRelative();
 

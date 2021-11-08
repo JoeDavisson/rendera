@@ -23,6 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace ExtraMath
 {
+  // random number seed
+  static int seed = 12345;
+
   // sign, used by fastStretch in Bitmap.cxx
   template <typename T>
   inline T sign(T const &v)
@@ -41,7 +44,7 @@ namespace ExtraMath
   // pseudo-random number
   inline int rnd(void)
   {
-    static int seed = 12345;
+//    static int seed = 12345;
     seed ^= seed << 17;
     seed ^= seed >> 13;
     seed ^= seed <<  5;
