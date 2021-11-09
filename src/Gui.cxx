@@ -622,7 +622,7 @@ void Gui::init()
   paint_mode->add("Antialiased");
   paint_mode->add("Coarse");
   paint_mode->add("Fine");
-  paint_mode->add("Blurry");
+  paint_mode->add("Blurred");
   paint_mode->add("Watercolor");
   paint_mode->add("Chalk");
   paint_mode->add("Texture");

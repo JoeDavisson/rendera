@@ -339,11 +339,11 @@ namespace NewImage
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "New Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", (Fl_Callback *)checkWidth, 1, 10000);
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 10000);
     Items::width->center();
     Items::width->maximum_size(8);
     y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", (Fl_Callback *)checkHeight, 1, 10000);
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height", (Fl_Callback *)checkHeight, 1, 10000);
     Items::height->center();
     Items::height->maximum_size(8);
     y1 += 24 + 8;

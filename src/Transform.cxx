@@ -140,10 +140,10 @@ namespace Resize
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Resize Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", (Fl_Callback *)checkWidth, 1, 10000);
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 10000);
     Items::width->center();
     y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", (Fl_Callback *)checkHeight, 1, 10000);
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height", (Fl_Callback *)checkHeight, 1, 10000);
     Items::height->center();
     y1 += 24 + 8;
     Items::width->maximum_size(8);
@@ -409,10 +409,10 @@ namespace Scale
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Scale Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width:", (Fl_Callback *)checkWidth, 1, 10000);
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 10000);
     Items::width->center();
     y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", (Fl_Callback *)checkHeight, 1, 10000);
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height", (Fl_Callback *)checkHeight, 1, 10000);
     Items::height->center();
     y1 += 24 + 8;
     Items::percent = new InputInt(Items::dialog, 0, y1, 96, 24, "%", (Fl_Callback *)checkPercent, 1, 1000);
