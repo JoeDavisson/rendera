@@ -195,20 +195,25 @@ void Bitmap::hline(int x1, int y, int x2, int c, int t)
 
 void Bitmap::vline(int y1, int x, int y2, int c, int t)
 {
-  if(y1 < 0)
-    y1 = 0;
-  if(y2 > h - 1)
-    y2 = h - 1;
+  if(y1 > y2)
+    std::swap(y1, y2);
 
-  int *y = row[y2] + x;
+  if(x < cl || x > cr)
+    return;
+  if(y1 > cb)
+    return;
+  if(y2 < ct)
+    return;
 
-  do
+  clip(&x, &y1, &x, &y2);
+
+  int *p = row[y1] + x;
+
+  for(int y = y1; y <= y2; y++)
   {
-    *y = Blend::current(*y, c, t);
-    y -= w;
-    y2--;
+    *p = Blend::current(*p, c, t);
+    p += w;
   }
-  while(y2 >= y1);
 }
 
 void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
@@ -1105,7 +1110,7 @@ void Bitmap::blur(int radius, int amount)
       int c1 = *p;
       int c2 = makeRgba(rr, gg, bb, aa);
 
-      *p = blendFast(c1, c2, amount);
+      *p = Blend::trans(c1, c2, amount);
 
       p++;
     }

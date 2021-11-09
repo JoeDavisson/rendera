@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <vector>
 #include <stdint.h>
 
+#include "Gamma.H"
+#include "Inline.H"
 #include "Map.H"
 #include "ExtraMath.H"
 
@@ -437,11 +439,11 @@ void Map::polyfill(int *px, int *py, int count, int y1, int y2, int c)
 }
 
 // add weighted value to real pixel
-void Map::blendAA(const int x, const int y, const int c)
+void Map::blendAA(const int x, const int y, const int c2)
 {
   int c1 = *(row[y] + x);
 
-  c1 += c;
+  c1 += c2;
 
   if(c1 > 255)
     c1 = 255;
@@ -460,8 +462,6 @@ void Map::setpixelAA(const int x, const int y, const int c)
 
   int shift1 = 4;
   int shift2 = 20;
-//  int shift1 = 3;
-//  int shift2 = 18;
 
   if(thick_aa)
   {

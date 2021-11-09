@@ -156,9 +156,6 @@ namespace
   Fl_Input *text_input;
   CheckBox *text_smooth;
 
-  InputInt *fill_range;
-  InputInt *fill_blur;
-
   // palette
 //  Palette *undo_palette;
 //  bool begin_palette_undo = false;
@@ -792,19 +789,6 @@ void Gui::init()
                    112, window->h() - top->h() - menubar->h() - status->h(),
                    "Fill");
   pos = 28 + 16;
-  fill_range = new InputInt(fill, 8, pos, 96, 24,
-                            "Range (0-100)",
-                            0, 0, 100);
-  fill_range->align(FL_ALIGN_TOP);
-  fill_range->labelsize(11);
-  fill_range->value("0");
-  pos += 40 + 8;
-  fill_blur = new InputInt(fill, 8, pos, 96, 24,
-                            "Blur (0-100)",
-                            0, 0, 100);
-  fill_blur->align(FL_ALIGN_TOP);
-  fill_blur->labelsize(11);
-  fill_blur->value("0");
 
   fill->resizable(0);
   fill->end();
@@ -1953,16 +1937,6 @@ int Gui::getPaintMode()
 int Gui::getTextSmooth()
 {
   return text_smooth->value();
-}
-
-int Gui::getFillRange()
-{
-  return atoi(fill_range->value());
-}
-
-int Gui::getFillBlur()
-{
-  return atoi(fill_blur->value());
 }
 
 /*

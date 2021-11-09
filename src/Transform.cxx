@@ -169,6 +169,7 @@ namespace Scale
     DialogWindow *dialog;
     InputInt *width;
     InputInt *height;
+    InputInt *percent;
     CheckBox *keep_aspect;
     CheckBox *bilinear;
     CheckBox *wrap;
@@ -227,7 +228,7 @@ namespace Scale
       {
         int radius = mipx > mipy ? mipx : mipy;
 
-        bmp->blur(std::sqrt(radius), 0);
+        bmp->blur(std::sqrt(radius), 64);
       }
 
       for(int y = 0; y < dh; y++) 
@@ -334,6 +335,7 @@ namespace Scale
     Items::width->value(s);
     snprintf(s, sizeof(s), "%d", Project::bmp->ch);
     Items::height->value(s);
+    Items::percent->value("100");
     Items::dialog->show();
   }
 
@@ -367,6 +369,27 @@ namespace Scale
     }
   }
 
+  void checkPercent()
+  {
+    int w = Project::bmp->cw;
+    int h = Project::bmp->ch;
+    char s[8];
+
+    w = (float)w * ((float)atoi(Items::percent->value()) / 100);
+    h = (float)h * ((float)atoi(Items::percent->value()) / 100);
+
+    if(w < 1)
+      w = 1;
+
+    if(h < 1)
+      h = 1;
+
+    snprintf(s, sizeof(s), "%d", w);
+    Items::width->value(s);
+    snprintf(s, sizeof(s), "%d", h);
+    Items::height->value(s);
+  }
+
   void close()
   {
     Items::dialog->hide();
@@ -391,6 +414,10 @@ namespace Scale
     y1 += 24 + 8;
     Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height:", (Fl_Callback *)checkHeight, 1, 10000);
     Items::height->center();
+    y1 += 24 + 8;
+    Items::percent = new InputInt(Items::dialog, 0, y1, 96, 24, "%", (Fl_Callback *)checkPercent, 1, 1000);
+    Items::percent->value("100");
+    Items::percent->center();
     y1 += 24 + 8;
     Items::width->maximum_size(8);
     Items::height->maximum_size(8);
@@ -422,7 +449,6 @@ namespace RotateArbitrary
     DialogWindow *dialog;
     InputFloat *angle;
     InputFloat *scale;
-//    CheckBox *tile;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -530,24 +556,8 @@ namespace RotateArbitrary
         u += du_col;
         v += dv_col;
 
-        // clip source image
-/*        if(tile)
-        {
-          while(uu < bmp->cl)
-            uu += (bmp->cr - bmp->cl) + 0;
-          while(vv < bmp->ct)
-            vv += (bmp->cb - bmp->ct) + 0;
-          while(uu > bmp->cr)
-            uu -= (bmp->cr - bmp->cl) + 0;
-          while(vv > bmp->cb)
-            vv -= (bmp->cb - bmp->ct) + 0;
-        }
-        else
-        {
-*/
-          if(uu < bmp->cl || uu > bmp->cr || vv < bmp->ct || vv > bmp->cb)
-            continue;
-//        }
+        if(uu < bmp->cl || uu > bmp->cr || vv < bmp->ct || vv > bmp->cb)
+          continue;
 
         const int xx = ((temp->cw) / 2) + x;
         if(xx < temp->cl || xx > temp->cr)
@@ -601,17 +611,14 @@ namespace RotateArbitrary
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Arbitrary Rotation");
-    Items::angle = new InputFloat(Items::dialog, 0, y1, 96, 24, "Angle:", 0, -359.99, 359.99);
+    Items::angle = new InputFloat(Items::dialog, 0, y1, 96, 24, "Angle", 0, -359.99, 359.99);
     Items::angle->center();
     y1 += 24 + 8;
     Items::angle->value("0");
-    Items::scale = new InputFloat(Items::dialog, 0, y1, 96, 24, "Scale:", 0, 1, 4);
+    Items::scale = new InputFloat(Items::dialog, 0, y1, 96, 24, "Scale (1-4)", 0, 1, 4);
     Items::scale->center();
-    y1 += 24 + 8;
     Items::scale->value("1.0");
-//    Items::tile = new CheckBox(Items::dialog, 0, y1, 16, 16, "Tile", 0);
-    y1 += 16 + 8;
-//    Items::tile->center();
+    y1 += 24 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
@@ -679,7 +686,6 @@ void Transform::rotate90()
   {
     for(int x = 0; x < w; x++)
     {
-//       *(Project::bmp->row[w - 1 - x] + y) = *p++;   
        *(Project::bmp->row[x] + h - 1 - y) = *p++;   
     } 
   } 

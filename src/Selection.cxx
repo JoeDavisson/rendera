@@ -123,19 +123,40 @@ namespace
     x2 = x2 * zoom - ox + zoom;
     y2 = y2 * zoom - oy + zoom;
 
+    int c1 = makeRgb(0, 0, 0);
+
     backbuf->xorHline(x1 - s - 1, y1 - 1, x1 - d - 1);
+    backbuf->hline(x1 - s - 1, y1 - 2, x1 - d - 1, c1, 128);
+    backbuf->hline(x1 - s - 1, y1 - 3, x1 - d - 1, c1, 192);
     backbuf->xorVline(y1 - s - 1, x1 - 1, y1 - d - 1);
+    backbuf->vline(y1 - s - 1, x1 - 2, y1 - d - 1, c1, 128);
+    backbuf->vline(y1 - s - 1, x1 - 3, y1 - d - 1, c1, 192);
 
     backbuf->xorHline(x2 + d, y1 - 1, x2 + s);
+    backbuf->hline(x2 + d, y1 - 2, x2 + s, c1, 128);
+    backbuf->hline(x2 + d, y1 - 3, x2 + s, c1, 192);
     backbuf->xorVline(y1 - s - 1, x2 + 1, y1 - d - 1);
+    backbuf->vline(y1 - s - 1, x2 + 2, y1 - d - 1, c1, 128);
+    backbuf->vline(y1 - s - 1, x2 + 3, y1 - d - 1, c1, 192);
 
     backbuf->xorHline(x1 - s - 1, y2 + 1, x1 - d - 1);
+    backbuf->hline(x1 - s - 1, y2 + 2, x1 - d - 1, c1, 128);
+    backbuf->hline(x1 - s - 1, y2 + 3, x1 - d - 1, c1, 192);
     backbuf->xorVline(y2 + d + 1, x1 - 1, y2 + s + 1);
+    backbuf->vline(y2 + d + 1, x1 - 2, y2 + s + 1, c1, 128);
+    backbuf->vline(y2 + d + 1, x1 - 3, y2 + s + 1, c1, 192);
 
     backbuf->xorHline(x2 + d + 1, y2 + 1, x2 + s + 1);
+    backbuf->hline(x2 + d + 1, y2 + 2, x2 + s + 1, c1, 128);
+    backbuf->hline(x2 + d + 1, y2 + 3, x2 + s + 1, c1, 192);
     backbuf->xorVline(y2 + d + 1, x2 + 1, y2 + s + 1);
+    backbuf->vline(y2 + d + 1, x2 + 2, y2 + s + 1, c1, 128);
+    backbuf->vline(y2 + d + 1, x2 + 3, y2 + s + 1, c1, 192);
 
     backbuf->xorRect(x1 - 1, y1 - 1, x2 + 1, y2 + 1);
+    backbuf->rect(x1 - 2, y1 - 2, x2 + 2, y2 + 2, c1, 128);
+    backbuf->rect(x1 - 3, y1 - 3, x2 + 3, y2 + 3, c1, 192);
+//    backbuf->xorRect(x1 - 2, y1 - 2, x2 + 2, y2 + 2);
   }
 
   void crop(View *view)

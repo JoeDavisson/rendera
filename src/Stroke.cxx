@@ -591,19 +591,18 @@ void Stroke::end(int x, int y)
         polycount++;
         polycount &= 65535;
 
+        if(polycount < 2)
+        {
+          map->thick_aa = 1;
+          drawBrushAA(x, y, 255);
+          break;
+        }
+
         if(brush->size < 5)
           map->thick_aa = 1;
 
-        if(polycount < 3)
-        {
-          map->thick_aa = 1;
-          drawBrushAA(x, y, 64);
-        }
-
         for(int i = 1; i < polycount; i++)
         {
-//          drawBrushAA(polycachex[i], polycachey[i], 64);
-//          drawBrushAA(polycachex[i - 1], polycachey[i - 1], 64);
           drawBrushLineAA(polycachex[i], polycachey[i],
                           polycachex[i - 1], polycachey[i - 1], 255);
         }
@@ -944,5 +943,7 @@ void Stroke::previewBrush(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
   }
 
   backbuf->xorRect(x1 * zoom - ox - 1, y1 * zoom - oy - 1, x2 * zoom - ox + zoom + 0, y2 * zoom - oy + zoom + 0);
+  backbuf->rect(x1 * zoom - ox - 1 - 1, y1 * zoom - oy - 1 - 1, x2 * zoom - ox + zoom + 0 + 1, y2 * zoom - oy + zoom + 0 + 1, makeRgb(0, 0, 0), 128);
+  backbuf->rect(x1 * zoom - ox - 1 - 2, y1 * zoom - oy - 1 - 2, x2 * zoom - ox + zoom + 0 + 2, y2 * zoom - oy + zoom + 0 + 2, makeRgb(0, 0, 0), 192);
 }
 
