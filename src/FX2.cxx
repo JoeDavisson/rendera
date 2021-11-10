@@ -437,6 +437,7 @@ namespace ForwardFFT
     }
 
     Gui::hideProgress();
+    Gui::getView()->drawMain(true);
   }
 
   void begin()
@@ -571,6 +572,7 @@ namespace InverseFFT
     Gui::hideProgress();
     Project::resizeImage(w, h);
     bmp = Project::bmp;
+    Gui::getView()->drawMain(true);
   }
 
   void begin()
