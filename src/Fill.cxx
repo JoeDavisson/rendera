@@ -212,7 +212,6 @@ namespace
       return;
     }
 
-    map->invert();
     Stroke *stroke = Project::stroke.get();
 
     int count = 0;
@@ -237,7 +236,7 @@ namespace
   
       for(x = cl; x <= cr; x++)
       {
-        if(*p++ == 0)
+        if(*p++ == 255)
         {
           bmp->setpixel(x, y, new_color);
           continue;
