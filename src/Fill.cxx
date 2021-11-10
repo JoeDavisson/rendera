@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Inline.H"
 #include "Map.H"
 #include "Project.H"
+#include "Stroke.H"
 #include "Undo.H"
 #include "View.H"
 
@@ -205,11 +206,16 @@ namespace
       }
     }
 
+    if(feather == 0)
+    {
+      temp.blit(bmp, 0, 0, 0, 0, temp.w, temp.h);
+      return;
+    }
+
     map->invert();
+    Stroke *stroke = Project::stroke.get();
 
     int count = 0;
-    int edgecachex[65536];
-    int edgecachey[65536];
 
     for(y = ct; y <= cb; y++)
     {
@@ -217,18 +223,12 @@ namespace
       {
         if(map->getpixel(x - cl, y - ct) && isEdge(map, x - cl, y - ct))
         {
-          edgecachex[count] = x;
-          edgecachey[count] = y;
+          stroke->edgecachex[count] = x;
+          stroke->edgecachey[count] = y;
           count++;
           count &= 0xFFFFF;
         }
       }
-    }
-
-    if(feather == 0)
-    {
-      temp.blit(bmp, 0, 0, 0, 0, temp.w, temp.h);
-      return;
     }
 
     for(y = ct; y <= cb; y++)
@@ -243,8 +243,8 @@ namespace
           continue;
         }
 
-        int *cx = edgecachex;
-        int *cy = edgecachey;
+        int *cx = stroke->edgecachex;
+        int *cy = stroke->edgecachey;
         const int dx = (x - *cx++);
         const int dy = (y - *cy++);
         int z = 0;
@@ -266,7 +266,7 @@ namespace
         const int c1 = bmp->getpixel(x, y);
 
         bmp->setpixel(x, y, Blend::trans(c1, new_color, fineEdge(x, y,
-                      edgecachex[z], edgecachey[z], feather, 0)));
+                      stroke->edgecachex[z], stroke->edgecachey[z], feather, 0)));
       }
 
       if(update(y) < 0)

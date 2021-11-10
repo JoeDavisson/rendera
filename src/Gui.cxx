@@ -791,7 +791,7 @@ void Gui::init()
                    "Fill");
   pos = 28 + 8;
 
-  fill_feather = new InputInt(fill, 8, pos, 86, 24, "Feather:", 0, 0, 255);
+  fill_feather = new InputInt(fill, 8, pos, 96, 24, "Feather (0-255)", 0, 0, 255);
   fill_feather->align(FL_ALIGN_BOTTOM);
   fill_feather->value("0");
   pos += 24 + 8;
