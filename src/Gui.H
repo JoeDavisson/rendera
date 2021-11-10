@@ -123,6 +123,7 @@ namespace Gui
   void checkPaintMode();
   int getPaintMode();
   int getTextSmooth();
+  int getFillFeather();
 //  int getDitherPattern();
 //  int getDitherRelative();
 

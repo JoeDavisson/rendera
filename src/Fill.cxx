@@ -47,6 +47,39 @@ namespace
       return 0;
   }
 
+  // returns true if pixel is on a boundary
+  bool isEdge(Map *map, const int x, const int y)
+  {
+    if(x < 1 || x >= map->w - 1 || y < 1 || y >= map->h - 1)
+      return 0;
+
+    if( *(map->row[y - 1] + x) &&
+        *(map->row[y] + x - 1) &&
+        *(map->row[y] + x + 1) &&
+        *(map->row[y + 1] + x) )
+      return 0;
+    else
+      return 1;
+  }
+
+  // used by fine airbrush
+  int fineEdge(int x1, int y1, const int x2, const int y2,
+               const int feather, const int trans)
+  {
+    if(feather == 0)
+      return 255;
+
+    x1 -= x2;
+    y1 -= y2;
+
+    const float d = std::sqrt(x1 * x1 + y1 * y1);
+    const int s = (255 - trans) / (feather + 1);
+    int temp = s * d;
+
+    temp = clamp(temp, 255);
+
+    return temp < trans ? trans : temp;
+  }
 
   // flood-fill related stack routines
   const int stack_size = 4096;
@@ -90,7 +123,7 @@ namespace
     }
   }
 
-  void fill(Bitmap *bmp, int x, int y, int new_color, int old_color)
+  void fill(int x, int y, int new_color, int old_color, int feather)
   {
     if(old_color == new_color)
       return;
@@ -99,6 +132,12 @@ namespace
     
     if(!push(x, y))
       return;
+
+    Bitmap *bmp = Project::bmp;
+    Bitmap temp(bmp->w, bmp->h);
+    bmp->blit(&temp, 0, 0, 0, 0, bmp->w, bmp->h);
+    Map *map = Project::map;
+    map->clear(0);
 
     int cl = bmp->cl;
     int cr = bmp->cr;
@@ -109,7 +148,7 @@ namespace
     {    
       int x1 = x;
 
-      while(x1 >= cl && (bmp->getpixel(x1, y) == old_color))
+      while(x1 >= cl && (temp.getpixel(x1, y) == old_color))
         x1--;
 
       x1++;
@@ -117,35 +156,95 @@ namespace
       bool span_t = false;
       bool span_b = false;
 
-      while(x1 <= cr && (bmp->getpixel(x1, y) == old_color))
+      while(x1 <= cr && (temp.getpixel(x1, y) == old_color))
       {
-        bmp->setpixel(x1, y, new_color);
+        temp.setpixel(x1, y, new_color);
+        map->setpixel(x1 - bmp->cl, y - bmp->ct, 255);
 
-        if((!span_t && y > ct) && (bmp->getpixel(x1, y - 1) == old_color))
+        if((!span_t && y > ct) && (temp.getpixel(x1, y - 1) == old_color))
         {
           if(!push(x1, y - 1))
             return;
 
           span_t = true;
         }
-        else if((span_t && y > ct) && (bmp->getpixel(x1, y - 1) != old_color))
+        else if((span_t && y > ct) && (temp.getpixel(x1, y - 1) != old_color))
         {
           span_t = false;
         }
 
-        if((!span_b && y < cb) && (bmp->getpixel(x1, y + 1) == old_color))
+        if((!span_b && y < cb) && (temp.getpixel(x1, y + 1) == old_color))
         {
           if(!push(x1, y + 1))
             return;
 
           span_b = true;
         }
-        else if((span_b && y < cb) && (bmp->getpixel(x1, y + 1) != old_color))
+        else if((span_b && y < cb) && (temp.getpixel(x1, y + 1) != old_color))
         {
           span_b = false;
         } 
 
         x1++;
+      }
+    }
+
+    map->invert();
+
+    int count = 0;
+    int edgecachex[65536];
+    int edgecachey[65536];
+
+    for(y = ct; y <= cb; y++)
+    {
+      for(x = cl; x <= cr; x++)
+      {
+        if(map->getpixel(x - cl, y - ct) && isEdge(map, x - cl, y - ct))
+        {
+          edgecachex[count] = x;
+          edgecachey[count] = y;
+          count++;
+          count &= 0xFFFFF;
+        }
+      }
+    }
+
+    for(y = ct; y <= cb; y++)
+    {
+      unsigned char *p = map->row[y - bmp->ct];
+  
+      for(x = cl; x <= cr; x++)
+      {
+        if(*p++ == 0)
+        {
+          bmp->setpixel(x, y, new_color);
+          continue;
+        }
+
+        int *cx = edgecachex;
+        int *cy = edgecachey;
+        const int dx = (x - *cx++);
+        const int dy = (y - *cy++);
+        int z = 0;
+        int temp1 = dx * dx + dy * dy;
+
+        for(int i = 1; i < count; i++)
+        {
+          const int dx = (x - *cx++);
+          const int dy = (y - *cy++);
+          int temp2 = dx * dx + dy * dy;
+
+          if(temp2 < temp1)
+          {
+            temp1 = temp2;
+            z = i;
+          }
+        }
+
+        const int c1 = bmp->getpixel(x, y);
+
+        bmp->setpixel(x, y, Blend::trans(c1, new_color, fineEdge(x, y,
+                      edgecachex[z], edgecachey[z], feather, 0)));
       }
     }
   }
@@ -169,7 +268,7 @@ void Fill::push(View *view)
     rgba_type rgba = getRgba(Project::brush->color);
     int color = makeRgba(rgba.r, rgba.g, rgba.b, 255 - Project::brush->trans);
     Blend::set(Project::brush->blend);
-    fill(Project::bmp, view->imgx, view->imgy, color, target);
+    fill(view->imgx, view->imgy, color, target, Gui::getFillFeather());
     Blend::set(Blend::TRANS);
     view->drawMain(true);
   }

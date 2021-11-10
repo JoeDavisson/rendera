@@ -131,6 +131,7 @@ namespace
 //  CheckBox *paint_dither_relative;
   Fl_Choice *paint_mode;
   Widget *getcolor_color;
+  InputInt *fill_feather;
 
   StaticText *selection_x;
   StaticText *selection_y;
@@ -788,7 +789,12 @@ void Gui::init()
   fill = new Group(48, top->h() + menubar->h(),
                    112, window->h() - top->h() - menubar->h() - status->h(),
                    "Fill");
-  pos = 28 + 16;
+  pos = 28 + 8;
+
+  fill_feather = new InputInt(fill, 8, pos, 86, 24, "Feather:", 0, 0, 255);
+  fill_feather->align(FL_ALIGN_BOTTOM);
+  fill_feather->value("0");
+  pos += 24 + 8;
 
   fill->resizable(0);
   fill->end();
@@ -1937,6 +1943,11 @@ int Gui::getPaintMode()
 int Gui::getTextSmooth()
 {
   return text_smooth->value();
+}
+
+int Gui::getFillFeather()
+{
+  return atoi(fill_feather->value());
 }
 
 /*

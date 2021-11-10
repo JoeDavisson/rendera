@@ -357,7 +357,7 @@ void Selection::drag(View *view)
     Project::brush->color = temp;
 */
 
-    view->redraw();
+//    view->redraw();
 
     redraw(view);
   }
