@@ -66,9 +66,6 @@ namespace
   int fineEdge(int x1, int y1, const int x2, const int y2,
                const int feather, const int trans)
   {
-    if(feather == 0)
-      return 255;
-
     x1 -= x2;
     y1 -= y2;
 
@@ -79,6 +76,25 @@ namespace
     temp = clamp(temp, 255);
 
     return temp < trans ? trans : temp;
+  }
+
+  // updates the viewport during rendering
+  int update(int pos)
+  {
+    // user cancelled operation
+    if(Fl::get_key(FL_Escape))
+    {
+      Gui::getView()->drawMain(true);
+      return -1;
+    }
+
+    if((pos & 63) == 63)
+    {
+      Gui::getView()->drawMain(true);
+      Fl::check();
+    }
+
+    return 0;
   }
 
   // flood-fill related stack routines
@@ -209,6 +225,12 @@ namespace
       }
     }
 
+    if(feather == 0)
+    {
+      temp.blit(bmp, 0, 0, 0, 0, temp.w, temp.h);
+      return;
+    }
+
     for(y = ct; y <= cb; y++)
     {
       unsigned char *p = map->row[y - bmp->ct];
@@ -246,6 +268,9 @@ namespace
         bmp->setpixel(x, y, Blend::trans(c1, new_color, fineEdge(x, y,
                       edgecachex[z], edgecachey[z], feather, 0)));
       }
+
+      if(update(y) < 0)
+        break;
     }
   }
 }
