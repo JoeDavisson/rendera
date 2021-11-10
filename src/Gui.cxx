@@ -469,6 +469,11 @@ void Gui::init()
   menubar->add("F&X/Artistic/Marble...", 0,
     (Fl_Callback *)FX2::marble, 0, 0);
 
+  menubar->add("F&X/FFT/Forward FFT", 0,
+    (Fl_Callback *)FX2::forwardFFT, 0, 0);
+  menubar->add("F&X/FFT/Inverse FFT", 0,
+    (Fl_Callback *)FX2::inverseFFT, 0, 0);
+
   menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
 

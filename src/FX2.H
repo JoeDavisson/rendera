@@ -25,6 +25,8 @@ namespace FX2
 {
   void init();
   void marble();
+  void forwardFFT();
+  void inverseFFT();
 }
 
 #endif

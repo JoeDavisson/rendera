@@ -322,6 +322,264 @@ namespace Marble
   }
 }
 
+namespace ForwardFFT
+{
+  void apply()
+  {
+    int w = bmp->cw;
+    int h = bmp->ch;
+
+    // resize image
+    Project::resizeImage(w * 2, h);
+    bmp = Project::bmp;
+
+    std::vector<float> real(w * h, 0);
+    std::vector<float> imag(w * h, 0);
+    std::vector<float> real_row(w, 0);
+    std::vector<float> imag_row(w, 0);
+    std::vector<float> real_col(h, 0);
+    std::vector<float> imag_col(h, 0);
+
+    Gui::showProgress(3);
+
+    for(int channel = 0; channel < 3; channel++)
+    {
+      // forward horizontal pass
+      for(int y = 0; y < h; y++)
+      {
+        int *p = bmp->row[y + bmp->ct] + bmp->cl;
+        for(int x = 0; x < w; x++, p++)
+        {
+          const rgba_type rgba = getRgba(*p);
+
+          switch(channel)
+          {
+            case 0:
+              real_row[x] = rgba.r;
+              break;
+            case 1:
+              real_row[x] = rgba.g;
+              break;
+            case 2:
+              real_row[x] = rgba.b;
+              break;
+          }
+
+          imag_row[x] = 0;
+        }
+
+        ExtraMath::forwardFFT(&real_row[0], &imag_row[0], w);
+
+        for(int x = 0; x < w; x++)
+        {
+          real[x + w * y] = real_row[x];
+          imag[x + w * y] = imag_row[x];
+        }
+      }
+
+      // forward vertical pass
+      for(int x = 0; x < w; x++)
+      {
+        for(int y = 0; y < h; y++)
+        {
+          real_col[y] = real[x + w * y];
+          imag_col[y] = imag[x + w * y];
+        }
+
+        ExtraMath::forwardFFT(&real_col[0], &imag_col[0], h);
+
+        for(int y = 0; y < h; y++)
+        {
+          real[x + w * y] = real_col[y];
+          imag[x + w * y] = imag_col[y];
+        }
+      }
+
+      // convert to image
+      for(int y = 0; y < h; y++)
+      {
+        for(int x = 0; x < w; x++)
+        {
+          float re = real[x + w * y];
+          float im = imag[x + w * y];
+          float mag = log10f(sqrtf(re * re + im * im)) * 32;
+          float phase = (atan2f(im, re) + 3.14159f) * 32;
+          int val1 = clamp((int)mag, 255);
+          int val2 = clamp((int)phase, 255);
+
+          int xx = (x + w / 2) % w;
+          int yy = (y + h / 2) % h;
+          xx += bmp->cl;
+          yy += bmp->ct;
+          const rgba_type rgba1 = getRgba(bmp->getpixel(xx, yy));
+          const rgba_type rgba2 = getRgba(bmp->getpixel(xx + w, yy));
+
+          switch(channel)
+          {
+            case 0:
+              bmp->setpixel(xx, yy, makeRgb(val1, rgba1.g, rgba1.b));
+              bmp->setpixel(xx + w, yy, makeRgb(val2, rgba2.g, rgba2.b));
+              break;
+            case 1:
+              bmp->setpixel(xx, yy, makeRgb(rgba1.r, val1, rgba1.b));
+              bmp->setpixel(xx + w, yy, makeRgb(rgba2.r, val2, rgba2.b));
+              break;
+            case 2:
+              bmp->setpixel(xx, yy, makeRgb(rgba1.r, rgba1.g, val1));
+              bmp->setpixel(xx + w, yy, makeRgb(rgba2.r, rgba2.g, val2));
+              break;
+          }
+        }
+      }
+
+      if(Gui::updateProgress(channel) < 0)
+        return;
+    }
+
+    Gui::hideProgress();
+  }
+
+  void begin()
+  {
+    pushUndo();
+    apply();
+  }
+}
+
+namespace InverseFFT
+{
+  void apply()
+  {
+    int w = bmp->cw / 2;
+    int h = bmp->ch;
+
+    std::vector<float> real(w * h, 0);
+    std::vector<float> imag(w * h, 0);
+    std::vector<float> real_row(w, 0);
+    std::vector<float> imag_row(w, 0);
+    std::vector<float> real_col(h, 0);
+    std::vector<float> imag_col(h, 0);
+
+    Gui::showProgress(3);
+
+    for(int channel = 0; channel < 3; channel++)
+    {
+      // convert from image
+      for(int y = 0; y < h; y++)
+      {
+        for(int x = 0; x < w; x++)
+        {
+          int xx = (x + w / 2) % w;
+          int yy = (y + h / 2) % h;
+          xx += bmp->cl;
+          yy += bmp->ct;
+
+          int p1 = bmp->getpixel(xx, yy);
+          int p2 = bmp->getpixel(xx + w, yy);
+          float c1 = 0, c2 = 0;
+
+          switch(channel)
+          {
+            case 0:
+              c1 = getr(p1);
+              c2 = getr(p2);
+              break;
+            case 1:
+              c1 = getg(p1);
+              c2 = getg(p2);
+              break;
+            case 2:
+              c1 = getb(p1);
+              c2 = getb(p2);
+              break;
+          }
+
+          float mag = powf(10.0f, c1 / 32);
+          float phase = c2 / 32 - 3.14159f;
+
+          real[x + w * y] = mag * cosf(phase);
+          imag[x + w * y] = mag * sinf(phase);
+        }
+      }
+
+      // inverse horizontal pass
+      for(int y = 0; y < h; y++)
+      {
+        for(int x = 0; x < w; x++)
+        {
+          real_row[x] = real[x + w * y];
+          imag_row[x] = imag[x + w * y];
+        }
+
+        ExtraMath::inverseFFT(&real_row[0], &imag_row[0], w);
+
+        for(int x = 0; x < w; x++)
+        {
+          real[x + w * y] = real_row[x];
+          imag[x + w * y] = imag_row[x];
+        }
+      }
+
+      // inverse vertical pass
+      for(int x = 0; x < w; x++)
+      {
+        for(int y = 0; y < h; y++)
+        {
+          real_col[y] = real[x + w * y];
+          imag_col[y] = imag[x + w * y];
+        }
+
+        ExtraMath::inverseFFT(&real_col[0], &imag_col[0], h);
+
+        for(int y = 0; y < h; y++)
+        {
+          real[x + w * y] = real_col[y];
+          imag[x + w * y] = imag_col[y];
+        }
+      }
+
+      // convert to image
+      for(int y = 0; y < h; y++)
+      {
+        int *p = bmp->row[y + bmp->ct] + bmp->cl;
+        for(int x = 0; x < w; x++, p++)
+        {
+          float re = real[x + w * y];
+          int val = clamp((int)re, 255);
+
+          const rgba_type rgba = getRgba(*p);
+
+          switch(channel)
+          {
+            case 0:
+              *p = makeRgb(val, rgba.g, rgba.b);
+              break;
+            case 1:
+              *p = makeRgb(rgba.r, val, rgba.b);
+              break;
+            case 2:
+              *p = makeRgb(rgba.r, rgba.g, val);
+              break;
+          }
+        }
+      }
+
+      if(Gui::updateProgress(channel) < 0)
+        return;
+    }
+
+    Gui::hideProgress();
+    Project::resizeImage(w, h);
+    bmp = Project::bmp;
+  }
+
+  void begin()
+  {
+    pushUndo();
+    apply();
+  }
+}
+
 void FX2::init()
 {
   Marble::init();
@@ -330,5 +588,35 @@ void FX2::init()
 void FX2::marble()
 {
   Marble::begin();
+}
+
+void FX2::forwardFFT()
+{
+  int w = Project::bmp->cw;
+  int h = Project::bmp->ch;
+
+  if(ExtraMath::isPowerOfTwo(w) && ExtraMath::isPowerOfTwo(h))
+  {
+    ForwardFFT::begin();
+  }
+  else
+  {
+    Dialog::message("Error", "Image dimensions must\nbe powers of two.");
+  }
+}
+
+void FX2::inverseFFT()
+{
+  int w = Project::bmp->cw;
+  int h = Project::bmp->ch;
+
+  if(ExtraMath::isPowerOfTwo(w) && ExtraMath::isPowerOfTwo(h))
+  {
+    InverseFFT::begin();
+  }
+  else
+  {
+    Dialog::message("Error", "Image dimensions must\nbe powers of two.");
+  }
 }
 
