@@ -161,12 +161,6 @@ int main(int argc, char *argv[])
   Fl::visual(FL_DOUBLE | FL_RGB);
   Fl::scheme("gtk+");
 
-  //Fl_Shared_Image::add_handler(File::previewJpeg);
-  //Fl_Shared_Image::add_handler(File::previewPng);
-  //Fl_Shared_Image::add_handler(File::previewBmp);
-  //Fl_Shared_Image::add_handler(File::previewTarga);
-  //Fl_Shared_Image::add_handler(File::previewGimpPalette);
-
   // program inits
   File::init();
   Project::init();
@@ -176,6 +170,12 @@ int main(int argc, char *argv[])
   FX2::init();
   Transform::init();
   Gui::init();
+
+  //Fl_Shared_Image::add_handler(File::previewJpeg);
+  //Fl_Shared_Image::add_handler(File::previewPng);
+  //Fl_Shared_Image::add_handler(File::previewBmp);
+  //Fl_Shared_Image::add_handler(File::previewTarga);
+  //Fl_Shared_Image::add_handler(File::previewGimpPalette);
 
   // try to load image from command line
   if(optind < argc)
@@ -189,7 +189,6 @@ int main(int argc, char *argv[])
 
   // delay showing main gui until after all arguments are checked
   Gui::show();
-
 
 /*
   // view theme palette (for testing)

@@ -41,17 +41,15 @@ namespace File
   int saveTarga(const char *);
   int savePng(const char *);
   int saveJpeg(const char *);
-//  int saveJavaArray(const char *);
-//  int saveSTL(const char *);
 
   void loadPalette();
   void savePalette();
 
-//  Fl_Image *previewJpeg(const char *, unsigned char *, int);
-//  Fl_Image *previewPng(const char *, unsigned char *, int);
-//  Fl_Image *previewBmp(const char *, unsigned char *, int);
-//  Fl_Image *previewTarga(const char *, unsigned char *, int);
-//  Fl_Image *previewGimpPalette(const char *, unsigned char *, int);
+  //Fl_Image *previewJpeg(const char *, unsigned char *, int);
+  //Fl_Image *previewPng(const char *, unsigned char *, int);
+  //Fl_Image *previewBmp(const char *, unsigned char *, int);
+  //Fl_Image *previewTarga(const char *, unsigned char *, int);
+  //Fl_Image *previewGimpPalette(const char *, unsigned char *, int);
 
   void decodeURI(char *);
   void getDirectory(char *, const char *);

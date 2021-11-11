@@ -132,13 +132,9 @@ namespace
   //Bitmap *preview_bmp = 0;
 
   // palette preview widget
-  //Widget *pal_preview = new Widget(new Fl_Group(0, 0, 96, 96),
-  //                                 0, 0, 96, 96, "", 6, 6, 0);
+  //Widget *pal_preview;
 
-  // file extensions in the order they appear in the file chooser dialog
-  // (used to automatically append a file extension)
-  //const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga"/*, ".java", ".stl"*/ };
-  const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga"/*, ".stl" */};
+  const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
 
   // store previous directory paths
   char load_dir[256];
@@ -220,6 +216,14 @@ void File::init()
     strcpy(pal_load_dir, ".");
     strcpy(pal_save_dir, ".");
 }
+
+/*
+void createPalettePreview()
+{
+  pal_preview = new Widget(new Fl_Group(0, 0, 96, 96),
+                      0, 0, 96, 96, "", 6, 6, 0);
+}
+*/
 
 // display file loading dialog
 void File::load(Fl_Widget *, void *)
@@ -928,8 +932,6 @@ void File::save(Fl_Widget *, void *)
             "JPEG\t*.jpg\n"
             "Bitmap\t*.bmp\n"
             "Targa\t*.tga\n");
-//            "Java Array\t*.java\n");
-//            "STL\t*.stl\n");
 //  fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc.directory(save_dir);
@@ -971,12 +973,6 @@ void File::save(Fl_Widget *, void *)
     case 3:
       ret = File::saveTarga(fn);
       break;
-//    case 4:
-//      ret = File::saveJava(fn);
-//       break;
-//    case 4:
-//      ret = File::saveSTL(fn);
-//      break;
     default:
       ret = -1;
   }
@@ -1301,254 +1297,6 @@ int File::saveJpeg(const char *fn)
 
   return 0;
 }
-
-// this doesn't work yet
-/*
-int File::saveJavaArray(const char *fn)
-{
-  FileSP out(fn, "w");
-  FILE *outp = out.get();
-  if(!outp)
-    return -1;
-
-  Dialog::javaExport();
-  int option = Dialog::javaExportOption();
-
-  Bitmap *bmp = Project::bmp;
-  int overscroll = Project::overscroll;
-  int w = bmp->cw;
-  int h = bmp->ch;
-
-  fprintf(outp, "  static byte array[] = \n");
-  fprintf(outp, "  {\n");
-
-  int count = 0;
-
-  if(option == 0)
-  {
-    for(int y = bmp->ct; y <= bmp->cb; y++)
-    {
-      for(int x = bmp->cl; x <= bmp->cr; x += 2)
-      {
-        int c1 = Project::palette->lookup(bmp->getpixel(x, y)) & 15;
-        int c2 = Project::palette->lookup(bmp->getpixel(x + 1, y)) & 15;
-
-        if(count == 0)
-          fprintf(outp, "    ");
-
-        fprintf(outp, "%d, ", (char)((c1 << 4) | c2));
-        count++;
-
-        if(count >= 10)
-        {
-          fprintf(outp, "\n");
-          count = 0;
-        }
-      }
-    }
-
-    fprintf(outp, "\n  };\n");
-  }
-  else if(option == 1)
-  {
-    for(int y = bmp->ct; y <= bmp->cb; y++)
-    {
-      for(int x = bmp->cl; x <= bmp->cr; x++)
-      {
-        int c = Project::palette->lookup(bmp->getpixel(x, y));
-
-        if(count == 0)
-          fprintf(outp, "    ");
-
-        fprintf(outp, "%d, ", (char)c);
-        count++;
-
-        if(count >= 10)
-        {
-          fprintf(outp, "\n");
-          count = 0;
-        }
-      }
-    }
-
-    fprintf(outp, "\n  };\n");
-  }
-
-  return 0;
-}
-*/
-
-/*
-// export height map
-int File::saveSTL(const char *fn)
-{
-  Bitmap *bmp = Project::bmp;
-
-  FileSP out(fn, "w");
-  FILE *outp = out.get();
-  if(!outp)
-    return -1;
-
-  fprintf(outp, "solid mesh\n");
-
-  int scale = 8;
-  double inc = 1.0 / scale;
-  int scalez = 64;
-  double b = -.25;
-
-  // height map
-  for(int y = bmp->ct; y < bmp->cb; y++)
-  {
-    double yy = (double)(y - bmp->ct) / scale;
-    yy -= (bmp->ch / 2) / scale;
-
-    for(int x = bmp->cl; x < bmp->cr; x++)
-    {
-      double xx = (double)(x - bmp->cl) / scale;
-      xx -= (bmp->cw / 2) / scale;
-
-      double c0 = getl(bmp->getpixel(x, y));
-      double c1 = getl(bmp->getpixel(x + 1, y));
-      double c2 = getl(bmp->getpixel(x, y + 1));
-      double c3 = getl(bmp->getpixel(x + 1, y + 1));
-
-      c0 /= scalez;
-      c1 /= scalez;
-      c2 /= scalez;
-      c3 /= scalez;
-
-      fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-      fprintf(outp, "    outer loop\n");
-      fprintf(outp, "      vertex %f %f %f\n", xx, c0, yy);
-      fprintf(outp, "      vertex %f %f %f\n", xx + inc, c3, yy + inc);
-      fprintf(outp, "      vertex %f %f %f\n", xx + inc, c1, yy);
-      fprintf(outp, "    endloop\n");
-      fprintf(outp, "  endfacet\n");
-
-      fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-      fprintf(outp, "    outer loop\n");
-      fprintf(outp, "      vertex %f %f %f\n", xx, c0, yy);
-      fprintf(outp, "      vertex %f %f %f\n", xx, c2, yy + inc);
-      fprintf(outp, "      vertex %f %f %f\n", xx + inc, c3, yy + inc);
-      fprintf(outp, "    endloop\n");
-      fprintf(outp, "  endfacet\n");
-
-      // base
-      if(x == bmp->cl)
-      {
-        fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-        fprintf(outp, "    outer loop\n");
-        fprintf(outp, "      vertex %f %f %f\n", xx, c0, yy);
-        fprintf(outp, "      vertex %f %f %f\n", xx, b, yy);
-        fprintf(outp, "      vertex %f %f %f\n", xx, b, yy + inc);
-        fprintf(outp, "    endloop\n");
-        fprintf(outp, "  endfacet\n");
-
-        fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-        fprintf(outp, "    outer loop\n");
-        fprintf(outp, "      vertex %f %f %f\n", xx, c0, yy);
-        fprintf(outp, "      vertex %f %f %f\n", xx, b, yy + inc);
-        fprintf(outp, "      vertex %f %f %f\n", xx, c2, yy + inc);
-        fprintf(outp, "    endloop\n");
-        fprintf(outp, "  endfacet\n");
-
-        fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-        fprintf(outp, "    outer loop\n");
-        fprintf(outp, "      vertex %f %f %f\n", xx, b, yy);
-        fprintf(outp, "      vertex %f %f %f\n", 0.0, b, 0.0);
-        fprintf(outp, "      vertex %f %f %f\n", xx, b, yy + inc);
-        fprintf(outp, "    endloop\n");
-        fprintf(outp, "  endfacet\n");
-      }
-
-      if(x == bmp->cr - 1)
-      {
-        fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-        fprintf(outp, "    outer loop\n");
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, c1, yy);
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, b, yy + inc);
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, b, yy);
-        fprintf(outp, "    endloop\n");
-        fprintf(outp, "  endfacet\n");
-
-        fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-        fprintf(outp, "    outer loop\n");
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, c1, yy);
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, c3, yy + inc);
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, b, yy + inc);
-        fprintf(outp, "    endloop\n");
-        fprintf(outp, "  endfacet\n");
-
-        fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-        fprintf(outp, "    outer loop\n");
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, b, yy);
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, b, yy + inc);
-        fprintf(outp, "      vertex %f %f %f\n", 0.0, b, 0.0);
-        fprintf(outp, "    endloop\n");
-        fprintf(outp, "  endfacet\n");
-      }
-
-      if(y == bmp->ct)
-      {
-        fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-        fprintf(outp, "    outer loop\n");
-        fprintf(outp, "      vertex %f %f %f\n", xx, c0, yy);
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, b, yy);
-        fprintf(outp, "      vertex %f %f %f\n", xx, b, yy);
-        fprintf(outp, "    endloop\n");
-        fprintf(outp, "  endfacet\n");
-
-        fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-        fprintf(outp, "    outer loop\n");
-        fprintf(outp, "      vertex %f %f %f\n", xx, c0, yy);
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, c1, yy);
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, b, yy);
-        fprintf(outp, "    endloop\n");
-        fprintf(outp, "  endfacet\n");
-
-        fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-        fprintf(outp, "    outer loop\n");
-        fprintf(outp, "      vertex %f %f %f\n", xx, b, yy);
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, b, yy);
-        fprintf(outp, "      vertex %f %f %f\n", 0.0, b, 0.0);
-        fprintf(outp, "    endloop\n");
-        fprintf(outp, "  endfacet\n");
-      }
-
-      if(y == bmp->cb - 1)
-      {
-        fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-        fprintf(outp, "    outer loop\n");
-        fprintf(outp, "      vertex %f %f %f\n", xx, c2, yy + inc);
-        fprintf(outp, "      vertex %f %f %f\n", xx, b, yy + inc);
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, b, yy + inc);
-        fprintf(outp, "    endloop\n");
-        fprintf(outp, "  endfacet\n");
-
-        fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-        fprintf(outp, "    outer loop\n");
-        fprintf(outp, "      vertex %f %f %f\n", xx, c2, yy + inc);
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, b, yy + inc);
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, c3, yy + inc);
-        fprintf(outp, "    endloop\n");
-        fprintf(outp, "  endfacet\n");
-
-        fprintf(outp, "  facet normal %f %f %f\n", 0.0, 0.0, 0.0);
-        fprintf(outp, "    outer loop\n");
-        fprintf(outp, "      vertex %f %f %f\n", xx, b, yy + inc);
-        fprintf(outp, "      vertex %f %f %f\n", 0.0, b, 0.0);
-        fprintf(outp, "      vertex %f %f %f\n", xx + inc, b, yy + inc);
-        fprintf(outp, "    endloop\n");
-        fprintf(outp, "  endfacet\n");
-      }
-    }
-  }
-
-  fprintf(outp, "endsolid mesh\n");
-
-  return 0;
-}
-*/
 
 // callbacks for FLTK's file preview
 /*
