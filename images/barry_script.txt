@@ -1,0 +1,4 @@
+from base directory:
+
+~/barry/barry -o Images.H image/*.png
+

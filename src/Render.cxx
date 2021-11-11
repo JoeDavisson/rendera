@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Map.H"
 #include "ExtraMath.H"
 #include "Project.H"
+#include "Quadtree.H"
 #include "Render.H"
 #include "Stroke.H"
 #include "Tool.H"
@@ -65,7 +66,6 @@ namespace
       return 1;
   }
 
-  // used by fine airbrush
   int fineEdge(int x1, int y1, const int x2, const int y2,
                const int edge, const int trans)
   {
@@ -320,6 +320,9 @@ namespace
           const int dy = (y - *cy++);
           int temp2 = dx * dx + dy * dy;
 
+if(temp2 == temp1)
+  puts("same");
+
           if(temp2 < temp1)
           {
             temp1 = temp2;
@@ -336,6 +339,43 @@ namespace
         break;
     }
   }
+
+/*
+  void renderFine()
+  {
+    Quadtree quadtree;
+
+    for(int y = stroke->y1; y <= stroke->y2; y++)
+    {
+      for(int x = stroke->x1; x <= stroke->x2; x++)
+      {
+        if(map->getpixel(x, y) && isEdge(map, x, y))
+          quadtree.writePath(x, y, 1);
+      }
+    }
+
+    for(int y = stroke->y1; y <= stroke->y2; y++)
+    {
+      unsigned char *p = map->row[y] + stroke->x1;
+
+      for(int x = stroke->x1; x <= stroke->x2; x++)
+      {
+        if(*p++ == 0)
+          continue;
+
+        int qx, qy;
+
+        quadtree.read(x, y, &qx, &qy);
+
+        const int t = fineEdge(x, y, qx, qy, brush->fine_edge, trans);
+        bmp->setpixel(x, y, color, t);
+      }
+
+      if(update(y) < 0)
+        break;
+    }
+  }
+*/
 
   // gaussian blur
   void renderBlur()
