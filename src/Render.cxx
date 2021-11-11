@@ -73,6 +73,7 @@ namespace
     y1 -= y2;
 
     const float d = std::sqrt(x1 * x1 + y1 * y1);
+//    const float d = std::abs(x1);
     const int s = (255 - trans) / (((3 << edge) >> 1) + 1);
     const int temp = 255 - s * d;
 
