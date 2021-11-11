@@ -230,8 +230,8 @@ void File::load(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser fc;
   fc.title("Load Image");
-  fc.filter("All Files\t*.*\n"
-            "PNG\t*.png\n"
+  //fc.filter("All Files\t*.*\n"
+  fc.filter("PNG\t*.png\n"
             "JPEG\t*.{jpg,jpeg}\n"
             "Bitmap\t*.bmp\n"
             "Targa\t*.tga\n");
