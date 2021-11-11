@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015 Joe Davisson.
+Copyright (c) 2021 Joe Davisson.
 
 This file is part of Rendera.
 
@@ -113,7 +113,6 @@ namespace Gui
   void checkClearToTransparent();
   void checkConvertToIndexed();
   void checkConvertToGrayscale();
-  void checkFlattenImage();
 
   Fl_Double_Window *getWindow();
   Fl_Menu_Bar *getMenuBar();

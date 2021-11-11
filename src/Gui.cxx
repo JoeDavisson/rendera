@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015 Joe Davisson.
+Copyright (c) 2021 Joe Davisson.
 
 This file is part of Rendera.
 
@@ -344,7 +344,6 @@ void Gui::init()
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
   menubar->box(FL_THIN_UP_BOX);
   menubar->color(FL_INACTIVE_COLOR);
-//  menubar->textcolor(FL_BLACK);
 
   menubar->add("&File/New...", 0,
     (Fl_Callback *)Dialog::newImage, 0, 0);
@@ -374,8 +373,6 @@ void Gui::init()
     (Fl_Callback *)Transform::resize, 0, 0);
   menubar->add("&Image/&Scale...", 0,
     (Fl_Callback *)Transform::scale, 0, FL_MENU_DIVIDER);
-//  menubar->add("&Image/&Flatten", 0,
-//    (Fl_Callback *)checkFlattenImage, 0, FL_MENU_DIVIDER);
   menubar->add("&Image/Flip &Horizontal", 0,
     (Fl_Callback *)Transform::flipHorizontal, 0, 0);
   menubar->add("&Image/Flip &Vertical", 0,
@@ -386,17 +383,6 @@ void Gui::init()
     (Fl_Callback *)Transform::rotate180, 0, 0);
   menubar->add("&Image/Rotate/Arbitrary...", 0,
     (Fl_Callback *)Transform::rotateArbitrary, 0, 0);
-
-/*
-  menubar->add("&Selection/Flip &Horizontal", 0,
-    (Fl_Callback *)checkSelectionFlipHorizontal, 0, 0);
-  menubar->add("&Selection/Flip &Vertical", 0,
-    (Fl_Callback *)checkSelectionFlipVertical, 0, FL_MENU_DIVIDER);
-  menubar->add("&Selection/Rotate/90 Degrees", 0,
-    (Fl_Callback *)checkSelectionRotate90, 0, 0);
-  menubar->add("&Selection/Rotate/180 Degrees", 0,
-    (Fl_Callback *)checkSelectionRotate180, 0, 0);
-*/
 
   menubar->add("&Palette/&Open...", 0,
     (Fl_Callback *)File::loadPalette, 0, 0);
@@ -1842,25 +1828,6 @@ void Gui::checkClearToTransparent()
   for(int y = bmp->ct; y <= bmp->cb; y++)
     for(int x = bmp->cl; x <= bmp->cr; x++)
       *(bmp->row[y] + x) = 0x00808080;
-
-  view->drawMain(true);
-}
-
-void Gui::checkFlattenImage()
-{
-  Undo::push();
-
-  Bitmap *bmp = Project::bmp;
-
-  for(int y = bmp->ct; y <= bmp->cb; y++)
-  {
-    int *p = bmp->row[y] + bmp->cl;
-
-    for(int x = bmp->cl; x <= bmp->cr; x++)
-    {
-      *p++ |= 0xFF000000;
-    }
-  }
 
   view->drawMain(true);
 }
