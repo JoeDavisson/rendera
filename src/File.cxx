@@ -129,11 +129,11 @@ namespace
   }
 
   // bitmap pointer used for FLTK's file preview
-  Bitmap *preview_bmp = 0;
+  //Bitmap *preview_bmp = 0;
 
   // palette preview widget
-  Widget *pal_preview = new Widget(new Fl_Group(0, 0, 96, 96),
-                                   0, 0, 96, 96, "", 6, 6, 0);
+  //Widget *pal_preview = new Widget(new Fl_Group(0, 0, 96, 96),
+  //                                 0, 0, 96, 96, "", 6, 6, 0);
 
   // file extensions in the order they appear in the file chooser dialog
   // (used to automatically append a file extension)
@@ -1551,6 +1551,7 @@ int File::saveSTL(const char *fn)
 */
 
 // callbacks for FLTK's file preview
+/*
 Fl_Image *File::previewPng(const char *fn, unsigned char *header, int)
 {
   if(!isPng(header))
@@ -1647,6 +1648,7 @@ Fl_Image *File::previewGimpPalette(const char *fn, unsigned char *header, int)
   return new Fl_RGB_Image((unsigned char *)pal_preview->bitmap->data,
                           96, 96, 4, 0);
 }
+*/
 
 // load a palette using the file chooser
 void File::loadPalette()

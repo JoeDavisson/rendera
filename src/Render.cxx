@@ -320,9 +320,6 @@ namespace
           const int dy = (y - *cy++);
           int temp2 = dx * dx + dy * dy;
 
-if(temp2 == temp1)
-  puts("same");
-
           if(temp2 < temp1)
           {
             temp1 = temp2;

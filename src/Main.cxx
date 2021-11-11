@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <getopt.h>
 #include <iostream>
 
-#include <FL/Fl_Shared_Image.H>
+//#include <FL/Fl_Shared_Image.H>
 
 #include "Blend.H"
 #include "Dialog.H"
@@ -161,11 +161,11 @@ int main(int argc, char *argv[])
   Fl::visual(FL_DOUBLE | FL_RGB);
   Fl::scheme("gtk+");
 
-  Fl_Shared_Image::add_handler(File::previewJpeg);
-  Fl_Shared_Image::add_handler(File::previewPng);
-  Fl_Shared_Image::add_handler(File::previewBmp);
-  Fl_Shared_Image::add_handler(File::previewTarga);
-  Fl_Shared_Image::add_handler(File::previewGimpPalette);
+  //Fl_Shared_Image::add_handler(File::previewJpeg);
+  //Fl_Shared_Image::add_handler(File::previewPng);
+  //Fl_Shared_Image::add_handler(File::previewBmp);
+  //Fl_Shared_Image::add_handler(File::previewTarga);
+  //Fl_Shared_Image::add_handler(File::previewGimpPalette);
 
   // program inits
   File::init();
