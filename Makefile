@@ -28,7 +28,7 @@ endif
 ifeq ($(PLATFORM),mingw32)
   HOST=i686-w64-mingw32
   CXX=$(HOST)-g++
-  CXXFLAGS= -O3 -ffast-math-Wall -static-libgcc -static-libstdc++ -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -O3 -ffast-math -Wall -static-libgcc -static-libstdc++ -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   LIBS+=-lgdi32 -lcomctl32 -static -lpthread
   EXE=rendera.exe
 endif
@@ -91,7 +91,7 @@ fltk:
 	@cd ./fltk-1.3.3; \
 	make clean; \
 	./configure --host=$(HOST) --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
-	make -j20; \
+	make -j6; \
 	cd ..
 	@echo "FLTK libs built!"
 

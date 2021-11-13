@@ -73,7 +73,6 @@ namespace
     y1 -= y2;
 
     const float d = std::sqrt(x1 * x1 + y1 * y1);
-//    const float d = std::abs(x1);
     const int s = (255 - trans) / (((3 << edge) >> 1) + 1);
     const int temp = 255 - s * d;
 
@@ -337,43 +336,6 @@ namespace
         break;
     }
   }
-
-/*
-  void renderFine()
-  {
-    Quadtree quadtree;
-
-    for(int y = stroke->y1; y <= stroke->y2; y++)
-    {
-      for(int x = stroke->x1; x <= stroke->x2; x++)
-      {
-        if(map->getpixel(x, y) && isEdge(map, x, y))
-          quadtree.writePath(x, y, 1);
-      }
-    }
-
-    for(int y = stroke->y1; y <= stroke->y2; y++)
-    {
-      unsigned char *p = map->row[y] + stroke->x1;
-
-      for(int x = stroke->x1; x <= stroke->x2; x++)
-      {
-        if(*p++ == 0)
-          continue;
-
-        int qx, qy;
-
-        quadtree.read(x, y, &qx, &qy);
-
-        const int t = fineEdge(x, y, qx, qy, brush->fine_edge, trans);
-        bmp->setpixel(x, y, color, t);
-      }
-
-      if(update(y) < 0)
-        break;
-    }
-  }
-*/
 
   // gaussian blur
   void renderBlur()

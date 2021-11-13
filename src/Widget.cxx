@@ -29,11 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Project.H"
 #include "Widget.H"
 
-namespace
-{
-  int last_var = 0;
-}
-
 // load a PNG image from a file
 Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
                const char *label, const unsigned char *array,
@@ -168,11 +163,7 @@ int Widget::handle(int event)
       x1 *= stepx;
       y1 *= stepy;
 
-      if(var != last_var)
-      {
-        do_callback();
-        last_var = var;
-      }
+      do_callback();
 
       redraw();
       return 1;

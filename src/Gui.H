@@ -40,6 +40,7 @@ namespace Gui
   void updateHexColor();
   void updateColor(int);
   void updateSwatch();
+  void updateRange();
   void updateGetColor(int);
   void setPaletteIndex(int);
   int getPaletteIndex();
@@ -77,6 +78,7 @@ namespace Gui
   void checkSatVal(Widget *, void *);
   void checkTrans(Widget *, void *);
   void checkBlend(Widget *, void *);
+  void checkRange(Widget *, void *);
 //  void checkAlphaMask();
   void checkWrap(Widget *, void *);
   void checkClone(Widget *, void *);

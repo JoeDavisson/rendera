@@ -106,6 +106,7 @@ namespace Marble
     Fl_Choice *type;
     Fl_Choice *mode;
     Fl_Button *palette_editor;
+    Fl_Button *change;
     Fl_Button *ok;
     Fl_Button *cancel;
 
@@ -260,7 +261,7 @@ namespace Marble
     int y1 = 8;
 
     Items::dialog = new DialogWindow(304 + 16, 0, "Marble");
-    Items::preview = new Widget(Items::dialog, 8, y1, 304, 304, 0, 1, 1, (Fl_Callback *)update);
+    Items::preview = new Widget(Items::dialog, 8, y1, 304, 304, 0, 1, 1, 0);
     y1 += 304 + 8;
     Items::marb = new Widget(Items::dialog, 8, y1, 144, 24, "Marbleize", images_marbleize_large_png, 12, 24, (Fl_Callback *)setMarb);
     Items::marb->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
@@ -314,6 +315,9 @@ namespace Marble
     x1 += 64 + 8;
     Items::color = new Widget(Items::dialog, x1, y1, 24, 24, 0, 0, 0, 0);
     y1 += 24 + 8;
+    Items::change = new Fl_Button(8, y1 + 8, 96, 24, "Randomize");
+    Items::change->labelsize(12);
+    Items::change->callback((Fl_Callback *)update);
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
