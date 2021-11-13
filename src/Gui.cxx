@@ -931,8 +931,6 @@ void Gui::init()
 //  Project::brush->size = 4;
 
   updateColor(Project::palette->data[palette_swatches->var]);
-  //updateRange();
-  //range->do_callback();
   drawPalette();
   tool->do_callback();
   checkZoom();
@@ -1629,18 +1627,13 @@ void Gui::checkRange(Widget *widget, void *)
      my = 190;
 
   Project::brush->color = range_buf->getpixel(mx, my);
-  //updateRange();
-
-//  int pos = range->var;
-//  int mx = pos % 96;
-//  int my = pos / 96;
-
   range_buf->blit(range->bitmap, 0, 0, 0, 0, range_buf->w, range_buf->h);
 
   range->bitmap->rect(mx - 6, my - 6, mx + 6, my + 6, makeRgb(0, 0, 0), 192);
   range->bitmap->rect(mx - 5, my - 5, mx + 5, my + 5, makeRgb(0, 0, 0), 96);
   range->bitmap->xorRect(mx - 4, my - 4, mx + 4, my + 4);
 
+  updateHexColor();
   updateSwatch();
 }
 
