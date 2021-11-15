@@ -176,6 +176,7 @@ namespace
   Fl_Choice *blend;
   Widget *range;
   Bitmap *range_buf;
+  Bitmap *range_buf_small;
 //  CheckBox *alpha_mask;
 
   // bottom
@@ -886,6 +887,7 @@ void Gui::init()
   pos += 8;
   range = new Widget(colors, 8, pos, 96, 192, 0, 1, 1, (Fl_Callback *)checkRange);
   range_buf = new Bitmap(96, 192);
+  range_buf_small = new Bitmap(24, 48);
 //  alpha_mask = new CheckBox(colors, 8, pos, 96, 24, "Alpha Mask", (Fl_Callback *)checkAlphaMask);
 //  alpha_mask->labelsize(13);
 //  pos += 24 + 8;
@@ -1088,22 +1090,24 @@ void Gui::updateRange()
 
   Blend::rgbToHsv(r, g, b, &h, &s, &v);
 
-  for(int y = 0; y < 192; y++)
+  for(int y = 0; y < 48; y++)
   {
-    const int hh = (h + y) % 1536;
+    int *p = range_buf_small->row[y];
+    const int hh = (h + y * 4) % 1536;
 
-    for(int x = 0; x < 96; x++)
+    for(int x = 0; x < 24; x++)
     {
-      int vv = v + x;
+      int vv = v + x * 4;
 
       vv = clamp(vv, 255);
 
       Blend::hsvToRgb(hh, s, vv, &r, &g, &b);
-      //range_buf->setpixel(x, y, makeRgb(r, g, b));
-      range_buf->setpixel(x, y, Blend::keepLum(makeRgb(r, g, b), x * 2.69));
+      //*p++ = Blend::keepLum(makeRgb(r, g, b), x * 2.69f);
+      *p++ = Blend::keepLum(makeRgb(r, g, b), x * 11.09f);
     }
   }
 
+  range_buf_small->scale(range_buf);
   range_buf->rect(0, 0, range->bitmap->w - 1, range->bitmap->h - 1,
                        makeRgb(0, 0, 0), 0);
   range_buf->blit(range->bitmap, 0, 0, 0, 0, range_buf->w, range_buf->h);
@@ -1111,6 +1115,18 @@ void Gui::updateRange()
   int pos = range->var;
   int mx = pos % 96;
   int my = pos / 96;
+
+  if(mx < 5)
+    mx = 5;
+
+  if(mx > 90)
+     mx = 90;
+
+  if(my < 5)
+    my = 5;
+
+  if(my > 186)
+     my = 186;
 
   range->bitmap->rect(mx - 6, my - 6, mx + 6, my + 6, makeRgb(0, 0, 0), 192);
   range->bitmap->rect(mx - 5, my - 5, mx + 5, my + 5, makeRgb(0, 0, 0), 96);
@@ -1628,6 +1644,18 @@ void Gui::checkRange(Widget *widget, void *)
 
   Project::brush->color = range_buf->getpixel(mx, my);
   range_buf->blit(range->bitmap, 0, 0, 0, 0, range_buf->w, range_buf->h);
+
+  if(mx < 5)
+    mx = 5;
+
+  if(mx > 90)
+     mx = 90;
+
+  if(my < 5)
+    my = 5;
+
+  if(my > 186)
+     my = 186;
 
   range->bitmap->rect(mx - 6, my - 6, mx + 6, my + 6, makeRgb(0, 0, 0), 192);
   range->bitmap->rect(mx - 5, my - 5, mx + 5, my + 5, makeRgb(0, 0, 0), 96);

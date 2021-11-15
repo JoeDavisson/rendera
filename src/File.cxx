@@ -134,6 +134,16 @@ namespace
   // palette preview widget
   //Widget *pal_preview;
 
+  enum
+  {
+    TYPE_PNG,
+    TYPE_JPG,
+    TYPE_BMP,
+    TYPE_TGA
+  };
+ 
+  int last_type = 0;
+
   const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
 
   // store previous directory paths
@@ -231,12 +241,13 @@ void File::load(Fl_Widget *, void *)
   Fl_Native_File_Chooser fc;
   fc.title("Load Image");
   //fc.filter("All Files\t*.*\n"
-  fc.filter("PNG\t*.png\n"
-            "JPEG\t*.{jpg,jpeg}\n"
-            "Bitmap\t*.bmp\n"
-            "Targa\t*.tga\n");
+  fc.filter("PNG \t*.png\n"
+            "JPEG \t*.{jpg,jpeg}\n"
+            "Bitmap \t*.bmp\n"
+            "Targa \t*.tga\n");
 //  fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
+  fc.filter_value(last_type);
   fc.directory(load_dir);
 
   switch(fc.show())
@@ -928,12 +939,13 @@ void File::save(Fl_Widget *, void *)
 {
   Fl_Native_File_Chooser fc;
   fc.title("Save Image");
-  fc.filter("PNG\t*.png\n"
-            "JPEG\t*.jpg\n"
-            "Bitmap\t*.bmp\n"
-            "Targa\t*.tga\n");
+  fc.filter("PNG \t*.png\n"
+            "JPEG \t*.jpg\n"
+            "Bitmap \t*.bmp\n"
+            "Targa \t*.tga\n");
 //  fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  fc.filter_value(last_type);
   fc.directory(save_dir);
 
   switch(fc.show())
@@ -948,8 +960,8 @@ void File::save(Fl_Widget *, void *)
 
   char fn[256];
   strcpy(fn, fc.filename());
-  int ext = fc.filter_value();
-  fl_filename_setext(fn, sizeof(fn), ext_string[ext]);
+  int ext_value = fc.filter_value();
+  fl_filename_setext(fn, sizeof(fn), ext_string[ext_value]);
 
   if(fileExists(fn))
   {
@@ -959,18 +971,18 @@ void File::save(Fl_Widget *, void *)
 
   int ret = 0;
   
-  switch(ext)
+  switch(ext_value)
   {
-    case 0:
+    case TYPE_PNG:
       ret = File::savePng(fn);
       break;
-    case 1:
+    case TYPE_JPG:
       ret = File::saveJpeg(fn);
       break;
-    case 2:
+    case TYPE_BMP:
       ret = File::saveBmp(fn);
       break;
-    case 3:
+    case TYPE_TGA:
       ret = File::saveTarga(fn);
       break;
     default:
@@ -979,6 +991,8 @@ void File::save(Fl_Widget *, void *)
 
   if(ret < 0)
     errorMessage();
+
+  last_type = ext_value;
 }
 
 int File::saveBmp(const char *fn)
