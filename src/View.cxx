@@ -205,16 +205,6 @@ int View::handle(int event)
         imgy += overscroll % gridy;
       }
       break;
-    case Tool::KNIFE:
-      if(gridsnap)
-      {
-        imgx -= imgx % gridx;
-        imgy -= imgy % gridy;
-
-        imgx += overscroll % gridx;
-        imgy += overscroll % gridy;
-      }
-      break;
     default:
       break;
   }

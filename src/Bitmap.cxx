@@ -1145,7 +1145,7 @@ void Bitmap::scale(Bitmap *dest)
     const int v1 = vv;
     const float v = vv - v1;
 
-    if(sy + v1 >= h - 1)
+    if(sy + v1 >= h)
       break;
 
     int v2 = v1 + 1;
@@ -1165,7 +1165,7 @@ void Bitmap::scale(Bitmap *dest)
       const int u1 = uu;
       const float u = uu - u1;
 
-      if(sx + u1 >= w - 1)
+      if(sx + u1 >= w)
         break;
 
       int u2 = u1 + 1;
