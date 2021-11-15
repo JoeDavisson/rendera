@@ -62,12 +62,35 @@ namespace
       return 0;
   }
 
-  void absrect(int *x1, int *y1, int *x2, int *y2)
+  void absrect(View *view, int *x1, int *y1, int *x2, int *y2)
   {
     if(*x1 > *x2)
       std::swap(*x1, *x2);
     if(*y1 > *y2)
       std::swap(*y1, *y2);
+
+    const int gridx = view->gridx;
+    const int gridy = view->gridy;
+    const int overscroll = Project::overscroll;
+
+    if(view->gridsnap)
+    {
+      *x1 -= overscroll;
+      *x1 -= *x1 % gridx;
+      *x1 += overscroll;
+
+      *y1 -= overscroll;
+      *y1 -= *y1 % gridy;
+      *y1 += overscroll;
+
+      *x2 -= overscroll;
+      *x2 -= *x2 % gridx;
+      *x2 += gridx + overscroll - 1;
+
+      *y2 -= overscroll;
+      *y2 -= *y2 % gridy;
+      *y2 += gridy + overscroll - 1;
+    }
 
     if(*x1 < Project::bmp->cl)
       *x1 = Project::bmp->cl;
@@ -115,7 +138,7 @@ namespace
     int ox = view->ox * zoom;
     int oy = view->oy * zoom;
 
-    absrect(&x1, &y1, &x2, &y2);
+    absrect(view, &x1, &y1, &x2, &y2);
     stroke->size(x1, y1, x2, y2);
 
     x1 = x1 * zoom - ox;
@@ -167,7 +190,7 @@ namespace
     Undo::push();
     state = 0;
     active = false;
-    absrect(&beginx, &beginy, &lastx, &lasty);
+    absrect(view, &beginx, &beginy, &lastx, &lasty);
 
     int w = (lastx - beginx) + 1;
     int h = (lasty - beginy) + 1;
@@ -456,7 +479,7 @@ void Selection::release(View *view)
 
   drag_started = false;
   resize_started = false;
-  absrect(&beginx, &beginy, &lastx, &lasty);
+  absrect(view, &beginx, &beginy, &lastx, &lasty);
 
   redraw(view);
 

@@ -60,7 +60,8 @@ public:
   bool fit;
   bool moving;
   bool panning;
-  int grid, gridx, gridy;
+  bool grid, gridsnap;
+  int gridx, gridy;
   int px, py, pw, ph;
   int bx, by, bw, bh;
   int lastbx, lastby, lastbw, lastbh;

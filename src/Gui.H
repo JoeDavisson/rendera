@@ -56,6 +56,7 @@ namespace Gui
   void checkZoomOne(Button *, void *);
   void checkZoom();
   void checkGrid(ToggleButton *, void *);
+  void checkGridSnap(ToggleButton *, void *);
   void checkGridX();
   void checkGridY();
   void changePaintSize(int);

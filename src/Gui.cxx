@@ -108,6 +108,7 @@ namespace
   ToggleButton *grid;
   InputInt *gridx;
   InputInt *gridy;
+  ToggleButton *gridsnap;
 
   // tools
   Widget *tool;
@@ -521,6 +522,10 @@ void Gui::init()
   grid = new ToggleButton(top, pos, 8, 24, 24,
                           "Show Grid", images_grid_png,
                           (Fl_Callback *)checkGrid);
+  pos += 24 + 8;
+  gridsnap = new ToggleButton(top, pos, 8, 24, 24,
+                          "Snap to Grid", images_gridsnap_png,
+                          (Fl_Callback *)checkGridSnap);
   pos += 50;
   gridx = new InputInt(top, pos, 8, 64, 24,
                        "X:",
@@ -865,7 +870,7 @@ void Gui::init()
   pos += 96 + 8;
   trans = new Widget(colors, 8, pos, 96, 24,
                      "Transparency", images_transparency_png, 6, 24,
-                     (Fl_Callback *)checkColor);
+                     (Fl_Callback *)checkTrans);
   pos += 24 + 8;
   blend = new Fl_Choice(8, pos, 96, 24, "");
   blend->tooltip("Blending Mode");
@@ -1301,6 +1306,11 @@ void Gui::checkGrid(ToggleButton *, void *var)
   }
 }
 
+void Gui::checkGridSnap(ToggleButton *, void *var)
+{
+  view->gridsnap = *(int *)var;
+}
+
 void Gui::checkGridX()
 {
   view->gridx = atoi(gridx->value());
@@ -1508,7 +1518,7 @@ void Gui::checkColor(Widget *widget, void *)
   Project::brush->color = makeRgb(r, g, b);
 //  Project::brush->trans = std::pow((double)trans->var, 2.02);
 //  Project::brush->trans = std::pow((double)trans->var, 2.04);
-  Project::brush->trans = trans->var * 16.8;
+//  Project::brush->trans = trans->var * 16.8;
 //  Project::brush->trans = Gamma::unfix(trans->var * 4096);
   Project::brush->blend = blend->value();
 
@@ -1616,7 +1626,9 @@ void Gui::checkSatVal(Widget *, void *)
 
 void Gui::checkTrans(Widget *, void *)
 {
-  checkColor(0, 0);
+  Project::brush->trans = trans->var * 16.8;
+  updateSwatch();
+//  checkColor(0, 0);
 }
 
 void Gui::checkBlend(Widget *, void *)
@@ -1852,6 +1864,11 @@ const char *Gui::getTextInput()
   return text_input->value();
 }
 
+int Gui::getTool()
+{
+  return tool->var;
+}
+
 void Gui::paletteDefault()
 {
   Project::palette->setDefault();
@@ -1956,11 +1973,6 @@ Fl_Menu_Bar *Gui::getMenuBar()
 View *Gui::getView()
 {
   return view;
-}
-
-int Gui::getTool()
-{
-  return tool->var;
 }
 
 int Gui::getClone()

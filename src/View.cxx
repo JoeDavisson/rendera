@@ -179,10 +179,45 @@ int View::handle(int event)
   if(rendering)
     return 0;
 
+  int overscroll = Project::overscroll;
+
   mousex = Fl::event_x() - x();
   mousey = Fl::event_y() - y();
   imgx = mousex / zoom + ox;
   imgy = mousey / zoom + oy;
+
+  switch(Gui::getTool())
+  {
+    case Tool::PAINT:
+      if(gridsnap)
+      {
+        if(imgx % gridx < gridx / 2)
+          imgx -= imgx % gridx;
+        else
+          imgx += gridx - imgx % gridx - 1;
+
+        if(imgy % gridy < gridy / 2)
+          imgy -= imgy % gridy;
+        else
+          imgy += gridy - imgy % gridy - 1;
+
+        imgx += overscroll % gridx;
+        imgy += overscroll % gridy;
+      }
+      break;
+    case Tool::KNIFE:
+      if(gridsnap)
+      {
+        imgx -= imgx % gridx;
+        imgy -= imgy % gridy;
+
+        imgx += overscroll % gridx;
+        imgy += overscroll % gridy;
+      }
+      break;
+    default:
+      break;
+  }
 
   // do it this way to prevent multiple button presses
   button1 = Fl::event_button1() ? 1 : 0;
