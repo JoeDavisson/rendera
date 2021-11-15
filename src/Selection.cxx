@@ -69,7 +69,6 @@ namespace
     if(*y1 > *y2)
       std::swap(*y1, *y2);
 
-/*
     const int gridx = view->gridx;
     const int gridy = view->gridy;
     const int overscroll = Project::overscroll;
@@ -85,14 +84,15 @@ namespace
       *y1 += overscroll;
 
       *x2 -= overscroll;
+      *x2 += 1;
       *x2 -= *x2 % gridx;
-      *x2 += gridx + overscroll - 1;
+      *x2 += overscroll - 1;
 
       *y2 -= overscroll;
+      *y2 += 1;
       *y2 -= *y2 % gridy;
-      *y2 += gridy + overscroll - 1;
+      *y2 += overscroll - 1;
     }
-*/
 
     if(*x1 < Project::bmp->cl)
       *x1 = Project::bmp->cl;

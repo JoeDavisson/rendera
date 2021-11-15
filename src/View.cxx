@@ -189,6 +189,7 @@ int View::handle(int event)
   switch(Gui::getTool())
   {
     case Tool::PAINT:
+    case Tool::KNIFE:
       if(gridsnap)
       {
         imgx -= overscroll;
