@@ -191,18 +191,19 @@ int View::handle(int event)
     case Tool::PAINT:
       if(gridsnap)
       {
+        imgx -= overscroll;
         if(imgx % gridx < gridx / 2)
           imgx -= imgx % gridx;
         else
           imgx += gridx - imgx % gridx - 1;
+        imgx += overscroll;
 
+        imgy -= overscroll;
         if(imgy % gridy < gridy / 2)
           imgy -= imgy % gridy;
         else
           imgy += gridy - imgy % gridy - 1;
-
-        imgx += overscroll % gridx;
-        imgy += overscroll % gridy;
+        imgy += overscroll;
       }
       break;
     default:
