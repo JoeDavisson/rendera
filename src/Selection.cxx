@@ -504,8 +504,20 @@ void Selection::move(View *view)
     const int w = Project::select_bmp->w;
     const int h = Project::select_bmp->h;
 
-    const int x1 = view->imgx - w / 2;
-    const int y1 = view->imgy - h / 2;
+    int x1 = view->imgx - w / 2;
+    int y1 = view->imgy - h / 2;
+
+    if(view->gridsnap)
+    {
+      x1 -= Project::overscroll;
+      x1 -= x1 % view->gridx;
+      x1 += Project::overscroll;
+
+      y1 -= Project::overscroll;
+      y1 -= y1 % view->gridy;
+      y1 += Project::overscroll;
+    }
+
     const int x2 = x1 + w - 1;
     const int y2 = y1 + h - 1;
 
