@@ -119,8 +119,8 @@ namespace
 
     x1 = x1 * zoom - ox;
     y1 = y1 * zoom - oy;
-    x2 = x2 * zoom - ox + zoom;
-    y2 = y2 * zoom - oy + zoom;
+    x2 = x2 * zoom - ox + zoom - 1;
+    y2 = y2 * zoom - oy + zoom - 1;
 
     int c1 = makeRgb(0, 0, 0);
 
@@ -155,7 +155,6 @@ namespace
     backbuf->xorRect(x1 - 1, y1 - 1, x2 + 1, y2 + 1);
     backbuf->rect(x1 - 2, y1 - 2, x2 + 2, y2 + 2, c1, 128);
     backbuf->rect(x1 - 3, y1 - 3, x2 + 3, y2 + 3, c1, 192);
-//    backbuf->xorRect(x1 - 2, y1 - 2, x2 + 2, y2 + 2);
   }
 
   void crop(View *view)
