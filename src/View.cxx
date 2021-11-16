@@ -189,6 +189,36 @@ int View::handle(int event)
   switch(Gui::getTool())
   {
     case Tool::PAINT:
+      if(gridsnap)
+      {
+	if(Project::stroke->type == Stroke::FREEHAND)
+	{
+          imgx -= overscroll;
+          imgx -= imgx % gridx;
+          imgx += overscroll;
+
+          imgy -= overscroll;
+          imgy -= imgy % gridy;
+          imgy += overscroll;
+        }
+        else
+        { 
+          imgx -= overscroll;
+          if(imgx % gridx < gridx / 2)
+            imgx -= imgx % gridx;
+          else
+            imgx += gridx - imgx % gridx - 1;
+          imgx += overscroll;
+
+          imgy -= overscroll;
+          if(imgy % gridy < gridy / 2)
+            imgy -= imgy % gridy;
+          else
+            imgy += gridy - imgy % gridy - 1;
+          imgy += overscroll;
+        }
+      }
+      break;
     case Tool::KNIFE:
       if(gridsnap)
       {
