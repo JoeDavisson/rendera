@@ -104,32 +104,6 @@ namespace
       *y2 = Project::bmp->cb;
   }
 
-/*
-  void drawHandles(Stroke *stroke, int x1, int y1, int x2, int y2, int color)
-  {
-    int d = 8;
-    int s = 16;
-
-    absrect(&x1, &y1, &x2, &y2);
-    Project::map->rect(x1 - 1, y1 - 1, x2 + 1, y2 + 1, color);
-
-    Project::map->hline(x1 - s - 1, y1 - 1, x1 - d - 1, color);
-    Project::map->vline(y1 - s - 1, x1 - 1, y1 - d - 1, color);
-
-    Project::map->hline(x2 + d, y1 - 1, x2 + s, color);
-    Project::map->vline(y1 - s - 1, x2 + 1, y1 - d - 1, color);
-
-    Project::map->hline(x1 - s - 1, y2 + 1, x1 - d - 1, color);
-    Project::map->vline(y2 + d + 1, x1 - 1, y2 + s + 1, color);
-
-    Project::map->hline(x2 + d + 1, y2 + 1, x2 + s + 1, color);
-
-    Project::map->vline(y2 + d + 1, x2 + 1, y2 + s + 1, color);
-
-    stroke->size(x1 - s, y1 - s, x2 + s, y2 + s);
-  }
-*/
-
   void drawHandles(View *view, Stroke *stroke, int x1, int y1, int x2, int y2)
   {
     int d = 8;
@@ -355,18 +329,6 @@ void Selection::push(View *view)
 
     Project::select_bmp->blit(Project::bmp,
                0, 0, x1, y1, w, h);
-    //Project::select_bmp->blit(Project::bmp,
-    //           0, 0, view->imgx - w / 2, view->imgy - h / 2, w, h);
-
-/*
-    for(int y = 0; y < h; y++)
-    {
-      for(int x = 0; x < w; x++)
-      {
-        Project::bmp->setpixelSolid(view->imgx - w / 2 + x, view->imgy - h / 2 + y, Project::select_bmp->getpixel(x, y), Project::brush->trans);
-      }
-    }
-*/
 
     Blend::set(Blend::TRANS);
     view->ignore_tool = true;
@@ -386,19 +348,6 @@ void Selection::drag(View *view)
 
     lastx = view->imgx;
     lasty = view->imgy;
-
-//    view->drawMain(false);
-
-//    stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
-
-/*
-    int temp = Project::brush->color;
-    Project::brush->color = makeRgb(128, 128, 128);
-    stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom, view->bgr_order);
-    Project::brush->color = temp;
-*/
-
-//    view->redraw();
 
     redraw(view);
   }
@@ -468,18 +417,6 @@ void Selection::drag(View *view)
 
     redraw(view);
   }
-/*
-  else if(state == 3)
-  {
-    const int w = Project::select_bmp->w;
-    const int h = Project::select_bmp->h;
-
-    Project::select_bmp->blit(Project::bmp,
-               0, 0, view->imgx - w / 2, view->imgy - h / 2, w, h);
-    view->ignore_tool = true;
-    view->drawMain(true);
-  }
-*/
 
   const int overscroll = Project::overscroll;
   const int x = beginx - overscroll;
@@ -613,8 +550,6 @@ void Selection::redraw(View *view)
     active = false;
     view->drawMain(false);
     drawHandles(view, stroke, beginx, beginy, lastx, lasty);
-//    view->drawMain(false);
-//    stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
     view->redraw();
     active = true;
   }
