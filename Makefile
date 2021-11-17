@@ -1,6 +1,6 @@
 # Rendera Makefile
 #
-# The fltk-1.3.3 source tree must be available in this directory.
+# The fltk-1.3.7 source tree must be available in this directory.
 # Please run "make fltk" first to build the library before running "make".
 
 # you MUST have libxft-dev installed before compiling FLTK on linux
@@ -14,8 +14,8 @@ VERSION="0.2.1"
 #VERSION=$(shell git describe --always)
 
 SRC_DIR=src
-INCLUDE=-I$(SRC_DIR) -Ifltk-1.3.3
-LIBS=$(shell ./fltk-1.3.3/fltk-config --use-images --ldstaticflags)
+INCLUDE=-I$(SRC_DIR) -Ifltk-1.3.7
+LIBS=$(shell ./fltk-1.3.7/fltk-config --use-images --ldstaticflags)
 
 ifeq ($(PLATFORM),linux)
   HOST=
@@ -88,9 +88,9 @@ default: $(OBJ)
 	$(CXX) -o ./$(EXE) $(SRC_DIR)/Main.cxx $(OBJ) $(CXXFLAGS) $(LIBS)
 
 fltk:
-	@cd ./fltk-1.3.3; \
+	@cd ./fltk-1.3.7; \
 	make clean; \
-	./configure --host=$(HOST) --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
+	./configure --host=$(HOST) --enable-xft --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
 	make -j6; \
 	cd ..
 	@echo "FLTK libs built!"

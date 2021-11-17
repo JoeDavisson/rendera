@@ -51,6 +51,7 @@ Button::Button(Fl_Group *g, int x, int y, int w, int h,
 
   image = new Fl_RGB_Image((unsigned char *)bitmap->data, bitmap->w, bitmap->h, 4, 0);
 
+  value(0);
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
 }
