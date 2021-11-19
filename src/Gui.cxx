@@ -1139,10 +1139,10 @@ void Gui::updateRange()
   if(my < 5)
     my = 5;
 
-  if(my > 186)
-     my = 186;
+  if(my > 90)
+     my = 90;
 
-  range->bitmap->rect(mx - 6, my - 6, mx + 6, my + 6, makeRgb(0, 0, 0), 192);
+  range->bitmap->rect(mx - 6, my - 6, mx + 6, my + 6, makeRgb(0, 0, 0), 96);
   range->bitmap->rect(mx - 5, my - 5, mx + 5, my + 5, makeRgb(0, 0, 0), 96);
   range->bitmap->xorRect(mx - 4, my - 4, mx + 4, my + 4);
 
