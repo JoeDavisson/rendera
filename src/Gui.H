@@ -77,6 +77,7 @@ namespace Gui
   void checkColor(Widget *, void *);
   void checkHue(Widget *, void *);
   void checkSatVal(Widget *, void *);
+  void checkTransInput(Widget *, void *);
   void checkTrans(Widget *, void *);
   void checkBlend(Widget *, void *);
   void checkRange(Widget *, void *);

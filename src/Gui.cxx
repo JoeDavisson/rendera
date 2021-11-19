@@ -173,6 +173,7 @@ namespace
   Widget *hue;
   Widget *satval;
   InputText *hexcolor;
+  InputInt *trans_input;
   Widget *trans;
   Fl_Choice *blend;
   Widget *range;
@@ -868,10 +869,23 @@ void Gui::init()
   hue = new Widget(colors, 8, pos, 96, 96, 0, 1, 1, (Fl_Callback *)checkColor);
   satval = new Widget(colors, 32, pos + 24, 48, 48, 0, 1, 1, (Fl_Callback *)checkColor);
   pos += 96 + 8;
+
+  range = new Widget(colors, 8, pos, 96, 96, 0, 1, 1, (Fl_Callback *)checkRange);
+  range_buf = new Bitmap(96, 96);
+  range_buf_small = new Bitmap(24, 24);
+  pos += 96 + 8;
+  new Separator(colors, 4, pos, 106, 2, "");
+  pos += 8;
+  trans_input = new InputInt(colors, 8, pos, 96, 24,
+                       "", (Fl_Callback *)checkTransInput, 0, 255);
+  trans_input->value("0");
+  pos += 24 + 8;
   trans = new Widget(colors, 8, pos, 96, 24,
                      "Transparency", images_transparency_png, 6, 24,
                      (Fl_Callback *)checkTrans);
   pos += 24 + 8;
+  new Separator(colors, 4, pos, 106, 2, "");
+  pos += 8;
   blend = new Fl_Choice(8, pos, 96, 24, "");
   blend->tooltip("Blending Mode");
   blend->textsize(10);
@@ -888,11 +902,6 @@ void Gui::init()
   blend->value(0);
   blend->callback((Fl_Callback *)checkColor);
   pos += 24 + 8;
-  new Separator(colors, 4, pos, 106, 2, "");
-  pos += 8;
-  range = new Widget(colors, 8, pos, 96, 192, 0, 1, 1, (Fl_Callback *)checkRange);
-  range_buf = new Bitmap(96, 192);
-  range_buf_small = new Bitmap(24, 48);
 //  alpha_mask = new CheckBox(colors, 8, pos, 96, 24, "Alpha Mask", (Fl_Callback *)checkAlphaMask);
 //  alpha_mask->labelsize(13);
 //  pos += 24 + 8;
@@ -1095,10 +1104,10 @@ void Gui::updateRange()
 
   Blend::rgbToHsv(r, g, b, &h, &s, &v);
 
-  for(int y = 0; y < 48; y++)
+  for(int y = 0; y < 24; y++)
   {
     int *p = range_buf_small->row[y];
-    const int hh = (h + y * 4) % 1536;
+    const int hh = (h + y * 8) % 1536;
 
     for(int x = 0; x < 24; x++)
     {
@@ -1624,9 +1633,23 @@ void Gui::checkSatVal(Widget *, void *)
   checkColor(0, 0);
 }
 
+void Gui::checkTransInput(Widget *, void *)
+{
+  Project::brush->trans = atoi(trans_input->value());
+  trans->var = Project::brush->trans / 16.8;
+  trans->redraw();
+  updateSwatch();
+//  checkColor(0, 0);
+}
+
+
 void Gui::checkTrans(Widget *, void *)
 {
   Project::brush->trans = trans->var * 16.8;
+  char s[16];
+  sprintf(s, "%d", Project::brush->trans);
+  trans_input->value(s);
+  trans_input->redraw();
   updateSwatch();
 //  checkColor(0, 0);
 }
@@ -1651,8 +1674,8 @@ void Gui::checkRange(Widget *widget, void *)
   if(my < 1)
     my = 1;
 
-  if(my > 190)
-     my = 190;
+  if(my > 94)
+     my = 94;
 
   Project::brush->color = range_buf->getpixel(mx, my);
   range_buf->blit(range->bitmap, 0, 0, 0, 0, range_buf->w, range_buf->h);
@@ -1666,8 +1689,8 @@ void Gui::checkRange(Widget *widget, void *)
   if(my < 5)
     my = 5;
 
-  if(my > 186)
-     my = 186;
+  if(my > 90)
+     my = 90;
 
   range->bitmap->rect(mx - 6, my - 6, mx + 6, my + 6, makeRgb(0, 0, 0), 192);
   range->bitmap->rect(mx - 5, my - 5, mx + 5, my + 5, makeRgb(0, 0, 0), 96);

@@ -192,18 +192,9 @@ int View::handle(int event)
     case Tool::PAINT:
       if(gridsnap)
       {
-	if(Project::stroke->type == Stroke::FREEHAND)
+	if((Project::stroke->type != Stroke::FREEHAND)
+          && (Project::stroke->type != Stroke::REGION))
 	{
-          imgx -= overscroll;
-          imgx -= imgx % gridx;
-          imgx += overscroll;
-
-          imgy -= overscroll;
-          imgy -= imgy % gridy;
-          imgy += overscroll;
-        }
-        else
-        { 
           imgx -= overscroll;
           if(imgx % gridx < gridx / 2)
             imgx -= imgx % gridx;
