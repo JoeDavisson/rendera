@@ -586,6 +586,29 @@ namespace InverseFFT
   }
 }
 
+namespace ClearAlpha
+{
+  void apply()
+  {
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = bmp->row[y] + bmp->cl;
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        *p++ |= 0xFF000000;
+      }
+    }
+  }
+
+  void begin()
+  {
+    pushUndo();
+    apply();
+  }
+}
+
+
 void FX2::init()
 {
   Marble::init();
@@ -594,6 +617,11 @@ void FX2::init()
 void FX2::marble()
 {
   Marble::begin();
+}
+
+void FX2::clearAlpha()
+{
+  ClearAlpha::begin();
 }
 
 void FX2::forwardFFT()

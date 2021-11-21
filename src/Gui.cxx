@@ -430,8 +430,11 @@ void Gui::init()
     (Fl_Callback *)FX::paletteColors, 0, 0);
   menubar->add("F&X/Color/Invert", 0,
     (Fl_Callback *)FX::invert, 0, 0);
-  menubar->add("F&X/Color/Invert Alpha", 0,
+
+  menubar->add("F&X/Alpha/Invert", 0,
     (Fl_Callback *)FX::invertAlpha, 0, 0);
+  menubar->add("F&X/Alpha/Clear", 0,
+    (Fl_Callback *)FX2::clearAlpha, 0, 0);
 
   menubar->add("F&X/Filters/Gaussian Blur...", 0,
     (Fl_Callback *)FX::gaussianBlur, 0, 0);

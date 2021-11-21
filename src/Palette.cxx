@@ -182,7 +182,7 @@ void Palette::fillTable()
   delete table;
   table = new Octree();
 
-  const int step = 8;
+  const int step = 4;
 
   for(int b = 0; b <= 256 - step; b += step)
   {
