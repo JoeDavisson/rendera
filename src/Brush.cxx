@@ -42,7 +42,7 @@ Brush::Brush()
   texture_turb = 0;
   average_edge = 0;
   blend = 0;
-  color = makeRgb(255, 0, 0);
+  color = makeRgb(255, 255, 255);
   trans = 0;
   aa = 0;
 //  alpha_mask = false;
