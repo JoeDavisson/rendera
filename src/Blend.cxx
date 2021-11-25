@@ -187,28 +187,25 @@ int Blend::luminosity(const int c1, const int c2, const int t)
 
 int Blend::keepLum(const int c, const int lum)
 {
-/*
+  int r, g, b;
   float y, cb, cr;
-  rgba_type rgba1 = getRgba(c);
+
+  const rgba_type rgba1 = getRgba(c);
   rgbToYcc(rgba1.r, rgba1.g, rgba1.b, &y, &cb, &cr);
   yccToRgb(lum, cb, cr, &r, &g, &b);
 
-  return makeRgba(r, g, b, rgba1.a);
-  int c1 = makeRgba(r, g, b, rgba1.a);
-*/
-
-  // these have to be in order of importance in the luminosity calc: G, R, B
-  const rgba_type rgba = getRgba(c);
+  const rgba_type rgba = getRgba(makeRgba(r, g, b, rgba1.a));
   int n[3];
+
   n[1] = rgba.r;
   n[0] = rgba.g;
   n[2] = rgba.b;
 
-  // iterate to find similar color with same luminosity
+  // iterate to exact luminosity
   int src = getlUnpacked(n[1], n[0], n[2]);
   int count = 0;
 
-  while(src < lum && count < 1000)
+  while(src < lum)
   {
     for(int i = 0; i < 3; i++)
     {
@@ -226,7 +223,7 @@ int Blend::keepLum(const int c, const int lum)
 
   count = 0;
 
-  while(src > lum && count < 1000)
+  while(src > lum)
   {
     for(int i = 0; i < 3; i++)
     {
