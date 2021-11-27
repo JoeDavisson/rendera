@@ -319,7 +319,7 @@ namespace
         {
           const int dx = (x - *cx++);
           const int dy = (y - *cy++);
-          int temp2 = dx * dx + dy * dy;
+          const int temp2 = dx * dx + dy * dy;
 
           if(temp2 < temp1)
           {
@@ -775,9 +775,9 @@ namespace
         {
           const int c = bmp->getpixel(x, y);
           rgba_type rgba = getRgba(c);
-          r += Gamma::fix(rgba.r);
-          g += Gamma::fix(rgba.g);
-          b += Gamma::fix(rgba.b);
+          r += rgba.r;
+          g += rgba.g;
+          b += rgba.b;
           count++; 
         }
       }
@@ -789,10 +789,6 @@ namespace
     r /= count;
     g /= count;
     b /= count;
-
-    r = Gamma::unfix(r);
-    g = Gamma::unfix(g);
-    b = Gamma::unfix(b);
 
     const int average = makeRgb(r, g, b);
 

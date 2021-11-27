@@ -902,6 +902,7 @@ void Gui::init()
   blend->add("Alpha Subtract");
   blend->add("Smooth");
   blend->add("Sharpen");
+  blend->add("Test");
   blend->value(0);
   blend->callback((Fl_Callback *)checkColor);
   pos += 24 + 8;
@@ -1526,7 +1527,8 @@ void Gui::checkColor(Widget *widget, void *)
 
   int r, g, b;
 
-  Blend::hsvToRgb(h, s, v, &r, &g, &b);
+  //Blend::hsvToRgb(h, s, v, &r, &g, &b);
+  Blend::rybToRgb(h, s, v, &r, &g, &b);
   Project::brush->color = makeRgb(r, g, b);
 //  Project::brush->trans = std::pow((double)trans->var, 2.02);
 //  Project::brush->trans = std::pow((double)trans->var, 2.04);
@@ -1535,11 +1537,12 @@ void Gui::checkColor(Widget *widget, void *)
   Project::brush->blend = blend->value();
 
   // hue circle
-  hue->bitmap->clear(blendFast(convertFormat(getFltkColor(FL_BACKGROUND_COLOR),true), makeRgb(0, 0, 0), 192));
+  hue->bitmap->clear(blendFast(convertFormat(getFltkColor(FL_BACKGROUND_COLOR), true), makeRgb(0, 0, 0), 192));
 
   for(int i = 1; i < 1536; i++)
   {
-    Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
+    //Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
+    Blend::rybToRgb(i, 255, 255, &r, &g, &b);
 
     float angle = ((3.14159 * 2) / 1536) * i;
     int x1 = 48 + 46 * std::cos(angle);
@@ -1553,7 +1556,8 @@ void Gui::checkColor(Widget *widget, void *)
 
   for(int i = 1; i < 1536; i++)
   {
-    Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
+    //Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
+    Blend::rybToRgb(i, 255, 255, &r, &g, &b);
 
     float angle = ((3.14159 * 2) / 1536) * i;
     int x1 = 48 + 45 * std::cos(angle);
@@ -1567,7 +1571,8 @@ void Gui::checkColor(Widget *widget, void *)
 
   for(int i = 1; i < 1536; i++)
   {
-    Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
+    //Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
+    Blend::rybToRgb(i, 255, 255, &r, &g, &b);
 
     float angle = ((3.14159 * 2) / 1536) * i;
     int x1 = 48 + 44 * std::cos(angle);
@@ -1582,7 +1587,8 @@ void Gui::checkColor(Widget *widget, void *)
   const int x1 = 48 + 41 * std::cos(mouse_angle);
   const int y1 = 48 + 41 * std::sin(mouse_angle);
 
-  Blend::hsvToRgb(h, 255, 255, &r, &g, &b);
+  //Blend::hsvToRgb(h, 255, 255, &r, &g, &b);
+  Blend::rybToRgb(h, 255, 255, &r, &g, &b);
   hue->bitmap->rect(x1 - 6, y1 - 6, x1 + 6, y1 + 6, makeRgb(0, 0, 0), 192);
   hue->bitmap->rect(x1 - 5, y1 - 5, x1 + 5, y1 + 5, makeRgb(0, 0, 0), 96);
   hue->bitmap->xorRect(x1 - 4, y1 - 4, x1 + 4, y1 + 4);
@@ -1597,7 +1603,8 @@ void Gui::checkColor(Widget *widget, void *)
   {
     for(int x = 0; x < 48; x++)
     {
-      Blend::hsvToRgb(h, x * 5.43, y * 5.43, &r, &g, &b);
+      //Blend::hsvToRgb(h, x * 5.43, y * 5.43, &r, &g, &b);
+      Blend::rybToRgb(h, x * 5.43, y * 5.43, &r, &g, &b);
       satval->bitmap->setpixelSolid(x, y, makeRgb(r, g, b), 0);
     }
   }

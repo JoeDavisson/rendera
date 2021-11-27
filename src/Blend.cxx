@@ -80,6 +80,9 @@ void Blend::set(const int mode)
     case TRANS_NO_ALPHA:
       current_blend = transNoAlpha;
       break;
+    case TEST:
+      current_blend = test;
+      break;
     default:
       current_blend = trans;
       break;
@@ -189,12 +192,13 @@ int Blend::keepLum(const int c, const int lum)
 {
   int r, g, b;
   float y, cb, cr;
-
   const rgba_type rgba1 = getRgba(c);
+
   rgbToYcc(rgba1.r, rgba1.g, rgba1.b, &y, &cb, &cr);
   yccToRgb(lum, cb, cr, &r, &g, &b);
 
   const rgba_type rgba = getRgba(makeRgba(r, g, b, rgba1.a));
+//  const rgba_type rgba = getRgba(c);
   int n[3];
 
   n[1] = rgba.r;
@@ -205,7 +209,7 @@ int Blend::keepLum(const int c, const int lum)
   int src = getlUnpacked(n[1], n[0], n[2]);
   int count = 0;
 
-  while(src < lum)
+  while(src < lum && count < 1000)
   {
     for(int i = 0; i < 3; i++)
     {
@@ -223,7 +227,7 @@ int Blend::keepLum(const int c, const int lum)
 
   count = 0;
 
-  while(src > lum)
+  while(src > lum && count < 1000)
   {
     for(int i = 0; i < 3; i++)
     {
@@ -337,8 +341,6 @@ int Blend::smoothLuminosity(const int c1, const int, const int t)
 
 int Blend::sharpen(const int c1, const int, const int t)
 {
-//  int lum = 0;
-
   int r = 0, g = 0, b = 0, a = 0;
 
   for(int j = 0; j < 3; j++)
@@ -374,6 +376,31 @@ int Blend::fast(const int c1, const int c2, const int t)
 int Blend::invert(const int c1, const int, const int)
 {
   return makeRgba(255 - getr(c1), 255 - getg(c1), 255 - getb(c1), geta(c1));
+}
+
+int Blend::test(const int c1, const int c2, const int t)
+{
+  rgba_type rgba1 = getRgba(c1);
+  rgba_type rgba2 = getRgba(c2);
+
+  if(rgba1.r > rgba1.g && rgba1.r > rgba1.b)
+    rgba1.r = 0;
+  else if(rgba1.g > rgba1.b && rgba1.g > rgba1.r)
+    rgba1.g = 0;
+  else if(rgba1.b > rgba1.r && rgba1.b > rgba1.g)
+    rgba1.b = 0;
+
+  if(rgba2.r > rgba2.g && rgba2.r > rgba2.b)
+    rgba2.r = 0;
+  else if(rgba2.g > rgba2.b && rgba2.g > rgba2.r)
+    rgba2.g = 0;
+  else if(rgba2.b > rgba2.r && rgba2.b > rgba2.g)
+    rgba2.b = 0;
+
+  return makeRgba(rgba2.r + (t * (rgba1.r - rgba2.r)) / 255,
+                  rgba2.g + (t * (rgba1.g - rgba2.g)) / 255,
+                  rgba2.b + (t * (rgba1.b - rgba2.b)) / 255,
+                  rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
 }
 
 // integer-based RGB<->HSV conversions use the following ranges:
@@ -466,21 +493,53 @@ void Blend::hsvToRgb(const int h, const int s, const int v, int *r, int *g, int 
   }
 }
 
-void Blend::yccToRgb(const float y, const float cb, const float cr, int *r, int *g, int *b)
-{
-    *r  = y +                       + (cr - 128) *  1.40200;
-    *g  = y + (cb - 128) * -0.34414 + (cr - 128) * -0.71414;
-    *b  = y + (cb - 128) *  1.77200;
-
-    *r = clamp(*r, 255);
-    *g = clamp(*g, 255);
-    *b = clamp(*b, 255);
-}
-
+// from JFIF specification: https://www.w3.org/Graphics/JPEG/jfif3.pdf
 void Blend::rgbToYcc(const int r, const int g, const int b, float *y, float *cb, float *cr)
 {
-    *y  = r *  0.301 + g *  0.586 + b *  0.113;
-    *cb = r * -0.168 + g * -0.332 + b *  0.500 + 128;
-    *cr = r *  0.500 + g * -0.417 + b * -0.082 + 128;
+  *y  = r * 0.299 + g * 0.587 + b * 0.114;
+  *cb = r * -0.1687 + g * -0.3313 + b * 0.500 + 128;
+  *cr = r * 0.500 + g * -0.4187 + b * -0.0813 + 128;
 }
+
+void Blend::yccToRgb(const float y, const float cb, const float cr, int *r, int *g, int *b)
+{
+  *r = y + (cr - 128) * 1.402;
+  *g = y + (cb - 128) * -0.34414 + (cr - 128) * -0.71414;
+  *b = y + (cb - 128) * 1.772;
+
+  *r = clamp(*r, 255);
+  *g = clamp(*g, 255);
+  *b = clamp(*b, 255);
+}
+
+void Blend::rybToRgb(int h, int s, int v, int *r, int *g, int *b)
+{
+  switch(h / 256)
+  {
+    case 0:
+      h /= 2;
+      break;
+    case 1:
+      h = 128 + (h - 256) / 2;
+      break;
+    case 2:
+      h -= 256;
+      break;
+    case 3:
+      h = 512 + (h - 768) * 2;
+      break;
+    case 4:
+      break;
+    case 5:
+      break;
+  }
+
+  Blend::hsvToRgb(h, s, v, r, g, b);
+}
+
+
+
+
+
+
 

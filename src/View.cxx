@@ -272,7 +272,7 @@ int View::handle(int event)
           window()->cursor(FL_CURSOR_CROSS);
           break;
         default:
-          window()->cursor(FL_CURSOR_CROSS);
+          window()->cursor(FL_CURSOR_DEFAULT);
           break;
       }
 
