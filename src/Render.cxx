@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Bitmap.H"
 #include "Brush.H"
-#include "DitherMatrix.H"
 #include "FilterMatrix.H"
 #include "Fractal.H"
 #include "Gamma.H"
@@ -156,36 +155,15 @@ namespace
   // solid
   void renderSolid()
   {
-//    int z = Gui::getDitherPattern();
-//    if(z < 0 || z > 7)
-//      z = 0;
-
-//    const int relative = Gui::getDitherRelative();
-//    int xx, yy;
-
     for(int y = stroke->y1; y <= stroke->y2; y++)
     {
       unsigned char *p = map->row[y] + stroke->x1;
-//      if(relative)
-//        yy = y - stroke->y1;
-//      else
-//        yy = y;
 
       for(int x = stroke->x1; x <= stroke->x2; x++)
       {
-//        if(relative)
-//          xx = x - stroke->x1;
-//        else
-//          xx = x;
-
-//        if(*p++ && (DitherMatrix::pattern[z][yy & 3][xx & 3] == 1))
-//           bmp->setpixel(x, y, color, trans);
         if(*p++)
           bmp->setpixel(x, y, color, trans);
       }
-
-//      if(update(y) < 0)
-//        break;
     }
   }
 

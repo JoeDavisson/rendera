@@ -706,7 +706,6 @@ void Bitmap::swapRedBlue()
   }
 }
 
-// copies part of one image to another, performs clipping
 void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 {
   if((sx >= w) || (sy >= h) || (dx > dest->cr) || (dy > dest->cb))
@@ -773,7 +772,72 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
   }
 }
 
-// same as blit, but draws using the current blending mode and transparency
+void Bitmap::transBlit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
+{
+  if((sx >= w) || (sy >= h) || (dx > dest->cr) || (dy > dest->cb))
+    return;
+
+  if(sx < 0)
+  {
+    ww += sx;
+    dx -= sx;
+    sx = 0;
+  }
+
+  if(sy < 0)
+  {
+    hh += sy;
+    dy -= sy;
+    sy = 0;
+  }
+
+  if((sx + ww) > w)
+    ww = w - sx;
+
+  if((sy + hh) > h)
+    hh = h - sy;
+
+  if(dx < dest->cl)
+  {
+    dx -= dest->cl;
+    ww += dx;
+    sx -= dx;
+    dx = dest->cl;
+  }
+
+  if(dy < dest->ct)
+  {
+    dy -= dest->ct;
+    hh += dy;
+    sy -= dy;
+    dy = dest->ct;
+  }
+
+  if((dx + ww - 1) > dest->cr)
+    ww = dest->cr - dx + 1;
+
+  if((dy + hh - 1) > dest->cb)
+    hh = dest->cb - dy + 1;
+
+  if(ww < 1 || hh < 1)
+    return;
+
+  int sy1 = sy;
+  int dy1 = dy;
+
+  for(int y = 0; y < hh; y++)
+  {
+    int *sx1 = sx + row[sy1];
+    int *dx1 = dx + dest->row[dy1];
+
+    for(int x = 0; x < ww; x++, sx1++, dx1++)
+      *dx1 = blendFast(*dx1, *sx1, 255 - geta(*sx1));
+
+    sy1++;
+    dy1++;
+  }
+}
+
 void Bitmap::drawBrush(Bitmap *dest,
                        int sx, int sy, int dx, int dy, int ww, int hh)
 {

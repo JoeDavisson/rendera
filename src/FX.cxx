@@ -2519,7 +2519,6 @@ namespace ConvolutionMatrix
     Items::mode->add("Edge Detect");
     Items::mode->add("Emboss");
     Items::mode->add("Emboss (Inverse)");
-//    Items::mode->add("Test");
     Items::mode->value(0);
     int ww, hh;
     Items::mode->measure_label(ww, hh);
@@ -2758,11 +2757,6 @@ void FX::init()
   ConvolutionMatrix::init();
   Sobel::init();
   Painting::init();
-}
-
-void FX::test()
-{
-  Test::begin();
 }
 
 void FX::normalize()

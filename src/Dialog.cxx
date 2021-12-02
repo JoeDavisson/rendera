@@ -617,7 +617,6 @@ namespace Editor
     setHsv(true);
     updateHexColor();
     Gui::updateColor(c);
-    Gui::updateRange();
   }
 
   void insertColor()

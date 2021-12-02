@@ -39,6 +39,7 @@ public:
   void drawMove();
   void drawMain(bool);
   void drawGrid();
+  void drawCursor();
   void drawCloneCursor();
   void beginMove();
   void move();

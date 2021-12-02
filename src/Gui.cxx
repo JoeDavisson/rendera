@@ -39,7 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "CheckBox.H"
 #include "Clone.H"
 #include "Dialog.H"
-#include "DitherMatrix.H"
 #include "FX.H"
 #include "FX2.H"
 #include "File.H"
@@ -128,8 +127,6 @@ namespace
   Widget *paint_texture_marb;
   Widget *paint_texture_turb;
   Widget *paint_average_edge;
-//  Widget *paint_dither_pattern;
-//  CheckBox *paint_dither_relative;
   Fl_Choice *paint_mode;
   Widget *getcolor_color;
   InputInt *fill_feather;
@@ -151,7 +148,6 @@ namespace
   RepeatButton *offset_left;
   RepeatButton *offset_right;
   RepeatButton *offset_down;
-//  Button *offset_undo;
 
   Fl_Hold_Browser *font_browse;
   InputInt *font_size;
@@ -159,14 +155,8 @@ namespace
   CheckBox *text_smooth;
 
   // palette
-//  Palette *undo_palette;
-//  bool begin_palette_undo = false;
   Widget *palette_swatches;
   Fl_Button *palette_editor;
-//  Fl_Button *palette_insert;
-//  Fl_Button *palette_delete;
-//  Fl_Button *palette_replace;
-//  Fl_Button *palette_undo;
 
   // colors
   Widget *swatch;
@@ -176,10 +166,6 @@ namespace
   InputInt *trans_input;
   Widget *trans;
   Fl_Choice *blend;
-  Widget *range;
-  Bitmap *range_buf;
-  Bitmap *range_buf_small;
-//  CheckBox *alpha_mask;
 
   // bottom
   ToggleButton *wrap;
@@ -282,25 +268,6 @@ public:
           case FL_Up:
             view->scroll(3, 64);
             break;
-/*
-          case '1':
-          case '2':
-          case '3':
-          case '4':
-          case '5':
-          case '6':
-          case '7':
-          case '8':
-            trans->var = (key - '1') * 2;
-            trans->do_callback();
-            colors->redraw();
-            break;
-          case '9':
-            trans->var = 15;
-            trans->do_callback();
-            colors->redraw();
-            break;
-*/
           case '1':
             zoom_fit->var = 0;
             zoom_fit->redraw();
@@ -410,8 +377,6 @@ void Gui::init()
   menubar->add("&Palette/&Editor... (E)", 0,
     (Fl_Callback *)Dialog::editor, 0, 0);
 
-//  menubar->add("F&X/Test", 0,
-//    (Fl_Callback *)FX::test, 0, 0);
   menubar->add("F&X/Color/Normalize", 0,
     (Fl_Callback *)FX::normalize, 0, 0);
   menubar->add("F&X/Color/Equalize", 0,
@@ -544,7 +509,7 @@ void Gui::init()
   top->end();
 
   // bottom
-  bottom = new Group(160, window->h() - status->h() - 40, window->w() - 272 - 80, 40, "");
+  bottom = new Group(160, window->h() - status->h() - 40, window->w() - 304 - 80, 40, "");
   pos = 8;
   wrap = new ToggleButton(bottom, pos, 8, 24, 24,
                           "Wrap Edges", images_wrap_png,
@@ -662,13 +627,6 @@ void Gui::init()
                           "Edge", images_edge_png, 12, 24,
                           (Fl_Callback *)checkPaintAverageEdge);
   pos += 24 + 8;
-//  paint_dither_pattern = new Widget(paint, 8, pos, 96, 48,
-//                                    "Dither Pattern", 24, 24,
-//                                    (Fl_Callback *)0);
-//  pos += 48 + 8;
-//  paint_dither_relative = new CheckBox(paint, 12, pos, 16, 16, "Relative", 0);
-//  paint_dither_relative->center();
-  pos += 16 + 8;
   paint->resizable(0);
   paint->end();
 
@@ -803,96 +761,54 @@ void Gui::init()
   fill->end();
 
   // palette
-  palette = new Group(window->w() - 112 - 80, top->h() + menubar->h(),
+  palette = new Group(window->w() - 80, top->h() + menubar->h(),
                     80, window->h() - top->h() - menubar->h() - status->h(),
                     "Palette");
   pos = 28;
-//  palette_swatches_border = new Fl_Box(FL_FLAT_BOX, palette->x() + 7, palette->y() + pos - 1, 66, 258, "");
-//  palette_swatches_border->color(FL_BLACK);
-
   palette_swatches = new Widget(palette, 8, pos, 64, 256,
                        0, 8, 8,
                        (Fl_Callback *)checkPaletteSwatches);
-/*
-  palette = new Group(window->w() - 112 - 80, top->h() + menubar->h(),
-                    80, window->h() - top->h() - menubar->h() - status->h(),
-                    "Palette");
-  pos = 20;
-  palette_swatches = new Widget(palette, 8, pos, 64, 256,
-                       0, 8, 8,
-                       (Fl_Callback *)checkPaletteSwatches);
-*/
   pos += 256 + 8;
   palette_editor = new Fl_Button(palette->x() + 8, palette->y() + pos, 64, 24, "Editor...");
   palette_editor->callback((Fl_Callback *)Dialog::editor);
   palette_editor->labelsize(12);
 
-/*  palette_insert = new Fl_Button(palette->x() + 8, palette->y() + pos,
-                                 28, 24, "+"); 
-  palette_insert->tooltip("Insert");
-  palette_insert->callback((Fl_Callback *)checkPaletteInsert);
-
-  palette_delete = new Fl_Button(palette->x() + 44, palette->y() + pos,
-                                 28, 24, "-"); 
-  palette_delete->tooltip("Delete");
-  palette_delete->callback((Fl_Callback *)checkPaletteDelete);
-
-  pos += 24 + 8;
-
-  palette_replace = new Fl_Button(palette->x() + 8, palette->y() + pos,
-                                 64, 24, "Replace");
-  palette_replace->callback((Fl_Callback *)checkPaletteReplace);
-  palette_replace->labelsize(12);
-
-  pos += 24 + 8;
-
-  palette_undo = new Fl_Button(palette->x() + 8, palette->y() + pos,
-                                 64, 24, "Undo");
-  palette_undo->callback((Fl_Callback *)checkPaletteUndo);
-  palette_undo->labelsize(12);
-*/
-
   palette->resizable(0);
   palette->end();
 
   // colors
-  colors = new Group(window->w() - 112, top->h() + menubar->h(),
-                    112, window->h() - top->h() - menubar->h() - status->h(),
+  colors = new Group(window->w() - 144 - 80, top->h() + menubar->h(),
+                    144, window->h() - top->h() - menubar->h() - status->h(),
                     "Colors");
   pos = 28;
-  swatch = new Widget(colors, 8, pos, 96, 48, "Paint Color", 0, 0, 0);
+  swatch = new Widget(colors, 8, pos, 128, 48, "Paint Color", 0, 0, 0);
   pos += 48 + 8;
-  hexcolor = new InputText(colors, 40, pos, 64, 24, "Hex:",
+  hexcolor = new InputText(colors, 40, pos, 96, 24, "Hex:",
                            (Fl_Callback *)checkHexColor);
   hexcolor->maximum_size(6);
   hexcolor->textfont(FL_COURIER);
   hexcolor->textsize(14);
   pos += 24 + 8;
   // satval overlaps the hue color wheel
-  hue = new Widget(colors, 8, pos, 96, 96, 0, 1, 1, (Fl_Callback *)checkColor);
-  satval = new Widget(colors, 32, pos + 24, 48, 48, 0, 1, 1, (Fl_Callback *)checkColor);
-  pos += 96 + 8;
-
-  range = new Widget(colors, 8, pos, 96, 96, 0, 1, 1, (Fl_Callback *)checkRange);
-  range_buf = new Bitmap(96, 96);
-  range_buf_small = new Bitmap(24, 24);
-  pos += 96 + 8;
-  new Separator(colors, 4, pos, 106, 2, "");
+  hue = new Widget(colors, 8, pos, 128, 128, 0, 1, 1, (Fl_Callback *)checkColor);
+  satval = new Widget(colors, 40, pos + 32, 64, 64, 0, 1, 1, (Fl_Callback *)checkColor);
+  pos += 128 + 8;
+  new Separator(colors, 4, pos, 138, 2, "");
   pos += 8;
-  trans_input = new InputInt(colors, 8, pos, 96, 24,
+  trans_input = new InputInt(colors, 8, pos, 128, 24,
                        "", (Fl_Callback *)checkTransInput, 0, 255);
   trans_input->value("0");
   pos += 24 + 8;
-  trans = new Widget(colors, 8, pos, 96, 24,
-                     "Transparency", images_transparency_png, 6, 24,
+  trans = new Widget(colors, 8, pos, 128, 24,
+                     "Transparency", images_transparency_png, 4, 24,
                      (Fl_Callback *)checkTrans);
   pos += 24 + 8;
-  new Separator(colors, 4, pos, 106, 2, "");
+  new Separator(colors, 4, pos, 138, 2, "");
   pos += 8;
-  blend = new Fl_Choice(8, pos, 96, 24, "");
+  blend = new Fl_Choice(8, pos, 128, 24, "");
   blend->tooltip("Blending Mode");
   blend->textsize(10);
-  blend->resize(colors->x() + 8, colors->y() + pos, 96, 24);
+  blend->resize(colors->x() + 8, colors->y() + pos, 128, 24);
   blend->add("Normal");
   blend->add("Lighten");
   blend->add("Darken");
@@ -902,19 +818,15 @@ void Gui::init()
   blend->add("Alpha Subtract");
   blend->add("Smooth");
   blend->add("Sharpen");
-  blend->add("Test");
   blend->value(0);
   blend->callback((Fl_Callback *)checkColor);
   pos += 24 + 8;
-//  alpha_mask = new CheckBox(colors, 8, pos, 96, 24, "Alpha Mask", (Fl_Callback *)checkAlphaMask);
-//  alpha_mask->labelsize(13);
-//  pos += 24 + 8;
   colors->resizable(0);
   colors->end();
 
   // middle
   middle = new Fl_Group(160, top->h() + menubar->h(),
-                        window->w() - 272 - 80, window->h() - (menubar->h() + top->h() + bottom->h() + status->h()));
+                        window->w() - 304 - 80, window->h() - (menubar->h() + top->h() + bottom->h() + status->h()));
   middle->box(FL_FLAT_BOX);
   view = new View(middle, 0, 0, middle->w(), middle->h(), "View");
   middle->resizable(view);
@@ -932,8 +844,8 @@ void Gui::init()
   left->end();
 
   // container for right panels
-  right = new Fl_Group(window->w() - 112 - 80, top->h() + menubar->h(),
-                            112 + 80, window->h() - (menubar->h() + top->h() + bottom->h()));
+  right = new Fl_Group(window->w() - 144 - 80, top->h() + menubar->h(),
+                            144 + 80, window->h() - (menubar->h() + top->h() + bottom->h()));
   right->add(palette);
   right->add(colors);
 
@@ -970,25 +882,6 @@ void Gui::init()
   paint_average_edge->var = 2;
   paint_average_edge->do_callback();
 
-  // create dither pattern image from data in DitherMatrix.H
-/*
-  paint_dither_pattern->bitmap->clear(makeRgb(0, 0, 0));
-
-  for(int z = 0; z < 8; z++)
-  {
-    for(int y = 0; y < 8; y++)
-    {
-      const int yy = (z / 4) * 24 + y * 3;
-      for(int x = 0; x < 8; x++)
-      {
-        const int xx = (z % 4) * 24 + x * 3;
-        if(DitherMatrix::pattern[z][(y & 3)][(x & 3)] == 1)
-          paint_dither_pattern->bitmap->rectfill(xx, yy, xx + 2, yy + 2,
-                                         makeRgb(208, 208, 208), 0);
-      }
-    }
-  }
-*/
 /*
   // fix certain icons if using a light theme
   if(Project::theme == Project::THEME_LIGHT)
@@ -1064,10 +957,10 @@ void Gui::updateColor(int c)
   Blend::rgbToHsv(r, g, b, &h, &s, &v);
 
   float angle = ((3.14159 * 2) / 1536) * h;
-  int mx = 48 + 41 * std::cos(angle);
-  int my = 48 + 41 * std::sin(angle);
-  hue->var = mx + 96 * my;
-  satval->var = (int)(s / 5.42) + 48 * (int)(v / 5.42);
+  int mx = 64 + 56 * std::cos(angle);
+  int my = 64 + 56 * std::sin(angle);
+  hue->var = mx + 128 * my;
+  satval->var = (int)(s / 4.05) + 64 * (int)(v / 4.05);
 
   hue->do_callback();
 
@@ -1096,61 +989,6 @@ void Gui::updateSwatch()
   swatch->bitmap->rect(0, 0, swatch->bitmap->w - 1, swatch->bitmap->h - 1,
                        makeRgb(0, 0, 0), 0);
   swatch->redraw();
-}
-
-void Gui::updateRange()
-{
-  int c = Project::brush->color;
-  int r = getr(c);
-  int g = getg(c);
-  int b = getb(c);
-  int h, s, v;
-
-  Blend::rgbToHsv(r, g, b, &h, &s, &v);
-
-  for(int y = 0; y < 24; y++)
-  {
-    int *p = range_buf_small->row[y];
-    const int hh = (h + y * 8) % 1536;
-
-    for(int x = 0; x < 24; x++)
-    {
-      int vv = v + x * 4;
-
-      vv = clamp(vv, 255);
-
-      Blend::hsvToRgb(hh, s, vv, &r, &g, &b);
-      //*p++ = Blend::keepLum(makeRgb(r, g, b), x * 2.69f);
-      *p++ = Blend::keepLum(makeRgb(r, g, b), x * 11.09f);
-    }
-  }
-
-  range_buf_small->scale(range_buf);
-  range_buf->rect(0, 0, range->bitmap->w - 1, range->bitmap->h - 1,
-                       makeRgb(0, 0, 0), 0);
-  range_buf->blit(range->bitmap, 0, 0, 0, 0, range_buf->w, range_buf->h);
-
-  int pos = range->var;
-  int mx = pos % 96;
-  int my = pos / 96;
-
-  if(mx < 5)
-    mx = 5;
-
-  if(mx > 90)
-     mx = 90;
-
-  if(my < 5)
-    my = 5;
-
-  if(my > 90)
-     my = 90;
-
-  range->bitmap->rect(mx - 6, my - 6, mx + 6, my + 6, makeRgb(0, 0, 0), 96);
-  range->bitmap->rect(mx - 5, my - 5, mx + 5, my + 5, makeRgb(0, 0, 0), 96);
-  range->bitmap->xorRect(mx - 4, my - 4, mx + 4, my + 4);
-
-  range->redraw();
 }
 
 void Gui::updateGetColor(int c)
@@ -1508,32 +1346,28 @@ void Gui::checkTool(Widget *, void *var)
 void Gui::checkColor(Widget *widget, void *)
 {
   int pos = hue->var;
-  int mx = pos % 96;
-  int my = pos / 96;
+  int mx = pos % 128;
+  int my = pos / 128;
 
   if(widget == hue)
   {
-    if(((mx - 48) * (mx - 48) + (my - 48) * (my - 48)) < (20 * 20))
+    if(((mx - 64) * (mx - 64) + (my - 64) * (my - 64)) < (30 * 30))
     {
       satval->redraw();
       return;
     }
   }
 
-  float mouse_angle = atan2f(my - 48, mx - 48);
+  float mouse_angle = atan2f(my - 64, mx - 64);
   int h = ((int)(mouse_angle * 244.46) + 1536) % 1536;
-  int s = (satval->var % 48) * 5.43;
-  int v = (satval->var / 48) * 5.43;
+  int s = (satval->var % 64) * 4.05;
+  int v = (satval->var / 64) * 4.05;
 
   int r, g, b;
 
-  //Blend::hsvToRgb(h, s, v, &r, &g, &b);
-  Blend::rybToRgb(h, s, v, &r, &g, &b);
+  Blend::hsvToRgb(h, s, v, &r, &g, &b);
+  //Blend::wheelToRgb(h, s, v, &r, &g, &b);
   Project::brush->color = makeRgb(r, g, b);
-//  Project::brush->trans = std::pow((double)trans->var, 2.02);
-//  Project::brush->trans = std::pow((double)trans->var, 2.04);
-//  Project::brush->trans = trans->var * 16.8;
-//  Project::brush->trans = Gamma::unfix(trans->var * 4096);
   Project::brush->blend = blend->value();
 
   // hue circle
@@ -1541,14 +1375,14 @@ void Gui::checkColor(Widget *widget, void *)
 
   for(int i = 1; i < 1536; i++)
   {
-    //Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
-    Blend::rybToRgb(i, 255, 255, &r, &g, &b);
+    Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
+    //Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
 
     float angle = ((3.14159 * 2) / 1536) * i;
-    int x1 = 48 + 46 * std::cos(angle);
-    int y1 = 48 + 46 * std::sin(angle);
-    int x2 = 48 + 36 * std::cos(angle);
-    int y2 = 48 + 36 * std::sin(angle);
+    int x1 = 64 + 62 * std::cos(angle);
+    int y1 = 64 + 62 * std::sin(angle);
+    int x2 = 64 + 50 * std::cos(angle);
+    int y2 = 64 + 50 * std::sin(angle);
 
     hue->bitmap->line(x1, y1, x2, y2, makeRgb(0, 0, 0), 252);
     hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makeRgb(0, 0, 0), 252);
@@ -1556,14 +1390,14 @@ void Gui::checkColor(Widget *widget, void *)
 
   for(int i = 1; i < 1536; i++)
   {
-    //Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
-    Blend::rybToRgb(i, 255, 255, &r, &g, &b);
+    Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
+    //Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
 
     float angle = ((3.14159 * 2) / 1536) * i;
-    int x1 = 48 + 45 * std::cos(angle);
-    int y1 = 48 + 45 * std::sin(angle);
-    int x2 = 48 + 37 * std::cos(angle);
-    int y2 = 48 + 37 * std::sin(angle);
+    int x1 = 64 + 61 * std::cos(angle);
+    int y1 = 64 + 61 * std::sin(angle);
+    int x2 = 64 + 51 * std::cos(angle);
+    int y2 = 64 + 51 * std::sin(angle);
 
     hue->bitmap->line(x1, y1, x2, y2, makeRgb(0, 0, 0), 252);
     hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makeRgb(0, 0, 0), 252);
@@ -1571,55 +1405,55 @@ void Gui::checkColor(Widget *widget, void *)
 
   for(int i = 1; i < 1536; i++)
   {
-    //Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
-    Blend::rybToRgb(i, 255, 255, &r, &g, &b);
+    Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
+    //Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
 
     float angle = ((3.14159 * 2) / 1536) * i;
-    int x1 = 48 + 44 * std::cos(angle);
-    int y1 = 48 + 44 * std::sin(angle);
-    int x2 = 48 + 38 * std::cos(angle);
-    int y2 = 48 + 38 * std::sin(angle);
+    int x1 = 64 + 60 * std::cos(angle);
+    int y1 = 64 + 60 * std::sin(angle);
+    int x2 = 64 + 52 * std::cos(angle);
+    int y2 = 64 + 52 * std::sin(angle);
 
     hue->bitmap->line(x1, y1, x2, y2, makeRgb(r, g, b), 0);
     hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makeRgb(r, g, b), 0);
   }
 
-  const int x1 = 48 + 41 * std::cos(mouse_angle);
-  const int y1 = 48 + 41 * std::sin(mouse_angle);
+  const int x1 = 64 + 56 * std::cos(mouse_angle);
+  const int y1 = 64 + 56 * std::sin(mouse_angle);
 
-  //Blend::hsvToRgb(h, 255, 255, &r, &g, &b);
-  Blend::rybToRgb(h, 255, 255, &r, &g, &b);
+  Blend::hsvToRgb(h, 255, 255, &r, &g, &b);
+  //Blend::wheelToRgb(h, 255, 255, &r, &g, &b);
   hue->bitmap->rect(x1 - 6, y1 - 6, x1 + 6, y1 + 6, makeRgb(0, 0, 0), 192);
   hue->bitmap->rect(x1 - 5, y1 - 5, x1 + 5, y1 + 5, makeRgb(0, 0, 0), 96);
   hue->bitmap->xorRect(x1 - 4, y1 - 4, x1 + 4, y1 + 4);
   hue->bitmap->rectfill(x1 - 3, y1 - 3, x1 + 3, y1 + 3, makeRgb(r, g, b), 0);
 
   // saturation/value
-  hue->bitmap->rect(24 - 2, 24 - 2, 71 + 2, 71 + 2, makeRgb(0, 0, 0), 192);
-  hue->bitmap->rect(24 - 1, 24 - 1, 71 + 1, 71 + 1, makeRgb(0, 0, 0), 96);
-  hue->bitmap->rect(0, 0, 95, 95, makeRgb(0, 0, 0), 0);
+  hue->bitmap->rect(32 - 2, 32 - 2, 95 + 2, 95 + 2, makeRgb(0, 0, 0), 192);
+  hue->bitmap->rect(32 - 1, 32 - 1, 95 + 1, 95 + 1, makeRgb(0, 0, 0), 96);
+  hue->bitmap->rect(0, 0, 127, 127, makeRgb(0, 0, 0), 0);
 
-  for(int y = 0; y < 48; y++)
+  for(int y = 0; y < 64; y++)
   {
-    for(int x = 0; x < 48; x++)
+    for(int x = 0; x < 64; x++)
     {
-      //Blend::hsvToRgb(h, x * 5.43, y * 5.43, &r, &g, &b);
-      Blend::rybToRgb(h, x * 5.43, y * 5.43, &r, &g, &b);
+      Blend::hsvToRgb(h, x * 4.05, y * 4.05, &r, &g, &b);
+      //Blend::wheelToRgb(h, x * 5.43, y * 5.43, &r, &g, &b);
       satval->bitmap->setpixelSolid(x, y, makeRgb(r, g, b), 0);
     }
   }
 
-  int x = (satval->var % 48);
-  int y = (satval->var / 48);
+  int x = (satval->var % 64);
+  int y = (satval->var / 64);
 
   if(x < 4)
     x = 4;
   if(y < 4)
     y = 4;
-  if(x > 43)
-    x = 43;
-  if(y > 43)
-    y = 43;
+  if(x > 59)
+    x = 59;
+  if(y > 59)
+    y = 59;
 
   satval->bitmap->rect(x - 6, y - 6, x + 6, y + 6, makeRgb(0, 0, 0), 192);
   satval->bitmap->rect(x - 5, y - 5, x + 5, y + 5, makeRgb(0, 0, 0), 96);
@@ -1629,7 +1463,6 @@ void Gui::checkColor(Widget *widget, void *)
   satval->redraw();
 
   updateSwatch();
-  updateRange();
   updateHexColor();
 }
 
@@ -1646,7 +1479,8 @@ void Gui::checkSatVal(Widget *, void *)
 void Gui::checkTransInput(Widget *, void *)
 {
   Project::brush->trans = atoi(trans_input->value());
-  trans->var = Project::brush->trans / 16.8;
+//  trans->var = Project::brush->trans / 16.8;
+  trans->var = Project::brush->trans / 8.22;
   trans->redraw();
   updateSwatch();
 //  checkColor(0, 0);
@@ -1655,7 +1489,8 @@ void Gui::checkTransInput(Widget *, void *)
 
 void Gui::checkTrans(Widget *, void *)
 {
-  Project::brush->trans = trans->var * 16.8;
+//  Project::brush->trans = trans->var * 16.8;
+  Project::brush->trans = trans->var * 8.23;
   char s[16];
   sprintf(s, "%d", Project::brush->trans);
   trans_input->value(s);
@@ -1668,55 +1503,6 @@ void Gui::checkBlend(Widget *, void *)
 {
   checkColor(0, 0);
 }
-
-void Gui::checkRange(Widget *widget, void *)
-{
-  int pos = range->var;
-  int mx = pos % 96;
-  int my = pos / 96;
-
-  if(mx < 1)
-    mx = 1;
-
-  if(mx > 94)
-     mx = 94;
-
-  if(my < 1)
-    my = 1;
-
-  if(my > 94)
-     my = 94;
-
-  Project::brush->color = range_buf->getpixel(mx, my);
-  range_buf->blit(range->bitmap, 0, 0, 0, 0, range_buf->w, range_buf->h);
-
-  if(mx < 5)
-    mx = 5;
-
-  if(mx > 90)
-     mx = 90;
-
-  if(my < 5)
-    my = 5;
-
-  if(my > 90)
-     my = 90;
-
-  range->bitmap->rect(mx - 6, my - 6, mx + 6, my + 6, makeRgb(0, 0, 0), 192);
-  range->bitmap->rect(mx - 5, my - 5, mx + 5, my + 5, makeRgb(0, 0, 0), 96);
-  range->bitmap->xorRect(mx - 4, my - 4, mx + 4, my + 4);
-
-  updateHexColor();
-  updateSwatch();
-}
-
-/*
-void Gui::checkAlphaMask()
-{
-  Project::brush->alpha_mask = alpha_mask->value();
-  Gui::getView()->drawMain(true);
-}
-*/
 
 void Gui::checkWrap(Widget *, void *var)
 {
@@ -1782,7 +1568,6 @@ void Gui::checkSelectionRotate90()
   {
     for(int x = 0; x < w; x++)
     {
-//       *(Project::bmp->row[w - 1 - x] + y) = *p++;   
        *(Project::select_bmp->row[x] + h - 1 - y) = *p++;
     }
   }
@@ -2025,14 +1810,10 @@ void Gui::checkPaintMode()
   paint_texture_marb->hide();
   paint_texture_turb->hide();
   paint_average_edge->hide();
-//  paint_dither_pattern->hide();
-//  paint_dither_relative->hide();
 
   switch(paint_mode->value())
   {
     case Render::SOLID:
-//      paint_dither_pattern->show();
-//      paint_dither_relative->show();
       break;
     case Render::ANTIALIASED:
       Project::brush->aa = 1;
@@ -2077,18 +1858,6 @@ int Gui::getFillFeather()
 {
   return atoi(fill_feather->value());
 }
-
-/*
-int Gui::getDitherPattern()
-{
-  return paint_dither_pattern->var;
-}
-
-int Gui::getDitherRelative()
-{
-  return paint_dither_relative->value();
-}
-*/
 
 void Gui::resetTool()
 {

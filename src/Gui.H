@@ -40,15 +40,10 @@ namespace Gui
   void updateHexColor();
   void updateColor(int);
   void updateSwatch();
-  void updateRange();
   void updateGetColor(int);
   void setPaletteIndex(int);
   int getPaletteIndex();
   void checkPaletteSwatches(Widget *, void *);
-//  void checkPaletteInsert(Widget *, void *);
-//  void checkPaletteDelete(Widget *, void *);
-//  void checkPaletteReplace(Widget *, void *);
-//  void checkPaletteUndo(Widget *, void *);
   void drawPalette();
   void checkZoomIn(Button *, void *);
   void checkZoomOut(Button *, void *);
@@ -80,8 +75,6 @@ namespace Gui
   void checkTransInput(Widget *, void *);
   void checkTrans(Widget *, void *);
   void checkBlend(Widget *, void *);
-  void checkRange(Widget *, void *);
-//  void checkAlphaMask();
   void checkWrap(Widget *, void *);
   void checkClone(Widget *, void *);
   void checkMirror(Widget *, void *);
@@ -127,8 +120,6 @@ namespace Gui
   int getPaintMode();
   int getTextSmooth();
   int getFillFeather();
-//  int getDitherPattern();
-//  int getDitherRelative();
 
   void resetTool();
   void showProgress(float);

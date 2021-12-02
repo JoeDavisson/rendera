@@ -42,7 +42,6 @@ namespace Blend
     FAST,
     TRANS_ALPHA,
     TRANS_NO_ALPHA,
-    TEST,
   };
  
   void set(const int);
@@ -65,12 +64,11 @@ namespace Blend
   int sharpen(const int, const int, const int);
   int fast(const int, const int, const int);
   int invert(const int, const int, const int);
-  int test(const int, const int, const int);
   void rgbToHsv(const int, const int, const int, int *, int *, int *);
   void hsvToRgb(const int, const int, const int, int *, int *, int *);
   void rgbToYcc(const int, const int, const int, float *, float *, float *);
   void yccToRgb(const float, const float, const float, int *, int *, int *);
-  void rybToRgb(int, int, int, int *, int *, int *);
+  void wheelToRgb(const int, const int, const int, int *, int *, int *);
 }
 
 #endif

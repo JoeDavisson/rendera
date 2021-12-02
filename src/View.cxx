@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Clone.H"
 #include "File.H"
 #include "Gui.H"
+#include "Images.H"
 #include "Inline.H"
 #include "Map.H"
 #include "Palette.H"
@@ -413,6 +414,7 @@ int View::handle(int event)
     case FL_MOVE:
     {
       Project::tool->move(this);
+      redraw();
 
       // update coordinates display
       char coords[256];

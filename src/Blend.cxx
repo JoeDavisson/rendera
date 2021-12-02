@@ -80,9 +80,6 @@ void Blend::set(const int mode)
     case TRANS_NO_ALPHA:
       current_blend = transNoAlpha;
       break;
-    case TEST:
-      current_blend = test;
-      break;
     default:
       current_blend = trans;
       break;
@@ -378,31 +375,6 @@ int Blend::invert(const int c1, const int, const int)
   return makeRgba(255 - getr(c1), 255 - getg(c1), 255 - getb(c1), geta(c1));
 }
 
-int Blend::test(const int c1, const int c2, const int t)
-{
-  rgba_type rgba1 = getRgba(c1);
-  rgba_type rgba2 = getRgba(c2);
-
-  if(rgba1.r > rgba1.g && rgba1.r > rgba1.b)
-    rgba1.r = 0;
-  else if(rgba1.g > rgba1.b && rgba1.g > rgba1.r)
-    rgba1.g = 0;
-  else if(rgba1.b > rgba1.r && rgba1.b > rgba1.g)
-    rgba1.b = 0;
-
-  if(rgba2.r > rgba2.g && rgba2.r > rgba2.b)
-    rgba2.r = 0;
-  else if(rgba2.g > rgba2.b && rgba2.g > rgba2.r)
-    rgba2.g = 0;
-  else if(rgba2.b > rgba2.r && rgba2.b > rgba2.g)
-    rgba2.b = 0;
-
-  return makeRgba(rgba2.r + (t * (rgba1.r - rgba2.r)) / 255,
-                  rgba2.g + (t * (rgba1.g - rgba2.g)) / 255,
-                  rgba2.b + (t * (rgba1.b - rgba2.b)) / 255,
-                  rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
-}
-
 // integer-based RGB<->HSV conversions use the following ranges:
 // hue 0-1535
 // sat 0-255
@@ -496,7 +468,7 @@ void Blend::hsvToRgb(const int h, const int s, const int v, int *r, int *g, int 
 // from JFIF specification: https://www.w3.org/Graphics/JPEG/jfif3.pdf
 void Blend::rgbToYcc(const int r, const int g, const int b, float *y, float *cb, float *cr)
 {
-  *y  = r * 0.299 + g * 0.587 + b * 0.114;
+  *y = r * 0.299 + g * 0.587 + b * 0.114;
   *cb = r * -0.1687 + g * -0.3313 + b * 0.500 + 128;
   *cr = r * 0.500 + g * -0.4187 + b * -0.0813 + 128;
 }
@@ -512,7 +484,11 @@ void Blend::yccToRgb(const float y, const float cb, const float cr, int *r, int 
   *b = clamp(*b, 255);
 }
 
-void Blend::rybToRgb(int h, int s, int v, int *r, int *g, int *b)
+// same as RGB<->HSV, except hues are arranged like an artist's color wheel
+// hue 0-1535
+// sat 0-255
+// val 0-255
+void Blend::wheelToRgb(int h, int s, int v, int *r, int *g, int *b)
 {
   switch(h / 256)
   {
@@ -536,10 +512,4 @@ void Blend::rybToRgb(int h, int s, int v, int *r, int *g, int *b)
 
   Blend::hsvToRgb(h, s, v, r, g, b);
 }
-
-
-
-
-
-
 
