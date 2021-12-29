@@ -70,7 +70,7 @@ namespace
     x1 -= x2;
     y1 -= y2;
 
-    const float d = std::sqrt(x1 * x1 + y1 * y1);
+    const float d = __builtin_sqrtf(x1 * x1 + y1 * y1);
     const int s = (255 - trans) / (feather + 1);
     int temp = s * d;
 
@@ -263,9 +263,11 @@ namespace
         }
 
         const int c1 = bmp->getpixel(x, y);
+        const int zx = stroke->edgecachex[z];
+        const int zy = stroke->edgecachey[z];
+        const int t = fineEdge(x, y, zx, zy, feather, 0);
 
-        bmp->setpixel(x, y, Blend::trans(c1, new_color, fineEdge(x, y,
-                      stroke->edgecachex[z], stroke->edgecachey[z], feather, 0)));
+        bmp->setpixel(x, y, Blend::trans(c1, new_color, t));
       }
 
       if(update(y) < 0)

@@ -2743,6 +2743,52 @@ namespace Painting
   }
 }
 
+namespace Randomize
+{
+  void apply()
+  {
+for(int j = 0; j <= 1; j++)
+{
+    // horizontal
+    for(int y = bmp->ct; y <= bmp->cb; y += 1)
+    {
+      for(int x = bmp->cl + 1 + j; x <= bmp->cr; x += 2)
+      {
+        if((ExtraMath::rnd() & 1) == 1)
+        {
+          const int temp = bmp->getpixel(x, y);
+
+          bmp->setpixel(x, y, bmp->getpixel(x - 1, y), 128);
+          bmp->setpixel(x - 1, y, temp, 128);
+        }
+      }
+    }
+
+    // vertical
+    for(int x = bmp->cl; x <= bmp->cr; x += 1)
+    {
+      for(int y = bmp->ct + 1 + j; y <= bmp->cb; y += 2)
+      {
+        if((ExtraMath::rnd() & 1) == 1)
+        {
+          const int temp = bmp->getpixel(x, y);
+
+          bmp->setpixel(x, y, bmp->getpixel(x, y - 1), 128);
+          bmp->setpixel(x, y - 1, temp, 128);
+        }
+      }
+    }
+}
+
+  }
+
+  void begin()
+  {
+    pushUndo();
+    apply();
+  }
+}
+
 void FX::init()
 {
   RotateHue::init();
@@ -2867,5 +2913,10 @@ void FX::sobel()
 void FX::painting()
 {
   Painting::begin();
+}
+
+void FX::randomize()
+{
+  Randomize::begin();
 }
 

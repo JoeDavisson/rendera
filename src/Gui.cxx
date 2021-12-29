@@ -413,6 +413,8 @@ void Gui::init()
     (Fl_Callback *)FX::sobel, 0, 0);
   menubar->add("F&X/Filters/Bloom...", 0,
     (Fl_Callback *)FX::bloom, 0, 0);
+  menubar->add("F&X/Filters/Randomize...", 0,
+    (Fl_Callback *)FX::randomize, 0, 0);
 
   menubar->add("F&X/Photo/Restore...", 0,
     (Fl_Callback *)FX::restore, 0, 0);

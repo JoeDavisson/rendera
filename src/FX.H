@@ -46,6 +46,7 @@ namespace FX
   void convolutionMatrix();
   void sobel();
   void painting();
+  void randomize();
 }
 
 #endif

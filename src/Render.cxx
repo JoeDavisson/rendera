@@ -66,13 +66,13 @@ namespace
   }
 
   // used by fine airbrush
-  int fineEdge(int x1, int y1, const int x2, const int y2,
+  inline int fineEdge(int x1, int y1, const int x2, const int y2,
                const int edge, const int trans)
   {
     x1 -= x2;
     y1 -= y2;
 
-    const float d = std::sqrt(x1 * x1 + y1 * y1);
+    const float d = __builtin_sqrtf(x1 * x1 + y1 * y1);
     const int s = (255 - trans) / (((3 << edge) >> 1) + 1);
     const int temp = 255 - s * d;
 
@@ -277,6 +277,70 @@ namespace
       }
     }
 
+    if(count == 0)
+      count++;
+
+    for(int y = stroke->y1; y <= stroke->y2; y++)
+    {
+      unsigned char *p = map->row[y] + stroke->x1;
+
+      for(int x = stroke->x1; x <= stroke->x2; x++)
+      {
+        if(*p++ == 0)
+          continue;
+
+        int *cx = stroke->edgecachex;
+        int *cy = stroke->edgecachey;
+        const int dx = (x - *cx++);
+        const int dy = (y - *cy++);
+        int temp1 = dx * dx + dy * dy;
+        int z = 0;
+
+        for(int i = 1; i < count; i++)
+        {
+          const int dx = (x - *cx++);
+          const int dy = (y - *cy++);
+          const int temp2 = dx * dx + dy * dy;
+
+          if(temp2 < temp1)
+          {
+            temp1 = temp2;
+            z = i;
+          }
+        }
+
+        const int zx = stroke->edgecachex[z];
+        const int zy = stroke->edgecachey[z];
+        const int t = fineEdge(x, y, zx, zy, brush->fine_edge, trans);
+
+        bmp->setpixel(x, y, color, t);
+      }
+
+      if(update(y) < 0)
+        break;
+    }
+  }
+
+/*
+  // fine airbrush
+  void renderFine()
+  {
+    int count = 0;
+
+    for(int y = stroke->y1; y <= stroke->y2; y++)
+    {
+      for(int x = stroke->x1; x <= stroke->x2; x++)
+      {
+        if(map->getpixel(x, y) && isEdge(map, x, y))
+        {
+          stroke->edgecachex[count] = x;
+          stroke->edgecachey[count] = y;
+          count++;
+          count &= 0xFFFFF;
+        }
+      }
+    }
+
     for(int y = stroke->y1; y <= stroke->y2; y++)
     {
       unsigned char *p = map->row[y] + stroke->x1;
@@ -315,6 +379,7 @@ namespace
         break;
     }
   }
+*/
 
 /*
   void renderFine()
@@ -326,6 +391,7 @@ namespace
       for(int x = stroke->x1; x <= stroke->x2; x++)
       {
         if(map->getpixel(x, y) && isEdge(map, x, y))
+          //quadtree.write(x, y, 1);
           quadtree.writePath(x, y, 1);
       }
     }

@@ -591,20 +591,21 @@ void Stroke::end(int x, int y)
         polycount++;
         polycount &= 65535;
 
-        if(polycount < 2)
+        if(polycount > 2)
+        {
+          if(brush->size < 5)
+            map->thick_aa = 1;
+
+          for(int i = 1; i < polycount; i++)
+          {
+            drawBrushLineAA(polycachex[i], polycachey[i],
+                            polycachex[i - 1], polycachey[i - 1], 255);
+          }
+        }
+        else
         {
           map->thick_aa = 1;
           drawBrushAA(x, y, 255);
-          break;
-        }
-
-        if(brush->size < 5)
-          map->thick_aa = 1;
-
-        for(int i = 1; i < polycount; i++)
-        {
-          drawBrushLineAA(polycachex[i], polycachey[i],
-                          polycachex[i - 1], polycachey[i - 1], 255);
         }
 
         break;

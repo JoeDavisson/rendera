@@ -139,7 +139,7 @@ namespace
     TYPE_PNG,
     TYPE_JPG,
     TYPE_BMP,
-    TYPE_TGA
+    TYPE_TGA,
   };
  
   int last_type = 0;
@@ -943,6 +943,7 @@ void File::save(Fl_Widget *, void *)
             "JPEG \t*.jpg\n"
             "Bitmap \t*.bmp\n"
             "Targa \t*.tga\n");
+
 //  fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc.filter_value(last_type);
@@ -985,6 +986,7 @@ void File::save(Fl_Widget *, void *)
     case TYPE_TGA:
       ret = File::saveTarga(fn);
       break;
+
     default:
       ret = -1;
   }

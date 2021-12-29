@@ -192,10 +192,10 @@ namespace JavaExport
 
     Items::dialog = new DialogWindow(256, 0, "Export Java Array");
     Items::option = new Fl_Choice(64, y1, 128, 24, "");
-    Items::option->tooltip("Export Option");
+    Items::option->tooltip("Format");
     Items::option->textsize(10);
-    Items::option->add("16 Colors (4-bit)");
-    Items::option->add("256 Colors (8-bit)");
+    Items::option->add("C64 Characters");
+    Items::option->add("C64 Sprites");
     Items::option->value(0);
     y1 += 24 + 8;
     Items::dialog->addOkButton(&Items::ok, &y1);
