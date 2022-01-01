@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "KDtree.H"
 
+// based on example at https://rosettacode.org/wiki/K-d_tree
+
 inline int KDtree::dist(node_type *a, node_type *b, int dim)
 {
   int t;
