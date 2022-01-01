@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Fill.H"
 #include "Gui.H"
 #include "Inline.H"
+#include "KDtree.H"
 #include "Map.H"
 #include "Project.H"
 #include "Stroke.H"
@@ -230,6 +231,23 @@ namespace
       }
     }
 
+    if(count == 0)
+      return;
+
+    KDtree::node_type test_node;
+    KDtree::node_type *root, *found;
+    KDtree::node_type *points = new KDtree::node_type[count];
+
+    int best_dist;
+
+    for(int i = 0; i < count; i++)
+    {
+      points[i].x[0] = stroke->edgecachex[i];
+      points[i].x[1] = stroke->edgecachey[i];
+    }
+
+    root = make_tree(points, count, 0, 2);
+
     for(y = ct; y <= cb; y++)
     {
       unsigned char *p = map->row[y - bmp->ct];
@@ -242,6 +260,14 @@ namespace
           continue;
         }
 
+        test_node.x[0] = x;
+        test_node.x[1] = y;
+        found = 0;
+        nearest(root, &test_node, 0, 2, &found, &best_dist);
+
+        const int zx = found->x[0];
+        const int zy = found->x[1];
+/*
         int *cx = stroke->edgecachex;
         int *cy = stroke->edgecachey;
         const int dx = (x - *cx++);
@@ -261,10 +287,10 @@ namespace
             z = i;
           }
         }
-
+*/
         const int c1 = bmp->getpixel(x, y);
-        const int zx = stroke->edgecachex[z];
-        const int zy = stroke->edgecachey[z];
+//        const int zx = stroke->edgecachex[z];
+//        const int zy = stroke->edgecachey[z];
         const int t = fineEdge(x, y, zx, zy, feather, 0);
 
         bmp->setpixel(x, y, Blend::trans(c1, new_color, t));

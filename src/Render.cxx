@@ -30,10 +30,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gamma.H"
 #include "Gui.H"
 #include "Inline.H"
+#include "KDtree.H"
 #include "Map.H"
 #include "ExtraMath.H"
 #include "Project.H"
-#include "Quadtree.H"
 #include "Render.H"
 #include "Stroke.H"
 #include "Tool.H"
@@ -51,7 +51,7 @@ namespace
   int trans;
 
   // returns true if pixel is on a boundary
-  bool isEdge(Map *map, const int x, const int y)
+  inline bool isEdge(Map *map, const int x, const int y)
   {
     if(x < 1 || x >= map->w - 1 || y < 1 || y >= map->h - 1)
       return 0;
@@ -278,7 +278,21 @@ namespace
     }
 
     if(count == 0)
-      count++;
+      return;
+
+    KDtree::node_type test_node;
+    KDtree::node_type *root, *found;
+    KDtree::node_type *points = new KDtree::node_type[count];
+
+    int best_dist;
+
+    for(int i = 0; i < count; i++)
+    {
+      points[i].x[0] = stroke->edgecachex[i];
+      points[i].x[1] = stroke->edgecachey[i];
+    }
+
+    root = make_tree(points, count, 0, 2);
 
     for(int y = stroke->y1; y <= stroke->y2; y++)
     {
@@ -289,28 +303,13 @@ namespace
         if(*p++ == 0)
           continue;
 
-        int *cx = stroke->edgecachex;
-        int *cy = stroke->edgecachey;
-        const int dx = (x - *cx++);
-        const int dy = (y - *cy++);
-        int temp1 = dx * dx + dy * dy;
-        int z = 0;
+        test_node.x[0] = x;
+        test_node.x[1] = y;
+        found = 0;
+        nearest(root, &test_node, 0, 2, &found, &best_dist);
 
-        for(int i = 1; i < count; i++)
-        {
-          const int dx = (x - *cx++);
-          const int dy = (y - *cy++);
-          const int temp2 = dx * dx + dy * dy;
-
-          if(temp2 < temp1)
-          {
-            temp1 = temp2;
-            z = i;
-          }
-        }
-
-        const int zx = stroke->edgecachex[z];
-        const int zy = stroke->edgecachey[z];
+        const int zx = found->x[0];
+        const int zy = found->x[1];
         const int t = fineEdge(x, y, zx, zy, brush->fine_edge, trans);
 
         bmp->setpixel(x, y, color, t);
@@ -319,6 +318,8 @@ namespace
       if(update(y) < 0)
         break;
     }
+
+    delete points;
   }
 
 /*

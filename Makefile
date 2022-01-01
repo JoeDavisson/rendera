@@ -51,6 +51,7 @@ OBJ= \
   $(SRC_DIR)/Blend.o \
   $(SRC_DIR)/Map.o \
   $(SRC_DIR)/Quadtree.o \
+  $(SRC_DIR)/KDtree.o \
   $(SRC_DIR)/Octree.o \
   $(SRC_DIR)/Palette.o \
   $(SRC_DIR)/Quantize.o \
