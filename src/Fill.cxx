@@ -52,8 +52,8 @@ namespace
   // returns true if pixel is on a boundary
   bool isEdge(Map *map, const int x, const int y)
   {
-    if(x < 1 || x >= map->w - 1 || y < 1 || y >= map->h - 1)
-      return 0;
+    if(x < 1 || x > map->w - 1 || y < 1 || y > map->h - 1)
+      return 1;
 
     if( *(map->row[y - 1] + x) &&
         *(map->row[y] + x - 1) &&
@@ -64,7 +64,7 @@ namespace
       return 1;
   }
 
-  // used by fine airbrush
+  // edge feathering
   int fineEdge(int x1, int y1, const int x2, const int y2,
                const int feather, const int trans)
   {
@@ -78,25 +78,6 @@ namespace
     temp = clamp(temp, 255);
 
     return temp < trans ? trans : temp;
-  }
-
-  // updates the viewport during rendering
-  int update(int pos)
-  {
-    // user cancelled operation
-    if(Fl::get_key(FL_Escape))
-    {
-      Gui::getView()->drawMain(true);
-      return -1;
-    }
-
-    if((pos & 63) == 63)
-    {
-      Gui::getView()->drawMain(true);
-      Fl::check();
-    }
-
-    return 0;
   }
 
   // flood-fill related stack routines
@@ -214,8 +195,9 @@ namespace
     }
 
     Stroke *stroke = Project::stroke.get();
-
     int count = 0;
+
+    Gui::showProgress((cb - ct) + 1);
 
     for(y = ct; y <= cb; y++)
     {
@@ -226,9 +208,14 @@ namespace
           stroke->edgecachex[count] = x;
           stroke->edgecachey[count] = y;
           count++;
-          count &= 0xFFFFF;
+
+          if(count > 0xFFFFF)
+            break;
         }
       }
+
+      if(Gui::updateProgress(y) < 0)
+        return;
     }
 
     if(count == 0)
@@ -247,14 +234,13 @@ namespace
     }
 
     root = make_tree(points, count, 0, 2);
+    Gui::showProgress((cb - ct) + 1);
 
     for(y = ct; y <= cb; y++)
     {
-      unsigned char *p = map->row[y - bmp->ct];
-  
       for(x = cl; x <= cr; x++)
       {
-        if(*p++ == 255)
+        if(map->getpixel(x - cl, y - ct) == 255)
         {
           bmp->setpixel(x, y, new_color);
           continue;
@@ -267,38 +253,18 @@ namespace
 
         const int zx = found->x[0];
         const int zy = found->x[1];
-/*
-        int *cx = stroke->edgecachex;
-        int *cy = stroke->edgecachey;
-        const int dx = (x - *cx++);
-        const int dy = (y - *cy++);
-        int z = 0;
-        int temp1 = dx * dx + dy * dy;
-
-        for(int i = 1; i < count; i++)
-        {
-          const int dx = (x - *cx++);
-          const int dy = (y - *cy++);
-          int temp2 = dx * dx + dy * dy;
-
-          if(temp2 < temp1)
-          {
-            temp1 = temp2;
-            z = i;
-          }
-        }
-*/
         const int c1 = bmp->getpixel(x, y);
-//        const int zx = stroke->edgecachex[z];
-//        const int zy = stroke->edgecachey[z];
         const int t = fineEdge(x, y, zx, zy, feather, 0);
 
         bmp->setpixel(x, y, Blend::trans(c1, new_color, t));
       }
 
-      if(update(y) < 0)
+      if(Gui::updateProgress(y) < 0)
         break;
     }
+
+    Gui::hideProgress();
+    delete points;
   }
 }
 

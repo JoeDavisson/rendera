@@ -130,6 +130,7 @@ namespace
   Fl_Choice *paint_mode;
   Widget *getcolor_color;
   InputInt *fill_feather;
+  Fl_Box *fill_warning;
 
   StaticText *selection_x;
   StaticText *selection_y;
@@ -753,11 +754,14 @@ void Gui::init()
                    112, window->h() - top->h() - menubar->h() - status->h(),
                    "Fill");
   pos = 28 + 8;
-
   fill_feather = new InputInt(fill, 8, pos, 96, 24, "Feather (0-255)", 0, 0, 255);
   fill_feather->align(FL_ALIGN_BOTTOM);
   fill_feather->value("0");
-  pos += 24 + 8;
+  pos += 24 + 24;
+
+  fill_warning = new Fl_Box(FL_NO_BOX, fill->x() + 8, fill->y() + pos, 96, 48, "Feathering can\nbe very slow\non large images!");
+  fill_warning->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP | FL_ALIGN_LEFT);
+  fill_warning->labelsize(10);
 
   fill->resizable(0);
   fill->end();
@@ -1305,7 +1309,7 @@ void Gui::checkTool(Widget *, void *var)
       paint_brush_preview->do_callback();
       paint_shape->do_callback();
       paint->show();
-      updateInfo((char *)"Middle-click to navigate. Mouse wheel zooms. Esc cancels rendering.");
+      updateInfo((char *)"Middle-click to navigate. Mouse wheel zooms. Esc to cancel rendering.");
       
       break;
     case Tool::GETCOLOR:
@@ -1331,7 +1335,7 @@ void Gui::checkTool(Widget *, void *var)
     case Tool::FILL:
       Project::setTool(Tool::FILL);
       fill->show();
-      updateInfo((char *)"Click to fill an area with the selected color.");
+      updateInfo((char *)"Click to fill an area with the selected color. Esc to cancel.");
       break;
   }
 

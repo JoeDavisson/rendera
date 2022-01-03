@@ -272,7 +272,8 @@ namespace
           stroke->edgecachex[count] = x;
           stroke->edgecachey[count] = y;
           count++;
-          count &= 0xFFFFF;
+          if(count > 0xFFFFF)
+            break;
         }
       }
     }
@@ -323,7 +324,8 @@ namespace
   }
 
 /*
-  // fine airbrush
+  // slow version
+
   void renderFine()
   {
     int count = 0;
@@ -383,6 +385,8 @@ namespace
 */
 
 /*
+  // experimental, doesn't work
+
   void renderFine()
   {
     Quadtree quadtree;
