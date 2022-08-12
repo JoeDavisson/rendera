@@ -1531,6 +1531,8 @@ namespace DitherImage
   void init()
   {
     int y1 = 8;
+    int ww = 0;
+    int hh = 0;
 
     Items::dialog = new DialogWindow(256, 0, "Apply Palette to Image");
     Items::mode = new Fl_Choice(0, y1, 128, 24, "Dither:");
@@ -1543,7 +1545,6 @@ namespace DitherImage
     Items::mode->add("Atkinson");
     Items::mode->add("Sierra");
     Items::mode->value(0);
-    int ww, hh;
     Items::mode->measure_label(ww, hh);
     Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
     y1 += 24 + 8;
@@ -1912,6 +1913,8 @@ namespace GaussianBlur
   void init()
   {
     int y1 = 8;
+    int ww = 0;
+    int hh = 0;
 
     Items::dialog = new DialogWindow(256, 0, "Gaussian Blur");
     Items::radius = new InputInt(Items::dialog, 0, y1, 96, 24, "Radius (1-100)", 0, 1, 100);
@@ -1930,7 +1933,6 @@ namespace GaussianBlur
     Items::mode->add("Alpha Only");
     Items::mode->value(0);
     Items::mode->align(FL_ALIGN_LEFT);
-    int ww, hh;
     Items::mode->measure_label(ww, hh);
     Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
     y1 += 24 + 8;
@@ -2509,6 +2511,8 @@ namespace ConvolutionMatrix
   void init()
   {
     int y1 = 8;
+    int ww = 0;
+    int hh = 0;
 
     Items::dialog = new DialogWindow(256, 0, "Box Filters");
     Items::mode = new Fl_Choice(0, y1, 128, 24, "Filter:");
@@ -2520,7 +2524,6 @@ namespace ConvolutionMatrix
     Items::mode->add("Emboss");
     Items::mode->add("Emboss (Inverse)");
     Items::mode->value(0);
-    int ww, hh;
     Items::mode->measure_label(ww, hh);
     Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
     y1 += 24 + 8;

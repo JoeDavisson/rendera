@@ -43,6 +43,7 @@ public:
   const int levels = 16;
   int undo_current = levels - 1;
   int redo_current = levels - 1;
+
   Bitmap **undo_stack;
   Bitmap **redo_stack;
 };

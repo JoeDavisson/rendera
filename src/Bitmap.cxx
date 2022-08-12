@@ -67,6 +67,7 @@ Bitmap::Bitmap(int width, int height)
   y = 0;
   w = width;
   h = height;
+  active = false;
   overscroll = 0;
 
   setClip(0, 0, w - 1, h - 1);
@@ -93,6 +94,7 @@ Bitmap::Bitmap(int width, int height, int overscroll)
   y = 0;
   w = width;
   h = height;
+  active = false;
   this->overscroll = overscroll;
 
   for(int i = 0; i < height; i++)
@@ -130,6 +132,7 @@ Bitmap::Bitmap(int width, int height, int *image_data)
   y = 0;
   w = width;
   h = height;
+  active = false;
   overscroll = 0;
 
   for(int i = 0; i < height; i++)

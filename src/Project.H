@@ -75,6 +75,8 @@ namespace Project
   extern Fl_Color fltk_theme_bevel_up;
   extern Fl_Color fltk_theme_bevel_down;
 
+  const int max_layers = 16;
+
   void init();
   void setTool(int);
   void newImage(int, int);

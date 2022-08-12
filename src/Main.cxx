@@ -162,8 +162,8 @@ int main(int argc, char *argv[])
   Fl::scheme("gtk+");
 
   // program inits
-  File::init();
   Project::init();
+  File::init();
   Dialog::init();
   FX::init();
   FX2::init();

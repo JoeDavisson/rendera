@@ -35,6 +35,12 @@ Undo::Undo()
   undo_stack = new Bitmap *[levels];
   redo_stack = new Bitmap *[levels];
 
+  for(int i = 0; i < levels; i++)
+  {
+    undo_stack[i] = 0;
+    redo_stack[i] = 0;
+  }
+
   reset();
 }
 

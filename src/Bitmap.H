@@ -34,6 +34,7 @@ public:
   int x, y, w, h;
   int cl, cr, ct, cb, cw, ch;
   int overscroll;
+  int active;
   int *data;
   int **row;
 

@@ -43,7 +43,8 @@ Group::~Group()
 
 void Group::draw()
 {
-  int lw, lh;
+  int lw = 0;
+  int lh = 0;
 
   fl_draw_box(FL_UP_FRAME, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
 

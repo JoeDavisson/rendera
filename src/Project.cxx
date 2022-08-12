@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace Project
 {
   Bitmap *bmp = 0;
+  Bitmap **layer = 0;
   Bitmap *select_bmp = new Bitmap(8, 8);
   Map *map = 0;
 
@@ -75,6 +76,15 @@ namespace Project
 void Project::init()
 {
   newImage(512, 512);
+
+/*
+  for(int i = 0; i < max_layers; i++)
+  {
+    if(layer[i])
+      delete layer[i];
+    layer[i] = new Bitmap(8, 8);
+  }
+*/
   setTool(Tool::PAINT);
 }
 
