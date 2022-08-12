@@ -50,6 +50,7 @@ namespace Project
   SP<Brush> brush = new Brush();
   SP<Palette> palette = new Palette();
   SP<Stroke> stroke = new Stroke();
+  SP<Undo> undo = new Undo();
 
   // tools
   Tool *tool = 0;
@@ -135,5 +136,15 @@ void Project::resizeImage(int w, int h)
 
   map = new Map(bmp->w, bmp->h);
   map->clear(0);
+}
+
+void Project::pop()
+{
+  undo->pop();
+}
+
+void Project::popRedo()
+{
+  undo->popRedo();
 }
 

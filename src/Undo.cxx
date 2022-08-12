@@ -30,16 +30,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "View.H"
 
-namespace
+Undo::Undo()
 {
-  const int levels = 10;
-  std::vector<Bitmap *> undo_stack(levels); 
-  std::vector<Bitmap *> redo_stack(levels); 
-  int undo_current = levels - 1;
-  int redo_current = levels - 1;
+  undo_stack = new Bitmap *[levels];
+  redo_stack = new Bitmap *[levels];
+
+  reset();
 }
 
-void Undo::init()
+Undo::~Undo()
+{
+  for(int i = 0; i < levels; i++)
+  {
+    if(undo_stack[i])
+      delete undo_stack[i];
+
+    if(redo_stack[i])
+      delete redo_stack[i];
+  }
+}
+
+void Undo::reset()
 {
   for(int i = 0; i < levels; i++)
   {
@@ -180,17 +191,5 @@ void Undo::popRedo()
 
   Gui::getView()->ignore_tool = true;
   Gui::getView()->drawMain(true);
-}
-
-void Undo::free()
-{
-  for(int i = 0; i < levels; i++)
-  {
-    if(undo_stack[i])
-      delete undo_stack[i];
-
-    if(redo_stack[i])
-      delete redo_stack[i];
-  }
 }
 

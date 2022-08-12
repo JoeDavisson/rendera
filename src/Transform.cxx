@@ -46,7 +46,7 @@ namespace
   {
     bmp = Project::bmp;
     overscroll = bmp->overscroll;
-    Undo::push();
+    Project::undo->push();
   }
 }
 

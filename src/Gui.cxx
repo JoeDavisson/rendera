@@ -288,9 +288,9 @@ public:
             break;
           case 'z':
             if(ctrl && shift)
-              Undo::popRedo();
+              Project::undo->popRedo();
             else if(ctrl)
-              Undo::pop();
+              Project::undo->pop();
             break;
           case 'e':
             Dialog::editor();
@@ -328,9 +328,9 @@ void Gui::init()
     (Fl_Callback *)quit, 0, 0);
 
   menubar->add("&Edit/Undo (Ctrl+Z)", 0,
-    (Fl_Callback *)Undo::pop, 0, 0);
+    (Fl_Callback *)Project::pop, 0, 0);
   menubar->add("&Edit/Redo (Shift+Ctrl+Z)", 0,
-    (Fl_Callback *)Undo::popRedo, 0);
+    (Fl_Callback *)Project::popRedo, 0);
   menubar->add("&Clear/&Black", 0,
     (Fl_Callback *)checkClearToBlack, 0, 0);
   menubar->add("&Clear/&White", 0,
@@ -1730,7 +1730,7 @@ void Gui::palette4LevelRGB()
 
 void Gui::checkClearToPaintColor()
 {
-  Undo::push();
+  Project::undo->push();
 
   Bitmap *bmp = Project::bmp;
 
@@ -1740,7 +1740,7 @@ void Gui::checkClearToPaintColor()
 
 void Gui::checkClearToBlack()
 {
-  Undo::push();
+  Project::undo->push();
 
   Bitmap *bmp = Project::bmp;
 
@@ -1750,7 +1750,7 @@ void Gui::checkClearToBlack()
 
 void Gui::checkClearToWhite()
 {
-  Undo::push();
+  Project::undo->push();
 
   Bitmap *bmp = Project::bmp;
 
@@ -1760,7 +1760,7 @@ void Gui::checkClearToWhite()
 
 void Gui::checkClearToGray()
 {
-  Undo::push();
+  Project::undo->push();
 
   Bitmap *bmp = Project::bmp;
 
@@ -1773,7 +1773,7 @@ void Gui::checkClearToGray()
 
 void Gui::checkClearToTransparent()
 {
-  Undo::push();
+  Project::undo->push();
 
   Bitmap *bmp = Project::bmp;
 

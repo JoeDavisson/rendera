@@ -60,7 +60,7 @@ namespace
   void pushUndo()
   {
     bmp = Project::bmp;
-    Undo::push();
+    Project::undo->push();
   }
 
   void drawPreview(Bitmap *src, Bitmap *dest)

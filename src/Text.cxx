@@ -53,7 +53,7 @@ void Text::push(View *view)
 
   move(view);
 
-  Undo::push();
+  Project::undo->push();
 
   Clone::move(view->imgx, view->imgy);
   Clone::refresh(stroke->x1, stroke->y1, stroke->x2, stroke->y2);

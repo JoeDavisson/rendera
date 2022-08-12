@@ -306,7 +306,7 @@ int File::loadFile(const char *fn)
   Project::stroke->clip();
   Gui::getView()->zoomFit(Gui::getView()->fit);
   Gui::getView()->drawMain(true);
-  Undo::init();
+  Project::undo->reset();
 
   return 0;
 }

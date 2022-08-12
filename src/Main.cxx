@@ -164,7 +164,6 @@ int main(int argc, char *argv[])
   // program inits
   File::init();
   Project::init();
-  Undo::init();
   Dialog::init();
   FX::init();
   FX2::init();

@@ -31,6 +31,7 @@ class Map;
 class Palette;
 class Tool;
 class Stroke;
+class Undo;
 
 class Paint;
 class GetColor;
@@ -54,6 +55,7 @@ namespace Project
   extern SP<Brush> brush;
   extern SP<Palette> palette;
   extern SP<Stroke> stroke;
+  extern SP<Undo> undo;
 
   extern SP<Paint> paint;
   extern SP<GetColor> getcolor;
@@ -77,6 +79,8 @@ namespace Project
   void setTool(int);
   void newImage(int, int);
   void resizeImage(int, int);
+  void pop();
+  void popRedo();
 }
 
 #endif

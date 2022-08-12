@@ -21,16 +21,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef UNDO_H
 #define UNDO_H
 
-namespace Undo
+#include <vector>
+
+#include "Bitmap.H"
+
+class Bitmap;
+
+class Undo
 {
-  void init();
+public:
+  Undo();
+  ~Undo();
+
+  void reset();
   void doPush();
   void push();
   void pop();
   void pushRedo();
   void popRedo();
-  void free();
-}
+
+  const int levels = 16;
+  int undo_current = levels - 1;
+  int redo_current = levels - 1;
+  Bitmap **undo_stack;
+  Bitmap **redo_stack;
+};
 
 #endif
 

@@ -326,7 +326,8 @@ namespace NewImage
     Gui::getView()->oy = 0;
     Gui::getView()->zoomFit(0);
     Gui::getView()->drawMain(true);
-    Undo::init();
+
+    Project::undo->reset();
   }
 
   void quit()

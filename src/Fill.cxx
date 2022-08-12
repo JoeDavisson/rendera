@@ -281,7 +281,7 @@ void Fill::push(View *view)
   if(inbox(view->imgx, view->imgy, Project::bmp->cl, Project::bmp->ct,
                                    Project::bmp->cr, Project::bmp->cb))
   {
-    Undo::push();
+    Project::undo->push();
     int target = Project::bmp->getpixel(view->imgx, view->imgy);
     rgba_type rgba = getRgba(Project::brush->color);
     int color = makeRgba(rgba.r, rgba.g, rgba.b, 255 - Project::brush->trans);

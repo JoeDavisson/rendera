@@ -950,7 +950,7 @@ void Render::begin()
                        stroke->x2, stroke->y2,
                        view->ox, view->oy, 1, view->zoom);
 
-  Undo::push();
+  Project::undo->push();
 
   view->rendering = true;
 

@@ -162,7 +162,7 @@ namespace
     if(state == 3)
       return;
 
-    Undo::push();
+    Project::undo->push();
     state = 0;
     active = false;
     absrect(view, &beginx, &beginy, &lastx, &lasty);
@@ -308,7 +308,7 @@ void Selection::push(View *view)
   }
   else if(state == 3)
   {
-    Undo::push();
+    Project::undo->push();
     const int w = Project::select_bmp->w;
     const int h = Project::select_bmp->h;
 
