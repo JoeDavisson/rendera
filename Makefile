@@ -1,9 +1,10 @@
 # Rendera Makefile
 #
-# The fltk-1.3.7 source tree must be available in this directory.
-# Please run "make fltk" first to build the library before running "make".
+# The official fltk-1.3.7 source tree must in this directory.
+# Please run "make fltk" first.
+# Also run "make clean" before "make" the first time to build the images header.
 
-# you MUST have libxft-dev installed before compiling FLTK on linux
+# libxft-dev should be installed before compiling FLTK on linux
 # (otherwise you'll have ugly, non-resizable fonts)
 PLATFORM=linux
 #PLATFORM=mingw32
@@ -103,6 +104,7 @@ clean:
 	@rm -f $(SRC_DIR)/*.o 
 #	@rm -f ./$(EXE)
 	@echo "Clean!"
-	@./barry/barry -o src/Images.H images/*.png
+	gcc -O3 ./makeheader.c -o ./makeheader
+	./makeheader src/Images.H images/*.png
 	@echo "Image.H built"
 

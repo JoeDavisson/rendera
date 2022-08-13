@@ -35,8 +35,5 @@ Everything is statically linked resulting in a standalone executable.
 
 ### Toolchain
 
-Rendera is built with ```gcc-9.3```.
+Rendera is built with ```gcc-9.4```.
 
-```Barry``` is used to create the header for the embedded PNG icons:
-
-```$ git clone https://github.com/rubicks/barry```
