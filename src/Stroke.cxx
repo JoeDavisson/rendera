@@ -862,6 +862,7 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 
   float yy1 = (float)y1 * zoom;
   float yy2 = yy1 + zoom - 1;
+  int color = convertFormat(Project::brush.get()->color, Gui::getView()->bgr_order);
 
   for(int y = y1; y <= y2; y++)
   {
@@ -882,14 +883,14 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
           case OVAL:
           case FILLED_OVAL:
             backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
-            backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, makeRgb(128, 128, 128), 128);
+            backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, 128);
             break;
           case REGION:
           case POLYGON:
             if(isEdge(map, x, y) == true)
             {
               backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
-              backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, makeRgb(128, 128, 128), 128);
+              backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, 128);
             }
             break;
         }
