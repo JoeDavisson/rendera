@@ -19,6 +19,10 @@ The Makefile supports ```linux``` and ```mingw``` cross-compiler targets.
 
 ```$ make fltk```
 
+Do this the first time anyway to build the images header:
+```$ make clean```
+
+Then:
 ```$ make```
 
 *Note: Compilation can be sped up by including ```-j <threads>``` after ```make```.*
