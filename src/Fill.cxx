@@ -264,7 +264,7 @@ namespace
     }
 
     Gui::hideProgress();
-    delete [] points;
+    delete[] points;
   }
 }
 

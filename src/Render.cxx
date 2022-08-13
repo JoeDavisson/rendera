@@ -320,7 +320,7 @@ namespace
         break;
     }
 
-    delete [] points;
+    delete[] points;
   }
 
 /*
