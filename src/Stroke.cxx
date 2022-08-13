@@ -952,6 +952,7 @@ void Stroke::previewBrushAlpha(Bitmap *backbuf, int ox, int oy, float zoom, bool
 {
   int trans = Project::brush.get()->trans;
   int blend = Project::brush.get()->blend;
+  int use_alpha = Gui::getSelectionAlpha();
 
   float yy1 = (float)y1 * zoom;
   float yy2 = yy1 + zoom - 1;
@@ -962,6 +963,8 @@ void Stroke::previewBrushAlpha(Bitmap *backbuf, int ox, int oy, float zoom, bool
 
   if(blend == Blend::COLORIZE ||
      blend == Blend::SMOOTH ||
+     blend == Blend::ALPHA_ADD ||
+     blend == Blend::ALPHA_SUB ||
      blend == Blend::SHARPEN)
   {
     blend = Blend::TRANS;
@@ -979,8 +982,16 @@ void Stroke::previewBrushAlpha(Bitmap *backbuf, int ox, int oy, float zoom, bool
     {
       const int c = Project::select_bmp->getpixel(sx, sy);
 
-      backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
-             convertFormat(c, bgr_order), trans);
+      if(use_alpha)
+      {
+        backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
+               convertFormat(c, bgr_order), scaleVal(255 - geta(c), trans));
+      }
+      else
+      {
+        backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
+               convertFormat(c, bgr_order), trans);
+      }
 
       xx1 += zoom;
       xx2 += zoom;

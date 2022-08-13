@@ -666,10 +666,10 @@ void Gui::init()
   selection_select = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Copy");
   selection_select->callback((Fl_Callback *)checkSelectionSelect);
   pos += 32 + 8;
-  selection_alpha = new CheckBox(selection, 8, pos, 16, 16, "Use Alpha", 0);
+  selection_alpha = new CheckBox(selection, 8, pos, 16, 16, "Alpha Mask", 0);
   selection_alpha->labelsize(13);
   selection_alpha->center();
-  selection_alpha->value(0);
+  selection_alpha->value(1);
   pos += 16 + 8;
   selection_mirror = new Button(selection, 8, pos, 30, 30, "Mirror", images_select_mirror_png, (Fl_Callback *)checkSelectionFlipHorizontal);
   selection_flip = new Button(selection, 8 + 33, pos, 30, 30, "Flip", images_select_flip_png, (Fl_Callback *)checkSelectionFlipVertical);

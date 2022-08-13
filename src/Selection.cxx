@@ -37,7 +37,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "View.H"
 
-
 namespace
 {
   int beginx = 0, beginy = 0, lastx = 0, lasty = 0;
@@ -330,13 +329,20 @@ void Selection::push(View *view)
 
     Blend::set(Project::brush.get()->blend);
 
+    const int trans = Project::brush.get()->trans;
+    const int alpha = Gui::getSelectionAlpha();
+
     for(int y = 0; y < h; y++)
     {
       for(int x = 0; x < w; x++)
       {
         const int c = Project::select_bmp->getpixel(x, y);
 
-        Project::bmp->setpixel(x1 + x, y1 + y, c, Project::brush.get()->trans);
+        if(alpha)
+          Project::bmp->setpixel(x1 + x, y1 + y, c,
+                                 scaleVal(255 - geta(c), trans));
+        else
+          Project::bmp->setpixel(x1 + x, y1 + y, c, trans);
       }
     }
 
