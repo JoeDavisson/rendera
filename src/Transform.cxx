@@ -373,7 +373,7 @@ namespace Scale
   {
     int w = Project::bmp->cw;
     int h = Project::bmp->ch;
-    char s[8];
+    char s[16];
 
     w = (float)w * ((float)atoi(Items::percent->value()) / 100);
     h = (float)h * ((float)atoi(Items::percent->value()) / 100);
@@ -384,10 +384,11 @@ namespace Scale
     if(h < 1)
       h = 1;
 
-    snprintf(s, sizeof(s), "%d", w);
-    Items::width->value(s);
-    snprintf(s, sizeof(s), "%d", h);
-    Items::height->value(s);
+    if(snprintf(s, sizeof(s), "%d", w) > 0)
+      Items::width->value(s);
+
+    if(snprintf(s, sizeof(s), "%d", h) > 0)
+      Items::height->value(s);
   }
 
   void close()

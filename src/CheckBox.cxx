@@ -37,10 +37,7 @@ CheckBox::CheckBox(Fl_Group *g, int x, int y, int w, int h,
 
   char s[32];
 
-  strncpy(&s[1], label, strlen(label));
-  s[0] = ' ';
-  s[strlen(label) + 1] = '\0';
-
+  strcpy(s, label);
   copy_label(s);
   resize(group->x() + x, group->y() + y, w, h);
 }
