@@ -82,6 +82,7 @@ namespace Gui
   void checkConstrain(Widget *, void *);
   void checkSelectionCrop();
   void checkSelectionSelect();
+  int getSelectionAlpha();
   void checkSelectionFlipHorizontal();
   void checkSelectionFlipVertical();
   void checkSelectionRotate90();

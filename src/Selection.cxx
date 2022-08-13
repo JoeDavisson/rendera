@@ -326,8 +326,19 @@ void Selection::push(View *view)
       y1 += Project::overscroll;
     }
 
-    Project::select_bmp->blit(Project::bmp,
-               0, 0, x1, y1, w, h);
+    // Project::select_bmp->blit(Project::bmp, 0, 0, x1, y1, w, h);
+
+    Blend::set(Project::brush.get()->blend);
+
+    for(int y = 0; y < h; y++)
+    {
+      for(int x = 0; x < w; x++)
+      {
+        const int c = Project::select_bmp->getpixel(x, y);
+
+        Project::bmp->setpixel(x1 + x, y1 + y, c, Project::brush.get()->trans);
+      }
+    }
 
     Blend::set(Blend::TRANS);
     view->ignore_tool = true;
@@ -477,7 +488,7 @@ void Selection::move(View *view)
     stroke->size(x1, y1, x2, y2);
 
     view->drawMain(false);
-    stroke->previewBrush(view->backbuf, view->ox, view->oy, view->zoom,
+    stroke->previewBrushAlpha(view->backbuf, view->ox, view->oy, view->zoom,
                          view->bgr_order);
     view->ignore_tool = true;
     view->redraw();

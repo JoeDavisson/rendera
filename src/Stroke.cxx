@@ -910,18 +910,17 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 // preview custom brush
 void Stroke::previewBrush(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
 {
-  ox *= zoom;
-  oy *= zoom;
-
   float yy1 = (float)y1 * zoom;
   float yy2 = yy1 + zoom - 1;
   int sy = 0;
+
+  ox *= zoom;
+  oy *= zoom;
 
   for(int y = y1; y <= y2; y++)
   {
     float xx1 = (float)x1 * zoom;
     float xx2 = xx1 + zoom - 1;
-
     int sx = 0;
 
     for(int x = x1; x <= x2; x++)
@@ -942,6 +941,58 @@ void Stroke::previewBrush(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
     yy2 += zoom;
     sy++;
   }
+
+  backbuf->xorRect(x1 * zoom - ox - 1, y1 * zoom - oy - 1, x2 * zoom - ox + zoom + 0, y2 * zoom - oy + zoom + 0);
+  backbuf->rect(x1 * zoom - ox - 1 - 1, y1 * zoom - oy - 1 - 1, x2 * zoom - ox + zoom + 0 + 1, y2 * zoom - oy + zoom + 0 + 1, makeRgb(0, 0, 0), 128);
+  backbuf->rect(x1 * zoom - ox - 1 - 2, y1 * zoom - oy - 1 - 2, x2 * zoom - ox + zoom + 0 + 2, y2 * zoom - oy + zoom + 0 + 2, makeRgb(0, 0, 0), 192);
+}
+
+// alpha transparency version
+void Stroke::previewBrushAlpha(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
+{
+  int trans = Project::brush.get()->trans;
+  int blend = Project::brush.get()->blend;
+
+  float yy1 = (float)y1 * zoom;
+  float yy2 = yy1 + zoom - 1;
+  int sy = 0;
+
+  ox *= zoom;
+  oy *= zoom;
+
+  if(blend == Blend::COLORIZE ||
+     blend == Blend::SMOOTH ||
+     blend == Blend::SHARPEN)
+  {
+    blend = Blend::TRANS;
+  }
+    
+  Blend::set(blend);
+
+  for(int y = y1; y <= y2; y++)
+  {
+    float xx1 = (float)x1 * zoom;
+    float xx2 = xx1 + zoom - 1;
+    int sx = 0;
+
+    for(int x = x1; x <= x2; x++)
+    {
+      const int c = Project::select_bmp->getpixel(sx, sy);
+
+      backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
+             convertFormat(c, bgr_order), trans);
+
+      xx1 += zoom;
+      xx2 += zoom;
+      sx++;
+    }
+
+    yy1 += zoom;
+    yy2 += zoom;
+    sy++;
+  }
+
+  Blend::set(Blend::TRANS);
 
   backbuf->xorRect(x1 * zoom - ox - 1, y1 * zoom - oy - 1, x2 * zoom - ox + zoom + 0, y2 * zoom - oy + zoom + 0);
   backbuf->rect(x1 * zoom - ox - 1 - 1, y1 * zoom - oy - 1 - 1, x2 * zoom - ox + zoom + 0 + 1, y2 * zoom - oy + zoom + 0 + 1, makeRgb(0, 0, 0), 128);

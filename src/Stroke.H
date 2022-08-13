@@ -60,6 +60,7 @@ public:
   void preview(Bitmap *,int, int, float);
   void previewPaint(Bitmap *,int, int, float, bool);
   void previewBrush(Bitmap *,int, int, float, bool);
+  void previewBrushAlpha(Bitmap *,int, int, float, bool);
 
   int x1, y1, x2, y2;
   bool origin, constrain;
