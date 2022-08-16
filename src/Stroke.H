@@ -63,7 +63,7 @@ public:
   void previewBrushAlpha(Bitmap *,int, int, float, bool);
 
   int x1, y1, x2, y2;
-  bool origin, constrain;
+  int origin, constrain;
   int blitx, blity, blitw, blith;
   int beginx, beginy;
   int lastx, lasty;

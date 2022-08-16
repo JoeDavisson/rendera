@@ -80,6 +80,17 @@ void Paint::drag(View *view)
 {
   Stroke *stroke = Project::stroke.get();
 
+  int old_constrain = stroke->constrain;
+  int old_origin = stroke->origin;
+  int new_constrain = Fl::event_shift();
+  int new_origin = Fl::event_ctrl();
+
+  if(old_constrain != new_constrain || old_origin != new_origin)
+    Project::map->clear(0);
+
+  stroke->constrain |= new_constrain;
+  stroke->origin |= new_origin;
+
   if(stroke->type != 3)
   {
     stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
@@ -88,6 +99,9 @@ void Paint::drag(View *view)
                          view->bgr_order);
     view->redraw();
   }
+
+  stroke->constrain = old_constrain;
+  stroke->origin = old_origin;
 }
 
 void Paint::release(View *view)
