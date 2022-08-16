@@ -250,7 +250,7 @@ namespace Scale
       {
         int radius = mipx > mipy ? mipx : mipy;
 
-        bmp->blur(std::sqrt(radius), 64);
+        bmp->blur(std::sqrt(radius), 0);
       }
 
       for(int y = 0; y < dh; y++) 
@@ -348,7 +348,7 @@ namespace Scale
       {
         int radius = mipx > mipy ? mipx : mipy;
 
-        bmp->blur(std::sqrt(radius), 64);
+        bmp->blur(std::sqrt(radius), 0);
       }
 
       float r[4][4];
