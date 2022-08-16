@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 #include <cmath>
 
+#include <FL/Fl_Choice.H>
+
 #include "Bitmap.H"
 #include "CheckBox.H"
 #include "Dialog.H"
@@ -171,10 +173,28 @@ namespace Scale
     InputInt *height;
     InputInt *percent;
     CheckBox *keep_aspect;
-    CheckBox *bilinear;
+    Fl_Choice *mode;
     CheckBox *wrap;
     Fl_Button *ok;
     Fl_Button *cancel;
+  }
+
+  float cubic(const float p[4], const float x)
+  {
+    return p[1] + 0.5f * x * (p[2] - p[0] + x * (2.0f * p[0] - 5.0f * p[1]
+           + 4.0f * p[2] - p[3] + x * (3.0f * (p[1] - p[2]) + p[3] - p[0])));
+  }
+
+  float bicubic(const float p[4][4], const float x, const float y)
+  {
+    float temp[4];
+
+    temp[0] = cubic(p[0], y);
+    temp[1] = cubic(p[1], y);
+    temp[2] = cubic(p[2], y);
+    temp[3] = cubic(p[3], y);
+
+    return cubic(temp, x);
   }
 
   void apply(int dw, int dh, bool wrap_edges)
@@ -201,23 +221,25 @@ namespace Scale
   
     Gui::showProgress(dh);
 
-    if(Items::bilinear->value() == false)
+    if(Items::mode->value() == 0)
     {
+      // nearest
       for(int y = 0; y < dh; y++) 
       {
         int *d = temp->row[dy + y] + dx;
+        const int yy = y * ay;
 
         for(int x = 0; x < dw; x++) 
         {
-          int yy = y * ay;
-          int xx = x * ax;
+          const int xx = x * ax;
 
           *d++ = *(bmp->row[yy + sy] + xx + sx);
         }
       }
     }
-    else
+    else if(Items::mode->value() == 1)
     {
+      // bilinear
       int mipx = 1, mipy = 1;
       if(sw > dw)
         mipx = (sw / dw);
@@ -307,6 +329,78 @@ namespace Scale
           c[1] -= u2;
           c[2] -= u1;
           c[3] -= u2;
+        }
+
+        if(Gui::updateProgress(y) < 0)
+          break;
+      }
+    }
+    else if(Items::mode->value() == 2)
+    {
+      // bicubic
+      int mipx = 1, mipy = 1;
+      if(sw > dw)
+        mipx = (sw / dw);
+      if(sh > dh)
+        mipy = (sh / dh);
+
+      if(mipx > 1 || mipy > 1)
+      {
+        int radius = mipx > mipy ? mipx : mipy;
+
+        bmp->blur(std::sqrt(radius), 64);
+      }
+
+      float r[4][4];
+      float g[4][4];
+      float b[4][4];
+      float a[4][4];
+
+      for(int y = 0; y < dh; y++) 
+      {
+        int *d = temp->row[dy + y] + dx;
+
+        const float vv = (y * ay);
+        const int v1 = vv;
+        const float v = vv - v1;
+
+        for(int x = 0; x < dw; x++) 
+        {
+          const float uu = (x * ax);
+          const int u1 = uu;
+          const float u = uu - u1;
+
+          for(int j = 0; j < 4; j++)
+          {
+            for(int i = 0; i < 4; i++)
+            {
+              int xx = u1 + i - 1;
+              int yy = v1 + j - 1;
+
+              if(wrap_edges)
+              {
+                if(xx >= sw)
+                  xx -= sw;
+
+                if(yy >= sh)
+                  yy -= sh;
+              }
+
+              const int c = bmp->getpixel(sx + xx, sy + yy);
+
+              r[i][j] = Gamma::fix(getr(c));
+              g[i][j] = Gamma::fix(getg(c));
+              b[i][j] = Gamma::fix(getb(c));
+              a[i][j] = Gamma::fix(geta(c));
+            }
+          }
+
+          const int rr = Gamma::unfix(clamp(bicubic(r, u, v), 65535));
+          const int gg = Gamma::unfix(clamp(bicubic(g, u, v), 65535));
+          const int bb = Gamma::unfix(clamp(bicubic(b, u, v), 65535));
+          const int aa = Gamma::unfix(clamp(bicubic(a, u, v), 65535));
+
+          *d++ = makeRgba(rr, gg, bb, aa);
         }
 
         if(Gui::updateProgress(y) < 0)
@@ -408,6 +502,8 @@ namespace Scale
   void init()
   {
     int y1 = 8;
+    int ww = 0;
+    int hh = 0;
 
     Items::dialog = new DialogWindow(256, 0, "Scale Image");
     Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 10000);
@@ -427,10 +523,17 @@ namespace Scale
     Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
     Items::keep_aspect->value(1);
     y1 += 16 + 8;
-    Items::bilinear = new CheckBox(Items::dialog, 0, y1, 16, 16, "Filtering", 0);
-    Items::bilinear->center();
-    Items::bilinear->value(1);
-    y1 += 16 + 8;
+    Items::mode = new Fl_Choice(0, y1, 96, 24, "Mode:");
+    Items::mode->labelsize(12);
+    Items::mode->textsize(12);
+    Items::mode->add("Nearest");
+    Items::mode->add("Bilinear");
+    Items::mode->add("Bicubic");
+    Items::mode->value(2);
+    Items::mode->align(FL_ALIGN_LEFT);
+    Items::mode->measure_label(ww, hh);
+    Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
+    y1 += 24 + 8;
     Items::keep_aspect->center();
     Items::wrap = new CheckBox(Items::dialog, 0, y1, 16, 16, "Wrap Edges", 0);
     y1 += 16 + 8;

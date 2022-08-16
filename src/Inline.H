@@ -209,9 +209,6 @@ inline int clamp(const int value, const int ceiling)
     return ceiling;
   else
     return value;
-
-//  const int temp = value > ceiling ? ceiling : value;
-//  return temp < 0 ? 0 : temp;
 }
 
 // file access functions
