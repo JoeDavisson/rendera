@@ -203,13 +203,10 @@ namespace Scale
     int overscroll = bmp->overscroll;
     const int sx = overscroll;
     const int sy = overscroll;
-    const int sw = bmp->cw;
-    const int sh = bmp->ch;
+    int sw = bmp->cw;
+    int sh = bmp->ch;
     const int dx = overscroll;
     const int dy = overscroll;
-
-    const float ax = ((float)sw / dw);
-    const float ay = ((float)sh / dh);
 
     if(sw < 1 || sh < 1)
       return;
@@ -218,8 +215,10 @@ namespace Scale
       return;
 
     Bitmap *temp = new Bitmap(dw, dh, overscroll);
-  
     Gui::showProgress(dh);
+
+    const float ax = ((float)sw / dw);
+    const float ay = ((float)sh / dh);
 
     if(Items::mode->value() == 0)
     {
@@ -241,6 +240,7 @@ namespace Scale
     {
       // bilinear
       int mipx = 1, mipy = 1;
+
       if(sw > dw)
         mipx = (sw / dw);
       if(sh > dh)
@@ -249,8 +249,9 @@ namespace Scale
       if(mipx > 1 || mipy > 1)
       {
         int radius = mipx > mipy ? mipx : mipy;
-
-        bmp->blur(std::sqrt(radius), 0);
+        bmp->blur(radius, 0);
+        bmp->blur(radius, 0);
+        bmp->blur(radius, 0);
       }
 
       for(int y = 0; y < dh; y++) 
@@ -347,8 +348,9 @@ namespace Scale
       if(mipx > 1 || mipy > 1)
       {
         int radius = mipx > mipy ? mipx : mipy;
-
-        bmp->blur(std::sqrt(radius), 0);
+        bmp->blur(radius, 0);
+        bmp->blur(radius, 0);
+        bmp->blur(radius, 0);
       }
 
       float r[4][4];

@@ -1093,29 +1093,135 @@ void Bitmap::fastStretch(Bitmap *dest,
   }
 }
 
-void Bitmap::blur(int radius, int amount)
+void Bitmap::blur(int s, int amount)
 {
-  radius = (radius + 1) * 2;
+  s = sqrt(s);
 
-  std::vector<int> kernel(radius);
-  int div = 0;
+  int size = 2;
+  int shift = 1;
 
-  // bell curve
-  const int b = radius / 2;
-
-  for(int x = 0; x < radius; x++)
+  if(s > 1)
   {
-    kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) /
-					 ((b * b) / 2)));
-    div += kernel[x];
+    size = 2;
+    shift = 1;
   }
 
-  Bitmap temp(this->cw, this->ch);
+  if(s > 2)
+  {
+    size = 4;
+    shift = 2;
+  }
+
+  if(s > 3)
+  {
+    size = 8;
+    shift = 3;
+  }
+
+  if(s > 4)
+  {
+    size = 16;
+    shift = 4;
+  }
+
+  Bitmap temp(this->cw, this->ch, this->overscroll);
 
   // x direction
   for(int y = this->ct; y <= this->cb; y++)
   {
-    int *p = temp.row[y - this->ct];
+    int *p = temp.row[y] + temp.cl;
+
+    for(int x = this->cl; x <= this->cr; x++)
+    {
+      int rr = 0;
+      int gg = 0;
+      int bb = 0;
+      int aa = 0;
+
+      for(int i = 0; i < size; i++) 
+      {
+        const int xx = x - size / 2 + i;
+
+        rgba_type rgba = getRgba(this->getpixel(xx, y));
+
+        rr += Gamma::fix(rgba.r);
+        gg += Gamma::fix(rgba.g);
+        bb += Gamma::fix(rgba.b);
+        aa += rgba.a;
+      }
+
+      rr = Gamma::unfix(rr >> shift);
+      gg = Gamma::unfix(gg >> shift);
+      bb = Gamma::unfix(bb >> shift);
+      aa >>= shift;
+
+      *p = makeRgba(rr, gg, bb, aa);
+      p++;
+    }
+  }
+
+  // y direction
+  for(int y = this->ct; y <= this->cb; y++)
+  {
+    int *p = this->row[y] + this->cl;
+
+    for(int x = this->cl; x <= this->cr; x++)
+    {
+      int rr = 0;
+      int gg = 0;
+      int bb = 0;
+      int aa = 0;
+
+      for(int i = 0; i < size; i++) 
+      {
+        const int yy = y - size / 2 + i;
+
+        rgba_type rgba = getRgba(temp.getpixel(x, yy));
+
+        rr += Gamma::fix(rgba.r);
+        gg += Gamma::fix(rgba.g);
+        bb += Gamma::fix(rgba.b);
+        aa += rgba.a;
+      }
+
+      rr = Gamma::unfix(rr >> shift);
+      gg = Gamma::unfix(gg >> shift);
+      bb = Gamma::unfix(bb >> shift);
+      aa >>= shift;
+
+      *p = makeRgba(rr, gg, bb, aa);
+      p++;
+    }
+  }
+}
+
+/*
+void Bitmap::blur(int radius, int amount)
+{
+  if(radius < 1)
+    return;
+
+  radius = radius * 2 + 1;
+  const int r2 = radius / 2;
+  int div = 0;
+
+  std::vector<int> kernel(radius);
+
+  // bell curve
+  const double b = (double)radius / 2;
+
+  for(int x = 0; x < radius; x++)
+  {
+    kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) / ((b * b) / 2)));
+    div += kernel[x];
+  }
+
+  Bitmap temp(this->cw, this->ch, this->overscroll);
+
+  // x direction
+  for(int y = this->ct; y <= this->cb; y++)
+  {
+    int *p = temp.row[y] + temp.cl;
 
     for(int x = this->cl; x <= this->cr; x++)
     {
@@ -1127,12 +1233,14 @@ void Bitmap::blur(int radius, int amount)
       for(int i = 0; i < radius; i++) 
       {
 	const int mul = kernel[i];
-	rgba_type rgba = getRgba(this->getpixel(x - radius / 2 + i, y));
+        const int xx = x - r2 + i;
 
-	rr += Gamma::fix(rgba.r) * mul;
-	gg += Gamma::fix(rgba.g) * mul;
-	bb += Gamma::fix(rgba.b) * mul;
-	aa += rgba.a * mul;
+        rgba_type rgba = getRgba(this->getpixel(xx, y));
+
+        rr += Gamma::fix(rgba.r) * mul;
+        gg += Gamma::fix(rgba.g) * mul;
+        bb += Gamma::fix(rgba.b) * mul;
+        aa += rgba.a * mul;
       }
 
       rr = Gamma::unfix(rr / div);
@@ -1159,14 +1267,15 @@ void Bitmap::blur(int radius, int amount)
 
       for(int i = 0; i < radius; i++) 
       {
-	const int mul = kernel[i];
-	rgba_type rgba = getRgba(temp.getpixel(x - this->cl,
-					       y - radius / 2 + i - this->ct));
+        const int mul = kernel[i];
+        const int yy = y - r2 + i;
 
-	rr += Gamma::fix(rgba.r) * mul;
-	gg += Gamma::fix(rgba.g) * mul;
-	bb += Gamma::fix(rgba.b) * mul;
-	aa += rgba.a * mul;
+        rgba_type rgba = getRgba(temp.getpixel(x, yy));
+
+        rr += Gamma::fix(rgba.r) * mul;
+        gg += Gamma::fix(rgba.g) * mul;
+        bb += Gamma::fix(rgba.b) * mul;
+        aa += rgba.a * mul;
       }
 
       rr = Gamma::unfix(rr / div);
@@ -1174,17 +1283,18 @@ void Bitmap::blur(int radius, int amount)
       bb = Gamma::unfix(bb / div);
       aa /= div;
 
-      int c1 = *p;
-      int c2 = makeRgba(rr, gg, bb, aa);
+//      const int c1 = *p;
+//      const int c2 = makeRgba(rr, gg, bb, aa);
 
-      *p = Blend::trans(c1, c2, amount);
-
+//      *p = blendFast(c1, c2, amount);
+//        *p = Blend::trans(c1, c2, amount);
+      *p = makeRgba(rr, gg, bb, aa);
       p++;
     }
   }
 }
+*/
 
-// scales an image with bilinear filtering and gamma-correction
 void Bitmap::scale(Bitmap *dest)
 {
   const int sx = cl;
