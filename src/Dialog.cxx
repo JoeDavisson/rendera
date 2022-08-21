@@ -80,7 +80,7 @@ namespace About
   {
     int y1 = 8;
     int ww = 0, hh = 0;
-    const char *credits = "\nCopyright (c) 2021 Joe Davisson.\n\nRendera is based in part on the work\nof the FLTK project (http://www.fltk.org).";
+    const char *credits = "\nCopyright (c) 2022 Joe Davisson.\n\nRendera is based in part on the work\nof the FLTK project (http://www.fltk.org).";
 
     Items::dialog = new DialogWindow(384, 0, "About");
 
