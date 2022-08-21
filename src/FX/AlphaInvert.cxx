@@ -18,36 +18,35 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef FX_H
-#define FX_H
+#include "AlphaInvert.H"
 
-namespace FX
+void AlphaInvert::apply()
 {
-  void init();
-  void normalize();
-  void equalize();
-  void valueStretch();
-  void saturate();
-  void rotateHue();
-  void invert();
-  void invertAlpha();
-  void restore();
-  void sideAbsorptions();
-  void removeDust();
-  void desaturate();
-  void colorize();
-  void paletteColors();
-  void ditherImage();
-  void stainedGlass();
-  void gaussianBlur();
-  void bloom();
-  void sharpen();
-  void unsharpMask();
-  void convolutionMatrix();
-  void sobel();
-  void painting();
-  void randomize();
+  Bitmap *bmp = Project::bmp;
+
+  Gui::showProgress(bmp->h);
+
+  for(int y = bmp->ct; y <= bmp->cb; y++)
+  {
+    int *p = bmp->row[y] + bmp->cl;
+
+    for(int x = bmp->cl; x <= bmp->cr; x++)
+    {
+      const rgba_type rgba = getRgba(*p);
+      *p = makeRgba(rgba.r, rgba.g, rgba.b, 255 - rgba.a);
+      p++;
+    }
+
+    if(Gui::updateProgress(y) < 0)
+      return;
+  }
+
+  Gui::hideProgress();
 }
 
-#endif
+void AlphaInvert::begin()
+{
+  Project::undo->push();
+  apply();
+}
 

@@ -10,12 +10,13 @@ PLATFORM=linux
 #PLATFORM=mingw32
 #PLATFORM=mingw64
 
-VERSION="0.2.1"
+VERSION="0.2.3"
 #VERSION=$(shell git describe --always --dirty)
 #VERSION=$(shell git describe --always)
 
 SRC_DIR=src
-INCLUDE=-I$(SRC_DIR) -Ifltk-1.3.7
+SRC_DIR_FX=src/FX 
+INCLUDE=-I$(SRC_DIR) -I$(SRC_DIR_FX) -Ifltk-1.3.7
 LIBS=$(shell ./fltk-1.3.7/fltk-config --use-images --ldstaticflags)
 
 ifeq ($(PLATFORM),linux)
@@ -43,10 +44,35 @@ ifeq ($(PLATFORM),mingw64)
 endif
 
 OBJ= \
+  $(SRC_DIR)/FX/FX.o \
+  $(SRC_DIR)/FX/Normalize.o \
+  $(SRC_DIR)/FX/Equalize.o \
+  $(SRC_DIR)/FX/RotateHue.o \
+  $(SRC_DIR)/FX/ValueStretch.o \
+  $(SRC_DIR)/FX/Saturate.o \
+  $(SRC_DIR)/FX/Desaturate.o \
+  $(SRC_DIR)/FX/Colorize.o \
+  $(SRC_DIR)/FX/PaletteColors.o \
+  $(SRC_DIR)/FX/Invert.o \
+  $(SRC_DIR)/FX/AlphaInvert.o \
+  $(SRC_DIR)/FX/AlphaClear.o \
+  $(SRC_DIR)/FX/GaussianBlur.o \
+  $(SRC_DIR)/FX/Sharpen.o \
+  $(SRC_DIR)/FX/UnsharpMask.o \
+  $(SRC_DIR)/FX/BoxFilters.o \
+  $(SRC_DIR)/FX/Sobel.o \
+  $(SRC_DIR)/FX/Bloom.o \
+  $(SRC_DIR)/FX/Randomize.o \
+  $(SRC_DIR)/FX/Restore.o \
+  $(SRC_DIR)/FX/SideAbsorptions.o \
+  $(SRC_DIR)/FX/RemoveDust.o \
+  $(SRC_DIR)/FX/StainedGlass.o \
+  $(SRC_DIR)/FX/Painting.o \
+  $(SRC_DIR)/FX/Marble.o \
+  $(SRC_DIR)/FX/ForwardFFT.o \
+  $(SRC_DIR)/FX/InverseFFT.o \
   $(SRC_DIR)/File.o \
   $(SRC_DIR)/FileSP.o \
-  $(SRC_DIR)/FX.o \
-  $(SRC_DIR)/FX2.o \
   $(SRC_DIR)/Transform.o \
   $(SRC_DIR)/Bitmap.o \
   $(SRC_DIR)/Blend.o \
@@ -102,6 +128,7 @@ $(SRC_DIR)/%.o: $(SRC_DIR)/%.cxx $(SRC_DIR)/%.H
 
 clean:
 	@rm -f $(SRC_DIR)/*.o 
+	@rm -f $(SRC_DIR)/FX/*.o 
 #	@rm -f ./$(EXE)
 	@echo "Clean!"
 	gcc -O3 ./makeheader.c -o ./makeheader

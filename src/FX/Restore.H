@@ -18,17 +18,19 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef FX2_H
-#define FX2_H
+#ifndef FX_RESTORE_H
+#define FX_RESTORE_H
 
-namespace FX2
+#include "FX.H"
+
+namespace Restore
 {
+  void apply();
+  void close();
+  void quit();
+  void begin();
   void init();
-  void marble();
-  void forwardFFT();
-  void inverseFFT();
-  void clearAlpha();
-}
+};
 
 #endif
 

@@ -30,8 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Dialog.H"
 #include "File.H"
-#include "FX.H"
-#include "FX2.H"
+#include "FX/FX.H"
 #include "Gui.H"
 #include "Inline.H"
 #include "Project.H"
@@ -164,9 +163,8 @@ int main(int argc, char *argv[])
   // program inits
   Project::init();
   File::init();
-  Dialog::init();
   FX::init();
-  FX2::init();
+  Dialog::init();
   Transform::init();
   Gui::init();
 

@@ -39,8 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "CheckBox.H"
 #include "Clone.H"
 #include "Dialog.H"
-#include "FX.H"
-#include "FX2.H"
+#include "FX/FX.H"
 #include "File.H"
 #include "Gamma.H"
 #include "Group.H"
@@ -364,8 +363,8 @@ void Gui::init()
     (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/&Create...", 0,
     (Fl_Callback *)Dialog::makePalette, 0, 0);
-  menubar->add("&Palette/&Apply...", 0,
-    (Fl_Callback *)FX::ditherImage, 0, FL_MENU_DIVIDER);
+//  menubar->add("&Palette/&Apply...", 0,
+//    (Fl_Callback *)FX::ditherImage, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/Presets/Default", 0,
     (Fl_Callback *)paletteDefault, 0, 0);
   menubar->add("Palette/Presets/Black and White", 0,
@@ -380,62 +379,62 @@ void Gui::init()
     (Fl_Callback *)Dialog::editor, 0, 0);
 
   menubar->add("F&X/Color/Normalize", 0,
-    (Fl_Callback *)FX::normalize, 0, 0);
+    (Fl_Callback *)Normalize::begin, 0, 0);
   menubar->add("F&X/Color/Equalize", 0,
-    (Fl_Callback *)FX::equalize, 0, 0);
+    (Fl_Callback *)Equalize::begin, 0, 0);
   menubar->add("F&X/Color/Value Stretch", 0,
-    (Fl_Callback *)FX::valueStretch, 0, 0);
-  menubar->add("F&X/Color/Color Stretch", 0,
-    (Fl_Callback *)FX::saturate, 0, 0);
+    (Fl_Callback *)ValueStretch::begin, 0, 0);
+  menubar->add("F&X/Color/Saturate", 0,
+    (Fl_Callback *)Saturate::begin, 0, 0);
   menubar->add("F&X/Color/Rotate Hue...", 0,
-    (Fl_Callback *)FX::rotateHue, 0, 0);
+    (Fl_Callback *)RotateHue::begin, 0, 0);
   menubar->add("F&X/Color/Desaturate", 0,
-    (Fl_Callback *)FX::desaturate, 0, 0);
+    (Fl_Callback *)Desaturate::begin, 0, 0);
   menubar->add("F&X/Color/Colorize", 0,
-    (Fl_Callback *)FX::colorize, 0, 0);
+    (Fl_Callback *)Colorize::begin, 0);
   menubar->add("F&X/Color/Palette Colors", 0,
-    (Fl_Callback *)FX::paletteColors, 0, 0);
+   (Fl_Callback *)PaletteColors::begin, 0, 0);
   menubar->add("F&X/Color/Invert", 0,
-    (Fl_Callback *)FX::invert, 0, 0);
+    (Fl_Callback *)Invert::begin, 0, 0);
 
   menubar->add("F&X/Alpha/Invert", 0,
-    (Fl_Callback *)FX::invertAlpha, 0, 0);
+    (Fl_Callback *)AlphaInvert::begin, 0, 0);
   menubar->add("F&X/Alpha/Clear", 0,
-    (Fl_Callback *)FX2::clearAlpha, 0, 0);
+    (Fl_Callback *)AlphaClear::begin, 0, 0);
 
   menubar->add("F&X/Filters/Gaussian Blur...", 0,
-    (Fl_Callback *)FX::gaussianBlur, 0, 0);
+    (Fl_Callback *)GaussianBlur::begin, 0, 0);
   menubar->add("F&X/Filters/Sharpen...", 0,
-    (Fl_Callback *)FX::sharpen, 0, 0);
+    (Fl_Callback *)Sharpen::begin, 0, 0);
   menubar->add("F&X/Filters/Unsharp Mask...", 0,
-    (Fl_Callback *)FX::unsharpMask, 0, 0);
+    (Fl_Callback *)UnsharpMask::begin, 0, 0);
   menubar->add("F&X/Filters/Box Filters...", 0,
-    (Fl_Callback *)FX::convolutionMatrix, 0, 0);
+    (Fl_Callback *)BoxFilters::begin, 0, 0);
   menubar->add("F&X/Filters/Sobel...", 0,
-    (Fl_Callback *)FX::sobel, 0, 0);
+    (Fl_Callback *)Sobel::begin, 0, 0);
   menubar->add("F&X/Filters/Bloom...", 0,
-    (Fl_Callback *)FX::bloom, 0, 0);
-  menubar->add("F&X/Filters/Randomize...", 0,
-    (Fl_Callback *)FX::randomize, 0, 0);
+    (Fl_Callback *)Bloom::begin, 0, 0);
+  menubar->add("F&X/Filters/Randomize", 0,
+    (Fl_Callback *)Randomize::begin, 0, 0);
 
   menubar->add("F&X/Photo/Restore...", 0,
-    (Fl_Callback *)FX::restore, 0, 0);
+    (Fl_Callback *)Restore::begin, 0, 0);
   menubar->add("F&X/Photo/Side Absorptions", 0,
-    (Fl_Callback *)FX::sideAbsorptions, 0, 0);
+    (Fl_Callback *)SideAbsorptions::begin, 0, 0);
   menubar->add("F&X/Photo/Remove Dust...", 0,
-    (Fl_Callback *)FX::removeDust, 0, 0);
+    (Fl_Callback *)RemoveDust::begin, 0, 0);
 
   menubar->add("F&X/Artistic/Stained Glass...", 0,
-    (Fl_Callback *)FX::stainedGlass, 0, 0);
+    (Fl_Callback *)StainedGlass::begin, 0, 0);
   menubar->add("F&X/Artistic/Painting...", 0,
-    (Fl_Callback *)FX::painting, 0, 0);
+    (Fl_Callback *)Painting::begin, 0, 0);
   menubar->add("F&X/Artistic/Marble...", 0,
-    (Fl_Callback *)FX2::marble, 0, 0);
+    (Fl_Callback *)Marble::begin, 0, 0);
 
   menubar->add("F&X/FFT/Forward FFT", 0,
-    (Fl_Callback *)FX2::forwardFFT, 0, 0);
+    (Fl_Callback *)ForwardFFT::begin, 0, 0);
   menubar->add("F&X/FFT/Inverse FFT", 0,
-    (Fl_Callback *)FX2::inverseFFT, 0, 0);
+    (Fl_Callback *)InverseFFT::begin, 0, 0);
 
   menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
