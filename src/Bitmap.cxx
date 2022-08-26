@@ -1398,4 +1398,47 @@ void Bitmap::invert()
   }
 }
 
+/*
+void Bitmap::average(int d)
+{
+  rgba_type rgba[4];
+
+  for(int step = 1; step < d; step *= 2)
+  for(int y = ct; y <= cb; y += step)
+  {
+    for(int x = cl; x <= cr; x += step)
+    {
+      rgba[0] = getRgba(getpixel(x, y));
+      rgba[1] = getRgba(getpixel(x + step, y));
+      rgba[2] = getRgba(getpixel(x, y + step));
+      rgba[3] = getRgba(getpixel(x + step, y + step));
+
+      int rr = 0;
+      int gg = 0;
+      int bb = 0;
+      int aa = 0;
+
+      for(int i = 0; i < 4; i++)
+      {
+        rr += Gamma::fix(rgba[i].r);
+        gg += Gamma::fix(rgba[i].g);
+        bb += Gamma::fix(rgba[i].b);
+        aa += Gamma::fix(rgba[i].a);
+      }
+
+      rr = Gamma::unfix(rr >> 2);
+      gg = Gamma::unfix(gg >> 2);
+      bb = Gamma::unfix(bb >> 2);
+      aa = Gamma::unfix(aa >> 2);
+
+      const int c = makeRgba(rr, gg, bb, aa);
+
+      if((step * 2) >= d)
+        rectfill(x, y, x + step - 1, y + step - 1, c, 0);
+      else
+        setpixel(x, y, c);
+    }
+  }
+}
+*/
 

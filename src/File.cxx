@@ -50,7 +50,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "File.H"
 #include "FileSP.H"
 #include "FilterMatrix.H"
-//#include "FX.H"
 #include "Gui.H"
 #include "Inline.H"
 #include "Map.H"
@@ -140,11 +139,12 @@ namespace
     TYPE_JPG,
     TYPE_BMP,
     TYPE_TGA,
+    TYPE_TXT,
   };
  
   int last_type = 0;
 
-  const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
+  const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga", ".txt" };
 
   // store previous directory paths
   char load_dir[256];
@@ -942,7 +942,8 @@ void File::save(Fl_Widget *, void *)
   fc.filter("PNG \t*.png\n"
             "JPEG \t*.jpg\n"
             "Bitmap \t*.bmp\n"
-            "Targa \t*.tga\n");
+            "Targa \t*.tga\n"
+            "Text Data \t*.txt\n");
 
 //  fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
@@ -985,6 +986,9 @@ void File::save(Fl_Widget *, void *)
       break;
     case TYPE_TGA:
       ret = File::saveTarga(fn);
+      break;
+    case TYPE_TXT:
+      ret = File::saveText(fn);
       break;
 
     default:
@@ -1311,6 +1315,57 @@ int File::saveJpeg(const char *fn)
   jpeg_finish_compress(&cinfo);
   jpeg_destroy_compress(&cinfo);
 
+  return 0;
+}
+
+int File::saveText(const char *fn)
+{
+  Dialog::textOptions();
+
+/*
+  FileSP out(fn, "wb");
+  FILE *outp = out.get();
+  if(!outp)
+    return -1;
+
+  Bitmap *bmp = Project::bmp;
+  int overscroll = Project::overscroll;
+  int w = bmp->cw;
+  int h = bmp->ch;
+
+  DialogWindow *dialog;
+  InputInt *bits;
+  CheckBox *use_alpha;
+  InputInt *alpha_levels;
+  Fl_Button *ok;
+
+//  writeUint8(0, outp);
+//  writeUint8(0, outp);
+//  writeUint8(2, outp);
+
+  int *p = bmp->row[overscroll] + overscroll;
+  std::vector<unsigned char> linebuf(w * 4);
+
+  for(int y = 0; y < h; y++)
+  {
+    int xx = 0;
+
+    for(int x = 0; x < w; x++)
+    {
+      linebuf[xx + 0] = (*p >> 16) & 0xff;
+      linebuf[xx + 1] = (*p >> 8) & 0xff;
+      linebuf[xx + 2] = *p & 0xff;
+      linebuf[xx + 3] = (*p >> 24) & 0xff;
+      p++;
+      xx += 4;
+    }
+
+    p += overscroll * 2;
+
+    if(fwrite(&linebuf[0], 1, w * 4, outp) != (unsigned)(w * 4))
+      return -1;
+  }
+*/
   return 0;
 }
 

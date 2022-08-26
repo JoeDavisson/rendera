@@ -124,6 +124,7 @@ namespace Gui
 
   void resetTool();
   void showProgress(float);
+  void showProgress(float, int);
   int updateProgress(const int);
   void hideProgress();
 

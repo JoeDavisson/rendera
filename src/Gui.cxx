@@ -181,6 +181,7 @@ namespace
   // progress indicator related
   float progress_value = 0;
   float progress_step = 0;
+  int progress_interval = 50;
 
   // tables
   const int brush_sizes[16] =
@@ -363,8 +364,8 @@ void Gui::init()
     (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/&Create...", 0,
     (Fl_Callback *)Dialog::makePalette, 0, 0);
-//  menubar->add("&Palette/&Apply...", 0,
-//    (Fl_Callback *)FX::ditherImage, 0, FL_MENU_DIVIDER);
+  menubar->add("&Palette/&Apply...", 0,
+    (Fl_Callback *)Dither::begin, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/Presets/Default", 0,
     (Fl_Callback *)paletteDefault, 0, 0);
   menubar->add("Palette/Presets/Black and White", 0,
@@ -1880,11 +1881,35 @@ void Gui::resetTool()
   Project::tool->reset();
 }
 
+// use default interval
 void Gui::showProgress(float step)
 {
+  if(step == 0)
+    step = .001;
+
   view->rendering = true;
   progress_value = 0;
-  progress_step = 100.0 / (step / 50);
+  progress_interval = 50;
+  progress_step = 100.0 / (step / progress_interval);
+  // keep progress bar on right side in case window was resized
+  progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4, 256, 16);
+  info->hide();
+  progress->show();
+}
+
+// custom interval
+void Gui::showProgress(float step, int interval)
+{
+  if(step == 0)
+    step = .001;
+
+  if(interval < 1)
+     interval = 1;
+
+  view->rendering = true;
+  progress_value = 0;
+  progress_interval = interval;
+  progress_step = 100.0 / (step / progress_interval);
   // keep progress bar on right side in case window was resized
   progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4, 256, 16);
   info->hide();
@@ -1901,7 +1926,7 @@ int Gui::updateProgress(const int y)
     return -1;
   }
 
-  if(!(y % 50))
+  if(!(y % progress_interval))
   {
     progress->value(progress_value);
     char percent[16];

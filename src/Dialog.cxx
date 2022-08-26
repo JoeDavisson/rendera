@@ -263,6 +263,77 @@ namespace PngOptions
   }
 }
 
+namespace TextOptions
+{
+  namespace Items
+  {
+    DialogWindow *dialog;
+    Fl_Choice *bits;
+    Fl_Choice *align;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
+
+  void closeCallback(Fl_Widget *, void *)
+  {
+    // needed to prevent dialog from being closed by window manager
+  }
+
+  void begin()
+  {
+    Items::dialog->show();
+
+    while(true)
+    {
+      Fl_Widget *action = Fl::readqueue();
+
+      if(!action)
+      {
+        Fl::wait();
+      }
+      else if(action == Items::ok)
+      {
+        Items::dialog->hide();
+        break;
+      }
+      else if(action == Items::cancel)
+      {
+        Items::dialog->hide();
+        break;
+      }
+    }
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    Items::dialog = new DialogWindow(256, 0, "Text Data Options");
+    Items::dialog->callback(closeCallback);
+    Items::bits = new Fl_Choice(64, y1, 128, 24, "");
+    Items::bits->tooltip("Bit Depth");
+    Items::bits->textsize(10);
+    Items::bits->add("1-bit (2 colors)");
+    Items::bits->add("2-bit (4 colors)");
+    Items::bits->add("4-bit (16 colors)");
+    Items::bits->add("8-bit (256 colors)");
+    Items::bits->value(0);
+    y1 += 24 + 8;
+    Items::align = new Fl_Choice(64, y1, 128, 24, "");
+    Items::align->tooltip("Byte Alignment");
+    Items::align->textsize(10);
+    Items::align->add("Linear");
+    Items::align->add("C64 Characters");
+    Items::align->add("C64 Hi-Res");
+    Items::align->add("C64 Sprite");
+    Items::align->value(0);
+    y1 += 24 + 8;
+    Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
+    Items::dialog->set_modal();
+    Items::dialog->end();
+  }
+}
+
 namespace NewImage
 {
   namespace Items
@@ -1111,6 +1182,7 @@ void Dialog::init()
   JpegQuality::init();
   JavaExport::init();
   PngOptions::init();
+  TextOptions::init();
   NewImage::init();
   MakePalette::init();
   Editor::init();
@@ -1146,6 +1218,11 @@ int Dialog::javaExportOption()
 void Dialog::pngOptions()
 {
   PngOptions::begin();
+}
+
+void Dialog::textOptions()
+{
+  TextOptions::begin();
 }
 
 int Dialog::pngUsePalette()

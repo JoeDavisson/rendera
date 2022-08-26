@@ -70,5 +70,6 @@ void FX::init()
   StainedGlass::init();
   Painting::init();
   Marble::init();
+  Dither::init();
 }
 

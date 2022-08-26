@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace GaussianBlur::Items
 {
   DialogWindow *dialog;
-  InputInt *radius;
+  InputInt *size;
   InputInt *blend;
   Fl_Choice *mode;
   Fl_Button *ok;
@@ -34,24 +34,23 @@ void GaussianBlur::apply()
 {
   Bitmap *bmp = Project::bmp;
 
-  int radius = (atoi(Items::radius->value()) + 1) / 2;
-  int blend = 255 - atoi(Items::blend->value()) * 2.55;
-  int mode = Items::mode->value();
-
-  std::vector<int> kernel(radius);
-  int div = 0;
+  const int size = (atof(Items::size->value()) * 2) * 2;
+  const int blend = 255 - atoi(Items::blend->value()) * 2.55;
+  const int mode = Items::mode->value();
 
   // bell curve
-  const int b = radius / 2;
+  std::vector<int> kernel(size);
+  int div = 0;
+  const int b = size / 2;
 
-  for(int x = 0; x < radius; x++)
+  for(int x = 0; x < size; x++)
   {
     kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) / ((b * b) / 2)));
     div += kernel[x];
   }
 
   Bitmap temp(bmp->cw, bmp->ch);
-  Gui::showProgress(bmp->h);
+  Gui::showProgress(bmp->ch);
 
   // x direction
   for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -65,10 +64,10 @@ void GaussianBlur::apply()
       int bb = 0;
       int aa = 0;
 
-      for(int i = 0; i < radius; i++) 
+      for(int i = 0; i < size; i++) 
       {
 	const int mul = kernel[i];
-	rgba_type rgba = getRgba(bmp->getpixel(x - radius / 2 + i, y));
+	rgba_type rgba = getRgba(bmp->getpixel(x - size / 2 + i, y));
 
 	rr += Gamma::fix(rgba.r) * mul;
 	gg += Gamma::fix(rgba.g) * mul;
@@ -85,11 +84,11 @@ void GaussianBlur::apply()
       p++;
     }
 
-    if(Gui::updateProgress(y) < 0)
-      return;
+    if(Gui::updateProgress(y - bmp->ct) < 0)
+      break;
   }
 
-  Gui::showProgress(bmp->h);
+  Gui::showProgress(bmp->ch);
 
   // y direction
   for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -103,11 +102,11 @@ void GaussianBlur::apply()
       int bb = 0;
       int aa = 0;
 
-      for(int i = 0; i < radius; i++) 
+      for(int i = 0; i < size; i++) 
       {
 	const int mul = kernel[i];
 	rgba_type rgba = getRgba(temp.getpixel(x - bmp->cl,
-                           y - radius / 2 + i - bmp->ct));
+                                               y - size / 2 + i - bmp->ct));
 
 	rr += Gamma::fix(rgba.r) * mul;
 	gg += Gamma::fix(rgba.g) * mul;
@@ -132,8 +131,8 @@ void GaussianBlur::apply()
       p++;
     }
 
-    if(Gui::updateProgress(y) < 0)
-      return;
+    if(Gui::updateProgress(y - bmp->ct) < 0)
+      break;
   }
 
   Gui::hideProgress();
@@ -164,10 +163,10 @@ void GaussianBlur::init()
   int hh = 0;
 
   Items::dialog = new DialogWindow(256, 0, "Gaussian Blur");
-  Items::radius = new InputInt(Items::dialog, 0, y1, 96, 24, "Radius (1-100)", 0, 1, 100);
+  Items::size = new InputInt(Items::dialog, 0, y1, 96, 24, "Size (1-100)", 0, 1, 100);
   y1 += 24 + 8;
-  Items::radius->value("1");
-  Items::radius->center();
+  Items::size->value("1");
+  Items::size->center();
   Items::blend = new InputInt(Items::dialog, 0, y1, 96, 24, "Blend %", 0, 0, 100);
   Items::blend->value("100");
   Items::blend->center();

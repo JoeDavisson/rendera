@@ -142,10 +142,10 @@ namespace Resize
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Resize Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 10000);
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 16384);
     Items::width->center();
     y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height", (Fl_Callback *)checkHeight, 1, 10000);
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height", (Fl_Callback *)checkHeight, 1, 16384);
     Items::height->center();
     y1 += 24 + 8;
     Items::width->maximum_size(8);
@@ -179,6 +179,66 @@ namespace Scale
     Fl_Button *cancel;
   }
 
+  void average(Bitmap *src, int d)
+  {
+    rgba_type rgba[4];
+    int count = 0;
+
+    for(int step = 1; step < d; step *= 2)
+      count++;
+
+    Gui::showProgress(count, 1);
+    count = 0;
+
+    for(int step = 1; step < d; step *= 2)
+    {
+      for(int y = src->ct; y <= src->cb; y += step)
+      {
+        int *p = src->row[y] + src->cl;
+
+        for(int x = src->cl; x <= src->cr; x += step)
+        {
+          rgba[0] = getRgba(src->getpixel(x, y));
+          rgba[1] = getRgba(src->getpixel(x + step, y));
+          rgba[2] = getRgba(src->getpixel(x, y + step));
+          rgba[3] = getRgba(src->getpixel(x + step, y + step));
+
+          int rr = 0;
+          int gg = 0;
+          int bb = 0;
+          int aa = 0;
+
+          for(int i = 0; i < 4; i++)
+          {
+            rr += Gamma::fix(rgba[i].r);
+            gg += Gamma::fix(rgba[i].g);
+            bb += Gamma::fix(rgba[i].b);
+            aa += Gamma::fix(rgba[i].a);
+          }
+
+          rr = Gamma::unfix(rr >> 2);
+          gg = Gamma::unfix(gg >> 2);
+          bb = Gamma::unfix(bb >> 2);
+          aa = Gamma::unfix(aa >> 2);
+
+          const int c = makeRgba(rr, gg, bb, aa);
+
+          if(step * 2 >= d)
+            src->rectfill(x, y, x + step - 1, y + step - 1, c, 0);
+          else
+            *p = c;
+
+          p += step;
+        }
+      }
+
+      count++;
+      Gui::updateProgress(count);
+    }
+
+    Gui::hideProgress();
+  }
+
   float cubic(const float p[4], const float x)
   {
     return p[1] + 0.5f * x * (p[2] - p[0] + x * (2.0f * p[0] - 5.0f * p[1]
@@ -197,7 +257,7 @@ namespace Scale
     return cubic(temp, x);
   }
 
-  void apply(int dw, int dh, bool wrap_edges)
+  void apply(const int dw, const int dh, const bool wrap_edges)
   {
     Bitmap *bmp = Project::bmp;
     int overscroll = bmp->overscroll;
@@ -215,7 +275,6 @@ namespace Scale
       return;
 
     Bitmap *temp = new Bitmap(dw, dh, overscroll);
-    Gui::showProgress(dh);
 
     const float ax = ((float)sw / dw);
     const float ay = ((float)sh / dh);
@@ -249,10 +308,10 @@ namespace Scale
       if(mipx > 1 || mipy > 1)
       {
         int radius = mipx > mipy ? mipx : mipy;
-        bmp->blur(radius, 0);
-        bmp->blur(radius, 0);
-        bmp->blur(radius, 0);
+        average(bmp, radius);
       }
+
+      Gui::showProgress(dh);
 
       for(int y = 0; y < dh; y++) 
       {
@@ -340,6 +399,7 @@ namespace Scale
     {
       // bicubic
       int mipx = 1, mipy = 1;
+
       if(sw > dw)
         mipx = (sw / dw);
       if(sh > dh)
@@ -348,15 +408,15 @@ namespace Scale
       if(mipx > 1 || mipy > 1)
       {
         int radius = mipx > mipy ? mipx : mipy;
-        bmp->blur(radius, 0);
-        bmp->blur(radius, 0);
-        bmp->blur(radius, 0);
+        average(bmp, radius);
       }
 
       float r[4][4];
       float g[4][4];
       float b[4][4];
       float a[4][4];
+
+      Gui::showProgress(dh);
 
       for(int y = 0; y < dh; y++) 
       {
@@ -388,12 +448,20 @@ namespace Scale
                   yy -= sh;
               }
 
+              const rgba_type rgba = getRgba(*(bmp->row[sy + yy] + sx + xx));
+
+              r[i][j] = Gamma::fix(rgba.r);
+              g[i][j] = Gamma::fix(rgba.g);
+              b[i][j] = Gamma::fix(rgba.b);
+              a[i][j] = Gamma::fix(rgba.a);
+/*
               const int c = bmp->getpixel(sx + xx, sy + yy);
 
               r[i][j] = Gamma::fix(getr(c));
               g[i][j] = Gamma::fix(getg(c));
               b[i][j] = Gamma::fix(getb(c));
               a[i][j] = Gamma::fix(geta(c));
+*/
             }
           }
 
@@ -508,10 +576,10 @@ namespace Scale
     int hh = 0;
 
     Items::dialog = new DialogWindow(256, 0, "Scale Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 10000);
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 16384);
     Items::width->center();
     y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height", (Fl_Callback *)checkHeight, 1, 10000);
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height", (Fl_Callback *)checkHeight, 1, 16384);
     Items::height->center();
     y1 += 24 + 8;
     Items::percent = new InputInt(Items::dialog, 0, y1, 96, 24, "%", (Fl_Callback *)checkPercent, 1, 1000);

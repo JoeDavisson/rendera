@@ -18,28 +18,19 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef FX_DITHER_H
+#define FX_DITHER_H
 
-namespace Dialog
+#include "FX.H"
+
+namespace Dither
 {
+  void apply();
+  void close();
+  void quit();
+  void begin();
   void init();
-  void about();
-  void jpegQuality();
-  int jpegQualityValue();
-  void javaExport();
-  int javaExportOption();
-  void pngOptions();
-  void textOptions();
-  int pngUsePalette();
-  int pngUseAlpha();
-  int pngAlphaLevels();
-  void newImage();
-  void makePalette();
-  void editor();
-  void message(const char *, const char *);
-  bool choice(const char *, const char *);
-}
+};
 
 #endif
 
