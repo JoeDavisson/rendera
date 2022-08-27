@@ -20,6 +20,69 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "GaussianBlur.H"
 
+namespace
+{
+//FIXME cheesy workarounds
+
+  void extendBorders(Bitmap *bmp)
+  {
+    const int cl = bmp->cl;
+    const int cr = bmp->cr;
+    const int ct = bmp->ct;
+    const int cb = bmp->cb;
+    const int w = bmp->w;
+    const int h = bmp->h;
+
+    bmp->setClip(0, 0, bmp->w - 1, bmp->h - 1);
+
+    // left
+    for(int y = ct; y <= cb; y++)
+      bmp->hline(0, y, cl - 1, bmp->getpixel(cl, y), 0);
+
+    // right
+    for(int y = ct; y <= cb; y++)
+      bmp->hline(cr + 1, y, w - 1, bmp->getpixel(cr, y), 0);
+
+    // top
+    for(int x = cl; x <= cr; x++)
+      bmp->vline(0, x, ct - 1, bmp->getpixel(x, ct), 0);
+
+    // bottom
+    for(int x = cl; x <= cr; x++)
+      bmp->vline(cb + 1, x, h - 1, bmp->getpixel(x, cb), 0);
+
+    // upper-left
+    bmp->rectfill(0, 0, cl - 1, ct - 1, bmp->getpixel(cl, ct), 0);
+
+    // upper-right
+    bmp->rectfill(cr, 0, w - 1, ct - 1, bmp->getpixel(cr, ct), 0);
+
+    // lower-left
+    bmp->rectfill(0, cb + 1, cl - 1, h - 1, bmp->getpixel(cl, cb), 0);
+
+    // lower-right
+    bmp->rectfill(cr + 1, cb + 1, w - 1, h - 1, bmp->getpixel(cr, cb), 0);
+  }
+}
+
+void redrawBorder(Bitmap *bmp)
+{
+    const int cl = bmp->overscroll;
+    const int cr = bmp->w - bmp->overscroll - 1;
+    const int ct = bmp->overscroll;
+    const int cb = bmp->h - bmp->overscroll - 1;
+    const int w = bmp->w;
+    const int h = bmp->h;
+    const int c = convertFormat(getFltkColor(FL_BACKGROUND_COLOR), true);
+
+    bmp->setClip(0, 0, w - 1, h - 1);
+    bmp->rectfill(0, 0, cl - 1, h - 1, c, 0);
+    bmp->rectfill(cr + 1, 0, w - 1, h - 1, c, 0);
+    bmp->rectfill(cl, 0, cr, ct - 1, c, 0);
+    bmp->rectfill(cl, cb + 1, cr, h - 1, c, 0);
+    bmp->setClip(bmp->overscroll, bmp->overscroll, bmp->w - bmp->overscroll - 1, bmp->h - bmp->overscroll - 1);
+}
+
 namespace GaussianBlur::Items
 {
   DialogWindow *dialog;
@@ -33,8 +96,17 @@ namespace GaussianBlur::Items
 void GaussianBlur::apply()
 {
   Bitmap *bmp = Project::bmp;
-  Bitmap temp(bmp->cw, bmp->ch, bmp->overscroll);
-  int size = atof(Items::size->value()) * 2;
+  Bitmap temp(bmp->w, bmp->h);
+
+  extendBorders(bmp);
+
+  bmp->setClip(0, 0, bmp->w - 1, bmp->h - 1);
+  temp.setClip(0, 0, temp.w - 1, temp.h - 1);
+
+  int size = atof(Items::size->value()) + 1;
+
+  if(size > bmp->overscroll - 2)
+    size = bmp->overscroll - 2;
 
   if((size & 1) == 0)
     size++;
@@ -60,45 +132,46 @@ void GaussianBlur::apply()
 
     for(int y = bmp->ct; y <= bmp->cb; y++)
     {
-      int *p = bmp->row[y] + bmp->cl;
-
       for(int x = bmp->cl; x <= bmp->cr; x++)
       {
-        rgba_type rgba = getRgba(*p++);
+        rgba_type rgba = getRgba(bmp->getpixel(x, y));
         buf_r[x] = Gamma::fix(rgba.r);
         buf_g[x] = Gamma::fix(rgba.g);
         buf_b[x] = Gamma::fix(rgba.b);
         buf_a[x] = rgba.a;
       }
 
-      p = temp.row[y] + bmp->cl;
+      int accum_r = 0;
+      int accum_g = 0;
+      int accum_b = 0;
+      int accum_a = 0;
+      int div = 1;
 
       for(int x = bmp->cl; x <= bmp->cr; x++)
       {
-        int rr = 0;
-        int gg = 0;
-        int bb = 0;
-        int aa = 0;
-        int div = 0;
+        const int mx = x - div;
 
-        for(int i = 0; i < size; i++) 
-        {
-          const int xx = x - size / 2 + i;
+        accum_r -= buf_r[mx];
+        accum_g -= buf_g[mx];
+        accum_b -= buf_b[mx];
+        accum_a -= buf_a[mx];
 
-          if(xx < bmp->cl || xx > bmp->cr)
-            continue;
+        accum_r += buf_r[x];
+        accum_g += buf_g[x];
+        accum_b += buf_b[x];
+        accum_a += buf_a[x];
 
-          rr += buf_r[xx];
-          gg += buf_g[xx];
-          bb += buf_b[xx];
-          aa += buf_a[xx];
-          div++;
-        }
+        div++;
 
-        *p++ = makeRgba(Gamma::unfix(rr / div),
-                        Gamma::unfix(gg / div),
-                        Gamma::unfix(bb / div),
-                        aa / div);
+        if(div > size)
+          div = size;
+
+        const int c = makeRgba(Gamma::unfix(accum_r / div),
+                               Gamma::unfix(accum_g / div),
+                               Gamma::unfix(accum_b / div),
+                               accum_a / div);
+
+        temp.setpixel(x - size / 2, y - size / 2, c);
       }
     }
 
@@ -108,59 +181,64 @@ void GaussianBlur::apply()
 
     for(int x = bmp->cl; x <= bmp->cr; x++)
     {
-      int *p = temp.row[bmp->ct] + x;
-
       for(int y = bmp->ct; y <= bmp->cb; y++)
       {
-        rgba_type rgba = getRgba(*p);
-        p += bmp->w;
+        rgba_type rgba = getRgba(temp.getpixel(x, y));
         buf_r[y] = Gamma::fix(rgba.r);
         buf_g[y] = Gamma::fix(rgba.g);
         buf_b[y] = Gamma::fix(rgba.b);
         buf_a[y] = rgba.a;
       }
 
-      p = bmp->row[bmp->ct] + x;
+      int accum_r = 0;
+      int accum_g = 0;
+      int accum_b = 0;
+      int accum_a = 0;
+      int div = 1;
 
       for(int y = bmp->ct; y <= bmp->cb; y++)
       {
-        int rr = 0;
-        int gg = 0;
-        int bb = 0;
-        int aa = 0;
-        int div = 0;
+        const int my = y - div;
 
-        for(int i = 0; i < size; i++) 
+        accum_r -= buf_r[my];
+        accum_g -= buf_g[my];
+        accum_b -= buf_b[my];
+        accum_a -= buf_a[my];
+
+        accum_r += buf_r[y];
+        accum_g += buf_g[y];
+        accum_b += buf_b[y];
+        accum_a += buf_a[y];
+
+        div++;
+
+        if(div > size)
+          div = size;
+
+        int c1 = temp.getpixel(x, y);
+        const int c2 = makeRgba(Gamma::unfix(accum_r / div),
+                                Gamma::unfix(accum_g / div),
+                                Gamma::unfix(accum_b / div),
+                                accum_a / div);
+
+        if(mode == 0)
         {
-          const int yy = y - size / 2 + i;
-
-          if(yy < bmp->ct || yy > bmp->cb)
-            continue;
-
-          rr += buf_r[yy];
-          gg += buf_g[yy];
-          bb += buf_b[yy];
-          aa += buf_a[yy];
-          div++;
+          bmp->setpixel(x, y, Blend::trans(c1, c2, blend));
         }
-
-        const int c3 = makeRgba(Gamma::unfix(rr / div),
-                                Gamma::unfix(gg / div),
-                                Gamma::unfix(bb / div),
-                                aa / div);
-
-        if(mode == 1)
-          *p = Blend::trans(*p, Blend::keepLum(c3, getl(*p)), blend);
+        else if(mode == 1)
+        {
+          bmp->setpixel(x, y,
+                        Blend::trans(c1, Blend::keepLum(c2, getl(c1)), blend));
+        }
         else if(mode == 2)
-          *p = Blend::transAlpha(*p, c3, blend);
-        else
-          *p = Blend::trans(*p, c3, blend);
-
-        p += bmp->w;
+        {
+          bmp->setpixel(x, y, Blend::transAlpha(c1, c2, blend));
+        }
       }
     }
   }
 
+  redrawBorder(bmp);
   Gui::hideProgress();
 }
 
@@ -189,7 +267,7 @@ void GaussianBlur::init()
   int hh = 0;
 
   Items::dialog = new DialogWindow(256, 0, "Gaussian Blur");
-  Items::size = new InputInt(Items::dialog, 0, y1, 96, 24, "Size (1-100)", 0, 1, 100);
+  Items::size = new InputInt(Items::dialog, 0, y1, 96, 24, "Size (1-60)", 0, 1, 60);
   y1 += 24 + 8;
   Items::size->value("1");
   Items::size->center();
