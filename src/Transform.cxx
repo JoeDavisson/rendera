@@ -434,19 +434,29 @@ namespace Scale
 
           for(int j = 0; j < 4; j++)
           {
+            int yy = v1 + j - 1;
+
+            if(wrap_edges)
+            {
+              if(yy >= sh)
+                yy -= sh;
+            }
+
+            if(yy > sh - 1)
+              yy = sh - 1;
+
             for(int i = 0; i < 4; i++)
             {
               int xx = u1 + i - 1;
-              int yy = v1 + j - 1;
 
               if(wrap_edges)
               {
                 if(xx >= sw)
                   xx -= sw;
-
-                if(yy >= sh)
-                  yy -= sh;
               }
+
+              if(xx > sw - 1)
+                xx = sw - 1;
 
               const rgba_type rgba = getRgba(*(bmp->row[sy + yy] + sx + xx));
 
