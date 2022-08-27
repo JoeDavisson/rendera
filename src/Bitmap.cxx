@@ -103,18 +103,6 @@ Bitmap::Bitmap(int width, int height, int overscroll)
   setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
   clear(convertFormat(getFltkColor(FL_BACKGROUND_COLOR), true));
   rectfill(cl, ct, cr, cb, makeRgb(0, 0, 0), 0);
-  setClip(0, 0, w - 1, h - 1);
-
-/*
-  for(int i = 0; i < 4; i++)
-  {
-    rect(overscroll - 1 - i, overscroll - 1 - i,
-         w - overscroll + i, h - overscroll + i,
-         convertFormat(getFltkColor(FL_BACKGROUND2_COLOR), true), 0);
-  }
-*/
-
-  setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
 }
 
 // creates bitmap from existing pixel data
