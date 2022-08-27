@@ -263,8 +263,8 @@ namespace Scale
     int overscroll = bmp->overscroll;
     const int sx = overscroll;
     const int sy = overscroll;
-    int sw = bmp->cw;
-    int sh = bmp->ch;
+    const int sw = bmp->cw;
+    const int sh = bmp->ch;
     const int dx = overscroll;
     const int dy = overscroll;
 
@@ -454,14 +454,6 @@ namespace Scale
               g[i][j] = Gamma::fix(rgba.g);
               b[i][j] = Gamma::fix(rgba.b);
               a[i][j] = Gamma::fix(rgba.a);
-/*
-              const int c = bmp->getpixel(sx + xx, sy + yy);
-
-              r[i][j] = Gamma::fix(getr(c));
-              g[i][j] = Gamma::fix(getg(c));
-              b[i][j] = Gamma::fix(getb(c));
-              a[i][j] = Gamma::fix(geta(c));
-*/
             }
           }
 
