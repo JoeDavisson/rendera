@@ -48,18 +48,6 @@ void GaussianBlur::apply()
   std::vector<int> buf_b(larger);
   std::vector<int> buf_a(larger);
 
-  const int s1 = size + 1;
-  std::vector<std::vector<int>> div8(s1, std::vector<int>(256 * s1));
-  std::vector<std::vector<int>> div16(s1, std::vector<int>(65536 * s1));
-
-  for(int j = 1; j < s1; j++)
-    for(int i = 0; i < 256 * s1; i++)
-      div8[j][i] = i / j; 
-
-  for(int j = 1; j < s1; j++)
-    for(int i = 0; i < 65536 * s1; i++)
-      div16[j][i] = i / j; 
-
   Gui::showProgress(6, 1);
 
   int pass_count = 0;
@@ -107,10 +95,10 @@ void GaussianBlur::apply()
           div++;
         }
 
-        *p++ = makeRgba(Gamma::unfix(div16[div][rr]),
-                        Gamma::unfix(div16[div][gg]),
-                        Gamma::unfix(div16[div][bb]),
-                        div8[div][aa]);
+        *p++ = makeRgba(Gamma::unfix(rr / div),
+                        Gamma::unfix(gg / div),
+                        Gamma::unfix(bb / div),
+                        aa / div);
       }
     }
 
@@ -156,10 +144,10 @@ void GaussianBlur::apply()
           div++;
         }
 
-        const int c3 = makeRgba(Gamma::unfix(div16[div][rr]),
-                                Gamma::unfix(div16[div][gg]),
-                                Gamma::unfix(div16[div][bb]),
-                                div8[div][aa]);
+        const int c3 = makeRgba(Gamma::unfix(rr / div),
+                                Gamma::unfix(gg / div),
+                                Gamma::unfix(bb / div),
+                                aa / div);
 
         if(mode == 1)
           *p = Blend::trans(*p, Blend::keepLum(c3, getl(*p)), blend);
