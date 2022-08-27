@@ -33,106 +33,144 @@ namespace GaussianBlur::Items
 void GaussianBlur::apply()
 {
   Bitmap *bmp = Project::bmp;
+  Bitmap temp(bmp->cw, bmp->ch, bmp->overscroll);
+  int size = atof(Items::size->value()) * 2;
 
-  const int size = (atof(Items::size->value()) * 2) * 2;
+  if((size & 1) == 0)
+    size++;
+
   const int blend = 255 - atoi(Items::blend->value()) * 2.55;
   const int mode = Items::mode->value();
+  const int larger = bmp->w > bmp->h ? bmp->w : bmp->h;
 
-  // bell curve
-  std::vector<int> kernel(size);
-  int div = 0;
-  const int b = size / 2;
+  std::vector<int> buf_r(larger);
+  std::vector<int> buf_g(larger);
+  std::vector<int> buf_b(larger);
+  std::vector<int> buf_a(larger);
 
-  for(int x = 0; x < size; x++)
+  const int s1 = size + 1;
+  std::vector<std::vector<int>> div8(s1, std::vector<int>(256 * s1));
+  std::vector<std::vector<int>> div16(s1, std::vector<int>(65536 * s1));
+
+  for(int j = 1; j < s1; j++)
+    for(int i = 0; i < 256 * s1; i++)
+      div8[j][i] = i / j; 
+
+  for(int j = 1; j < s1; j++)
+    for(int i = 0; i < 65536 * s1; i++)
+      div16[j][i] = i / j; 
+
+  Gui::showProgress(6, 1);
+
+  int pass_count = 0;
+
+  for(int pass = 0; pass < 3; pass++)
   {
-    kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) / ((b * b) / 2)));
-    div += kernel[x];
-  }
+    // x direction
+    if(Gui::updateProgress(pass_count++))
+      break;
 
-  Bitmap temp(bmp->cw, bmp->ch);
-  Gui::showProgress(bmp->ch);
+    for(int y = bmp->ct; y <= bmp->cb; y++)
+    {
+      int *p = bmp->row[y] + bmp->cl;
 
-  // x direction
-  for(int y = bmp->ct; y <= bmp->cb; y++)
-  {
-    int *p = temp.row[y - bmp->ct];
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        rgba_type rgba = getRgba(*p++);
+        buf_r[x] = Gamma::fix(rgba.r);
+        buf_g[x] = Gamma::fix(rgba.g);
+        buf_b[x] = Gamma::fix(rgba.b);
+        buf_a[x] = rgba.a;
+      }
+
+      p = temp.row[y] + bmp->cl;
+
+      for(int x = bmp->cl; x <= bmp->cr; x++)
+      {
+        int rr = 0;
+        int gg = 0;
+        int bb = 0;
+        int aa = 0;
+        int div = 0;
+
+        for(int i = 0; i < size; i++) 
+        {
+          const int xx = x - size / 2 + i;
+
+          if(xx < bmp->cl || xx > bmp->cr)
+            continue;
+
+          rr += buf_r[xx];
+          gg += buf_g[xx];
+          bb += buf_b[xx];
+          aa += buf_a[xx];
+          div++;
+        }
+
+        *p++ = makeRgba(Gamma::unfix(div16[div][rr]),
+                        Gamma::unfix(div16[div][gg]),
+                        Gamma::unfix(div16[div][bb]),
+                        div8[div][aa]);
+      }
+    }
+
+    // y direction
+    if(Gui::updateProgress(pass_count++))
+      break;
 
     for(int x = bmp->cl; x <= bmp->cr; x++)
     {
-      int rr = 0;
-      int gg = 0;
-      int bb = 0;
-      int aa = 0;
+      int *p = temp.row[bmp->ct] + x;
 
-      for(int i = 0; i < size; i++) 
+      for(int y = bmp->ct; y <= bmp->cb; y++)
       {
-	const int mul = kernel[i];
-	rgba_type rgba = getRgba(bmp->getpixel(x - size / 2 + i, y));
-
-	rr += Gamma::fix(rgba.r) * mul;
-	gg += Gamma::fix(rgba.g) * mul;
-	bb += Gamma::fix(rgba.b) * mul;
-	aa += rgba.a * mul;
+        rgba_type rgba = getRgba(*p);
+        p += bmp->w;
+        buf_r[y] = Gamma::fix(rgba.r);
+        buf_g[y] = Gamma::fix(rgba.g);
+        buf_b[y] = Gamma::fix(rgba.b);
+        buf_a[y] = rgba.a;
       }
 
-      rr = Gamma::unfix(rr / div);
-      gg = Gamma::unfix(gg / div);
-      bb = Gamma::unfix(bb / div);
-      aa /= div;
+      p = bmp->row[bmp->ct] + x;
 
-      *p = makeRgba(rr, gg, bb, aa);
-      p++;
-    }
-
-    if(Gui::updateProgress(y - bmp->ct) < 0)
-      break;
-  }
-
-  Gui::showProgress(bmp->ch);
-
-  // y direction
-  for(int y = bmp->ct; y <= bmp->cb; y++)
-  {
-    int *p = bmp->row[y] + bmp->cl;
-
-    for(int x = bmp->cl; x <= bmp->cr; x++)
-    {
-      int rr = 0;
-      int gg = 0;
-      int bb = 0;
-      int aa = 0;
-
-      for(int i = 0; i < size; i++) 
+      for(int y = bmp->ct; y <= bmp->cb; y++)
       {
-	const int mul = kernel[i];
-	rgba_type rgba = getRgba(temp.getpixel(x - bmp->cl,
-                                               y - size / 2 + i - bmp->ct));
+        int rr = 0;
+        int gg = 0;
+        int bb = 0;
+        int aa = 0;
+        int div = 0;
 
-	rr += Gamma::fix(rgba.r) * mul;
-	gg += Gamma::fix(rgba.g) * mul;
-	bb += Gamma::fix(rgba.b) * mul;
-	aa += rgba.a * mul;
+        for(int i = 0; i < size; i++) 
+        {
+          const int yy = y - size / 2 + i;
+
+          if(yy < bmp->ct || yy > bmp->cb)
+            continue;
+
+          rr += buf_r[yy];
+          gg += buf_g[yy];
+          bb += buf_b[yy];
+          aa += buf_a[yy];
+          div++;
+        }
+
+        const int c3 = makeRgba(Gamma::unfix(div16[div][rr]),
+                                Gamma::unfix(div16[div][gg]),
+                                Gamma::unfix(div16[div][bb]),
+                                div8[div][aa]);
+
+        if(mode == 1)
+          *p = Blend::trans(*p, Blend::keepLum(c3, getl(*p)), blend);
+        else if(mode == 2)
+          *p = Blend::transAlpha(*p, c3, blend);
+        else
+          *p = Blend::trans(*p, c3, blend);
+
+        p += bmp->w;
       }
-
-      rr = Gamma::unfix(rr / div);
-      gg = Gamma::unfix(gg / div);
-      bb = Gamma::unfix(bb / div);
-      aa /= div;
-
-      int c3 = makeRgba(rr, gg, bb, aa);
-
-      if(mode == 1)
-	*p = Blend::trans(*p, Blend::keepLum(c3, getl(*p)), blend);
-      else if(mode == 2)
-	*p = Blend::transAlpha(*p, c3, blend);
-      else
-	*p = Blend::trans(*p, c3, blend);
-
-      p++;
     }
-
-    if(Gui::updateProgress(y - bmp->ct) < 0)
-      break;
   }
 
   Gui::hideProgress();
