@@ -215,7 +215,8 @@ void GaussianBlur::apply()
         if(div > size)
           div = size;
 
-        int c1 = temp.getpixel(x, y);
+        int c1 = bmp->getpixel(x, y);
+
         const int c2 = makeRgba(Gamma::unfix(accum_r / div),
                                 Gamma::unfix(accum_g / div),
                                 Gamma::unfix(accum_b / div),
