@@ -20,16 +20,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "RotateHue.H"
 
-namespace RotateHue::Items
+namespace
 {
-  DialogWindow *dialog;
-  Widget *preview;
-  Widget *hue;
-  Fl_Repeat_Button *inc_hue;
-  Fl_Repeat_Button *dec_hue;
-  CheckBox *preserve_lum;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    DialogWindow *dialog;
+    Widget *preview;
+    Widget *hue;
+    Fl_Repeat_Button *inc_hue;
+    Fl_Repeat_Button *dec_hue;
+    CheckBox *preserve_lum;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
 }
 
 void RotateHue::apply(Bitmap *dest, bool show_progress)

@@ -20,12 +20,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Sharpen.H"
 
-namespace Sharpen::Items
+namespace
 {
-  DialogWindow *dialog;
-  InputInt *amount;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    DialogWindow *dialog;
+    InputInt *amount;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
 }
 
 void Sharpen::apply()

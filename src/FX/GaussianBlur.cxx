@@ -83,14 +83,17 @@ void redrawBorder(Bitmap *bmp)
     bmp->setClip(bmp->overscroll, bmp->overscroll, bmp->w - bmp->overscroll - 1, bmp->h - bmp->overscroll - 1);
 }
 
-namespace GaussianBlur::Items
+namespace
 {
-  DialogWindow *dialog;
-  InputInt *size;
-  InputInt *blend;
-  Fl_Choice *mode;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    DialogWindow *dialog;
+    InputInt *size;
+    InputInt *blend;
+    Fl_Choice *mode;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
 }
 
 void GaussianBlur::apply()

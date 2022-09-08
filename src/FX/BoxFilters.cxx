@@ -32,6 +32,15 @@ enum
 
 namespace
 {
+  namespace Items
+  {
+    DialogWindow *dialog;
+    Fl_Choice *mode;
+    InputInt *amount;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
+
   void copyMatrix(const int src[3][3], int dest[3][3])
   {
     for(int j = 0; j < 3; j++) 
@@ -42,15 +51,6 @@ namespace
       }
     }
   }
-}
-
-namespace BoxFilters::Items
-{
-  DialogWindow *dialog;
-  Fl_Choice *mode;
-  InputInt *amount;
-  Fl_Button *ok;
-  Fl_Button *cancel;
 }
 
 void BoxFilters::apply()

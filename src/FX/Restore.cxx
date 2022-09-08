@@ -20,15 +20,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Restore.H"
 
-namespace Restore::Items
+namespace
 {
-  DialogWindow *dialog;
-  Fl_Box *box;
-  CheckBox *normalize;
-  CheckBox *invert;
-  CheckBox *preserve_lum;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    DialogWindow *dialog;
+    Fl_Box *box;
+    CheckBox *normalize;
+    CheckBox *invert;
+    CheckBox *preserve_lum;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
 }
 
 void Restore::apply()

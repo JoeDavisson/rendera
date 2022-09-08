@@ -22,27 +22,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Fractal.H"
 #include "Images.H"
 
-namespace Marble::Items
+namespace
 {
-  DialogWindow *dialog;
-  Widget *preview;
-  Widget *marb;
-  Widget *turb;
-  Widget *blend;
-  Widget *threshold;
-  Widget *color;
-  Fl_Choice *type;
-  Fl_Choice *mode;
-  Fl_Button *palette_editor;
-  Fl_Button *change;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    DialogWindow *dialog;
+    Widget *preview;
+    Widget *marb;
+    Widget *turb;
+    Widget *blend;
+    Widget *threshold;
+    Widget *color;
+    Fl_Choice *type;
+    Fl_Choice *mode;
+    Fl_Button *palette_editor;
+    Fl_Button *change;
+    Fl_Button *ok;
+    Fl_Button *cancel;
 
-  Bitmap *temp;
-  int old_marb_var;
-  int old_turb_var;
-  int old_blend_var;
-  int old_threshold_var;
+    Bitmap *temp;
+    int old_marb_var;
+    int old_turb_var;
+    int old_blend_var;
+    int old_threshold_var;
+  }
 }
 
 void Marble::apply(Bitmap *dest)

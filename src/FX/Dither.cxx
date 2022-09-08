@@ -20,14 +20,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Dither.H"
 
-namespace Dither::Items
+namespace
 {
-  DialogWindow *dialog;
-  Fl_Choice *mode;
-  CheckBox *gamma;
-  CheckBox *lum_only;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    DialogWindow *dialog;
+    Fl_Choice *mode;
+    CheckBox *gamma;
+    CheckBox *lum_only;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
 }
 
 enum

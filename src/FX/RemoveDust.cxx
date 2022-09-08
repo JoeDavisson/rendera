@@ -20,14 +20,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "RemoveDust.H"
 
-namespace RemoveDust::Items
+namespace
 {
-  DialogWindow *dialog;
-  Fl_Box *box;
-  InputInt *amount;
-  CheckBox *invert;
-  Fl_Button *ok;
-  Fl_Button *cancel;
+  namespace Items
+  {
+    DialogWindow *dialog;
+    Fl_Box *box;
+    InputInt *amount;
+    CheckBox *invert;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
 }
 
 void RemoveDust::apply()

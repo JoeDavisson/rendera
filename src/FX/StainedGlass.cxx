@@ -22,6 +22,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
+  namespace Items
+  {
+    DialogWindow *dialog;
+    InputInt *detail;
+    InputInt *edge;
+    CheckBox *uniform;
+    CheckBox *sat_alpha;
+    CheckBox *draw_edges;
+    Fl_Button *ok;
+    Fl_Button *cancel;
+  }
+
   inline int isEdge(Bitmap *b, const int x, const int y, const int div)
   {
     const int c0 = getl(b->getpixel(x, y)) / div;
@@ -47,18 +59,6 @@ namespace
     else
       return 1;
   }
-}
-
-namespace StainedGlass::Items
-{
-  DialogWindow *dialog;
-  InputInt *detail;
-  InputInt *edge;
-  CheckBox *uniform;
-  CheckBox *sat_alpha;
-  CheckBox *draw_edges;
-  Fl_Button *ok;
-  Fl_Button *cancel;
 }
 
 void StainedGlass::apply()
