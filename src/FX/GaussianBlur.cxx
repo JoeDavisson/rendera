@@ -22,8 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-//FIXME cheesy workarounds
-
   void extendBorders(Bitmap *bmp)
   {
     const int cl = bmp->cl;
@@ -80,7 +78,8 @@ void redrawBorder(Bitmap *bmp)
     bmp->rectfill(cr + 1, 0, w - 1, h - 1, c, 0);
     bmp->rectfill(cl, 0, cr, ct - 1, c, 0);
     bmp->rectfill(cl, cb + 1, cr, h - 1, c, 0);
-    bmp->setClip(bmp->overscroll, bmp->overscroll, bmp->w - bmp->overscroll - 1, bmp->h - bmp->overscroll - 1);
+    bmp->setClip(bmp->overscroll, bmp->overscroll,
+                 bmp->w - bmp->overscroll - 1, bmp->h - bmp->overscroll - 1);
 }
 
 namespace

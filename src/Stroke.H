@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef STROKE_H
 #define STROKE_H
 
+#include <vector>
+
 class Bitmap;
 
 class Stroke
@@ -64,6 +66,7 @@ public:
 
   int x1, y1, x2, y2;
   int origin, constrain;
+  int origin_always, constrain_always;
   int blitx, blity, blitw, blith;
   int beginx, beginy;
   int lastx, lasty;

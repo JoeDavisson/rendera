@@ -98,14 +98,17 @@ namespace
 
 Stroke::Stroke()
 {
-  polycachex = new int[65536];
-  polycachey = new int[65536];
+  polycachex = new int[0x10000];
+  polycachey = new int[0x10000];
   edgecachex = new int[0x100000];
   edgecachey = new int[0x100000];
+
   polycount = 0;
   type = 0;
   origin = false;
+  origin_always = false;
   constrain = false;
+  constrain_always = false;
   x1 = 0;
   y1 = 0;
   x2 = 0;
@@ -388,7 +391,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       polycachex[polycount] = x;
       polycachey[polycount] = y;
       polycount++;
-      polycount &= 65535;
+      polycount &= 0xffff;
 
       break;
     }
@@ -405,7 +408,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       polycachex[polycount] = x;
       polycachey[polycount] = y;
       polycount++;
-      polycount &= 65535;
+      polycount &= 0xffff;
       oldx = x;
       oldy = y;
 
@@ -443,7 +446,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       polycachex[polycount] = x;
       polycachey[polycount] = y;
       polycount++;
-      polycount &= 65535;
+      polycount &= 0xffff;
       oldx = x;
       oldy = y;
 
@@ -589,7 +592,7 @@ void Stroke::end(int x, int y)
         polycachex[polycount] = x;
         polycachey[polycount] = y;
         polycount++;
-        polycount &= 65535;
+        polycount &= 0xffff;
 
         if(polycount > 2)
         {
@@ -616,7 +619,7 @@ void Stroke::end(int x, int y)
         polycachex[polycount] = beginx;
         polycachey[polycount] = beginy;
         polycount++;
-        polycount &= 65535;
+        polycount &= 0xffff;
         map->polyfillAA(polycachex, polycachey, polycount, y1, y2, 255);
 
         break;
@@ -647,7 +650,7 @@ void Stroke::end(int x, int y)
         polycachex[polycount] = beginx;
         polycachey[polycount] = beginy;
         polycount++;
-        polycount &= 65535;
+        polycount &= 0xffff;
         if(polycount > 3)
           map->polyfillAA(polycachex, polycachey, polycount, y1, y2, 255);
 
@@ -753,7 +756,7 @@ void Stroke::end(int x, int y)
         polycachex[polycount] = beginx;
         polycachey[polycount] = beginy;
         polycount++;
-        polycount &= 65535;
+        polycount &= 0xffff;
         if(polycount > 3)
         {
           map->polyfill(polycachex, polycachey, polycount, y1, y2, 255);
@@ -849,8 +852,11 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
 {
   Map *map = Project::map;
-  clip();
+  const int c = convertFormat(Project::brush.get()->color, Gui::getView()->bgr_order);
 
+  const int trans = Project::brush->trans;
+
+  clip();
   ox *= zoom;
   oy *= zoom;
 
@@ -862,7 +868,8 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 
   float yy1 = (float)y1 * zoom;
   float yy2 = yy1 + zoom - 1;
-  int color = convertFormat(Project::brush.get()->color, Gui::getView()->bgr_order);
+
+  Blend::set(Blend::FAST);
 
   for(int y = y1; y <= y2; y++)
   {
@@ -872,31 +879,16 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 
     for(int x = x1; x <= x2; x++)
     {
-      if(*p)
+      if(*p++)
       {
-        switch(type)
+        if(isEdge(map, x, y) == true)
         {
-          case FREEHAND:
-          case LINE:
-          case RECT:
-          case FILLED_RECT:
-          case OVAL:
-          case FILLED_OVAL:
-            backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
-            backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, 128);
-            break;
-          case REGION:
-          case POLYGON:
-            if(isEdge(map, x, y) == true)
-            {
-              backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
-              backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, 128);
-            }
-            break;
+          backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
+                           (x & 1) ^ (y & 1) ? 0xff555555 : 0xffaaaaaa,
+                           trans / 2);
         }
       }
 
-      p++;
       xx1 += zoom;
       xx2 += zoom;
     }

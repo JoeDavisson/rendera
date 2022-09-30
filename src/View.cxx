@@ -242,6 +242,7 @@ int View::handle(int event)
   dclick = Fl::event_clicks() ? true : false;
   shift = Fl::event_shift() ? true : false;
   ctrl = Fl::event_ctrl() ? true : false;
+  alt = Fl::event_alt() ? true : false;
 
   switch(event)
   {
@@ -293,10 +294,24 @@ int View::handle(int event)
       if(Fl::focus() != this)
         Fl::focus(this);
 
+//FIXME buggy
+/*
+      Project::stroke->origin = Project::stroke->origin_always;
+      Project::stroke->constrain = Project::stroke->constrain_always;
+*/
+
       switch(button)
       {
         case 1:
+/*
+          if(ctrl)
+            Project::stroke->origin = 1;
+
           if(shift)
+            Project::stroke->constrain = 1;
+*/
+
+          if(alt)
           {
             // update clone target
             Clone::x = imgx;

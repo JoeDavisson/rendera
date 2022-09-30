@@ -74,6 +74,7 @@ public:
   bool dclick;
   bool shift;
   bool ctrl;
+  bool alt;
 
 protected:
   virtual void draw();

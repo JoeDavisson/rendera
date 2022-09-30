@@ -522,7 +522,7 @@ void Gui::init()
   new Separator(bottom, pos, 4, 2, 34, "");
   pos += 8;
   clone = new ToggleButton(bottom, pos, 8, 24, 24,
-                           "Clone (Shift+Click to set target)",
+                           "Clone (Alt+Click to set target)",
                            images_clone_png,
                            (Fl_Callback *)checkClone);
   pos += 24 + 8;
@@ -1533,12 +1533,14 @@ void Gui::checkMirror(Widget *, void *var)
 
 void Gui::checkOrigin(Widget *, void *var)
 {
-  Project::stroke->origin = *(int *)var;
+  Project::stroke->origin_always = *(int *)var;
+  Project::stroke->origin = Project::stroke->origin_always;
 }
 
 void Gui::checkConstrain(Widget *, void *var)
 {
-  Project::stroke->constrain = *(int *)var;
+  Project::stroke->constrain_always = *(int *)var;
+  Project::stroke->constrain = Project::stroke->constrain_always;
 }
 
 void Gui::checkSelectionCrop()
