@@ -1,6 +1,4 @@
 [submodule "fltk"]
 	path = fltk
 	url = git@github.com:fltk/fltk.git
-[submodule "tools/barry"]
-	path = tools/barry
-	url = git@github.com:rubicks/barry.git
+
