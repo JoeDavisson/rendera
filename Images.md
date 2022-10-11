@@ -1,7 +1,9 @@
-The image header (src/Images.H) is created with barry:
+The image header (src/Images.H) is created with `barry`:
 https://github.com/rubicks/barry
 
-barry -o src/Images.H images/*.png
+The latest version of `barry` is included in the `tools` directory.
+
+`barry -o src/Images.H images/*.png`
 
 These images should always be included in source distributions.
 

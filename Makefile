@@ -16,8 +16,8 @@ VERSION="0.2.3"
 
 SRC_DIR=src
 SRC_DIR_FX=src/FX 
-INCLUDE=-I$(SRC_DIR) -I$(SRC_DIR_FX) -Ifltk-1.3.7
-LIBS=$(shell ./fltk-1.3.7/fltk-config --use-images --ldstaticflags)
+INCLUDE=-I$(SRC_DIR) -I$(SRC_DIR_FX) -Ifltk
+LIBS=$(shell ./fltk/fltk-config --use-images --ldstaticflags)
 
 ifeq ($(PLATFORM),linux)
   HOST=
@@ -117,7 +117,7 @@ default: $(OBJ)
 	$(CXX) -o ./$(EXE) $(SRC_DIR)/Main.cxx $(OBJ) $(CXXFLAGS) $(LIBS)
 
 fltk:
-	@cd ./fltk-1.3.7; \
+	@cd ./fltk; \
 	make clean; \
 	./configure --host=$(HOST) --enable-xft --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
 	make -j6; \
