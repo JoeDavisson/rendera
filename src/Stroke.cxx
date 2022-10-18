@@ -881,13 +881,13 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
     {
       if(*p++)
       {
-        if(isEdge(map, x, y) == true)
-        {
-          backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, trans / 2);
+//        if(isEdge(map, x, y) == true)
+//        {
+          backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, trans);
 //          backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
 //                           (x & 1) ^ (y & 1) ? 0xff555555 : 0xffaaaaaa,
 //                           trans / 2);
-        }
+//        }
       }
 
       xx1 += zoom;
