@@ -852,7 +852,7 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
 {
   Map *map = Project::map;
-  const int c = convertFormat(Project::brush.get()->color, Gui::getView()->bgr_order);
+  const int color = convertFormat(Project::brush.get()->color, Gui::getView()->bgr_order);
 
   const int trans = Project::brush->trans;
 
@@ -883,9 +883,10 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
       {
         if(isEdge(map, x, y) == true)
         {
-          backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
-                           (x & 1) ^ (y & 1) ? 0xff555555 : 0xffaaaaaa,
-                           trans / 2);
+          backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, trans / 2);
+//          backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
+//                           (x & 1) ^ (y & 1) ? 0xff555555 : 0xffaaaaaa,
+//                           trans / 2);
         }
       }
 
