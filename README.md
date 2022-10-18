@@ -23,7 +23,7 @@ Or uncompress the FLTK-1.3.7 source package here under `fltk`.
 The Makefile supports ```linux``` and ```mingw``` cross-compiler targets.
 (Edit the Makefile to choose.)
 
-```$ make fltk```
+```$ make fltklibs```
 
 Do this the first time anyway to build the images header:
 ```$ make clean```
