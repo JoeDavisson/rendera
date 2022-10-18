@@ -15,6 +15,7 @@ C++/FLTK.
 Get FLTK 1.3.7:
 
 ```$ git submodule init```
+
 ```$ git submodule update```
 
 Or uncompress the FLTK-1.3.7 source package here under `fltk`.
