@@ -1,7 +1,7 @@
 # Rendera Makefile
 #
 # The official fltk-1.3.7 source tree must in this directory.
-# Please run "make fltk" first.
+# Please run "make fltklibs" first.
 # Also run "make clean" before "make" the first time to build the images header.
 
 # libxft-dev should be installed before compiling FLTK on linux
@@ -116,13 +116,13 @@ OBJ= \
 default: $(OBJ)
 	$(CXX) -o ./$(EXE) $(SRC_DIR)/Main.cxx $(OBJ) $(CXXFLAGS) $(LIBS)
 
-fltk:
-	@cd ./fltk; \
+fltklibs:
+	cd ./fltk; \
 	make clean; \
 	./configure --host=$(HOST) --enable-xft --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
-	make -j6; \
-	cd ..
-	@echo "FLTK libs built!"
+	make -j4; \
+	cd ..; \
+	echo "FLTK libs built!";
 
 $(SRC_DIR)/%.o: $(SRC_DIR)/%.cxx $(SRC_DIR)/%.H
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -130,7 +130,6 @@ $(SRC_DIR)/%.o: $(SRC_DIR)/%.cxx $(SRC_DIR)/%.H
 clean:
 	@rm -f $(SRC_DIR)/*.o 
 	@rm -f $(SRC_DIR)/FX/*.o 
-#	@rm -f ./$(EXE)
 	@echo "Clean!"
 	gcc -O3 ./makeheader.c -o ./makeheader
 	./makeheader src/Images.H images/*.png
