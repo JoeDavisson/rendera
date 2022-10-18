@@ -12,7 +12,11 @@ C++/FLTK.
 
 ```$ cd rendera```
 
-Uncompress the FLTK-1.3.7 source package here.
+Get FLTK 1.3.7:
+```$ git submodule init```
+```$ git submodule update```
+
+Or uncompress the FLTK-1.3.7 source package here under `fltk`.
 
 The Makefile supports ```linux``` and ```mingw``` cross-compiler targets.
 (Edit the Makefile to choose.)
@@ -39,5 +43,5 @@ Everything is statically linked resulting in a standalone executable.
 
 ### Toolchain
 
-Rendera is built with ```gcc-9.4```.
+Rendera is built with ```gcc-11.2```.
 
