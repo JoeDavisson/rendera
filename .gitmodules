@@ -1,4 +1,4 @@
 [submodule "fltk"]
 	path = fltk
-	url = git@github.com:fltk/fltk.git
+	url = https://github.com/fltk/fltk.git
 
