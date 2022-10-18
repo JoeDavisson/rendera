@@ -852,6 +852,71 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
 {
   Map *map = Project::map;
+  clip();
+
+  ox *= zoom;
+  oy *= zoom;
+
+  // prevent overun when zoomed out
+  if(x2 > map->w - 2)
+    x2 = map->w - 2;
+  if(y2 > map->h - 2)
+    y2 = map->h - 2;
+
+  float yy1 = (float)y1 * zoom;
+  float yy2 = yy1 + zoom - 1;
+  int color = convertFormat(Project::brush.get()->color, Gui::getView()->bgr_order);
+
+  Blend::set(Blend::FAST);
+
+  for(int y = y1; y <= y2; y++)
+  {
+    unsigned char *p = map->row[y] + x1;
+    float xx1 = (float)x1 * zoom;
+    float xx2 = xx1 + zoom - 1;
+
+    for(int x = x1; x <= x2; x++)
+    {
+      if(*p)
+      {
+        switch(type)
+        {
+          case FREEHAND:
+          case LINE:
+          case RECT:
+          case FILLED_RECT:
+          case OVAL:
+          case FILLED_OVAL:
+            backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
+            backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, 128);
+            break;
+          case REGION:
+          case POLYGON:
+            if(isEdge(map, x, y) == true)
+            {
+              backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
+              backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, 128);
+            }
+            break;
+        }
+      }
+
+      p++;
+      xx1 += zoom;
+      xx2 += zoom;
+    }
+
+    yy1 += zoom;
+    yy2 += zoom;
+  }
+
+  Blend::set(Blend::TRANS);
+}
+
+/*
+void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
+{
+  Map *map = Project::map;
   const int color = convertFormat(Project::brush.get()->color, Gui::getView()->bgr_order);
 
   const int trans = Project::brush->trans;
@@ -879,17 +944,18 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 
     for(int x = x1; x <= x2; x++)
     {
-      if(*p++)
+      if(*p)
       {
-//        if(isEdge(map, x, y) == true)
-//        {
+        if(isEdge(map, x, y) == true)
+        {
           backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, trans);
 //          backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
 //                           (x & 1) ^ (y & 1) ? 0xff555555 : 0xffaaaaaa,
 //                           trans / 2);
-//        }
+        }
       }
 
+      p++;
       xx1 += zoom;
       xx2 += zoom;
     }
@@ -900,6 +966,7 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 
   Blend::set(Blend::TRANS);
 }
+*/
 
 // preview custom brush
 void Stroke::previewBrush(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)

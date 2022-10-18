@@ -93,8 +93,8 @@ void Paint::drag(View *view)
     view->drawMain(false);
     stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom,
                          view->bgr_order);
-    stroke->origin = stroke->origin_always;
-    stroke->constrain = stroke->constrain_always;
+//    stroke->origin = stroke->origin_always;
+//    stroke->constrain = stroke->constrain_always;
     view->redraw();
   }
 }
