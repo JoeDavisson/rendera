@@ -852,6 +852,14 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
 {
   Map *map = Project::map;
+  const int xx1 = x1 * zoom;
+  const int yy1 = y1 * zoom;
+  const int xx2 = x2 * zoom;
+  const int yy2 = y2 * zoom;
+
+  const int color = convertFormat(Project::brush.get()->color,
+                            Gui::getView()->bgr_order);
+
   clip();
 
   ox *= zoom;
@@ -863,21 +871,19 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
   if(y2 > map->h - 2)
     y2 = map->h - 2;
 
-  float yy1 = (float)y1 * zoom;
-  float yy2 = yy1 + zoom - 1;
-  int color = convertFormat(Project::brush.get()->color, Gui::getView()->bgr_order);
-
   Blend::set(Blend::FAST);
 
-  for(int y = y1; y <= y2; y++)
+  for(int y = yy1; y <= yy2; y++)
   {
-    unsigned char *p = map->row[y] + x1;
-    float xx1 = (float)x1 * zoom;
-    float xx2 = xx1 + zoom - 1;
+    const int ym = y / zoom;
 
-    for(int x = x1; x <= x2; x++)
+    for(int x = xx1; x <= xx2; x++)
     {
-      if(*p)
+      const int xm = x / zoom;
+      const int c = map->getpixel(xm, ym);
+      const int checker = ((x & 1) ^ (y & 1)) ? 0xA0A0A0 : 0x606060;
+
+      if(c)
       {
         switch(type)
         {
@@ -887,27 +893,20 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
           case FILLED_RECT:
           case OVAL:
           case FILLED_OVAL:
-            backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
-            backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, 128);
+            backbuf->setpixelSolid(x - ox, y - oy, checker, 0);
+            backbuf->setpixelSolid(x - ox, y - oy, color, 128);
             break;
           case REGION:
           case POLYGON:
-            if(isEdge(map, x, y) == true)
+            if(isEdge(map, xm, ym) == true)
             {
-              backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
-              backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, color, 128);
+              backbuf->setpixelSolid(x - ox, y - oy, checker, 0);
+              backbuf->setpixelSolid(x - ox, y - oy, color, 128);
             }
             break;
         }
       }
-
-      p++;
-      xx1 += zoom;
-      xx2 += zoom;
     }
-
-    yy1 += zoom;
-    yy2 += zoom;
   }
 
   Blend::set(Blend::TRANS);
