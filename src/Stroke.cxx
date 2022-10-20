@@ -852,18 +852,7 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
 {
   Map *map = Project::map;
-  const int xx1 = x1 * zoom;
-  const int yy1 = y1 * zoom;
-  const int xx2 = x2 * zoom;
-  const int yy2 = y2 * zoom;
-
-  const int color = convertFormat(Project::brush.get()->color,
-                            Gui::getView()->bgr_order);
-
   clip();
-
-  ox *= zoom;
-  oy *= zoom;
 
   // prevent overun when zoomed out
   if(x2 > map->w - 2)
@@ -871,39 +860,39 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
   if(y2 > map->h - 2)
     y2 = map->h - 2;
 
+  const int xx1 = x1 * zoom;
+  const int yy1 = y1 * zoom;
+  const int xx2 = x2 * zoom;
+  const int yy2 = y2 * zoom;
+
+  const int zr = (int)((1.0 / zoom) * 65536);
+
+  const int color = convertFormat(Project::brush.get()->color,
+                            Gui::getView()->bgr_order);
+  const int trans = Project::brush.get()->trans;
+
+  ox *= zoom;
+  oy *= zoom;
+
   Blend::set(Blend::FAST);
 
   for(int y = yy1; y <= yy2; y++)
   {
-    const int ym = y / zoom;
+    const int ym = (y * zr) >> 16;
 
     for(int x = xx1; x <= xx2; x++)
     {
-      const int xm = x / zoom;
-      const int c = map->getpixel(xm, ym);
-      const int checker = ((x & 1) ^ (y & 1)) ? 0xA0A0A0 : 0x606060;
+      const int xm = (x * zr) >> 16;
+      const int m = map->getpixel(xm, ym);
 
-      if(c)
+      if(m)
       {
-        switch(type)
+        backbuf->setpixel(x - ox, y - oy, color, trans);
+
+        if(isEdge(map, xm, ym))
         {
-          case FREEHAND:
-          case LINE:
-          case RECT:
-          case FILLED_RECT:
-          case OVAL:
-          case FILLED_OVAL:
-            backbuf->setpixelSolid(x - ox, y - oy, checker, 0);
-            backbuf->setpixelSolid(x - ox, y - oy, color, 128);
-            break;
-          case REGION:
-          case POLYGON:
-            if(isEdge(map, xm, ym) == true)
-            {
-              backbuf->setpixelSolid(x - ox, y - oy, checker, 0);
-              backbuf->setpixelSolid(x - ox, y - oy, color, 128);
-            }
-            break;
+          const int checker = ((x & 1) ^ (y & 1)) ? 0xffffff : 0x000000;
+          backbuf->setpixel(x - ox, y - oy, checker, 128);
         }
       }
     }
