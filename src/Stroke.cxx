@@ -83,7 +83,7 @@ namespace
     }
   }
 
-  bool isEdge(Map *map, const int x, const int y)
+  inline bool isEdge(Map *map, const int x, const int y)
   {
     if((map->getpixel(x, y) &&
        (!map->getpixel(x - 1, y) ||
@@ -854,21 +854,12 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
   Map *map = Project::map;
   clip();
 
-  // prevent overun when zoomed out
-  if(x2 > map->w - 2)
-    x2 = map->w - 2;
-  if(y2 > map->h - 2)
-    y2 = map->h - 2;
-
   const int xx1 = x1 * zoom;
   const int yy1 = y1 * zoom;
   const int xx2 = x2 * zoom;
   const int yy2 = y2 * zoom;
-
   const int zr = (int)((1.0 / zoom) * 65536);
-
-  const int color = convertFormat(Project::brush.get()->color,
-                            Gui::getView()->bgr_order);
+  const int color = convertFormat(Project::brush.get()->color, Gui::getView()->bgr_order);
   const int trans = Project::brush.get()->trans;
 
   ox *= zoom;
@@ -879,21 +870,19 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
   for(int y = yy1; y <= yy2; y++)
   {
     const int ym = (y * zr) >> 16;
+    int checker = y & 1 ? 0xffffff : 0x000000;
 
     for(int x = xx1; x <= xx2; x++)
     {
       const int xm = (x * zr) >> 16;
-      const int m = map->getpixel(xm, ym);
+      checker = 0xffffff - checker;
 
-      if(m)
+      if(map->getpixel(xm, ym))
       {
         backbuf->setpixel(x - ox, y - oy, color, trans);
 
         if(isEdge(map, xm, ym))
-        {
-          const int checker = ((x & 1) ^ (y & 1)) ? 0xffffff : 0x000000;
           backbuf->setpixel(x - ox, y - oy, checker, 128);
-        }
       }
     }
   }
