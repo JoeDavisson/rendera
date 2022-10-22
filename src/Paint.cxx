@@ -127,7 +127,7 @@ void Paint::move(View *view)
     case 3:
       if(active)
       {
-        stroke->polyline(view->imgx, view->imgy,
+        stroke->polyLine(view->imgx, view->imgy,
                          view->ox, view->oy, view->zoom);
         
         view->drawMain(false);

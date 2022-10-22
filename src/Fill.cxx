@@ -205,11 +205,11 @@ namespace
       {
         if(map->getpixel(x - cl, y - ct) && isEdge(map, x - cl, y - ct))
         {
-          stroke->edgecachex[count] = x;
-          stroke->edgecachey[count] = y;
+          stroke->edge_x[count] = x;
+          stroke->edge_y[count] = y;
           count++;
 
-          if(count > 0xFFFFF)
+          if(count > 0xfffff)
             break;
         }
       }
@@ -229,8 +229,8 @@ namespace
 
     for(int i = 0; i < count; i++)
     {
-      points[i].x[0] = stroke->edgecachex[i];
-      points[i].x[1] = stroke->edgecachey[i];
+      points[i].x[0] = stroke->edge_x[i];
+      points[i].x[1] = stroke->edge_y[i];
     }
 
     root = make_tree(points, count, 0, 2);

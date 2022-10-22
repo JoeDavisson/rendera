@@ -42,11 +42,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace
 {
 
-  // XOR checkerboard pattern (for brushstroke previews)
+  // checkerboard pattern
   inline int xorValue(const int x, const int y)
   {
-//    static const int xor_colors[2] = { 0xFFFFFFFF, 0xFF000000 };
-    static const unsigned int xor_colors[2] = { 0x00000000, 0xFFFFFFFF };
+    static const unsigned int xor_colors[2] = { 0x00000000, 0xffffffff };
 
     return xor_colors[(x & 1) ^ (y & 1)];
   }
@@ -331,7 +330,6 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
     while(x1 != x2)
     {
       *(row[y1] + x1) = xorValue(x1, y1);
-//      *(row[y1] + x1) ^= xorValue(x1, y1);
 
       if(e >= 0)
       {
@@ -352,7 +350,6 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
     while(y1 != y2)
     {
       *(row[y1] + x1) = xorValue(x1, y1);
-//      *(row[y1] + x1) ^= xorValue(x1, y1);
 
       if(e >= 0)
       {
@@ -365,7 +362,6 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
     }
   }
 
-//  *(row[y1] + x1) ^= xorValue(x1, y1);
   *(row[y1] + x1) = xorValue(x1, y1);
 }
 
@@ -387,7 +383,6 @@ void Bitmap::xorHline(int x1, int y, int x2)
 
   for(; x1 <= x2; x1++)
     *p++ = xorValue(x1, y);
-//    *p++ ^= xorValue(x1, y);
 }
 
 void Bitmap::xorVline(int y1, int x, int y2)
@@ -408,7 +403,6 @@ void Bitmap::xorVline(int y1, int x, int y2)
 
   for(; y1 <= y2; y1++)
   {
-//    *p ^= xorValue(x, y1);
     *p = xorValue(x, y1);
     p += w;
   }
@@ -443,8 +437,6 @@ void Bitmap::xorRect(int x1, int y1, int x2, int y2)
   {
     *(row[y1] + x1) = xorValue(x1, y1);
     *(row[y1] + x2) = xorValue(x1, y1);
-//    *(row[y1] + x1) ^= xorValue(x1, y1);
-//    *(row[y1] + x2) ^= xorValue(x1, y1);
   }
 }
 
@@ -887,7 +879,7 @@ void Bitmap::drawBrush(Bitmap *dest,
     for(int x = 0; x < ww; x++)
     {
       const int c = getpixel(sx + x, sy + y);
-      dest->setpixelSolid(dx + x, dy + y, c | 0xFF000000,
+      dest->setpixelSolid(dx + x, dy + y, c | 0xff000000,
                      scaleVal(255 - geta(c), Project::brush->trans));
     }
   }
@@ -962,8 +954,7 @@ void Bitmap::pointStretch(Bitmap *dest,
       const int x1 = sx + ((x * bx) >> 16);
       const int c = *(row[y1] + x1);
 //      const int c = pal->data[pal->table->read(*(row[y1] + x1))];
-
-      const int checker = ((x >> 4) ^ (y >> 4)) & 1 ? 0xA0A0A0 : 0x606060;
+      const int checker = ((x >> 4) ^ (y >> 4)) & 1 ? 0xa0a0a0 : 0x606060;
 
       *p = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
       p++;
@@ -1056,7 +1047,7 @@ void Bitmap::fastStretch(Bitmap *dest,
     for(int d_1 = 0; d_1 <= dx_1; d_1++)
     {
       // generate checkboard pattern for transparent areas
-      const int checker = ((d_1 >> 4) ^ (yd1 >> 4)) & 1 ? 0xA0A0A0 : 0x606060;
+      const int checker = ((d_1 >> 4) ^ (yd1 >> 4)) & 1 ? 0xa0a0a0 : 0x606060;
 
       *p = convertFormat(blendFast(checker, *q, 255 - geta(*q)), bgr_order);
 
@@ -1182,106 +1173,6 @@ void Bitmap::blur(int s, int amount)
     }
   }
 }
-
-/*
-void Bitmap::blur(int radius, int amount)
-{
-  if(radius < 1)
-    return;
-
-  radius = radius * 2 + 1;
-  const int r2 = radius / 2;
-  int div = 0;
-
-  std::vector<int> kernel(radius);
-
-  // bell curve
-  const double b = (double)radius / 2;
-
-  for(int x = 0; x < radius; x++)
-  {
-    kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) / ((b * b) / 2)));
-    div += kernel[x];
-  }
-
-  Bitmap temp(this->cw, this->ch, this->overscroll);
-
-  // x direction
-  for(int y = this->ct; y <= this->cb; y++)
-  {
-    int *p = temp.row[y] + temp.cl;
-
-    for(int x = this->cl; x <= this->cr; x++)
-    {
-      int rr = 0;
-      int gg = 0;
-      int bb = 0;
-      int aa = 0;
-
-      for(int i = 0; i < radius; i++) 
-      {
-	const int mul = kernel[i];
-        const int xx = x - r2 + i;
-
-        rgba_type rgba = getRgba(this->getpixel(xx, y));
-
-        rr += Gamma::fix(rgba.r) * mul;
-        gg += Gamma::fix(rgba.g) * mul;
-        bb += Gamma::fix(rgba.b) * mul;
-        aa += rgba.a * mul;
-      }
-
-      rr = Gamma::unfix(rr / div);
-      gg = Gamma::unfix(gg / div);
-      bb = Gamma::unfix(bb / div);
-      aa /= div;
-
-      *p = makeRgba(rr, gg, bb, aa);
-      p++;
-    }
-  }
-
-  // y direction
-  for(int y = this->ct; y <= this->cb; y++)
-  {
-    int *p = this->row[y] + this->cl;
-
-    for(int x = this->cl; x <= this->cr; x++)
-    {
-      int rr = 0;
-      int gg = 0;
-      int bb = 0;
-      int aa = 0;
-
-      for(int i = 0; i < radius; i++) 
-      {
-        const int mul = kernel[i];
-        const int yy = y - r2 + i;
-
-        rgba_type rgba = getRgba(temp.getpixel(x, yy));
-
-        rr += Gamma::fix(rgba.r) * mul;
-        gg += Gamma::fix(rgba.g) * mul;
-        bb += Gamma::fix(rgba.b) * mul;
-        aa += rgba.a * mul;
-      }
-
-      rr = Gamma::unfix(rr / div);
-      gg = Gamma::unfix(gg / div);
-      bb = Gamma::unfix(bb / div);
-      aa /= div;
-
-//      const int c1 = *p;
-//      const int c2 = makeRgba(rr, gg, bb, aa);
-
-//      *p = blendFast(c1, c2, amount);
-//        *p = Blend::trans(c1, c2, amount);
-      *p = makeRgba(rr, gg, bb, aa);
-      p++;
-    }
-  }
-}
-*/
 
 void Bitmap::scale(Bitmap *dest)
 {

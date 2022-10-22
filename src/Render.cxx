@@ -269,10 +269,10 @@ namespace
       {
         if(map->getpixel(x, y) && isEdge(map, x, y))
         {
-          stroke->edgecachex[count] = x;
-          stroke->edgecachey[count] = y;
+          stroke->edge_x[count] = x;
+          stroke->edge_y[count] = y;
           count++;
-          if(count > 0xFFFFF)
+          if(count > 0xfffff)
             break;
         }
       }
@@ -289,8 +289,8 @@ namespace
 
     for(int i = 0; i < count; i++)
     {
-      points[i].x[0] = stroke->edgecachex[i];
-      points[i].x[1] = stroke->edgecachey[i];
+      points[i].x[0] = stroke->edge_x[i];
+      points[i].x[1] = stroke->edge_y[i];
     }
 
     root = make_tree(points, count, 0, 2);
@@ -336,10 +336,10 @@ namespace
       {
         if(map->getpixel(x, y) && isEdge(map, x, y))
         {
-          stroke->edgecachex[count] = x;
-          stroke->edgecachey[count] = y;
+          stroke->edge_x[count] = x;
+          stroke->edge_y[count] = y;
           count++;
-          count &= 0xFFFFF;
+          count &= 0xfffff;
         }
       }
     }
@@ -353,8 +353,8 @@ namespace
         if(*p++ == 0)
           continue;
 
-        int *cx = stroke->edgecachex;
-        int *cy = stroke->edgecachey;
+        int *cx = stroke->edge_x;
+        int *cy = stroke->edge_y;
         const int dx = (x - *cx++);
         const int dy = (y - *cy++);
         int z = 0;
@@ -374,7 +374,7 @@ namespace
         }
 
         bmp->setpixel(x, y, color, fineEdge(x, y,
-                      stroke->edgecachex[z], stroke->edgecachey[z],
+                      stroke->edge_x[z], stroke->edge_y[z],
                       brush->fine_edge, trans));
       }
 

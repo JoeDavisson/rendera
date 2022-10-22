@@ -58,7 +58,7 @@ public:
   void begin(int, int, int, int, float);
   void draw(int, int, int, int, float);
   void end(int, int);
-  void polyline(int, int, int, int, float);
+  void polyLine(int, int, int, int, float);
   void preview(Bitmap *,int, int, float);
   void previewPaint(Bitmap *,int, int, float, bool);
   void previewBrush(Bitmap *,int, int, float, bool);
@@ -72,11 +72,11 @@ public:
   int lastx, lasty;
   int oldx, oldy;
   int type;
-  int *polycachex;
-  int *polycachey;
-  int *edgecachex;
-  int *edgecachey;
-  int polycount;
+  int *poly_x;
+  int *poly_y;
+  int *edge_x;
+  int *edge_y;
+  int poly_count;
 };
 
 #endif
