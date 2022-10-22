@@ -852,37 +852,36 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
 {
   Map *map = Project::map;
+  ox *= zoom;
+  oy *= zoom;
   clip();
 
-  const int xx1 = x1 * zoom;
-  const int yy1 = y1 * zoom;
-  const int xx2 = x2 * zoom;
-  const int yy2 = y2 * zoom;
+  const int xx1 = x1 * zoom - ox;
+  const int yy1 = y1 * zoom - oy;
+  const int xx2 = x2 * zoom - ox;
+  const int yy2 = y2 * zoom - oy;
   const int zr = (int)((1.0 / zoom) * 65536);
   const int color = convertFormat(Project::brush.get()->color, Gui::getView()->bgr_order);
   const int trans = Project::brush.get()->trans;
-
-  ox *= zoom;
-  oy *= zoom;
 
   Blend::set(Blend::FAST);
 
   for(int y = yy1; y <= yy2; y++)
   {
-    const int ym = (y * zr) >> 16;
-    int checker = y & 1 ? 0xffffff : 0x000000;
+    const int ym = ((y + oy) * zr) >> 16;
+    int checker = ((y & 1) << 24) - (y & 1);
 
     for(int x = xx1; x <= xx2; x++)
     {
-      const int xm = (x * zr) >> 16;
+      const int xm = ((x + ox) * zr) >> 16;
       checker = 0xffffff - checker;
 
       if(map->getpixel(xm, ym))
       {
-        backbuf->setpixel(x - ox, y - oy, color, trans);
+        backbuf->setpixel(x, y, color, trans);
 
         if(isEdge(map, xm, ym))
-          backbuf->setpixel(x - ox, y - oy, checker, 128);
+          backbuf->setpixel(x, y, checker, 160);
       }
     }
   }
