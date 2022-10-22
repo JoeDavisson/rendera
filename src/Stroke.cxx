@@ -85,6 +85,18 @@ namespace
 
   inline bool isEdge(Map *map, const int x, const int y)
   {
+    if(!map->getpixel(x, y - 1) ||
+       !map->getpixel(x - 1, y) ||
+       !map->getpixel(x + 1, y) ||
+       !map->getpixel(x, y + 1))
+      return true;
+    else
+      return false;
+  }
+
+/*
+  inline bool isEdge(Map *map, const int x, const int y)
+  {
     if((map->getpixel(x, y) &&
        (!map->getpixel(x - 1, y) ||
        !map->getpixel(x + 1, y) ||
@@ -94,6 +106,7 @@ namespace
     else
       return false;
   }
+*/
 }
 
 Stroke::Stroke()
@@ -856,20 +869,44 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
   oy *= zoom;
   clip();
 
-  const int xx1 = x1 * zoom - ox;
-  const int yy1 = y1 * zoom - oy;
-  const int xx2 = x2 * zoom - ox;
-  const int yy2 = y2 * zoom - oy;
+  int xx1 = x1 * zoom - ox;
+  int yy1 = y1 * zoom - oy;
+  int xx2 = x2 * zoom - ox;
+  int yy2 = y2 * zoom - oy;
   const int zr = (int)((1.0 / zoom) * 65536);
-  const int color = convertFormat(Project::brush.get()->color, Gui::getView()->bgr_order);
+  const int color = convertFormat(Project::brush.get()->color,
+                                  Gui::getView()->bgr_order);
   const int trans = Project::brush.get()->trans;
 
-  Blend::set(Blend::FAST);
+  if(xx1 < 0)
+    xx1 = 0;
+
+  if(yy1 < 0)
+    yy1 = 0;
+
+  if(xx1 >= backbuf->w - 1)
+    xx1 = backbuf->w - 1;
+
+  if(yy1 >= backbuf->h - 1)
+    yy1 = backbuf->h - 1;
+
+  if(xx2 < 0)
+    xx2 = 0;
+
+  if(yy2 < 0)
+    yy2 = 0;
+
+  if(xx2 >= backbuf->w - 1)
+    xx2 = backbuf->w - 1;
+
+  if(yy2 >= backbuf->h - 1)
+    yy2 = backbuf->h - 1;
 
   for(int y = yy1; y <= yy2; y++)
   {
     const int ym = ((y + oy) * zr) >> 16;
     int checker = ((y & 1) << 24) - (y & 1);
+    int *p = backbuf->row[y] + xx1;
 
     for(int x = xx1; x <= xx2; x++)
     {
@@ -878,15 +915,15 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 
       if(map->getpixel(xm, ym))
       {
-        backbuf->setpixel(x, y, color, trans);
+        *p = blendFast(*p, color, trans);
 
         if(isEdge(map, xm, ym))
-          backbuf->setpixel(x, y, checker, 160);
+          *p = blendFast(*p, checker, 128);
       }
+
+      p++;
     }
   }
-
-  Blend::set(Blend::TRANS);
 }
 
 // preview custom brush
