@@ -37,14 +37,16 @@ namespace File
   Bitmap *loadPngFromArray(const unsigned char *, int);
 
   void save(Fl_Widget *, void *);
-  int saveBmp(const char *);
-  int saveTarga(const char *);
-  int savePng(const char *);
-  int saveJpeg(const char *);
-  int saveText(const char *);
+  int saveBmp(Bitmap *, const char *);
+  int saveTarga(Bitmap *, const char *);
+  int savePng(Bitmap *, const char *);
+  int saveJpeg(Bitmap *, const char *);
+  int saveText(Bitmap *, const char *);
 
   void loadPalette();
   void savePalette();
+  void loadSelection();
+  void saveSelection();
 
   //Fl_Image *previewJpeg(const char *, unsigned char *, int);
   //Fl_Image *previewPng(const char *, unsigned char *, int);

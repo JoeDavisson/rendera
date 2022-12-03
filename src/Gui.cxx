@@ -358,6 +358,11 @@ void Gui::init()
   menubar->add("&Image/Rotate/Arbitrary...", 0,
     (Fl_Callback *)Transform::rotateArbitrary, 0, 0);
 
+  menubar->add("&Selection/&Open...", 0,
+    (Fl_Callback *)File::loadSelection, 0, 0);
+  menubar->add("&Selection/&Save...", 0,
+    (Fl_Callback *)File::saveSelection, 0, 0);
+
   menubar->add("&Palette/&Open...", 0,
     (Fl_Callback *)File::loadPalette, 0, 0);
   menubar->add("&Palette/&Save...", 0,

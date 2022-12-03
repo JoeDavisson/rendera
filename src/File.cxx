@@ -976,19 +976,19 @@ void File::save(Fl_Widget *, void *)
   switch(ext_value)
   {
     case TYPE_PNG:
-      ret = File::savePng(fn);
+      ret = File::savePng(Project::bmp, fn);
       break;
     case TYPE_JPG:
-      ret = File::saveJpeg(fn);
+      ret = File::saveJpeg(Project::bmp, fn);
       break;
     case TYPE_BMP:
-      ret = File::saveBmp(fn);
+      ret = File::saveBmp(Project::bmp, fn);
       break;
     case TYPE_TGA:
-      ret = File::saveTarga(fn);
+      ret = File::saveTarga(Project::bmp, fn);
       break;
     case TYPE_TXT:
-      ret = File::saveText(fn);
+      ret = File::saveText(Project::bmp, fn);
       break;
 
     default:
@@ -1001,15 +1001,16 @@ void File::save(Fl_Widget *, void *)
   last_type = ext_value;
 }
 
-int File::saveBmp(const char *fn)
+int File::saveBmp(Bitmap *bmp, const char *fn)
 {
   FileSP out(fn, "wb");
   FILE *outp = out.get();
   if(!outp)
     return -1;
 
-  Bitmap *bmp = Project::bmp;
-  int overscroll = Project::overscroll;
+//  Bitmap *bmp = Project::bmp;
+//  int overscroll = Project::overscroll;
+  int overscroll = bmp->overscroll;
   int w = bmp->cw;
   int h = bmp->ch;
   int pad = w % 4;
@@ -1064,15 +1065,16 @@ int File::saveBmp(const char *fn)
   return 0;
 }
 
-int File::saveTarga(const char *fn)
+int File::saveTarga(Bitmap *bmp, const char *fn)
 {
   FileSP out(fn, "wb");
   FILE *outp = out.get();
   if(!outp)
     return -1;
 
-  Bitmap *bmp = Project::bmp;
-  int overscroll = Project::overscroll;
+//  Bitmap *bmp = Project::bmp;
+//  int overscroll = Project::overscroll;
+  int overscroll = bmp->overscroll;
   int w = bmp->cw;
   int h = bmp->ch;
 
@@ -1115,7 +1117,7 @@ int File::saveTarga(const char *fn)
   return 0;
 }
 
-int File::savePng(const char *fn)
+int File::savePng(Bitmap *bmp, const char *fn)
 {
   Dialog::pngOptions();
   bool use_palette = Dialog::pngUsePalette();
@@ -1159,8 +1161,9 @@ int File::savePng(const char *fn)
     return -1;
   }
 
-  Bitmap *bmp = Project::bmp;
-  int overscroll = Project::overscroll;
+//  Bitmap *bmp = Project::bmp;
+//  int overscroll = Project::overscroll;
+  int overscroll = bmp->overscroll;
   int w = bmp->cw;
   int h = bmp->ch;
 
@@ -1263,7 +1266,7 @@ int File::savePng(const char *fn)
   return 0;
 }
 
-int File::saveJpeg(const char *fn)
+int File::saveJpeg(Bitmap *bmp, const char *fn)
 {
   FileSP out(fn, "wb");
   if(!out.get())
@@ -1276,8 +1279,9 @@ int File::saveJpeg(const char *fn)
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
 
-  Bitmap *bmp = Project::bmp;
-  int overscroll = Project::overscroll;
+//  Bitmap *bmp = Project::bmp;
+//  int overscroll = Project::overscroll;
+  int overscroll = bmp->overscroll;
   int w = bmp->cw;
   int h = bmp->ch;
 
@@ -1318,7 +1322,7 @@ int File::saveJpeg(const char *fn)
   return 0;
 }
 
-int File::saveText(const char *fn)
+int File::saveText(Bitmap *bmp, const char *fn)
 {
   Dialog::textOptions();
 
@@ -1552,6 +1556,93 @@ void File::savePalette()
     errorMessage();
     return;
   }
+}
+
+void File::loadSelection()
+{
+  Fl_Native_File_Chooser fc;
+  fc.title("Load Selection");
+  fc.filter("PNG \t*.png\n");
+  fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
+  fc.filter_value(0);
+  fc.directory(load_dir);
+
+  switch(fc.show())
+  {
+    case -1:
+    case 1:
+      return;
+    default:
+      getDirectory(load_dir, fc.filename());
+      break;
+  }
+
+  FileSP in(fc.filename(), "rb");
+  if(!in.get())
+    return;
+
+  unsigned char header[8];
+  if(fread(&header, 1, 8, in.get()) != 8)
+    return;
+
+  // load to a temporary bitmap first
+  Bitmap *temp = 0;
+
+  if(isPng(header))
+    temp = File::loadPng((const char *)fc.filename(), 0);
+  else
+    return;
+
+  delete Project::select_bmp;
+  Project::select_bmp = temp;
+
+  Project::selection->reload();
+}
+
+void File::saveSelection()
+{
+  Fl_Native_File_Chooser fc;
+  fc.title("Save Selection");
+  fc.filter("PNG \t*.png\n");
+  fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  fc.filter_value(0);
+  fc.directory(save_dir);
+
+  switch(fc.show())
+  {
+    case -1:
+    case 1:
+      return;
+    default:
+      getDirectory(save_dir, fc.filename());
+      break;
+  }
+
+  char fn[256];
+  strcpy(fn, fc.filename());
+  int ext_value = fc.filter_value();
+  fl_filename_setext(fn, sizeof(fn), ext_string[ext_value]);
+
+  if(fileExists(fn))
+  {
+    if(!Dialog::choice("Replace File?", "Overwrite?"))
+      return;
+  }
+
+  int ret = 0;
+
+  switch(ext_value)
+  {
+    case TYPE_PNG:
+      ret = File::savePng(Project::select_bmp, fn);
+      break;
+
+    default:
+      ret = -1;
+  }
+
+  if(ret < 0)
+    errorMessage();
 }
 
 // convert special characters from drag n' drop path/filename string

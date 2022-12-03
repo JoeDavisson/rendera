@@ -584,3 +584,11 @@ void Selection::reset()
   Gui::getView()->drawMain(true);
 }
 
+void Selection::reload()
+{
+  active = true;
+  state = 3;
+  Gui::checkSelectionValues(0, 0, 0, 0);
+  Gui::getView()->drawMain(true);
+}
+
