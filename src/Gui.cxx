@@ -1311,12 +1311,11 @@ void Gui::checkTool(Widget *, void *var)
   if(tool != Tool::FILL)
     fill->hide();
 
-  Project::tool->reset();
-
   switch(tool)
   {
     case Tool::PAINT:
       Project::setTool(Tool::PAINT);
+      Project::tool->reset();
       paint_brush_preview->do_callback();
       paint_shape->do_callback();
       paint->show();
@@ -1325,26 +1324,31 @@ void Gui::checkTool(Widget *, void *var)
       break;
     case Tool::GETCOLOR:
       Project::setTool(Tool::GETCOLOR);
+      Project::tool->reset();
       getcolor->show();
       updateInfo((char *)"Click to select a color from the image.");
       break;
     case Tool::KNIFE:
       Project::setTool(Tool::KNIFE);
+      //Project::tool->reset();
       selection->show();
       updateInfo((char *)"Draw a box, then click inside box to move, outside to change size.");
       break;
     case Tool::OFFSET:
       Project::setTool(Tool::OFFSET);
+      Project::tool->reset();
       offset->show();
       updateInfo((char *)"Click and drag to change image offset.");
       break;
     case Tool::TEXT:
       Project::setTool(Tool::TEXT);
+      Project::tool->reset();
       text->show();
       updateInfo((char *)"Click to stamp text onto the image.");
       break;
     case Tool::FILL:
       Project::setTool(Tool::FILL);
+      Project::tool->reset();
       fill->show();
       updateInfo((char *)"Click to fill an area with the selected color. Esc to cancel.");
       break;
