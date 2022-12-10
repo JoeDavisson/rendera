@@ -310,18 +310,20 @@ int View::handle(int event)
           if(shift)
             Project::stroke->constrain = 1;
 */
-
           if(alt)
           {
             // update clone target
             Clone::x = imgx;
             Clone::y = imgy;
+            Clone::state = 1;
             Clone::moved = true;
             redraw();
-            break;
+          }
+          else
+          {
+            Project::tool->push(this);
           }
 
-          Project::tool->push(this);
           break;
         case 2:
           if(!moving)
@@ -331,15 +333,15 @@ int View::handle(int event)
               // begin image navigation
               moving = true;
               beginMove();
-              break;
             }
             else
             {
               // begin image panning
               last_ox = (w() - 1 - mousex) / zoom - ox;
               last_oy = (h() - 1 - mousey) / zoom - oy;
-              break;
             }
+
+           break;
           }
         case 4:
           Project::tool->push(this);
@@ -657,6 +659,7 @@ void View::drawCloneCursor()
   int y = Clone::y;
   int dx = Clone::dx;
   int dy = Clone::dy;
+  int state = Clone::state;
   int mirror = Clone::mirror;
   int w = Project::bmp->w - 1;
   int h = Project::bmp->h - 1;
@@ -687,8 +690,16 @@ void View::drawCloneCursor()
   }
   else
   {
-    x1 = (x - ox) * zoom;
-    y1 = (y - oy) * zoom;
+    if(state == 0)
+    {
+      x1 = (x1 - ox) * zoom;
+      y1 = (y1 - oy) * zoom;
+    }
+    else if(state == 1)
+    {
+      x1 = (x - ox) * zoom;
+      y1 = (y - oy) * zoom;
+    }
   }
 
   backbuf->rect(x1 - 9, y1 - 1, x1 + 9, y1 + 1, makeRgb(0, 0, 0), 64);

@@ -112,8 +112,8 @@ void Paint::release(View *view)
     Blend::set(Blend::TRANS);
   }
 
-  stroke->origin = stroke->origin_always;
-  stroke->constrain = stroke->constrain_always;
+//  stroke->origin = stroke->origin_always;
+//  stroke->constrain = stroke->constrain_always;
 
   view->drawMain(true);
 }
