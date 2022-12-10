@@ -74,6 +74,9 @@ void Blend::set(const int mode)
     case SHARPEN:
       current_blend = sharpen;
       break;
+    case FAST:
+      current_blend = fast;
+      break;
     case TRANS_ALPHA:
       current_blend = transAlpha;
       break;

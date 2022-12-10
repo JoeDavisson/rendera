@@ -968,7 +968,6 @@ void Stroke::previewBrush(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 void Stroke::previewBrushAlpha(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
 {
   int trans = Project::brush.get()->trans;
-  int blend = Project::brush.get()->blend;
   int use_alpha = Gui::getSelectionAlpha();
 
   float yy1 = (float)y1 * zoom;
@@ -978,16 +977,7 @@ void Stroke::previewBrushAlpha(Bitmap *backbuf, int ox, int oy, float zoom, bool
   ox *= zoom;
   oy *= zoom;
 
-  if(blend == Blend::COLORIZE ||
-     blend == Blend::SMOOTH ||
-     blend == Blend::ALPHA_ADD ||
-     blend == Blend::ALPHA_SUB ||
-     blend == Blend::SHARPEN)
-  {
-    blend = Blend::TRANS;
-  }
-    
-  Blend::set(blend);
+  Blend::set(Blend::FAST);
 
   for(int y = y1; y <= y2; y++)
   {
