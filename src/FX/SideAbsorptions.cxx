@@ -24,6 +24,8 @@ void SideAbsorptions::apply()
 {
   Bitmap *bmp = Project::bmp;
 
+  Gui::showProgress(bmp->h);
+
   for(int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
