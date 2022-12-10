@@ -24,6 +24,8 @@ void AlphaClear::apply()
 {
   Bitmap *bmp = Project::bmp;
 
+  Gui::showProgress(bmp->h);
+
   for(int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
@@ -32,7 +34,12 @@ void AlphaClear::apply()
     {
       *p++ |= 0xFF000000;
     }
+
+    if(Gui::updateProgress(y) < 0)
+      return;
   }
+
+  Gui::hideProgress();
 }
 
 void AlphaClear::begin()
