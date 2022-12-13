@@ -230,7 +230,7 @@ void Stroke::size(int x1, int y1, int x2, int y2)
 
 void Stroke::drawBrush(int x, int y, int c)
 {
-  Brush *brush = Project::brush.get();
+  Brush *brush = Project::brush;
   Map *map = Project::map;
 
   for(int i = 0; i < brush->solid_count; i++)
@@ -239,7 +239,7 @@ void Stroke::drawBrush(int x, int y, int c)
 
 void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Project::brush.get();
+  Brush *brush = Project::brush;
   Map *map = Project::map;
 
   drawBrush(x1, y1, c);
@@ -254,7 +254,7 @@ void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushRect(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Project::brush.get();
+  Brush *brush = Project::brush;
   Map *map = Project::map;
 
   for(int i = 0; i < brush->hollow_count; i++)
@@ -266,7 +266,7 @@ void Stroke::drawBrushRect(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Project::brush.get();
+  Brush *brush = Project::brush;
   Map *map = Project::map;
 
   for(int i = 0; i < brush->hollow_count; i++)
@@ -278,7 +278,7 @@ void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushAA(int x, int y, int c)
 {
-  Brush *brush = Project::brush.get();
+  Brush *brush = Project::brush;
   Map *map = Project::map;
 
   for(int i = 0; i < brush->solid_count; i++)
@@ -306,7 +306,7 @@ void Stroke::drawBrushAA(int x, int y, int c)
 
 void Stroke::drawBrushLineAA(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Project::brush.get();
+  Brush *brush = Project::brush;
   Map *map = Project::map;
 
   for(int i = 0; i < brush->solid_count; i++)
@@ -320,7 +320,7 @@ void Stroke::drawBrushLineAA(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushRectAA(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Project::brush.get();
+  Brush *brush = Project::brush;
   Map *map = Project::map;
 
   for(int i = 0; i < brush->solid_count; i++)
@@ -334,7 +334,7 @@ void Stroke::drawBrushRectAA(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::drawBrushOvalAA(int x1, int y1, int x2, int y2, int c)
 {
-  Brush *brush = Project::brush.get();
+  Brush *brush = Project::brush;
   Map *map = Project::map;
 
   for(int i = 0; i < brush->solid_count; i++)
@@ -348,7 +348,7 @@ void Stroke::drawBrushOvalAA(int x1, int y1, int x2, int y2, int c)
 
 void Stroke::begin(int x, int y, int ox, int oy, float zoom)
 {
-  Brush *brush = Project::brush.get();
+  Brush *brush = Project::brush;
   Map *map = Project::map;
 
   int r = brush->size / 2;
@@ -375,7 +375,7 @@ void Stroke::begin(int x, int y, int ox, int oy, float zoom)
 
 void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 {
-  Brush *brush = Project::brush.get();
+  Brush *brush = Project::brush;
   Map *map = Project::map;
 
   int r = brush->size / 2;
@@ -584,7 +584,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
 void Stroke::end(int x, int y)
 {
-  Brush *brush = Project::brush.get();
+  Brush *brush = Project::brush;
   Map *map = Project::map;
 
   map->thick_aa = 0;
@@ -872,9 +872,9 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
   int xx2 = x2 * zoom - ox;
   int yy2 = y2 * zoom - oy;
   const int zr = (int)((1.0 / zoom) * 65536);
-  const int color = convertFormat(Project::brush.get()->color,
+  const int color = convertFormat(Project::brush->color,
                                   Gui::getView()->bgr_order);
-  const int trans = Project::brush.get()->trans;
+  const int trans = Project::brush->trans;
 
   if(xx1 < 0)
     xx1 = 0;
@@ -967,7 +967,7 @@ void Stroke::previewBrush(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 // alpha transparency version
 void Stroke::previewBrushAlpha(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
 {
-  int trans = Project::brush.get()->trans;
+  int trans = Project::brush->trans;
   int use_alpha = Gui::getSelectionAlpha();
 
   float yy1 = (float)y1 * zoom;

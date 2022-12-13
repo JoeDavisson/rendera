@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 void PaletteColors::apply()
 {
   Bitmap *bmp = Project::bmp;
-  Palette *pal = Project::palette.get();
+  Palette *pal = Project::palette;
 
   Gui::showProgress(bmp->h);
 

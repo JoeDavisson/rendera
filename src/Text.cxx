@@ -49,7 +49,7 @@ Text::~Text()
 
 void Text::push(View *view)
 {
-  Stroke *stroke = Project::stroke.get();
+  Stroke *stroke = Project::stroke;
 
   move(view);
 
@@ -122,7 +122,7 @@ void Text::release(View*)
 
 void Text::move(View *view)
 {
-  Stroke *stroke = Project::stroke.get();
+  Stroke *stroke = Project::stroke;
 
   // write text string to FLTK's offscreen image
   int face = Gui::getFontFace();
@@ -218,7 +218,7 @@ void Text::done(View *, int)
 
 void Text::redraw(View *view)
 {
-  Stroke *stroke = Project::stroke.get();
+  Stroke *stroke = Project::stroke;
 
   view->drawMain(false);
   stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);

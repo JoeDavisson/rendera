@@ -23,8 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <FL/Fl.H>
 
-#include "SP.H"
-
 class Bitmap;
 class Brush;
 class Map;
@@ -52,17 +50,17 @@ namespace Project
   extern Bitmap *select_bmp;
   extern Map *map;
 
-  extern SP<Brush> brush;
-  extern SP<Palette> palette;
-  extern SP<Stroke> stroke;
-  extern SP<Undo> undo;
+  extern Brush *brush;
+  extern Palette *palette;
+  extern Stroke *stroke;
+  extern Undo *undo;
 
-  extern SP<Paint> paint;
-  extern SP<GetColor> getcolor;
-  extern SP<Selection> selection;
-  extern SP<Offset> offset;
-  extern SP<Text> text;
-  extern SP<Fill> fill;
+  extern Paint *paint;
+  extern GetColor *getcolor;
+  extern Selection *selection;
+  extern Offset *offset;
+  extern Text *text;
+  extern Fill *fill;
 
   extern Tool *tool;
 

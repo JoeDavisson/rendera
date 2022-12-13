@@ -194,7 +194,7 @@ namespace
       return;
     }
 
-    Stroke *stroke = Project::stroke.get();
+    Stroke *stroke = Project::stroke;
     int count = 0;
 
     Gui::showProgress((cb - ct) + 1);

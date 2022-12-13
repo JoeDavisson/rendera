@@ -107,6 +107,7 @@ namespace
   InputInt *gridx;
   InputInt *gridy;
   ToggleButton *gridsnap;
+  Fl_Button *swap;
 
   // tools
   Widget *tool;
@@ -514,6 +515,11 @@ void Gui::init()
                        "Y:",
                        (Fl_Callback *)checkGridY, 1, 256);
   gridy->value("8");
+  pos += 64 + 8;
+  new Separator(top, pos, 4, 2, 34, "");
+  pos += 8;
+  swap = new Fl_Button(top->x() + pos, top->y() + 8, 96, 24, "Swap");
+  swap->callback((Fl_Callback *)0);
   top->resizable(0);
   top->end();
 
@@ -1015,7 +1021,7 @@ void Gui::updateGetColor(int c)
 
 void Gui::checkPaletteSwatches(Widget *widget, void *var)
 {
-  Palette *pal = Project::palette.get();
+  Palette *pal = Project::palette;
   int pos = *(int *)var;
 
   if(pos > pal->max - 1)
@@ -1193,7 +1199,7 @@ void Gui::checkGridY()
 
 void Gui::changePaintSize(int size)
 {
-  Brush *brush = Project::brush.get();
+  Brush *brush = Project::brush;
   float round = (float)(15 - paint_shape->var) / 15;
 
   brush->make(size, round);

@@ -1124,7 +1124,7 @@ int File::savePng(Bitmap *bmp, const char *fn)
   bool use_alpha = Dialog::pngUseAlpha();
   int alpha_levels = Dialog::pngAlphaLevels();
   float alpha_step = 255.0 / (alpha_levels - 1);
-  Palette *pal = Project::palette.get();
+  Palette *pal = Project::palette;
 
   if(use_palette && use_alpha && pal->max * alpha_levels > 256)
   {
@@ -1460,7 +1460,7 @@ Fl_Image *File::previewGimpPalette(const char *fn, unsigned char *header, int)
   if(!isGimpPalette(header))
     return 0;
 
-  SP<Palette> temp_pal = new Palette();
+  Palette *temp_pal = new Palette();
 
   temp_pal->load(fn);
   if(temp_pal->max == 0)

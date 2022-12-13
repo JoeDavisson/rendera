@@ -453,7 +453,7 @@ namespace MakePalette
   void close()
   {
     Items::dialog->hide();
-    Quantize::pca(Project::bmp, Project::palette.get(), atoi(Items::colors->value()));
+    Quantize::pca(Project::bmp, Project::palette, atoi(Items::colors->value()));
   }
 
   void quit()
@@ -537,7 +537,7 @@ namespace Editor
     if(begin_undo)
     {
       begin_undo = false;
-      undo_palette->copy(Project::palette.get());
+      undo_palette->copy(Project::palette);
       Project::palette->draw(Items::palette);
       Gui::drawPalette();
       Items::palette->do_callback();
@@ -753,7 +753,7 @@ namespace Editor
   {
     storeUndo();
 
-    Palette *pal = Project::palette.get();
+    Palette *pal = Project::palette;
     int begin = ramp_begin;
 
     if(begin > end)
@@ -789,7 +789,7 @@ namespace Editor
   {
     storeUndo();
 
-    Palette *pal = Project::palette.get();
+    Palette *pal = Project::palette;
     int begin = ramp_begin;
 
     if(begin > end)
@@ -831,7 +831,7 @@ namespace Editor
 
   void checkPalette(Widget *widget, void *var)
   {
-    Palette *pal = Project::palette.get();
+    Palette *pal = Project::palette;
     int pos = *(int *)var;
 
     if(pos > pal->max - 1)

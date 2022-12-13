@@ -473,7 +473,7 @@ void Bitmap::setpixel(const int x, const int y, const int c)
 
 void Bitmap::setpixel(const int x, const int y, const int c2, const int t)
 {
-  Blend::target(this, Project::palette.get(), x, y);
+  Blend::target(this, Project::palette, x, y);
 
 //  if(Project::brush->alpha_mask)
 //    t = scaleVal(t, 255 - geta(getpixel(x, y)));
@@ -556,7 +556,7 @@ void Bitmap::setpixelClone(const int x, const int y, const int, const int t)
       break;
   }
 
-  Stroke *stroke = Project::stroke.get();
+  Stroke *stroke = Project::stroke;
 
   int c2;
 
@@ -620,7 +620,7 @@ void Bitmap::setpixelWrapClone(const int x, const int y, const int, const int t)
   while(y1 > cb)
     y1 -= ch;
 
-  Stroke *stroke = Project::stroke.get();
+  Stroke *stroke = Project::stroke;
 
   int c2;
 
@@ -893,7 +893,7 @@ void Bitmap::pointStretch(Bitmap *dest,
                           int dx, int dy, int dw, int dh,
                           int overx, int overy, bool bgr_order)
 {
-  //Palette *pal = Project::palette.get();
+  //Palette *pal = Project::palette;
 
   const int ax = ((float)dw / sw) * 65536;
   const int ay = ((float)dh / sh) * 65536;

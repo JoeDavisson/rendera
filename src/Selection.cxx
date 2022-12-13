@@ -327,9 +327,9 @@ void Selection::push(View *view)
 
     // Project::select_bmp->blit(Project::bmp, 0, 0, x1, y1, w, h);
 
-    Blend::set(Project::brush.get()->blend);
+    Blend::set(Project::brush->blend);
 
-    const int trans = Project::brush.get()->trans;
+    const int trans = Project::brush->trans;
     const int alpha = Gui::getSelectionAlpha();
 
     for(int y = 0; y < h; y++)
@@ -354,7 +354,7 @@ void Selection::push(View *view)
 
 void Selection::drag(View *view)
 {
-  Stroke *stroke = Project::stroke.get();
+  Stroke *stroke = Project::stroke;
 
   if(state == 1)
   {
@@ -466,7 +466,7 @@ void Selection::release(View *view)
 
 void Selection::move(View *view)
 {
-  Stroke *stroke = Project::stroke.get();
+  Stroke *stroke = Project::stroke;
 
   if(state == 3)
   {
@@ -559,7 +559,7 @@ void Selection::redraw(View *view)
     return;
   }
 
-  Stroke *stroke = Project::stroke.get();
+  Stroke *stroke = Project::stroke;
 
   if(active)
   {

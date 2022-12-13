@@ -47,20 +47,20 @@ namespace Project
   Bitmap *select_bmp = new Bitmap(8, 8);
   Map *map = 0;
 
-  SP<Brush> brush = new Brush();
-  SP<Palette> palette = new Palette();
-  SP<Stroke> stroke = new Stroke();
-  SP<Undo> undo = new Undo();
+  Brush *brush = new Brush();
+  Palette *palette = new Palette();
+  Stroke *stroke = new Stroke();
+  Undo *undo = new Undo();
 
   // tools
   Tool *tool = 0;
 
-  SP<Paint> paint = new Paint();
-  SP<GetColor> getcolor = new GetColor();
-  SP<Selection> selection = new Selection();
-  SP<Offset> offset = new Offset();
-  SP<Text> text = new Text();
-  SP<Fill> fill = new Fill();
+  Paint *paint = new Paint();
+  GetColor *getcolor = new GetColor();
+  Selection *selection = new Selection();
+  Offset *offset = new Offset();
+  Text *text = new Text();
+  Fill *fill = new Fill();
 
   int overscroll = 64;
   int theme = THEME_DARK;
@@ -83,25 +83,25 @@ void Project::setTool(int num)
   switch(num)
   {
     case Tool::PAINT:
-      tool = paint.get(); 
+      tool = paint; 
       break;
     case Tool::GETCOLOR:
-      tool = getcolor.get(); 
+      tool = getcolor; 
       break;
     case Tool::KNIFE:
-      tool = selection.get(); 
+      tool = selection; 
       break;
     case Tool::OFFSET:
-      tool = offset.get(); 
+      tool = offset; 
       break;
     case Tool::TEXT:
-      tool = text.get(); 
+      tool = text; 
       break;
     case Tool::FILL:
-      tool = fill.get(); 
+      tool = fill; 
       break;
     default:
-      tool = paint.get(); 
+      tool = paint; 
       break;
   }
 }
