@@ -107,7 +107,6 @@ namespace
   InputInt *gridx;
   InputInt *gridy;
   ToggleButton *gridsnap;
-  Fl_Button *swap;
 
   // tools
   Widget *tool;
@@ -516,10 +515,6 @@ void Gui::init()
                        (Fl_Callback *)checkGridY, 1, 256);
   gridy->value("8");
   pos += 64 + 8;
-  new Separator(top, pos, 4, 2, 34, "");
-  pos += 8;
-  swap = new Fl_Button(top->x() + pos, top->y() + 8, 96, 24, "Swap");
-  swap->callback((Fl_Callback *)0);
   top->resizable(0);
   top->end();
 
