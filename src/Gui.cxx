@@ -88,6 +88,7 @@ namespace
   Group *fill;
   Group *palette;
   Group *colors;
+  Group *files;
   Group *bottom;
   Group *status;
   Fl_Group *middle;
@@ -168,6 +169,9 @@ namespace
   Widget *trans;
   Fl_Choice *blend;
 
+  // files
+  Fl_Hold_Browser *file_browse;
+
   // bottom
   ToggleButton *wrap;
   ToggleButton *clone;
@@ -177,6 +181,9 @@ namespace
 
   // view
   View *view;
+
+  // height of leftmost panels
+  const int left_height = 400;
 
   // progress indicator related
   float progress_value = 0;
@@ -323,6 +330,8 @@ void Gui::init()
     (Fl_Callback *)Dialog::newImage, 0, 0);
   menubar->add("&File/&Open...", 0,
     (Fl_Callback *)File::load, 0, 0);
+  menubar->add("&File/&Close...", 0,
+    (Fl_Callback *)closeFile, 0, FL_MENU_DIVIDER);
   menubar->add("&File/&Save...", 0,
     (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
   menubar->add("&File/E&xit...", 0,
@@ -551,7 +560,7 @@ void Gui::init()
 
   // tools
   tools = new Group(0, top->h() + menubar->h(),
-                    48, window->h() - (menubar->h() + top->h() + status->h()),
+                    48, left_height,
                     "Tools");
   pos = 28;
   tool = new Widget(tools, 8, pos, 32, 192,
@@ -563,7 +572,7 @@ void Gui::init()
 
   // paint
   paint = new Group(48, top->h() + menubar->h(),
-                    112, window->h() - top->h() - menubar->h() - status->h(),
+                    112, left_height,
                     "Paint");
   pos = 28;
   paint_brush_preview = new Widget(paint, 8, pos, 96, 96 + 20,
@@ -642,7 +651,7 @@ void Gui::init()
 
   // selection
   selection = new Group(48, top->h() + menubar->h(),
-                   112, window->h() - top->h() - menubar->h() - status->h(),
+                   112, left_height,
                    "Selection");
   pos = 28;
   new StaticText(selection, 8, pos, 32, 24, "x:");
@@ -684,7 +693,7 @@ void Gui::init()
 
   // getcolor
   getcolor = new Group(48, top->h() + menubar->h(),
-                       112, window->h() - top->h() - menubar->h() - status->h(),
+                       112, left_height,
                        "Get Color");
   pos = 28;
   getcolor_color = new Widget(getcolor, 8, pos, 96, 96, 0, 0, 0, 0);
@@ -693,7 +702,7 @@ void Gui::init()
 
   // offset
   offset = new Group(48, top->h() + menubar->h(),
-                     112, window->h() - top->h() - menubar->h() - status->h(),
+                     112, left_height,
                      "Offset");
   pos = 28;
   new StaticText(offset, 8, pos, 32, 24, "x:");
@@ -719,7 +728,7 @@ void Gui::init()
 
   // text
   text = new Group(48, top->h() + menubar->h(),
-                   112, window->h() - top->h() - menubar->h() - status->h(),
+                   112, left_height,
                    "Text");
   pos = 28;
   // add font names
@@ -761,7 +770,7 @@ void Gui::init()
 
   // fill
   fill = new Group(48, top->h() + menubar->h(),
-                   112, window->h() - top->h() - menubar->h() - status->h(),
+                   112, left_height,
                    "Fill");
   pos = 28 + 8;
   fill_feather = new InputInt(fill, 8, pos, 96, 24, "Feather (0-255)", 0, 0, 255);
@@ -840,6 +849,19 @@ void Gui::init()
   colors->resizable(0);
   colors->end();
 
+  // files
+  files = new Group(0, top->h() + menubar->h() + left_height,
+                   160, window->h() - top->h() - menubar->h() - status->h() - left_height, "Files");
+  pos = 28;
+  file_browse = new Fl_Hold_Browser(8, pos, 144, files->h() - 16 - 20);
+  file_browse->textsize(12);
+  file_browse->resize(files->x() + 8, files->y() + pos, files->w() - 16, files->h() - 16 - 20);
+
+  file_browse->callback((Fl_Callback *)checkFileBrowse);
+
+  files->resizable(file_browse);
+  files->end();
+
   // middle
   middle = new Fl_Group(160, top->h() + menubar->h(),
                         window->w() - 304 - 80, window->h() - (menubar->h() + top->h() + bottom->h() + status->h()));
@@ -850,7 +872,7 @@ void Gui::init()
 
   // container for left panels
   left = new Fl_Group(0, top->h() + menubar->h(),
-                            64 + 96, window->h() - (menubar->h() + top->h() + bottom->h()));
+                            64 + 96, left_height);
   left->add(tools);
   left->add(paint);
   left->add(getcolor);
@@ -865,7 +887,7 @@ void Gui::init()
   right->add(palette);
   right->add(colors);
 
-  window->size_range(640, 480, 0, 0, 0, 0, 0);
+  window->size_range(1024, 768, 0, 0, 0, 0, 0);
   window->resizable(view);
   window->end();
 
@@ -1803,6 +1825,40 @@ void Gui::checkClearToTransparent()
       *(bmp->row[y] + x) = 0x00808080;
 
   view->drawMain(true);
+}
+
+void Gui::checkFileBrowse()
+{
+  if(file_browse->value() >= 1)
+    Project::switchImage(file_browse->value() - 1);
+
+  view->zoomOne();
+}
+
+void Gui::addFile(const char *name)
+{
+  file_browse->add(name, 0);
+  file_browse->select(Project::current + 1);
+}
+
+void Gui::closeFile()
+{
+  if(Project::removeImage() == true)
+  {
+    file_browse->remove(Project::current + 1);
+
+    if(Project::current > 0)
+      file_browse->select(Project::current, 1);
+    else
+      file_browse->select(Project::current + 1, 1);
+
+    if(Project::current > 0)
+      Project::switchImage(Project::current - 1);
+    else
+      Project::switchImage(Project::current);
+
+    view->drawMain(true);
+  }
 }
 
 Fl_Double_Window *Gui::getWindow()

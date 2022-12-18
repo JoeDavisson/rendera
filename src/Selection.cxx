@@ -177,7 +177,7 @@ namespace
     Bitmap *temp = new Bitmap(w, h);
     Project::bmp->blit(temp, beginx, beginy, 0, 0, w, h);
 
-    Project::newImage(w, h);
+    Project::replaceImage(w, h);
     temp->blit(Project::bmp, 0, 0,
                Project::overscroll, Project::overscroll, w, h);
     delete temp;

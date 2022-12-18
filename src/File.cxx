@@ -293,20 +293,21 @@ int File::loadFile(const char *fn)
     return -1;
   }
 
-  // load was successful, set the main bitmap to use the temp pointer
-  // and resize the brushstroke map to match the new image size
-  delete Project::bmp;
-  Project::bmp = temp;
-
-  delete Project::map;
-  Project::map = new Map(Project::bmp->w, Project::bmp->h);
+  if(Project::newImageFromBitmap(temp) == -1)
+  {
+    delete temp;
+    return -1;
+  }
+  else
+  {
+    Gui::addFile(fn);
+  }
 
   // redraw
-  Project::selection->reset();
+//  Project::selection->reset();
   Project::stroke->clip();
   Gui::getView()->zoomFit(Gui::getView()->fit);
   Gui::getView()->drawMain(true);
-  Project::undo->reset();
 
   return 0;
 }

@@ -55,6 +55,11 @@ namespace Project
   extern Stroke *stroke;
   extern Undo *undo;
 
+  extern Bitmap **bmp_list;
+  extern Undo **undo_list;
+  extern int current;
+  extern int last;
+
   extern Paint *paint;
   extern GetColor *getcolor;
   extern Selection *selection;
@@ -75,8 +80,13 @@ namespace Project
 
   void init();
   void setTool(int);
-  void newImage(int, int);
+  int newImage(int, int);
+  int newImageFromBitmap(Bitmap *);
+  void replaceImage(int, int);
+  void replaceImageFromBitmap(Bitmap *);
   void resizeImage(int, int);
+  void switchImage(int);
+  bool removeImage();
   void pop();
   void popRedo();
 }

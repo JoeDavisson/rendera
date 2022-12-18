@@ -187,6 +187,9 @@ int main(int argc, char *argv[])
   // delay showing main gui until after all arguments are checked
   Gui::show();
 
+  // name for starting image
+  Gui::addFile("New Image");
+
 /*
   // view theme palette (for testing)
   Project::palette->max = 256;

@@ -120,11 +120,15 @@ namespace Resize
     bmp->blit(temp, overscroll, overscroll, overscroll, overscroll,
                     bmp->cw, bmp->ch);
 
+    Project::replaceImageFromBitmap(temp);
+
+/*
     delete Project::bmp;
     Project::bmp = temp;
 
     delete Project::map;
     Project::map = new Map(Project::bmp->w, Project::bmp->h);
+*/
 
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
@@ -482,11 +486,13 @@ namespace Scale
 
     Gui::hideProgress();
 
-    delete Project::bmp;
-    Project::bmp = temp;
+//    delete Project::bmp;
+//    Project::bmp = temp;
 
-    delete Project::map;
-    Project::map = new Map(Project::bmp->w, Project::bmp->h);
+//    delete Project::map;
+//    Project::map = new Map(Project::bmp->w, Project::bmp->h);
+
+    Project::replaceImageFromBitmap(temp);
 
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
@@ -748,11 +754,15 @@ namespace RotateArbitrary
 
     Gui::hideProgress();
 
+    Project::replaceImageFromBitmap(temp);
+
+/*
     delete Project::bmp;
     Project::bmp = temp;
 
     delete Project::map;
     Project::map = new Map(Project::bmp->w, Project::bmp->h);
+*/
 
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;

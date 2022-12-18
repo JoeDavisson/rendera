@@ -390,13 +390,18 @@ namespace NewImage
   {
     Items::dialog->hide();
 
-    Project::newImage(atoi(Items::width->value()),
-                      atoi(Items::height->value()));
+    if(Project::newImage(atoi(Items::width->value()),
+                         atoi(Items::height->value())) == -1)
+    {
+      return;
+    }
 
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
     Gui::getView()->zoomFit(0);
     Gui::getView()->drawMain(true);
+
+    Gui::addFile("New Image");
 
     Project::undo->reset();
   }

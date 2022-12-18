@@ -119,7 +119,8 @@ void Undo::pop()
   int w = undo_stack[undo_current]->w;
   int h = undo_stack[undo_current]->h;
 
-  Project::newImage(w - Project::overscroll * 2, h - Project::overscroll * 2);
+//  Project::newImage(w - Project::overscroll * 2, h - Project::overscroll * 2);
+  Project::replaceImage(w - Project::overscroll * 2, h - Project::overscroll * 2);
 
   int ox = Gui::getView()->ox;
   int oy = Gui::getView()->oy;
@@ -176,7 +177,8 @@ void Undo::popRedo()
   int w = redo_stack[redo_current]->w;
   int h = redo_stack[redo_current]->h;
 
-  Project::newImage(w - Project::overscroll * 2, h - Project::overscroll * 2);
+//  Project::newImage(w - Project::overscroll * 2, h - Project::overscroll * 2);
+  Project::replaceImage(w - Project::overscroll * 2, h - Project::overscroll * 2);
 
   int ox = Gui::getView()->ox;
   int oy = Gui::getView()->oy;

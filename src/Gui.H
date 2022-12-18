@@ -109,8 +109,11 @@ namespace Gui
   void checkClearToWhite();
   void checkClearToGray();
   void checkClearToTransparent();
-  void checkConvertToIndexed();
-  void checkConvertToGrayscale();
+//  void checkConvertToIndexed();
+//  void checkConvertToGrayscale();
+  void checkFileBrowse();
+  void addFile(const char *);
+  void closeFile();
 
   Fl_Double_Window *getWindow();
   Fl_Menu_Bar *getMenuBar();
