@@ -352,10 +352,12 @@ void Gui::init()
   menubar->add("&Clear/&Transparent", 0,
     (Fl_Callback *)checkClearToTransparent, 0, 0);
 
-  menubar->add("&Image/&Resize...", 0,
-    (Fl_Callback *)Transform::resize, 0, 0);
   menubar->add("&Image/&Scale...", 0,
-    (Fl_Callback *)Transform::scale, 0, FL_MENU_DIVIDER);
+    (Fl_Callback *)Transform::scale, 0, 0);
+  menubar->add("&Image/&Resize...", 0,
+    (Fl_Callback *)Transform::resize, 0, FL_MENU_DIVIDER);
+  menubar->add("&Image/&Duplicate", 0,
+    (Fl_Callback *)duplicateImage, 0, FL_MENU_DIVIDER);
   menubar->add("&Image/Flip &Horizontal", 0,
     (Fl_Callback *)Transform::flipHorizontal, 0, 0);
   menubar->add("&Image/Flip &Vertical", 0,
@@ -1945,6 +1947,21 @@ int Gui::getFillFeather()
 void Gui::resetTool()
 {
   Project::tool->reset();
+}
+
+void Gui::duplicateImage()
+{
+  const int w = Project::bmp->w;
+  const int h = Project::bmp->h;
+  const int cw = Project::bmp->cw;
+  const int ch = Project::bmp->ch;
+  const int current = Project::current;
+  Bitmap **bmp_list = Project::bmp_list;
+
+  Project::newImage(cw, ch);
+  bmp_list[current]->blit(bmp_list[current + 1], 0, 0, 0, 0, w, h);
+
+  addFile("New Image");
 }
 
 // use default interval

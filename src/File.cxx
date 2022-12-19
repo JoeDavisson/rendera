@@ -300,7 +300,9 @@ int File::loadFile(const char *fn)
   }
   else
   {
-    Gui::addFile(fn);
+    char s[256];
+    getFilename(s, fn);
+    Gui::addFile(s);
   }
 
   // redraw
@@ -1686,5 +1688,32 @@ void File::getDirectory(char *dest, const char *src)
       break;
     }
   }
+}
+
+// extract filename from a path/filename string
+void File::getFilename(char *dest, const char *src)
+{
+  int len = strlen(src);
+  if(len < 2)
+    return;
+
+  int start = 0;
+  int count = 0;
+
+  for(int i = len - 1; i > 0; i--)
+  {
+    if(src[i] == '/')
+    {
+      start = i + 1; 
+      break;
+    }
+
+    count++;
+  }
+
+  for(int i = 0; i < count; i++)
+    dest[i] = src[start + i];
+
+  dest[count] = '\0';
 }
 

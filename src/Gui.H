@@ -126,6 +126,7 @@ namespace Gui
   int getFillFeather();
 
   void resetTool();
+  void duplicateImage();
   void showProgress(float);
   void showProgress(float, int);
   int updateProgress(const int);

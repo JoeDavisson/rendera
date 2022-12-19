@@ -56,6 +56,7 @@ namespace File
 
   void decodeURI(char *);
   void getDirectory(char *, const char *);
+  void getFilename(char *, const char *);
 }
 
 #endif
