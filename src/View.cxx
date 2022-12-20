@@ -380,10 +380,10 @@ int View::handle(int event)
             panning = true;
             ox = (w() - 1 - mousex) / zoom - last_ox;
             oy = (h() - 1 - mousey) / zoom - last_oy; 
-            if(ox < 0)
-              ox = 0;
-            if(oy < 0)
-              oy = 0;
+            if(ox < (Project::bmp->cl + 1) - w() / zoom)
+              ox = (Project::bmp->cl + 1) - w() / zoom;
+            if(oy < (Project::bmp->ct + 1) - h() / zoom)
+              oy = (Project::bmp->ct + 1) - h() / zoom;
             if(ox > Project::bmp->cr)
               ox = Project::bmp->cr;
             if(oy > Project::bmp->cb)
@@ -550,6 +550,8 @@ void View::resize(int x, int y, int w, int h)
     zoomFit(true);
 
   ignore_tool = true;
+  ox = 0;
+  oy = 0;
   drawMain(true);
 }
 
@@ -569,10 +571,12 @@ void View::drawMain(bool refresh)
   sw += 2;
   sh += 2;
 
+/*
   if(sw > Project::bmp->w - ox)
     sw = Project::bmp->w - ox;
   if(sh > Project::bmp->h - oy)
     sh = Project::bmp->h - oy;
+*/
 
   int dw = sw * zoom;
   int dh = sh * zoom;
@@ -588,8 +592,18 @@ void View::drawMain(bool refresh)
 
   backbuf->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
-  Project::bmp->pointStretch(backbuf, ox, oy, sw, sh,
-                             0, 0, dw, dh, overx, overy, bgr_order);
+  int offx = 0;
+  int offy = 0;
+
+  if(ox < 0)
+    offx = -ox;
+  if(oy < 0)
+    offy = -oy;
+
+  Project::bmp->pointStretch(backbuf, ox, oy, sw - offx, sh - offy,
+                             offx * zoom, offy * zoom, dw - offx * zoom, dh - offy * zoom, overx, overy, bgr_order);
+//  Project::bmp->pointStretch(backbuf, ox, oy, sw, sh,
+//                             0, 0, dw, dh, overx, overy, bgr_order);
 
   if(grid)
     drawGrid();
@@ -842,6 +856,15 @@ void View::zoomIn(int x, int y)
     ox += x / zoom;
     oy += y / zoom;
 
+    if(ox < Project::bmp->cl - w() / zoom)
+      ox = Project::bmp->cl - w() / zoom;
+    if(oy < Project::bmp->ct - h() / zoom)
+      oy = Project::bmp->ct - h() / zoom;
+    if(ox > Project::bmp->cr)
+      ox = Project::bmp->cr;
+    if(oy > Project::bmp->cb)
+      oy = Project::bmp->cb;
+/*
     if(ox > Project::bmp->w - w() / zoom)
       ox = Project::bmp->w - w() / zoom;
     if(oy > Project::bmp->h - h() / zoom)
@@ -850,6 +873,7 @@ void View::zoomIn(int x, int y)
       ox = 0;
     if(oy < 0)
       oy = 0;
+*/
   }
 
   if(Project::tool->isActive())
@@ -877,6 +901,15 @@ void View::zoomOut(int x, int y)
     ox -= x / oldzoom;
     oy -= y / oldzoom;
 
+    if(ox < Project::bmp->cl - w() / zoom)
+      ox = Project::bmp->cl - w() / zoom;
+    if(oy < Project::bmp->ct - h() / zoom)
+      oy = Project::bmp->ct - h() / zoom;
+    if(ox > Project::bmp->cr)
+      ox = Project::bmp->cr;
+    if(oy > Project::bmp->cb)
+      oy = Project::bmp->cb;
+/*
     if(ox > Project::bmp->w - w() / zoom)
       ox = Project::bmp->w - w() / zoom;
     if(oy > Project::bmp->h - h() / zoom)
@@ -885,6 +918,7 @@ void View::zoomOut(int x, int y)
       ox = 0;
     if(oy < 0)
       oy = 0;
+*/
   }
 
   drawMain(true);

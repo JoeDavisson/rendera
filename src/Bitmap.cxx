@@ -903,6 +903,12 @@ void Bitmap::pointStretch(Bitmap *dest,
   dw -= overx;
   dh -= overy;
 
+  if(sx < 0)
+    sx = 0;
+
+  if(sy < 0)
+    sy = 0;
+
   if(dx < dest->cl)
   {
     const int d = dest->cl - dx;
@@ -947,17 +953,25 @@ void Bitmap::pointStretch(Bitmap *dest,
   for(int y = 0; y < dh; y++)
   {
     const int y1 = sy + ((y * by) >> 16);
-    int *p = dest->row[dy + y] + dx;
+
+    if(y1 < 0 || y1 >= h)
+      continue;
+    if(dy + y < 0 || dy + y >= dest->h)
+      continue;
 
     for(int x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 16);
-      const int c = *(row[y1] + x1);
-//      const int c = pal->data[pal->table->read(*(row[y1] + x1))];
-      const int checker = ((x >> 4) ^ (y >> 4)) & 1 ? 0xa0a0a0 : 0x606060;
 
-      *p = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
-      p++;
+      if(x1 < 0 || x1 >= w)
+        continue;
+      if(dx + x < 0 || dx + x >= dest->w)
+        continue;
+
+      const int c = *(row[y1] + x1);
+      const int checker = ((x >> 4) ^ (y >> 4)) & 1 ? 0xa0a0a0 : 0x606060;
+      dest->setpixel(dx + x, dy + y,
+           convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order));
     }
   }
 }
