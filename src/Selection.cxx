@@ -198,6 +198,7 @@ void Selection::push(View *view)
     beginy = view->imgy;
     lastx = view->imgx;
     lasty = view->imgy;
+
     state = 1;
   }
   else if(state == 2)
@@ -323,6 +324,13 @@ void Selection::drag(View *view)
 {
   Stroke *stroke = Project::stroke;
 
+  if(view->imgx < 0 || view->imgy < 0
+     || view->imgx > Project::bmp->w - 1 || view->imgy > Project::bmp->h - 1)
+  {
+    drag_started = false;
+    resize_started = false;
+  }
+
   if(state == 1)
   {
     view->drawMain(false);
@@ -401,11 +409,18 @@ void Selection::drag(View *view)
     redraw(view);
   }
 
+  int temp_beginx = beginx;
+  int temp_beginy = beginy;
+  int temp_lastx = lastx;
+  int temp_lasty = lasty;
+
+  absrect(view, &temp_beginx, &temp_beginy, &temp_lastx, &temp_lasty);
+
   const int overscroll = Project::overscroll;
-  const int x = beginx - overscroll;
-  const int y = beginy - overscroll;
-  const int w = abs(lastx - beginx) + 1;
-  const int h = abs(lasty - beginy) + 1;
+  int x = temp_beginx - overscroll;
+  int y = temp_beginy - overscroll;
+  int w = abs(temp_lastx - temp_beginx) + 1;
+  int h = abs(temp_lasty - temp_beginy) + 1;
 
   Gui::checkSelectionValues(x, y, w, h);
 }

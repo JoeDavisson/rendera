@@ -1636,20 +1636,20 @@ void Gui::checkCropValues(int x, int y, int w, int h)
   char s[256];
 
   snprintf(s, sizeof(s), "%d", x);
-  selection_x->copy_label(s);
-  selection_x->redraw();
+  crop_x->copy_label(s);
+  crop_x->redraw();
 
   snprintf(s, sizeof(s), "%d", y);
-  selection_y->copy_label(s);
-  selection_y->redraw();
+  crop_y->copy_label(s);
+  crop_y->redraw();
 
   snprintf(s, sizeof(s), "%d", w);
-  selection_w->copy_label(s);
-  selection_w->redraw();
+  crop_w->copy_label(s);
+  crop_w->redraw();
 
   snprintf(s, sizeof(s), "%d", h);
-  selection_h->copy_label(s);
-  selection_h->redraw();
+  crop_h->copy_label(s);
+  crop_h->redraw();
 }
 
 void Gui::checkCropDo()

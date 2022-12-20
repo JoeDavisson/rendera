@@ -185,6 +185,7 @@ int View::handle(int event)
 
   mousex = Fl::event_x() - x();
   mousey = Fl::event_y() - y();
+
   imgx = mousex / zoom + ox;
   imgy = mousey / zoom + oy;
 
@@ -219,15 +220,15 @@ int View::handle(int event)
         imgx -= overscroll;
         if(imgx % gridx < gridx / 2)
           imgx -= imgx % gridx;
-        else
-          imgx += gridx - imgx % gridx - 1;
+//        else
+//          imgx += gridx - imgx % gridx - 1;
         imgx += overscroll;
 
         imgy -= overscroll;
         if(imgy % gridy < gridy / 2)
           imgy -= imgy % gridy;
-        else
-          imgy += gridy - imgy % gridy - 1;
+//        else
+//          imgy += gridy - imgy % gridy - 1;
         imgy += overscroll;
       }
       break;
@@ -292,8 +293,8 @@ int View::handle(int event)
     case FL_PUSH:
     {
       // gives viewport focus when clicked on
-      if(Fl::focus() != this)
-        Fl::focus(this);
+//      if(Fl::focus() != this)
+//        Fl::focus(this);
 
 //FIXME buggy
 /*
@@ -380,21 +381,10 @@ int View::handle(int event)
             panning = true;
             ox = (w() - 1 - mousex) / zoom - last_ox;
             oy = (h() - 1 - mousey) / zoom - last_oy; 
-            if(ox < (Project::bmp->cl + 1) - w() / zoom)
-              ox = (Project::bmp->cl + 1) - w() / zoom;
-            if(oy < (Project::bmp->ct + 1) - h() / zoom)
-              oy = (Project::bmp->ct + 1) - h() / zoom;
-            if(ox > Project::bmp->cr)
-              ox = Project::bmp->cr;
-            if(oy > Project::bmp->cb)
-              oy = Project::bmp->cb;
 
-            if(Project::tool->isActive())
-              Project::tool->redraw(this);
-            else
-              drawMain(true);
-//            ignore_tool = true;
-//            drawMain(true);
+            clipOrigin();
+            drawMain(true);
+            Project::tool->redraw(this);
           }
 
           break;
@@ -414,17 +404,17 @@ int View::handle(int event)
       {
         moving = false;
 
-        if(Project::tool->isActive())
-          Project::tool->redraw(this);
-        else
-          drawMain(true);
+//        if(Project::tool->isActive())
+//          Project::tool->redraw(this);
+//        else
+//          drawMain(true);
       }
 
       if(panning)
         panning = false;
 
-      if(Project::tool->isActive())
-        Project::tool->redraw(this);
+//      if(Project::tool->isActive())
+      Project::tool->redraw(this);
 
       return 1;
     }
@@ -464,8 +454,8 @@ int View::handle(int event)
         zoomIn(mousex, mousey);
       }
 
-      if(Project::tool->isActive())
-        Project::tool->redraw(this);
+//      if(Project::tool->isActive())
+      Project::tool->redraw(this);
 
       return 1;
     }
@@ -856,24 +846,7 @@ void View::zoomIn(int x, int y)
     ox += x / zoom;
     oy += y / zoom;
 
-    if(ox < Project::bmp->cl - w() / zoom)
-      ox = Project::bmp->cl - w() / zoom;
-    if(oy < Project::bmp->ct - h() / zoom)
-      oy = Project::bmp->ct - h() / zoom;
-    if(ox > Project::bmp->cr)
-      ox = Project::bmp->cr;
-    if(oy > Project::bmp->cb)
-      oy = Project::bmp->cb;
-/*
-    if(ox > Project::bmp->w - w() / zoom)
-      ox = Project::bmp->w - w() / zoom;
-    if(oy > Project::bmp->h - h() / zoom)
-      oy = Project::bmp->h - h() / zoom;
-    if(ox < 0)
-      ox = 0;
-    if(oy < 0)
-      oy = 0;
-*/
+    clipOrigin();
   }
 
   if(Project::tool->isActive())
@@ -901,24 +874,7 @@ void View::zoomOut(int x, int y)
     ox -= x / oldzoom;
     oy -= y / oldzoom;
 
-    if(ox < Project::bmp->cl - w() / zoom)
-      ox = Project::bmp->cl - w() / zoom;
-    if(oy < Project::bmp->ct - h() / zoom)
-      oy = Project::bmp->ct - h() / zoom;
-    if(ox > Project::bmp->cr)
-      ox = Project::bmp->cr;
-    if(oy > Project::bmp->cb)
-      oy = Project::bmp->cb;
-/*
-    if(ox > Project::bmp->w - w() / zoom)
-      ox = Project::bmp->w - w() / zoom;
-    if(oy > Project::bmp->h - h() / zoom)
-      oy = Project::bmp->h - h() / zoom;
-    if(ox < 0)
-      ox = 0;
-    if(oy < 0)
-      oy = 0;
-*/
+    clipOrigin();
   }
 
   drawMain(true);
@@ -1028,6 +984,18 @@ void View::scroll(int dir, int amount)
     Project::tool->redraw(this);
   else
     drawMain(true);
+}
+
+void View::clipOrigin()
+{
+  if(ox < (Project::bmp->cl + 1) - w() / zoom)
+    ox = (Project::bmp->cl + 1) - w() / zoom;
+  if(oy < (Project::bmp->ct + 1) - h() / zoom)
+    oy = (Project::bmp->ct + 1) - h() / zoom;
+  if(ox > Project::bmp->cr)
+    ox = Project::bmp->cr;
+  if(oy > Project::bmp->cb)
+    oy = Project::bmp->cb;
 }
 
 // do not call directly, call redraw() instead

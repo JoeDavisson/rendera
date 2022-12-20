@@ -970,8 +970,12 @@ void Bitmap::pointStretch(Bitmap *dest,
 
       const int c = *(row[y1] + x1);
       const int checker = ((x >> 4) ^ (y >> 4)) & 1 ? 0xa0a0a0 : 0x606060;
+      *(dest->row[dy + y] + dx + x) =
+           convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
+/*
       dest->setpixel(dx + x, dy + y,
            convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order));
+*/
     }
   }
 }

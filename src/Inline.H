@@ -211,6 +211,16 @@ inline int clamp(const int value, const int ceiling)
     return value;
 }
 
+inline int range(const int value, const int floor, const int ceiling)
+{
+  if(value < floor)
+    return floor;
+  else if(value > ceiling)
+    return ceiling;
+  else
+    return value;
+}
+
 // file access functions
 inline uint8_t parseUint8(unsigned char *&buffer)
 {

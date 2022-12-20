@@ -944,7 +944,6 @@ void Stroke::previewSelection(Bitmap *backbuf, int ox, int oy, float zoom, bool 
 //  const int color = convertFormat(Project::brush->color,
 //                                  Gui::getView()->bgr_order);
   const int select_trans = Project::select_trans;
-  const int overscroll = Project::overscroll;
   int use_alpha = Gui::getSelectionAlpha();
   Bitmap *select_bmp = Project::select_bmp;
 

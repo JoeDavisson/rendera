@@ -48,6 +48,7 @@ public:
   void zoomFit(bool);
   void zoomOne();
   void scroll(int, int);
+  void clipOrigin();
 
   Fl_Group *group;
   Bitmap *backbuf;
