@@ -93,7 +93,6 @@ namespace Gui
   void checkSelectionValues(int, int, int, int);
   void checkSelectionToNewImage();
   void checkSelectionFromCurrentImage();
-  void checkSelectionTrans(Widget *, void *);
   void checkImageToSelection();
   void checkOffsetValues(int, int);
   void checkOffsetLeft(Widget *, void *);
@@ -115,8 +114,6 @@ namespace Gui
   void checkClearToWhite();
   void checkClearToGray();
   void checkClearToTransparent();
-//  void checkConvertToIndexed();
-//  void checkConvertToGrayscale();
   void checkFileBrowse();
   void addFile(const char *);
   void closeFile();
@@ -131,7 +128,6 @@ namespace Gui
   int getTextSmooth();
   int getFillFeather();
 
-//  void resetTool();
   void duplicateImage();
   void showProgress(float);
   void showProgress(float, int);

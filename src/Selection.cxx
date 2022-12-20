@@ -293,24 +293,22 @@ void Selection::push(View *view)
 
     Blend::set(Project::brush->blend);
 
-    const int trans = Project::select_trans;
+    const int trans = Project::brush->trans;
     const int alpha = Gui::getSelectionAlpha();
 
     for(int y = 0; y < h; y++)
     {
       for(int x = 0; x < w; x++)
       {
-        const int c = Project::select_bmp->getpixel(x, y);
+        int c = Project::select_bmp->getpixel(x, y);
+        const int t = scaleVal(255 - geta(c), trans);
+
+        c |= 0xff000000;
 
         if(alpha)
-        {
-          Project::bmp->setpixel(x1 + x, y1 + y, c,
-                                 scaleVal(255 - geta(c), trans));
-        }
+          Project::bmp->setpixel(x1 + x, y1 + y, c, t);
         else
-        {
           Project::bmp->setpixel(x1 + x, y1 + y, c, trans);
-        }
       }
     }
 

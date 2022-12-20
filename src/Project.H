@@ -49,7 +49,6 @@ namespace Project
 
   extern Bitmap *bmp;
   extern Bitmap *select_bmp;
-  extern int select_trans;
   extern Map *map;
 
   extern Brush *brush;

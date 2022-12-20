@@ -293,8 +293,8 @@ int View::handle(int event)
     case FL_PUSH:
     {
       // gives viewport focus when clicked on
-//      if(Fl::focus() != this)
-//        Fl::focus(this);
+      if(Fl::focus() != this)
+        Fl::focus(this);
 
 //FIXME buggy
 /*
@@ -383,8 +383,9 @@ int View::handle(int event)
             oy = (h() - 1 - mousey) / zoom - last_oy; 
 
             clipOrigin();
-            drawMain(true);
+            drawMain(false);
             Project::tool->redraw(this);
+            redraw();
           }
 
           break;
@@ -401,20 +402,13 @@ int View::handle(int event)
       Project::tool->release(this);
 
       if(moving)
-      {
         moving = false;
-
-//        if(Project::tool->isActive())
-//          Project::tool->redraw(this);
-//        else
-//          drawMain(true);
-      }
 
       if(panning)
         panning = false;
 
-//      if(Project::tool->isActive())
-      Project::tool->redraw(this);
+      if(Project::tool->isActive())
+        Project::tool->redraw(this);
 
       return 1;
     }
@@ -454,7 +448,6 @@ int View::handle(int event)
         zoomIn(mousex, mousey);
       }
 
-//      if(Project::tool->isActive())
       Project::tool->redraw(this);
 
       return 1;
@@ -561,13 +554,6 @@ void View::drawMain(bool refresh)
   sw += 2;
   sh += 2;
 
-/*
-  if(sw > Project::bmp->w - ox)
-    sw = Project::bmp->w - ox;
-  if(sh > Project::bmp->h - oy)
-    sh = Project::bmp->h - oy;
-*/
-
   int dw = sw * zoom;
   int dh = sh * zoom;
 
@@ -590,10 +576,11 @@ void View::drawMain(bool refresh)
   if(oy < 0)
     offy = -oy;
 
-  Project::bmp->pointStretch(backbuf, ox, oy, sw - offx, sh - offy,
-                             offx * zoom, offy * zoom, dw - offx * zoom, dh - offy * zoom, overx, overy, bgr_order);
-//  Project::bmp->pointStretch(backbuf, ox, oy, sw, sh,
-//                             0, 0, dw, dh, overx, overy, bgr_order);
+  Project::bmp->pointStretch(backbuf,
+                             ox, oy, sw - offx, sh - offy,
+                             offx * zoom, offy * zoom,
+                             dw - offx * zoom, dh - offy * zoom,
+                             overx, overy, bgr_order);
 
   if(grid)
     drawGrid();
@@ -849,10 +836,9 @@ void View::zoomIn(int x, int y)
     clipOrigin();
   }
 
-  if(Project::tool->isActive())
+    drawMain(false);
     Project::tool->redraw(this);
-  else
-    drawMain(true);
+    redraw();
 
   Gui::checkZoom();
 }
@@ -879,10 +865,9 @@ void View::zoomOut(int x, int y)
 
   drawMain(true);
 
-  if(Project::tool->isActive())
+    drawMain(false);
     Project::tool->redraw(this);
-  else
-    drawMain(true);
+    redraw();
 
   Gui::checkZoom();
 }

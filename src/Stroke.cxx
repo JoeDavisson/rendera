@@ -941,9 +941,7 @@ void Stroke::previewSelection(Bitmap *backbuf, int ox, int oy, float zoom, bool 
   clip();
 
   const int zr = (int)((1.0 / zoom) * 65536);
-//  const int color = convertFormat(Project::brush->color,
-//                                  Gui::getView()->bgr_order);
-  const int select_trans = Project::select_trans;
+  const int trans = Project::brush->trans;
   int use_alpha = Gui::getSelectionAlpha();
   Bitmap *select_bmp = Project::select_bmp;
 
@@ -983,9 +981,9 @@ void Stroke::previewSelection(Bitmap *backbuf, int ox, int oy, float zoom, bool 
       const int c = convertFormat(select_bmp->getpixel(xm, ym), bgr_order);
 
       if(use_alpha)
-        *p = blendFast(*p, c, scaleVal(255 - geta(c), select_trans));
+        *p = blendFast(*p, c, scaleVal(255 - geta(c), trans));
       else
-        *p = blendFast(*p, c, select_trans);
+        *p = blendFast(*p, c, trans);
 
       p++;
     }

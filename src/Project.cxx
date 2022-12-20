@@ -47,7 +47,6 @@ namespace Project
 {
   Bitmap *bmp = 0;
   Bitmap *select_bmp = new Bitmap(8, 8);
-  int select_trans = 0;
   Map *map = 0;
 
   Brush *brush = new Brush();

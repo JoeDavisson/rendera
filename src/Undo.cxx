@@ -119,23 +119,7 @@ void Undo::pop()
   int w = undo_stack[undo_current]->w;
   int h = undo_stack[undo_current]->h;
 
-//  Project::newImage(w - Project::overscroll * 2, h - Project::overscroll * 2);
   Project::replaceImage(w - Project::overscroll * 2, h - Project::overscroll * 2);
-
-  int ox = Gui::getView()->ox;
-  int oy = Gui::getView()->oy;
-
-  if(ox < 0)
-    ox = 0;
-  if(ox > w - 1)
-    ox = w - 1;
-  if(oy < 0)
-    oy = 0;
-  if(oy > h - 1)
-    oy = h - 1;
-
-  Gui::getView()->ox = ox;
-  Gui::getView()->oy = oy;
 
   undo_stack[undo_current]->blit(Project::bmp, 0, 0, 0, 0, w, h);
 
@@ -177,23 +161,7 @@ void Undo::popRedo()
   int w = redo_stack[redo_current]->w;
   int h = redo_stack[redo_current]->h;
 
-//  Project::newImage(w - Project::overscroll * 2, h - Project::overscroll * 2);
   Project::replaceImage(w - Project::overscroll * 2, h - Project::overscroll * 2);
-
-  int ox = Gui::getView()->ox;
-  int oy = Gui::getView()->oy;
-
-  if(ox < 0)
-    ox = 0;
-  if(ox > w - 1)
-    ox = w - 1;
-  if(oy < 0)
-    oy = 0;
-  if(oy > h - 1)
-    oy = h - 1;
-
-  Gui::getView()->ox = ox;
-  Gui::getView()->oy = oy;
 
   redo_stack[redo_current]->blit(Project::bmp, 0, 0, 0, 0, w, h);
 

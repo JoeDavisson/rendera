@@ -153,7 +153,6 @@ namespace
   Button *selection_flip;
   Button *selection_mirror;
   Button *selection_rotate;
-  Widget *selection_trans;
 
   StaticText *offset_x;
   StaticText *offset_y;
@@ -734,9 +733,6 @@ void Gui::init()
   selection_flip = new Button(selection, 8 + 33, pos, 30, 30, "Flip", images_select_flip_png, (Fl_Callback *)checkSelectionFlipVertical);
   selection_rotate = new Button(selection, 8 + 66, pos, 30, 30, "Rotate", images_select_rotate_png, (Fl_Callback *)checkSelectionRotate90);
   pos += 30 + 8;
-  selection_trans = new Widget(selection, 8, pos, 96, 24,
-                     "Transparency", images_transparency_small_png, 3, 24,
-                     (Fl_Callback *)checkSelectionTrans);
   selection->resizable(0);
   selection->end();
 
@@ -1136,61 +1132,11 @@ int Gui::getPaletteIndex()
   return palette_swatches->var;
 }
 
-/*
-void Gui::checkPaletteInsert(Widget *widget, void *var)
-{
-  Project::palette->copy(undo_palette);
-  begin_palette_undo = true;
-  Project::palette->insertColor(Project::brush->color, palette_swatches->var);
-  Project::palette->fillTable();
-  Project::palette->draw(palette_swatches);
-  palette_swatches->do_callback();
-}
-
-void Gui::checkPaletteDelete(Widget *widget, void *var)
-{
-  Project::palette->copy(undo_palette);
-  begin_palette_undo = true;
-  Project::palette->deleteColor(palette_swatches->var);
-  Project::palette->fillTable();
-  Project::palette->draw(palette_swatches);
-
-  if(palette_swatches->var > Project::palette->max - 1)
-    palette_swatches->var = Project::palette->max - 1;
-
-  palette_swatches->do_callback();
-}
-
-void Gui::checkPaletteReplace(Widget *widget, void *var)
-{
-  Project::palette->copy(undo_palette);
-  begin_palette_undo = true;
-  Project::palette->replaceColor(Project::brush->color, palette_swatches->var);
-  Project::palette->fillTable();
-  Project::palette->draw(palette_swatches);
-  palette_swatches->do_callback();
-}
-
-void Gui::checkPaletteUndo(Widget *widget, void *var)
-{
-  if(begin_palette_undo)
-  {
-    begin_palette_undo = false;
-    undo_palette->copy(Project::palette.get());
-    Project::palette->fillTable();
-    Project::palette->draw(palette_swatches);
-    Gui::drawPalette();
-    palette_swatches->do_callback();
-  }
-}
-*/
-
 void Gui::drawPalette()
 {
   Project::palette->draw(palette_swatches);
   palette_swatches->var = 0;
   palette_swatches->redraw();
-//  palette_swatches->do_callback();
 }
 
 void Gui::checkZoomIn(Button *, void *)
@@ -1235,7 +1181,6 @@ void Gui::checkZoom()
 void Gui::checkGrid(ToggleButton *, void *var)
 {
   view->grid = *(int *)var;
-//  Project::tool->reset();
   view->drawMain(true);
   view->redraw();
 
@@ -1311,7 +1256,6 @@ void Gui::checkPaintSizeValue(Widget *, void *var)
 
 void Gui::checkPaintShape(Widget *, void *)
 {
-//  paint_size->do_callback();
   changePaintSize(Project::brush->size);
 }
 
@@ -1433,12 +1377,6 @@ void Gui::checkTool(Widget *, void *var)
       break;
   }
 
-/*
-  if(Project::tool->isActive())
-    Project::tool->redraw(view);
-  else
-    view->drawMain(true);
-*/
   view->ignore_tool = true;
   view->drawMain(true);
 }
@@ -1579,11 +1517,9 @@ void Gui::checkSatVal(Widget *, void *)
 void Gui::checkTransInput(Widget *, void *)
 {
   Project::brush->trans = atoi(trans_input->value());
-//  trans->var = Project::brush->trans / 16.8;
   trans->var = Project::brush->trans / 8.22;
   trans->redraw();
   updateSwatch();
-//  checkColor(0, 0);
 }
 
 
@@ -1757,11 +1693,6 @@ void Gui::checkSelectionToNewImage()
   select_bmp->blit(temp, 0, 0, Project::overscroll, Project::overscroll, temp->w, temp->h);
   Project::newImageFromBitmap(temp);
   addFile("From Selection");
-}
-
-void Gui::checkSelectionTrans(Widget *, void *var)
-{
-  Project::select_trans = *(int *)var * 8.23;
 }
 
 void Gui::checkOffsetValues(int x, int y)
@@ -2052,11 +1983,6 @@ int Gui::getFillFeather()
 {
   return atoi(fill_feather->value());
 }
-
-//void Gui::resetTool()
-//{
-//  Project::tool->reset();
-//}
 
 void Gui::duplicateImage()
 {
