@@ -32,7 +32,8 @@ public:
   {
     PAINT,
     GETCOLOR,
-    KNIFE,
+    CROP,
+    SELECT,
     OFFSET,
     TEXT,
     FILL
@@ -55,7 +56,7 @@ public:
   virtual void key(View *) = 0;
 
   // call this to finish tool from external trigger
-  virtual void done(View *, int) = 0;
+  virtual void done(View *) = 0;
 
   // call this to redraw tool
   virtual void redraw(View *) = 0;

@@ -308,7 +308,7 @@ void Fill::key(View *)
 {
 }
 
-void Fill::done(View *, int)
+void Fill::done(View *)
 {
 }
 

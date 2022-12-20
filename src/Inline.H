@@ -68,7 +68,7 @@ inline rgba_type getRgba(const uint32_t n)
 // make RGB color with no alpha
 inline int makeRgb(const int r, const int g, const int b)
 {
-  return r | g << 8 | b << 16 | 0xFF000000;
+  return r | g << 8 | b << 16 | 0xff000000;
 }
 
 // make RGBA color
@@ -178,10 +178,10 @@ inline int diff32(const int c1, const int c2)
 inline int blendFast(const int c1, const int c2, const int t)
 {
   const int rb =
-    (((((c1 & 0xFF00FF) - (c2 & 0xFF00FF)) * t) >> 8) + c2) & 0xFF00FF;
-  const int g = (((((c1 & 0xFF00) - (c2 & 0xFF00)) * t) >> 8) + c2) & 0xFF00;
+    (((((c1 & 0xff00ff) - (c2 & 0xff00ff)) * t) >> 8) + c2) & 0xff00ff;
+  const int g = (((((c1 & 0xff00) - (c2 & 0xff00)) * t) >> 8) + c2) & 0xff00;
 
-  return rb | g | 0xFF000000;
+  return rb | g | 0xff000000;
 }
 
 // convert internal RGB format to whatever the graphics card needs
@@ -198,7 +198,7 @@ inline int convertFormat(const int c, const bool bgr_order)
 // get an FLTK color
 inline int getFltkColor(const int c)
 {
-  return (Fl::get_color(c) >> 8) | 0xFF000000;
+  return (Fl::get_color(c) >> 8) | 0xff000000;
 }
 
 inline int clamp(const int value, const int ceiling)

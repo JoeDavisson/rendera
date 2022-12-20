@@ -26,12 +26,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Bitmap.H"
 #include "Brush.H"
+#include "Crop.H"
 #include "Gui.H"
 #include "Map.H"
 #include "ExtraMath.H"
 #include "Inline.H"
 #include "Project.H"
-#include "Selection.H"
 #include "Stroke.H"
 #include "Tool.H"
 #include "Undo.H"
@@ -155,12 +155,11 @@ namespace
     backbuf->rect(x1 - 3, y1 - 3, x2 + 3, y2 + 3, c1, 192);
   }
 
-  void select(View *)
+  void crop(View *view)
   {
-    if(state == 3)
-      return;
-
-    state = 3;
+    Project::undo->push();
+    state = 0;
+    absrect(view, &beginx, &beginy, &lastx, &lasty);
 
     int w = (lastx - beginx) + 1;
     int h = (lasty - beginy) + 1;
@@ -170,23 +169,31 @@ namespace
     if(h < 1)
       h = 1;
 
-    delete(Project::select_bmp);
-    Project::select_bmp = new Bitmap(w, h);
-    Project::bmp->blit(Project::select_bmp, beginx, beginy, 0, 0, w, h);
+    Bitmap *temp = new Bitmap(w, h);
+    Project::bmp->blit(temp, beginx, beginy, 0, 0, w, h);
 
-    Gui::checkSelectionValues(0, 0, 0, 0);
+    Project::replaceImage(w, h);
+    temp->blit(Project::bmp, 0, 0,
+               Project::overscroll, Project::overscroll, w, h);
+    delete temp;
+
+    view->zoom = 1;
+    view->ox = 0;
+    view->oy = 0;
+    view->drawMain(true);
+    Gui::checkCropValues(0, 0, 0, 0);
   }
 }
 
-Selection::Selection()
+Crop::Crop()
 {
 }
 
-Selection::~Selection()
+Crop::~Crop()
 {
 }
 
-void Selection::push(View *view)
+void Crop::push(View *view)
 {
   if(!view->button1)
     return;
@@ -270,56 +277,9 @@ void Selection::push(View *view)
       }
     }
   }
-  else if(state == 3)
-  {
-    Project::undo->push();
-    const int w = Project::select_bmp->w;
-    const int h = Project::select_bmp->h;
-
-    int x1 = view->imgx - w / 2;
-    int y1 = view->imgy - h / 2;
-
-    if(view->gridsnap)
-    {
-      x1 -= Project::overscroll;
-      x1 -= x1 % view->gridx;
-      x1 += Project::overscroll;
-
-      y1 -= Project::overscroll;
-      y1 -= y1 % view->gridy;
-      y1 += Project::overscroll;
-    }
-
-    Blend::set(Project::brush->blend);
-
-    const int trans = Project::select_trans;
-    const int alpha = Gui::getSelectionAlpha();
-
-    for(int y = 0; y < h; y++)
-    {
-      for(int x = 0; x < w; x++)
-      {
-        const int c = Project::select_bmp->getpixel(x, y);
-
-        if(alpha)
-        {
-          Project::bmp->setpixel(x1 + x, y1 + y, c,
-                                 scaleVal(255 - geta(c), trans));
-        }
-        else
-        {
-          Project::bmp->setpixel(x1 + x, y1 + y, c, trans);
-        }
-      }
-    }
-
-    Blend::set(Blend::TRANS);
-    view->ignore_tool = true;
-    view->drawMain(true);
-  }
 }
 
-void Selection::drag(View *view)
+void Crop::drag(View *view)
 {
   Stroke *stroke = Project::stroke;
 
@@ -407,10 +367,10 @@ void Selection::drag(View *view)
   const int w = abs(lastx - beginx) + 1;
   const int h = abs(lasty - beginy) + 1;
 
-  Gui::checkSelectionValues(x, y, w, h);
+  Gui::checkCropValues(x, y, w, h);
 }
 
-void Selection::release(View *view)
+void Crop::release(View *view)
 {
   if(state == 1)
     state = 2;
@@ -428,45 +388,14 @@ void Selection::release(View *view)
   const int h = abs(lasty - beginy) + 1;
 
   if(state != 3)
-    Gui::checkSelectionValues(x, y, w, h);
+    Gui::checkCropValues(x, y, w, h);
 }
 
-void Selection::move(View *view)
+void Crop::move(View *view)
 {
   Stroke *stroke = Project::stroke;
 
-  if(state == 3)
-  {
-    const int w = Project::select_bmp->w;
-    const int h = Project::select_bmp->h;
-
-    int x1 = view->imgx - w / 2;
-    int y1 = view->imgy - h / 2;
-
-    if(view->gridsnap)
-    {
-      x1 -= Project::overscroll;
-      x1 -= x1 % view->gridx;
-      x1 += Project::overscroll;
-
-      y1 -= Project::overscroll;
-      y1 -= y1 % view->gridy;
-      y1 += Project::overscroll;
-    }
-
-    const int x2 = x1 + w - 1;
-    const int y2 = y1 + h - 1;
-
-    view->window()->cursor(FL_CURSOR_HAND);
-    stroke->size(x1, y1, x2, y2);
-
-    view->drawMain(false);
-    stroke->previewSelection(view->backbuf, view->ox, view->oy, view->zoom,
-                         view->bgr_order);
-    view->ignore_tool = true;
-    view->redraw();
-  }
-  else if(state == 2)
+  if(state == 2)
   {
     if(view->imgx < stroke->x1 && view->imgy < stroke->y1)
       view->window()->cursor(FL_CURSOR_NW);
@@ -495,26 +424,20 @@ void Selection::move(View *view)
   }
 }
 
-void Selection::key(View *view)
+void Crop::key(View *view)
 {
 }
 
-void Selection::done(View *view)
+void Crop::done(View *view)
 {
   if(state == 0)
     return;
 
-  select(view);
+  crop(view);
 }
 
-void Selection::redraw(View *view)
+void Crop::redraw(View *view)
 {
-  if(state == 3)
-  {
-    move(view);
-    return;
-  }
-
   Stroke *stroke = Project::stroke;
 
   if(state == 1 || state == 2)
@@ -525,22 +448,15 @@ void Selection::redraw(View *view)
   }
 }
 
-bool Selection::isActive()
+bool Crop::isActive()
 {
   return false;
 }
 
-void Selection::reset()
+void Crop::reset()
 {
   state = 0;
-  Gui::checkSelectionValues(0, 0, 0, 0);
-  Gui::getView()->drawMain(true);
-}
-
-void Selection::reload()
-{
-  state = 3;
-  Gui::checkSelectionValues(0, 0, 0, 0);
+  Gui::checkCropValues(0, 0, 0, 0);
   Gui::getView()->drawMain(true);
 }
 

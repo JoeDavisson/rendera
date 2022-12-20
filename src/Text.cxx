@@ -207,7 +207,7 @@ void Text::key(View *view)
 {
 }
 
-void Text::done(View *, int)
+void Text::done(View *)
 {
   if(temp)
   {
@@ -221,7 +221,7 @@ void Text::redraw(View *view)
   Stroke *stroke = Project::stroke;
 
   view->drawMain(false);
-  stroke->preview(view->backbuf, view->ox, view->oy, view->zoom);
+  stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom, view->bgr_order);
   view->redraw();
 }
 

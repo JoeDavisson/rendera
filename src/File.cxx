@@ -1598,7 +1598,6 @@ void File::loadSelection()
 
   delete Project::select_bmp;
   Project::select_bmp = temp;
-
   Project::selection->reload();
 }
 

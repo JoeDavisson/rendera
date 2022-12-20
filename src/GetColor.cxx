@@ -79,7 +79,7 @@ void GetColor::key(View *)
 {
 }
 
-void GetColor::done(View *, int)
+void GetColor::done(View *)
 {
 }
 

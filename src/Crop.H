@@ -18,18 +18,18 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef PAINT_H
-#define PAINT_H
-
-class View;
+#ifndef CROP_H
+#define CROP_H
 
 #include "Tool.H"
 
-class Paint : public Tool
+class View;
+
+class Crop : public Tool
 {
 public:
-  Paint();
-  ~Paint();
+  Crop();
+  ~Crop();
 
   void push(View *);
   void drag(View *);

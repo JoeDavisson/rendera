@@ -80,8 +80,10 @@ namespace Gui
   void checkMirror(Widget *, void *);
   void checkOrigin(Widget *, void *);
   void checkConstrain(Widget *, void *);
-  void checkSelectionCrop();
-  void checkSelectionSelect();
+  void checkCropValues(int, int, int, int);
+  void checkCropDo();
+  void checkCropReset();
+  void checkSelectionDo();
   int getSelectionAlpha();
   void checkSelectionFlipHorizontal();
   void checkSelectionFlipVertical();
@@ -89,6 +91,10 @@ namespace Gui
   void checkSelectionRotate180();
   void checkSelectionReset();
   void checkSelectionValues(int, int, int, int);
+  void checkSelectionToNewImage();
+  void checkSelectionFromCurrentImage();
+  void checkSelectionTrans(Widget *, void *);
+  void checkImageToSelection();
   void checkOffsetValues(int, int);
   void checkOffsetLeft(Widget *, void *);
   void checkOffsetRight(Widget *, void *);
@@ -125,7 +131,7 @@ namespace Gui
   int getTextSmooth();
   int getFillFeather();
 
-  void resetTool();
+//  void resetTool();
   void duplicateImage();
   void showProgress(float);
   void showProgress(float, int);

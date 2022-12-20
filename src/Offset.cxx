@@ -110,7 +110,7 @@ void Offset::key(View *)
 {
 }
 
-void Offset::done(View *, int)
+void Offset::done(View *)
 {
 }
 

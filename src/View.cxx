@@ -212,7 +212,8 @@ int View::handle(int event)
         }
       }
       break;
-    case Tool::KNIFE:
+    case Tool::CROP:
+    case Tool::SELECT:
       if(gridsnap)
       {
         imgx -= overscroll;
@@ -262,16 +263,16 @@ int View::handle(int event)
       switch(Gui::getTool())
       {
         case Tool::GETCOLOR:
+        case Tool::FILL:
           window()->cursor(FL_CURSOR_CROSS);
           break;
-        case Tool::KNIFE:
+        case Tool::CROP:
+        case Tool::SELECT:
           window()->cursor(FL_CURSOR_CROSS);
+          Project::tool->redraw(this);
           break;
         case Tool::OFFSET:
           window()->cursor(FL_CURSOR_HAND);
-          break;
-        case Tool::FILL:
-          window()->cursor(FL_CURSOR_CROSS);
           break;
         default:
           window()->cursor(FL_CURSOR_DEFAULT);
@@ -548,7 +549,6 @@ void View::resize(int x, int y, int w, int h)
   if(fit)
     zoomFit(true);
 
-  Project::tool->reset();
   ignore_tool = true;
   drawMain(true);
 }

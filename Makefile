@@ -106,6 +106,7 @@ OBJ= \
   $(SRC_DIR)/Stroke.o \
   $(SRC_DIR)/Undo.o \
   $(SRC_DIR)/View.o \
+  $(SRC_DIR)/Crop.o \
   $(SRC_DIR)/Selection.o \
   $(SRC_DIR)/Fill.o \
   $(SRC_DIR)/GetColor.o \

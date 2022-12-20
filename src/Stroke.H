@@ -61,8 +61,7 @@ public:
   void polyLine(int, int, int, int, float);
   void preview(Bitmap *,int, int, float);
   void previewPaint(Bitmap *,int, int, float, bool);
-  void previewBrush(Bitmap *,int, int, float, bool);
-  void previewBrushAlpha(Bitmap *,int, int, float, bool);
+  void previewSelection(Bitmap *,int, int, float, bool);
 
   int x1, y1, x2, y2;
   int origin, constrain;

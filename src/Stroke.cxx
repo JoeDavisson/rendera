@@ -924,96 +924,72 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
   }
 }
 
-// preview custom brush
-void Stroke::previewBrush(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
+void Stroke::previewSelection(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
 {
-  float yy1 = (float)y1 * zoom;
-  float yy2 = yy1 + zoom - 1;
-  int sy = 0;
-
   ox *= zoom;
   oy *= zoom;
 
-  for(int y = y1; y <= y2; y++)
-  {
-    float xx1 = (float)x1 * zoom;
-    float xx2 = xx1 + zoom - 1;
-    int sx = 0;
+  int xx1 = x1 * zoom - ox;
+  int yy1 = y1 * zoom - oy;
+  int xx2 = x2 * zoom - ox;
+  int yy2 = y2 * zoom - oy;
 
-    for(int x = x1; x <= x2; x++)
-    {
-      const int c = Project::select_bmp->getpixel(sx, sy);
-      // generate checkboard pattern for transparent areas
-      const int checker = ((((int)xx1 - ox) >> 4) & 1) ^ ((((int)yy1 - oy) >> 4) & 1) ? 0xa0a0a0 : 0x606060;
+  // these preserve sign
+  int xx3 = xx1;
+  int yy3 = yy1;
 
-      backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
-             convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order), 0);
+  clip();
 
-      xx1 += zoom;
-      xx2 += zoom;
-      sx++;
-    }
-
-    yy1 += zoom;
-    yy2 += zoom;
-    sy++;
-  }
-
-  backbuf->xorRect(x1 * zoom - ox - 1, y1 * zoom - oy - 1, x2 * zoom - ox + zoom + 0, y2 * zoom - oy + zoom + 0);
-  backbuf->rect(x1 * zoom - ox - 1 - 1, y1 * zoom - oy - 1 - 1, x2 * zoom - ox + zoom + 0 + 1, y2 * zoom - oy + zoom + 0 + 1, makeRgb(0, 0, 0), 128);
-  backbuf->rect(x1 * zoom - ox - 1 - 2, y1 * zoom - oy - 1 - 2, x2 * zoom - ox + zoom + 0 + 2, y2 * zoom - oy + zoom + 0 + 2, makeRgb(0, 0, 0), 192);
-}
-
-// alpha transparency version
-void Stroke::previewBrushAlpha(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
-{
-  int trans = Project::brush->trans;
+  const int zr = (int)((1.0 / zoom) * 65536);
+//  const int color = convertFormat(Project::brush->color,
+//                                  Gui::getView()->bgr_order);
+  const int select_trans = Project::select_trans;
+  const int overscroll = Project::overscroll;
   int use_alpha = Gui::getSelectionAlpha();
+  Bitmap *select_bmp = Project::select_bmp;
 
-  float yy1 = (float)y1 * zoom;
-  float yy2 = yy1 + zoom - 1;
-  int sy = 0;
+  if(xx1 < 0)
+    xx1 = 0;
 
-  ox *= zoom;
-  oy *= zoom;
+  if(yy1 < 0)
+    yy1 = 0;
 
-  Blend::set(Blend::FAST);
+  if(xx1 >= backbuf->w - 1)
+    xx1 = backbuf->w - 1;
 
-  for(int y = y1; y <= y2; y++)
+  if(yy1 >= backbuf->h - 1)
+    yy1 = backbuf->h - 1;
+
+  if(xx2 < 0)
+    xx2 = 0;
+
+  if(yy2 < 0)
+    yy2 = 0;
+
+  if(xx2 >= backbuf->w - 1)
+    xx2 = backbuf->w - 1;
+
+  if(yy2 >= backbuf->h - 1)
+    yy2 = backbuf->h - 1;
+
+  for(int y = yy1; y <= yy2; y++)
   {
-    float xx1 = (float)x1 * zoom;
-    float xx2 = xx1 + zoom - 1;
-    int sx = 0;
+    int ym = ((y - yy3) * zr) >> 16;
+    
+    int *p = backbuf->row[y] + xx1;
 
-    for(int x = x1; x <= x2; x++)
+    for(int x = xx1; x <= xx2; x++)
     {
-      const int c = Project::select_bmp->getpixel(sx, sy);
+      const int xm = ((x - xx3) * zr) >> 16;
+      const int c = convertFormat(select_bmp->getpixel(xm, ym), bgr_order);
 
       if(use_alpha)
-      {
-        backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
-               convertFormat(c, bgr_order), scaleVal(255 - geta(c), trans));
-      }
+        *p = blendFast(*p, c, scaleVal(255 - geta(c), select_trans));
       else
-      {
-        backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy,
-               convertFormat(c, bgr_order), trans);
-      }
+        *p = blendFast(*p, c, select_trans);
 
-      xx1 += zoom;
-      xx2 += zoom;
-      sx++;
+      p++;
     }
-
-    yy1 += zoom;
-    yy2 += zoom;
-    sy++;
   }
-
-  Blend::set(Blend::TRANS);
-
-  backbuf->xorRect(x1 * zoom - ox - 1, y1 * zoom - oy - 1, x2 * zoom - ox + zoom + 0, y2 * zoom - oy + zoom + 0);
-  backbuf->rect(x1 * zoom - ox - 1 - 1, y1 * zoom - oy - 1 - 1, x2 * zoom - ox + zoom + 0 + 1, y2 * zoom - oy + zoom + 0 + 1, makeRgb(0, 0, 0), 128);
-  backbuf->rect(x1 * zoom - ox - 1 - 2, y1 * zoom - oy - 1 - 2, x2 * zoom - ox + zoom + 0 + 2, y2 * zoom - oy + zoom + 0 + 2, makeRgb(0, 0, 0), 192);
 }
 

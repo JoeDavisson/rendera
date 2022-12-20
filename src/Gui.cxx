@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Button.H"
 #include "CheckBox.H"
 #include "Clone.H"
+#include "Crop.H"
 #include "Dialog.H"
 #include "FX/FX.H"
 #include "File.H"
@@ -54,6 +55,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Render.H"
 #include "RepeatButton.H"
 #include "Separator.H"
+#include "Selection.H"
 #include "StaticText.H"
 #include "Stroke.H"
 #include "ToggleButton.H"
@@ -81,6 +83,7 @@ namespace
   Group *top;
   Group *tools;
   Group *paint;
+  Group *crop;
   Group *selection;
   Group *getcolor;
   Group *offset;
@@ -132,17 +135,25 @@ namespace
   InputInt *fill_feather;
   Fl_Box *fill_warning;
 
+  StaticText *crop_x;
+  StaticText *crop_y;
+  StaticText *crop_w;
+  StaticText *crop_h;
+  Fl_Button *crop_reset;
+  Fl_Button *crop_do;
+
   StaticText *selection_x;
   StaticText *selection_y;
   StaticText *selection_w;
   StaticText *selection_h;
-  Button *selection_crop;
-  Button *selection_select;
+//  Button *selection_crop;
   Fl_Button *selection_reset;
+  Fl_Button *selection_do;
   CheckBox *selection_alpha;
   Button *selection_flip;
   Button *selection_mirror;
   Button *selection_rotate;
+  Widget *selection_trans;
 
   StaticText *offset_x;
   StaticText *offset_y;
@@ -352,10 +363,10 @@ void Gui::init()
   menubar->add("&Clear/&Transparent", 0,
     (Fl_Callback *)checkClearToTransparent, 0, 0);
 
-  menubar->add("&Image/&Scale...", 0,
-    (Fl_Callback *)Transform::scale, 0, 0);
   menubar->add("&Image/&Resize...", 0,
-    (Fl_Callback *)Transform::resize, 0, FL_MENU_DIVIDER);
+    (Fl_Callback *)Transform::resize, 0, 0);
+  menubar->add("&Image/&Scale...", 0,
+    (Fl_Callback *)Transform::scale, 0, FL_MENU_DIVIDER);
   menubar->add("&Image/&Duplicate", 0,
     (Fl_Callback *)duplicateImage, 0, FL_MENU_DIVIDER);
   menubar->add("&Image/Flip &Horizontal", 0,
@@ -372,7 +383,11 @@ void Gui::init()
   menubar->add("&Selection/&Open...", 0,
     (Fl_Callback *)File::loadSelection, 0, 0);
   menubar->add("&Selection/&Save...", 0,
-    (Fl_Callback *)File::saveSelection, 0, 0);
+    (Fl_Callback *)File::saveSelection, 0, FL_MENU_DIVIDER);
+  menubar->add("&Selection/Copy &From Current Image", 0,
+    (Fl_Callback *)checkSelectionFromCurrentImage, 0, 0);
+  menubar->add("&Selection/Copy to &New Image", 0,
+    (Fl_Callback *)checkSelectionToNewImage, 0, 0);
 
   menubar->add("&Palette/&Open...", 0,
     (Fl_Callback *)File::loadPalette, 0, 0);
@@ -565,7 +580,7 @@ void Gui::init()
                     48, left_height,
                     "Tools");
   pos = 28;
-  tool = new Widget(tools, 8, pos, 32, 192,
+  tool = new Widget(tools, 8, pos, 32, 7 * 32,
                     "Tools", images_tools_png, 32, 32,
                     (Fl_Callback *)checkTool);
   pos += 96 + 8;
@@ -651,6 +666,36 @@ void Gui::init()
   paint->resizable(0);
   paint->end();
 
+  // crop
+  crop = new Group(48, top->h() + menubar->h(),
+                   112, left_height,
+                   "Crop");
+  pos = 28;
+  new StaticText(crop, 8, pos, 32, 24, "x:");
+  crop_x = new StaticText(crop, 24, pos, 72, 24, 0);
+  pos += 24;
+  new StaticText(crop, 8, pos, 32, 24, "y:");
+  crop_y = new StaticText(crop, 24, pos, 72, 24, 0);
+  pos += 24;
+  new StaticText(crop, 8, pos, 32, 24, "w:");
+  crop_w = new StaticText(crop, 24, pos, 72, 24, 0);
+  pos += 24;
+  new StaticText(crop, 8, pos, 32, 24, "h:");
+  crop_h = new StaticText(crop, 24, pos, 72, 24, 0);
+  pos += 24;
+  new Separator(crop, 4, pos, 106, 2, "");
+  pos += 8;
+  crop_reset = new Fl_Button(crop->x() + 8, crop->y() + pos, 96, 32, "Reset");
+  crop_reset->callback((Fl_Callback *)checkCropReset);
+  pos += 32 + 8;
+  new Separator(crop, 4, pos, 106, 2, "");
+  pos += 8;
+  crop_do = new Fl_Button(crop->x() + 8, crop->y() + pos, 96, 32, "Crop");
+  crop_do->callback((Fl_Callback *)checkCropDo);
+  pos += 32 + 12;
+  crop->resizable(0);
+  crop->end();
+
   // selection
   selection = new Group(48, top->h() + menubar->h(),
                    112, left_height,
@@ -675,12 +720,11 @@ void Gui::init()
   pos += 32 + 8;
   new Separator(selection, 4, pos, 106, 2, "");
   pos += 8;
-  selection_crop = new Button(selection, 8, pos, 44, 44, "Crop", images_crop_png,(Fl_Callback *)checkSelectionCrop);
-//  pos += 32 + 8;
-//  new Separator(selection, 4, pos, 106, 2, "");
-//  pos += 8;
-  selection_select = new Button(selection, 8 + 44 + 8, pos, 44, 44, "Copy", images_copy_png, (Fl_Callback *)checkSelectionSelect);
-  pos += 40 + 12;
+  selection_do = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Select");
+  selection_do->callback((Fl_Callback *)checkSelectionDo);
+  pos += 32 + 8;
+  new Separator(selection, 4, pos, 106, 2, "");
+  pos += 8;
   selection_alpha = new CheckBox(selection, 8, pos, 16, 16, "Alpha Mask", 0);
   selection_alpha->labelsize(13);
   selection_alpha->center();
@@ -690,6 +734,9 @@ void Gui::init()
   selection_flip = new Button(selection, 8 + 33, pos, 30, 30, "Flip", images_select_flip_png, (Fl_Callback *)checkSelectionFlipVertical);
   selection_rotate = new Button(selection, 8 + 66, pos, 30, 30, "Rotate", images_select_rotate_png, (Fl_Callback *)checkSelectionRotate90);
   pos += 30 + 8;
+  selection_trans = new Widget(selection, 8, pos, 96, 24,
+                     "Transparency", images_transparency_small_png, 3, 24,
+                     (Fl_Callback *)checkSelectionTrans);
   selection->resizable(0);
   selection->end();
 
@@ -878,6 +925,7 @@ void Gui::init()
   left->add(tools);
   left->add(paint);
   left->add(getcolor);
+  left->add(crop);
   left->add(selection);
   left->add(offset);
   left->add(text);
@@ -889,7 +937,7 @@ void Gui::init()
   right->add(palette);
   right->add(colors);
 
-  window->size_range(1024, 768, 0, 0, 0, 0, 0);
+  window->size_range(800, 600, 0, 0, 0, 0, 0);
   window->resizable(view);
   window->end();
 
@@ -1325,7 +1373,9 @@ void Gui::checkTool(Widget *, void *var)
     paint->hide();
   if(tool != Tool::GETCOLOR)
     getcolor->hide();
-  if(tool != Tool::KNIFE)
+  if(tool != Tool::CROP)
+    crop->hide();
+  if(tool != Tool::SELECT)
     selection->hide();
   if(tool != Tool::OFFSET)
     offset->hide();
@@ -1351,9 +1401,15 @@ void Gui::checkTool(Widget *, void *var)
       getcolor->show();
       updateInfo((char *)"Click to select a color from the image.");
       break;
-    case Tool::KNIFE:
-      Project::setTool(Tool::KNIFE);
-      //Project::tool->reset();
+    case Tool::CROP:
+      Project::setTool(Tool::CROP);
+      //  Project::tool->reset();
+      crop->show();
+      updateInfo((char *)"Draw a box, then click inside box to move, outside to change size.");
+      break;
+    case Tool::SELECT:
+      Project::setTool(Tool::SELECT);
+      //  Project::tool->reset();
       selection->show();
       updateInfo((char *)"Draw a box, then click inside box to move, outside to change size.");
       break;
@@ -1575,14 +1631,40 @@ void Gui::checkConstrain(Widget *, void *var)
   Project::stroke->constrain = Project::stroke->constrain_always;
 }
 
-void Gui::checkSelectionCrop()
+void Gui::checkCropValues(int x, int y, int w, int h)
 {
-  Project::tool->done(view, 0);
+  char s[256];
+
+  snprintf(s, sizeof(s), "%d", x);
+  selection_x->copy_label(s);
+  selection_x->redraw();
+
+  snprintf(s, sizeof(s), "%d", y);
+  selection_y->copy_label(s);
+  selection_y->redraw();
+
+  snprintf(s, sizeof(s), "%d", w);
+  selection_w->copy_label(s);
+  selection_w->redraw();
+
+  snprintf(s, sizeof(s), "%d", h);
+  selection_h->copy_label(s);
+  selection_h->redraw();
 }
 
-void Gui::checkSelectionSelect()
+void Gui::checkCropDo()
 {
-  Project::tool->done(view, 1);
+  Project::tool->done(view);
+}
+
+void Gui::checkCropReset()
+{
+  Project::tool->reset();
+}
+
+void Gui::checkSelectionDo()
+{
+  Project::tool->done(view);
 }
 
 int Gui::getSelectionAlpha()
@@ -1631,7 +1713,7 @@ void Gui::checkSelectionRotate180()
 
 void Gui::checkSelectionReset()
 {
-  Project::tool->done(view, 2);
+  Project::tool->reset();
 }
 
 void Gui::checkSelectionValues(int x, int y, int w, int h)
@@ -1653,6 +1735,33 @@ void Gui::checkSelectionValues(int x, int y, int w, int h)
   snprintf(s, sizeof(s), "%d", h);
   selection_h->copy_label(s);
   selection_h->redraw();
+}
+
+void Gui::checkSelectionFromCurrentImage()
+{
+  delete Project::select_bmp;
+
+  Bitmap *bmp = Project::bmp;
+  Bitmap *temp = new Bitmap(bmp->cw, bmp->ch);
+
+  bmp->blit(temp, bmp->overscroll, bmp->overscroll, 0, 0, temp->w, temp->h);
+  Project::select_bmp = temp;
+  Project::selection->reload();
+}
+
+void Gui::checkSelectionToNewImage()
+{
+  Bitmap *select_bmp = Project::select_bmp;
+  Bitmap *temp = new Bitmap(select_bmp->w, select_bmp->h, Project::overscroll);
+  
+  select_bmp->blit(temp, 0, 0, Project::overscroll, Project::overscroll, temp->w, temp->h);
+  Project::newImageFromBitmap(temp);
+  addFile("From Selection");
+}
+
+void Gui::checkSelectionTrans(Widget *, void *var)
+{
+  Project::select_trans = *(int *)var * 8.23;
 }
 
 void Gui::checkOffsetValues(int x, int y)
@@ -1944,10 +2053,10 @@ int Gui::getFillFeather()
   return atoi(fill_feather->value());
 }
 
-void Gui::resetTool()
-{
-  Project::tool->reset();
-}
+//void Gui::resetTool()
+//{
+//  Project::tool->reset();
+//}
 
 void Gui::duplicateImage()
 {
@@ -1956,10 +2065,11 @@ void Gui::duplicateImage()
   const int cw = Project::bmp->cw;
   const int ch = Project::bmp->ch;
   const int current = Project::current;
+  const int last = Project::last;
   Bitmap **bmp_list = Project::bmp_list;
 
   Project::newImage(cw, ch);
-  bmp_list[current]->blit(bmp_list[current + 1], 0, 0, 0, 0, w, h);
+  bmp_list[current]->blit(bmp_list[last], 0, 0, 0, 0, w, h);
 
   addFile("New Image");
 }
