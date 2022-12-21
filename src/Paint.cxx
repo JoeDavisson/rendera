@@ -169,14 +169,14 @@ void Paint::redraw(View *view)
 {
   Stroke *stroke = Project::stroke;
 
-//  if(active)
-//  {
-//    active = false;
+  if(active)
+  {
+    active = false;
     view->drawMain(false);
     stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom, view->bgr_order);
     view->redraw();
-//    active = true;
-//  }
+    active = true;
+  }
 }
 
 bool Paint::isActive()
