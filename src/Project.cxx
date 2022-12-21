@@ -219,22 +219,6 @@ void Project::replaceImageFromBitmap(Bitmap *temp)
   map->clear(0);
 }
 
-/*
-void Project::newImage(int w, int h)
-{
-  if(bmp)
-    delete bmp;
-
-  bmp = new Bitmap(w, h, overscroll);
-
-  if(map)
-    delete map;
-
-  map = new Map(bmp->w, bmp->h);
-  map->clear(0);
-}
-*/
-
 void Project::resizeImage(int w, int h)
 {
   Bitmap *temp = new Bitmap(w, h, overscroll);
@@ -271,11 +255,11 @@ bool Project::removeImage()
 {
   if(last == 1)
   {
-    Dialog::message("Error", "Last image, nothing to do.");
+    Dialog::message("Last Image", "Cannot close last image.");
     return false;
   }
 
-  if(Dialog::choice("Close", "Are you sure?") == false)
+  if(Dialog::choice("Close Image", "Are you sure?") == false)
     return false;
 
   for(int i = current; i < last; i++)

@@ -61,15 +61,12 @@ public:
   void setClip(int, int, int, int);
   void swapRedBlue();
   void blit(Bitmap *, int, int, int, int, int, int);
-  void transBlit(Bitmap *, int, int, int, int, int, int);
-  void drawBrush(Bitmap *, int, int, int, int, int, int);
   void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, bool);
   void flipHorizontal();
   void flipVertical();
   void rotate180();
   void fastStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);
   void blur(int, int);
-  void scale(Bitmap *);
   void invert();
 };
 

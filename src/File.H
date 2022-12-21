@@ -41,7 +41,6 @@ namespace File
   int saveTarga(Bitmap *, const char *);
   int savePng(Bitmap *, const char *);
   int saveJpeg(Bitmap *, const char *);
-  int saveText(Bitmap *, const char *);
 
   void loadPalette();
   void savePalette();
