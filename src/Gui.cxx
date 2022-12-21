@@ -950,6 +950,7 @@ void Gui::init()
   drawPalette();
   tool->do_callback();
   checkZoom();
+  checkCropValues(0, 0, 0, 0);
   checkSelectionValues(0, 0, 0, 0);
   checkOffsetValues(0, 0);
   checkPaintMode();
