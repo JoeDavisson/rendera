@@ -115,6 +115,7 @@ namespace Gui
   void checkClearToGray();
   void checkClearToTransparent();
   void checkFileBrowse();
+  void checkFileRename();
   void addFile(const char *);
   void closeFile();
 

@@ -181,6 +181,7 @@ namespace
 
   // files
   Fl_Hold_Browser *file_browse;
+  Fl_Input *file_rename;
 
   // bottom
   ToggleButton *wrap;
@@ -898,11 +899,18 @@ void Gui::init()
   files = new Group(0, top->h() + menubar->h() + left_height,
                    160, window->h() - top->h() - menubar->h() - status->h() - left_height, "Files");
   pos = 28;
-  file_browse = new Fl_Hold_Browser(8, pos, 144, files->h() - 16 - 20);
+  file_browse = new Fl_Hold_Browser(8, pos, 144, files->h() - 16 - 20 - 32);
   file_browse->textsize(12);
-  file_browse->resize(files->x() + 8, files->y() + pos, files->w() - 16, files->h() - 16 - 20);
-
+  file_browse->resize(files->x() + 8, files->y() + pos, files->w() - 16, files->h() - 16 - 20 - 32);
   file_browse->callback((Fl_Callback *)checkFileBrowse);
+  pos += file_browse->h() + 8;
+  file_rename = new Fl_Input(8, pos, 160, 24, "");
+  file_rename->textsize(10);
+  file_rename->value("");
+  file_rename->when(FL_WHEN_ENTER_KEY);
+  file_rename->resize(files->x() + 8, files->y() + pos, 144, 24);
+  file_rename->callback((Fl_Callback *)checkFileRename);
+  pos += 24 + 8;
 
   files->resizable(file_browse);
   files->end();
@@ -933,7 +941,7 @@ void Gui::init()
   right->add(palette);
   right->add(colors);
 
-  window->size_range(800, 600, 0, 0, 0, 0, 0);
+  window->size_range(1024, 768, 0, 0, 0, 0, 0);
   window->resizable(view);
   window->end();
 
@@ -1875,16 +1883,29 @@ void Gui::checkClearToTransparent()
 
 void Gui::checkFileBrowse()
 {
-  if(file_browse->value() >= 1)
-    Project::switchImage(file_browse->value() - 1);
+  const int line = file_browse->value();
+
+  if(line >= 1)
+    Project::switchImage(line - 1);
+
+  file_rename->value(file_browse->text(line));
 
   view->zoomOne();
+}
+
+void Gui::checkFileRename()
+{
+  const int line = file_browse->value();
+
+  file_browse->text(line, file_rename->value());
+  file_browse->redraw();
 }
 
 void Gui::addFile(const char *name)
 {
   file_browse->add(name, 0);
   file_browse->select(Project::current + 1);
+  checkFileBrowse();
 }
 
 void Gui::closeFile()
@@ -2001,7 +2022,7 @@ void Gui::duplicateImage()
   Project::newImage(cw, ch);
   bmp_list[current]->blit(bmp_list[last], 0, 0, 0, 0, w, h);
 
-  addFile("New Image");
+  addFile("new");
 }
 
 // use default interval

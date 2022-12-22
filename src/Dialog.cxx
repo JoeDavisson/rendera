@@ -401,7 +401,7 @@ namespace NewImage
     Gui::getView()->zoomFit(0);
     Gui::getView()->drawMain(true);
 
-    Gui::addFile("New Image");
+    Gui::addFile("new");
 
     Project::undo->reset();
   }

@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
   Gui::show();
 
   // name for starting image
-  Gui::addFile("New Image");
+  Gui::addFile("new");
 
 /*
   // view theme palette (for testing)
