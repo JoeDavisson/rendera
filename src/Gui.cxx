@@ -1684,6 +1684,9 @@ void Gui::checkSelectionFromCurrentImage()
   bmp->blit(temp, bmp->overscroll, bmp->overscroll, 0, 0, temp->w, temp->h);
   Project::select_bmp = temp;
   Project::selection->reload();
+
+  tool->var = Tool::SELECT;
+  checkTool(tool, (void *)&tool->var);
 }
 
 void Gui::checkSelectionToNewImage()
