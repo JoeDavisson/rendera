@@ -1374,7 +1374,7 @@ void Gui::checkTool(Widget *, void *var)
       Project::setTool(Tool::FILL);
       Project::tool->reset();
       fill->show();
-      updateInfo((char *)"Click to fill an area with the selected color. Esc to cancel.");
+      updateInfo((char *)"Click to fill an area with the selected color. Blending modes ignored. Esc to cancel.");
       break;
   }
 
