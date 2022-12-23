@@ -576,11 +576,13 @@ void View::drawMain(bool refresh)
   if(oy < 0)
     offy = -oy;
 
-  Project::bmp->pointStretch(backbuf,
-                             ox, oy, sw - offx, sh - offy,
-                             offx * zoom, offy * zoom,
-                             dw - offx * zoom, dh - offy * zoom,
-                             overx, overy, bgr_order);
+  Bitmap *bmp = Project::bmp;
+
+  bmp->pointStretch(backbuf,
+                    ox, oy, sw - offx, sh - offy,
+                    offx * zoom, offy * zoom,
+                    dw - offx * zoom, dh - offy * zoom,
+                    overx, overy, bgr_order);
 
   if(grid)
     drawGrid();
