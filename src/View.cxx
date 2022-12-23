@@ -260,7 +260,8 @@ int View::handle(int event)
 
     case FL_ENTER:
     {
-      // change cursor
+      changeCursor();
+/*
       switch(Gui::getTool())
       {
         case Tool::GETCOLOR:
@@ -279,6 +280,7 @@ int View::handle(int event)
           window()->cursor(FL_CURSOR_DEFAULT);
           break;
       }
+*/
 
       return 1;
     }
@@ -518,6 +520,8 @@ int View::handle(int event)
         }
       #endif
 
+      changeCursor();
+
       return 1;
     }
   }
@@ -641,6 +645,29 @@ void View::drawGrid()
     while(i < zy);
   }
   while(y1 <= y2);
+}
+
+
+void View::changeCursor()
+{
+  switch(Gui::getTool())
+  {
+    case Tool::GETCOLOR:
+    case Tool::FILL:
+      window()->cursor(FL_CURSOR_CROSS);
+      break;
+    case Tool::CROP:
+    case Tool::SELECT:
+      window()->cursor(FL_CURSOR_CROSS);
+      Project::tool->redraw(this);
+      break;
+    case Tool::OFFSET:
+      window()->cursor(FL_CURSOR_HAND);
+      break;
+    default:
+      window()->cursor(FL_CURSOR_DEFAULT);
+      break;
+  }
 }
 
 void View::drawCloneCursor()

@@ -40,6 +40,7 @@ public:
   void drawMain(bool);
   void drawGrid();
   void drawCursor();
+  void changeCursor();
   void drawCloneCursor();
   void beginMove();
   void move();
