@@ -264,6 +264,9 @@ bool Project::removeImage()
 
   for(int i = current; i < last; i++)
   {
+    delete bmp_list[i];
+    delete undo_list[i];
+
     bmp_list[i] = bmp_list[i + 1];
     undo_list[i] = undo_list[i + 1];
   }

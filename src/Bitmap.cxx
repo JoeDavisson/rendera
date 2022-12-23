@@ -651,6 +651,21 @@ int Bitmap::getpixel(int x, int y)
   return *(row[y] + x);
 }
 
+int Bitmap::getpixelNoClip(int x, int y)
+{
+  if(x < 0)
+    x = 0;
+  if(x > w - 1)
+    x = w - 1;
+  if(y < 0)
+    y = 0;
+  if(y > h - 1)
+    y = h - 1;
+
+  return *(row[y] + x);
+}
+
+
 // clips coordinates to the writable image area
 void Bitmap::clip(int *x1, int *y1, int *x2, int *y2)
 {
