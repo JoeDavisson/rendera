@@ -89,6 +89,7 @@ namespace Project
   void resizeImage(int, int);
   void switchImage(int);
   bool removeImage();
+  double getImageMemory();
   void pop();
   void popRedo();
 }

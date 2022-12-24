@@ -75,25 +75,6 @@ void Brush::make(int s, float round)
   Map *map = new Map(96, 96);
   map->clear(0);
 
-/*
-  switch(shape)
-  {
-    case 0:
-      map->ovalfill(x1, y1, x2, y2, 255);
-      break;
-    case 1:
-      map->rectfill(x1, y1, x2, y2, 255);
-      break;
-    case 2:
-      map->hline(x1, 48, x2, 255);
-      break;
-    case 3:
-      map->vline(y1, 48, y2, 255);
-      break;
-    default:
-      break;
-  }
-*/
   if(s == 1)
   {
     map->setpixel(x1, y1, 255);
@@ -134,23 +115,6 @@ void Brush::make(int s, float round)
       }
     }
   }
-
-/*
-  if(size > 8)
-  {
-    switch(shape)
-    {
-      case 0:
-        map->ovalfill(x1 + 2, y1 + 2, x2 - 2, y2 - 2, 0);
-        break;
-      case 1:
-        map->rectfill(x1 + 2, y1 + 2, x2 - 2, y2 - 2, 0);
-        break;
-      default:
-        break;
-    }
-  }
-*/
 
   for(int y = 0; y < 96; y++)
   {

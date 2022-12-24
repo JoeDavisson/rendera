@@ -100,11 +100,7 @@ void Text::push(View *view)
     }
   }
 
-  if(temp)
-  {
-    delete temp;
-    temp = 0;
-  }
+  delete temp;
 
   Blend::set(Blend::TRANS);
 
@@ -159,12 +155,7 @@ void Text::move(View *view)
   // draw text string to offscreen image
   Fl_Offscreen offscreen = fl_create_offscreen(tw, th);
 
-  if(temp)
-  {
-    delete temp;
-    temp = 0;
-  }
-
+  delete temp;
   temp = new Bitmap(tw, th);
   temp->clear(makeRgb(255, 255, 255));
 
@@ -209,11 +200,7 @@ void Text::key(View *view)
 
 void Text::done(View *)
 {
-  if(temp)
-  {
-    delete temp;
-    temp = 0;
-  }
+  delete temp;
 }
 
 void Text::redraw(View *view)

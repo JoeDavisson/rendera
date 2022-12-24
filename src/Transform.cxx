@@ -122,14 +122,6 @@ namespace Resize
 
     Project::replaceImageFromBitmap(temp);
 
-/*
-    delete Project::bmp;
-    Project::bmp = temp;
-
-    delete Project::map;
-    Project::map = new Map(Project::bmp->w, Project::bmp->h);
-*/
-
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
     Gui::getView()->zoomFit(0);

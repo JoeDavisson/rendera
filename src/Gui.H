@@ -118,6 +118,7 @@ namespace Gui
   void checkFileRename();
   void addFile(const char *);
   void closeFile();
+  void updateImageMemory();
 
   Fl_Double_Window *getWindow();
   Fl_Menu_Bar *getMenuBar();

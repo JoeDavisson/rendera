@@ -136,11 +136,8 @@ int Project::newImage(int w, int h)
     return -1;
   }
 
-  if(bmp_list[last])
-    delete bmp_list[last];
-
-  if(undo_list[last])
-    delete undo_list[last];
+  delete bmp_list[last];
+  delete undo_list[last];
 
   bmp_list[last] = new Bitmap(w, h, overscroll);
   undo_list[last] = new Undo();
@@ -149,9 +146,7 @@ int Project::newImage(int w, int h)
   current = last;
   last++;
 
-  if(map)
-    delete map;
-
+  delete map;
   map = new Map(bmp->w, bmp->h);
   map->clear(0);
 
@@ -166,23 +161,17 @@ int Project::newImageFromBitmap(Bitmap *temp)
     return -1;
   }
 
-  if(bmp_list[last])
-    delete bmp_list[last];
-
+  delete bmp_list[last];
   bmp_list[last] = temp;
 
-  if(undo_list[last])
-    delete undo_list[last];
-
+  delete undo_list[last];
   undo_list[last] = new Undo();
   bmp = bmp_list[last];
   undo = undo_list[last];
   current = last;
   last++;
 
-  if(map)
-    delete map;
-
+  delete map;
   map = new Map(bmp->w, bmp->h);
   map->clear(0);
 
@@ -191,30 +180,22 @@ int Project::newImageFromBitmap(Bitmap *temp)
 
 void Project::replaceImage(int w, int h)
 {
-  if(bmp_list[current])
-    delete bmp_list[current];
-
+  delete bmp_list[current];
   bmp_list[current] = new Bitmap(w, h, overscroll);
   bmp = bmp_list[current];
 
-  if(map)
-    delete map;
-
+  delete map;
   map = new Map(bmp->w, bmp->h);
   map->clear(0);
 }
 
 void Project::replaceImageFromBitmap(Bitmap *temp)
 {
-  if(bmp_list[current])
-    delete bmp_list[current];
-
+  delete bmp_list[current];
   bmp_list[current] = temp;
   bmp = bmp_list[current];
 
-  if(map)
-    delete map;
-
+  delete map;
   map = new Map(bmp->w, bmp->h);
   map->clear(0);
 }
@@ -225,14 +206,10 @@ void Project::resizeImage(int w, int h)
   bmp->blit(temp, overscroll, overscroll, overscroll, overscroll,
             bmp->cw, bmp->ch);
 
-  if(bmp)
-    delete bmp;
-
+  delete bmp;
   bmp = temp;
 
-  if(map)
-    delete map;
-
+  delete map;
   map = new Map(bmp->w, bmp->h);
   map->clear(0);
 }
@@ -242,9 +219,7 @@ void Project::switchImage(int index)
   bmp = bmp_list[index];
   undo = undo_list[index];
 
-  if(map)
-    delete map;
-
+  delete map;
   map = new Map(bmp->w, bmp->h);
   map->clear(0);
 
@@ -274,6 +249,37 @@ bool Project::removeImage()
   last--;
 
   return true;
+}
+
+double Project::getImageMemory()
+{
+  double bytes = 0;
+
+  for(int j = 0; j < last; j++)
+  {
+    Bitmap *bmp = bmp_list[j];
+
+    bytes += bmp->w * bmp->h * sizeof(int);
+    bytes += bmp->h * sizeof(int *);
+
+    for(int i = 0; i < undo_list[j]->levels; i++)
+    {
+      Bitmap *bmp = undo_list[j]->undo_stack[i];
+
+      bytes += bmp->w * bmp->h * sizeof(int);
+      bytes += bmp->h * sizeof(int *);
+    }
+
+    for(int i = 0; i < undo_list[j]->levels; i++)
+    {
+      Bitmap *bmp = undo_list[j]->redo_stack[i];
+
+      bytes += bmp->w * bmp->h * sizeof(int);
+      bytes += bmp->h * sizeof(int *);
+    }
+  }
+
+  return bytes / 1000000;
 }
 
 void Project::pop()

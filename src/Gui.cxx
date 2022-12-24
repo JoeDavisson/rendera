@@ -111,6 +111,7 @@ namespace
   InputInt *gridx;
   InputInt *gridy;
   ToggleButton *gridsnap;
+  StaticText *memory;
 
   // tools
   Widget *tool;
@@ -314,6 +315,8 @@ public:
           case 'e':
             Dialog::editor();
             break;
+//          case 'm':
+//            Gui::updateImageMemory();
         }
 
         return 1;
@@ -541,6 +544,16 @@ void Gui::init()
                        (Fl_Callback *)checkGridY, 1, 256);
   gridy->value("8");
   pos += 64 + 8;
+// for testing
+//  new Separator(top, pos, 4, 2, 34, "");
+//  pos += 8;
+//  memory = new StaticText(top, pos, 8, 144, 24, 0);
+//  memory->label("test");
+//  memory->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
+//  memory->hide();
+
+  pos += 24;
+
   top->resizable(0);
   top->end();
 
@@ -1251,7 +1264,7 @@ void Gui::checkPaintSize(Widget *, void *var)
   int size = brush_sizes[*(int *)var];
   changePaintSize(size);
   char s[16];
-  sprintf(s, "%d", (int)size);
+  snprintf(s, sizeof(s), "%d", (int)size);
   paint_size_value->value(s);
   paint_size_value->redraw();
 }
@@ -1537,7 +1550,7 @@ void Gui::checkTrans(Widget *, void *)
 //  Project::brush->trans = trans->var * 16.8;
   Project::brush->trans = trans->var * 8.23;
   char s[16];
-  sprintf(s, "%d", Project::brush->trans);
+  snprintf(s, sizeof(s), "%d", Project::brush->trans);
   trans_input->value(s);
   trans_input->redraw();
   updateSwatch();
@@ -1928,6 +1941,14 @@ void Gui::closeFile()
   }
 }
 
+void Gui::updateImageMemory()
+{
+  char s[256];
+
+  snprintf(s, sizeof(s), "%.2fMB used", Project::getImageMemory());
+  memory->copy_label(s);
+}
+
 Fl_Double_Window *Gui::getWindow()
 {
   return window;
@@ -2074,7 +2095,7 @@ int Gui::updateProgress(const int y)
   {
     progress->value(progress_value);
     char percent[16];
-    sprintf(percent, "%d%%", (int)progress_value);
+    snprintf(percent, sizeof(percent), "%d%%", (int)progress_value);
     progress->copy_label(percent);
     Fl::check();
     progress_value += progress_step;

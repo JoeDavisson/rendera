@@ -48,11 +48,8 @@ Undo::~Undo()
 {
   for(int i = 0; i < levels; i++)
   {
-    if(undo_stack[i])
-      delete undo_stack[i];
-
-    if(redo_stack[i])
-      delete redo_stack[i];
+    delete undo_stack[i];
+    delete redo_stack[i];
   }
 }
 
@@ -60,11 +57,8 @@ void Undo::reset()
 {
   for(int i = 0; i < levels; i++)
   {
-    if(undo_stack[i])
-      delete undo_stack[i];
-
-    if(redo_stack[i])
-      delete redo_stack[i];
+    delete undo_stack[i];
+    delete redo_stack[i];
 
     undo_stack[i] = new Bitmap(8, 8);
     redo_stack[i] = new Bitmap(8, 8);

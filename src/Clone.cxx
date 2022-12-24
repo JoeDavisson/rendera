@@ -53,9 +53,7 @@ void Clone::refresh(int x1, int y1, int x2, int y2)
   const int w = x2 - x1;
   const int h = y2 - y1;
 
-  if(bmp)
-    delete bmp;
-
+  delete bmp;
   bmp = new Bitmap(w, h);
   Project::bmp->blit(bmp, x1, y1, 0, 0, w, h);
 
