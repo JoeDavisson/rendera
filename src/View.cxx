@@ -477,47 +477,37 @@ int View::handle(int event)
     case FL_PASTE:
     {
       // drag n drop
-      #ifdef WIN32
-        char fn[256];
+      if(strncasecmp(Fl::event_text(), "file://", 7) == 0)
+      {
+        char fn[4096];
 
-        strcpy(fn, Fl::event_text());
+        // remove "file://" from path
+        #ifndef WIN32
+        strcpy(fn, Fl::event_text() + 7);
+        #endif
 
         // convert to utf-8 (e.g. %20 becomes space)
         File::decodeURI(fn);
 
-        for(unsigned int i = 0, n = strlen(fn); i < n; i++)
-         {
-          if(fn[i] == '\r')
-            fn[i] = '\0';
-          if(fn[i] == '\n')
-            fn[i] = '\0';
-        }
+        int index = 0;
 
-        // try to load the file
-        File::loadFile(fn);
-      #else
-        if(strncasecmp(Fl::event_text(), "file://", 7) == 0)
+        for(int i = 0, n = strlen(fn); i < n; i += 0)
         {
-          char fn[256];
-
-          // remove "file://" from path
-          strcpy(fn, Fl::event_text() + 7);
-
-          // convert to utf-8 (e.g. %20 becomes space)
-          File::decodeURI(fn);
-
-          for(unsigned int i = 0, n = strlen(fn); i < n; i++)
+          if(fn[i] == '\r' || fn[i] =='\n' || fn[i] == '\0')
           {
-            if(fn[i] == '\r')
-              fn[i] = '\0';
-            if(fn[i] == '\n')
-              fn[i] = '\0';
-          }
+            fn[i] = '\0';
+            File::loadFile(fn + index);
 
-          // try to load the file
-          File::loadFile(fn);
+            // try to load more if multiple
+            i += 8;
+            index = i;
+          }
+          else
+          {
+            i++;
+          }
         }
-      #endif
+      }
 
       changeCursor();
 
