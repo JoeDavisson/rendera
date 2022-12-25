@@ -101,6 +101,7 @@ void Text::push(View *view)
   }
 
   delete temp;
+  temp = 0;
 
   Blend::set(Blend::TRANS);
 
@@ -201,6 +202,7 @@ void Text::key(View *view)
 void Text::done(View *)
 {
   delete temp;
+  temp = 0;
 }
 
 void Text::redraw(View *view)
