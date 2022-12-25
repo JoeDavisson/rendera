@@ -315,8 +315,8 @@ public:
           case 'e':
             Dialog::editor();
             break;
-//          case 'm':
-//            Gui::updateImageMemory();
+          case 'm':
+            Gui::updateImageMemory();
         }
 
         return 1;
@@ -545,12 +545,12 @@ void Gui::init()
   gridy->value("8");
   pos += 64 + 8;
 // for testing
-//  new Separator(top, pos, 4, 2, 34, "");
-//  pos += 8;
-//  memory = new StaticText(top, pos, 8, 144, 24, 0);
-//  memory->label("test");
-//  memory->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
-//  memory->hide();
+  new Separator(top, pos, 4, 2, 34, "");
+  pos += 8;
+  memory = new StaticText(top, pos, 8, 144, 24, 0);
+  memory->label("test");
+  memory->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
+  memory->hide();
 
   pos += 24;
 
@@ -1898,11 +1898,10 @@ void Gui::checkFileBrowse()
 {
   const int line = file_browse->value();
 
-  if(line >= 1)
+  if(line > 0)
     Project::switchImage(line - 1);
 
   file_rename->value(file_browse->text(line));
-
   view->zoomOne();
 }
 

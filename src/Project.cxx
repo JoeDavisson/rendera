@@ -130,7 +130,7 @@ void Project::setTool(int num)
 
 int Project::newImage(int w, int h)
 {
-  if(last > max_images - 1)
+  if(last > max_images - 2)
   {
     Dialog::message("Error", "Maximum number of images\nhas been reached.");
     return -1;
@@ -155,11 +155,13 @@ int Project::newImage(int w, int h)
 
 int Project::newImageFromBitmap(Bitmap *temp)
 {
-  if(last > max_images - 1)
+  if(last > max_images - 2)
   {
     Dialog::message("Error", "Maximum number of images\nhas been reached.");
     return -1;
   }
+//puts("newImageFromBitmap()");
+//printf("last = %lu\n", (uint64_t)bmp_list[last]);
 
   delete bmp_list[last];
   bmp_list[last] = temp;
@@ -216,37 +218,55 @@ void Project::resizeImage(int w, int h)
 
 void Project::switchImage(int index)
 {
-  bmp = bmp_list[index];
-  undo = undo_list[index];
+  current = index;
+puts("switchImage()");
+printf("current = %d, last = %d\n", current, last);
+  bmp = bmp_list[current];
+  undo = undo_list[current];
 
   delete map;
   map = new Map(bmp->w, bmp->h);
   map->clear(0);
-
-  current = index;
 }
 
 bool Project::removeImage()
 {
-  if(last == 1)
+  if(last < 2)
   {
-    Dialog::message("Last Image", "Cannot close last image.");
+    Dialog::message("Last Image", "Cannot close last image,\nthere must be at least one.");
     return false;
   }
 
   if(Dialog::choice("Close Image", "Are you sure?") == false)
     return false;
+puts("removeImage()");
+printf("current = %d, last = %d\n", current, last);
+
+  delete bmp_list[current];
+  delete undo_list[current];
 
   for(int i = current; i < last; i++)
   {
-    delete bmp_list[i];
-    delete undo_list[i];
+//    delete bmp_list[i];
+//    delete undo_list[i];
 
     bmp_list[i] = bmp_list[i + 1];
     undo_list[i] = undo_list[i + 1];
   }
 
+  delete bmp_list[last];
+  delete undo_list[last];
+
   last--;
+
+/*
+  if(current > 0)
+    switchImage(current - 1);
+  else
+    switchImage(current);
+*/
+//  bmp = bmp_list[current];
+//  undo = undo_list[current];
 
   return true;
 }
