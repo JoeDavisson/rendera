@@ -95,9 +95,11 @@ namespace
   }
 }
 
-void GaussianBlur::apply()
+void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
 {
-  Bitmap *bmp = Project::bmp;
+  if(size < 1)
+    return;
+
   Bitmap temp(bmp->w, bmp->h);
 
   extendBorders(bmp);
@@ -105,16 +107,15 @@ void GaussianBlur::apply()
   bmp->setClip(0, 0, bmp->w - 1, bmp->h - 1);
   temp.setClip(0, 0, temp.w - 1, temp.h - 1);
 
-  int size = atof(Items::size->value()) + 1;
-
   if(size > bmp->overscroll - 2)
     size = bmp->overscroll - 2;
 
   if((size & 1) == 0)
+  {
     size++;
+    blend = scaleVal(blend, 128);
+  }
 
-  const int blend = 255 - atoi(Items::blend->value()) * 2.55;
-  const int mode = Items::mode->value();
   const int larger = bmp->w > bmp->h ? bmp->w : bmp->h;
 
   std::vector<int> buf_r(larger);
@@ -249,7 +250,12 @@ void GaussianBlur::close()
 {
   Items::dialog->hide();
   Project::undo->push();
-  apply();
+
+  int size = atof(Items::size->value()) + 1;
+  int blend = 255 - atoi(Items::blend->value()) * 2.55;
+  int mode = Items::mode->value();
+
+  apply(Project::bmp, size, blend, mode);
 }
 
 void GaussianBlur::quit()

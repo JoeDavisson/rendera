@@ -39,6 +39,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "View.H"
 
+#include "FX/GaussianBlur.H"
+
 namespace
 {
   Bitmap *bmp;
@@ -175,64 +177,18 @@ namespace Scale
     Fl_Button *cancel;
   }
 
-  void average(Bitmap *src, int d)
+  void blur(Bitmap *bmp, float size)
   {
-    rgba_type rgba[4];
-    int count = 0;
+    int blend = 0;
 
-    for(int step = 1; step < d; step *= 2)
-      count++;
-
-    Gui::showProgress(count, 1);
-    count = 0;
-
-    for(int step = 1; step < d; step *= 2)
+    if(size < 1)
     {
-      for(int y = src->ct; y <= src->cb; y += step)
-      {
-        int *p = src->row[y] + src->cl;
-
-        for(int x = src->cl; x <= src->cr; x += step)
-        {
-          rgba[0] = getRgba(src->getpixel(x, y));
-          rgba[1] = getRgba(src->getpixel(x + step, y));
-          rgba[2] = getRgba(src->getpixel(x, y + step));
-          rgba[3] = getRgba(src->getpixel(x + step, y + step));
-
-          int rr = 0;
-          int gg = 0;
-          int bb = 0;
-          int aa = 0;
-
-          for(int i = 0; i < 4; i++)
-          {
-            rr += Gamma::fix(rgba[i].r);
-            gg += Gamma::fix(rgba[i].g);
-            bb += Gamma::fix(rgba[i].b);
-            aa += Gamma::fix(rgba[i].a);
-          }
-
-          rr = Gamma::unfix(rr >> 2);
-          gg = Gamma::unfix(gg >> 2);
-          bb = Gamma::unfix(bb >> 2);
-          aa = Gamma::unfix(aa >> 2);
-
-          const int c = makeRgba(rr, gg, bb, aa);
-
-          if(step * 2 >= d)
-            src->rectfill(x, y, x + step - 1, y + step - 1, c, 0);
-          else
-            *p = c;
-
-          p += step;
-        }
-      }
-
-      count++;
-      Gui::updateProgress(count);
+ puts("size < 1");
+      blend = 255 - size * 255;
+      size = 1;
     }
 
-    Gui::hideProgress();
+    GaussianBlur::apply(bmp, size, blend, 0);
   }
 
   float cubic(const float p[4], const float x)
@@ -294,7 +250,7 @@ namespace Scale
     else if(Items::mode->value() == 1)
     {
       // bilinear
-      int mipx = 1, mipy = 1;
+      float mipx = 1, mipy = 1;
 
       if(sw > dw)
         mipx = (sw / dw);
@@ -303,8 +259,8 @@ namespace Scale
 
       if(mipx > 1 || mipy > 1)
       {
-        int radius = mipx > mipy ? mipx : mipy;
-        average(bmp, radius);
+        float size = mipx > mipy ? mipx : mipy;
+        blur(bmp, size);
       }
 
       Gui::showProgress(dh);
@@ -394,17 +350,17 @@ namespace Scale
     else if(Items::mode->value() == 2)
     {
       // bicubic
-      int mipx = 1, mipy = 1;
+      float mipx = 1, mipy = 1;
 
       if(sw > dw)
-        mipx = (sw / dw);
+        mipx = (float)sw / dw;
       if(sh > dh)
-        mipy = (sh / dh);
+        mipy = (float)sh / dh;
 
       if(mipx > 1 || mipy > 1)
       {
-        int radius = mipx > mipy ? mipx : mipy;
-        average(bmp, radius);
+        float size = mipx < mipy ? mipx : mipy;
+        blur(bmp, size);
       }
 
       float r[4][4];

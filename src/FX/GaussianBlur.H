@@ -23,9 +23,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX.H"
 
+class Bitmap;
+
 namespace GaussianBlur
 {
-  void apply();
+  void apply(Bitmap *bmp, int, int, int);
   void close();
   void quit();
   void begin();
