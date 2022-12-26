@@ -43,6 +43,7 @@ namespace
 {
   enum
   {
+    OPTION_MEMORY,
     OPTION_VERSION,
     OPTION_HELP
   };
@@ -53,6 +54,7 @@ namespace
 
   struct option long_options[] =
   {
+    { "mem", optional_argument,       &verbose_flag, OPTION_MEMORY },
     { "version", no_argument,       &verbose_flag, OPTION_VERSION },
     { "help",    no_argument,       &verbose_flag, OPTION_HELP    },
     { 0, 0, 0, 0 }
@@ -108,9 +110,13 @@ namespace
       os
       << std::endl << "Usage: rendera [OPTIONS] filename"
       << std::endl
+      << std::endl << "  --mem=<value>\t\t memory limit (in megabytes)"
       << std::endl << "  --version\t\t version information"
       << std::endl << std::endl;
   }
+
+  // image memory limit
+  int memory_limit = 4000;
 }
 
 int main(int argc, char *argv[])
@@ -140,9 +146,22 @@ int main(int argc, char *argv[])
             std::cout << PACKAGE_STRING << std::endl;
             return EXIT_SUCCESS;
 
+          case OPTION_MEMORY:
+            if(optarg)
+            {
+              memory_limit = atoi(optarg);
+            }
+            else
+            {
+              std::cerr << _help_type();
+              return EXIT_FAILURE;
+            }
+            
+            break;
+
           default:
             std::cerr << _help_type();
-            return EXIT_FAILURE ;
+            return EXIT_FAILURE;
         }
 
         break;
@@ -156,12 +175,14 @@ int main(int argc, char *argv[])
     }
   }
 
+  printf("Image Memory Limit = %d MB\n", memory_limit);
+
   // fltk related inits
   Fl::visual(FL_DOUBLE | FL_RGB);
   Fl::scheme("gtk+");
 
   // program inits
-  Project::init();
+  Project::init(memory_limit);
   File::init();
   FX::init();
   Dialog::init();
