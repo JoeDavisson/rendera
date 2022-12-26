@@ -288,6 +288,9 @@ public:
           case FL_Up:
             view->scroll(3, 64);
             break;
+          case FL_Delete:
+            Gui::closeFile();
+            break;
           case '1':
             zoom_fit->var = 0;
             zoom_fit->redraw();
