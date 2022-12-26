@@ -80,8 +80,9 @@ namespace Project
   extern Fl_Color fltk_theme_bevel_up;
   extern Fl_Color fltk_theme_bevel_down;
 
-  void init();
+  void init(int);
   void setTool(int);
+  bool enoughMemory(int, int);
   int newImage(int, int);
   int newImageFromBitmap(Bitmap *);
   void replaceImage(int, int);

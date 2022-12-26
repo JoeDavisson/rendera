@@ -59,6 +59,7 @@ namespace Project
   const int max_images = 256;
   int last = 0;
   int current = 0;
+  int mem_max = 1000;
 
   // tools
   Tool *tool = 0;
@@ -81,8 +82,10 @@ namespace Project
 }
 
 // called when the program starts
-void Project::init()
+void Project::init(int memory_limit)
 {
+  mem_max = memory_limit;
+
   bmp_list = new Bitmap *[max_images];
   undo_list = new Undo *[max_images];
 
@@ -128,8 +131,27 @@ void Project::setTool(int num)
   }
 }
 
+bool Project::enoughMemory(int w, int h)
+{
+  int data = w * h * sizeof(int);
+  int row = h * sizeof(int *);
+
+  if((getImageMemory() + data + row) / 1000000 > mem_max)
+  {
+    Dialog::message("Error", "Memory limit reached.\nClose images or start program with --mem option\nto increase limit.");
+    return false;
+  }
+  else
+  {
+    return true;
+  }
+}
+
 int Project::newImage(int w, int h)
 {
+  if(enoughMemory(w, h) == false)
+    return -1;
+
   if(last > max_images - 2)
   {
     Dialog::message("Error", "Maximum number of images\nhas been reached.");
@@ -155,6 +177,9 @@ int Project::newImage(int w, int h)
 
 int Project::newImageFromBitmap(Bitmap *temp)
 {
+  if(enoughMemory(temp->w, temp->h) == false)
+    return -1;
+
   if(last > max_images - 2)
   {
     Dialog::message("Error", "Maximum number of images\nhas been reached.");
@@ -183,6 +208,9 @@ int Project::newImageFromBitmap(Bitmap *temp)
 
 void Project::replaceImage(int w, int h)
 {
+  if(enoughMemory(w, h) == false)
+    return;
+
   delete bmp_list[current];
   bmp_list[current] = new Bitmap(w, h, overscroll);
   bmp = bmp_list[current];
@@ -194,6 +222,9 @@ void Project::replaceImage(int w, int h)
 
 void Project::replaceImageFromBitmap(Bitmap *temp)
 {
+  if(enoughMemory(temp->w, temp->h) == false)
+    return;
+
   delete bmp_list[current];
   bmp_list[current] = temp;
   bmp = bmp_list[current];
@@ -205,6 +236,9 @@ void Project::replaceImageFromBitmap(Bitmap *temp)
 
 void Project::resizeImage(int w, int h)
 {
+  if(enoughMemory(w, h) == false)
+    return;
+
   Bitmap *temp = new Bitmap(w, h, overscroll);
   bmp->blit(temp, overscroll, overscroll, overscroll, overscroll,
             bmp->cw, bmp->ch);
@@ -291,7 +325,7 @@ double Project::getImageMemory()
     }
   }
 
-  return bytes / 1000000;
+  return bytes;
 }
 
 void Project::pop()

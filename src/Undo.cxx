@@ -82,6 +82,9 @@ void Undo::doPush()
     undo_stack[0] = temp_bmp;
   }
 
+  if(Project::enoughMemory(Project::bmp->w, Project::bmp->h) == false)
+    return;
+
   delete undo_stack[undo_current];
   undo_stack[undo_current] = new Bitmap(Project::bmp->w, Project::bmp->h);
 
@@ -134,6 +137,9 @@ void Undo::pushRedo()
 
     redo_stack[0] = temp_bmp;
   }
+
+  if(Project::enoughMemory(Project::bmp->w, Project::bmp->h) == false)
+    return;
 
   delete redo_stack[redo_current];
   redo_stack[redo_current] = new Bitmap(Project::bmp->w, Project::bmp->h);
