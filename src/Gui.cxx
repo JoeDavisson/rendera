@@ -111,7 +111,6 @@ namespace
   InputInt *gridx;
   InputInt *gridy;
   ToggleButton *gridsnap;
-  StaticText *memory;
 
   // tools
   Widget *tool;
@@ -315,8 +314,10 @@ public:
           case 'e':
             Dialog::editor();
             break;
-          case 'm':
-            Gui::updateImageMemory();
+        // for testing
+        // case 'm':
+        //   printf("Image Memory Used: %lf MB\n", Project::getImageMemory() / 1000000);
+        //   break;
         }
 
         return 1;
@@ -492,6 +493,7 @@ void Gui::init()
   info->resize(status->x() + pos, status->y() + 4, window->w() - pos, 16);
   info->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
   info->copy_label("Welcome to Rendera!");
+
   progress = new Fl_Progress(pos, window->w() - 256 - 8, 256, 16);
   progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4, 256, 16);
   progress->minimum(0);
@@ -500,7 +502,6 @@ void Gui::init()
   progress->selection_color(0xBBBBBB00);
   progress->labelcolor(0xFFFFFF00);
   progress->hide();
-  status->resizable(0);
   status->end();
 
   // top
@@ -544,16 +545,7 @@ void Gui::init()
                        (Fl_Callback *)checkGridY, 1, 256);
   gridy->value("8");
   pos += 64 + 8;
-// for testing
-  new Separator(top, pos, 4, 2, 34, "");
-  pos += 8;
-  memory = new StaticText(top, pos, 8, 144, 24, 0);
-  memory->label("test");
-  memory->align(FL_ALIGN_RIGHT | FL_ALIGN_INSIDE);
-  memory->hide();
-
-  pos += 24;
-
+  
   top->resizable(0);
   top->end();
 
@@ -918,7 +910,7 @@ void Gui::init()
   file_browse->callback((Fl_Callback *)checkFileBrowse);
   pos += file_browse->h() + 8;
   file_rename = new Fl_Input(8, pos, 160, 24, "");
-  file_rename->textsize(10);
+  file_rename->textsize(12);
   file_rename->value("");
   file_rename->when(FL_WHEN_ENTER_KEY);
   file_rename->resize(files->x() + 8, files->y() + pos, 144, 24);
@@ -1716,8 +1708,9 @@ void Gui::checkSelectionToNewImage()
   Bitmap *temp = new Bitmap(select_bmp->w, select_bmp->h, Project::overscroll);
   
   select_bmp->blit(temp, 0, 0, Project::overscroll, Project::overscroll, temp->w, temp->h);
-  Project::newImageFromBitmap(temp);
-  addFile("From Selection");
+
+  if(Project::newImageFromBitmap(temp) != -1)
+    addFile("From Selection");
 }
 
 void Gui::checkOffsetValues(int x, int y)
@@ -1940,14 +1933,6 @@ void Gui::closeFile()
   }
 }
 
-void Gui::updateImageMemory()
-{
-  char s[256];
-
-  snprintf(s, sizeof(s), "%.2fMB used", Project::getImageMemory());
-  memory->copy_label(s);
-}
-
 Fl_Double_Window *Gui::getWindow()
 {
   return window;
@@ -2031,16 +2016,16 @@ int Gui::getFillFeather()
 
 void Gui::duplicateImage()
 {
-  const int w = Project::bmp->w;
-  const int h = Project::bmp->h;
-  const int cw = Project::bmp->cw;
-  const int ch = Project::bmp->ch;
   const int current = Project::current;
   const int last = Project::last;
   Bitmap **bmp_list = Project::bmp_list;
+  Bitmap *bmp = Project::bmp_list[current];
 
-  Project::newImage(cw, ch);
-  bmp_list[current]->blit(bmp_list[last], 0, 0, 0, 0, w, h);
+  if(Project::enoughMemory(bmp->w, bmp->h) == false)
+    return;
+
+  Project::newImage(bmp->cw, bmp->ch);
+  bmp_list[current]->blit(bmp_list[last], 0, 0, 0, 0, bmp->w, bmp->h);
 
   addFile("new");
 }
