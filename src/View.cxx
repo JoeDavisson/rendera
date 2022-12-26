@@ -479,11 +479,16 @@ int View::handle(int event)
       // drag n drop
       if(strncasecmp(Fl::event_text(), "file://", 7) == 0)
       {
-        char fn[4096];
+        const int length = Fl::event_length();
+        char *fn = new char[length];
 
-        // remove "file://" from path
-        #ifndef WIN32
-        strcpy(fn, Fl::event_text() + 7);
+        // printf("length = %d\n", length);
+
+        // remove "file:///" from path?
+        #ifdef WIN32
+          strcpy(fn, Fl::event_text());
+        #else
+          strcpy(fn, Fl::event_text() + 7);
         #endif
 
         // convert to utf-8 (e.g. %20 becomes space)
@@ -491,15 +496,19 @@ int View::handle(int event)
 
         int index = 0;
 
-        for(int i = 0, n = strlen(fn); i < n; i += 0)
+        for(int i = 0, n = length; i < n; i += 0)
         {
-          if(fn[i] == '\r' || fn[i] =='\n' || fn[i] == '\0')
+          if(fn[i] == '\r' || fn[i] =='\n')
           {
             fn[i] = '\0';
             File::loadFile(fn + index);
 
-            // try to load more if multiple
-            i += 8;
+            #ifdef WIN32
+              i += 1;
+            #else
+              i += 8;
+            #endif
+
             index = i;
           }
           else
@@ -507,6 +516,8 @@ int View::handle(int event)
             i++;
           }
         }
+
+        delete[] fn;
       }
 
       changeCursor();
