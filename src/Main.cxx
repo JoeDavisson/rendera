@@ -235,7 +235,6 @@ int main(int argc, char *argv[])
   Gui::drawPalette();
 */
 
-  Project::program_started = true;
   Fl::add_timeout(.1, (Fl_Timeout_Handler)Gui::updateMemInfo);
 
   int ret = Fl::run();

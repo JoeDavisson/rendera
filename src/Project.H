@@ -65,7 +65,6 @@ namespace Project
   extern int last;
   extern int mem_max;
   extern int undo_max;
-  extern bool program_started;
 
   extern Paint *paint;
   extern GetColor *getcolor;

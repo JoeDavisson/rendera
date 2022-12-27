@@ -387,6 +387,11 @@ int View::handle(int event)
             drawMain(false);
             Project::tool->redraw(this);
             redraw();
+
+            // save coords/zoom
+            Project::ox_list[Project::current] = ox;
+            Project::oy_list[Project::current] = oy;
+            Project::zoom_list[Project::current] = zoom;
           }
 
           break;
@@ -450,6 +455,11 @@ int View::handle(int event)
       }
 
       Project::tool->redraw(this);
+
+      // save coords/zoom
+      Project::ox_list[Project::current] = ox;
+      Project::oy_list[Project::current] = oy;
+      Project::zoom_list[Project::current] = zoom;
 
       return 1;
     }
@@ -537,8 +547,6 @@ void View::resize(int x, int y, int w, int h)
     zoomFit(true);
 
   ignore_tool = true;
-  ox = 0;
-  oy = 0;
   drawMain(true);
 }
 

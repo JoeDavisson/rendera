@@ -402,7 +402,6 @@ namespace NewImage
     Gui::getView()->drawMain(true);
 
     Gui::addFile("new");
-
     Project::undo->reset();
   }
 

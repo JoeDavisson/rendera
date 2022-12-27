@@ -1904,20 +1904,16 @@ void Gui::checkFileBrowse()
 
   if(line > 0)
   {
-    Project::ox_list[Project::current] = view->ox;
-    Project::oy_list[Project::current] = view->oy;
-    Project::zoom_list[Project::current] = view->zoom;
-
     Project::switchImage(line - 1);
-  }
 
-  view->ox = Project::ox_list[Project::current];
-  view->oy = Project::oy_list[Project::current];
-  view->zoom = Project::zoom_list[Project::current];
-  view->drawMain(true);
+    // restore coords/zoom saved during navigation
+    view->ox = Project::ox_list[Project::current];
+    view->oy = Project::oy_list[Project::current];
+    view->zoom = Project::zoom_list[Project::current];
+    view->drawMain(true);
 
-  if(line > 0)
     file_rename->value(file_browse->text(line));
+  }
 }
 
 void Gui::checkFileRename()

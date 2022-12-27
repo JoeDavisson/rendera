@@ -65,7 +65,6 @@ namespace Project
   int last = 0;
   int mem_max = 1000;
   int undo_max = 16;
-  bool program_started = false;
 
   // tools
   Tool *tool = 0;
@@ -102,7 +101,7 @@ void Project::init(int memory_limit, int undo_limit)
     undo_list[i] = 0;
     ox_list[i] = 0;
     oy_list[i] = 0;
-    zoom_list[i] = 1.0f;
+    zoom_list[i] = 1;
   }
 
   newImage(512, 512);
@@ -163,7 +162,7 @@ int Project::newImage(int w, int h)
 
   if(last > max_images - 2)
   {
-    Dialog::message("Error", "Maximum number of images\nhas been reached.");
+    Dialog::message("Error", "Maximum number of images has been reached.");
     return -1;
   }
 
