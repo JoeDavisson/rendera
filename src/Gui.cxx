@@ -319,10 +319,9 @@ public:
           case 'e':
             Dialog::editor();
             break;
-         // for testing
-          case 'm':
-            Gui::updateMemInfo();
-            break;
+          //case 'm':
+          //  Gui::updateMemInfo();
+          //  break;
         }
 
         return 1;
@@ -1968,9 +1967,13 @@ void Gui::updateMemInfo()
     max_gb = true;
   }
 
-//  sprintf(s, "%.1lf %s / %.1lf %s used", mem, mem_gb ? "GB" : "MB", max, max_gb ? "GB" : "MB");
+  const int undos =
+    Project::undo_max - Project::undo_list[Project::current]->undo_current - 1;
+  const int redos =
+    Project::undo_max - Project::undo_list[Project::current]->redo_current - 1;
 
-  sprintf(s, "%.1lf %s / %.1lf %s used\n%d undos,%d redos remaining", mem, mem_gb ? "GB" : "MB", max, max_gb ? "GB" : "MB", Project::undo_max - Project::undo_list[Project::current]->undo_current - 1, Project::undo_max - Project::undo_list[Project::current]->redo_current - 1);
+  sprintf(s, "%.1lf %s / %.1lf %s used\n%d undos, %d redos remaining",
+          mem, mem_gb ? "GB" : "MB", max, max_gb ? "GB" : "MB", undos, redos);
 
   file_mem->copy_label(s);
 

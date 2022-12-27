@@ -94,6 +94,9 @@ void Undo::doPush()
                      Project::bmp->w, Project::bmp->h);
 
   undo_current--;
+
+  if(undo_current < 0)
+    undo_current = 0;
 }
 
 void Undo::push()
@@ -113,12 +116,16 @@ void Undo::push()
 void Undo::pop()
 {
   if(undo_current >= levels - 1)
-  {
-    Dialog::message("Undo", "No more undo levels.");
     return;
-  }
 
   pushRedo();
+
+  if(undo_current > 0)
+  {
+    delete undo_stack[undo_current];
+    undo_stack[undo_current] = new Bitmap(8, 8);
+  }
+
   undo_current++;
 
   int w = undo_stack[undo_current]->w;
@@ -156,6 +163,9 @@ void Undo::pushRedo()
                      Project::bmp->w, Project::bmp->h);
 
   redo_current--;
+
+  if(redo_current < 0)
+    redo_current = 0;
 }
 
 void Undo::popRedo()
@@ -164,6 +174,13 @@ void Undo::popRedo()
     return;
 
   doPush();
+
+  if(redo_current > 0)
+  {
+    delete redo_stack[redo_current];
+    redo_stack[redo_current] = new Bitmap(8, 8);
+  }
+
   redo_current++;
 
   int w = redo_stack[redo_current]->w;
