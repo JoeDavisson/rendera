@@ -40,7 +40,7 @@ public:
   void pushRedo();
   void popRedo();
 
-  const int levels = 5;
+  int levels = 16;
   int undo_current = levels - 1;
   int redo_current = levels - 1;
 

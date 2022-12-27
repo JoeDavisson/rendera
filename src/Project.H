@@ -61,6 +61,7 @@ namespace Project
   extern int current;
   extern int last;
   extern int mem_max;
+  extern int undo_max;
   extern bool program_started;
 
   extern Paint *paint;
@@ -82,7 +83,7 @@ namespace Project
   extern Fl_Color fltk_theme_bevel_up;
   extern Fl_Color fltk_theme_bevel_down;
 
-  void init(int);
+  void init(int, int);
   void setTool(int);
   bool enoughMemory(int, int);
   int newImage(int, int);

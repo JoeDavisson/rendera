@@ -32,6 +32,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Undo::Undo()
 {
+  levels = Project::undo_max;
+
   undo_stack = new Bitmap *[levels];
   redo_stack = new Bitmap *[levels];
 

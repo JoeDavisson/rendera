@@ -911,7 +911,7 @@ void Gui::init()
   pos = 28;
   file_browse = new Fl_Hold_Browser(8, pos, 144, files->h() - 16 - 20 - 32);
   file_browse->textsize(12);
-  file_browse->resize(files->x() + 8, files->y() + pos, files->w() - 16, files->h() - 16 - 20 - 32 - 16 - 8);
+  file_browse->resize(files->x() + 8, files->y() + pos, files->w() - 16, files->h() - 16 - 20 - 32 - 32 - 8);
   file_browse->callback((Fl_Callback *)checkFileBrowse);
   pos += file_browse->h() + 8;
   file_rename = new Fl_Input(8, pos, 112, 24, "");
@@ -924,9 +924,10 @@ void Gui::init()
                           "Close File", images_close_png,
                           (Fl_Callback *)closeFile);
   pos += 24 + 8;
-  file_mem = new Fl_Box(FL_NO_BOX, files->x() + 8, files->y() + pos, 144, 16, "");
+  file_mem = new Fl_Box(FL_FLAT_BOX, files->x() + 8, files->y() + pos, 144, 32, "");
+
   file_mem->labelsize(10);
-  file_mem->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+  file_mem->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP | FL_ALIGN_LEFT);
 
   files->resizable(file_browse);
   files->end();
@@ -1967,9 +1968,10 @@ void Gui::updateMemInfo()
     max_gb = true;
   }
 
-//  sprintf(s, "%.1lf / %d MB used", Project::getImageMemory() / 1000000, Project::mem_max);
+//  sprintf(s, "%.1lf %s / %.1lf %s used", mem, mem_gb ? "GB" : "MB", max, max_gb ? "GB" : "MB");
 
-  sprintf(s, "%.1lf %s / %.1lf %s used", mem, mem_gb ? "GB" : "MB", max, max_gb ? "GB" : "MB");
+  sprintf(s, "%.1lf %s / %.1lf %s used\n%d undos,%d redos remaining", mem, mem_gb ? "GB" : "MB", max, max_gb ? "GB" : "MB", Project::undo_max - Project::undo_list[Project::current]->undo_current - 1, Project::undo_max - Project::undo_list[Project::current]->redo_current - 1);
+
   file_mem->copy_label(s);
 
   Fl::repeat_timeout(1.0, (Fl_Timeout_Handler)Gui::updateMemInfo);

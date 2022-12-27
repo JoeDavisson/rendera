@@ -61,6 +61,7 @@ namespace Project
   int current = 0;
   int last = 0;
   int mem_max = 1000;
+  int undo_max = 16;
   bool program_started = false;
 
   // tools
@@ -84,9 +85,10 @@ namespace Project
 }
 
 // called when the program starts
-void Project::init(int memory_limit)
+void Project::init(int memory_limit, int undo_limit)
 {
   mem_max = memory_limit;
+  undo_max = undo_limit;
 
   bmp_list = new Bitmap *[max_images];
   undo_list = new Undo *[max_images];
