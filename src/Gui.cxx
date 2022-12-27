@@ -182,6 +182,7 @@ namespace
   // files
   Fl_Hold_Browser *file_browse;
   Fl_Input *file_rename;
+  Button *file_close;
 
   // bottom
   ToggleButton *wrap;
@@ -317,10 +318,10 @@ public:
           case 'e':
             Dialog::editor();
             break;
-        // for testing
-        // case 'm':
-        //   printf("Image Memory Used: %lf MB\n", Project::getImageMemory() / 1000000);
-        //   break;
+         // for testing
+         // case 'm':
+         //   printf("Image Memory Used: %lf MB\n", Project::getImageMemory() / 1000000);
+         //   break;
         }
 
         return 1;
@@ -348,10 +349,10 @@ void Gui::init()
     (Fl_Callback *)Dialog::newImage, 0, 0);
   menubar->add("&File/&Open...", 0,
     (Fl_Callback *)File::load, 0, 0);
-  menubar->add("&File/&Close...", 0,
-    (Fl_Callback *)closeFile, 0, FL_MENU_DIVIDER);
   menubar->add("&File/&Save...", 0,
     (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
+  menubar->add("&File/&Close...", 0,
+    (Fl_Callback *)closeFile, 0, FL_MENU_DIVIDER);
   menubar->add("&File/E&xit...", 0,
     (Fl_Callback *)quit, 0, 0);
 
@@ -912,12 +913,15 @@ void Gui::init()
   file_browse->resize(files->x() + 8, files->y() + pos, files->w() - 16, files->h() - 16 - 20 - 32);
   file_browse->callback((Fl_Callback *)checkFileBrowse);
   pos += file_browse->h() + 8;
-  file_rename = new Fl_Input(8, pos, 160, 24, "");
+  file_rename = new Fl_Input(8, pos, 112, 24, "");
   file_rename->textsize(12);
   file_rename->value("");
   file_rename->when(FL_WHEN_ENTER_KEY);
-  file_rename->resize(files->x() + 8, files->y() + pos, 144, 24);
+  file_rename->resize(files->x() + 8, files->y() + pos, 112, 24);
   file_rename->callback((Fl_Callback *)checkFileRename);
+  file_close = new Button(files, 128, pos, 24, 24,
+                          "Close File", images_close_png,
+                          (Fl_Callback *)closeFile);
   pos += 24 + 8;
 
   files->resizable(file_browse);
@@ -1932,6 +1936,7 @@ void Gui::closeFile()
     else
       Project::switchImage(Project::current);
 
+    file_rename->value(file_browse->text(file_browse->value()));
     view->drawMain(true);
   }
 }

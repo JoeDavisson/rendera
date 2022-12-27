@@ -182,7 +182,7 @@ int Project::newImageFromBitmap(Bitmap *temp)
 
   if(last > max_images - 2)
   {
-    Dialog::message("Error", "Maximum number of images\nhas been reached.");
+    Dialog::message("Error", "Maximum number of images has been reached.");
     return -1;
   }
 
@@ -270,7 +270,7 @@ bool Project::removeImage()
 {
   if(last < 2)
   {
-    Dialog::message("Last Image", "Cannot close last image,\nthere must be at least one.");
+    Dialog::message("Last Image", "Cannot close last image, there must be at least one.");
     return false;
   }
 
