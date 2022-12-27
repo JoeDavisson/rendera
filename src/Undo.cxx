@@ -72,9 +72,9 @@ void Undo::reset()
 
 void Undo::doPush()
 {
-  if(undo_current < 0)
+  if(undo_current < 1)
   {
-    undo_current = 0;
+    undo_current = 1;
 
     Bitmap *temp_bmp = undo_stack[levels - 1];
 
@@ -94,9 +94,6 @@ void Undo::doPush()
                      Project::bmp->w, Project::bmp->h);
 
   undo_current--;
-
-  if(undo_current < 0)
-    undo_current = 0;
 }
 
 void Undo::push()
@@ -120,7 +117,7 @@ void Undo::pop()
 
   pushRedo();
 
-  if(undo_current > 0)
+  if(undo_current >= 0)
   {
     delete undo_stack[undo_current];
     undo_stack[undo_current] = new Bitmap(8, 8);
@@ -175,7 +172,7 @@ void Undo::popRedo()
 
   doPush();
 
-  if(redo_current > 0)
+  if(redo_current >= 0)
   {
     delete redo_stack[redo_current];
     redo_stack[redo_current] = new Bitmap(8, 8);
