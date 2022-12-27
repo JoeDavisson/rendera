@@ -1162,8 +1162,8 @@ namespace Choice
     int y1 = 8;
 
     Items::dialog = new DialogWindow(512, 0, "Error");
-    Items::box = new Fl_Box(FL_FLAT_BOX, 8, 8, 368, 64, "");
-    Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP);
+    Items::box = new Fl_Box(FL_FLAT_BOX, 64 + 16, 8, 368, 64, "");
+    Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
     Items::box->labelsize(14); 
     Items::icon = new Widget(Items::dialog, 8, 8, 64, 64, "", images_dialog_question_png);
     y1 += 64 + 8;
