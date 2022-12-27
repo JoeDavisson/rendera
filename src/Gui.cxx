@@ -1903,18 +1903,32 @@ void Gui::checkFileBrowse()
   const int line = file_browse->value();
 
   if(line > 0)
-    Project::switchImage(line - 1);
+  {
+    Project::ox_list[Project::current] = view->ox;
+    Project::oy_list[Project::current] = view->oy;
+    Project::zoom_list[Project::current] = view->zoom;
 
-  file_rename->value(file_browse->text(line));
-  view->zoomOne();
+    Project::switchImage(line - 1);
+  }
+
+  view->ox = Project::ox_list[Project::current];
+  view->oy = Project::oy_list[Project::current];
+  view->zoom = Project::zoom_list[Project::current];
+  view->drawMain(true);
+
+  if(line > 0)
+    file_rename->value(file_browse->text(line));
 }
 
 void Gui::checkFileRename()
 {
   const int line = file_browse->value();
 
-  file_browse->text(line, file_rename->value());
-  file_browse->redraw();
+  if(line > 0)
+  {
+    file_browse->text(line, file_rename->value());
+    file_browse->redraw();
+  }
 }
 
 void Gui::addFile(const char *name)

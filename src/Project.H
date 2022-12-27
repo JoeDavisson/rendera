@@ -58,6 +58,9 @@ namespace Project
 
   extern Bitmap **bmp_list;
   extern Undo **undo_list;
+  extern int ox_list[256];
+  extern int oy_list[256];
+  extern float zoom_list[256];
   extern int current;
   extern int last;
   extern int mem_max;

@@ -57,6 +57,9 @@ namespace Project
 
   Bitmap **bmp_list;
   Undo **undo_list;
+  int ox_list[256];
+  int oy_list[256];
+  float zoom_list[256];
   const int max_images = 256;
   int current = 0;
   int last = 0;
@@ -97,10 +100,12 @@ void Project::init(int memory_limit, int undo_limit)
   {
     bmp_list[i] = 0;
     undo_list[i] = 0;
+    ox_list[i] = 0;
+    oy_list[i] = 0;
+    zoom_list[i] = 0;
   }
 
   newImage(512, 512);
-
   setTool(Tool::PAINT);
 }
 
