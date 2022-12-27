@@ -177,18 +177,9 @@ namespace Scale
     Fl_Button *cancel;
   }
 
-  void blur(Bitmap *bmp, float size)
+  void blur(Bitmap *bmp, int size)
   {
-    int blend = 0;
-
-    if(size < 1)
-    {
- puts("size < 1");
-      blend = 255 - size * 255;
-      size = 1;
-    }
-
-    GaussianBlur::apply(bmp, size, blend, 0);
+    GaussianBlur::apply(bmp, size / 2, 0, 0);
   }
 
   float cubic(const float p[4], const float x)
@@ -250,7 +241,7 @@ namespace Scale
     else if(Items::mode->value() == 1)
     {
       // bilinear
-      float mipx = 1, mipy = 1;
+      int mipx = 1, mipy = 1;
 
       if(sw > dw)
         mipx = (sw / dw);
@@ -259,7 +250,7 @@ namespace Scale
 
       if(mipx > 1 || mipy > 1)
       {
-        float size = mipx > mipy ? mipx : mipy;
+        int size = mipx > mipy ? mipx : mipy;
         blur(bmp, size);
       }
 
@@ -350,7 +341,7 @@ namespace Scale
     else if(Items::mode->value() == 2)
     {
       // bicubic
-      float mipx = 1, mipy = 1;
+      int mipx = 1, mipy = 1;
 
       if(sw > dw)
         mipx = (float)sw / dw;
@@ -359,7 +350,7 @@ namespace Scale
 
       if(mipx > 1 || mipy > 1)
       {
-        float size = mipx < mipy ? mipx : mipy;
+        int size = mipx < mipy ? mipx : mipy;
         blur(bmp, size);
       }
 
