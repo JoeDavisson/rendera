@@ -102,7 +102,7 @@ void Project::init(int memory_limit, int undo_limit)
     undo_list[i] = 0;
     ox_list[i] = 0;
     oy_list[i] = 0;
-    zoom_list[i] = 0;
+    zoom_list[i] = 1.0f;
   }
 
   newImage(512, 512);
