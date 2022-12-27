@@ -60,6 +60,8 @@ namespace Project
   extern Undo **undo_list;
   extern int current;
   extern int last;
+  extern int mem_max;
+  extern bool program_started;
 
   extern Paint *paint;
   extern GetColor *getcolor;

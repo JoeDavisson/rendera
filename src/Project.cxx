@@ -28,15 +28,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "Crop.H"
 #include "Dialog.H"
-#include "Selection.H"
 #include "Fill.H"
 #include "GetColor.H"
+#include "Gui.H"
 #include "Inline.H"
 #include "Map.H"
 #include "Offset.H"
 #include "Paint.H"
 #include "Palette.H"
 #include "Project.H"
+#include "Selection.H"
 #include "Stroke.H"
 #include "Text.H"
 #include "Tool.H"
@@ -57,9 +58,10 @@ namespace Project
   Bitmap **bmp_list;
   Undo **undo_list;
   const int max_images = 256;
-  int last = 0;
   int current = 0;
+  int last = 0;
   int mem_max = 1000;
+  bool program_started = false;
 
   // tools
   Tool *tool = 0;

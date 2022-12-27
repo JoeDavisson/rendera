@@ -183,6 +183,7 @@ namespace
   Fl_Hold_Browser *file_browse;
   Fl_Input *file_rename;
   Button *file_close;
+  Fl_Box *file_mem;
 
   // bottom
   ToggleButton *wrap;
@@ -319,9 +320,9 @@ public:
             Dialog::editor();
             break;
          // for testing
-         // case 'm':
-         //   printf("Image Memory Used: %lf MB\n", Project::getImageMemory() / 1000000);
-         //   break;
+          case 'm':
+            Gui::updateMemInfo();
+            break;
         }
 
         return 1;
@@ -910,7 +911,7 @@ void Gui::init()
   pos = 28;
   file_browse = new Fl_Hold_Browser(8, pos, 144, files->h() - 16 - 20 - 32);
   file_browse->textsize(12);
-  file_browse->resize(files->x() + 8, files->y() + pos, files->w() - 16, files->h() - 16 - 20 - 32);
+  file_browse->resize(files->x() + 8, files->y() + pos, files->w() - 16, files->h() - 16 - 20 - 32 - 16 - 8);
   file_browse->callback((Fl_Callback *)checkFileBrowse);
   pos += file_browse->h() + 8;
   file_rename = new Fl_Input(8, pos, 112, 24, "");
@@ -923,6 +924,9 @@ void Gui::init()
                           "Close File", images_close_png,
                           (Fl_Callback *)closeFile);
   pos += 24 + 8;
+  file_mem = new Fl_Box(FL_NO_BOX, files->x() + 8, files->y() + pos, 144, 16, "");
+  file_mem->labelsize(10);
+  file_mem->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
 
   files->resizable(file_browse);
   files->end();
@@ -1939,6 +1943,36 @@ void Gui::closeFile()
     file_rename->value(file_browse->text(file_browse->value()));
     view->drawMain(true);
   }
+}
+
+void Gui::updateMemInfo()
+{
+  char s[256];
+
+  double mem = Project::getImageMemory() / 1000000;
+  double max = Project::mem_max;
+
+  bool mem_gb = false;
+  bool max_gb = false;
+
+  if(mem >= 1000)
+  {
+    mem /= 1000;
+    mem_gb = true;
+  }
+
+  if(max >= 1000)
+  {
+    max /= 1000;
+    max_gb = true;
+  }
+
+//  sprintf(s, "%.1lf / %d MB used", Project::getImageMemory() / 1000000, Project::mem_max);
+
+  sprintf(s, "%.1lf %s / %.1lf %s used", mem, mem_gb ? "GB" : "MB", max, max_gb ? "GB" : "MB");
+  file_mem->copy_label(s);
+
+  Fl::repeat_timeout(1.0, (Fl_Timeout_Handler)Gui::updateMemInfo);
 }
 
 Fl_Double_Window *Gui::getWindow()

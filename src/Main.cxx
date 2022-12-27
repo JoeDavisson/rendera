@@ -116,7 +116,7 @@ namespace
   }
 
   // image memory limit
-  int memory_limit = 4000;
+  int memory_limit = 2000;
 }
 
 int main(int argc, char *argv[])
@@ -150,6 +150,7 @@ int main(int argc, char *argv[])
             if(optarg)
             {
               memory_limit = atoi(optarg);
+              printf("Image memory limit set to: %d MB\n", memory_limit);
             }
             else
             {
@@ -174,8 +175,6 @@ int main(int argc, char *argv[])
       }
     }
   }
-
-  printf("Image Memory Limit = %d MB\n", memory_limit);
 
   // fltk related inits
   Fl::visual(FL_DOUBLE | FL_RGB);
@@ -219,6 +218,9 @@ int main(int argc, char *argv[])
   }
   Gui::drawPalette();
 */
+
+  Project::program_started = true;
+  Fl::add_timeout(.1, (Fl_Timeout_Handler)Gui::updateMemInfo);
 
   int ret = Fl::run();
   return ret;
