@@ -99,6 +99,12 @@ void Undo::push()
   doPush();
 
   // reset redo list since user performed some action
+  for(int i = 0; i < levels; i++)
+  {
+    delete redo_stack[i];
+    redo_stack[i] = new Bitmap(8, 8);
+  }
+
   redo_current = levels - 1;
 }
 
