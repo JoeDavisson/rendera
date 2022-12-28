@@ -50,6 +50,7 @@ public:
   void zoomOne();
   void scroll(int, int);
   void clipOrigin();
+  void saveCoords();
 
   Fl_Group *group;
   Bitmap *backbuf;

@@ -388,10 +388,7 @@ int View::handle(int event)
             Project::tool->redraw(this);
             redraw();
 
-            // save coords/zoom
-            Project::ox_list[Project::current] = ox;
-            Project::oy_list[Project::current] = oy;
-            Project::zoom_list[Project::current] = zoom;
+            saveCoords();
           }
 
           break;
@@ -455,11 +452,7 @@ int View::handle(int event)
       }
 
       Project::tool->redraw(this);
-
-      // save coords/zoom
-      Project::ox_list[Project::current] = ox;
-      Project::oy_list[Project::current] = oy;
-      Project::zoom_list[Project::current] = zoom;
+      saveCoords();
 
       return 1;
     }
@@ -917,6 +910,9 @@ void View::zoomFit(bool fit_to_view)
     zoom = 1;
     ox = 0;
     oy = 0;
+
+    saveCoords();
+
     drawMain(true);
     Gui::checkZoom();
     return;
@@ -933,6 +929,8 @@ void View::zoomFit(bool fit_to_view)
   ox = 0;
   oy = 0;
 
+  saveCoords();
+
   fit = true;
   drawMain(true);
   Gui::checkZoom();
@@ -944,6 +942,9 @@ void View::zoomOne()
   zoom = 1;
   ox = 0;
   oy = 0;
+
+  saveCoords();
+
   drawMain(true);
   Gui::checkZoom();
 }
@@ -1018,6 +1019,14 @@ void View::clipOrigin()
     ox = Project::bmp->cr;
   if(oy > Project::bmp->cb)
     oy = Project::bmp->cb;
+}
+
+void View::saveCoords()
+{
+  // save coords/zoom for current image
+  Project::ox_list[Project::current] = ox;
+  Project::oy_list[Project::current] = oy;
+  Project::zoom_list[Project::current] = zoom;
 }
 
 // do not call directly, call redraw() instead
