@@ -898,7 +898,6 @@ void Gui::init()
   blend->add("Alpha Subtract");
   blend->add("Smooth");
   blend->add("Sharpen");
-  blend->add("Emboss");
   blend->value(0);
   blend->callback((Fl_Callback *)checkColor);
   pos += 24 + 8;

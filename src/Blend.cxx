@@ -65,17 +65,8 @@ void Blend::set(const int mode)
     case SMOOTH:
       current_blend = smooth;
       break;
-//    case SMOOTH_COLOR:
-//      current_blend = smoothColor;
-//      break;
-//    case SMOOTH_LUMINOSITY:
-//      current_blend = smoothLuminosity;
-//      break;
     case SHARPEN:
       current_blend = sharpen;
-      break;
-    case EMBOSS:
-      current_blend = emboss;
       break;
     case FAST:
       current_blend = fast;
@@ -298,28 +289,6 @@ int Blend::sharpen(const int c1, const int, const int t)
       r += rgba.r * FilterMatrix::sharpen[i][j];
       g += rgba.g * FilterMatrix::sharpen[i][j];
       b += rgba.b * FilterMatrix::sharpen[i][j];
-    }
-  }
-
-  r = clamp(r, 255);
-  g = clamp(g, 255);
-  b = clamp(b, 255);
-
-  return Blend::transNoAlpha(c1, makeRgb(r, g, b), 255 - (255 - t) / 16);
-}
-
-int Blend::emboss(const int c1, const int, const int t)
-{
-  int r = 0, g = 0, b = 0;
-
-  for(int j = 0; j < 3; j++)
-  {
-    for(int i = 0; i < 3; i++)
-    {
-      const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
-      r += rgba.r * FilterMatrix::emboss[i][j];
-      g += rgba.g * FilterMatrix::emboss[i][j];
-      b += rgba.b * FilterMatrix::emboss[i][j];
     }
   }
 

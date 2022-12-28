@@ -41,7 +41,7 @@ namespace FilterMatrix
   const int sharpen[3][3] =
   {
     {  0, -1,  0 },
-    { -1,  5, -1 },
+    { -1,  9, -1 },
     {  0, -1,  0 }
   };
 
