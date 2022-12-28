@@ -676,6 +676,9 @@ void View::drawCloneCursor()
   if(moving)
     return;
 
+  if(Gui::getTool() != Tool::PAINT && Gui::getTool() != Tool::TEXT)
+    return;
+
   int x = Clone::x;
   int y = Clone::y;
   int dx = Clone::dx;

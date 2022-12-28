@@ -122,6 +122,8 @@ void Paint::move(View *view)
 {
   Stroke *stroke = Project::stroke;
 
+  view->drawMain(false);
+
   switch(stroke->type)
   {
     case 3:
@@ -130,9 +132,7 @@ void Paint::move(View *view)
         stroke->polyLine(view->imgx, view->imgy,
                          view->ox, view->oy, view->zoom);
         
-        view->drawMain(false);
         stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom, view->bgr_order);
-        view->redraw();
       }
       break;
     case 0:
@@ -149,12 +149,12 @@ void Paint::move(View *view)
       stroke->makeBlitRect(stroke->x1, stroke->y1,
                            stroke->x2, stroke->y2,
                            view->ox, view->oy, 96, view->zoom);
-      view->drawMain(false);
       stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom,
                            view->bgr_order);
-      view->redraw();
       break;
   }
+
+  view->redraw();
 }
 
 void Paint::key(View *)
