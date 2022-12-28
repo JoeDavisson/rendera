@@ -74,6 +74,9 @@ void Blend::set(const int mode)
     case SHARPEN:
       current_blend = sharpen;
       break;
+    case EMBOSS:
+      current_blend = emboss;
+      break;
     case FAST:
       current_blend = fast;
       break;
@@ -283,65 +286,9 @@ int Blend::smooth(const int c1, const int, const int t)
   return Blend::trans(c1, makeRgba(r, g, b, a), t);
 }
 
-int Blend::smoothColor(const int c1, const int, const int t)
-{
-  const int matrix[5][5] = {
-    {  1,  4,  7,  4,  1 },
-    {  4, 16, 26, 16,  4 },
-    {  7, 26, 41, 26,  7 },
-    {  4, 16, 26, 16,  4 },
-    {  1 , 4,  7,  4,  1 }
-  };
-    
-  int r = 0;
-  int g = 0;
-  int b = 0;
-  int a = 0;
-
-  for(int j = 0; j < 5; j++)
-  {
-    for(int i = 0; i < 5; i++)
-    {
-      const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 2, ypos + j - 2));
-
-      r += rgba.r * matrix[i][j];
-      g += rgba.g * matrix[i][j];
-      b += rgba.b * matrix[i][j];
-      a += rgba.a * matrix[i][j];
-    }
-  }
-
-  r /= 273;
-  g /= 273;
-  b /= 273;
-  a /= 273;
-
-  int c3 = Blend::trans(c1, makeRgba(r, g, b, a), t);
-
-  return keepLum(c3, getl(c1));
-}
-
-int Blend::smoothLuminosity(const int c1, const int, const int t)
-{
-  int lum = 0;
-
-  for(int j = 0; j < 3; j++)
-  {
-    for(int i = 0; i < 3; i++)
-    {
-      const int l = getl(bmp->getpixel(xpos + i - 1, ypos + j - 1));
-      lum += l * FilterMatrix::gaussian[i][j];
-    }
-  }
-
-  lum /= 16;
-
-  return Blend::trans(c1, keepLum(c1, lum), t);
-}
-
 int Blend::sharpen(const int c1, const int, const int t)
 {
-  int r = 0, g = 0, b = 0, a = 0;
+  int r = 0, g = 0, b = 0;
 
   for(int j = 0; j < 3; j++)
   {
@@ -351,16 +298,35 @@ int Blend::sharpen(const int c1, const int, const int t)
       r += rgba.r * FilterMatrix::sharpen[i][j];
       g += rgba.g * FilterMatrix::sharpen[i][j];
       b += rgba.b * FilterMatrix::sharpen[i][j];
-      a += rgba.a * FilterMatrix::sharpen[i][j];
     }
   }
 
   r = clamp(r, 255);
   g = clamp(g, 255);
   b = clamp(b, 255);
-  a = clamp(a, 255);
 
-//  return Blend::trans(c1, makeRgba(r, g, b, a), 255 - (255 - t) / 16);
+  return Blend::transNoAlpha(c1, makeRgb(r, g, b), 255 - (255 - t) / 16);
+}
+
+int Blend::emboss(const int c1, const int, const int t)
+{
+  int r = 0, g = 0, b = 0;
+
+  for(int j = 0; j < 3; j++)
+  {
+    for(int i = 0; i < 3; i++)
+    {
+      const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
+      r += rgba.r * FilterMatrix::emboss[i][j];
+      g += rgba.g * FilterMatrix::emboss[i][j];
+      b += rgba.b * FilterMatrix::emboss[i][j];
+    }
+  }
+
+  r = clamp(r, 255);
+  g = clamp(g, 255);
+  b = clamp(b, 255);
+
   return Blend::transNoAlpha(c1, makeRgb(r, g, b), 255 - (255 - t) / 16);
 }
 

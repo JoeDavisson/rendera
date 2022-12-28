@@ -36,9 +36,8 @@ namespace Blend
     ALPHA_ADD,
     ALPHA_SUB,
     SMOOTH,
-//    SMOOTH_COLOR,
-//    SMOOTH_LUMINOSITY,
     SHARPEN,
+    EMBOSS,
     FAST,
     TRANS_ALPHA,
     TRANS_NO_ALPHA,
@@ -62,6 +61,7 @@ namespace Blend
   int smoothColor(const int, const int, const int);
   int smoothLuminosity(const int, const int, const int);
   int sharpen(const int, const int, const int);
+  int emboss(const int, const int, const int);
   int fast(const int, const int, const int);
   int invert(const int, const int, const int);
   void rgbToHsv(const int, const int, const int, int *, int *, int *);
