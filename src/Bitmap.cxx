@@ -776,8 +776,6 @@ void Bitmap::pointStretch(Bitmap *dest,
                           int dx, int dy, int dw, int dh,
                           int overx, int overy, bool bgr_order)
 {
-  //Palette *pal = Project::palette;
-
   const int ax = ((float)dw / sw) * 65536;
   const int ay = ((float)dh / sh) * 65536;
   const int bx = ((float)sw / dw) * 65536;
@@ -967,108 +965,6 @@ void Bitmap::fastStretch(Bitmap *dest,
 
     yd1 += sx;
     e += dy;
-  }
-}
-
-void Bitmap::blur(int s, int amount)
-{
-  s = sqrt(s);
-
-  int size = 2;
-  int shift = 1;
-
-  if(s > 1)
-  {
-    size = 2;
-    shift = 1;
-  }
-
-  if(s > 2)
-  {
-    size = 4;
-    shift = 2;
-  }
-
-  if(s > 3)
-  {
-    size = 8;
-    shift = 3;
-  }
-
-  if(s > 4)
-  {
-    size = 16;
-    shift = 4;
-  }
-
-  Bitmap temp(this->cw, this->ch, this->overscroll);
-
-  // x direction
-  for(int y = this->ct; y <= this->cb; y++)
-  {
-    int *p = temp.row[y] + temp.cl;
-
-    for(int x = this->cl; x <= this->cr; x++)
-    {
-      int rr = 0;
-      int gg = 0;
-      int bb = 0;
-      int aa = 0;
-
-      for(int i = 0; i < size; i++) 
-      {
-        const int xx = x - size / 2 + i;
-
-        rgba_type rgba = getRgba(this->getpixel(xx, y));
-
-        rr += Gamma::fix(rgba.r);
-        gg += Gamma::fix(rgba.g);
-        bb += Gamma::fix(rgba.b);
-        aa += rgba.a;
-      }
-
-      rr = Gamma::unfix(rr >> shift);
-      gg = Gamma::unfix(gg >> shift);
-      bb = Gamma::unfix(bb >> shift);
-      aa >>= shift;
-
-      *p = makeRgba(rr, gg, bb, aa);
-      p++;
-    }
-  }
-
-  // y direction
-  for(int y = this->ct; y <= this->cb; y++)
-  {
-    int *p = this->row[y] + this->cl;
-
-    for(int x = this->cl; x <= this->cr; x++)
-    {
-      int rr = 0;
-      int gg = 0;
-      int bb = 0;
-      int aa = 0;
-
-      for(int i = 0; i < size; i++) 
-      {
-        const int yy = y - size / 2 + i;
-
-        rgba_type rgba = getRgba(temp.getpixel(x, yy));
-
-        rr += Gamma::fix(rgba.r);
-        gg += Gamma::fix(rgba.g);
-        bb += Gamma::fix(rgba.b);
-        aa += rgba.a;
-      }
-
-      rr = Gamma::unfix(rr >> shift);
-      gg = Gamma::unfix(gg >> shift);
-      bb = Gamma::unfix(bb >> shift);
-      aa >>= shift;
-
-      *p = makeRgba(rr, gg, bb, aa);
-      p++;
-    }
   }
 }
 

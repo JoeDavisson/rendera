@@ -67,7 +67,6 @@ public:
   void flipVertical();
   void rotate180();
   void fastStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);
-  void blur(int, int);
   void invert();
 };
 
