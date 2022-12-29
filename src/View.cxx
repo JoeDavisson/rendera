@@ -114,7 +114,9 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   ox = 0;
   oy = 0;
   zoom = 1;
-  fit = false;
+  prev_ox = ox;
+  prev_oy = oy;
+  prev_zoom = zoom;
   moving = false;
   panning = false;
   last_ox = 0;
@@ -536,9 +538,6 @@ void View::resize(int x, int y, int w, int h)
 {
   Fl_Widget::resize(x, y, w, h);
 
-  if(fit)
-    zoomFit(true);
-
   ignore_tool = true;
   drawMain(true);
 }
@@ -852,9 +851,6 @@ void View::move()
 
 void View::zoomIn(int x, int y)
 {
-  if(fit)
-    return;
-
   zoom *= 2;
 
   if(zoom > 64)
@@ -878,9 +874,6 @@ void View::zoomIn(int x, int y)
 
 void View::zoomOut(int x, int y)
 {
-  if(fit)
-    return;
-
   float oldzoom = zoom;
   zoom /= 2;
 
@@ -905,43 +898,8 @@ void View::zoomOut(int x, int y)
   Gui::checkZoom();
 }
 
-void View::zoomFit(bool fit_to_view)
-{
-  if(!fit_to_view)
-  {
-    fit = false;
-    zoom = 1;
-    ox = 0;
-    oy = 0;
-
-    saveCoords();
-
-    drawMain(true);
-    Gui::checkZoom();
-    return;
-  }
-
-  winaspect = (float)h() / w();
-  aspect = (float)Project::bmp->h / Project::bmp->w;
-
-  if(aspect < winaspect)
-    zoom = ((float)w() / Project::bmp->w);
-  else
-    zoom = ((float)h() / Project::bmp->h);
-
-  ox = 0;
-  oy = 0;
-
-  saveCoords();
-
-  fit = true;
-  drawMain(true);
-  Gui::checkZoom();
-}
-
 void View::zoomOne()
 {
-  fit = false;
   zoom = 1;
   ox = 0;
   oy = 0;

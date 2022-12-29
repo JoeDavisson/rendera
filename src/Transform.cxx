@@ -126,7 +126,6 @@ namespace Resize
 
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
-    Gui::getView()->zoomFit(0);
     Gui::getView()->drawMain(true);
   }
 
@@ -428,7 +427,6 @@ namespace Scale
 
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
-    Gui::getView()->zoomFit(0);
     Gui::getView()->drawMain(true);
   }
 
@@ -689,7 +687,6 @@ namespace RotateArbitrary
 
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
-    Gui::getView()->zoomFit(0);
     Gui::getView()->drawMain(true);
   }
 

@@ -398,7 +398,6 @@ namespace NewImage
 
     Gui::getView()->ox = 0;
     Gui::getView()->oy = 0;
-    Gui::getView()->zoomFit(0);
     Gui::getView()->drawMain(true);
 
     Gui::addFile("new");
@@ -1110,7 +1109,7 @@ namespace Message
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(512, 0, "Error");
+    Items::dialog = new DialogWindow(384, 0, "Error");
     Items::box = new Fl_Box(FL_FLAT_BOX, 64 + 16, 8, 368, 64, "");
     Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
     Items::box->labelsize(14); 
@@ -1160,7 +1159,7 @@ namespace Choice
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(512, 0, "Error");
+    Items::dialog = new DialogWindow(384, 0, "Error");
     Items::box = new Fl_Box(FL_FLAT_BOX, 64 + 16, 8, 368, 64, "");
     Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
     Items::box->labelsize(14); 

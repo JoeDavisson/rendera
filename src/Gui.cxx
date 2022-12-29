@@ -102,7 +102,6 @@ namespace
   Fl_Box *info;
 
   // top
-  ToggleButton *zoom_fit;
   Button *zoom_one;
   Button *zoom_in;
   Button *zoom_out;
@@ -294,14 +293,7 @@ public:
             Gui::closeFile();
             break;
           case '1':
-            zoom_fit->var = 0;
-            zoom_fit->redraw();
             view->zoomOne();
-            break;
-          case 'f':
-            zoom_fit->var ^= 1;
-            zoom_fit->redraw();
-            view->zoomFit(zoom_fit->var);
             break;
           case '+':
           case '=':
@@ -511,10 +503,6 @@ void Gui::init()
   // top
   top = new Group(0, menubar->h(), window->w(), 40, "");
   pos = 8;
-  zoom_fit = new ToggleButton(top, pos, 8, 24, 24,
-                              "Fit In Window (F)", images_zoom_fit_png,
-                              (Fl_Callback *)checkZoomFit);
-  pos += 24 + 8;
   zoom_one = new Button(top, pos, 8, 24, 24,
                         "Actual Size (1)", images_zoom_one_png,
                         (Fl_Callback *)checkZoomOne);
@@ -1176,16 +1164,8 @@ void Gui::checkZoomOut(Button *, void *)
   checkZoom();
 }
 
-void Gui::checkZoomFit(ToggleButton *, void *var)
-{
-  view->zoomFit(*(int *)var);
-  checkZoom();
-}
-
 void Gui::checkZoomOne(Button *, void *)
 {
-  zoom_fit->var = 0;
-  zoom_fit->redraw();
   view->zoomOne();
   checkZoom();
 }

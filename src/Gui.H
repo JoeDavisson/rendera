@@ -47,7 +47,6 @@ namespace Gui
   void drawPalette();
   void checkZoomIn(Button *, void *);
   void checkZoomOut(Button *, void *);
-  void checkZoomFit(ToggleButton *, void *);
   void checkZoomOne(Button *, void *);
   void checkZoom();
   void checkGrid(ToggleButton *, void *);

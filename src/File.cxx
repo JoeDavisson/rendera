@@ -308,7 +308,6 @@ int File::loadFile(const char *fn)
   // redraw
 //  Project::selection->reset();
   Project::stroke->clip();
-  Gui::getView()->zoomFit(Gui::getView()->fit);
   Gui::getView()->drawMain(true);
 
   return 0;

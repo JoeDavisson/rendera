@@ -100,14 +100,10 @@ void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
   if(size < 1)
     size = 1;
 
-  const int matrix[3][3] =
-  {
-    {  1,  2,  1 },
-    {  2,  4,  2 },
-    {  1,  2,  1 }
-  };
+  const int matrix[9] = { 0, 1, 0, 1, 2, 1, 0, 1, 0 };
 
   Bitmap temp(bmp->w, bmp->h);
+  bmp->blit(&temp, 0, 0, 0, 0, bmp->w, bmp->h);
 
   if(size < 3)
   {
@@ -125,43 +121,40 @@ void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
           int b = 0;
           int a = 0;
 
-          for(int j = 0; j < 3; j++)
+          for(int i = 0; i < 9; i++)
           {
-            for(int i = 0; i < 3; i++)
-            {
-              const rgba_type rgba = getRgba(bmp->getpixel(x + i - 1, y + j - 1));
+            const rgba_type rgba = getRgba(bmp->getpixel(x + i % 3 - 1, y + i / 3 - 1));
 
-              r += Gamma::fix(rgba.r) * matrix[i][j];
-              g += Gamma::fix(rgba.g) * matrix[i][j];
-              b += Gamma::fix(rgba.b) * matrix[i][j];
-              a += rgba.a;
-            }
+            r += Gamma::fix(rgba.r) << matrix[i];
+            g += Gamma::fix(rgba.g) << matrix[i];
+            b += Gamma::fix(rgba.b) << matrix[i];
+            a += rgba.a;
           }
 
-          r /= 16;
-          g /= 16;
-          b /= 16;
+          r >>= 4;
+          g >>= 4;
+          b >>= 4;
           a /= 9;
 
           r = Gamma::unfix(r);
           g = Gamma::unfix(g);
           b = Gamma::unfix(b);
 
-          int c1 = bmp->getpixel(x, y);
+          const int c1 = bmp->getpixel(x, y);
           const int c2 = makeRgba(r, g, b, a);
-        
-          if(mode == 0)
+
+          switch(mode)
           {
-            temp.setpixel(x, y, Blend::trans(c1, c2, blend));
-          }
-          else if(mode == 1)
-          {
-            temp.setpixel(x, y,
-                          Blend::trans(c1, Blend::keepLum(c2, getl(c1)), blend));
-          }
-          else if(mode == 2)
-          {
-            temp.setpixel(x, y, Blend::transAlpha(c1, c2, blend));
+            case 0:
+              temp.setpixel(x, y, Blend::trans(c1, c2, blend));
+              break;
+            case 1:
+              temp.setpixel(x, y,
+                Blend::trans(c1, Blend::keepLum(c2, getl(c1)), blend));
+              break;
+            case 2:
+              temp.setpixel(x, y, Blend::transAlpha(c1, c2, blend));
+              break;
           }
         }
 
@@ -296,18 +289,18 @@ void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
                                 Gamma::unfix(accum_b / div),
                                 accum_a / div);
 
-        if(mode == 0)
+        switch(mode)
         {
-          bmp->setpixel(x, y, Blend::trans(c1, c2, blend));
-        }
-        else if(mode == 1)
-        {
-          bmp->setpixel(x, y,
-                        Blend::trans(c1, Blend::keepLum(c2, getl(c1)), blend));
-        }
-        else if(mode == 2)
-        {
-          bmp->setpixel(x, y, Blend::transAlpha(c1, c2, blend));
+          case 0:
+            bmp->setpixel(x, y, Blend::trans(c1, c2, blend));
+            break;
+          case 1:
+            bmp->setpixel(x, y,
+              Blend::trans(c1, Blend::keepLum(c2, getl(c1)), blend));
+            break;
+          case 2:
+            bmp->setpixel(x, y, Blend::transAlpha(c1, c2, blend));
+            break;
         }
       }
     }

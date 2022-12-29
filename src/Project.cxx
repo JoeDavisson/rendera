@@ -278,7 +278,7 @@ bool Project::removeImage()
 {
   if(last < 2)
   {
-    Dialog::message("Last Image", "Cannot close last image, there must be at least one.");
+    Dialog::message("Last Image", "Cannot close last image, there\nmust be at least one.");
     return false;
   }
 

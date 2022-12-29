@@ -45,7 +45,6 @@ public:
   void move();
   void zoomIn(int, int);
   void zoomOut(int, int);
-  void zoomFit(bool);
   void zoomOne();
   void scroll(int, int);
   void clipOrigin();
@@ -60,7 +59,9 @@ public:
   int last_ox, last_oy;
   int ox, oy;
   float zoom;
-  bool fit;
+  float prev_ox;
+  float prev_oy;
+  float prev_zoom;
   bool moving;
   bool panning;
   bool grid, gridsnap;

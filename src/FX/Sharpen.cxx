@@ -98,7 +98,7 @@ void Sharpen::init()
   Items::dialog = new DialogWindow(256, 0, "Sharpen");
   Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount %", 0, 0, 100);
   y1 += 24 + 8;
-  Items::amount->value("25");
+  Items::amount->value("10");
   Items::amount->center();
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
