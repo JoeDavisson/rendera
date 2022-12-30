@@ -586,7 +586,7 @@ void View::drawMain(bool refresh)
                     ox, oy, sw - offx, sh - offy,
                     offx * zoom, offy * zoom,
                     dw - offx * zoom, dh - offy * zoom,
-                    overx, overy, bgr_order);
+                    overx, overy, ox, oy, bgr_order);
 
   if(grid)
     drawGrid();

@@ -62,7 +62,7 @@ public:
   void setClip(int, int, int, int);
   void swapRedBlue();
   void blit(Bitmap *, int, int, int, int, int, int);
-  void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, bool);
+  void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, int, int, int, int, bool);
   void flipHorizontal();
   void flipVertical();
   void rotate180();

@@ -774,12 +774,17 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 void Bitmap::pointStretch(Bitmap *dest,
                           int sx, int sy, int sw, int sh,
                           int dx, int dy, int dw, int dh,
-                          int overx, int overy, bool bgr_order)
+                          int overx, int overy,
+                          int ox, int oy,
+                          bool bgr_order)
 {
   const int ax = ((float)dw / sw) * 65536;
   const int ay = ((float)dh / sh) * 65536;
   const int bx = ((float)sw / dw) * 65536;
   const int by = ((float)sh / dh) * 65536;
+
+  ox = (ox * ax) >> 16;
+  oy = (oy * ay) >> 16;
 
   dw -= overx;
   dh -= overy;
@@ -850,7 +855,8 @@ void Bitmap::pointStretch(Bitmap *dest,
         continue;
 
       const int c = *(row[y1] + x1);
-      const int checker = ((x1 >> 4) ^ (y1 >> 4)) & 1 ? 0xa0a0a0 : 0x606060;
+      const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
+                          ? 0x989898 : 0x686868;
 
       *(dest->row[dy + y] + dx + x) =
            convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
