@@ -107,9 +107,9 @@ namespace
   Button *zoom_out;
   StaticText *zoom;
   ToggleButton *grid;
+  ToggleButton *gridsnap;
   InputInt *gridx;
   InputInt *gridy;
-  ToggleButton *gridsnap;
 
   // tools
   Widget *tool;
