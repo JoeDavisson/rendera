@@ -141,12 +141,15 @@ void Project::setTool(int num)
 
 bool Project::enoughMemory(int w, int h)
 {
-  int data = w * h * sizeof(int);
-  int row = h * sizeof(int *);
+  w += overscroll * 2;
+  h += overscroll * 2;
+
+  uint64_t data = w * h * sizeof(int);
+  uint64_t row = h * sizeof(int *);
 
   if((getImageMemory() + data + row) / 1000000 > mem_max)
   {
-    Dialog::message("Error", "Memory limit reached.\nClose images or start program with --mem option\nto increase limit.");
+    Dialog::message("Error", "Memory limit reached: Close images or\nstart program with --mem option\nto increase limit.");
     return false;
   }
   else

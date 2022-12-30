@@ -111,6 +111,9 @@ namespace Resize
     int w = atoi(Items::width->value());
     int h = atoi(Items::height->value());
 
+    if(Project::enoughMemory(w, h) == false)
+      return;
+
     Items::dialog->hide();
     pushUndo();
 
@@ -139,10 +142,10 @@ namespace Resize
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Resize Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 16384);
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 32768);
     Items::width->center();
     y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height", (Fl_Callback *)checkHeight, 1, 16384);
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height", (Fl_Callback *)checkHeight, 1, 32768);
     Items::height->center();
     y1 += 24 + 8;
     Items::width->maximum_size(8);
@@ -495,11 +498,16 @@ namespace Scale
 
   void close()
   {
+    int w = atoi(Items::width->value());
+    int h = atoi(Items::height->value());
+
+    if(Project::enoughMemory(w, h) == false)
+      return;
+
     Items::dialog->hide();
     pushUndo();
-    apply(atoi(Items::width->value()),
-          atoi(Items::height->value()),
-          Items::wrap->value());
+
+    apply(w, h, Items::wrap->value());
   }
 
   void quit()
@@ -514,10 +522,10 @@ namespace Scale
     int hh = 0;
 
     Items::dialog = new DialogWindow(256, 0, "Scale Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 16384);
+    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 32768);
     Items::width->center();
     y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height", (Fl_Callback *)checkHeight, 1, 16384);
+    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height", (Fl_Callback *)checkHeight, 1, 32768);
     Items::height->center();
     y1 += 24 + 8;
     Items::percent = new InputInt(Items::dialog, 0, y1, 96, 24, "%", (Fl_Callback *)checkPercent, 1, 1000);
