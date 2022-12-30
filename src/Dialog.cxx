@@ -1109,8 +1109,8 @@ namespace Message
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(384, 0, "Error");
-    Items::box = new Fl_Box(FL_FLAT_BOX, 64 + 16, 8, 368, 64, "");
+    Items::dialog = new DialogWindow(448, 0, "Error");
+    Items::box = new Fl_Box(FL_FLAT_BOX, 64 + 8, 8, Items::dialog->w() - 32, 64, "");
     Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
     Items::box->labelsize(14); 
     Items::icon = new Widget(Items::dialog, 8, 8, 64, 64, "", images_dialog_info_png);
@@ -1159,8 +1159,8 @@ namespace Choice
   {
     int y1 = 8;
 
-    Items::dialog = new DialogWindow(384, 0, "Error");
-    Items::box = new Fl_Box(FL_FLAT_BOX, 64 + 16, 8, 368, 64, "");
+    Items::dialog = new DialogWindow(448, 0, "Error");
+    Items::box = new Fl_Box(FL_FLAT_BOX, 64 + 8, 8, Items::dialog->w() - 32, 64, "");
     Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
     Items::box->labelsize(14); 
     Items::icon = new Widget(Items::dialog, 8, 8, 64, 64, "", images_dialog_question_png);

@@ -551,7 +551,7 @@ void Gui::init()
   new Separator(bottom, pos, 4, 2, 34, "");
   pos += 8;
   clone = new ToggleButton(bottom, pos, 8, 24, 24,
-                           "Clone (Alt+Click to set target)",
+                           "Clone (Hold Alt to set target)",
                            images_clone_png,
                            (Fl_Callback *)checkClone);
   pos += 24 + 8;
@@ -908,7 +908,7 @@ void Gui::init()
   file_rename->resize(files->x() + 8, files->y() + pos, 112, 24);
   file_rename->callback((Fl_Callback *)checkFileRename);
   file_close = new Button(files, 128, pos, 24, 24,
-                          "Close File", images_close_png,
+                          "Close File (Delete)", images_close_png,
                           (Fl_Callback *)closeFile);
   pos += 24 + 8;
   file_mem = new Fl_Box(FL_FLAT_BOX, files->x() + 8, files->y() + pos, 144, 32, "");
