@@ -1962,8 +1962,9 @@ void Gui::updateMemInfo()
   const int redos =
     Project::undo_max - Project::undo_list[Project::current]->redo_current - 1;
 
-  sprintf(s, "%.1lf %s / %.1lf %s used\n%d undos, %d redos remaining",
-          mem, mem_gb ? "GB" : "MB", max, max_gb ? "GB" : "MB", undos, redos);
+  sprintf(s, "%.1lf %s / %.1lf %s used\n%d/%d undos, %d redos remaining",
+          mem, mem_gb ? "GB" : "MB", max, max_gb ? "GB" : "MB",
+          undos, Project::undo_max - 1, redos);
 
   file_mem->copy_label(s);
 

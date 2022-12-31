@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #endif
 
 #include <getopt.h>
-#include <iostream>
 
 //#include <FL/Fl_Shared_Image.H>
 
@@ -103,22 +102,16 @@ namespace
     Project::fltk_theme_bevel_down = fl_rgb_color(r, g, b);
   }
 
-  struct _help_type {};
-
-  std::ostream &
-  operator << (std::ostream &os, _help_type const &)
+  void printHelp()
   {
-    return
-      os
-      << std::endl << "Usage: rendera [OPTIONS] filename"
-      << std::endl
-      << std::endl << "  --mem=<value>\t\t memory limit (in megabytes)"
-      << std::endl << "  --version\t\t version information"
-      << std::endl << std::endl;
+    printf("Usage: rendera [OPTIONS] filename\n\n");
+    printf("--mem=<value>\t\t memory limit (in megabytes)\n");
+    printf("--undos=<value>\t\t undo limit (1-100)\n");
+    printf("--version\t\t version information\n\n");
   }
 
-  int memory_limit = 2000;
-  int undo_limit = 16;
+  int memory_max = 1000;
+  int undo_max = 16;
 }
 
 int main(int argc, char *argv[])
@@ -127,6 +120,8 @@ int main(int argc, char *argv[])
 
   // parse command line
   int option_index = 0;
+  bool exit = false;
+  bool custom_settings = false;
 
   while(true)
   {
@@ -141,23 +136,32 @@ int main(int argc, char *argv[])
         switch(option_index)
         {
           case OPTION_HELP:
-            std::cout << _help_type();
-            return EXIT_SUCCESS;
+            printHelp();
+            exit = true;
+            break;
 
           case OPTION_VERSION:
-            std::cout << PACKAGE_STRING << std::endl;
-            return EXIT_SUCCESS;
+            printf("Rendera %s\n\n", PACKAGE_STRING);
+            printf("This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n");
+            exit = true;
+            break;
 
           case OPTION_MEM:
             if(optarg)
             {
-              memory_limit = atoi(optarg);
-              printf("Image memory limit set to: %d MB\n", memory_limit);
+              memory_max = atoi(optarg);
+
+              if(memory_max < 16)
+                memory_max = 16;
+
+              printf("Image memory limit set to: %d MB\n", memory_max);
+              custom_settings = true;
+              exit = false;
             }
             else
             {
-              std::cerr << _help_type();
-              return EXIT_FAILURE;
+              printHelp();
+              exit = true;
             }
             
             break;
@@ -165,20 +169,31 @@ int main(int argc, char *argv[])
           case OPTION_UNDOS:
             if(optarg)
             {
-              undo_limit = atoi(optarg);
-              printf("Undo levels set to: %d\n", undo_limit);
+              undo_max = atoi(optarg);
+
+              if(undo_max < 1)
+                undo_max = 1;
+
+              if(undo_max > 100)
+                undo_max = 100;
+
+              printf("Undo levels set to: %d\n", undo_max);
+              custom_settings = true;
+              exit = false;
             }
             else
             {
-              std::cerr << _help_type();
-              return EXIT_FAILURE;
+              printHelp();
+              exit = true;
+              break;
             }
             
             break;
 
           default:
-            std::cerr << _help_type();
-            return EXIT_FAILURE;
+            printHelp();
+            exit = true;
+            break;
         }
 
         break;
@@ -186,23 +201,32 @@ int main(int argc, char *argv[])
 
       default:
       {
-        std::cerr << _help_type();
-        return EXIT_FAILURE ;
+        printHelp();
+        exit = true;
+        break;
       }
     }
+  }
+
+  if(exit == true)
+  {
+    #ifndef WIN32
+      return 0;
+    #else
+    #endif
   }
 
   // fltk related inits
   Fl::visual(FL_DOUBLE | FL_RGB);
   Fl::scheme("gtk+");
 
-  // program inits
-  Project::init(memory_limit, undo_limit);
+  // program initalization
+  Project::init(memory_max, undo_max);
   File::init();
   FX::init();
-  Dialog::init();
   Transform::init();
   Gui::init();
+  Dialog::init();
 
   //Fl_Shared_Image::add_handler(File::previewJpeg);
   //Fl_Shared_Image::add_handler(File::previewPng);
@@ -223,6 +247,16 @@ int main(int argc, char *argv[])
   // delay showing main gui until after all arguments are checked
   Gui::show();
   Gui::addFile("new");
+
+    if(custom_settings == true)
+    {
+      #ifdef WIN32
+      char s[256];
+      snprintf(s, sizeof(s), "Rendera %s\nImage memory limit set to: %d MB\nUndo levels set to: %d", PACKAGE_STRING, memory_max, undo_max);
+
+      Dialog::message("Custom Settings", s);
+      #endif
+    }
 
 /*
   // view theme palette (for testing)

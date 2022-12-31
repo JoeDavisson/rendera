@@ -57,9 +57,12 @@ namespace Project
 
   Bitmap **bmp_list;
   Undo **undo_list;
+
+  // these store the pan/zoom information for each image
   int ox_list[256];
   int oy_list[256];
   float zoom_list[256];
+
   const int max_images = 256;
   int current = 0;
   int last = 0;
@@ -90,7 +93,7 @@ namespace Project
 void Project::init(int memory_limit, int undo_limit)
 {
   mem_max = memory_limit;
-  undo_max = undo_limit;
+  undo_max = undo_limit + 1;
 
   bmp_list = new Bitmap *[max_images];
   undo_list = new Undo *[max_images];
