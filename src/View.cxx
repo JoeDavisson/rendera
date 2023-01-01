@@ -262,34 +262,12 @@ int View::handle(int event)
     case FL_ENTER:
     {
       changeCursor();
-/*
-      switch(Gui::getTool())
-      {
-        case Tool::GETCOLOR:
-        case Tool::FILL:
-          window()->cursor(FL_CURSOR_CROSS);
-          break;
-        case Tool::CROP:
-        case Tool::SELECT:
-          window()->cursor(FL_CURSOR_CROSS);
-          Project::tool->redraw(this);
-          break;
-        case Tool::OFFSET:
-          window()->cursor(FL_CURSOR_HAND);
-          break;
-        default:
-          window()->cursor(FL_CURSOR_DEFAULT);
-          break;
-      }
-*/
-
       return 1;
     }
 
     case FL_LEAVE:
     {
       window()->cursor(FL_CURSOR_DEFAULT);
-
       return 1;
     }
 
@@ -665,7 +643,7 @@ void View::changeCursor()
       window()->cursor(FL_CURSOR_HAND);
       break;
     default:
-      window()->cursor(FL_CURSOR_DEFAULT);
+      window()->cursor(FL_CURSOR_CROSS);
       break;
   }
 }
