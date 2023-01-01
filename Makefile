@@ -10,7 +10,7 @@ PLATFORM=linux
 #PLATFORM=mingw32
 #PLATFORM=mingw64
 
-VERSION="0.2.3"
+VERSION="0.2.4"
 #VERSION=$(shell git describe --always --dirty)
 #VERSION=$(shell git describe --always)
 
