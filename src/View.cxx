@@ -288,6 +288,8 @@ int View::handle(int event)
             // update clone target
             Clone::x = imgx;
             Clone::y = imgy;
+            Clone::dx = 0;
+            Clone::dy = 0;
             Clone::state = 1;
             Clone::moved = true;
             redraw();
@@ -652,31 +654,12 @@ void View::drawCloneCursor()
   int dx = Clone::dx;
   int dy = Clone::dy;
   int state = Clone::state;
-  int mirror = Clone::mirror;
-  int w = Project::bmp->w - 1;
-  int h = Project::bmp->h - 1;
 
   int x1 = imgx - dx;
   int y1 = imgy - dy;
 
   if(Project::tool->isActive())
   {
-    switch(mirror)
-    {
-      case 0:
-        break;
-      case 1:
-        x1 = (w - x1) - (w - x * 2);
-        break;
-      case 2:
-        y1 = (h - y1) - (h - y * 2);
-        break;
-      case 3:
-        x1 = (w - x1) - (w - x * 2);
-        y1 = (h - y1) - (h - y * 2);
-        break;
-    }
-
     x1 = (x1 - ox) * zoom;
     y1 = (y1 - oy) * zoom;
   }
@@ -700,6 +683,8 @@ void View::drawCloneCursor()
   backbuf->rect(x1 - 2, y1 - 10, x1 + 2, y1 + 10, makeRgb(0, 0, 0), 160);
   backbuf->xorRectfill(x1 - 8, y1, x1 + 8, y1);
   backbuf->xorRectfill(x1, y1 - 8, x1, y1 + 8);
+  backbuf->rectfill(x1 - 8, y1, x1 + 8, y1, makeRgb(255, 0, 255), 128);
+  backbuf->rectfill(x1, y1 - 8, x1, y1 + 8, makeRgb(255, 0, 255), 128);
 
   updateView(oldx1 - 12, oldy1 - 12,
              this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
@@ -959,7 +944,7 @@ void View::saveCoords()
 void View::draw()
 {
 
-  if(Project::tool->isActive())
+  if(Project::tool->isActive() && Clone::active == false)
   {
     int blitx = Project::stroke->blitx;
     int blity = Project::stroke->blity;

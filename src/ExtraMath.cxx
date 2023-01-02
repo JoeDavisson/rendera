@@ -51,15 +51,15 @@ void ExtraMath::forwardFFT(float *real, float *imag, int size)
     j += k;
   }
 
-  for(int k = 1; k <= (int)(logf(size) / logf(2)); k++)
+  for(int k = 1; k <= (int)(std::log(size) / std::log(2)); k++)
   {
-    const int le = (int)(powf(2, k));
+    const int le = (int)(std::pow(2, k));
     const int le2 = le / 2;
 
     float ur = 1;
     float ui = 0;
-    float sr = cosf(M_PI / le2);
-    float si = -sinf(M_PI / le2);
+    float sr = std::cos(M_PI / le2);
+    float si = -std::sin(M_PI / le2);
 
     for(int j = 1; j <= le2; j++)
     {

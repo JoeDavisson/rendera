@@ -29,8 +29,6 @@ namespace Clone
   int dx = 0;
   int dy = 0;
   int state = 0;
-  bool wrap = false;
-  int mirror = 0;
   bool active = false;
   bool moved = false;
   Bitmap *bmp = 0;

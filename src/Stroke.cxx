@@ -874,6 +874,7 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
   const int zr = (int)((1.0 / zoom) * 65536);
   const int color = convertFormat(Project::brush->color,
                                   Gui::getView()->bgr_order);
+  const int clone_color = makeRgb(255, 0, 255);
   const int trans = Project::brush->trans;
 
   if(xx1 < 0)
@@ -913,11 +914,39 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 
       if(map->getpixel(xm, ym))
       {
-        *p = blendFast(*p, color, trans);
+        if(Clone::active == false)
+        {
+          *p = blendFast(*p, color, trans);
+
+          if(isEdge(map, xm, ym))
+            *p = blendFast(*p, checker, 128);
+        }
+        else
+        {
+          int cx = x - Clone::dx * zoom;
+          int cy = y - Clone::dy * zoom;
+
+          cx = clamp(cx, backbuf->w - 1);
+          cy = clamp(cy, backbuf->h - 1);
+
+          backbuf->setpixel(cx, cy, blendFast(backbuf->getpixel(cx, cy), clone_color, 192));
+          if(isEdge(map, xm, ym))
+          {
+            *p = blendFast(*p, checker, 128);
+            backbuf->setpixel(cx, cy, blendFast(backbuf->getpixel(cx, cy), checker, 128));
+          }
+        }
+      }
+/*
+      if(map->getpixel(xm, ym))
+      {
+        if(Clone::active == false)
+          *p = blendFast(*p, color, trans);
 
         if(isEdge(map, xm, ym))
           *p = blendFast(*p, checker, 128);
       }
+*/
 
       p++;
     }

@@ -36,6 +36,8 @@ void Painting::apply()
   Bitmap *bmp = Project::bmp;
   int amount = atoi(Items::amount->value());
 
+  Gui::showProgress(bmp->h);
+
   for(int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;

@@ -30,8 +30,6 @@ namespace Clone
   extern int dx;
   extern int dy;
   extern int state;
-  extern bool wrap;
-  extern int mirror;
   extern bool active;
   extern bool moved;
   extern Bitmap *bmp;

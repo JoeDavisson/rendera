@@ -449,24 +449,10 @@ void Bitmap::setpixel(const int x, const int y, const int c2, const int t)
 //  if(Project::brush->alpha_mask)
 //    t = scaleVal(t, 255 - geta(getpixel(x, y)));
 
-  switch(Clone::wrap | (Clone::active << 1))
-  {
-    case 0:
-      setpixelSolid(x, y, c2, t);
-      break;
-    case 1:
-      setpixelWrap(x, y, c2, t);
-      break;
-    case 2:
-      setpixelClone(x, y, c2, t);
-      break;
-    case 3:
-      setpixelWrapClone(x, y, c2, t);
-      break;
-    default:
-      setpixelSolid(x, y, c2, t);
-      break;
-  }
+  if(Clone::active)
+    setpixelClone(x, y, c2, t);
+  else
+    setpixelSolid(x, y, c2, t);
 }
 
 void Bitmap::setpixelSolid(const int x, const int y, const int c2, const int t)
@@ -475,25 +461,6 @@ void Bitmap::setpixelSolid(const int x, const int y, const int c2, const int t)
     return;
 
   int *c1 = row[y] + x;
-
-  *c1 = Blend::current(*c1, c2, t);
-}
-
-void Bitmap::setpixelWrap(const int x, const int y, const int c2, const int t)
-{
-  int x1 = x; 
-  int y1 = y; 
-
-  while(x1 < cl)
-    x1 += cw;
-  while(x1 > cr)
-    x1 -= cw;
-  while(y1 < ct)
-    y1 += ch;
-  while(y1 > cb)
-    y1 -= ch;
-
-  int *c1 = row[y1] + x1;
 
   *c1 = Blend::current(*c1, c2, t);
 }
@@ -507,89 +474,6 @@ void Bitmap::setpixelClone(const int x, const int y, const int, const int t)
 
   int x1 = x - Clone::dx;
   int y1 = y - Clone::dy;
-
-  const int w1 = w - 1;
-  const int h1 = h - 1;
-
-  switch(Clone::mirror)
-  {
-    case 0:
-      break;
-    case 1:
-      x1 = (w1 - x1) - (w1 - Clone::x * 2);
-      break;
-    case 2:
-      y1 = (h1 - y1) - (h1 - Clone::y * 2);
-      break;
-    case 3:
-      x1 = (w1 - x1) - (w1 - Clone::x * 2);
-      y1 = (h1 - y1) - (h1 - Clone::y * 2);
-      break;
-  }
-
-  Stroke *stroke = Project::stroke;
-
-  int c2;
-
-  if(x1 > stroke->x1 && x1 < stroke->x2 &&
-     y1 > stroke->y1 && y1 < stroke->y2)
-  {
-    c2 = Clone::bmp->getpixel(x1 - stroke->x1 - 1, y1 - stroke->y1 - 1);
-  }
-  else
-  {
-    c2 = getpixel(x1, y1);
-  }
-
-  *c1 = Blend::current(*c1, c2, t);
-}
-
-void Bitmap::setpixelWrapClone(const int x, const int y, const int, const int t)
-{
-  int x1 = x; 
-  int y1 = y;
-
-  while(x1 < cl)
-    x1 += cw;
-  while(x1 > cr)
-    x1 -= cw;
-  while(y1 < ct)
-    y1 += ch;
-  while(y1 > cb)
-    y1 -= ch;
-
-  int *c1 = row[y1] + x1;
-
-  x1 -= Clone::dx;
-  y1 -= Clone::dy;
-
-  const int w1 = w - 1;
-  const int h1 = h - 1;
-
-  switch(Clone::mirror)
-  {
-    case 0:
-      break;
-    case 1:
-      x1 = (w1 - x1) - (w1 - Clone::x * 2);
-      break;
-    case 2:
-      y1 = (h1 - y1) - (h1 - Clone::y * 2);
-      break;
-    case 3:
-      x1 = (w1 - x1) - (w1 - Clone::x * 2);
-      y1 = (h1 - y1) - (h1 - Clone::y * 2);
-      break;
-  }
-
-  while(x1 < cl)
-    x1 += cw;
-  while(x1 > cr)
-    x1 -= cw;
-  while(y1 < ct)
-    y1 += ch;
-  while(y1 > cb)
-    y1 -= ch;
 
   Stroke *stroke = Project::stroke;
 

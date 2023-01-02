@@ -74,9 +74,7 @@ namespace Gui
   void checkTransInput(Widget *, void *);
   void checkTrans(Widget *, void *);
   void checkBlend(Widget *, void *);
-  void checkWrap(Widget *, void *);
   void checkClone(Widget *, void *);
-  void checkMirror(Widget *, void *);
   void checkOrigin(Widget *, void *);
   void checkConstrain(Widget *, void *);
   void checkCropValues(int, int, int, int);

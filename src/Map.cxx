@@ -77,7 +77,7 @@ void Map::invert()
     data[i] = 255 - data[i];
 }
 
-void Map::setpixel(const int x, const int y, const int c)
+void Map::setpixel(int x, int y, int c)
 {
   if(x < 0 || x >= w || y < 0 || y >= h)
     return;
@@ -85,7 +85,7 @@ void Map::setpixel(const int x, const int y, const int c)
   *(row[y] + x) = c & 0xff;
 }
 
-int Map::getpixel(const int x, const int y)
+int Map::getpixel(int x, int y)
 {
   if(x < 0 || x >= w || y < 0 || y >= h)
     return 0;
@@ -439,7 +439,7 @@ void Map::polyfill(int *px, int *py, int count, int y1, int y2, int c)
 }
 
 // add weighted value to real pixel
-void Map::blendAA(const int x, const int y, const int c2)
+void Map::blendAA(int x, int y, int c2)
 {
   int c1 = *(row[y] + x);
 
@@ -453,7 +453,7 @@ void Map::blendAA(const int x, const int y, const int c2)
 
 // draw antialiased pixel
 // each real pixel is treated like 4x4 virtual pixels
-void Map::setpixelAA(const int x, const int y, const int c)
+void Map::setpixelAA(int x, int y, int c)
 {
   if(c == 0 ||
     x < 0 || x >= ((w - 1) << 2) ||

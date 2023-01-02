@@ -185,9 +185,7 @@ namespace
   Fl_Box *file_mem;
 
   // bottom
-  ToggleButton *wrap;
   ToggleButton *clone;
-  Widget *mirror;
   ToggleButton *origin;
   ToggleButton *constrain;
 
@@ -463,11 +461,6 @@ void Gui::init()
   menubar->add("F&X/Artistic/Marble...", 0,
     (Fl_Callback *)Marble::begin, 0, 0);
 
-  menubar->add("F&X/FFT/Forward FFT", 0,
-    (Fl_Callback *)ForwardFFT::begin, 0, 0);
-  menubar->add("F&X/FFT/Inverse FFT", 0,
-    (Fl_Callback *)InverseFFT::begin, 0, 0);
-
   menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
 
@@ -544,21 +537,13 @@ void Gui::init()
   // bottom
   bottom = new Group(160, window->h() - status->h() - 40, window->w() - 304 - 80, 40, "");
   pos = 8;
-  wrap = new ToggleButton(bottom, pos, 8, 24, 24,
-                          "Wrap Edges", images_wrap_png,
-                          (Fl_Callback *)checkWrap);
-  pos += 24 + 6;
   new Separator(bottom, pos, 4, 2, 34, "");
   pos += 8;
   clone = new ToggleButton(bottom, pos, 8, 24, 24,
-                           "Clone (Hold Alt to set target)",
+                           "Clone (Alt+Click to set target)",
                            images_clone_png,
                            (Fl_Callback *)checkClone);
   pos += 24 + 8;
-  mirror = new Widget(bottom, pos, 8, 96, 24,
-                      "Mirror", images_mirror_png, 24, 24,
-                      (Fl_Callback *)checkMirror);
-  pos += 96 + 6;
   new Separator(bottom, pos, 4, 2, 34, "");
   pos += 8;
   origin = new ToggleButton(bottom, pos, 8, 24, 24,
@@ -1546,19 +1531,9 @@ void Gui::checkBlend(Widget *, void *)
   checkColor(0, 0);
 }
 
-void Gui::checkWrap(Widget *, void *var)
-{
-  Clone::wrap = *(int *)var;
-}
-
 void Gui::checkClone(Widget *, void *var)
 {
   Clone::active = *(int *)var;
-}
-
-void Gui::checkMirror(Widget *, void *var)
-{
-  Clone::mirror = *(int *)var;
 }
 
 void Gui::checkOrigin(Widget *, void *var)

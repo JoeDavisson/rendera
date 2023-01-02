@@ -76,8 +76,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "StainedGlass.H"
 #include "Painting.H"
 #include "Marble.H"
-#include "ForwardFFT.H"
-#include "InverseFFT.H"
 #include "Dither.H"
 
 namespace FX

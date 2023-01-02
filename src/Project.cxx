@@ -249,11 +249,13 @@ void Project::resizeImage(int w, int h)
   if(enoughMemory(w, h) == false)
     return;
 
-  Bitmap *temp = new Bitmap(w, h);
-  bmp->blit(temp, 0, 0, 0, 0, bmp->cw, bmp->ch);
+  Bitmap temp(w, h);
+  bmp->blit(&temp, 0, 0, 0, 0, bmp->w, bmp->h);
 
-  delete bmp;
-  bmp = temp;
+  delete bmp_list[current];
+  bmp_list[current] = new Bitmap(w, h);
+  temp.blit(bmp_list[current], 0, 0, 0, 0, temp.w, temp.h);
+  bmp = bmp_list[current];
 
   delete map;
   map = new Map(bmp->w, bmp->h);
