@@ -932,8 +932,8 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
           backbuf->setpixel(cx, cy, blendFast(backbuf->getpixel(cx, cy), clone_color, 192));
           if(isEdge(map, xm, ym))
           {
-            *p = blendFast(*p, checker, 128);
-            backbuf->setpixel(cx, cy, blendFast(backbuf->getpixel(cx, cy), checker, 128));
+            *p = blendFast(*p, checker, 64);
+            backbuf->setpixel(cx, cy, blendFast(backbuf->getpixel(cx, cy), checker, 64));
           }
         }
       }

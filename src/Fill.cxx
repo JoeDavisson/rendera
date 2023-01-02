@@ -52,7 +52,7 @@ namespace
   // returns true if pixel is on a boundary
   bool isEdge(Map *map, const int x, const int y)
   {
-    if(x < 1 || x > map->w - 1 || y < 1 || y > map->h - 1)
+    if(x < 1 || x > map->w - 2 || y < 1 || y > map->h - 2)
       return 1;
 
     if( *(map->row[y - 1] + x) &&

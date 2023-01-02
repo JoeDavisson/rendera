@@ -412,7 +412,7 @@ void Map::polyfill(int *px, int *py, int count, int y1, int y2, int c)
 {
   std::vector<int> nodex(65536);
 
-  for(int y = y1; y < y2; y++)
+  for(int y = y1; y <= y2; y++)
   {
     int nodes = 0;
     int j = count - 1;
@@ -768,7 +768,7 @@ void Map::polyfillAA(int *px, int *py, int count, int y1, int y2, int c)
 
   std::vector<int> nodex(65536);
 
-  for(int y = (y1 << 2); y < (y2 << 2); y++)
+  for(int y = (y1 << 2); y <= (y2 << 2); y++)
   {
     int j = count - 1;
     int nodes = 0;
