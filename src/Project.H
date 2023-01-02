@@ -77,7 +77,6 @@ namespace Project
   extern Tool *tool;
 
   extern int mode;
-  extern int overscroll;
   extern int theme;
   extern char theme_path[];
   extern int theme_highlight_color;

@@ -110,7 +110,7 @@ namespace
     printf("--version\t\t version information\n\n");
   }
 
-  int memory_max = 1000;
+  int memory_max = 4000;
   int undo_max = 16;
 }
 

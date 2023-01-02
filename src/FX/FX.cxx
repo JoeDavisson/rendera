@@ -25,31 +25,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 void FX::drawPreview(Bitmap *src, Bitmap *dest)
 {
-  int overscroll = Project::overscroll;
-
   if(src->w >= src->h)
   {
-    float aspect = (float)(src->h - overscroll * 2) / (src->w - overscroll * 2);
+    float aspect = (float)src->h / src->w;
     int height = (float)dest->w * aspect;
 
     dest->clear(getFltkColor(FL_BACKGROUND2_COLOR));
-    src->fastStretch(dest, overscroll, overscroll,
-                     src->w - overscroll * 2, src->h - overscroll * 2,
+    src->fastStretch(dest, 0, 0, src->w, src->h,
                      0, (dest->h - height) / 2, dest->w, height, false);
     dest->rect(0, (dest->h - height) / 2, dest->w,
               ((dest->h - height) / 2) + height, makeRgb(0, 0, 0), 0);
   }
   else
   {
-    float aspect = (float)(src->w - overscroll * 2) / (src->h - overscroll * 2);
+    float aspect = (float)src->w / src->h;
     int width = (float)dest->h * aspect;
 
     dest->clear(getFltkColor(FL_BACKGROUND2_COLOR));
-    src->fastStretch(dest, overscroll, overscroll,
-                     src->w - overscroll * 2, src->h - overscroll * 2,
+    src->fastStretch(dest, 0, 0, src->w, src->h,
                      (dest->w - width) / 2, 0, width, dest->w, false);
-      dest->rect((dest->w - width) / 2, 0,
-                ((dest->w - width) / 2) + width, dest->w, makeRgb(0, 0, 0), 0);
+    dest->rect((dest->w - width) / 2, 0,
+              ((dest->w - width) / 2) + width, dest->w, makeRgb(0, 0, 0), 0);
   }
 
   dest->rect(0, 0, dest->w - 1, dest->h - 1, makeRgb(0, 0, 0), 128);

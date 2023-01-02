@@ -44,12 +44,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace
 {
   Bitmap *bmp;
-  int overscroll;
 
   void pushUndo()
   {
     bmp = Project::bmp;
-    overscroll = bmp->overscroll;
     Project::undo->push();
   }
 }
@@ -118,12 +116,10 @@ namespace Resize
     pushUndo();
 
     Bitmap *bmp = Project::bmp;
-    int overscroll = bmp->overscroll;
-    Bitmap *temp = new Bitmap(w, h, overscroll);
+    Bitmap *temp = new Bitmap(w, h);
 
     temp->rectfill(temp->cl, temp->ct, temp->cr, temp->cb, makeRgba(0, 0, 0, 0), 0);
-    bmp->blit(temp, overscroll, overscroll, overscroll, overscroll,
-                    bmp->cw, bmp->ch);
+    bmp->blit(temp, 0, 0, 0, 0, bmp->cw, bmp->ch);
 
     Project::replaceImageFromBitmap(temp);
 
@@ -205,13 +201,12 @@ namespace Scale
   void apply(const int dw, const int dh, const bool wrap_edges)
   {
     Bitmap *bmp = Project::bmp;
-    int overscroll = bmp->overscroll;
-    const int sx = overscroll;
-    const int sy = overscroll;
+    const int sx = 0;
+    const int sy = 0;
     const int sw = bmp->cw;
     const int sh = bmp->ch;
-    const int dx = overscroll;
-    const int dy = overscroll;
+    const int dx = 0;
+    const int dy = 0;
 
     if(sw < 1 || sh < 1)
       return;
@@ -219,7 +214,7 @@ namespace Scale
     if(dw < 1 || dh < 1)
       return;
 
-    Bitmap *temp = new Bitmap(dw, dh, overscroll);
+    Bitmap *temp = new Bitmap(dw, dh);
 
     const float ax = ((float)sw / dw);
     const float ay = ((float)sh / dh);
@@ -403,7 +398,7 @@ namespace Scale
               if(xx > sw - 1)
                 xx = sw - 1;
 
-              const rgba_type rgba = getRgba(*(bmp->row[sy + yy] + sx + xx));
+              const rgba_type rgba = getRgba(bmp->getpixel(sx + xx, sy + yy));
 
               r[i][j] = Gamma::fix(rgba.r);
               g[i][j] = Gamma::fix(rgba.g);
@@ -573,7 +568,7 @@ namespace RotateArbitrary
     Fl_Button *cancel;
   }
 
-  void apply(double angle, double scale, int overscroll/*, bool tile*/)
+  void apply(double angle, double scale)
   {
     Bitmap *bmp = Project::bmp;
 
@@ -634,7 +629,7 @@ namespace RotateArbitrary
     int bh = (by2 - by1) + 1;
 
     // create image with new size
-    Bitmap *temp = new Bitmap(bw, bh, overscroll);
+    Bitmap *temp = new Bitmap(bw, bh);
     temp->rectfill(temp->cl, temp->ct, temp->cr, temp->cb,
                    makeRgba(0, 0, 0, 0), 0);
 
@@ -711,8 +706,7 @@ namespace RotateArbitrary
     Items::dialog->hide();
     pushUndo();
 
-    apply(atof(Items::angle->value()), atof(Items::scale->value()),
-          Project::overscroll/*, Items::tile->value()*/);
+    apply(atof(Items::angle->value()), atof(Items::scale->value()));
   }
 
   void quit()

@@ -27,13 +27,11 @@ class Bitmap
 {
 public:
   Bitmap(int, int);
-  Bitmap(int, int, int);
   Bitmap(int, int, int *);
   ~Bitmap();
 
   int x, y, w, h;
   int cl, cr, ct, cb, cw, ch;
-  int overscroll;
   int active;
   int *data;
   int **row;

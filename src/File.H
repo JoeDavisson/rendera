@@ -30,11 +30,11 @@ namespace File
   void init();
   void load(Fl_Widget *, void *);
   int loadFile(const char *);
-  Bitmap *loadJpeg(const char *, int);
-  Bitmap *loadBmp(const char *, int);
-  Bitmap *loadTarga(const char *, int);
-  Bitmap *loadPng(const char *, int);
-  Bitmap *loadPngFromArray(const unsigned char *, int);
+  Bitmap *loadJpeg(const char *);
+  Bitmap *loadBmp(const char *);
+  Bitmap *loadTarga(const char *);
+  Bitmap *loadPng(const char *);
+  Bitmap *loadPngFromArray(const unsigned char *);
 
   void save(Fl_Widget *, void *);
   int saveBmp(Bitmap *, const char *);

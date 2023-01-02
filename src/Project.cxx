@@ -80,7 +80,6 @@ namespace Project
   Text *text = new Text();
   Fill *fill = new Fill();
 
-  int overscroll = 64;
   int theme = THEME_DARK;
   char theme_path[PATH_MAX];
   int theme_highlight_color;
@@ -144,9 +143,6 @@ void Project::setTool(int num)
 
 bool Project::enoughMemory(int w, int h)
 {
-  w += overscroll * 2;
-  h += overscroll * 2;
-
   uint64_t data = w * h * sizeof(int);
   uint64_t row = h * sizeof(int *);
 
@@ -175,7 +171,7 @@ int Project::newImage(int w, int h)
   delete bmp_list[last];
   delete undo_list[last];
 
-  bmp_list[last] = new Bitmap(w, h, overscroll);
+  bmp_list[last] = new Bitmap(w, h);
   undo_list[last] = new Undo();
   bmp = bmp_list[last];
   undo = undo_list[last];
@@ -226,7 +222,7 @@ void Project::replaceImage(int w, int h)
     return;
 
   delete bmp_list[current];
-  bmp_list[current] = new Bitmap(w, h, overscroll);
+  bmp_list[current] = new Bitmap(w, h);
   bmp = bmp_list[current];
 
   delete map;
@@ -253,9 +249,8 @@ void Project::resizeImage(int w, int h)
   if(enoughMemory(w, h) == false)
     return;
 
-  Bitmap *temp = new Bitmap(w, h, overscroll);
-  bmp->blit(temp, overscroll, overscroll, overscroll, overscroll,
-            bmp->cw, bmp->ch);
+  Bitmap *temp = new Bitmap(w, h);
+  bmp->blit(temp, 0, 0, 0, 0, bmp->cw, bmp->ch);
 
   delete bmp;
   bmp = temp;

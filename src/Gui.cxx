@@ -1686,7 +1686,7 @@ void Gui::checkSelectionFromCurrentImage()
   Bitmap *bmp = Project::bmp;
   Bitmap *temp = new Bitmap(bmp->cw, bmp->ch);
 
-  bmp->blit(temp, bmp->overscroll, bmp->overscroll, 0, 0, temp->w, temp->h);
+  bmp->blit(temp, 0, 0, 0, 0, temp->w, temp->h);
   Project::select_bmp = temp;
   Project::selection->reload();
 
@@ -1697,9 +1697,9 @@ void Gui::checkSelectionFromCurrentImage()
 void Gui::checkSelectionToNewImage()
 {
   Bitmap *select_bmp = Project::select_bmp;
-  Bitmap *temp = new Bitmap(select_bmp->w, select_bmp->h, Project::overscroll);
+  Bitmap *temp = new Bitmap(select_bmp->w, select_bmp->h);
   
-  select_bmp->blit(temp, 0, 0, Project::overscroll, Project::overscroll, temp->w, temp->h);
+  select_bmp->blit(temp, 0, 0, 0, 0, temp->w, temp->h);
 
   if(Project::newImageFromBitmap(temp) != -1)
     addFile("From Selection");

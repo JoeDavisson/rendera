@@ -126,7 +126,7 @@ void Undo::pop()
   int w = undo_stack[undo_current]->w;
   int h = undo_stack[undo_current]->h;
 
-  Project::replaceImage(w - Project::overscroll * 2, h - Project::overscroll * 2);
+  Project::replaceImage(w, h);
 
   undo_stack[undo_current]->blit(Project::bmp, 0, 0, 0, 0, w, h);
 
@@ -180,7 +180,7 @@ void Undo::popRedo()
   int w = redo_stack[redo_current]->w;
   int h = redo_stack[redo_current]->h;
 
-  Project::replaceImage(w - Project::overscroll * 2, h - Project::overscroll * 2);
+  Project::replaceImage(w, h);
 
   redo_stack[redo_current]->blit(Project::bmp, 0, 0, 0, 0, w, h);
 

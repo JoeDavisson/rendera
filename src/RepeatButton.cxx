@@ -41,7 +41,7 @@ RepeatButton::RepeatButton(Fl_Group *g, int x, int y, int w, int h,
 
   group = g;
 
-  if(!(bitmap = File::loadPngFromArray(array, 0)))
+  if(!(bitmap = File::loadPngFromArray(array)))
   {
     fl_message_title("Error");
 //    fl_message("Could not load %s, exiting.", filename);

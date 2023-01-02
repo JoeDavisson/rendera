@@ -69,27 +69,18 @@ namespace
 
     const int gridx = view->gridx;
     const int gridy = view->gridy;
-    const int overscroll = Project::overscroll;
 
     if(view->gridsnap)
     {
-      *x1 -= overscroll;
       *x1 -= *x1 % gridx;
-      *x1 += overscroll;
 
-      *y1 -= overscroll;
       *y1 -= *y1 % gridy;
-      *y1 += overscroll;
 
-      *x2 -= overscroll;
       *x2 += 1;
       *x2 -= *x2 % gridx;
-      *x2 += overscroll - 1;
 
-      *y2 -= overscroll;
       *y2 += 1;
       *y2 -= *y2 % gridy;
-      *y2 += overscroll - 1;
     }
 
     if(*x1 < Project::bmp->cl)
@@ -173,8 +164,7 @@ namespace
     Project::bmp->blit(temp, beginx, beginy, 0, 0, w, h);
 
     Project::replaceImage(w, h);
-    temp->blit(Project::bmp, 0, 0,
-               Project::overscroll, Project::overscroll, w, h);
+    temp->blit(Project::bmp, 0, 0, 0, 0, w, h);
     delete temp;
 
     view->zoom = 1;
@@ -375,19 +365,10 @@ void Crop::drag(View *view)
 
   absrect(view, &temp_beginx, &temp_beginy, &temp_lastx, &temp_lasty);
 
-  const int overscroll = Project::overscroll;
-  int x = temp_beginx - overscroll;
-  int y = temp_beginy - overscroll;
+  int x = temp_beginx;
+  int y = temp_beginy;
   int w = abs(temp_lastx - temp_beginx) + 1;
   int h = abs(temp_lasty - temp_beginy) + 1;
-
-/*
-  const int overscroll = Project::overscroll;
-  const int x = beginx - overscroll;
-  const int y = beginy - overscroll;
-  const int w = abs(lastx - beginx) + 1;
-  const int h = abs(lasty - beginy) + 1;
-*/
 
   Gui::checkCropValues(x, y, w, h);
 }
@@ -403,9 +384,8 @@ void Crop::release(View *view)
 
   redraw(view);
 
-  const int overscroll = Project::overscroll;
-  const int x = beginx - overscroll;
-  const int y = beginy - overscroll;
+  const int x = beginx;
+  const int y = beginy;
   const int w = abs(lastx - beginx) + 1;
   const int h = abs(lasty - beginy) + 1;
 

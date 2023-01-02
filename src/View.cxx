@@ -181,8 +181,6 @@ int View::handle(int event)
   if(rendering)
     return 0;
 
-  int overscroll = Project::overscroll;
-
   mousex = Fl::event_x() - x();
   mousey = Fl::event_y() - y();
 
@@ -197,19 +195,15 @@ int View::handle(int event)
 	if((Project::stroke->type != Stroke::FREEHAND)
           && (Project::stroke->type != Stroke::REGION))
 	{
-          imgx -= overscroll;
           if(imgx % gridx < gridx / 2)
             imgx -= imgx % gridx;
           else
             imgx += gridx - imgx % gridx - 1;
-          imgx += overscroll;
 
-          imgy -= overscroll;
           if(imgy % gridy < gridy / 2)
             imgy -= imgy % gridy;
           else
             imgy += gridy - imgy % gridy - 1;
-          imgy += overscroll;
         }
       }
       break;
@@ -217,19 +211,15 @@ int View::handle(int event)
     case Tool::SELECT:
       if(gridsnap)
       {
-        imgx -= overscroll;
         if(imgx % gridx < gridx / 2)
           imgx -= imgx % gridx;
 //        else
 //          imgx += gridx - imgx % gridx - 1;
-        imgx += overscroll;
 
-        imgy -= overscroll;
         if(imgy % gridy < gridy / 2)
           imgy -= imgy % gridy;
 //        else
 //          imgy += gridy - imgy % gridy - 1;
-        imgy += overscroll;
       }
       break;
     default:
@@ -403,8 +393,8 @@ int View::handle(int event)
 
       // update coordinates display
       char coords[256];
-      int coordx = imgx - Project::overscroll;
-      int coordy = imgy - Project::overscroll;
+      int coordx = imgx;
+      int coordy = imgy;
       coordx = clamp(coordx, Project::bmp->cw - 1);
       coordy = clamp(coordy, Project::bmp->ch - 1);
       sprintf(coords, "(%d, %d)", coordx, coordy);
@@ -591,8 +581,10 @@ void View::drawGrid()
 
   int zx = zoom * gridx;
   int zy = zoom * gridy;
-  int qx = (Project::bmp->overscroll % gridx) * zoom;
-  int qy = (Project::bmp->overscroll % gridy) * zoom;
+//  int qx = (Project::bmp->overscroll % gridx) * zoom;
+//  int qy = (Project::bmp->overscroll % gridy) * zoom;
+  int qx = 0;
+  int qy = 0;
 
   y1 = 0 - zy + (offy * zoom) + qy - (int)(oy * zoom) % zy;
 

@@ -275,17 +275,16 @@ int File::loadFile(const char *fn)
     return -1;
 
   // load to a temporary bitmap first
-  int overscroll = Project::overscroll;
   Bitmap *temp = 0;
 
   if(isPng(header))
-    temp = File::loadPng((const char *)fn, overscroll);
+    temp = File::loadPng((const char *)fn);
   else if(isJpeg(header))
-    temp = File::loadJpeg((const char *)fn, overscroll);
+    temp = File::loadJpeg((const char *)fn);
   else if(isBmp(header))
-    temp = File::loadBmp((const char *)fn, overscroll);
+    temp = File::loadBmp((const char *)fn);
   else if(isTarga(fn))
-    temp = File::loadTarga((const char *)fn, overscroll);
+    temp = File::loadTarga((const char *)fn);
 
   if(!temp)
   {
@@ -313,7 +312,7 @@ int File::loadFile(const char *fn)
   return 0;
 }
 
-Bitmap *File::loadJpeg(const char *fn, int overscroll)
+Bitmap *File::loadJpeg(const char *fn)
 {
   struct jpeg_decompress_struct cinfo;
   struct my_error_mgr jerr;
@@ -349,8 +348,8 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
 //printf("%d\n", cinfo.X_density);
 //printf("%d\n", cinfo.Y_density);
 
-  Bitmap *volatile temp = new Bitmap(w, h, overscroll);
-  int *p = temp->row[overscroll] + overscroll;
+  Bitmap *volatile temp = new Bitmap(w, h);
+  int *p = temp->data;
 
   if(bytes == 3)
   {
@@ -364,8 +363,6 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
                        linebuf[0][x + 1] & 0xFF,
                        linebuf[0][x + 2] & 0xFF);
       }
-
-      p += overscroll * 2;
     }
   }
   else if(bytes == 1)
@@ -380,8 +377,6 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
                        linebuf[0][x] & 0xFF,
                        linebuf[0][x] & 0xFF);
       }
-
-      p += overscroll * 2;
     }
   }
   else
@@ -398,7 +393,7 @@ Bitmap *File::loadJpeg(const char *fn, int overscroll)
   return temp;
 }
 
-Bitmap *File::loadBmp(const char *fn, int overscroll)
+Bitmap *File::loadBmp(const char *fn)
 {
   FileSP in(fn, "rb");
   if(!in.get())
@@ -466,13 +461,12 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
   w = ExtraMath::abs(w);
   h = ExtraMath::abs(h);
 
-  Bitmap *temp = new Bitmap(w, h, overscroll);
+  Bitmap *temp = new Bitmap(w, h);
   std::vector<unsigned char> linebuf(w * mul + pad);
 
   for(int y = 0; y < h; y++)
   {
     int y1 = negy ? h - 1 - y : y;
-    y1 += overscroll;
 
     if(fread(&linebuf[0], 1, w * mul + pad, in.get()) !=
        (unsigned)(w * mul + pad))
@@ -485,7 +479,6 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
       for(int x = 0; x < w; x++)
       {
         int x1 = negx ? w - 1 - x : x;
-        x1 += overscroll;
         *(temp->row[y1] + x1) = makeRgb(linebuf[xx + 2] & 0xFF,
                                         linebuf[xx + 1] & 0xFF,
                                         linebuf[xx + 0] & 0xFF);
@@ -497,7 +490,7 @@ Bitmap *File::loadBmp(const char *fn, int overscroll)
   return temp;
 }
 
-Bitmap *File::loadTarga(const char *fn, int overscroll)
+Bitmap *File::loadTarga(const char *fn)
 {
   FileSP in(fn, "rb");
   if(!in.get())
@@ -545,7 +538,7 @@ Bitmap *File::loadTarga(const char *fn, int overscroll)
   int w = header.w;
   int h = header.h;
 
-  Bitmap *temp = new Bitmap(w, h, overscroll);
+  Bitmap *temp = new Bitmap(w, h);
   std::vector<unsigned char> linebuf(w * depth);
 
   bool negx = true;
@@ -582,18 +575,16 @@ Bitmap *File::loadTarga(const char *fn, int overscroll)
     {
       if(depth == 3)
       {
-        *(temp->row[y + overscroll] + x + overscroll) =
-                       makeRgb((linebuf[x * depth + 2] & 0xFF),
-                               (linebuf[x * depth + 1] & 0xFF),
-                               (linebuf[x * depth + 0] & 0xFF));
+        *(temp->row[y] + x) = makeRgb((linebuf[x * depth + 2] & 0xFF),
+                                      (linebuf[x * depth + 1] & 0xFF),
+                                      (linebuf[x * depth + 0] & 0xFF));
       }
       else if(depth == 4)
       {
-        *(temp->row[y + overscroll] + x + overscroll) =
-                       makeRgba((linebuf[x * depth + 2] & 0xFF),
-                                (linebuf[x * depth + 1] & 0xFF),
-                                (linebuf[x * depth + 0] & 0xFF),
-                                (linebuf[x * depth + 3] & 0xFF));
+        *(temp->row[y] + x) = makeRgba((linebuf[x * depth + 2] & 0xFF),
+                                       (linebuf[x * depth + 1] & 0xFF),
+                                       (linebuf[x * depth + 0] & 0xFF),
+                                       (linebuf[x * depth + 3] & 0xFF));
       }
     }
   }
@@ -601,7 +592,7 @@ Bitmap *File::loadTarga(const char *fn, int overscroll)
   return temp;
 }
 
-Bitmap *File::loadPng(const char *fn, int overscroll)
+Bitmap *File::loadPng(const char *fn)
 {
   FileSP in(fn, "rb");
   if(!in.get())
@@ -689,7 +680,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
   int channels = (int)png_get_channels(png_ptr, info_ptr);
 
-  Bitmap *volatile temp = new Bitmap(w, h, overscroll);
+  Bitmap *volatile temp = new Bitmap(w, h);
 
   if(interlace)
   {
@@ -706,7 +697,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
     // convert image
     for(int y = 0; y < h; y++)
     {
-      int *p = temp->row[y + overscroll] + overscroll;
+      int *p = temp->row[y];
       int xx = 0;
 
       png_bytep row = row_pointers[y];
@@ -741,7 +732,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
       // read line
       png_read_row(png_ptr, &linebuf[0], 0);
 
-      int *p = temp->row[y + overscroll] + overscroll;
+      int *p = temp->row[y];
       int xx = 0;
 
       // convert line
@@ -772,7 +763,7 @@ Bitmap *File::loadPng(const char *fn, int overscroll)
   return temp;
 }
 
-Bitmap *File::loadPngFromArray(const unsigned char *array, int overscroll)
+Bitmap *File::loadPngFromArray(const unsigned char *array)
 {
   png_structp png_ptr;
   png_infop info_ptr;
@@ -854,7 +845,7 @@ Bitmap *File::loadPngFromArray(const unsigned char *array, int overscroll)
   int rowbytes = png_get_rowbytes(png_ptr, info_ptr);
   int channels = (int)png_get_channels(png_ptr, info_ptr);
 
-  Bitmap *volatile temp = new Bitmap(w, h, overscroll);
+  Bitmap *volatile temp = new Bitmap(w, h);
 
   if(interlace)
   {
@@ -871,7 +862,7 @@ Bitmap *File::loadPngFromArray(const unsigned char *array, int overscroll)
     // convert image
     for(int y = 0; y < h; y++)
     {
-      int *p = temp->row[y + overscroll] + overscroll;
+      int *p = temp->row[y];
       int xx = 0;
 
       png_bytep row = row_pointers[y];
@@ -906,7 +897,7 @@ Bitmap *File::loadPngFromArray(const unsigned char *array, int overscroll)
       // read line
       png_read_row(png_ptr, &linebuf[0], 0);
 
-      int *p = temp->row[y + overscroll] + overscroll;
+      int *p = temp->row[y];
       int xx = 0;
 
       // convert line
@@ -1006,9 +997,6 @@ int File::saveBmp(Bitmap *bmp, const char *fn)
   if(!outp)
     return -1;
 
-//  Bitmap *bmp = Project::bmp;
-//  int overscroll = Project::overscroll;
-  int overscroll = bmp->overscroll;
   int w = bmp->cw;
   int h = bmp->ch;
   int pad = w % 4;
@@ -1036,7 +1024,7 @@ int File::saveBmp(Bitmap *bmp, const char *fn)
   writeUint32(0, outp);
   writeUint32(0, outp);
 
-  int *p = bmp->row[overscroll] + overscroll;
+  int *p = bmp->data;
   std::vector<unsigned char> linebuf(w * 3 + pad);
 
   for(int y = 0; y < h; y++)
@@ -1054,8 +1042,6 @@ int File::saveBmp(Bitmap *bmp, const char *fn)
     for(int x = 0; x < pad; x++)
       linebuf[xx++] = 0;
 
-    p += overscroll * 2;
-
     if(fwrite(&linebuf[0], 1, w * 3 + pad, outp) != (unsigned)(w * 3 + pad))
       return -1;
   }
@@ -1070,9 +1056,6 @@ int File::saveTarga(Bitmap *bmp, const char *fn)
   if(!outp)
     return -1;
 
-//  Bitmap *bmp = Project::bmp;
-//  int overscroll = Project::overscroll;
-  int overscroll = bmp->overscroll;
   int w = bmp->cw;
   int h = bmp->ch;
 
@@ -1089,7 +1072,7 @@ int File::saveTarga(Bitmap *bmp, const char *fn)
   writeUint8(32, outp);
   writeUint8(32, outp);
 
-  int *p = bmp->row[overscroll] + overscroll;
+  int *p = bmp->data;
   std::vector<unsigned char> linebuf(w * 4);
 
   for(int y = 0; y < h; y++)
@@ -1105,8 +1088,6 @@ int File::saveTarga(Bitmap *bmp, const char *fn)
       p++;
       xx += 4;
     }
-
-    p += overscroll * 2;
 
     if(fwrite(&linebuf[0], 1, w * 4, outp) != (unsigned)(w * 4))
       return -1;
@@ -1159,9 +1140,6 @@ int File::savePng(Bitmap *bmp, const char *fn)
     return -1;
   }
 
-//  Bitmap *bmp = Project::bmp;
-//  int overscroll = Project::overscroll;
-  int overscroll = bmp->overscroll;
   int w = bmp->cw;
   int h = bmp->ch;
 
@@ -1231,7 +1209,7 @@ int File::savePng(Bitmap *bmp, const char *fn)
 
   for(int y = 0; y < h; y++)
   {
-    int *p = bmp->row[y + overscroll] + overscroll;
+    int *p = bmp->row[y];
 
     for(int x = 0; x < w * bytes; x += bytes)
     {
@@ -1277,9 +1255,6 @@ int File::saveJpeg(Bitmap *bmp, const char *fn)
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
 
-//  Bitmap *bmp = Project::bmp;
-//  int overscroll = Project::overscroll;
-  int overscroll = bmp->overscroll;
   int w = bmp->cw;
   int h = bmp->ch;
 
@@ -1297,7 +1272,7 @@ int File::saveJpeg(Bitmap *bmp, const char *fn)
   jpeg_set_quality(&cinfo, quality, TRUE);
   jpeg_start_compress(&cinfo, TRUE);
 
-  int *p = bmp->row[overscroll] + overscroll;
+  int *p = bmp->data;
 
   while(cinfo.next_scanline < cinfo.image_height)
   {
@@ -1311,7 +1286,6 @@ int File::saveJpeg(Bitmap *bmp, const char *fn)
 
     JSAMPROW row_pointer = &linebuf[0];
     jpeg_write_scanlines(&cinfo, &row_pointer, 1);
-    p += overscroll * 2;
   }
 
   jpeg_finish_compress(&cinfo);
@@ -1536,7 +1510,7 @@ void File::loadSelection()
   Bitmap *temp = 0;
 
   if(isPng(header))
-    temp = File::loadPng((const char *)fc.filename(), 0);
+    temp = File::loadPng((const char *)fc.filename());
   else
     return;
 

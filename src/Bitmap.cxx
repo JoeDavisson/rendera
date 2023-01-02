@@ -67,41 +67,13 @@ Bitmap::Bitmap(int width, int height)
   w = width;
   h = height;
   active = false;
-  overscroll = 0;
 
   setClip(0, 0, w - 1, h - 1);
 
   for(int i = 0; i < height; i++)
     row[i] = &data[width * i];
-}
 
-// creates bitmap with a border
-Bitmap::Bitmap(int width, int height, int overscroll)
-{
-  width += overscroll * 2;
-  height += overscroll * 2;
-
-  if(width < 1)
-    width = 1;
-  if(height < 1)
-    height = 1;
-
-  data = new int [width * height];
-  row = new int *[height];
-
-  x = 0;
-  y = 0;
-  w = width;
-  h = height;
-  active = false;
-  this->overscroll = overscroll;
-
-  for(int i = 0; i < height; i++)
-    row[i] = &data[width * i];
-
-  setClip(overscroll, overscroll, w - overscroll - 1, h - overscroll - 1);
-  clear(convertFormat(getFltkColor(FL_BACKGROUND_COLOR), true));
-  rectfill(cl, ct, cr, cb, makeRgb(0, 0, 0), 0);
+  rectfill(0, 0, w - 1, h - 1, makeRgb(0, 0, 0), 0);
 }
 
 // creates bitmap from existing pixel data
@@ -120,7 +92,6 @@ Bitmap::Bitmap(int width, int height, int *image_data)
   w = width;
   h = height;
   active = false;
-  overscroll = 0;
 
   for(int i = 0; i < height; i++)
     row[i] = &data[width * i];
