@@ -129,7 +129,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   oldimgy = 0;
   rendering = false;
   bgr_order = false;
-  ignore_tool = false;
+//  ignore_tool = false;
 
   #if defined linux
     backbuf = new Bitmap(Fl::w(), Fl::h());
@@ -261,6 +261,7 @@ int View::handle(int event)
 
     case FL_ENTER:
     {
+      window()->cursor(FL_CURSOR_CROSS);
       changeCursor();
       return 1;
     }
@@ -516,7 +517,7 @@ void View::resize(int x, int y, int w, int h)
 {
   Fl_Widget::resize(x, y, w, h);
 
-  ignore_tool = true;
+//  ignore_tool = true;
   drawMain(true);
 }
 
@@ -636,6 +637,7 @@ void View::changeCursor()
       break;
     case Tool::CROP:
     case Tool::SELECT:
+    case Tool::TEXT:
       window()->cursor(FL_CURSOR_CROSS);
       Project::tool->redraw(this);
       break;
@@ -769,7 +771,7 @@ void View::beginMove()
 
   backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
-  ignore_tool = true;
+//  ignore_tool = true;
   redraw();
 }
 
@@ -818,7 +820,7 @@ void View::move()
   backbuf->xorRect(lastbx, lastby, lastbx + lastbw - 1, lastby + lastbh - 1);
   backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
-  ignore_tool = true;
+//  ignore_tool = true;
   redraw();
 
   lastbx = bx;
@@ -843,9 +845,9 @@ void View::zoomIn(int x, int y)
     clipOrigin();
   }
 
-    drawMain(false);
-    Project::tool->redraw(this);
-    redraw();
+  drawMain(false);
+  Project::tool->redraw(this);
+  redraw();
 
   Gui::checkZoom();
 }
@@ -867,11 +869,9 @@ void View::zoomOut(int x, int y)
     clipOrigin();
   }
 
-  drawMain(true);
-
-    drawMain(false);
-    Project::tool->redraw(this);
-    redraw();
+  drawMain(false);
+  Project::tool->redraw(this);
+  redraw();
 
   Gui::checkZoom();
 }
@@ -971,18 +971,23 @@ void View::saveCoords()
 // do not call directly, call redraw() instead
 void View::draw()
 {
+
   if(Project::tool->isActive())
   {
+/*
     if(ignore_tool)
     {
       ignore_tool = false;
       updateView(0, 0, x(), y(), w(), h());
-      if(Gui::getClone())
-        drawCloneCursor();
+
+      //if(Gui::getClone())
+      //  drawCloneCursor();
+
       return;
     }
     else
     {
+*/
       int blitx = Project::stroke->blitx;
       int blity = Project::stroke->blity;
       int blitw = Project::stroke->blitw;
@@ -1003,11 +1008,14 @@ void View::draw()
 
       if(Gui::getClone())
         drawCloneCursor();
+/*
     }
+*/
   }
   else
   {
     updateView(0, 0, x(), y(), w(), h());
+
     if(Gui::getClone())
       drawCloneCursor();
   }

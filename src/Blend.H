@@ -36,16 +36,14 @@ namespace Blend
     ALPHA_ADD,
     ALPHA_SUB,
     SMOOTH,
-    SHARPEN,
     FAST,
     TRANS_ALPHA,
     TRANS_NO_ALPHA,
   };
  
   void set(const int);
-  void target(Bitmap *, Palette *, const int, const int);
+  void target(Bitmap *, const int, const int);
   int current(const int, const int, const int);
-  int invert(const int, const int, const int);
   int transAlpha(const int, const int, const int);
   int transNoAlpha(const int, const int, const int);
   int trans(const int, const int, const int);
@@ -57,7 +55,6 @@ namespace Blend
   int alphaAdd(const int, const int, const int);
   int alphaSub(const int, const int, const int);
   int smooth(const int, const int, const int);
-  int sharpen(const int, const int, const int);
   int fast(const int, const int, const int);
   int invert(const int, const int, const int);
   void rgbToHsv(const int, const int, const int, int *, int *, int *);

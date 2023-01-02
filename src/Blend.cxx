@@ -32,7 +32,6 @@ namespace
 {
   int (*current_blend)(const int, const int, const int) = &Blend::trans;
   Bitmap *bmp;
-  Palette *pal;
   int xpos, ypos;
 }
 
@@ -65,9 +64,6 @@ void Blend::set(const int mode)
     case SMOOTH:
       current_blend = smooth;
       break;
-    case SHARPEN:
-      current_blend = sharpen;
-      break;
     case FAST:
       current_blend = fast;
       break;
@@ -84,10 +80,9 @@ void Blend::set(const int mode)
 }
 
 // sets the target coordinates used by some blending modes
-void Blend::target(Bitmap *b, Palette *p, const int x, const int y)
+void Blend::target(Bitmap *b, const int x, const int y)
 {
   bmp = b;
-  pal = p;
   xpos = x;
   ypos = y;
 }
@@ -275,28 +270,6 @@ int Blend::smooth(const int c1, const int, const int t)
   a /= 16;
 
   return Blend::trans(c1, makeRgba(r, g, b, a), t);
-}
-
-int Blend::sharpen(const int c1, const int, const int t)
-{
-  int r = 0, g = 0, b = 0;
-
-  for(int j = 0; j < 3; j++)
-  {
-    for(int i = 0; i < 3; i++)
-    {
-      const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
-      r += rgba.r * FilterMatrix::sharpen[i][j];
-      g += rgba.g * FilterMatrix::sharpen[i][j];
-      b += rgba.b * FilterMatrix::sharpen[i][j];
-    }
-  }
-
-  r = clamp(r, 255);
-  g = clamp(g, 255);
-  b = clamp(b, 255);
-
-  return Blend::transNoAlpha(c1, makeRgb(r, g, b), 255 - (255 - t) / 16);
 }
 
 int Blend::fast(const int c1, const int c2, const int t)

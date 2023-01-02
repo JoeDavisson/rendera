@@ -569,6 +569,9 @@ void Gui::init()
                               "Lock Proportions",
                               images_constrain_png,
                               (Fl_Callback *)checkConstrain);
+  pos += 24 + 8;
+//  new Separator(bottom, pos, 4, 2, 34, "");
+//  pos += 8;
   bottom->resizable(0);
   bottom->end();
 
@@ -885,7 +888,6 @@ void Gui::init()
   blend->add("Alpha Add");
   blend->add("Alpha Subtract");
   blend->add("Smooth");
-  blend->add("Sharpen");
   blend->value(0);
   blend->callback((Fl_Callback *)checkColor);
   pos += 24 + 8;
@@ -1382,7 +1384,7 @@ void Gui::checkTool(Widget *, void *var)
       break;
   }
 
-  view->ignore_tool = true;
+//  view->ignore_tool = true;
   view->drawMain(true);
 }
 

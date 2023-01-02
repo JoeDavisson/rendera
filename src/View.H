@@ -40,6 +40,7 @@ public:
   void drawMain(bool);
   void drawGrid();
   void changeCursor();
+  void drawCustomCursor();
   void drawCloneCursor();
   void beginMove();
   void move();
@@ -53,8 +54,9 @@ public:
   Fl_Group *group;
   Bitmap *backbuf;
   int mousex, mousey;
+  int oldmousex, oldmousey;
   int imgx, imgy;
-  bool ignore_tool;
+//  bool ignore_tool;
   int oldimgx, oldimgy;
   int last_ox, last_oy;
   int ox, oy;

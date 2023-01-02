@@ -752,7 +752,7 @@ void Transform::flipHorizontal()
 {
   pushUndo();
   Project::bmp->flipHorizontal();
-  Gui::getView()->ignore_tool = true;
+//  Gui::getView()->ignore_tool = true;
   Gui::getView()->drawMain(true);
 }
 
@@ -760,7 +760,7 @@ void Transform::flipVertical()
 {
   pushUndo();
   Project::bmp->flipVertical();
-  Gui::getView()->ignore_tool = true;
+//  Gui::getView()->ignore_tool = true;
   Gui::getView()->drawMain(true);
 }
 
@@ -804,7 +804,7 @@ void Transform::rotate90()
     } 
   } 
 
-  Gui::getView()->ignore_tool = true;
+//  Gui::getView()->ignore_tool = true;
   Gui::getView()->drawMain(true);
 }
 
@@ -812,7 +812,7 @@ void Transform::rotate180()
 {
   pushUndo();
   Project::bmp->rotate180();
-  Gui::getView()->ignore_tool = true;
+//  Gui::getView()->ignore_tool = true;
   Gui::getView()->drawMain(true);
 }
 

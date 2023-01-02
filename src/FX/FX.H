@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef FX_H
 #define FX_H
 
+#include <vector>
+
 #include <FL/fl_draw.H>
 
 #include <FL/Fl_Box.H>
