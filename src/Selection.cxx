@@ -313,7 +313,6 @@ void Selection::push(View *view)
     }
 
     Blend::set(Blend::TRANS);
-//    view->ignore_tool = true;
     view->drawMain(true);
   }
 }
@@ -476,7 +475,6 @@ void Selection::move(View *view)
     view->drawMain(false);
     stroke->previewSelection(view->backbuf, view->ox, view->oy, view->zoom,
                          view->bgr_order);
-//    view->ignore_tool = true;
     view->redraw();
   }
   else if(state == 2)

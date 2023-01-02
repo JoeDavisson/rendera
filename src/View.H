@@ -56,7 +56,6 @@ public:
   int mousex, mousey;
   int oldmousex, oldmousey;
   int imgx, imgy;
-//  bool ignore_tool;
   int oldimgx, oldimgy;
   int last_ox, last_oy;
   int ox, oy;

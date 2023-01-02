@@ -1384,7 +1384,6 @@ void Gui::checkTool(Widget *, void *var)
       break;
   }
 
-//  view->ignore_tool = true;
   view->drawMain(true);
 }
 

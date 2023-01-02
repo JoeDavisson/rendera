@@ -129,7 +129,6 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   oldimgy = 0;
   rendering = false;
   bgr_order = false;
-//  ignore_tool = false;
 
   #if defined linux
     backbuf = new Bitmap(Fl::w(), Fl::h());
@@ -517,12 +516,10 @@ void View::resize(int x, int y, int w, int h)
 {
   Fl_Widget::resize(x, y, w, h);
 
-//  ignore_tool = true;
   drawMain(true);
 }
 
-// when a tool is active, set ignore_tool=true before
-// calling if the entire view should be updated 
+// call if the entire view should be updated 
 void View::redraw()
 {
   damage(FL_DAMAGE_ALL);
@@ -771,7 +768,6 @@ void View::beginMove()
 
   backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
-//  ignore_tool = true;
   redraw();
 }
 
@@ -820,7 +816,6 @@ void View::move()
   backbuf->xorRect(lastbx, lastby, lastbx + lastbw - 1, lastby + lastbh - 1);
   backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
 
-//  ignore_tool = true;
   redraw();
 
   lastbx = bx;
@@ -974,43 +969,26 @@ void View::draw()
 
   if(Project::tool->isActive())
   {
-/*
-    if(ignore_tool)
-    {
-      ignore_tool = false;
-      updateView(0, 0, x(), y(), w(), h());
+    int blitx = Project::stroke->blitx;
+    int blity = Project::stroke->blity;
+    int blitw = Project::stroke->blitw;
+    int blith = Project::stroke->blith;
 
-      //if(Gui::getClone())
-      //  drawCloneCursor();
-
+    if(blitx < 0)
+      blitx = 0;
+    if(blity < 0)
+      blity = 0;
+    if(blitx + blitw > w() - 1)
+      blitw = w() - 1 - blitx;
+    if(blity + blith > h() - 1)
+      blith = h() - 1 - blity;
+    if(blitw < 1 || blith < 1)
       return;
-    }
-    else
-    {
-*/
-      int blitx = Project::stroke->blitx;
-      int blity = Project::stroke->blity;
-      int blitw = Project::stroke->blitw;
-      int blith = Project::stroke->blith;
 
-      if(blitx < 0)
-        blitx = 0;
-      if(blity < 0)
-        blity = 0;
-      if(blitx + blitw > w() - 1)
-        blitw = w() - 1 - blitx;
-      if(blity + blith > h() - 1)
-        blith = h() - 1 - blity;
-      if(blitw < 1 || blith < 1)
-        return;
+    updateView(blitx, blity, x() + blitx, y() + blity, blitw, blith);
 
-      updateView(blitx, blity, x() + blitx, y() + blity, blitw, blith);
-
-      if(Gui::getClone())
-        drawCloneCursor();
-/*
-    }
-*/
+    if(Gui::getClone())
+      drawCloneCursor();
   }
   else
   {
