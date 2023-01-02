@@ -67,8 +67,6 @@ OBJ= \
   $(SRC_DIR)/FX/StainedGlass.o \
   $(SRC_DIR)/FX/Painting.o \
   $(SRC_DIR)/FX/Marble.o \
-  $(SRC_DIR)/FX/ForwardFFT.o \
-  $(SRC_DIR)/FX/InverseFFT.o \
   $(SRC_DIR)/FX/Dither.o \
   $(SRC_DIR)/File.o \
   $(SRC_DIR)/FileSP.o \
