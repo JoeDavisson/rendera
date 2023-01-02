@@ -1,7 +1,7 @@
 Rendera
 =======
 
-![Screenshot](https://raw.githubusercontent.com/Mortis69/rendera/master/screenshots/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/JoeDavisson/rendera/master/screenshots/screenshot.png)
 
 Rendera is a painting program suitable for photo-retouching and making seamless
 textures. Originally a C program for Windows, it has been rewritten from scratch using
