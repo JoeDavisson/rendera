@@ -78,9 +78,11 @@ namespace
 
       *x2 += 1;
       *x2 -= *x2 % gridx;
+      *x2 -= 1;
 
       *y2 += 1;
       *y2 -= *y2 % gridy;
+      *y2 -= 1;
     }
   }
 
