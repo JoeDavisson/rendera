@@ -870,7 +870,6 @@ void Gui::init()
   blend->add("Darken");
   blend->add("Colorize");
   blend->add("Luminosity");
-  blend->add("Alpha Add");
   blend->add("Alpha Subtract");
   blend->add("Smooth");
   blend->value(0);

@@ -33,7 +33,6 @@ namespace Blend
     DARKEN,
     COLORIZE,
     LUMINOSITY,
-    ALPHA_ADD,
     ALPHA_SUB,
     SMOOTH,
     FAST,
@@ -52,7 +51,6 @@ namespace Blend
   int colorize(const int, const int, const int);
   int luminosity(const int, const int, const int);
   int keepLum(const int, const int);
-  int alphaAdd(const int, const int, const int);
   int alphaSub(const int, const int, const int);
   int smooth(const int, const int, const int);
   int fast(const int, const int, const int);
