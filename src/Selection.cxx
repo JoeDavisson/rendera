@@ -84,17 +84,6 @@ namespace
       *y2 -= *y2 % gridy;
       *y2 -= 1;
     }
-
-/*
-    if(*x1 < Project::bmp->cl)
-      *x1 = Project::bmp->cl;
-    if(*y1 < Project::bmp->ct)
-      *y1 = Project::bmp->ct;
-    if(*x2 > Project::bmp->cr)
-      *x2 = Project::bmp->cr;
-    if(*y2 > Project::bmp->cb)
-      *y2 = Project::bmp->cb;
-*/
   }
 
   void drawHandles(View *view, Stroke *stroke, int x1, int y1, int x2, int y2)
@@ -322,15 +311,6 @@ void Selection::drag(View *view)
 {
   Stroke *stroke = Project::stroke;
 
-/*
-  if(view->imgx < 0 || view->imgy < 0
-     || view->imgx > Project::bmp->w - 1 || view->imgy > Project::bmp->h - 1)
-  {
-    drag_started = false;
-    resize_started = false;
-  }
-*/
-
   if(state == 1)
   {
     view->drawMain(false);
@@ -352,21 +332,10 @@ void Selection::drag(View *view)
       const int dx = view->imgx - view->oldimgx;
       const int dy = view->imgy - view->oldimgy;
 
-      const int cl = Project::bmp->cl;
-      const int cr = Project::bmp->cr;
-      const int ct = Project::bmp->ct;
-      const int cb = Project::bmp->cb;
-
-//      if( (beginx + dx >= cl) && (beginx + dx <= cr) &&
-//          (beginy + dy >= ct) && (beginy + dy <= cb) &&
-//          (lastx + dx >= cl) && (lastx + dx <= cr) &&
-//          (lasty + dy >= ct) && (lasty + dy <= cb) )
-//      {
-        beginx += dx;
-        beginy += dy;
-        lastx += dx;
-        lasty += dy;
-//      }
+      beginx += dx;
+      beginy += dy;
+      lastx += dx;
+      lasty += dy;
     }
     else if(resize_started)
     {
