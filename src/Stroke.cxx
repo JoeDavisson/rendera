@@ -871,10 +871,10 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
   int yy1 = y1 * zoom - oy;
   int xx2 = x2 * zoom - ox;
   int yy2 = y2 * zoom - oy;
+
   const int zr = (int)((1.0 / zoom) * 65536);
   const int color = convertFormat(Project::brush->color,
                                   Gui::getView()->bgr_order);
-  const int clone_color = makeRgb(255, 0, 255);
   const int trans = Project::brush->trans;
 
   if(xx1 < 0)
@@ -904,49 +904,76 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
   for(int y = yy1; y <= yy2; y++)
   {
     const int ym = ((y + oy) * zr) >> 16;
-    int checker = ((y & 1) << 24) - (y & 1);
     int *p = backbuf->row[y] + xx1;
 
     for(int x = xx1; x <= xx2; x++)
     {
       const int xm = ((x + ox) * zr) >> 16;
-      checker = 0xffffff - checker;
 
       if(map->getpixel(xm, ym))
       {
-        if(Clone::active == false)
-        {
           *p = blendFast(*p, color, trans);
 
           if(isEdge(map, xm, ym))
-            *p = blendFast(*p, checker, 128);
-        }
-        else
-        {
-          int cx = x - Clone::dx * zoom;
-          int cy = y - Clone::dy * zoom;
-
-          cx = clamp(cx, backbuf->w - 1);
-          cy = clamp(cy, backbuf->h - 1);
-
-          backbuf->setpixel(cx, cy, blendFast(backbuf->getpixel(cx, cy), clone_color, 192));
-          if(isEdge(map, xm, ym))
-          {
-            *p = blendFast(*p, checker, 64);
-            backbuf->setpixel(cx, cy, blendFast(backbuf->getpixel(cx, cy), checker, 64));
-          }
-        }
+            *p = blendFast(*p, (x & 1) ^ (y & 1)? 0xa0a0a0 : 0x606060, 64);
       }
-/*
+
+      p++;
+    }
+  }
+
+  if(Clone::active == false)
+    return;
+
+  xx1 = (x1 - Clone::dx) * zoom - ox;
+  yy1 = (y1 - Clone::dy) * zoom - oy;
+  xx2 = (x2 - Clone::dx) * zoom - ox;
+  yy2 = (y2 - Clone::dy) * zoom - oy;
+
+  if(xx1 < 0)
+    xx1 = 0;
+
+  if(yy1 < 0)
+    yy1 = 0;
+
+  if(xx1 >= backbuf->w - 1)
+    xx1 = backbuf->w - 1;
+
+  if(yy1 >= backbuf->h - 1)
+    yy1 = backbuf->h - 1;
+
+  if(xx2 < 0)
+    xx2 = 0;
+
+  if(yy2 < 0)
+    yy2 = 0;
+
+  if(xx2 >= backbuf->w - 1)
+    xx2 = backbuf->w - 1;
+
+  if(yy2 >= backbuf->h - 1)
+    yy2 = backbuf->h - 1;
+
+  for(int y = yy1; y <= yy2; y++)
+  {
+    int ym = ((y + oy) * zr) >> 16;
+    ym += Clone::dy;
+    int *p = backbuf->row[y] + xx1;
+
+    for(int x = xx1; x <= xx2; x++)
+    {
+      int xm = ((x + ox) * zr) >> 16;
+      xm += Clone::dx;
+
       if(map->getpixel(xm, ym))
       {
-        if(Clone::active == false)
-          *p = blendFast(*p, color, trans);
+        *p = blendFast(*p, makeRgb(255, 0, 255), 192);
 
         if(isEdge(map, xm, ym))
-          *p = blendFast(*p, checker, 128);
+        {
+          *p = blendFast(*p, (x & 1) ^ (y & 1)? 0xa0a0a0 : 0x606060, 64);
+        }
       }
-*/
 
       p++;
     }

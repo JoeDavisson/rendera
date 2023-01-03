@@ -636,7 +636,7 @@ void View::changeCursor()
       window()->cursor(FL_CURSOR_HAND);
       break;
     default:
-      window()->cursor(FL_CURSOR_CROSS);
+      window()->cursor(FL_CURSOR_ARROW);
       break;
   }
 }
@@ -677,14 +677,12 @@ void View::drawCloneCursor()
     }
   }
 
-  backbuf->rect(x1 - 9, y1 - 1, x1 + 9, y1 + 1, makeRgb(0, 0, 0), 64);
-  backbuf->rect(x1 - 10, y1 - 2, x1 + 10, y1 + 2, makeRgb(0, 0, 0), 160);
-  backbuf->rect(x1 - 1, y1 - 9, x1 + 1, y1 + 9, makeRgb(0, 0, 0), 64);
-  backbuf->rect(x1 - 2, y1 - 10, x1 + 2, y1 + 10, makeRgb(0, 0, 0), 160);
-  backbuf->xorRectfill(x1 - 8, y1, x1 + 8, y1);
-  backbuf->xorRectfill(x1, y1 - 8, x1, y1 + 8);
-  backbuf->rectfill(x1 - 8, y1, x1 + 8, y1, makeRgb(255, 0, 255), 128);
-  backbuf->rectfill(x1, y1 - 8, x1, y1 + 8, makeRgb(255, 0, 255), 128);
+  backbuf->rect(x1 - 8, y1 - 1, x1 + 8, y1 + 1, makeRgb(0, 0, 0), 128);
+  backbuf->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 128);
+  backbuf->xorRectfill(x1 - 7, y1, x1 + 7, y1);
+  backbuf->xorRectfill(x1, y1 - 7, x1, y1 + 7);
+  backbuf->rectfill(x1 - 7, y1, x1 + 7, y1, makeRgb(255, 0, 255), 128);
+  backbuf->rectfill(x1, y1 - 7, x1, y1 + 7, makeRgb(255, 0, 255), 128);
 
   updateView(oldx1 - 12, oldy1 - 12,
              this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
