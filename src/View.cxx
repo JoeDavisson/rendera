@@ -213,13 +213,13 @@ int View::handle(int event)
       {
         if(imgx % gridx < gridx / 2)
           imgx -= imgx % gridx;
-//        else
-//          imgx += gridx - imgx % gridx - 1;
+        else
+          imgx += gridx - imgx % gridx - 1;
 
         if(imgy % gridy < gridy / 2)
           imgy -= imgy % gridy;
-//        else
-//          imgy += gridy - imgy % gridy - 1;
+        else
+          imgy += gridy - imgy % gridy - 1;
       }
       break;
     default:

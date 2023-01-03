@@ -78,11 +78,14 @@ namespace
 
       *x2 += 1;
       *x2 -= *x2 % gridx;
+      *x2 -= 1;
 
       *y2 += 1;
       *y2 -= *y2 % gridy;
+      *y2 -= 1;
     }
 
+/*
     if(*x1 < Project::bmp->cl)
       *x1 = Project::bmp->cl;
     if(*y1 < Project::bmp->ct)
@@ -91,6 +94,7 @@ namespace
       *x2 = Project::bmp->cr;
     if(*y2 > Project::bmp->cb)
       *y2 = Project::bmp->cb;
+*/
   }
 
   void drawHandles(View *view, Stroke *stroke, int x1, int y1, int x2, int y2)
@@ -146,12 +150,23 @@ namespace
     backbuf->rect(x1 - 3, y1 - 3, x2 + 3, y2 + 3, c1, 192);
   }
 
-  void select(View *)
+  void select(View *view)
   {
     if(state == 3)
       return;
 
     state = 3;
+
+    absrect(view, &beginx, &beginy, &lastx, &lasty);
+
+    if(beginx < Project::bmp->cl)
+      beginx = Project::bmp->cl;
+    if(beginy < Project::bmp->ct)
+      beginy = Project::bmp->ct;
+    if(lastx > Project::bmp->cr)
+      lastx = Project::bmp->cr;
+    if(lasty > Project::bmp->cb)
+      lasty = Project::bmp->cb;
 
     int w = (lastx - beginx) + 1;
     int h = (lasty - beginy) + 1;
@@ -307,12 +322,14 @@ void Selection::drag(View *view)
 {
   Stroke *stroke = Project::stroke;
 
+/*
   if(view->imgx < 0 || view->imgy < 0
      || view->imgx > Project::bmp->w - 1 || view->imgy > Project::bmp->h - 1)
   {
     drag_started = false;
     resize_started = false;
   }
+*/
 
   if(state == 1)
   {
@@ -340,16 +357,16 @@ void Selection::drag(View *view)
       const int ct = Project::bmp->ct;
       const int cb = Project::bmp->cb;
 
-      if( (beginx + dx >= cl) && (beginx + dx <= cr) &&
-          (beginy + dy >= ct) && (beginy + dy <= cb) &&
-          (lastx + dx >= cl) && (lastx + dx <= cr) &&
-          (lasty + dy >= ct) && (lasty + dy <= cb) )
-      {
+//      if( (beginx + dx >= cl) && (beginx + dx <= cr) &&
+//          (beginy + dy >= ct) && (beginy + dy <= cb) &&
+//          (lastx + dx >= cl) && (lastx + dx <= cr) &&
+//          (lasty + dy >= ct) && (lasty + dy <= cb) )
+//      {
         beginx += dx;
         beginy += dy;
         lastx += dx;
         lasty += dy;
-      }
+//      }
     }
     else if(resize_started)
     {

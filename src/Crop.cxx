@@ -273,12 +273,14 @@ void Crop::drag(View *view)
 {
   Stroke *stroke = Project::stroke;
 
+/*
   if(view->imgx < 0 || view->imgy < 0
      || view->imgx > Project::bmp->w - 1 || view->imgy > Project::bmp->h - 1)
   {
     drag_started = false;
     resize_started = false;
   }
+*/
 
   if(state == 1)
   {
