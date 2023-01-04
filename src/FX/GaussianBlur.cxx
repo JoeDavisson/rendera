@@ -61,27 +61,6 @@ namespace
     // lower-right
     bmp->rectfill(cr + 1, cb + 1, w - 1, h - 1, bmp->getpixel(cr, cb), 0);
   }
-
-/*
-  void redrawBorder(Bitmap *bmp)
-  {
-    const int cl = bmp->overscroll;
-    const int cr = bmp->w - bmp->overscroll - 1;
-    const int ct = bmp->overscroll;
-    const int cb = bmp->h - bmp->overscroll - 1;
-    const int w = bmp->w;
-    const int h = bmp->h;
-    const int c = convertFormat(getFltkColor(FL_BACKGROUND_COLOR), true);
-
-    bmp->setClip(0, 0, w - 1, h - 1);
-    bmp->rectfill(0, 0, cl - 1, h - 1, c, 0);
-    bmp->rectfill(cr + 1, 0, w - 1, h - 1, c, 0);
-    bmp->rectfill(cl, 0, cr, ct - 1, c, 0);
-    bmp->rectfill(cl, cb + 1, cr, h - 1, c, 0);
-    bmp->setClip(bmp->overscroll, bmp->overscroll,
-                 bmp->w - bmp->overscroll - 1, bmp->h - bmp->overscroll - 1);
-  }
-*/
 }
 
 namespace
