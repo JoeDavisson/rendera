@@ -578,13 +578,12 @@ void View::drawGrid()
   y2 = h() - 1;
 
   t = 216 - zoom;
+
   if(t < 96)
     t = 96;
 
   int zx = zoom * gridx;
   int zy = zoom * gridy;
-//  int qx = (Project::bmp->overscroll % gridx) * zoom;
-//  int qy = (Project::bmp->overscroll % gridy) * zoom;
   int qx = 0;
   int qy = 0;
 
@@ -941,7 +940,6 @@ void View::saveCoords()
 // do not call directly, call redraw() instead
 void View::draw()
 {
-
   if(Project::tool->isActive() && Clone::active == false)
   {
     int blitx = Project::stroke->blitx;
