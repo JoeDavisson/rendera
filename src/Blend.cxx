@@ -237,7 +237,7 @@ int Blend::alphaSub(const int c1, const int c2, const int t)
   const rgba_type rgba = getRgba(c2);
   const int a = geta(c1);
 
-  return makeRgba(rgba.r, rgba.g, rgba.b, (a * t) / 255);
+  return trans(c1, makeRgba(rgba.r, rgba.g, rgba.b, (a * t) / 255), t);
 }
 
 int Blend::smooth(const int c1, const int, const int t)
