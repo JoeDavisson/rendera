@@ -184,7 +184,6 @@ int Blend::keepLum(const int c, const int lum)
   yccToRgb(lum, cb, cr, &r, &g, &b);
 
   const rgba_type rgba = getRgba(makeRgba(r, g, b, rgba1.a));
-//  const rgba_type rgba = getRgba(c);
   int n[3];
 
   n[1] = rgba.r;
