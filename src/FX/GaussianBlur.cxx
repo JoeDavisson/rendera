@@ -110,7 +110,8 @@ void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
 
           for(int i = 0; i < 9; i++)
           {
-            const rgba_type rgba = getRgba(bmp->getpixel(x + i % 3 - 1, y + i / 3 - 1));
+            const rgba_type rgba = getRgba(bmp->getpixel(x + i % 3 - 1,
+                                                         y + i / 3 - 1));
 
             r += Gamma::fix(rgba.r) << matrix[i];
             g += Gamma::fix(rgba.g) << matrix[i];
