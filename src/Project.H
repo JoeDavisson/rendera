@@ -33,7 +33,6 @@ class Undo;
 
 class Paint;
 class GetColor;
-class Crop;
 class Selection;
 class Offset;
 class Text;
@@ -68,7 +67,6 @@ namespace Project
 
   extern Paint *paint;
   extern GetColor *getcolor;
-  extern Crop *crop;
   extern Selection *selection;
   extern Offset *offset;
   extern Text *text;

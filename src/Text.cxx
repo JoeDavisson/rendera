@@ -199,7 +199,7 @@ void Text::key(View *view)
 {
 }
 
-void Text::done(View *)
+void Text::done(View *, int)
 {
   delete temp;
   temp = 0;

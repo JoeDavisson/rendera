@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Bitmap.H"
 #include "Brush.H"
-#include "Crop.H"
 #include "Dialog.H"
 #include "Fill.H"
 #include "GetColor.H"
@@ -74,7 +73,6 @@ namespace Project
 
   Paint *paint = new Paint();
   GetColor *getcolor = new GetColor();
-  Crop *crop = new Crop();
   Selection *selection = new Selection();
   Offset *offset = new Offset();
   Text *text = new Text();
@@ -119,9 +117,6 @@ void Project::setTool(int num)
       break;
     case Tool::GETCOLOR:
       tool = getcolor; 
-      break;
-    case Tool::CROP:
-      tool = crop; 
       break;
     case Tool::SELECT:
       tool = selection; 

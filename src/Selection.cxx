@@ -171,6 +171,44 @@ namespace
 
     Gui::checkSelectionValues(0, 0, 0, 0);
   }
+
+  void crop(View *view)
+  {
+    Project::undo->push();
+    state = 0;
+
+    absrect(view, &beginx, &beginy, &lastx, &lasty);
+
+   if(beginx < Project::bmp->cl)
+      beginx = Project::bmp->cl;
+    if(beginy < Project::bmp->ct)
+      beginy = Project::bmp->ct;
+    if(lastx > Project::bmp->cr)
+      lastx = Project::bmp->cr;
+    if(lasty > Project::bmp->cb)
+      lasty = Project::bmp->cb;
+
+    int w = (lastx - beginx) + 1;
+    int h = (lasty - beginy) + 1;
+
+    if(w < 1)
+      w = 1;
+    if(h < 1)
+      h = 1;
+
+    Bitmap *temp = new Bitmap(w, h);
+    Project::bmp->blit(temp, beginx, beginy, 0, 0, w, h);
+
+    Project::replaceImage(w, h);
+    temp->blit(Project::bmp, 0, 0, 0, 0, w, h);
+    delete temp;
+
+    view->zoom = 1;
+    view->ox = 0;
+    view->oy = 0;
+    view->drawMain(true);
+    Gui::checkSelectionValues(0, 0, 0, 0);
+  }
 }
 
 Selection::Selection()
@@ -475,12 +513,15 @@ void Selection::key(View *view)
 {
 }
 
-void Selection::done(View *view)
+void Selection::done(View *view, int mode)
 {
   if(state == 0)
     return;
 
-  select(view);
+  if(mode == 1)
+    crop(view);
+  else
+    select(view);
 }
 
 void Selection::redraw(View *view)

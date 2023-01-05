@@ -77,10 +77,8 @@ namespace Gui
   void checkClone(Widget *, void *);
   void checkOrigin(Widget *, void *);
   void checkConstrain(Widget *, void *);
-  void checkCropValues(int, int, int, int);
-  void checkCropDo();
-  void checkCropReset();
-  void checkSelectionDo();
+  void checkSelectionCreate();
+  void checkSelectionCrop();
   int getSelectionAlpha();
   void checkSelectionFlipHorizontal();
   void checkSelectionFlipVertical();

@@ -207,7 +207,6 @@ int View::handle(int event)
         }
       }
       break;
-    case Tool::CROP:
     case Tool::SELECT:
       if(gridsnap)
       {
@@ -632,7 +631,6 @@ void View::changeCursor()
     case Tool::FILL:
       window()->cursor(FL_CURSOR_CROSS);
       break;
-    case Tool::CROP:
     case Tool::SELECT:
     case Tool::TEXT:
       window()->cursor(FL_CURSOR_CROSS);

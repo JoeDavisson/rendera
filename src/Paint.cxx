@@ -161,7 +161,7 @@ void Paint::key(View *)
 {
 }
 
-void Paint::done(View *)
+void Paint::done(View *, int)
 {
 }
 

@@ -38,7 +38,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Button.H"
 #include "CheckBox.H"
 #include "Clone.H"
-#include "Crop.H"
 #include "Dialog.H"
 #include "FX/FX.H"
 #include "File.H"
@@ -83,7 +82,6 @@ namespace
   Group *top;
   Group *tools;
   Group *paint;
-  Group *crop;
   Group *selection;
   Group *getcolor;
   Group *offset;
@@ -134,23 +132,17 @@ namespace
   InputInt *fill_feather;
   Fl_Box *fill_warning;
 
-  StaticText *crop_x;
-  StaticText *crop_y;
-  StaticText *crop_w;
-  StaticText *crop_h;
-  Fl_Button *crop_reset;
-  Fl_Button *crop_do;
-
   StaticText *selection_x;
   StaticText *selection_y;
   StaticText *selection_w;
   StaticText *selection_h;
   Fl_Button *selection_reset;
-  Fl_Button *selection_do;
+  Fl_Button *selection_create;
   CheckBox *selection_alpha;
   Button *selection_flip;
   Button *selection_mirror;
   Button *selection_rotate;
+  Fl_Button *selection_crop;
 
   StaticText *offset_x;
   StaticText *offset_y;
@@ -578,7 +570,7 @@ void Gui::init()
                     "Tools");
   pos = 28;
 
-  tool = new Widget(tools, 8, pos, 32, 7 * 32,
+  tool = new Widget(tools, 8, pos, 32, 6 * 32,
                     "Tools", images_tools_png, 32, 32,
                     (Fl_Callback *)checkTool);
   pos += 96 + 8;
@@ -668,45 +660,6 @@ void Gui::init()
   paint->resizable(0);
   paint->end();
 
-  // crop
-  crop = new Group(48, top->h() + menubar->h(),
-                   112, left_height,
-                   "Crop");
-  pos = 28;
-
-  new StaticText(crop, 8, pos, 32, 24, "x:");
-  crop_x = new StaticText(crop, 24, pos, 72, 24, 0);
-  pos += 24;
-
-  new StaticText(crop, 8, pos, 32, 24, "y:");
-  crop_y = new StaticText(crop, 24, pos, 72, 24, 0);
-  pos += 24;
-
-  new StaticText(crop, 8, pos, 32, 24, "w:");
-  crop_w = new StaticText(crop, 24, pos, 72, 24, 0);
-  pos += 24;
-
-  new StaticText(crop, 8, pos, 32, 24, "h:");
-  crop_h = new StaticText(crop, 24, pos, 72, 24, 0);
-  pos += 24;
-
-  new Separator(crop, 4, pos, 106, 2, "");
-  pos += 8;
-
-  crop_reset = new Fl_Button(crop->x() + 8, crop->y() + pos, 96, 32, "Reset");
-  crop_reset->callback((Fl_Callback *)checkCropReset);
-  pos += 32 + 8;
-
-  new Separator(crop, 4, pos, 106, 2, "");
-  pos += 8;
-
-  crop_do = new Fl_Button(crop->x() + 8, crop->y() + pos, 96, 32, "Crop");
-  crop_do->callback((Fl_Callback *)checkCropDo);
-  pos += 32 + 12;
-
-  crop->resizable(0);
-  crop->end();
-
   // selection
   selection = new Group(48, top->h() + menubar->h(),
                    112, left_height,
@@ -739,8 +692,8 @@ void Gui::init()
   new Separator(selection, 4, pos, 106, 2, "");
   pos += 8;
 
-  selection_do = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Select");
-  selection_do->callback((Fl_Callback *)checkSelectionDo);
+  selection_create = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Select");
+  selection_create->callback((Fl_Callback *)checkSelectionCreate);
   pos += 32 + 8;
 
   new Separator(selection, 4, pos, 106, 2, "");
@@ -756,6 +709,13 @@ void Gui::init()
   selection_flip = new Button(selection, 8 + 33, pos, 30, 30, "Flip", images_select_flip_png, (Fl_Callback *)checkSelectionFlipVertical);
   selection_rotate = new Button(selection, 8 + 66, pos, 30, 30, "Rotate", images_select_rotate_png, (Fl_Callback *)checkSelectionRotate90);
   pos += 30 + 8;
+
+  new Separator(selection, 4, pos, 106, 2, "");
+  pos += 8;
+
+  selection_crop = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Crop");
+  selection_crop->callback((Fl_Callback *)checkSelectionCrop);
+  pos += 32 + 8;
 
   selection->resizable(0);
   selection->end();
@@ -981,7 +941,6 @@ void Gui::init()
   left->add(tools);
   left->add(paint);
   left->add(getcolor);
-  left->add(crop);
   left->add(selection);
   left->add(offset);
   left->add(text);
@@ -1006,7 +965,6 @@ void Gui::init()
   drawPalette();
   tool->do_callback();
   checkZoom();
-  checkCropValues(0, 0, 0, 0);
   checkSelectionValues(0, 0, 0, 0);
   checkOffsetValues(0, 0);
   checkPaintMode();
@@ -1366,8 +1324,6 @@ void Gui::checkTool(Widget *, void *var)
     paint->hide();
   if(tool != Tool::GETCOLOR)
     getcolor->hide();
-  if(tool != Tool::CROP)
-    crop->hide();
   if(tool != Tool::SELECT)
     selection->hide();
   if(tool != Tool::OFFSET)
@@ -1393,12 +1349,6 @@ void Gui::checkTool(Widget *, void *var)
       Project::tool->reset();
       getcolor->show();
       updateInfo((char *)"Click to select a color from the image.");
-      break;
-    case Tool::CROP:
-      Project::setTool(Tool::CROP);
-      //  Project::tool->reset();
-      crop->show();
-      updateInfo((char *)"Draw a box, then click inside box to move, outside to change size.");
       break;
     case Tool::SELECT:
       Project::setTool(Tool::SELECT);
@@ -1605,40 +1555,14 @@ void Gui::checkConstrain(Widget *, void *var)
   Project::stroke->constrain = Project::stroke->constrain_always;
 }
 
-void Gui::checkCropValues(int x, int y, int w, int h)
+void Gui::checkSelectionCreate()
 {
-  char s[256];
-
-  snprintf(s, sizeof(s), "%d", x);
-  crop_x->copy_label(s);
-  crop_x->redraw();
-
-  snprintf(s, sizeof(s), "%d", y);
-  crop_y->copy_label(s);
-  crop_y->redraw();
-
-  snprintf(s, sizeof(s), "%d", w);
-  crop_w->copy_label(s);
-  crop_w->redraw();
-
-  snprintf(s, sizeof(s), "%d", h);
-  crop_h->copy_label(s);
-  crop_h->redraw();
+  Project::tool->done(view, 0);
 }
 
-void Gui::checkCropDo()
+void Gui::checkSelectionCrop()
 {
-  Project::tool->done(view);
-}
-
-void Gui::checkCropReset()
-{
-  Project::tool->reset();
-}
-
-void Gui::checkSelectionDo()
-{
-  Project::tool->done(view);
+  Project::tool->done(view, 1);
 }
 
 int Gui::getSelectionAlpha()

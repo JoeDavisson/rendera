@@ -36,7 +36,7 @@ public:
   void release(View *);
   void move(View *);
   void key(View *);
-  void done(View *);
+  void done(View *, int);
   void redraw(View *);
   bool isActive();
   void reset();
