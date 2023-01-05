@@ -285,9 +285,8 @@ void Fill::push(View *view)
     int target = Project::bmp->getpixel(view->imgx, view->imgy);
     rgba_type rgba = getRgba(Project::brush->color);
     int color = makeRgba(rgba.r, rgba.g, rgba.b, 255 - Project::brush->trans);
-    Blend::set(Project::brush->blend);
-    fill(view->imgx, view->imgy, color, target, Gui::getFillFeather());
     Blend::set(Blend::TRANS);
+    fill(view->imgx, view->imgy, color, target, Gui::getFillFeather());
     view->drawMain(true);
   }
 }
