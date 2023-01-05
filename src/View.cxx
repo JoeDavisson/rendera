@@ -236,6 +236,7 @@ int View::handle(int event)
   ctrl = Fl::event_ctrl() ? true : false;
   alt = Fl::event_alt() ? true : false;
 
+
   switch(event)
   {
     case FL_FOCUS:
@@ -260,6 +261,12 @@ int View::handle(int event)
       window()->cursor(FL_CURSOR_DEFAULT);
       return 1;
     }
+
+    // key presses are handled in Gui.cxx
+    //  case FL_KEYDOWN:
+    //  {
+    //    break;
+    //  }
 
     case FL_PUSH:
     {

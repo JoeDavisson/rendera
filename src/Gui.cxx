@@ -309,9 +309,8 @@ public:
           case 'e':
             Dialog::editor();
             break;
-          //case 'm':
-          //  Gui::updateMemInfo();
-          //  break;
+          default:
+            break;
         }
 
         return 1;
