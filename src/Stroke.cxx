@@ -912,10 +912,11 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 
       if(map->getpixel(xm, ym))
       {
+        if(Clone::active == false)
           *p = blendFast(*p, color, trans);
 
-          if(isEdge(map, xm, ym))
-            *p = blendFast(*p, (x & 1) ^ (y & 1)? 0xa0a0a0 : 0x606060, 64);
+        if(isEdge(map, xm, ym))
+          *p = blendFast(*p, (x & 1) ^ (y & 1)? 0xa0a0a0 : 0x606060, 64);
       }
 
       p++;
