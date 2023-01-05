@@ -916,7 +916,7 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
           *p = blendFast(*p, color, trans);
 
         if(isEdge(map, xm, ym))
-          *p = blendFast(*p, (x & 1) ^ (y & 1)? 0xa0a0a0 : 0x606060, 64);
+          *p = blendFast(*p, (x & 1) ^ (y & 1)? 0xffffff : 0x000000, 0);
       }
 
       p++;
@@ -972,7 +972,7 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 
         if(isEdge(map, xm, ym))
         {
-          *p = blendFast(*p, (x & 1) ^ (y & 1)? 0xa0a0a0 : 0x606060, 64);
+          *p = blendFast(*p, (x & 1) ^ (y & 1)? 0xffffff : 0x000000, 0);
         }
       }
 
