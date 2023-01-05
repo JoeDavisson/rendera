@@ -862,6 +862,7 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 // use paint color for preview
 void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
 {
+  Bitmap *bmp = Project::bmp;
   Map *map = Project::map;
   ox *= zoom;
   oy *= zoom;
@@ -912,7 +913,9 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 
       if(map->getpixel(xm, ym))
       {
-        if(Clone::active == false)
+        if(Clone::active == true)
+          *p = blendFast(*p, convertFormat(bmp->getpixel(xm - Clone::dx, ym - Clone::dy), bgr_order), trans);
+        else
           *p = blendFast(*p, color, trans);
 
         if(isEdge(map, xm, ym))
