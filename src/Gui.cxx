@@ -145,7 +145,6 @@ namespace
   StaticText *selection_y;
   StaticText *selection_w;
   StaticText *selection_h;
-//  Button *selection_crop;
   Fl_Button *selection_reset;
   Fl_Button *selection_do;
   CheckBox *selection_alpha;
@@ -381,9 +380,9 @@ void Gui::init()
     (Fl_Callback *)File::loadSelection, 0, 0);
   menubar->add("&Selection/&Save...", 0,
     (Fl_Callback *)File::saveSelection, 0, FL_MENU_DIVIDER);
-  menubar->add("&Selection/Copy &From Current Image", 0,
-    (Fl_Callback *)checkSelectionFromCurrentImage, 0, 0);
-  menubar->add("&Selection/Copy to &New Image", 0,
+  menubar->add("&Selection/&Image to Selection", 0,
+    (Fl_Callback *)checkImageToSelection, 0, 0);
+  menubar->add("&Selection/Selection to &New Image", 0,
     (Fl_Callback *)checkSelectionToNewImage, 0, 0);
 
   menubar->add("&Palette/&Open...", 0,
@@ -463,20 +462,19 @@ void Gui::init()
   menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
 
-  // initialize undo palette
-//  undo_palette = new Palette();
-
   // status
   status = new Group(0, window->h() - 24, window->w(), 24, "");
   pos = 8;
-  coords = new Fl_Box(FL_FLAT_BOX, pos, 4, 96, 16, "");
 
+  coords = new Fl_Box(FL_FLAT_BOX, pos, 4, 96, 16, "");
   coords->resize(status->x() + pos, status->y() + 4, 96, 16);
   coords->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
   coords->copy_label("(0, 0)");
   pos += 96 + 6;
+
   new Separator(status, pos, 4, 2, 18, "");
   pos += 8;
+
   info = new Fl_Box(FL_FLAT_BOX, pos, 4, window->w() - pos, 16, "");
   info->resize(status->x() + pos, status->y() + 4, window->w() - pos, 16);
   info->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
@@ -490,40 +488,51 @@ void Gui::init()
   progress->selection_color(0xBBBBBB00);
   progress->labelcolor(0xFFFFFF00);
   progress->hide();
+
+  status->resizable(0);
   status->end();
 
   // top
   top = new Group(0, menubar->h(), window->w(), 40, "");
   pos = 8;
+
   zoom_one = new Button(top, pos, 8, 24, 24,
                         "Actual Size (1)", images_zoom_one_png,
                         (Fl_Callback *)checkZoomOne);
   pos += 24 + 8;
+
   zoom_in = new Button(top, pos, 8, 24, 24,
                        "Zoom In (+)", images_zoom_in_png,
                        (Fl_Callback *)checkZoomIn);
   pos += 24 + 8;
+
   zoom_out = new Button(top, pos, 8, 24, 24,
                         "Zoom Out (-)", images_zoom_out_png,
                         (Fl_Callback *)checkZoomOut);
   pos += 24 + 8;
+
   zoom = new StaticText(top, pos, 8, 56, 24, "");
   pos += 56 + 6;
+
   new Separator(top, pos, 4, 2, 34, "");
   pos += 8;
+
   grid = new ToggleButton(top, pos, 8, 24, 24,
                           "Show Grid", images_grid_png,
                           (Fl_Callback *)checkGrid);
   pos += 24 + 8;
+
   gridsnap = new ToggleButton(top, pos, 8, 24, 24,
                           "Snap to Grid", images_gridsnap_png,
                           (Fl_Callback *)checkGridSnap);
   pos += 50;
+
   gridx = new InputInt(top, pos, 8, 64, 24,
                        "X:",
                        (Fl_Callback *)checkGridX, 1, 256);
   gridx->value("8");
   pos += 92;
+
   gridy = new InputInt(top, pos, 8, 64, 24,
                        "Y:",
                        (Fl_Callback *)checkGridY, 1, 256);
@@ -536,26 +545,30 @@ void Gui::init()
   // bottom
   bottom = new Group(160, window->h() - status->h() - 40, window->w() - 304 - 80, 40, "");
   pos = 8;
+
   new Separator(bottom, pos, 4, 2, 34, "");
   pos += 8;
+
   clone = new ToggleButton(bottom, pos, 8, 24, 24,
                            "Clone (Alt+Click to set target)",
                            images_clone_png,
                            (Fl_Callback *)checkClone);
   pos += 24 + 8;
+
   new Separator(bottom, pos, 4, 2, 34, "");
   pos += 8;
+
   origin = new ToggleButton(bottom, pos, 8, 24, 24,
                             "Start From Center", images_origin_png,
                             (Fl_Callback *)checkOrigin);
   pos += 24 + 8;
+
   constrain = new ToggleButton(bottom, pos, 8, 24, 24,
                               "Lock Proportions",
                               images_constrain_png,
                               (Fl_Callback *)checkConstrain);
   pos += 24 + 8;
-//  new Separator(bottom, pos, 4, 2, 34, "");
-//  pos += 8;
+
   bottom->resizable(0);
   bottom->end();
 
@@ -564,10 +577,12 @@ void Gui::init()
                     48, left_height,
                     "Tools");
   pos = 28;
+
   tool = new Widget(tools, 8, pos, 32, 7 * 32,
                     "Tools", images_tools_png, 32, 32,
                     (Fl_Callback *)checkTool);
   pos += 96 + 8;
+
   tools->resizable(0);
   tools->end();
 
@@ -576,33 +591,34 @@ void Gui::init()
                     112, left_height,
                     "Paint");
   pos = 28;
+
   paint_brush_preview = new Widget(paint, 8, pos, 96, 96 + 20,
                            "Preview", 0, 0, 0);
   paint_brush_preview->bitmap->clear(convertFormat(getFltkColor(FL_BACKGROUND2_COLOR), true));
   pos += 96;
+
   paint_size_value = new InputInt(paint, 8, pos, 96, 24,
                        "", (Fl_Callback *)checkPaintSizeValue, 1, 72);
-//  paint_size_value->inc.labelsize(11);
-//  paint_size_value->dec.labelsize(11);
-//                       (Fl_Callback *));
-//  paint_brush_label = new Fl_Box(FL_NO_BOX, paint_brush->x(), paint_brush->y(), paint_brush->w(), paint_brush->h(), "test");
-//  paint_brush_label->align(FL_ALIGN_RIGHT | FL_ALIGN_BOTTOM | FL_ALIGN_INSIDE);
-//  paint_brush->bitmap->setpixelSolid(48, 48, makeRgb(192, 192, 192), 0);
   pos += 24 + 8;
+
   paint_size = new Widget(paint, 8, pos, 96, 24,
                           "Size", images_size_png, 6, 24,
                           (Fl_Callback *)checkPaintSize);
   pos += 24 + 8;
+
   paint_stroke = new Widget(paint, 8, pos, 96, 48,
                             "Stroke", images_stroke_png, 24, 24,
                             (Fl_Callback *)checkPaintStroke);
   pos += 48 + 8;
+
   paint_shape = new Widget(paint, 8, pos, 96, 24,
                            "Shape", images_shape_png, 6, 24,
                            (Fl_Callback *)checkPaintShape);
   pos += 24 + 8;
+
   new Separator(paint, 4, pos, 106, 2, "");
   pos += 8;
+
   paint_mode = new Fl_Choice(8, pos, 96, 24, "");
   paint_mode->tooltip("Mode");
   paint_mode->textsize(10);
@@ -619,6 +635,7 @@ void Gui::init()
   paint_mode->value(0);
   paint_mode->callback((Fl_Callback *)checkPaintMode);
   pos += 24 + 8;
+
   paint_coarse_edge = new Widget(paint, 8, pos, 96, 24,
                           "Edge", images_edge_png, 12, 24,
                           (Fl_Callback *)checkPaintCoarseEdge);
@@ -647,6 +664,7 @@ void Gui::init()
                           "Edge", images_edge_png, 12, 24,
                           (Fl_Callback *)checkPaintAverageEdge);
   pos += 24 + 8;
+
   paint->resizable(0);
   paint->end();
 
@@ -655,28 +673,37 @@ void Gui::init()
                    112, left_height,
                    "Crop");
   pos = 28;
+
   new StaticText(crop, 8, pos, 32, 24, "x:");
   crop_x = new StaticText(crop, 24, pos, 72, 24, 0);
   pos += 24;
+
   new StaticText(crop, 8, pos, 32, 24, "y:");
   crop_y = new StaticText(crop, 24, pos, 72, 24, 0);
   pos += 24;
+
   new StaticText(crop, 8, pos, 32, 24, "w:");
   crop_w = new StaticText(crop, 24, pos, 72, 24, 0);
   pos += 24;
+
   new StaticText(crop, 8, pos, 32, 24, "h:");
   crop_h = new StaticText(crop, 24, pos, 72, 24, 0);
   pos += 24;
+
   new Separator(crop, 4, pos, 106, 2, "");
   pos += 8;
+
   crop_reset = new Fl_Button(crop->x() + 8, crop->y() + pos, 96, 32, "Reset");
   crop_reset->callback((Fl_Callback *)checkCropReset);
   pos += 32 + 8;
+
   new Separator(crop, 4, pos, 106, 2, "");
   pos += 8;
+
   crop_do = new Fl_Button(crop->x() + 8, crop->y() + pos, 96, 32, "Crop");
   crop_do->callback((Fl_Callback *)checkCropDo);
   pos += 32 + 12;
+
   crop->resizable(0);
   crop->end();
 
@@ -685,39 +712,51 @@ void Gui::init()
                    112, left_height,
                    "Selection");
   pos = 28;
+
   new StaticText(selection, 8, pos, 32, 24, "x:");
   selection_x = new StaticText(selection, 24, pos, 72, 24, 0);
   pos += 24;
+
   new StaticText(selection, 8, pos, 32, 24, "y:");
   selection_y = new StaticText(selection, 24, pos, 72, 24, 0);
   pos += 24;
+
   new StaticText(selection, 8, pos, 32, 24, "w:");
   selection_w = new StaticText(selection, 24, pos, 72, 24, 0);
   pos += 24;
+
   new StaticText(selection, 8, pos, 32, 24, "h:");
   selection_h = new StaticText(selection, 24, pos, 72, 24, 0);
   pos += 24;
+
   new Separator(selection, 4, pos, 106, 2, "");
   pos += 8;
+
   selection_reset = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Reset");
   selection_reset->callback((Fl_Callback *)checkSelectionReset);
   pos += 32 + 8;
+
   new Separator(selection, 4, pos, 106, 2, "");
   pos += 8;
+
   selection_do = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Select");
   selection_do->callback((Fl_Callback *)checkSelectionDo);
   pos += 32 + 8;
+
   new Separator(selection, 4, pos, 106, 2, "");
   pos += 8;
+
   selection_alpha = new CheckBox(selection, 8, pos, 16, 16, "Alpha Mask", 0);
   selection_alpha->labelsize(13);
   selection_alpha->center();
   selection_alpha->value(1);
   pos += 16 + 8;
+
   selection_mirror = new Button(selection, 8, pos, 30, 30, "Mirror", images_select_mirror_png, (Fl_Callback *)checkSelectionFlipHorizontal);
   selection_flip = new Button(selection, 8 + 33, pos, 30, 30, "Flip", images_select_flip_png, (Fl_Callback *)checkSelectionFlipVertical);
   selection_rotate = new Button(selection, 8 + 66, pos, 30, 30, "Rotate", images_select_rotate_png, (Fl_Callback *)checkSelectionRotate90);
   pos += 30 + 8;
+
   selection->resizable(0);
   selection->end();
 
@@ -726,6 +765,7 @@ void Gui::init()
                        112, left_height,
                        "Get Color");
   pos = 28;
+
   getcolor_color = new Widget(getcolor, 8, pos, 96, 96, 0, 0, 0, 0);
   getcolor->resizable(0);
   getcolor->end();
@@ -735,22 +775,28 @@ void Gui::init()
                      112, left_height,
                      "Offset");
   pos = 28;
+
   new StaticText(offset, 8, pos, 32, 24, "x:");
   offset_x = new StaticText(offset, 24, pos, 72, 24, 0);
   pos += 24;
+
   new StaticText(offset, 8, pos, 32, 24, "y:");
   offset_y = new StaticText(offset, 24, pos, 72, 24, 0);
   pos += 24;
 
   new Separator(offset, 4, pos, 106, 2, "");
   pos += 8;
+
   offset_up = new RepeatButton(offset, 44, pos, 24, 24, "", images_up_png, (Fl_Callback *)checkOffsetUp);
   pos += 12;
+
   offset_left = new RepeatButton(offset, 16, pos, 24, 24, "", images_left_png, (Fl_Callback *)checkOffsetLeft);
   offset_right = new RepeatButton(offset, 72, pos, 24, 24, "", images_right_png, (Fl_Callback *)checkOffsetRight);
   pos += 16;
+
   offset_down = new RepeatButton(offset, 44, pos, 24, 24, "", images_down_png, (Fl_Callback *)checkOffsetDown);
   pos += 24;
+
   new StaticText(offset, 8, pos, 96, 24, "Nudge");
 
   offset->resizable(0);
@@ -761,6 +807,7 @@ void Gui::init()
                    112, left_height,
                    "Text");
   pos = 28;
+
   // add font names
   font_browse = new Fl_Hold_Browser(8, pos, 96, 192);
   font_browse->textsize(9);
@@ -803,6 +850,7 @@ void Gui::init()
                    112, left_height,
                    "Fill");
   pos = 28 + 8;
+
   fill_feather = new InputInt(fill, 8, pos, 96, 24, "Feather (0-255)", 0, 0, 255);
   fill_feather->align(FL_ALIGN_BOTTOM);
   fill_feather->value("0");
@@ -820,10 +868,12 @@ void Gui::init()
                     80, window->h() - top->h() - menubar->h() - status->h(),
                     "Palette");
   pos = 28;
+
   palette_swatches = new Widget(palette, 8, pos, 64, 256,
                        0, 8, 8,
                        (Fl_Callback *)checkPaletteSwatches);
   pos += 256 + 8;
+
   palette_editor = new Fl_Button(palette->x() + 8, palette->y() + pos, 64, 24, "Editor...");
   palette_editor->callback((Fl_Callback *)Dialog::editor);
   palette_editor->labelsize(12);
@@ -836,30 +886,38 @@ void Gui::init()
                     144, window->h() - top->h() - menubar->h() - status->h(),
                     "Colors");
   pos = 28;
+
   swatch = new Widget(colors, 8, pos, 128, 48, "Paint Color", 0, 0, 0);
   pos += 48 + 8;
+
   hexcolor = new InputText(colors, 40, pos, 96, 24, "Hex:",
                            (Fl_Callback *)checkHexColor);
   hexcolor->maximum_size(6);
   hexcolor->textfont(FL_COURIER);
   hexcolor->textsize(14);
   pos += 24 + 8;
+
   // satval overlaps the hue color wheel
   hue = new Widget(colors, 8, pos, 128, 128, 0, 1, 1, (Fl_Callback *)checkColor);
   satval = new Widget(colors, 40, pos + 32, 64, 64, 0, 1, 1, (Fl_Callback *)checkColor);
   pos += 128 + 8;
+
   new Separator(colors, 4, pos, 138, 2, "");
   pos += 8;
+
   trans_input = new InputInt(colors, 8, pos, 128, 24,
                        "", (Fl_Callback *)checkTransInput, 0, 255);
   trans_input->value("0");
   pos += 24 + 8;
+
   trans = new Widget(colors, 8, pos, 128, 24,
                      "Transparency", images_transparency_png, 4, 24,
                      (Fl_Callback *)checkTrans);
   pos += 24 + 8;
+
   new Separator(colors, 4, pos, 138, 2, "");
   pos += 8;
+
   blend = new Fl_Choice(8, pos, 128, 24, "");
   blend->tooltip("Blending Mode");
   blend->textsize(10);
@@ -874,6 +932,7 @@ void Gui::init()
   blend->value(0);
   blend->callback((Fl_Callback *)checkColor);
   pos += 24 + 8;
+
   colors->resizable(0);
   colors->end();
 
@@ -881,21 +940,25 @@ void Gui::init()
   files = new Group(0, top->h() + menubar->h() + left_height,
                    160, window->h() - top->h() - menubar->h() - status->h() - left_height, "Files");
   pos = 28;
+
   file_browse = new Fl_Hold_Browser(8, pos, 144, files->h() - 16 - 20 - 32);
   file_browse->textsize(12);
-  file_browse->resize(files->x() + 8, files->y() + pos, files->w() - 16, files->h() - 16 - 20 - 32 - 32 - 8);
+  file_browse->resize(files->x() + 8, files->y() + pos, files->w() - 16, files->h() - 108);
   file_browse->callback((Fl_Callback *)checkFileBrowse);
   pos += file_browse->h() + 8;
+
   file_rename = new Fl_Input(8, pos, 112, 24, "");
   file_rename->textsize(12);
   file_rename->value("");
   file_rename->when(FL_WHEN_ENTER_KEY);
   file_rename->resize(files->x() + 8, files->y() + pos, 112, 24);
   file_rename->callback((Fl_Callback *)checkFileRename);
+
   file_close = new Button(files, 128, pos, 24, 24,
                           "Close File (Delete)", images_close_png,
                           (Fl_Callback *)closeFile);
   pos += 24 + 8;
+
   file_mem = new Fl_Box(FL_FLAT_BOX, files->x() + 8, files->y() + pos, 144, 32, "");
 
   file_mem->labelsize(10);
@@ -938,10 +1001,6 @@ void Gui::init()
   Fl_Tooltip::enable(1);
   Fl_Tooltip::color(fl_rgb_color(192, 224, 248));
   Fl_Tooltip::textcolor(FL_BLACK);
-
-//  Project::brush->edge = 3;
-//  paint_edge->var = 3;
-//  Project::brush->size = 4;
 
   updateColor(Project::palette->data[palette_swatches->var]);
   drawPalette();
@@ -1652,7 +1711,7 @@ void Gui::checkSelectionValues(int x, int y, int w, int h)
   selection_h->redraw();
 }
 
-void Gui::checkSelectionFromCurrentImage()
+void Gui::checkImageToSelection()
 {
   delete Project::select_bmp;
 
@@ -1675,7 +1734,7 @@ void Gui::checkSelectionToNewImage()
   select_bmp->blit(temp, 0, 0, 0, 0, temp->w, temp->h);
 
   if(Project::newImageFromBitmap(temp) != -1)
-    addFile("From Selection");
+    addFile("new_from_selection");
 }
 
 void Gui::checkOffsetValues(int x, int y)

@@ -88,9 +88,8 @@ namespace Gui
   void checkSelectionRotate180();
   void checkSelectionReset();
   void checkSelectionValues(int, int, int, int);
-  void checkSelectionToNewImage();
-  void checkSelectionFromCurrentImage();
   void checkImageToSelection();
+  void checkSelectionToNewImage();
   void checkOffsetValues(int, int);
   void checkOffsetLeft(Widget *, void *);
   void checkOffsetRight(Widget *, void *);
