@@ -808,9 +808,9 @@ void Gui::init()
   fill_feather->value("0");
   pos += 24 + 24;
 
-  fill_warning = new Fl_Box(FL_NO_BOX, fill->x() + 8, fill->y() + pos, 96, 48, "Feathering can\nbe very slow\non large images!");
+  fill_warning = new Fl_Box(FL_NO_BOX, fill->x() + 8, fill->y() + pos, 96, 96, "Blending mode\nignored, use color\nand transparency.\n\nFeathering can\nbe very slow\non large images!");
   fill_warning->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP | FL_ALIGN_LEFT);
-  fill_warning->labelsize(10);
+  fill_warning->labelsize(9);
 
   fill->resizable(0);
   fill->end();
