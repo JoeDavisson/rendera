@@ -899,7 +899,7 @@ void Gui::init()
 
   // files
   files = new Group(0, top->h() + menubar->h() + left_height,
-                   160, window->h() - top->h() - menubar->h() - status->h() - left_height, "Files");
+                   160, window->h() - top->h() - menubar->h() - status->h() - left_height, "Images");
   pos = 28;
 
   file_browse = new Fl_Hold_Browser(8, pos, 144, files->h() - 16 - 20 - 32);
