@@ -102,7 +102,6 @@ OBJ= \
   $(SRC_DIR)/Stroke.o \
   $(SRC_DIR)/Undo.o \
   $(SRC_DIR)/View.o \
-  $(SRC_DIR)/Crop.o \
   $(SRC_DIR)/Selection.o \
   $(SRC_DIR)/Fill.o \
   $(SRC_DIR)/GetColor.o \
@@ -110,25 +109,35 @@ OBJ= \
   $(SRC_DIR)/Paint.o \
   $(SRC_DIR)/Text.o
 
+# build program
 default: $(OBJ)
 	$(CXX) -o ./$(EXE) $(SRC_DIR)/Main.cxx $(OBJ) $(CXXFLAGS) $(LIBS)
 
+# build debug version for testing
+debug:	CXXFLAGS += -DDEBUG -g
+debug:	default
+
+# rebuld fltk library
 fltklibs:
 	cd ./fltk; \
 	make clean; \
 	./configure --host=$(HOST) --enable-xft --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
-	make -j20; \
+	make; \
 	cd ..; \
-	echo "FLTK libs built!";
+	echo "FLTK libs built.";
 
-$(SRC_DIR)/%.o: $(SRC_DIR)/%.cxx $(SRC_DIR)/%.H
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+# rebuild Images.H from png files in images directory
+image_header:
+	gcc -O3 ./makeheader.c -o ./makeheader
+	./makeheader src/Images.H images/*.png
+	@echo "Images.H created."
 
+# remove object files
 clean:
 	@rm -f $(SRC_DIR)/*.o 
 	@rm -f $(SRC_DIR)/FX/*.o 
-	@echo "Clean!"
-	gcc -O3 ./makeheader.c -o ./makeheader
-	./makeheader src/Images.H images/*.png
-	@echo "Image.H built"
+	@echo "Clean."
+
+$(SRC_DIR)/%.o: $(SRC_DIR)/%.cxx $(SRC_DIR)/%.H
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
