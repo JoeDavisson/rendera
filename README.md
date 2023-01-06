@@ -4,9 +4,6 @@ Rendera
 ![Screenshot](https://raw.githubusercontent.com/JoeDavisson/rendera/master/screenshots/screenshot.png)
 *Backround removed with fill tool, uses paint color for glow effect.*
 
-![Screenshot](https://raw.githubusercontent.com/JoeDavisson/rendera/master/screenshots/cube_texture.png)
-*Backround removed with fill tool, uses paint color for glow effect.*
-
 ## Overview
 Rendera is a painting program for Linux and Windows. It's a little unusual in that brushstrokes are "rendered" in after being created by the user. There are no layers, but transparency information may be edited with relative ease, making it a useful companion to programs like Gimp or Inkscape.
 
