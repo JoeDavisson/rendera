@@ -20,10 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Normalize.H"
 
-void Normalize::apply()
+void Normalize::apply(Bitmap *bmp)
 {
-  Bitmap *bmp = Project::bmp;
-
   // search for highest & lowest RGB values
   int r_high = 0;
   int g_high = 0;
@@ -101,6 +99,6 @@ void Normalize::apply()
 void Normalize::begin()
 {
   Project::undo->push();
-  apply();
+  apply(Project::bmp);
 }
 

@@ -115,12 +115,8 @@ namespace Sierra
   const int div = 32;
 }
 
-void Dither::apply()
+void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
 {
-  Bitmap *bmp = Project::bmp;
-  int mode = Items::mode->value();
-  const bool fix_gamma = Items::gamma->value();
-  const bool lum_only = Items::lum_only->value();
   int (*matrix)[5] = Threshold::matrix;
   int w = 5, h = 3;
   int div = 1;
@@ -322,7 +318,12 @@ void Dither::close()
 {
   Items::dialog->hide();
   Project::undo->push();
-  apply();
+
+  const int mode = Items::mode->value();
+  const bool fix_gamma = Items::gamma->value();
+  const bool lum_only = Items::lum_only->value();
+
+  apply(Project::bmp, mode, fix_gamma, lum_only);
 }
 
 void Dither::quit()

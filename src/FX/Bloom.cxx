@@ -28,19 +28,13 @@ namespace
     InputInt *radius;
     InputInt *blend;
     InputInt *threshold;
-  //    Fl_Choice *mode;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
 }
 
-void Bloom::apply()
+void Bloom::apply(Bitmap *bmp, int radius, int threshold, int blend)
 {
-  Bitmap *bmp = Project::bmp;
-  int radius = atoi(Items::radius->value());
-  int threshold = atoi(Items::threshold->value());
-  int blend = 255 - atoi(Items::blend->value()) * 2.55;
-
   radius = (radius + 1) * 2;
 
   std::vector<int> kernel(radius);
@@ -146,7 +140,12 @@ void Bloom::close()
 {
   Items::dialog->hide();
   Project::undo->push();
-  apply();
+
+  const int radius = atoi(Items::radius->value());
+  const int threshold = atoi(Items::threshold->value());
+  const int blend = 255 - atoi(Items::blend->value()) * 2.55;
+
+  apply(Project::bmp, radius, threshold, blend);
 }
 
 void Bloom::quit()

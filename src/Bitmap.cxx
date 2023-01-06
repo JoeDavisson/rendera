@@ -688,7 +688,6 @@ void Bitmap::transBlit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int
       const int c = *dx1;
 
       *dx1 = blendFast(c, *sx1, 255 - geta(*sx1));
-//      *dx1 = *sx1;
     }
 
     sy1++;

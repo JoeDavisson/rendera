@@ -127,8 +127,9 @@ namespace Gui
   void duplicateImage();
   void showProgress(float);
   void showProgress(float, int);
-  int updateProgress(const int);
+  int updateProgress(int);
   void hideProgress();
+  void enableProgress(bool);
 
   void updateCoords(char *);
   void updateInfo(char *);

@@ -190,6 +190,7 @@ namespace
   float progress_value = 0;
   float progress_step = 0;
   int progress_interval = 50;
+  bool progress_enable = true;
 
   // tables
   const int brush_sizes[16] =
@@ -980,6 +981,8 @@ void Gui::init()
   paint_chalk_edge->do_callback();
   paint_average_edge->var = 2;
   paint_average_edge->do_callback();
+
+//  FX::enableProgress(true);
 
 /*
   // fix certain icons if using a light theme
@@ -2028,6 +2031,9 @@ void Gui::duplicateImage()
 // use default interval
 void Gui::showProgress(float step)
 {
+  if(progress_enable == false)
+    return;
+
   if(step == 0)
     step = .001;
 
@@ -2044,6 +2050,9 @@ void Gui::showProgress(float step)
 // custom interval
 void Gui::showProgress(float step, int interval)
 {
+  if(progress_enable == false)
+    return;
+
   if(step == 0)
     step = .001;
 
@@ -2060,8 +2069,11 @@ void Gui::showProgress(float step, int interval)
   progress->show();
 }
 
-int Gui::updateProgress(const int y)
+int Gui::updateProgress(int y)
 {
+  if(progress_enable == false)
+    return 0;
+
   // user cancelled operation
   if(Fl::get_key(FL_Escape))
   {
@@ -2086,13 +2098,23 @@ int Gui::updateProgress(const int y)
 
 void Gui::hideProgress()
 {
-    view->drawMain(true);
-    progress->value(0);
-    progress->copy_label("");
-    progress->redraw();
-    progress->hide();
-    info->show();
-    view->rendering = false;
+  if(progress_enable == false)
+    return;
+
+  view->drawMain(true);
+  progress->value(0);
+  progress->copy_label("");
+  progress->redraw();
+  progress->hide();
+  info->show();
+  view->rendering = false;
+}
+
+// hack to externally enable/disable progress indicator
+// allows filters to be used internally
+void Gui::enableProgress(bool state)
+{
+  progress_enable = state;
 }
 
 void Gui::updateCoords(char *s)

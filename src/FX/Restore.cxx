@@ -117,14 +117,14 @@ void Restore::close()
   Project::undo->push();
 
   if(Items::normalize->value())
-    Normalize::apply();
+    Normalize::apply(Project::bmp);
   if(Items::invert->value())
-    Invert::apply();
+    Invert::apply(Project::bmp);
 
   apply();
 
   if(Items::invert->value())
-    Invert::apply();
+    Invert::apply(Project::bmp);
 }
 
 void Restore::quit()

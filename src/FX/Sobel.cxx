@@ -31,10 +31,10 @@ namespace
   }
 }
 
-void Sobel::apply()
+void Sobel::apply(Bitmap *bmp, int amount)
 {
-  Bitmap *bmp = Project::bmp;
-  int amount = atoi(Items::amount->value());
+//  Bitmap *bmp = Project::bmp;
+//  int amount = atoi(Items::amount->value());
   int div = 1;
 
   Bitmap temp(bmp->cw, bmp->ch);
@@ -99,7 +99,10 @@ void Sobel::close()
 {
   Items::dialog->hide();
   Project::undo->push();
-  apply();
+//  apply();
+//  Bitmap *bmp = Project::bmp;
+//  int amount = atoi(Items::amount->value());
+  apply(Project::bmp, atoi(Items::amount->value()));
 }
 
 void Sobel::quit()

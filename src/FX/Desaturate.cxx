@@ -20,10 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Desaturate.H"
 
-void Desaturate::apply()
+void Desaturate::apply(Bitmap *bmp)
 {
-  Bitmap *bmp = Project::bmp;
-
   Gui::showProgress(bmp->h);
 
   for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -48,6 +46,6 @@ void Desaturate::apply()
 void Desaturate::begin()
 {
   Project::undo->push();
-  apply();
+  apply(Project::bmp);
 }
 

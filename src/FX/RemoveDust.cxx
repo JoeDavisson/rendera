@@ -33,11 +33,8 @@ namespace
   }
 }
 
-void RemoveDust::apply()
+void RemoveDust::apply(Bitmap *bmp, int amount)
 {
-  Bitmap *bmp = Project::bmp;
-  int amount = atoi(Items::amount->value());
-
   for(int y = bmp->ct + 1; y <= bmp->cb - 1; y++)
   {
     int *p = bmp->row[y] + bmp->cl + 1;
@@ -89,12 +86,12 @@ void RemoveDust::close()
   Project::undo->push();
 
   if(Items::invert->value())
-    Invert::apply();
+    Invert::apply(Project::bmp);
 
-  apply();
+  apply(Project::bmp, atoi(Items::amount->value()));
 
   if(Items::invert->value())
-    Invert::apply();
+    Invert::apply(Project::bmp);
 }
 
 void RemoveDust::quit()

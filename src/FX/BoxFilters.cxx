@@ -53,12 +53,8 @@ namespace
   }
 }
 
-void BoxFilters::apply()
+void BoxFilters::apply(Bitmap *bmp, int amount, int mode)
 {
-  Bitmap *bmp = Project::bmp;
-  int amount = atoi(Items::amount->value());
-  int mode = Items::mode->value();
-
   int div = 1;
   int matrix[3][3];
 
@@ -143,7 +139,11 @@ void BoxFilters::close()
 {
   Items::dialog->hide();
   Project::undo->push();
-  apply();
+
+  const int amount = atoi(Items::amount->value());
+  const int mode = Items::mode->value();
+
+  apply(Project::bmp, amount, mode);
 }
 
 void BoxFilters::quit()

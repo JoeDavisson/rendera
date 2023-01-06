@@ -20,10 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Invert.H"
 
-void Invert::apply()
+void Invert::apply(Bitmap *bmp)
 {
-  Bitmap *bmp = Project::bmp;
-
   Gui::showProgress(bmp->h);
 
   for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -46,6 +44,6 @@ void Invert::apply()
 void Invert::begin()
 {
   Project::undo->push();
-  apply();
+  apply(Project::bmp);
 }
 

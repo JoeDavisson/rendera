@@ -20,10 +20,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Colorize.H"
 
-void Colorize::apply()
+void Colorize::apply(Bitmap *bmp, int color)
 {
-  Bitmap *bmp = Project::bmp;
-  rgba_type rgba_color = getRgba(Project::brush->color);
+  rgba_type rgba_color = getRgba(color);
 
   Gui::showProgress(bmp->h);
 
@@ -67,6 +66,6 @@ void Colorize::apply()
 void Colorize::begin()
 {
   Project::undo->push();
-  apply();
+  apply(Project::bmp, Project::brush->color);
 }
 

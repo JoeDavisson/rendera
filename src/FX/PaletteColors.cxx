@@ -20,11 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "PaletteColors.H"
 
-void PaletteColors::apply()
+void PaletteColors::apply(Bitmap *bmp, Palette *pal)
 {
-  Bitmap *bmp = Project::bmp;
-  Palette *pal = Project::palette;
-
   Gui::showProgress(bmp->h);
 
   const float inc = 1.0 / (bmp->cw * bmp->ch);
@@ -121,6 +118,6 @@ void PaletteColors::apply()
 void PaletteColors::begin()
 {
   Project::undo->push();
-  apply();
+  apply(Project::bmp, Project::palette);
 }
 

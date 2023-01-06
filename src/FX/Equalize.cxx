@@ -20,10 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Equalize.H"
 
-void Equalize::apply()
+void Equalize::apply(Bitmap *bmp)
 {
-  Bitmap *bmp = Project::bmp;
-
   std::vector<int> list_r(256, 0);
   std::vector<int> list_g(256, 0);
   std::vector<int> list_b(256, 0);
@@ -93,6 +91,6 @@ void Equalize::apply()
 void Equalize::begin()
 {
   Project::undo->push();
-  apply();
+  apply(Project::bmp);
 }
 

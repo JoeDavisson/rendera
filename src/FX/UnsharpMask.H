@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace UnsharpMask
 {
-  void apply();
+  void apply(Bitmap *, int, double, int);
   void close();
   void quit();
   void begin();

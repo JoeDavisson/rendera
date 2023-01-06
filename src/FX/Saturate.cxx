@@ -20,9 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Saturate.H"
 
-void Saturate::apply()
+void Saturate::apply(Bitmap *bmp)
 {
-  Bitmap *bmp = Project::bmp;
   std::vector<int> list_s(256, 0);
 
   const int size = bmp->cw * bmp->ch;
@@ -101,6 +100,6 @@ void Saturate::apply()
 void Saturate::begin()
 {
   Project::undo->push();
-  apply();
+  apply(Project::bmp);
 }
 

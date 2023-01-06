@@ -31,11 +31,9 @@ namespace
   }
 }
 
-void Sharpen::apply()
+void Sharpen::apply(Bitmap *bmp, int amount)
 {
-  Bitmap *bmp = Project::bmp;
   Bitmap temp(bmp->cw, bmp->ch);
-  int amount = atoi(Items::amount->value());
 
   Gui::showProgress(bmp->h);
 
@@ -77,7 +75,8 @@ void Sharpen::close()
 {
   Items::dialog->hide();
   Project::undo->push();
-  apply();
+
+  apply(Project::bmp, atoi(Items::amount->value()));
 }
 
 void Sharpen::quit()

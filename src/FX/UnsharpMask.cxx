@@ -33,13 +33,8 @@ namespace
   }
 }
 
-void UnsharpMask::apply()
+void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
 {
-  Bitmap *bmp = Project::bmp;
-  int radius = atoi(Items::radius->value());
-  double amount = atof(Items::amount->value());
-  int threshold = atoi(Items::threshold->value());
-
   radius = (radius + 1) * 2 + 1;
   std::vector<int> kernel(radius);
   int div = 0;
@@ -170,7 +165,12 @@ void UnsharpMask::close()
 {
   Items::dialog->hide();
   Project::undo->push();
-  apply();
+
+  const int radius = atoi(Items::radius->value());
+  const double amount = atof(Items::amount->value());
+  const int threshold = atoi(Items::threshold->value());
+
+  apply(Project::bmp, radius, amount, threshold);
 }
 
 void UnsharpMask::quit()
