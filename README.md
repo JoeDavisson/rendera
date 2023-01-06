@@ -3,9 +3,28 @@ Rendera
 
 ![Screenshot](https://raw.githubusercontent.com/JoeDavisson/rendera/master/screenshots/screenshot.png)
 
-Rendera is a painting program suitable for photo-retouching and making seamless
-textures. Originally a C program for Windows, it has been rewritten from scratch using
-C++/FLTK.
+Rendera is a painting program for Linux and Windows. It's a little unusual in that brushstrokes are "rendered" in after being created by the user. There are no layers, but transparency information may be edited with relative ease, making it a useful companion to programs like Gimp or Inkscape.
+
+## Features
+ * variety of painting and blending options
+ * clone mode displays second cursor for visual assistance
+ * colorize mode preserves luminosity for realistic results
+ * high-quality color reduction and dithering
+ * cut/paste selections
+ * crop function
+ * text tool works with blending modes and cloning
+ * fill with edge feathering option
+ * palette editor
+ * interactive offset
+ * "smart" grid snapping
+ * bilinear/bicubic scaling
+ * arbitrary rotation with scaling option
+ * scaling, gaussian blur, and dithering are "gamma-aware"
+ * multiple image support
+ * multiple undo/redo for each image
+ * file support: PNG, JPEG, BMP, TGA, GPL (Gimp Palette)
+ * drag and drop image loading
+ * variety of image filters
 
 ## Build it from source
 ```$ git clone https://github.com/JoeDavisson/rendera.git```
@@ -20,12 +39,15 @@ Get FLTK 1.3.7:
 
 Or uncompress the FLTK-1.3.7 source package here under `fltk`.
 
-The Makefile supports ```linux``` and ```mingw``` cross-compiler targets.
-(Edit the Makefile to choose.)
+The Makefile supports ```linux``` and ```mingw``` cross-compiler targets (edit to choose).
 
+Build fltk libraries (ignore errors about ```fluid.exe``` when using the mingw cross compiler):
 ```$ make fltklibs```
 
-Do this the first time anyway to build the images header:
+Run to create images header:
+```$ make image_header```
+
+Run whenever a header file is changed:
 ```$ make clean```
 
 Then:
@@ -36,7 +58,6 @@ Then:
 ## Dependencies
 
 ### Libraries
-
  * FLTK-1.3.7
  * libxft-dev (required for font rendering)
  * PNG and JPEG libraries are included in the FLTK source package.
@@ -44,6 +65,5 @@ Then:
 Everything is statically linked resulting in a standalone executable.
 
 ### Toolchain
-
 Rendera is built with ```gcc-11.2```.
 
