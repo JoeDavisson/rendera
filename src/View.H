@@ -42,8 +42,6 @@ public:
   void changeCursor();
   void drawCustomCursor();
   void drawCloneCursor();
-  void beginMove();
-  void move();
   void zoomIn(int, int);
   void zoomOut(int, int);
   void zoomOne();
@@ -63,7 +61,6 @@ public:
   float prev_ox;
   float prev_oy;
   float prev_zoom;
-  bool moving;
   bool panning;
   bool grid, gridsnap;
   int gridx, gridy;

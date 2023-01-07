@@ -59,7 +59,6 @@ void Paint::push(View *view)
       Render::begin();
       active = false;
       Blend::set(Blend::TRANS);
-      view->moving = 0;
       view->drawMain(true);
       return;
     }

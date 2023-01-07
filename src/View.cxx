@@ -117,7 +117,6 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   prev_ox = ox;
   prev_oy = oy;
   prev_zoom = zoom;
-  moving = false;
   panning = false;
   last_ox = 0;
   last_oy = 0;
@@ -307,23 +306,10 @@ int View::handle(int event)
 
           break;
         case 2:
-          if(!moving)
-          {
-            if(shift)
-            {
-              // begin image navigation
-              moving = true;
-              beginMove();
-            }
-            else
-            {
-              // begin image panning
-              last_ox = (w() - 1 - mousex) / zoom - ox;
-              last_oy = (h() - 1 - mousey) / zoom - oy;
-            }
-
-           break;
-          }
+          // begin image panning
+          last_ox = (w() - 1 - mousex) / zoom - ox;
+          last_oy = (h() - 1 - mousey) / zoom - oy;
+         break;
         case 4:
           Project::tool->push(this);
           break;
@@ -349,26 +335,17 @@ int View::handle(int event)
           Project::tool->drag(this);
           break;
         case 2:
-          if(moving)
-          {
-            // continue image navigation
-            move();
-          }
-          else
-          {
-            // continue image panning
-            panning = true;
-            ox = (w() - 1 - mousex) / zoom - last_ox;
-            oy = (h() - 1 - mousey) / zoom - last_oy; 
+          // continue image panning
+          panning = true;
+          ox = (w() - 1 - mousex) / zoom - last_ox;
+          oy = (h() - 1 - mousey) / zoom - last_oy; 
 
-            clipOrigin();
-            drawMain(false);
-            Project::tool->redraw(this);
-            redraw();
+          clipOrigin();
+          drawMain(false);
+          Project::tool->redraw(this);
+          redraw();
 
-            saveCoords();
-          }
-
+          saveCoords();
           break;
       } 
 
@@ -381,9 +358,6 @@ int View::handle(int event)
     case FL_RELEASE:
     {
       Project::tool->release(this);
-
-      if(moving)
-        moving = false;
 
       if(panning)
         panning = false;
@@ -417,7 +391,7 @@ int View::handle(int event)
     case FL_MOUSEWHEEL:
     {
       // ignore wheel during image navigation
-      if(moving || panning)
+      if(panning)
         break;
 
       if(Fl::event_dy() >= 0)
@@ -647,9 +621,6 @@ void View::changeCursor()
 
 void View::drawCloneCursor()
 {
-  if(moving)
-    return;
-
   if(Gui::getTool() != Tool::PAINT && Gui::getTool() != Tool::TEXT)
     return;
 
@@ -695,112 +666,6 @@ void View::drawCloneCursor()
 
   oldx1 = x1;
   oldy1 = y1;
-}
-
-void View::beginMove()
-{
-  int dx = x() - group->x();
-  int dy = y() - group->y();
-  int ww = w();
-  int hh = h();
-
-  winaspect = (float)hh / ww;
-  aspect = (float)Project::bmp->h / Project::bmp->w;
-
-  pw = ww;
-  ph = hh;
-
-  if(aspect < winaspect)
-    ph = ww * aspect;
-  else
-    pw = hh / aspect;
-  if(pw > ww)
-    pw = ww;
-  if(ph > hh)
-    ph = hh;
-
-  px = (ww - pw) >> 1;
-  py = (hh - ph) >> 1;
-  px += dx;
-  py += dy;
-
-  bw = ww * (((float)pw / zoom) / Project::bmp->w);
-  bh = bw * winaspect;
-
-  bx = ox * ((float)pw / Project::bmp->w) + px;
-  by = oy * ((float)ph / Project::bmp->h) + py;
-
-  // pos.x = bx + bw / 2;
-  // pos.y = by + bh / 2;
-  // warp mouse here... (unsupported in fltk)
-
-  backbuf->clear(convertFormat(getFltkColor(FL_BACKGROUND2_COLOR), true));
-
-  Project::bmp->fastStretch(backbuf,
-                             0, 0, Project::bmp->w, Project::bmp->h,
-                             px, py, pw, ph, bgr_order);
-
-  lastbx = bx;
-  lastby = by;
-  lastbw = bw;
-  lastbh = bh;
-
-  backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
-
-  redraw();
-}
-
-void View::move()
-{
-  bx = mousex - (bw >> 1);
-  by = mousey - (bh >> 1);
-
-  if(bx < px)
-    bx = px;
-  if(bx > px + pw - bw - 1)
-    bx = px + pw - bw - 1;
-  if(by < py)
-    by = py;
-  if(by > py + ph - bh - 1)
-    by = py + ph - bh - 1;
-
-  ox = (bx - px) / ((float)pw / (Project::bmp->w));
-  oy = (by - py) / ((float)ph / (Project::bmp->h));
-
-  if(ox < 0)
-    ox = 0;
-  if(oy < 0)
-    oy = 0;
-
-  if(bw > pw)
-  {
-    bx = px;
-    bw = pw;
-    ox = 0;
-  }
-
-  if(bh > ph)
-  {
-    by = py;
-    bh = ph;
-    oy = 0;
-  }
-
-  if(bw < 1)
-    bw = 1;
-  if(bh < 1)
-    bh = 1;
-
-  // draw bounding box
-  backbuf->xorRect(lastbx, lastby, lastbx + lastbw - 1, lastby + lastbh - 1);
-  backbuf->xorRect(bx, by, bx + bw - 1, by + bh - 1);
-
-  redraw();
-
-  lastbx = bx;
-  lastby = by;
-  lastbw = bw;
-  lastbh = bh;
 }
 
 void View::zoomIn(int x, int y)

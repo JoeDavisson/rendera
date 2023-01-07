@@ -301,6 +301,12 @@ public:
           case 'e':
             Dialog::editor();
             break;
+          case 'c':
+            clone->var = ~clone->var;
+            clone->redraw();
+            clone->do_callback();
+            view->drawMain(true);
+            break;
           default:
             break;
         }
