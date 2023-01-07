@@ -543,7 +543,7 @@ void Gui::init()
   pos += 8;
 
   clone = new ToggleButton(bottom, pos, 8, 24, 24,
-                           "Clone (Alt+Click to set target)",
+                           "Clone (Ctrl+Click to set target)",
                            images_clone_png,
                            (Fl_Callback *)checkClone);
   pos += 24 + 8;

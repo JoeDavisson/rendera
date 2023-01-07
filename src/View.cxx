@@ -289,7 +289,7 @@ int View::handle(int event)
           if(shift)
             Project::stroke->constrain = 1;
 */
-          if(alt)
+          if(ctrl)
           {
             // update clone target
             Clone::x = imgx;
