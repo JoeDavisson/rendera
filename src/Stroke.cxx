@@ -835,52 +835,12 @@ void Stroke::polyLine(int x, int y, int ox, int oy, float zoom)
   lasty = y;
 }
 
-// always-visible XOR preview
-void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
-{
-  Map *map = Project::map;
-
-  clip();
-
-  ox *= zoom;
-  oy *= zoom;
-
-  float yy1 = (float)y1 * zoom;
-  float yy2 = yy1 + zoom - 1;
-
-  // prevent overun when zoomed out
-  if(x2 > map->w - 2)
-    x2 = map->w - 2;
-  if(y2 > map->h - 2)
-    y2 = map->h - 2;
-
-  for(int y = y1; y <= y2; y++)
-  {
-    unsigned char *p = map->row[y] + x1;
-    float xx1 = (float)x1 * zoom;
-    float xx2 = xx1 + zoom - 1;
-
-    for(int x = x1; x <= x2; x++)
-    {
-      if(*p++)
-      {
-        backbuf->xorRectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy);
-        backbuf->rectfill(xx1 - ox, yy1 - oy, xx2 - ox, yy2 - oy, makeRgb(128, 128, 128), 128);
-      }
-
-      xx1 += zoom;
-      xx2 += zoom;
-    }
-
-    yy1 += zoom;
-    yy2 += zoom;
-  }
-}
-
 // use paint color for preview
-//FIXME this needs to take View * instead of Bitmap *
 void Stroke::previewPaint(View *view)
 {
+  Bitmap *backbuf = view->backbuf;
+  Map *map = Project::map;
+
   const float zoom = view->zoom;
   const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
@@ -890,17 +850,15 @@ void Stroke::previewPaint(View *view)
   int ox = view->ox;
   int oy = view->oy;
 
-  Bitmap *backbuf = view->backbuf;
-  Map *map = Project::map;
   ox *= zoom;
   oy *= zoom;
-  clip();
 
   int xx1 = x1 * zoom - ox;
   int yy1 = y1 * zoom - oy;
   int xx2 = x2 * zoom - ox + zoom - 1;
   int yy2 = y2 * zoom - oy + zoom - 1;
 
+  clip();
 
   // draw brushstroke preview
   if(xx1 < 0)
@@ -950,8 +908,21 @@ void Stroke::previewPaint(View *view)
   }
 }
 
-void Stroke::previewSelection(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
+void Stroke::previewSelection(View *view)
 {
+  Bitmap *backbuf = view->backbuf;
+  Bitmap *select_bmp = Project::select_bmp;
+  
+  const float zoom = view->zoom;
+  const bool bgr_order = view->bgr_order;
+  const int zr = (int)((1.0 / zoom) * 65536);
+  const int color = convertFormat(Project::brush->color, bgr_order);
+  const int trans = Project::brush->trans;
+  const int use_alpha = Gui::getSelectionAlpha();
+
+  int ox = view->ox;
+  int oy = view->oy;
+
   ox *= zoom;
   oy *= zoom;
 
@@ -965,11 +936,6 @@ void Stroke::previewSelection(Bitmap *backbuf, int ox, int oy, float zoom, bool 
   int yy3 = yy1;
 
   clip();
-
-  const int zr = (int)((1.0 / zoom) * 65536);
-  const int trans = Project::brush->trans;
-  int use_alpha = Gui::getSelectionAlpha();
-  Bitmap *select_bmp = Project::select_bmp;
 
   if(xx1 < 0)
     xx1 = 0;

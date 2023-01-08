@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <vector>
 
 class Bitmap;
+class View;
 
 class Stroke
 {
@@ -59,9 +60,8 @@ public:
   void draw(int, int, int, int, float);
   void end(int, int);
   void polyLine(int, int, int, int, float);
-  void preview(Bitmap *,int, int, float);
   void previewPaint(View *);
-  void previewSelection(Bitmap *,int, int, float, bool);
+  void previewSelection(View *);
 
   int x1, y1, x2, y2;
   int origin, constrain;

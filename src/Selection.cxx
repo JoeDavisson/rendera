@@ -476,8 +476,7 @@ void Selection::move(View *view)
     stroke->size(x1, y1, x2, y2);
 
     view->drawMain(false);
-    stroke->previewSelection(view->backbuf, view->ox, view->oy, view->zoom,
-                         view->bgr_order);
+    stroke->previewSelection(view);
     view->redraw();
   }
   else if(state == 2)
