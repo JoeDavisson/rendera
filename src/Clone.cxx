@@ -29,6 +29,7 @@ namespace Clone
   int dx = 0;
   int dy = 0;
   int state = 0;
+  bool enabled = false;
   bool active = false;
   bool moved = false;
   Bitmap *bmp = 0;
@@ -54,7 +55,5 @@ void Clone::refresh(int x1, int y1, int x2, int y2)
   delete bmp;
   bmp = new Bitmap(w, h);
   Project::bmp->blit(bmp, x1, y1, 0, 0, w, h);
-
-  state = 0;
 }
 

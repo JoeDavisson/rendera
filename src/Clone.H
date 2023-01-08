@@ -25,11 +25,19 @@ class Bitmap;
 
 namespace Clone
 {
+  enum
+  {
+    RESET,
+    PLACED,
+    DRAGGING
+  };
+
   extern int x;
   extern int y;
   extern int dx;
   extern int dy;
   extern int state;
+  extern bool enabled;
   extern bool active;
   extern bool moved;
   extern Bitmap *bmp;
