@@ -295,8 +295,10 @@ int View::handle(int event)
             Clone::y = imgy;
             Clone::dx = 0;
             Clone::dy = 0;
-            Clone::state = 1;
+//            Clone::state = 0;
+//            Clone::active = true;
             Clone::moved = true;
+            Clone::state = Clone::PLACED;
             redraw();
           }
           else
@@ -371,7 +373,7 @@ int View::handle(int event)
     case FL_MOVE:
     {
       Project::tool->move(this);
-      redraw();
+//      redraw();
 
       // update coordinates display
       char coords[256];
@@ -656,8 +658,8 @@ void View::drawCloneCursor()
   backbuf->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 128);
   backbuf->xorRectfill(x1 - 7, y1, x1 + 7, y1);
   backbuf->xorRectfill(x1, y1 - 7, x1, y1 + 7);
-  backbuf->rectfill(x1 - 7, y1, x1 + 7, y1, makeRgb(255, 0, 255), 128);
-  backbuf->rectfill(x1, y1 - 7, x1, y1 + 7, makeRgb(255, 0, 255), 128);
+  backbuf->rectfill(x1 - 7, y1, x1 + 7, y1, makeRgb(255, 255, 255), 128);
+  backbuf->rectfill(x1, y1 - 7, x1, y1 + 7, makeRgb(255, 255, 255), 128);
 
   updateView(oldx1 - 12, oldy1 - 12,
              this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);

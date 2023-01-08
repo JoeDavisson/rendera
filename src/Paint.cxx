@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Brush.H"
+#include "Clone.H"
 #include "Gui.H"
 #include "Map.H"
 #include "Paint.H"
@@ -33,7 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  int state = 0;
   bool active = 0;
 }
 
@@ -70,8 +70,10 @@ void Paint::push(View *view)
   else if(view->button1)
   {
     stroke->begin(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
+    Clone::state = Clone::DRAGGING;
     active = true;
   }
+
 }
 
 void Paint::drag(View *view)
@@ -90,10 +92,11 @@ void Paint::drag(View *view)
   {
     stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
     view->drawMain(false);
-    stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom,
-                         view->bgr_order);
+    stroke->previewPaint(view);
 //    stroke->origin = stroke->origin_always;
 //    stroke->constrain = stroke->constrain_always;
+
+    Clone::state = Clone::DRAGGING;
     view->redraw();
   }
 }
@@ -109,11 +112,15 @@ void Paint::release(View *view)
     Render::begin();
     active = false;
     Blend::set(Blend::TRANS);
+    Clone::x = view->imgx - Clone::dx;
+    Clone::y = view->imgy - Clone::dy;
+    Clone::state = Clone::PLACED;
   }
 
 //  stroke->origin = stroke->origin_always;
 //  stroke->constrain = stroke->constrain_always;
 
+  Project::map->clear(0);
   view->drawMain(true);
 }
 
@@ -130,9 +137,9 @@ void Paint::move(View *view)
       {
         stroke->polyLine(view->imgx, view->imgy,
                          view->ox, view->oy, view->zoom);
-        
-        stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom, view->bgr_order);
       }
+        
+      stroke->previewPaint(view);
       break;
     case 0:
     case 2:
@@ -148,8 +155,7 @@ void Paint::move(View *view)
       stroke->makeBlitRect(stroke->x1, stroke->y1,
                            stroke->x2, stroke->y2,
                            view->ox, view->oy, 96, view->zoom);
-      stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom,
-                           view->bgr_order);
+      stroke->previewPaint(view);
       break;
   }
 
@@ -172,7 +178,7 @@ void Paint::redraw(View *view)
   {
     active = false;
     view->drawMain(false);
-    stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom, view->bgr_order);
+    stroke->previewPaint(view);
     view->redraw();
     active = true;
   }
@@ -186,6 +192,5 @@ bool Paint::isActive()
 void Paint::reset()
 {
   active = false;
-  state = 0;
 }
 

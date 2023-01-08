@@ -210,7 +210,7 @@ void Text::redraw(View *view)
   Stroke *stroke = Project::stroke;
 
   view->drawMain(false);
-  stroke->previewPaint(view->backbuf, view->ox, view->oy, view->zoom, view->bgr_order);
+  stroke->previewPaint(view);
   view->redraw();
 }
 

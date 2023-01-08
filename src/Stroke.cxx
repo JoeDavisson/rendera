@@ -89,9 +89,27 @@ namespace
        !map->getpixel(x - 1, y) ||
        !map->getpixel(x + 1, y) ||
        !map->getpixel(x, y + 1))
+    {
       return true;
-    else
-      return false;
+    }
+
+    return false;
+  }
+
+  inline bool isOuterEdge(Map *map, const int x, const int y)
+  {
+//    if(!map->getpixel(x, y))
+//    {
+      if(map->getpixel(x, y - 1) > 0 ||
+         map->getpixel(x - 1, y) > 0 ||
+         map->getpixel(x + 1, y) > 0 ||
+         map->getpixel(x, y + 1) > 0)
+      {
+        return true;
+      }
+//    }
+
+    return false;
   }
 
 /*
@@ -860,8 +878,19 @@ void Stroke::preview(Bitmap *backbuf, int ox, int oy, float zoom)
 }
 
 // use paint color for preview
-void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_order)
+//FIXME this needs to take View * instead of Bitmap *
+void Stroke::previewPaint(View *view)
 {
+  const float zoom = view->zoom;
+  const bool bgr_order = view->bgr_order;
+  const int zr = (int)((1.0 / zoom) * 65536);
+  const int color = convertFormat(Project::brush->color, bgr_order);
+  const int trans = Project::brush->trans;
+  
+  int ox = view->ox;
+  int oy = view->oy;
+
+  Bitmap *backbuf = view->backbuf;
   Map *map = Project::map;
   ox *= zoom;
   oy *= zoom;
@@ -869,14 +898,11 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
 
   int xx1 = x1 * zoom - ox;
   int yy1 = y1 * zoom - oy;
-  int xx2 = x2 * zoom - ox;
-  int yy2 = y2 * zoom - oy;
+  int xx2 = x2 * zoom - ox + zoom - 1;
+  int yy2 = y2 * zoom - oy + zoom - 1;
 
-  const int zr = (int)((1.0 / zoom) * 65536);
-  const int color = convertFormat(Project::brush->color,
-                                  Gui::getView()->bgr_order);
-  const int trans = Project::brush->trans;
 
+  // draw brushstroke preview
   if(xx1 < 0)
     xx1 = 0;
 
@@ -916,64 +942,7 @@ void Stroke::previewPaint(Bitmap *backbuf, int ox, int oy, float zoom, bool bgr_
           *p = blendFast(*p, color, trans);
 
         if(isEdge(map, xm, ym))
-          *p = blendFast(*p, (x & 1) ^ (y & 1)? 0xffffff : 0x000000, 0);
-      }
-
-      p++;
-    }
-  }
-
-  if(Clone::active == false)
-    return;
-
-  xx1 = (x1 - Clone::dx) * zoom - ox;
-  yy1 = (y1 - Clone::dy) * zoom - oy;
-  xx2 = (x2 - Clone::dx) * zoom - ox;
-  yy2 = (y2 - Clone::dy) * zoom - oy;
-
-  if(xx1 < 0)
-    xx1 = 0;
-
-  if(yy1 < 0)
-    yy1 = 0;
-
-  if(xx1 >= backbuf->w - 1)
-    xx1 = backbuf->w - 1;
-
-  if(yy1 >= backbuf->h - 1)
-    yy1 = backbuf->h - 1;
-
-  if(xx2 < 0)
-    xx2 = 0;
-
-  if(yy2 < 0)
-    yy2 = 0;
-
-  if(xx2 >= backbuf->w - 1)
-    xx2 = backbuf->w - 1;
-
-  if(yy2 >= backbuf->h - 1)
-    yy2 = backbuf->h - 1;
-
-  for(int y = yy1; y <= yy2; y++)
-  {
-    int ym = ((y + oy) * zr) >> 16;
-    ym += Clone::dy;
-    int *p = backbuf->row[y] + xx1;
-
-    for(int x = xx1; x <= xx2; x++)
-    {
-      int xm = ((x + ox) * zr) >> 16;
-      xm += Clone::dx;
-
-      if(map->getpixel(xm, ym))
-      {
-        *p = blendFast(*p, makeRgb(255, 0, 255), 192);
-
-        if(isEdge(map, xm, ym))
-        {
-          *p = blendFast(*p, (x & 1) ^ (y & 1)? 0xffffff : 0x000000, 0);
-        }
+          *p = blendFast(*p, (x & 1) ^ (y & 1) ? 0xffffff : 0x000000, 0);
       }
 
       p++;
