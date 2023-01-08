@@ -897,10 +897,60 @@ void Stroke::previewPaint(View *view)
       if(map->getpixel(xm, ym))
       {
         if(Clone::active == false)
+        {
           *p = blendFast(*p, color, trans);
+        }
+        else
+        {
+          *p = blendFast(*p, 0xffffff, 128);
+        }
 
-        if(isEdge(map, xm, ym))
-          *p = blendFast(*p, (x & 1) ^ (y & 1) ? 0xffffff : 0x000000, 0);
+//        if(isEdge(map, xm, ym))
+//          *p = blendFast(*p, (x & 1) ^ (y & 1) ? 0xffffff : 0x000000, 0);
+      }
+      else
+      {
+        if(zoom >= 1)
+        {
+          // shade edges for contrast
+          int xmod = x % (int)zoom;
+          int ymod = y % (int)zoom;
+          int t = 255 / zoom;
+
+          int tx1 = 128 + xmod * t;
+          int tx2 = 128 + ((int)zoom - 1 - xmod) * t;
+          int ty1 = 128 + ymod * t;
+          int ty2 = 128 + ((int)zoom - 1 - ymod) * t;
+
+          tx1 = clamp(tx1, 255);
+          tx2 = clamp(tx2, 255);
+          ty1 = clamp(ty1, 255);
+          ty2 = clamp(ty2, 255);
+
+          if(map->getpixel(xm - 1, ym))
+            *p = blendFast(*p, 0x000000, tx1);
+
+          if(map->getpixel(xm + 1, ym))
+            *p = blendFast(*p, 0x000000, tx2);
+
+          if(map->getpixel(xm, ym - 1))
+            *p = blendFast(*p, 0x000000, ty1);
+
+          if(map->getpixel(xm, ym + 1))
+            *p = blendFast(*p, 0x000000, ty2);
+
+          if(map->getpixel(xm - 1, ym - 1))
+            *p = blendFast(*p, 0x000000, std::max(tx1, ty1));
+
+          if(map->getpixel(xm + 1, ym - 1))
+            *p = blendFast(*p, 0x000000, std::max(tx2, ty1));
+
+          if(map->getpixel(xm - 1, ym + 1))
+            *p = blendFast(*p, 0x000000, std::max(tx1, ty2));
+
+          if(map->getpixel(xm + 1, ym + 1))
+            *p = blendFast(*p, 0x000000, std::max(tx2, ty2));
+        }
       }
 
       p++;
@@ -916,7 +966,6 @@ void Stroke::previewSelection(View *view)
   const float zoom = view->zoom;
   const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
-  const int color = convertFormat(Project::brush->color, bgr_order);
   const int trans = Project::brush->trans;
   const int use_alpha = Gui::getSelectionAlpha();
 
