@@ -904,9 +904,6 @@ void Stroke::previewPaint(View *view)
         {
           *p = blendFast(*p, 0xffffff, 128);
         }
-
-//        if(isEdge(map, xm, ym))
-//          *p = blendFast(*p, (x & 1) ^ (y & 1) ? 0xffffff : 0x000000, 0);
       }
       else
       {
