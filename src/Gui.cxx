@@ -301,12 +301,6 @@ public:
           case 'e':
             Dialog::editor();
             break;
-          case 'c':
-            clone->var = ~clone->var;
-            clone->redraw();
-            clone->do_callback();
-            view->drawMain(true);
-            break;
           default:
             break;
         }
@@ -1549,6 +1543,7 @@ void Gui::checkBlend(Widget *, void *)
 
 void Gui::checkClone(Widget *, void *var)
 {
+  Clone::enabled = *(int *)var;
   Clone::active = *(int *)var;
 }
 
