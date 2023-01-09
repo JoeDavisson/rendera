@@ -113,10 +113,6 @@ OBJ= \
 default: $(OBJ)
 	$(CXX) -o ./$(EXE) $(SRC_DIR)/Main.cxx $(OBJ) $(CXXFLAGS) $(LIBS)
 
-# build debug version for testing
-debug:	CXXFLAGS += -DDEBUG -g
-debug:	default
-
 # rebuld fltk library
 fltklibs:
 	cd ./fltk; \
@@ -127,7 +123,7 @@ fltklibs:
 	echo "FLTK libs built.";
 
 # rebuild Images.H from png files in images directory
-image_header:
+header:
 	gcc -O3 ./makeheader.c -o ./makeheader
 	./makeheader src/Images.H images/*.png
 	@echo "Images.H created."
