@@ -22,6 +22,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Inline.H"
 #include "Map.H"
 
+namespace
+{
+  inline bool isEdge(Map *map, const int x, const int y)
+  {
+    if(!map->getpixel(x, y - 1) ||
+       !map->getpixel(x - 1, y) ||
+       !map->getpixel(x + 1, y) ||
+       !map->getpixel(x, y + 1))
+    {
+      return true;
+    }
+
+    return false;
+  }
+}
+
 Brush::Brush()
 {
   solidx = new int[96 * 96];
@@ -122,9 +138,12 @@ void Brush::make(int s, float round)
     {
       if(map->getpixel(x, y))
       {
-        hollowx[hollow_count] = x - 48;
-        hollowy[hollow_count] = y - 48;
-        hollow_count++;
+        if(isEdge(map, x, y))
+        {
+          hollowx[hollow_count] = x - 48;
+          hollowy[hollow_count] = y - 48;
+          hollow_count++;
+        }
       }
     }
   }
