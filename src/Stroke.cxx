@@ -96,22 +96,6 @@ namespace
     return false;
   }
 
-  inline bool isOuterEdge(Map *map, const int x, const int y)
-  {
-//    if(!map->getpixel(x, y))
-//    {
-      if(map->getpixel(x, y - 1) > 0 ||
-         map->getpixel(x - 1, y) > 0 ||
-         map->getpixel(x + 1, y) > 0 ||
-         map->getpixel(x, y + 1) > 0)
-      {
-        return true;
-      }
-//    }
-
-    return false;
-  }
-
 /*
   inline bool isEdge(Map *map, const int x, const int y)
   {
@@ -261,10 +245,10 @@ void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
   drawBrush(x1, y1, c);
   drawBrush(x2, y2, c);
 
-  for(int i = 0; i < brush->hollow_count; i++)
+  for(int i = 0; i < brush->solid_count; i++)
   {
-    map->line(x1 + brush->hollowx[i], y1 + brush->hollowy[i],
-              x2 + brush->hollowx[i], y2 + brush->hollowy[i], c);
+    map->line(x1 + brush->solidx[i], y1 + brush->solidy[i],
+              x2 + brush->solidx[i], y2 + brush->solidy[i], c);
   }
 }
 
@@ -273,10 +257,10 @@ void Stroke::drawBrushRect(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  for(int i = 0; i < brush->hollow_count; i++)
+  for(int i = 0; i < brush->solid_count; i++)
   {
-    map->rect(x1 + brush->hollowx[i], y1 + brush->hollowy[i],
-              x2 + brush->hollowx[i], y2 + brush->hollowy[i], c);
+    map->rect(x1 + brush->solidx[i], y1 + brush->solidy[i],
+              x2 + brush->solidx[i], y2 + brush->solidy[i], c);
   }
 }
 
@@ -285,10 +269,10 @@ void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  for(int i = 0; i < brush->hollow_count; i++)
+  for(int i = 0; i < brush->solid_count; i++)
   {
-    map->oval(x1 + brush->hollowx[i], y1 + brush->hollowy[i],
-              x2 + brush->hollowx[i], y2 + brush->hollowy[i], c);
+    map->oval(x1 + brush->solidx[i], y1 + brush->solidy[i],
+              x2 + brush->solidx[i], y2 + brush->solidy[i], c);
   }
 }
 
@@ -921,7 +905,7 @@ void Stroke::previewPaint(View *view)
           ty1 = ty1 == 0 ? 0 : 255;
           ty2 = ty2 == 0 ? 0 : 255;
 
-          const int checker = ((x >> 2) ^ (y >> 2)) & 1 ? 0xa0a0a0 : 0x606060;
+          const int checker = visibleColor(x, y);
 
           if(map->getpixel(xm - 1, ym - 1))
             *p = blendFast(*p, checker, tx1 | ty1);
