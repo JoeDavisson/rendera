@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 //#include <FL/Fl_Shared_Image.H>
 
 #include "Blend.H"
+#include "Clone.H"
 #include "Dialog.H"
 #include "File.H"
 #include "FX/FX.H"
@@ -225,6 +226,7 @@ int main(int argc, char *argv[])
   File::init();
   FX::init();
   Transform::init();
+  Clone::init();
   Gui::init();
   Dialog::init();
 

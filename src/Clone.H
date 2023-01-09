@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define CLONE_H
 
 class Bitmap;
+class View;
 
 namespace Clone
 {
@@ -37,13 +38,16 @@ namespace Clone
   extern int dx;
   extern int dy;
   extern int state;
-  extern bool enabled;
   extern bool active;
   extern bool moved;
-  extern Bitmap *bmp;
+  extern Bitmap *buffer_bmp;
 
+  void init();
   void move(int, int);
   void refresh(int, int, int, int);
+  void show(int);
+  void update(View *);
+  void hide();
 }
 
 #endif

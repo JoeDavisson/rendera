@@ -299,6 +299,7 @@ int View::handle(int event)
 //            Clone::active = true;
             Clone::moved = true;
             Clone::state = Clone::PLACED;
+            Clone::update(this);
             redraw();
           }
           else
@@ -654,8 +655,8 @@ void View::drawCloneCursor()
     }
   }
 
-  backbuf->rect(x1 - 8, y1 - 1, x1 + 8, y1 + 1, makeRgb(0, 0, 0), 128);
-  backbuf->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 128);
+  backbuf->rect(x1 - 8, y1 - 1, x1 + 8, y1 + 1, makeRgb(0, 0, 0), 0);
+  backbuf->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 0);
   backbuf->xorRectfill(x1 - 7, y1, x1 + 7, y1);
   backbuf->xorRectfill(x1, y1 - 7, x1, y1 + 7);
   backbuf->rectfill(x1 - 7, y1, x1 + 7, y1, makeRgb(255, 255, 255), 128);

@@ -482,7 +482,7 @@ void Bitmap::setpixelClone(const int x, const int y, const int, const int t)
   if(x1 > stroke->x1 && x1 < stroke->x2 &&
      y1 > stroke->y1 && y1 < stroke->y2)
   {
-    c2 = Clone::bmp->getpixel(x1 - stroke->x1 - 1, y1 - stroke->y1 - 1);
+    c2 = Clone::buffer_bmp->getpixel(x1 - stroke->x1 - 1, y1 - stroke->y1 - 1);
   }
   else
   {
