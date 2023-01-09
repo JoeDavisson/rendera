@@ -912,41 +912,42 @@ void Stroke::previewPaint(View *view)
           // shade edges for contrast
           int xmod = x % (int)zoom;
           int ymod = y % (int)zoom;
-          int t = 255 / zoom;
 
-          int tx1 = 128 + xmod * t;
-          int tx2 = 128 + ((int)zoom - 1 - xmod) * t;
-          int ty1 = 128 + ymod * t;
-          int ty2 = 128 + ((int)zoom - 1 - ymod) * t;
+          int tx1 = xmod;
+          int tx2 = ((int)zoom - 1 - xmod);
+          int ty1 = ymod;
+          int ty2 = ((int)zoom - 1 - ymod);
 
-          tx1 = clamp(tx1, 255);
-          tx2 = clamp(tx2, 255);
-          ty1 = clamp(ty1, 255);
-          ty2 = clamp(ty2, 255);
+          tx1 = tx1 == 0 ? 0 : 255;
+          tx2 = tx2 == 0 ? 0 : 255;
+          ty1 = ty1 == 0 ? 0 : 255;
+          ty2 = ty2 == 0 ? 0 : 255;
 
-          if(map->getpixel(xm - 1, ym))
-            *p = blendFast(*p, 0x000000, tx1);
-
-          if(map->getpixel(xm + 1, ym))
-            *p = blendFast(*p, 0x000000, tx2);
-
-          if(map->getpixel(xm, ym - 1))
-            *p = blendFast(*p, 0x000000, ty1);
-
-          if(map->getpixel(xm, ym + 1))
-            *p = blendFast(*p, 0x000000, ty2);
+          const int checker = ((x >> 2) ^ (y >> 2)) & 1 ? 0x989898 : 0x686868;
 
           if(map->getpixel(xm - 1, ym - 1))
-            *p = blendFast(*p, 0x000000, std::max(tx1, ty1));
+            *p = blendFast(*p, checker, tx1 | ty1);
+
+          if(map->getpixel(xm, ym - 1))
+            *p = blendFast(*p, checker, ty1);
 
           if(map->getpixel(xm + 1, ym - 1))
-            *p = blendFast(*p, 0x000000, std::max(tx2, ty1));
+            *p = blendFast(*p, checker, tx2 | ty1);
+
+          if(map->getpixel(xm - 1, ym))
+            *p = blendFast(*p, checker, tx1);
+
+          if(map->getpixel(xm + 1, ym))
+            *p = blendFast(*p, checker, tx2);
 
           if(map->getpixel(xm - 1, ym + 1))
-            *p = blendFast(*p, 0x000000, std::max(tx1, ty2));
+            *p = blendFast(*p, checker, tx1 | ty2);
+
+          if(map->getpixel(xm, ym + 1))
+            *p = blendFast(*p, checker, ty2);
 
           if(map->getpixel(xm + 1, ym + 1))
-            *p = blendFast(*p, 0x000000, std::max(tx2, ty2));
+            *p = blendFast(*p, checker, tx2 | ty2);
         }
       }
 
