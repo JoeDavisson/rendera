@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "Clone.H"
 #include "Inline.H"
+#include "Map.H"
 #include "Project.H"
 #include "Stroke.H"
 #include "View.H"
@@ -40,8 +41,8 @@ namespace Clone
   bool moved = false;
   Bitmap *buffer_bmp = 0;
 
-  Fl_Double_Window *window;
-  Widget *preview;
+  Fl_Double_Window *window = 0;
+  Widget *preview = 0;
 }
 
 void Clone::init()
@@ -82,6 +83,123 @@ void Clone::show(int enabled)
     window->iconize();
 }
 
+void Clone::update(View *view)
+{
+  Bitmap *bmp = Project::bmp;
+  Map *map = Project::map;
+
+  const float zoom = 1;
+
+  int sw = preview->bitmap->w;
+  int sh = preview->bitmap->h;
+
+  int sx = 0;
+  int sy = 0;
+
+  if(state == RESET || state == PLACED)
+  {
+    sx = x;
+    sy = y;
+  }
+  else
+  {
+    sx = view->imgx - dx;
+    sy = view->imgy - dy;
+  }
+
+  for(int yy = 0; yy < sh; yy++)
+  {
+    for(int xx = 0; xx < sw; xx++)
+    {
+      const int c = bmp->getpixel(xx + sx - sw / 2, yy + sy - sh / 2);
+
+      preview->bitmap->setpixel(xx, yy, c);
+    }
+  }
+
+  int xx1 = 0;
+  int yy1 = 0;
+  int xx2 = sw - 1;
+  int yy2 = sh - 1;
+
+  for(int yy = yy1; yy <= yy2; yy++)
+  {
+    int *p = preview->bitmap->row[yy];
+    int ym = yy + sy - sh / 2 + dy;
+
+    for(int xx = xx1; xx <= xx2; xx++)
+    {
+      int xm = xx + sx - sw / 2 + dx;
+
+      if(map->getpixel(xm, ym))
+      {
+        *p = blendFast(*p, 0xffffff, 128);
+      }
+      else
+      {
+        if(zoom >= 1)
+        {
+          // shade edges for contrast
+          int xmod = xx % (int)zoom;
+          int ymod = yy % (int)zoom;
+
+          int tx1 = xmod;
+          int tx2 = ((int)zoom - 1 - xmod);
+          int ty1 = ymod;
+          int ty2 = ((int)zoom - 1 - ymod);
+
+          tx1 = tx1 == 0 ? 0 : 255;
+          tx2 = tx2 == 0 ? 0 : 255;
+          ty1 = ty1 == 0 ? 0 : 255;
+          ty2 = ty2 == 0 ? 0 : 255;
+
+          const int checker = visibleColor(xx, yy);
+
+          if(map->getpixel(xm - 1, ym - 1))
+            *p = blendFast(*p, checker, tx1 | ty1);
+
+          if(map->getpixel(xm, ym - 1))
+            *p = blendFast(*p, checker, ty1);
+
+          if(map->getpixel(xm + 1, ym - 1))
+            *p = blendFast(*p, checker, tx2 | ty1);
+
+          if(map->getpixel(xm - 1, ym))
+            *p = blendFast(*p, checker, tx1);
+
+          if(map->getpixel(xm + 1, ym))
+            *p = blendFast(*p, checker, tx2);
+
+          if(map->getpixel(xm - 1, ym + 1))
+            *p = blendFast(*p, checker, tx1 | ty2);
+
+          if(map->getpixel(xm, ym + 1))
+            *p = blendFast(*p, checker, ty2);
+
+          if(map->getpixel(xm + 1, ym + 1))
+            *p = blendFast(*p, checker, tx2 | ty2);
+        }
+      }
+
+      p++;
+    }
+  }
+
+  int x1 = sw / 2;
+  int y1 = sh / 2;
+
+  // draw crosshair
+  preview->bitmap->rect(x1 - 8, y1 - 1, x1 + 8, y1 + 1, makeRgb(0, 0, 0), 0);
+  preview->bitmap->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 0);
+  preview->bitmap->xorRectfill(x1 - 7, y1, x1 + 7, y1);
+  preview->bitmap->xorRectfill(x1, y1 - 7, x1, y1 + 7);
+  preview->bitmap->rectfill(x1 - 7, y1, x1 + 7, y1, makeRgb(255, 255, 255), 128);
+  preview->bitmap->rectfill(x1, y1 - 7, x1, y1 + 7, makeRgb(255, 255, 255), 128);
+
+  preview->redraw();
+}
+
+/*
 void Clone::update(View *view)
 {
   Bitmap *bmp = Project::bmp;
@@ -161,6 +279,7 @@ void Clone::update(View *view)
 
   preview->redraw();
 }
+*/
 
 void Clone::hide()
 {
