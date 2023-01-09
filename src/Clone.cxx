@@ -21,9 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Double_Window.H>
 
 #include "Bitmap.H"
+#include "Brush.H"
 #include "Clone.H"
 #include "Inline.H"
 #include "Project.H"
+#include "Stroke.H"
 #include "View.H"
 #include "Widget.H"
 
@@ -46,6 +48,7 @@ void Clone::init()
 {
   window = new Fl_Double_Window(400, 400, "Clone Preview");
   preview = new Widget(window, 8, 8, 384, 384, "", 0, 0, 0);
+  window->iconize();
   window->end();
 }
 
@@ -76,12 +79,14 @@ void Clone::show(int enabled)
   if(enabled == true)
     window->show();
   else
-    window->hide();
+    window->iconize();
 }
 
 void Clone::update(View *view)
 {
   Bitmap *bmp = Project::bmp;
+  Brush *brush = Project::brush;
+  Stroke *stroke = Project::stroke;
 
   int sw = preview->w();
   int sh = preview->h();
@@ -89,6 +94,7 @@ void Clone::update(View *view)
   int sx = 0;
   int sy = 0;
 
+  // draw background
   for(int yy = 0; yy < sh; yy++)
   {
     for(int xx = 0; xx < sw; xx++)
@@ -110,9 +116,42 @@ void Clone::update(View *view)
     }
   }
 
+  // draw brush outline if relevant
+  switch(stroke->type)
+  {
+    case Stroke::FREEHAND:
+    case Stroke::LINE:
+    case Stroke::RECT:
+    case Stroke::OVAL:
+
+
+      for(int i = 0; i < brush->hollow_count; i++)
+      {
+        const int bx = brush->hollowx[i] + sw / 2;
+        const int by = brush->hollowy[i] + sh / 2;
+
+        preview->bitmap->rectfill(bx - 1, by - 1, bx + 1, by + 1,
+                                  makeRgb(0, 0, 0), 128);
+      }
+
+      for(int i = 0; i < brush->hollow_count; i++)
+      {
+        const int bx = brush->hollowx[i] + sw / 2;
+        const int by = brush->hollowy[i] + sh / 2;
+
+        preview->bitmap->setpixelSolid(bx, by, makeRgb(255, 255, 255), 128);
+      }
+
+      break;
+
+    default:
+      break;
+  }
+
   const int x1 = preview->w() / 2;
   const int y1 = preview->h() / 2;
 
+  // draw crosshair
   preview->bitmap->rect(x1 - 8, y1 - 1, x1 + 8, y1 + 1, makeRgb(0, 0, 0), 0);
   preview->bitmap->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 0);
   preview->bitmap->xorRectfill(x1 - 7, y1, x1 + 7, y1);
