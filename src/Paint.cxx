@@ -53,7 +53,6 @@ void Paint::push(View *view)
   {
     if(view->dclick || view->button3)
     {
-//      stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
       stroke->end(view->imgx, view->imgy);
       Blend::set(Project::brush->blend);
       Render::begin();
@@ -70,7 +69,7 @@ void Paint::push(View *view)
   else if(view->button1)
   {
     stroke->begin(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
-    Clone::state = Clone::DRAGGING;
+    Clone::state = Clone::STARTED;
     Clone::update(view);
     active = true;
   }
@@ -81,23 +80,12 @@ void Paint::drag(View *view)
 {
   Stroke *stroke = Project::stroke;
 
-/*
-  if(Fl::event_ctrl())
-    stroke->origin = 1;
-
-  if(Fl::event_shift())
-    stroke->constrain = 1;
-*/
-
   if(stroke->type != 3)
   {
     stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
     view->drawMain(false);
     stroke->previewPaint(view);
-//    stroke->origin = stroke->origin_always;
-//    stroke->constrain = stroke->constrain_always;
 
-    Clone::state = Clone::DRAGGING;
     Clone::update(view);
     view->redraw();
   }
@@ -114,13 +102,7 @@ void Paint::release(View *view)
     Render::begin();
     active = false;
     Blend::set(Blend::TRANS);
-    Clone::x = view->imgx - Clone::dx;
-    Clone::y = view->imgy - Clone::dy;
-    Clone::state = Clone::PLACED;
   }
-
-//  stroke->origin = stroke->origin_always;
-//  stroke->constrain = stroke->constrain_always;
 
   Project::map->clear(0);
   view->drawMain(true);
@@ -162,7 +144,6 @@ void Paint::move(View *view)
   }
 
   Clone::update(view);
-
   view->redraw();
 }
 

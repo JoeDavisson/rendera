@@ -137,9 +137,7 @@ Stroke::Stroke()
   poly_count = 0;
   type = 0;
   origin = false;
-  origin_always = false;
   constrain = false;
-  constrain_always = false;
   x1 = 0;
   y1 = 0;
   x2 = 0;
@@ -923,7 +921,7 @@ void Stroke::previewPaint(View *view)
           ty1 = ty1 == 0 ? 0 : 255;
           ty2 = ty2 == 0 ? 0 : 255;
 
-          const int checker = ((x >> 2) ^ (y >> 2)) & 1 ? 0x989898 : 0x686868;
+          const int checker = ((x >> 2) ^ (y >> 2)) & 1 ? 0xa0a0a0 : 0x606060;
 
           if(map->getpixel(xm - 1, ym - 1))
             *p = blendFast(*p, checker, tx1 | ty1);

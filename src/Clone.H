@@ -30,7 +30,7 @@ namespace Clone
   {
     RESET,
     PLACED,
-    DRAGGING
+    STARTED
   };
 
   extern int x;

@@ -272,22 +272,9 @@ int View::handle(int event)
       if(Fl::focus() != this)
         Fl::focus(this);
 
-//FIXME buggy
-/*
-      Project::stroke->origin = Project::stroke->origin_always;
-      Project::stroke->constrain = Project::stroke->constrain_always;
-*/
-
       switch(button)
       {
         case 1:
-/*
-          if(ctrl)
-            Project::stroke->origin = 1;
-
-          if(shift)
-            Project::stroke->constrain = 1;
-*/
           if(ctrl)
           {
             // update clone target
@@ -295,8 +282,6 @@ int View::handle(int event)
             Clone::y = imgy;
             Clone::dx = 0;
             Clone::dy = 0;
-//            Clone::state = 0;
-//            Clone::active = true;
             Clone::moved = true;
             Clone::state = Clone::PLACED;
             Clone::update(this);
@@ -374,7 +359,6 @@ int View::handle(int event)
     case FL_MOVE:
     {
       Project::tool->move(this);
-//      redraw();
 
       // update coordinates display
       char coords[256];
@@ -636,23 +620,15 @@ void View::drawCloneCursor()
   int x1 = imgx - dx;
   int y1 = imgy - dy;
 
-  if(Project::tool->isActive())
+  if(state == Clone::RESET || state == Clone::PLACED)
   {
-    x1 = (x1 - ox) * zoom;
-    y1 = (y1 - oy) * zoom;
+    x1 = (x - ox) * zoom;
+    y1 = (y - oy) * zoom;
   }
   else
   {
-    if(state == 0)
-    {
-      x1 = (x1 - ox) * zoom;
-      y1 = (y1 - oy) * zoom;
-    }
-    else if(state == 1)
-    {
-      x1 = (x - ox) * zoom;
-      y1 = (y - oy) * zoom;
-    }
+    x1 = (x1 - ox) * zoom;
+    y1 = (y1 - oy) * zoom;
   }
 
   backbuf->rect(x1 - 8, y1 - 1, x1 + 8, y1 + 1, makeRgb(0, 0, 0), 0);
@@ -813,7 +789,7 @@ void View::saveCoords()
 // do not call directly, call redraw() instead
 void View::draw()
 {
-  if(Project::tool->isActive() && Clone::active == false)
+  if(Project::tool->isActive())
   {
     int blitx = Project::stroke->blitx;
     int blity = Project::stroke->blity;

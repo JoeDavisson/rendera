@@ -86,12 +86,24 @@ void Clone::update(View *view)
   int sw = preview->w();
   int sh = preview->h();
 
+  int sx = 0;
+  int sy = 0;
+
   for(int yy = 0; yy < sh; yy++)
   {
     for(int xx = 0; xx < sw; xx++)
     {
-      const int sx = view->imgx - dx;
-      const int sy = view->imgy - dy;
+      if(state == RESET || state == PLACED)
+      {
+        sx = x;
+        sy = y;
+      }
+      else
+      {
+        sx = view->imgx - dx;
+        sy = view->imgy - dy;
+      }
+
       const int c = bmp->getpixel(xx + sx - sw / 2, yy + sy - sh / 2);
 
       preview->bitmap->setpixel(xx, yy, c);

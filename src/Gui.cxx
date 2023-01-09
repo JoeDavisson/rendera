@@ -1553,14 +1553,12 @@ void Gui::checkClone(Widget *, void *var)
 
 void Gui::checkOrigin(Widget *, void *var)
 {
-  Project::stroke->origin_always = *(int *)var;
-  Project::stroke->origin = Project::stroke->origin_always;
+  Project::stroke->origin = *(int *)var;
 }
 
 void Gui::checkConstrain(Widget *, void *var)
 {
-  Project::stroke->constrain_always = *(int *)var;
-  Project::stroke->constrain = Project::stroke->constrain_always;
+  Project::stroke->constrain = *(int *)var;
 }
 
 void Gui::checkSelectionCreate()

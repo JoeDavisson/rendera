@@ -65,7 +65,6 @@ public:
 
   int x1, y1, x2, y2;
   int origin, constrain;
-  int origin_always, constrain_always;
   int blitx, blity, blitw, blith;
   int beginx, beginy;
   int lastx, lasty;
