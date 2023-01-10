@@ -21,7 +21,7 @@ ifeq ($(PLATFORM),linux)
   HOST=
   CXX=g++
 #  CXXFLAGS= -O3 -Wall -Werror -Wfatal-errors -DPACKAGE_STRING=\"v0.2.0\" $(INCLUDE)
-  CXXFLAGS= -g -O3 -ffast-math -Wall -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -O3 -ffast-math -Wall -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   EXE=rendera
 endif
 

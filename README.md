@@ -47,7 +47,7 @@ Build fltk libraries (ignore errors about ```fluid.exe``` when using the mingw c
 ```$ make fltklibs```
 
 Run to create images header:
-```$ make image_header```
+```$ make header```
 
 Run whenever a header file is changed:
 ```$ make clean```
