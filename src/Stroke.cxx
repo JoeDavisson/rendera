@@ -884,7 +884,7 @@ void Stroke::previewPaint(View *view)
         }
         else
         {
-          *p = blendFast(*p, 0xffffff, 128);
+          *p = blendFast(*p, convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
         }
       }
       else

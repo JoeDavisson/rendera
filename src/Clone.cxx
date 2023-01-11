@@ -133,7 +133,7 @@ void Clone::update(View *view)
 
       if(map->getpixel(xm, ym))
       {
-        *p = blendFast(*p, 0xffffff, 128);
+        *p = blendFast(*p, makeRgb(255, 0, 192), 128);
       }
       else
       {
@@ -193,8 +193,8 @@ void Clone::update(View *view)
   preview->bitmap->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 0);
   preview->bitmap->xorRectfill(x1 - 7, y1, x1 + 7, y1);
   preview->bitmap->xorRectfill(x1, y1 - 7, x1, y1 + 7);
-  preview->bitmap->rectfill(x1 - 7, y1, x1 + 7, y1, makeRgb(255, 255, 255), 128);
-  preview->bitmap->rectfill(x1, y1 - 7, x1, y1 + 7, makeRgb(255, 255, 255), 128);
+  preview->bitmap->rectfill(x1 - 7, y1, x1 + 7, y1, makeRgb(255, 0, 192), 128);
+  preview->bitmap->rectfill(x1, y1 - 7, x1, y1 + 7, makeRgb(255, 0, 192), 128);
 
   preview->redraw();
 }
