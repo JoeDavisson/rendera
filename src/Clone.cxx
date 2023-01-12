@@ -111,9 +111,17 @@ void Clone::update(View *view)
   {
     for(int xx = 0; xx < sw; xx++)
     {
-      const int c = bmp->getpixel(xx + sx - sw / 2, yy + sy - sh / 2);
-
-      preview->bitmap->setpixel(xx, yy, c);
+      int tempx = xx + sx - sw / 2;
+      int tempy = yy + sy - sh / 2;
+ 
+      if(tempx >= 0 && tempx < bmp->w && tempy >= 0 && tempy < bmp->h)
+      {
+        preview->bitmap->setpixel(xx, yy, bmp->getpixel(tempx, tempy));
+      }
+      else
+      {
+        preview->bitmap->setpixel(xx, yy, getFltkColor(FL_BACKGROUND2_COLOR));
+      }
     }
   }
 
