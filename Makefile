@@ -62,7 +62,6 @@ OBJ= \
   $(SRC_DIR)/FX/Bloom.o \
   $(SRC_DIR)/FX/Randomize.o \
   $(SRC_DIR)/FX/Restore.o \
-  $(SRC_DIR)/FX/SideAbsorptions.o \
   $(SRC_DIR)/FX/RemoveDust.o \
   $(SRC_DIR)/FX/StainedGlass.o \
   $(SRC_DIR)/FX/Painting.o \

@@ -71,7 +71,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bloom.H"
 #include "Randomize.H"
 #include "Restore.H"
-#include "SideAbsorptions.H"
 #include "RemoveDust.H"
 #include "StainedGlass.H"
 #include "Painting.H"
