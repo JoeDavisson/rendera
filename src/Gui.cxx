@@ -218,7 +218,7 @@ namespace
       // hide any open windows so FLTK ends the program
       if(Dialog::choice("Exit", "Are You Sure?"))
       {
-        Clone::hide();
+        Clone::show(false);
         widget->hide();
       }
     }

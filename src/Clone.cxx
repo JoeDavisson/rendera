@@ -49,7 +49,6 @@ void Clone::init()
 {
   window = new Fl_Double_Window(400, 400, "Clone Preview");
   preview = new Widget(window, 8, 8, 384, 384, "", 0, 0, 0);
-//  window->iconize();
   window->set_non_modal();
   window->end();
 }
@@ -76,12 +75,12 @@ void Clone::refresh(int x1, int y1, int x2, int y2)
   Project::bmp->blit(buffer_bmp, x1, y1, 0, 0, w, h);
 }
 
-void Clone::show(int enabled)
+void Clone::show(bool enabled)
 {
   if(enabled == true)
     window->show();
   else
-    window->iconize();
+    window->hide();
 }
 
 void Clone::update(View *view)
@@ -198,92 +197,5 @@ void Clone::update(View *view)
   preview->bitmap->rectfill(x1, y1 - 7, x1, y1 + 7, makeRgb(255, 0, 192), 128);
 
   preview->redraw();
-}
-
-/*
-void Clone::update(View *view)
-{
-  Bitmap *bmp = Project::bmp;
-  Brush *brush = Project::brush;
-  Stroke *stroke = Project::stroke;
-
-  int sw = preview->w();
-  int sh = preview->h();
-
-  int sx = 0;
-  int sy = 0;
-
-  // draw background
-  for(int yy = 0; yy < sh; yy++)
-  {
-    for(int xx = 0; xx < sw; xx++)
-    {
-      if(state == RESET || state == PLACED)
-      {
-        sx = x;
-        sy = y;
-      }
-      else
-      {
-        sx = view->imgx - dx;
-        sy = view->imgy - dy;
-      }
-
-      const int c = bmp->getpixel(xx + sx - sw / 2, yy + sy - sh / 2);
-
-      preview->bitmap->setpixel(xx, yy, c);
-    }
-  }
-
-  // draw brush outline if relevant
-  switch(stroke->type)
-  {
-    case Stroke::FREEHAND:
-    case Stroke::LINE:
-    case Stroke::RECT:
-    case Stroke::OVAL:
-
-
-      for(int i = 0; i < brush->hollow_count; i++)
-      {
-        const int bx = brush->hollowx[i] + sw / 2;
-        const int by = brush->hollowy[i] + sh / 2;
-
-        preview->bitmap->rectfill(bx - 1, by - 1, bx + 1, by + 1,
-                                  makeRgb(0, 0, 0), 128);
-      }
-
-      for(int i = 0; i < brush->hollow_count; i++)
-      {
-        const int bx = brush->hollowx[i] + sw / 2;
-        const int by = brush->hollowy[i] + sh / 2;
-
-        preview->bitmap->setpixelSolid(bx, by, makeRgb(255, 255, 255), 128);
-      }
-
-      break;
-
-    default:
-      break;
-  }
-
-  const int x1 = preview->w() / 2;
-  const int y1 = preview->h() / 2;
-
-  // draw crosshair
-  preview->bitmap->rect(x1 - 8, y1 - 1, x1 + 8, y1 + 1, makeRgb(0, 0, 0), 0);
-  preview->bitmap->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 0);
-  preview->bitmap->xorRectfill(x1 - 7, y1, x1 + 7, y1);
-  preview->bitmap->xorRectfill(x1, y1 - 7, x1, y1 + 7);
-  preview->bitmap->rectfill(x1 - 7, y1, x1 + 7, y1, makeRgb(255, 255, 255), 128);
-  preview->bitmap->rectfill(x1, y1 - 7, x1, y1 + 7, makeRgb(255, 255, 255), 128);
-
-  preview->redraw();
-}
-*/
-
-void Clone::hide()
-{
-  window->hide();
 }
 

@@ -45,9 +45,8 @@ namespace Clone
   void init();
   void move(int, int);
   void refresh(int, int, int, int);
-  void show(int);
+  void show(bool);
   void update(View *);
-  void hide();
 }
 
 #endif
