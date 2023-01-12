@@ -49,7 +49,8 @@ void Clone::init()
 {
   window = new Fl_Double_Window(400, 400, "Clone Preview");
   preview = new Widget(window, 8, 8, 384, 384, "", 0, 0, 0);
-  window->iconize();
+//  window->iconize();
+  window->set_non_modal();
   window->end();
 }
 
