@@ -129,8 +129,9 @@ namespace
   Widget *paint_average_edge;
   Fl_Choice *paint_mode;
   Widget *getcolor_color;
+  InputInt *fill_range;
   InputInt *fill_feather;
-  Fl_Box *fill_warning;
+  Fl_Button *fill_reset;
 
   StaticText *selection_x;
   StaticText *selection_y;
@@ -814,14 +815,22 @@ void Gui::init()
                    "Fill");
   pos = 28 + 8;
 
+  fill_range = new InputInt(fill, 8, pos, 96, 24, "Range (0-31)", 0, 0, 31);
+  fill_range->align(FL_ALIGN_BOTTOM);
+  fill_range->value("0");
+  pos += 24 + 24;
+
   fill_feather = new InputInt(fill, 8, pos, 96, 24, "Feather (0-255)", 0, 0, 255);
   fill_feather->align(FL_ALIGN_BOTTOM);
   fill_feather->value("0");
   pos += 24 + 24;
 
-  fill_warning = new Fl_Box(FL_NO_BOX, fill->x() + 8, fill->y() + pos, 96, 96, "Blending mode\nignored, use color\nand transparency.\n\nFeathering can\nbe very slow\non large images!");
-  fill_warning->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP | FL_ALIGN_LEFT);
-  fill_warning->labelsize(9);
+  new Separator(fill, 4, pos, 106, 2, "");
+  pos += 8;
+
+  fill_reset = new Fl_Button(fill->x() + 8, fill->y() + pos, 96, 32, "Reset");
+  fill_reset->callback((Fl_Callback *)checkFillReset);
+  pos += 32 + 8;
 
   fill->resizable(0);
   fill->end();
@@ -2008,9 +2017,20 @@ int Gui::getTextSmooth()
   return text_smooth->value();
 }
 
+int Gui::getFillRange()
+{
+  return atoi(fill_range->value());
+}
+
 int Gui::getFillFeather()
 {
   return atoi(fill_feather->value());
+}
+
+void Gui::checkFillReset()
+{
+  fill_range->value("0");
+  fill_feather->value("0");
 }
 
 void Gui::duplicateImage()

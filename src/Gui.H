@@ -122,7 +122,9 @@ namespace Gui
   void checkPaintMode();
   int getPaintMode();
   int getTextSmooth();
+  int getFillRange();
   int getFillFeather();
+  void checkFillReset();
 
   void duplicateImage();
   void showProgress(float);

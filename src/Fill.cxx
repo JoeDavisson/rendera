@@ -122,7 +122,15 @@ namespace
     }
   }
 
-  void fill(int x, int y, int new_color, int old_color, int feather)
+  inline bool inRange(const int c1, const int c2, const int range)
+  {
+    if((std::sqrt(diff24(c1, c2)) / 2) <= range)
+      return true;
+    else
+      return false;
+  }
+
+  void fill(int x, int y, int new_color, int old_color, int range, int feather)
   {
     if(old_color == new_color)
       return;
@@ -147,7 +155,7 @@ namespace
     {    
       int x1 = x;
 
-      while(x1 >= cl && (temp.getpixel(x1, y) == old_color))
+      while(x1 >= cl && inRange(temp.getpixel(x1, y), old_color, range))
         x1--;
 
       x1++;
@@ -155,31 +163,35 @@ namespace
       bool span_t = false;
       bool span_b = false;
 
-      while(x1 <= cr && (temp.getpixel(x1, y) == old_color))
+      while(x1 <= cr && inRange(temp.getpixel(x1, y), old_color, range))
       {
         temp.setpixel(x1, y, new_color);
         map->setpixel(x1 - bmp->cl, y - bmp->ct, 255);
 
-        if((!span_t && y > ct) && (temp.getpixel(x1, y - 1) == old_color))
+        if((!span_t && y > ct) && inRange(temp.getpixel(x1, y - 1),
+                                          old_color, range))
         {
           if(!push(x1, y - 1))
             return;
 
           span_t = true;
         }
-        else if((span_t && y > ct) && (temp.getpixel(x1, y - 1) != old_color))
+        else if((span_t && y > ct) && !inRange(temp.getpixel(x1, y - 1),
+                                               old_color, range))
         {
           span_t = false;
         }
 
-        if((!span_b && y < cb) && (temp.getpixel(x1, y + 1) == old_color))
+        if((!span_b && y < cb) && inRange(temp.getpixel(x1, y + 1),
+                                          old_color, range))
         {
           if(!push(x1, y + 1))
             return;
 
           span_b = true;
         }
-        else if((span_b && y < cb) && (temp.getpixel(x1, y + 1) != old_color))
+        else if((span_b && y < cb) && !inRange(temp.getpixel(x1, y + 1),
+                                               old_color, range))
         {
           span_b = false;
         } 
@@ -282,11 +294,15 @@ void Fill::push(View *view)
                                    Project::bmp->cr, Project::bmp->cb))
   {
     Project::undo->push();
-    int target = Project::bmp->getpixel(view->imgx, view->imgy);
+    Blend::set(Blend::TRANS);
+
     rgba_type rgba = getRgba(Project::brush->color);
     int color = makeRgba(rgba.r, rgba.g, rgba.b, 255 - Project::brush->trans);
-    Blend::set(Blend::TRANS);
-    fill(view->imgx, view->imgy, color, target, Gui::getFillFeather());
+    int target = Project::bmp->getpixel(view->imgx, view->imgy);
+
+    fill(view->imgx, view->imgy, color, target,
+         Gui::getFillRange(), Gui::getFillFeather());
+
     view->drawMain(true);
   }
 }

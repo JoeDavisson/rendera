@@ -149,7 +149,7 @@ inline int scaleVal(const int a, const int b)
   return (a * (255 - b) / 255) + b;
 }
 
-// 3D quadratic distance
+// 3D distance
 inline int diff24(const int c1, const int c2)
 {
   const struct rgba_type rgba1 = getRgba(c1);
@@ -161,7 +161,7 @@ inline int diff24(const int c1, const int c2)
   return r * r + g * g + b * b;
 }
 
-// 4D quadratic distance
+// 4D distance
 inline int diff32(const int c1, const int c2)
 {
   const struct rgba_type rgba1 = getRgba(c1);
