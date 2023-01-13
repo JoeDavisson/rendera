@@ -427,6 +427,8 @@ void Gui::init()
     (Fl_Callback *)AlphaInvert::begin, 0, 0);
   menubar->add("F&X/Alpha/Clear", 0,
     (Fl_Callback *)AlphaClear::begin, 0, 0);
+  menubar->add("F&X/Alpha/Fade to Paint Color", 0,
+    (Fl_Callback *)AlphaColor::begin, 0, 0);
 
   menubar->add("F&X/Filters/Gaussian Blur...", 0,
     (Fl_Callback *)GaussianBlur::begin, 0, 0);

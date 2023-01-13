@@ -63,6 +63,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Invert.H"
 #include "AlphaInvert.H"
 #include "AlphaClear.H"
+#include "AlphaColor.H"
 #include "GaussianBlur.H"
 #include "Sharpen.H"
 #include "UnsharpMask.H"

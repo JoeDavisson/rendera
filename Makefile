@@ -54,6 +54,7 @@ OBJ= \
   $(SRC_DIR)/FX/Invert.o \
   $(SRC_DIR)/FX/AlphaInvert.o \
   $(SRC_DIR)/FX/AlphaClear.o \
+  $(SRC_DIR)/FX/AlphaColor.o \
   $(SRC_DIR)/FX/GaussianBlur.o \
   $(SRC_DIR)/FX/Sharpen.o \
   $(SRC_DIR)/FX/UnsharpMask.o \
