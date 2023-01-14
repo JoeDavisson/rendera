@@ -128,7 +128,9 @@ namespace
   Widget *paint_texture_turb;
   Widget *paint_average_edge;
   Fl_Choice *paint_mode;
+
   Widget *getcolor_color;
+
   InputInt *fill_range;
   InputInt *fill_feather;
   Fl_Button *fill_reset;
@@ -427,7 +429,7 @@ void Gui::init()
     (Fl_Callback *)AlphaInvert::begin, 0, 0);
   menubar->add("F&X/Alpha/Clear", 0,
     (Fl_Callback *)AlphaClear::begin, 0, 0);
-  menubar->add("F&X/Alpha/Fade to Paint Color", 0,
+  menubar->add("F&X/Alpha/Blend to Paint Color", 0,
     (Fl_Callback *)AlphaColor::begin, 0, 0);
 
   menubar->add("F&X/Filters/Gaussian Blur...", 0,
@@ -732,7 +734,11 @@ void Gui::init()
                        "Get Color");
   pos = 28;
 
-  getcolor_color = new Widget(getcolor, 8, pos, 96, 96, 0, 0, 0, 0);
+  getcolor_color = new Widget(getcolor, 8, pos, 96, 96, "Selected Color", 0, 0, 0);
+  getcolor_color->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
+  getcolor_color->labelsize(12);
+  pos += 96 + 24;
+
   getcolor->resizable(0);
   getcolor->end();
 
