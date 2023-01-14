@@ -21,10 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 
 #include "Bitmap.H"
+#include "Brush.H"
 #include "GetColor.H"
 #include "Gui.H"
 #include "Palette.H"
 #include "Project.H"
+#include "Undo.H"
 #include "View.H"
 
 namespace
@@ -53,10 +55,13 @@ GetColor::~GetColor()
 
 void GetColor::push(View *view)
 {
-  if(inbox(view->imgx, view->imgy, Project::bmp->cl, Project::bmp->ct,
-                                   Project::bmp->cr, Project::bmp->cb))
+  Bitmap *bmp = Project::bmp;
+
+  if(inbox(view->imgx, view->imgy, bmp->cl, bmp->ct,
+                                   bmp->cr, bmp->cb))
   {
-    int c = Project::bmp->getpixel(view->imgx, view->imgy);
+    const int c = bmp->getpixel(view->imgx, view->imgy);
+
     Gui::updateColor(c);
     Gui::updateGetColor(c);
   }
