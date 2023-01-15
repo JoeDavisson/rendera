@@ -1025,7 +1025,7 @@ void Gui::show()
 }
 
 // draw checkmark next to a menu item
-void Gui::menuSetItem(const char *s)
+void Gui::menuCheckItem(const char *s)
 {
   Fl_Menu_Item *m;
   m = (Fl_Menu_Item *)menubar->find_item(s);
@@ -1159,13 +1159,13 @@ void Gui::paletteSwatches(Widget *widget, void *var)
   colorUpdate(c);
 }
 
-void Gui::paletteSetIndex(int var)
+void Gui::paletteIndex(int var)
 {
   palette_swatches->var = var;
   Project::palette->draw(palette_swatches);
 }
 
-int Gui::paletteGetIndex()
+int Gui::getPaletteIndex()
 {
   return palette_swatches->var;
 }
@@ -1587,7 +1587,7 @@ void Gui::selectCrop()
   Project::tool->done(view, 1);
 }
 
-int Gui::selectGetAlpha()
+int Gui::getSelectAlpha()
 {
   return selection_alpha->value();
 }
@@ -1736,7 +1736,7 @@ void Gui::offsetDown(Widget *, void *)
   Project::tool->release(view);
 }
 
-int Gui::textGetFontFace()
+int Gui::getTextFontFace()
 {
   int index = font_browse->value();
 
@@ -1746,7 +1746,7 @@ int Gui::textGetFontFace()
   return index - 1;
 }
 
-int Gui::textGetFontSize()
+int Gui::getTextFontSize()
 {
   return atoi(font_size->value());
 }
@@ -1761,7 +1761,7 @@ const char *Gui::textInput()
   return text_input->value();
 }
 
-int Gui::toolGet()
+int Gui::getTool()
 {
   return tool->var;
 }
@@ -2016,22 +2016,22 @@ void Gui::paintMode()
   }
 }
 
-int Gui::paintGetMode()
+int Gui::getPaintMode()
 {
   return paint_mode->value();
 }
 
-int Gui::textGetSmooth()
+int Gui::getTextSmooth()
 {
   return text_smooth->value();
 }
 
-int Gui::fillGetRange()
+int Gui::getFillRange()
 {
   return atoi(fill_range->value());
 }
 
-int Gui::fillGetFeather()
+int Gui::getFillFeather()
 {
   return atoi(fill_feather->value());
 }

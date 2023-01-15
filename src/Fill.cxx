@@ -301,7 +301,7 @@ void Fill::push(View *view)
     int target = Project::bmp->getpixel(view->imgx, view->imgy);
 
     fill(view->imgx, view->imgy, color, target,
-         Gui::fillGetRange(), Gui::fillGetFeather());
+         Gui::getFillRange(), Gui::getFillFeather());
 
     view->drawMain(true);
   }

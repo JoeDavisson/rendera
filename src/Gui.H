@@ -32,6 +32,16 @@ class Fl_Menu_Bar;
 namespace Gui
 {
   int getClone();
+  int getFillFeather();
+  int getFillRange();
+  int getPaintMode();
+  int getPaletteIndex();
+  int getSelectAlpha();
+  int getTextFontFace();
+  int getTextFontSize();
+  int getTextSmooth();
+  int getTool();
+
   Fl_Menu_Bar *getMenuBar();
   View *getView();
   Fl_Double_Window *getWindow();
@@ -59,8 +69,6 @@ namespace Gui
   void colorTransInput(Widget *, void *);
   void colorUpdate(int);
 
-  int fillGetFeather();
-  int fillGetRange();
   void fillReset();
 
   void getcolorUpdate(int);
@@ -77,8 +85,8 @@ namespace Gui
   void imagesUpdateMemInfo();
   void imagesDuplicate();
 
+  void menuCheckItem(const char *);
   void menuClearItem(const char *);
-  void menuSetItem(const char *);
 
   void offsetValues(int, int);
   void offsetLeft(Widget *, void *);
@@ -90,7 +98,6 @@ namespace Gui
 
   void paintChangeSize(int);
   void paintMode();
-  int paintGetMode();
   void paintSize(Widget *, void *);
   void paintSizeValue(Widget *, void *);
   void paintShape(Widget *, void *);
@@ -110,8 +117,7 @@ namespace Gui
   void paletteBlackAndWhite();
   void paletteDefault();
   void paletteDraw();
-  int paletteGetIndex();
-  void paletteSetIndex(int);
+  void paletteIndex(int);
   void paletteSort();
   void paletteSwatches(Widget *, void *);
   void paletteWebSafe();
@@ -123,7 +129,6 @@ namespace Gui
   void progressShow(float);
   void progressShow(float, int);
 
-  int selectGetAlpha();
   void selectCreate();
   void selectCrop();
   void selectFlipX();
@@ -139,13 +144,9 @@ namespace Gui
   void statusInfo(char *);
 
   void textChangedSize(InputInt *, void *);
-  int textGetFontFace();
   const char *textInput();
-  int textGetFontSize();
-  int textGetSmooth();
 
   void toolChange(Widget *, void *);
-  int toolGet();
 
   void zoomIn(Button *, void *);
   void zoomOut(Button *, void *);

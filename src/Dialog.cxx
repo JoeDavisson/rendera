@@ -893,7 +893,7 @@ namespace Editor
       }
     }
 
-    Gui::paletteSetIndex(pos);
+    Gui::paletteIndex(pos);
     updateIndex(pos);
     last_index = pos;
 
@@ -954,7 +954,7 @@ namespace Editor
 
   void begin()
   {
-    Items::palette->var = Gui::paletteGetIndex();
+    Items::palette->var = Gui::getPaletteIndex();
     last_index = Items::palette->var;
     Project::palette->draw(Items::palette);
     updateHexColor();

@@ -61,7 +61,7 @@ void Text::push(View *view)
   // render text to image
   Blend::set(Project::brush->blend);
 
-  if(Gui::textGetSmooth() > 0)
+  if(Gui::getTextSmooth() > 0)
   {
     for(int y = 0; y < temp->h; y++)
     {
@@ -122,8 +122,8 @@ void Text::move(View *view)
   Stroke *stroke = Project::stroke;
 
   // write text string to FLTK's offscreen image
-  int face = Gui::textGetFontFace();
-  int size = Gui::textGetFontSize();
+  int face = Gui::getTextFontFace();
+  int size = Gui::getTextFontSize();
   const char *s = Gui::textInput();
 
   if(size > 256)

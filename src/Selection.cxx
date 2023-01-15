@@ -322,7 +322,7 @@ void Selection::push(View *view)
     Blend::set(Project::brush->blend);
 
     const int trans = Project::brush->trans;
-    const int alpha = Gui::selectGetAlpha();
+    const int alpha = Gui::getSelectAlpha();
 
     for(int y = 0; y < h; y++)
     {

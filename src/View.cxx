@@ -186,7 +186,7 @@ int View::handle(int event)
   imgx = mousex / zoom + ox;
   imgy = mousey / zoom + oy;
 
-  switch(Gui::toolGet())
+  switch(Gui::getTool())
   {
     case Tool::PAINT:
       if(gridsnap)
@@ -586,7 +586,7 @@ void View::drawGrid()
 
 void View::changeCursor()
 {
-  switch(Gui::toolGet())
+  switch(Gui::getTool())
   {
     case Tool::GETCOLOR:
     case Tool::FILL:
@@ -608,7 +608,7 @@ void View::changeCursor()
 
 void View::drawCloneCursor()
 {
-  if(Gui::toolGet() != Tool::PAINT && Gui::toolGet() != Tool::TEXT)
+  if(Gui::getTool() != Tool::PAINT && Gui::getTool() != Tool::TEXT)
     return;
 
   int x = Clone::x;
