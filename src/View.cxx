@@ -114,9 +114,6 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   ox = 0;
   oy = 0;
   zoom = 1;
-  prev_ox = ox;
-  prev_oy = oy;
-  prev_zoom = zoom;
   panning = false;
   last_ox = 0;
   last_oy = 0;
