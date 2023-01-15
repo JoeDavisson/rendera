@@ -43,7 +43,7 @@ void RotateHue::apply(Bitmap *dest, bool show_progress)
   FX::drawPreview(Project::bmp, Items::preview->bitmap);
 
   if(show_progress)
-    Gui::showProgress(dest->h);
+    Gui::progressShow(dest->h);
 
   for(int y = dest->ct; y <= dest->cb; y++)
   {
@@ -77,11 +77,11 @@ void RotateHue::apply(Bitmap *dest, bool show_progress)
     }
 
     if(show_progress)
-      if(Gui::updateProgress(y) < 0)
+      if(Gui::progressUpdate(y) < 0)
         return;
   }
 
-  Gui::hideProgress();
+  Gui::progressHide();
 }
 
 void RotateHue::begin()
@@ -102,7 +102,7 @@ void RotateHue::close()
 
 void RotateHue::quit()
 {
-  Gui::hideProgress();
+  Gui::progressHide();
   Items::dialog->hide();
 }
 

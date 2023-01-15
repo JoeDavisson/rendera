@@ -87,7 +87,7 @@ void BoxFilters::apply(Bitmap *bmp, int amount, int mode)
   }
 
   Bitmap temp(bmp->cw, bmp->ch);
-  Gui::showProgress(bmp->h);
+  Gui::progressShow(bmp->h);
 
   for(int y = bmp->ct; y <= bmp->cb; y++)
   {
@@ -125,13 +125,13 @@ void BoxFilters::apply(Bitmap *bmp, int amount, int mode)
       p++;
     }
 
-    if(Gui::updateProgress(y) < 0)
+    if(Gui::progressUpdate(y) < 0)
       return;
   }
 
   temp.blit(bmp, 0, 0, bmp->cl, bmp->ct, temp.w, temp.h);
 
-  Gui::hideProgress();
+  Gui::progressHide();
 
 }
 
@@ -148,7 +148,7 @@ void BoxFilters::close()
 
 void BoxFilters::quit()
 {
-  Gui::hideProgress();
+  Gui::progressHide();
   Items::dialog->hide();
 }
 

@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX.H"
 
-// most filters may be used internally by calling Gui::enableProgress(false)
+// most filters may be used internally by calling Gui::progressEnable(false)
 // first to disable the progress bar, then calling apply() with the target
 // bitmap and other parameters
 

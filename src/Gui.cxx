@@ -287,7 +287,7 @@ public:
             view->scroll(3, 64);
             break;
           case FL_Delete:
-            Gui::closeFile();
+            Gui::imagesCloseFile();
             break;
           case '1':
             view->zoomOne();
@@ -340,7 +340,7 @@ void Gui::init()
   menubar->add("&File/&Save...", 0,
     (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
   menubar->add("&File/&Close...", 0,
-    (Fl_Callback *)closeFile, 0, FL_MENU_DIVIDER);
+    (Fl_Callback *)imagesCloseFile, 0, FL_MENU_DIVIDER);
   menubar->add("&File/E&xit...", 0,
     (Fl_Callback *)quit, 0, 0);
 
@@ -349,22 +349,22 @@ void Gui::init()
   menubar->add("&Edit/Redo (Shift+Ctrl+Z)", 0,
     (Fl_Callback *)Project::popRedo, 0);
   menubar->add("&Clear/&Black", 0,
-    (Fl_Callback *)checkClearToBlack, 0, 0);
+    (Fl_Callback *)clearToBlack, 0, 0);
   menubar->add("&Clear/&White", 0,
-    (Fl_Callback *)checkClearToWhite, 0, 0);
+    (Fl_Callback *)clearToWhite, 0, 0);
   menubar->add("&Clear/&Gray", 0,
-    (Fl_Callback *)checkClearToGray, 0, 0);
+    (Fl_Callback *)clearToGray, 0, 0);
   menubar->add("&Clear/&Paint Color", 0,
-    (Fl_Callback *)checkClearToPaintColor, 0, 0);
+    (Fl_Callback *)clearToColor, 0, 0);
   menubar->add("&Clear/&Transparent", 0,
-    (Fl_Callback *)checkClearToTransparent, 0, 0);
+    (Fl_Callback *)clearToTrans, 0, 0);
 
   menubar->add("&Image/&Resize...", 0,
     (Fl_Callback *)Transform::resize, 0, 0);
   menubar->add("&Image/&Scale...", 0,
     (Fl_Callback *)Transform::scale, 0, FL_MENU_DIVIDER);
   menubar->add("&Image/&Duplicate", 0,
-    (Fl_Callback *)duplicateImage, 0, FL_MENU_DIVIDER);
+    (Fl_Callback *)imagesDuplicate, 0, FL_MENU_DIVIDER);
   menubar->add("&Image/Flip &Horizontal", 0,
     (Fl_Callback *)Transform::flipHorizontal, 0, 0);
   menubar->add("&Image/Flip &Vertical", 0,
@@ -381,9 +381,9 @@ void Gui::init()
   menubar->add("&Selection/&Save...", 0,
     (Fl_Callback *)File::saveSelection, 0, FL_MENU_DIVIDER);
   menubar->add("&Selection/&Image to Selection", 0,
-    (Fl_Callback *)checkImageToSelection, 0, 0);
+    (Fl_Callback *)selectFromImage, 0, 0);
   menubar->add("&Selection/Selection to &New Image", 0,
-    (Fl_Callback *)checkSelectionToNewImage, 0, 0);
+    (Fl_Callback *)selectToImage, 0, 0);
 
   menubar->add("&Palette/&Open...", 0,
     (Fl_Callback *)File::loadPalette, 0, 0);
@@ -498,17 +498,17 @@ void Gui::init()
 
   zoom_one = new Button(top, pos, 8, 24, 24,
                         "Actual Size (1)", images_zoom_one_png,
-                        (Fl_Callback *)checkZoomOne);
+                        (Fl_Callback *)zoomOne);
   pos += 24 + 8;
 
   zoom_in = new Button(top, pos, 8, 24, 24,
                        "Zoom In (+)", images_zoom_in_png,
-                       (Fl_Callback *)checkZoomIn);
+                       (Fl_Callback *)zoomIn);
   pos += 24 + 8;
 
   zoom_out = new Button(top, pos, 8, 24, 24,
                         "Zoom Out (-)", images_zoom_out_png,
-                        (Fl_Callback *)checkZoomOut);
+                        (Fl_Callback *)zoomOut);
   pos += 24 + 8;
 
   zoom = new StaticText(top, pos, 8, 56, 24, "");
@@ -519,23 +519,23 @@ void Gui::init()
 
   grid = new ToggleButton(top, pos, 8, 24, 24,
                           "Show Grid", images_grid_png,
-                          (Fl_Callback *)checkGrid);
+                          (Fl_Callback *)gridEnable);
   pos += 24 + 8;
 
   gridsnap = new ToggleButton(top, pos, 8, 24, 24,
                           "Snap to Grid", images_gridsnap_png,
-                          (Fl_Callback *)checkGridSnap);
+                          (Fl_Callback *)gridSnap);
   pos += 50;
 
   gridx = new InputInt(top, pos, 8, 64, 24,
                        "X:",
-                       (Fl_Callback *)checkGridX, 1, 256);
+                       (Fl_Callback *)gridX, 1, 256);
   gridx->value("8");
   pos += 92;
 
   gridy = new InputInt(top, pos, 8, 64, 24,
                        "Y:",
-                       (Fl_Callback *)checkGridY, 1, 256);
+                       (Fl_Callback *)gridY, 1, 256);
   gridy->value("8");
   pos += 64 + 8;
   
@@ -552,7 +552,7 @@ void Gui::init()
   clone = new ToggleButton(bottom, pos, 8, 24, 24,
                            "Clone (Ctrl+Click to set target)",
                            images_clone_png,
-                           (Fl_Callback *)checkClone);
+                           (Fl_Callback *)cloneEnable);
   pos += 24 + 8;
 
   new Separator(bottom, pos, 4, 2, 34, "");
@@ -560,13 +560,13 @@ void Gui::init()
 
   origin = new ToggleButton(bottom, pos, 8, 24, 24,
                             "Start From Center", images_origin_png,
-                            (Fl_Callback *)checkOrigin);
+                            (Fl_Callback *)originEnable);
   pos += 24 + 8;
 
   constrain = new ToggleButton(bottom, pos, 8, 24, 24,
                               "Lock Proportions",
                               images_constrain_png,
-                              (Fl_Callback *)checkConstrain);
+                              (Fl_Callback *)constrainEnable);
   pos += 24 + 8;
 
   bottom->resizable(0);
@@ -580,7 +580,7 @@ void Gui::init()
 
   tool = new Widget(tools, 8, pos, 32, 6 * 32,
                     "Tools", images_tools_png, 32, 32,
-                    (Fl_Callback *)checkTool);
+                    (Fl_Callback *)toolChange);
   pos += 96 + 8;
 
   tools->resizable(0);
@@ -598,22 +598,22 @@ void Gui::init()
   pos += 96;
 
   paint_size_value = new InputInt(paint, 8, pos, 96, 24,
-                       "", (Fl_Callback *)checkPaintSizeValue, 1, 72);
+                       "", (Fl_Callback *)paintSizeValue, 1, 72);
   pos += 24 + 8;
 
   paint_size = new Widget(paint, 8, pos, 96, 24,
                           "Size", images_size_png, 6, 24,
-                          (Fl_Callback *)checkPaintSize);
+                          (Fl_Callback *)paintSize);
   pos += 24 + 8;
 
   paint_stroke = new Widget(paint, 8, pos, 96, 48,
                             "Stroke", images_stroke_png, 24, 24,
-                            (Fl_Callback *)checkPaintStroke);
+                            (Fl_Callback *)paintStroke);
   pos += 48 + 8;
 
   paint_shape = new Widget(paint, 8, pos, 96, 24,
                            "Shape", images_shape_png, 6, 24,
-                           (Fl_Callback *)checkPaintShape);
+                           (Fl_Callback *)paintShape);
   pos += 24 + 8;
 
   new Separator(paint, 4, pos, 106, 2, "");
@@ -633,36 +633,36 @@ void Gui::init()
   paint_mode->add("Texture");
   paint_mode->add("Average");
   paint_mode->value(0);
-  paint_mode->callback((Fl_Callback *)checkPaintMode);
+  paint_mode->callback((Fl_Callback *)paintMode);
   pos += 24 + 8;
 
   paint_coarse_edge = new Widget(paint, 8, pos, 96, 24,
                           "Edge", images_edge_png, 12, 24,
-                          (Fl_Callback *)checkPaintCoarseEdge);
+                          (Fl_Callback *)paintCoarseEdge);
   paint_fine_edge = new Widget(paint, 8, pos, 96, 24,
                           "Edge", images_edge_png, 12, 24,
-                          (Fl_Callback *)checkPaintFineEdge);
+                          (Fl_Callback *)paintFineEdge);
   paint_blurry_edge = new Widget(paint, 8, pos, 96, 24,
                           "Edge", images_edge_png, 12, 24,
-                          (Fl_Callback *)checkPaintBlurryEdge);
+                          (Fl_Callback *)paintBlurryEdge);
   paint_watercolor_edge = new Widget(paint, 8, pos, 96, 24,
                           "Edge", images_watercolor_edge_png, 12, 24,
-                          (Fl_Callback *)checkPaintWatercolorEdge);
+                          (Fl_Callback *)paintWatercolorEdge);
   paint_chalk_edge = new Widget(paint, 8, pos, 96, 24,
                           "Edge", images_chalk_edge_png, 12, 24,
-                          (Fl_Callback *)checkPaintChalkEdge);
+                          (Fl_Callback *)paintChalkEdge);
   paint_texture_edge = new Widget(paint, 8, pos, 96, 24,
                           "Edge", images_edge_png, 12, 24,
-                          (Fl_Callback *)checkPaintTextureEdge);
+                          (Fl_Callback *)paintTextureEdge);
   paint_texture_marb = new Widget(paint, 8, pos + 32, 96, 16,
                           "Marbleize", images_marbleize_png, 12, 16,
-                          (Fl_Callback *)checkPaintTextureMarb);
+                          (Fl_Callback *)paintTextureMarb);
   paint_texture_turb = new Widget(paint, 8, pos + 56, 96, 16,
                           "Turbulence", images_turbulence_png, 12, 16,
-                          (Fl_Callback *)checkPaintTextureTurb);
+                          (Fl_Callback *)paintTextureTurb);
   paint_average_edge = new Widget(paint, 8, pos, 96, 24,
                           "Edge", images_edge_png, 12, 24,
-                          (Fl_Callback *)checkPaintAverageEdge);
+                          (Fl_Callback *)paintAverageEdge);
   pos += 24 + 8;
 
   paint->resizable(0);
@@ -694,14 +694,14 @@ void Gui::init()
   pos += 8;
 
   selection_reset = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Reset");
-  selection_reset->callback((Fl_Callback *)checkSelectionReset);
+  selection_reset->callback((Fl_Callback *)selectReset);
   pos += 32 + 8;
 
   new Separator(selection, 4, pos, 106, 2, "");
   pos += 8;
 
   selection_create = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Select");
-  selection_create->callback((Fl_Callback *)checkSelectionCreate);
+  selection_create->callback((Fl_Callback *)selectCreate);
   pos += 32 + 8;
 
   new Separator(selection, 4, pos, 106, 2, "");
@@ -713,16 +713,16 @@ void Gui::init()
   selection_alpha->value(1);
   pos += 16 + 8;
 
-  selection_mirror = new Button(selection, 8, pos, 30, 30, "Mirror", images_select_mirror_png, (Fl_Callback *)checkSelectionFlipHorizontal);
-  selection_flip = new Button(selection, 8 + 33, pos, 30, 30, "Flip", images_select_flip_png, (Fl_Callback *)checkSelectionFlipVertical);
-  selection_rotate = new Button(selection, 8 + 66, pos, 30, 30, "Rotate", images_select_rotate_png, (Fl_Callback *)checkSelectionRotate90);
+  selection_mirror = new Button(selection, 8, pos, 30, 30, "Mirror", images_select_mirror_png, (Fl_Callback *)selectFlipX);
+  selection_flip = new Button(selection, 8 + 33, pos, 30, 30, "Flip", images_select_flip_png, (Fl_Callback *)selectFlipY);
+  selection_rotate = new Button(selection, 8 + 66, pos, 30, 30, "Rotate", images_select_rotate_png, (Fl_Callback *)selectRotate90);
   pos += 30 + 8;
 
   new Separator(selection, 4, pos, 106, 2, "");
   pos += 8;
 
   selection_crop = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Crop");
-  selection_crop->callback((Fl_Callback *)checkSelectionCrop);
+  selection_crop->callback((Fl_Callback *)selectCrop);
   pos += 32 + 8;
 
   selection->resizable(0);
@@ -759,14 +759,14 @@ void Gui::init()
   new Separator(offset, 4, pos, 106, 2, "");
   pos += 8;
 
-  offset_up = new RepeatButton(offset, 44, pos, 24, 24, "", images_up_png, (Fl_Callback *)checkOffsetUp);
+  offset_up = new RepeatButton(offset, 44, pos, 24, 24, "", images_up_png, (Fl_Callback *)offsetUp);
   pos += 12;
 
-  offset_left = new RepeatButton(offset, 16, pos, 24, 24, "", images_left_png, (Fl_Callback *)checkOffsetLeft);
-  offset_right = new RepeatButton(offset, 72, pos, 24, 24, "", images_right_png, (Fl_Callback *)checkOffsetRight);
+  offset_left = new RepeatButton(offset, 16, pos, 24, 24, "", images_left_png, (Fl_Callback *)offsetLeft);
+  offset_right = new RepeatButton(offset, 72, pos, 24, 24, "", images_right_png, (Fl_Callback *)offsetRight);
   pos += 16;
 
-  offset_down = new RepeatButton(offset, 44, pos, 24, 24, "", images_down_png, (Fl_Callback *)checkOffsetDown);
+  offset_down = new RepeatButton(offset, 44, pos, 24, 24, "", images_down_png, (Fl_Callback *)offsetDown);
   pos += 24;
 
   new StaticText(offset, 8, pos, 96, 24, "Nudge");
@@ -793,12 +793,12 @@ void Gui::init()
   }
 
   font_browse->value(0);
-  font_browse->callback((Fl_Callback *)changedFontSize);
+  font_browse->callback((Fl_Callback *)textChangedSize);
   pos += 192 + 8;
 
   // font size
   font_size = new InputInt(text, 40, pos, 64, 24, "Size:",
-                           (Fl_Callback *)changedFontSize, 1, 256);
+                           (Fl_Callback *)textChangedSize, 1, 256);
   font_size->value("24");
   pos += 24 + 8;
 
@@ -806,7 +806,7 @@ void Gui::init()
   text_input->textsize(10);
   text_input->value("Text");
   text_input->resize(text->x() + 8, text->y() + pos, 96, 24);
-  text_input->callback((Fl_Callback *)changedFontSize);
+  text_input->callback((Fl_Callback *)textChangedSize);
   pos += 24 + 8;
 
   text_smooth = new CheckBox(text, 8, pos, 16, 16, "Antialiased", 0);
@@ -837,7 +837,7 @@ void Gui::init()
   pos += 8;
 
   fill_reset = new Fl_Button(fill->x() + 8, fill->y() + pos, 96, 32, "Reset");
-  fill_reset->callback((Fl_Callback *)checkFillReset);
+  fill_reset->callback((Fl_Callback *)fillReset);
   pos += 32 + 8;
 
   fill->resizable(0);
@@ -851,7 +851,7 @@ void Gui::init()
 
   palette_swatches = new Widget(palette, 8, pos, 64, 256,
                        0, 8, 8,
-                       (Fl_Callback *)checkPaletteSwatches);
+                       (Fl_Callback *)paletteSwatches);
   pos += 256 + 8;
 
   palette_editor = new Fl_Button(palette->x() + 8, palette->y() + pos, 64, 24, "Editor...");
@@ -871,28 +871,28 @@ void Gui::init()
   pos += 48 + 8;
 
   hexcolor = new InputText(colors, 40, pos, 96, 24, "Hex:",
-                           (Fl_Callback *)checkHexColor);
+                           (Fl_Callback *)colorHexInput);
   hexcolor->maximum_size(6);
   hexcolor->textfont(FL_COURIER);
   hexcolor->textsize(14);
   pos += 24 + 8;
 
   // satval overlaps the hue color wheel
-  hue = new Widget(colors, 8, pos, 128, 128, 0, 1, 1, (Fl_Callback *)checkColor);
-  satval = new Widget(colors, 40, pos + 32, 64, 64, 0, 1, 1, (Fl_Callback *)checkColor);
+  hue = new Widget(colors, 8, pos, 128, 128, 0, 1, 1, (Fl_Callback *)colorChange);
+  satval = new Widget(colors, 40, pos + 32, 64, 64, 0, 1, 1, (Fl_Callback *)colorChange);
   pos += 128 + 8;
 
   new Separator(colors, 4, pos, 138, 2, "");
   pos += 8;
 
   trans_input = new InputInt(colors, 8, pos, 128, 24,
-                       "", (Fl_Callback *)checkTransInput, 0, 255);
+                       "", (Fl_Callback *)colorTransInput, 0, 255);
   trans_input->value("0");
   pos += 24 + 8;
 
   trans = new Widget(colors, 8, pos, 128, 24,
                      "Transparency", images_transparency_png, 4, 24,
-                     (Fl_Callback *)checkTrans);
+                     (Fl_Callback *)colorTrans);
   pos += 24 + 8;
 
   new Separator(colors, 4, pos, 138, 2, "");
@@ -910,7 +910,7 @@ void Gui::init()
   blend->add("Alpha Subtract");
   blend->add("Smooth");
   blend->value(0);
-  blend->callback((Fl_Callback *)checkColor);
+  blend->callback((Fl_Callback *)colorChange);
   pos += 24 + 8;
 
   colors->resizable(0);
@@ -924,7 +924,7 @@ void Gui::init()
   file_browse = new Fl_Hold_Browser(8, pos, 144, files->h() - 16 - 20 - 32);
   file_browse->textsize(12);
   file_browse->resize(files->x() + 8, files->y() + pos, files->w() - 16, files->h() - 108);
-  file_browse->callback((Fl_Callback *)checkFileBrowse);
+  file_browse->callback((Fl_Callback *)imagesBrowse);
   pos += file_browse->h() + 8;
 
   file_rename = new Fl_Input(8, pos, 112, 24, "");
@@ -932,11 +932,11 @@ void Gui::init()
   file_rename->value("");
   file_rename->when(FL_WHEN_ENTER_KEY);
   file_rename->resize(files->x() + 8, files->y() + pos, 112, 24);
-  file_rename->callback((Fl_Callback *)checkFileRename);
+  file_rename->callback((Fl_Callback *)imagesRename);
 
   file_close = new Button(files, 128, pos, 24, 24,
                           "Close File (Delete)", images_close_png,
-                          (Fl_Callback *)closeFile);
+                          (Fl_Callback *)imagesCloseFile);
   pos += 24 + 8;
 
   file_mem = new Fl_Box(FL_FLAT_BOX, files->x() + 8, files->y() + pos, 144, 32, "");
@@ -981,13 +981,14 @@ void Gui::init()
   Fl_Tooltip::color(fl_rgb_color(192, 224, 248));
   Fl_Tooltip::textcolor(FL_BLACK);
 
-  updateColor(Project::palette->data[palette_swatches->var]);
-  drawPalette();
+  colorUpdate(Project::palette->data[palette_swatches->var]);
+  paletteDraw();
   tool->do_callback();
-  checkZoom();
-  checkSelectionValues(0, 0, 0, 0);
-  checkOffsetValues(0, 0);
-  checkPaintMode();
+  zoomLevel();
+  selectValues(0, 0, 0, 0);
+  offsetValues(0, 0);
+  paintMode();
+
   paint_size->var = 0;
   paint_size->do_callback();
   paint_coarse_edge->var = 3;
@@ -1024,7 +1025,7 @@ void Gui::show()
 }
 
 // draw checkmark next to a menu item
-void Gui::setMenuItem(const char *s)
+void Gui::menuSetItem(const char *s)
 {
   Fl_Menu_Item *m;
   m = (Fl_Menu_Item *)menubar->find_item(s);
@@ -1034,7 +1035,7 @@ void Gui::setMenuItem(const char *s)
 }
 
 // remove checkmark from menu item
-void Gui::clearMenuItem(const char *s)
+void Gui::menuClearItem(const char *s)
 {
   Fl_Menu_Item *m;
   m = (Fl_Menu_Item *)menubar->find_item(s);
@@ -1044,7 +1045,7 @@ void Gui::clearMenuItem(const char *s)
 }
 
 // begin callback functions
-void Gui::checkHexColor()
+void Gui::colorHexInput()
 {
   unsigned int c;
 
@@ -1055,11 +1056,11 @@ void Gui::checkHexColor()
 
   c |= 0xFF000000;
 
-  updateColor(convertFormat((int)c, true));
-  updateHexColor();
+  colorUpdate(convertFormat((int)c, true));
+  colorHexUpdate();
 }
 
-void Gui::updateHexColor()
+void Gui::colorHexUpdate()
 {
   char hex_string[8];
   snprintf(hex_string, sizeof(hex_string),
@@ -1067,7 +1068,7 @@ void Gui::updateHexColor()
   hexcolor->value(hex_string);
 }
 
-void Gui::updateColor(int c)
+void Gui::colorUpdate(int c)
 {
   int r = getr(c);
   int g = getg(c);
@@ -1086,11 +1087,11 @@ void Gui::updateColor(int c)
   hue->do_callback();
 
   Project::brush->color = c;
-  updateHexColor();
-  updateSwatch();
+  colorHexUpdate();
+  colorSwatch();
 }
 
-void Gui::updateSwatch()
+void Gui::colorSwatch()
 {
   swatch->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
@@ -1112,14 +1113,14 @@ void Gui::updateSwatch()
   swatch->redraw();
 }
 
-void Gui::updateGetColor(int c)
+void Gui::getcolorUpdate(int c)
 {
   getcolor_color->bitmap->clear(c);
   getcolor_color->bitmap->rect(0, 0, getcolor_color->bitmap->w - 1, getcolor_color->bitmap->h - 1, makeRgb(0, 0, 0), 0);
   getcolor_color->redraw();
 }
 
-void Gui::checkPaletteSwatches(Widget *widget, void *var)
+void Gui::paletteSwatches(Widget *widget, void *var)
 {
   Palette *pal = Project::palette;
   int pos = *(int *)var;
@@ -1155,46 +1156,46 @@ void Gui::checkPaletteSwatches(Widget *widget, void *var)
 
   int c = widget->bitmap->getpixel(x * step + 2, y * step + 2);
   pal->draw(widget);
-  updateColor(c);
+  colorUpdate(c);
 }
 
-void Gui::setPaletteIndex(int var)
+void Gui::paletteSetIndex(int var)
 {
   palette_swatches->var = var;
   Project::palette->draw(palette_swatches);
 }
 
-int Gui::getPaletteIndex()
+int Gui::paletteGetIndex()
 {
   return palette_swatches->var;
 }
 
-void Gui::drawPalette()
+void Gui::paletteDraw()
 {
   Project::palette->draw(palette_swatches);
   palette_swatches->var = 0;
   palette_swatches->redraw();
 }
 
-void Gui::checkZoomIn(Button *, void *)
+void Gui::zoomIn(Button *, void *)
 {
   view->zoomIn(view->w() / 2, view->h() / 2);
-  checkZoom();
+  zoomLevel();
 }
 
-void Gui::checkZoomOut(Button *, void *)
+void Gui::zoomOut(Button *, void *)
 {
   view->zoomOut(view->w() / 2, view->h() / 2);
-  checkZoom();
+  zoomLevel();
 }
 
-void Gui::checkZoomOne(Button *, void *)
+void Gui::zoomOne(Button *, void *)
 {
   view->zoomOne();
-  checkZoom();
+  zoomLevel();
 }
 
-void Gui::checkZoom()
+void Gui::zoomLevel()
 {
   char s[256];
 
@@ -1207,7 +1208,7 @@ void Gui::checkZoom()
   zoom->redraw();
 }
 
-void Gui::checkGrid(ToggleButton *, void *var)
+void Gui::gridEnable(ToggleButton *, void *var)
 {
   view->grid = *(int *)var;
   view->drawMain(true);
@@ -1219,26 +1220,26 @@ void Gui::checkGrid(ToggleButton *, void *var)
   }
 }
 
-void Gui::checkGridSnap(ToggleButton *, void *var)
+void Gui::gridSnap(ToggleButton *, void *var)
 {
   view->gridsnap = *(int *)var;
 }
 
-void Gui::checkGridX()
+void Gui::gridX()
 {
   view->gridx = atoi(gridx->value());
   view->drawMain(true);
   view->redraw();
 }
 
-void Gui::checkGridY()
+void Gui::gridY()
 {
   view->gridy = atoi(gridy->value());
   view->drawMain(true);
   view->redraw();
 }
 
-void Gui::changePaintSize(int size)
+void Gui::paintChangeSize(int size)
 {
   Brush *brush = Project::brush;
   float round = (float)(15 - paint_shape->var) / 15;
@@ -1266,79 +1267,79 @@ void Gui::changePaintSize(int size)
   paint_size_value->redraw();
 }
 
-void Gui::checkPaintSize(Widget *, void *var)
+void Gui::paintSize(Widget *, void *var)
 {
   int size = brush_sizes[*(int *)var];
-  changePaintSize(size);
+  paintChangeSize(size);
   char s[16];
   snprintf(s, sizeof(s), "%d", (int)size);
   paint_size_value->value(s);
   paint_size_value->redraw();
 }
 
-void Gui::checkPaintSizeValue(Widget *, void *var)
+void Gui::paintSizeValue(Widget *, void *var)
 {
   int size;
   sscanf(paint_size_value->value(), "%d", &size);
-  changePaintSize(size);
+  paintChangeSize(size);
 }
 
-void Gui::checkPaintShape(Widget *, void *)
+void Gui::paintShape(Widget *, void *)
 {
-  changePaintSize(Project::brush->size);
+  paintChangeSize(Project::brush->size);
 }
 
-void Gui::checkPaintStroke(Widget *, void *var)
+void Gui::paintStroke(Widget *, void *var)
 {
   Project::stroke->type = *(int *)var;
 }
 
-void Gui::checkPaintCoarseEdge(Widget *, void *var)
+void Gui::paintCoarseEdge(Widget *, void *var)
 {
   Project::brush->coarse_edge = *(int *)var;
 }
 
-void Gui::checkPaintFineEdge(Widget *, void *var)
+void Gui::paintFineEdge(Widget *, void *var)
 {
   Project::brush->fine_edge = *(int *)var;
 }
 
-void Gui::checkPaintBlurryEdge(Widget *, void *var)
+void Gui::paintBlurryEdge(Widget *, void *var)
 {
   Project::brush->blurry_edge = *(int *)var;
 }
 
-void Gui::checkPaintWatercolorEdge(Widget *, void *var)
+void Gui::paintWatercolorEdge(Widget *, void *var)
 {
   Project::brush->watercolor_edge = *(int *)var;
 }
 
-void Gui::checkPaintChalkEdge(Widget *, void *var)
+void Gui::paintChalkEdge(Widget *, void *var)
 {
   Project::brush->chalk_edge = *(int *)var;
 }
 
-void Gui::checkPaintTextureEdge(Widget *, void *var)
+void Gui::paintTextureEdge(Widget *, void *var)
 {
   Project::brush->texture_edge = *(int *)var;
 }
 
-void Gui::checkPaintTextureMarb(Widget *, void *var)
+void Gui::paintTextureMarb(Widget *, void *var)
 {
   Project::brush->texture_marb = *(int *)var;
 }
 
-void Gui::checkPaintTextureTurb(Widget *, void *var)
+void Gui::paintTextureTurb(Widget *, void *var)
 {
   Project::brush->texture_turb = *(int *)var;
 }
 
-void Gui::checkPaintAverageEdge(Widget *, void *var)
+void Gui::paintAverageEdge(Widget *, void *var)
 {
   Project::brush->average_edge = *(int *)var;
 }
 
-void Gui::checkTool(Widget *, void *var)
+void Gui::toolChange(Widget *, void *var)
 {
   int tool = *(int *)var;
 
@@ -1363,45 +1364,45 @@ void Gui::checkTool(Widget *, void *var)
       paint_brush_preview->do_callback();
       paint_shape->do_callback();
       paint->show();
-      updateInfo((char *)"Middle-click to navigate. Mouse wheel zooms. Esc to cancel rendering.");
+      statusInfo((char *)"Middle-click to navigate. Mouse wheel zooms. Esc to cancel rendering.");
       
       break;
     case Tool::GETCOLOR:
       Project::setTool(Tool::GETCOLOR);
       Project::tool->reset();
       getcolor->show();
-      updateInfo((char *)"Click to select a color from the image.");
+      statusInfo((char *)"Click to select a color from the image.");
       break;
     case Tool::SELECT:
       Project::setTool(Tool::SELECT);
       //  Project::tool->reset();
       selection->show();
-      updateInfo((char *)"Draw a box, then click inside box to move, outside to change size.");
+      statusInfo((char *)"Draw a box, then click inside box to move, outside to change size.");
       break;
     case Tool::OFFSET:
       Project::setTool(Tool::OFFSET);
       Project::tool->reset();
       offset->show();
-      updateInfo((char *)"Click and drag to change image offset.");
+      statusInfo((char *)"Click and drag to change image offset.");
       break;
     case Tool::TEXT:
       Project::setTool(Tool::TEXT);
       Project::tool->reset();
       text->show();
-      updateInfo((char *)"Click to stamp text onto the image.");
+      statusInfo((char *)"Click to stamp text onto the image.");
       break;
     case Tool::FILL:
       Project::setTool(Tool::FILL);
       Project::tool->reset();
       fill->show();
-      updateInfo((char *)"Click to fill an area with the selected color. Blending modes ignored. Esc to cancel.");
+      statusInfo((char *)"Click to fill an area with the selected color. Blending modes ignored. Esc to cancel.");
       break;
   }
 
   view->drawMain(true);
 }
 
-void Gui::checkColor(Widget *widget, void *)
+void Gui::colorChange(Widget *widget, void *)
 {
   int pos = hue->var;
   int mx = pos % 128;
@@ -1520,30 +1521,30 @@ void Gui::checkColor(Widget *widget, void *)
   hue->redraw();
   satval->redraw();
 
-  updateSwatch();
-  updateHexColor();
+  colorSwatch();
+  colorHexUpdate();
 }
 
-void Gui::checkHue(Widget *, void *)
+void Gui::colorHue(Widget *, void *)
 {
-  checkColor(0, 0);
+  colorChange(0, 0);
 }
 
-void Gui::checkSatVal(Widget *, void *)
+void Gui::colorSatVal(Widget *, void *)
 {
-  checkColor(0, 0);
+  colorChange(0, 0);
 }
 
-void Gui::checkTransInput(Widget *, void *)
+void Gui::colorTransInput(Widget *, void *)
 {
   Project::brush->trans = atoi(trans_input->value());
   trans->var = Project::brush->trans / 8.22;
   trans->redraw();
-  updateSwatch();
+  colorSwatch();
 }
 
 
-void Gui::checkTrans(Widget *, void *)
+void Gui::colorTrans(Widget *, void *)
 {
 //  Project::brush->trans = trans->var * 16.8;
   Project::brush->trans = trans->var * 8.23;
@@ -1551,57 +1552,57 @@ void Gui::checkTrans(Widget *, void *)
   snprintf(s, sizeof(s), "%d", Project::brush->trans);
   trans_input->value(s);
   trans_input->redraw();
-  updateSwatch();
-//  checkColor(0, 0);
+  colorSwatch();
+//  colorChange(0, 0);
 }
 
-void Gui::checkBlend(Widget *, void *)
+void Gui::colorBlend(Widget *, void *)
 {
-  checkColor(0, 0);
+  colorChange(0, 0);
 }
 
-void Gui::checkClone(Widget *, void *var)
+void Gui::cloneEnable(Widget *, void *var)
 {
   Clone::active = *(int *)var;
   Clone::show(*(int *)var);
 }
 
-void Gui::checkOrigin(Widget *, void *var)
+void Gui::originEnable(Widget *, void *var)
 {
   Project::stroke->origin = *(int *)var;
 }
 
-void Gui::checkConstrain(Widget *, void *var)
+void Gui::constrainEnable(Widget *, void *var)
 {
   Project::stroke->constrain = *(int *)var;
 }
 
-void Gui::checkSelectionCreate()
+void Gui::selectCreate()
 {
   Project::tool->done(view, 0);
 }
 
-void Gui::checkSelectionCrop()
+void Gui::selectCrop()
 {
   Project::tool->done(view, 1);
 }
 
-int Gui::getSelectionAlpha()
+int Gui::selectGetAlpha()
 {
   return selection_alpha->value();
 }
 
-void Gui::checkSelectionFlipHorizontal()
+void Gui::selectFlipX()
 {
   Project::select_bmp->flipHorizontal();
 }
 
-void Gui::checkSelectionFlipVertical()
+void Gui::selectFlipY()
 {
   Project::select_bmp->flipVertical();
 }
 
-void Gui::checkSelectionRotate90()
+void Gui::selectRotate90()
 {
   int w = Project::select_bmp->w;
   int h = Project::select_bmp->h;
@@ -1625,17 +1626,17 @@ void Gui::checkSelectionRotate90()
   }
 }
 
-void Gui::checkSelectionRotate180()
+void Gui::selectRotate180()
 {
   Project::select_bmp->rotate180();
 }
 
-void Gui::checkSelectionReset()
+void Gui::selectReset()
 {
   Project::tool->reset();
 }
 
-void Gui::checkSelectionValues(int x, int y, int w, int h)
+void Gui::selectValues(int x, int y, int w, int h)
 {
   char s[256];
 
@@ -1656,7 +1657,7 @@ void Gui::checkSelectionValues(int x, int y, int w, int h)
   selection_h->redraw();
 }
 
-void Gui::checkImageToSelection()
+void Gui::selectFromImage()
 {
   delete Project::select_bmp;
 
@@ -1668,10 +1669,10 @@ void Gui::checkImageToSelection()
   Project::selection->reload();
 
   tool->var = Tool::SELECT;
-  checkTool(tool, (void *)&tool->var);
+  toolChange(tool, (void *)&tool->var);
 }
 
-void Gui::checkSelectionToNewImage()
+void Gui::selectToImage()
 {
   Bitmap *select_bmp = Project::select_bmp;
   Bitmap *temp = new Bitmap(select_bmp->w, select_bmp->h);
@@ -1679,10 +1680,10 @@ void Gui::checkSelectionToNewImage()
   select_bmp->blit(temp, 0, 0, 0, 0, temp->w, temp->h);
 
   if(Project::newImageFromBitmap(temp) != -1)
-    addFile("new_from_selection");
+    imagesAddFile("new_from_selection");
 }
 
-void Gui::checkOffsetValues(int x, int y)
+void Gui::offsetValues(int x, int y)
 {
   char s[256];
 
@@ -1695,7 +1696,7 @@ void Gui::checkOffsetValues(int x, int y)
   offset_y->redraw();
 }
 
-void Gui::checkOffsetLeft(Widget *, void *)
+void Gui::offsetLeft(Widget *, void *)
 {
   view->imgx = 0;
   view->imgy = 0;
@@ -1705,7 +1706,7 @@ void Gui::checkOffsetLeft(Widget *, void *)
   Project::tool->release(view);
 }
 
-void Gui::checkOffsetRight(Widget *, void *)
+void Gui::offsetRight(Widget *, void *)
 {
   view->imgx = 0;
   view->imgy = 0;
@@ -1715,7 +1716,7 @@ void Gui::checkOffsetRight(Widget *, void *)
   Project::tool->release(view);
 }
 
-void Gui::checkOffsetUp(Widget *, void *)
+void Gui::offsetUp(Widget *, void *)
 {
   view->imgx = 0;
   view->imgy = 0;
@@ -1725,7 +1726,7 @@ void Gui::checkOffsetUp(Widget *, void *)
   Project::tool->release(view);
 }
 
-void Gui::checkOffsetDown(Widget *, void *)
+void Gui::offsetDown(Widget *, void *)
 {
   view->imgx = 0;
   view->imgy = 0;
@@ -1735,7 +1736,7 @@ void Gui::checkOffsetDown(Widget *, void *)
   Project::tool->release(view);
 }
 
-int Gui::getFontFace()
+int Gui::textGetFontFace()
 {
   int index = font_browse->value();
 
@@ -1745,22 +1746,22 @@ int Gui::getFontFace()
   return index - 1;
 }
 
-int Gui::getFontSize()
+int Gui::textGetFontSize()
 {
   return atoi(font_size->value());
 }
 
-void Gui::changedFontSize(InputInt *input, void *var)
+void Gui::textChangedSize(InputInt *input, void *var)
 {
   input->redraw();
 }
 
-const char *Gui::getTextInput()
+const char *Gui::textInput()
 {
   return text_input->value();
 }
 
-int Gui::getTool()
+int Gui::toolGet()
 {
   return tool->var;
 }
@@ -1800,7 +1801,7 @@ void Gui::palette4LevelRGB()
   Project::palette->draw(palette_swatches);
 }
 
-void Gui::checkClearToPaintColor()
+void Gui::clearToColor()
 {
   Project::undo->push();
 
@@ -1810,7 +1811,7 @@ void Gui::checkClearToPaintColor()
   view->drawMain(true);
 }
 
-void Gui::checkClearToBlack()
+void Gui::clearToBlack()
 {
   Project::undo->push();
 
@@ -1820,7 +1821,7 @@ void Gui::checkClearToBlack()
   view->drawMain(true);
 }
 
-void Gui::checkClearToWhite()
+void Gui::clearToWhite()
 {
   Project::undo->push();
 
@@ -1830,7 +1831,7 @@ void Gui::checkClearToWhite()
   view->drawMain(true);
 }
 
-void Gui::checkClearToGray()
+void Gui::clearToGray()
 {
   Project::undo->push();
 
@@ -1843,7 +1844,7 @@ void Gui::checkClearToGray()
   view->drawMain(true);
 }
 
-void Gui::checkClearToTransparent()
+void Gui::clearToTrans()
 {
   Project::undo->push();
 
@@ -1856,7 +1857,7 @@ void Gui::checkClearToTransparent()
   view->drawMain(true);
 }
 
-void Gui::checkFileBrowse()
+void Gui::imagesBrowse()
 {
   const int line = file_browse->value();
 
@@ -1874,7 +1875,7 @@ void Gui::checkFileBrowse()
   }
 }
 
-void Gui::checkFileRename()
+void Gui::imagesRename()
 {
   const int line = file_browse->value();
 
@@ -1885,14 +1886,14 @@ void Gui::checkFileRename()
   }
 }
 
-void Gui::addFile(const char *name)
+void Gui::imagesAddFile(const char *name)
 {
   file_browse->add(name, 0);
   file_browse->select(Project::current + 1);
-  checkFileBrowse();
+  imagesBrowse();
 }
 
-void Gui::closeFile()
+void Gui::imagesCloseFile()
 {
   if(Project::removeImage() == true)
   {
@@ -1913,7 +1914,7 @@ void Gui::closeFile()
   }
 }
 
-void Gui::updateMemInfo()
+void Gui::imagesUpdateMemInfo()
 {
   char s[256];
 
@@ -1946,7 +1947,7 @@ void Gui::updateMemInfo()
 
   file_mem->copy_label(s);
 
-  Fl::repeat_timeout(1.0, (Fl_Timeout_Handler)Gui::updateMemInfo);
+  Fl::repeat_timeout(1.0, (Fl_Timeout_Handler)Gui::imagesUpdateMemInfo);
 }
 
 Fl_Double_Window *Gui::getWindow()
@@ -1969,7 +1970,7 @@ int Gui::getClone()
   return clone->var;
 }
 
-void Gui::checkPaintMode()
+void Gui::paintMode()
 {
   Project::brush->aa = 0;
   paint_coarse_edge->hide();
@@ -2015,33 +2016,33 @@ void Gui::checkPaintMode()
   }
 }
 
-int Gui::getPaintMode()
+int Gui::paintGetMode()
 {
   return paint_mode->value();
 }
 
-int Gui::getTextSmooth()
+int Gui::textGetSmooth()
 {
   return text_smooth->value();
 }
 
-int Gui::getFillRange()
+int Gui::fillGetRange()
 {
   return atoi(fill_range->value());
 }
 
-int Gui::getFillFeather()
+int Gui::fillGetFeather()
 {
   return atoi(fill_feather->value());
 }
 
-void Gui::checkFillReset()
+void Gui::fillReset()
 {
   fill_range->value("0");
   fill_feather->value("0");
 }
 
-void Gui::duplicateImage()
+void Gui::imagesDuplicate()
 {
   const int current = Project::current;
   const int last = Project::last;
@@ -2054,11 +2055,11 @@ void Gui::duplicateImage()
   Project::newImage(bmp->cw, bmp->ch);
   bmp_list[current]->blit(bmp_list[last], 0, 0, 0, 0, bmp->w, bmp->h);
 
-  addFile("new");
+  imagesAddFile("new");
 }
 
 // use default interval
-void Gui::showProgress(float step)
+void Gui::progressShow(float step)
 {
   if(progress_enable == false)
     return;
@@ -2077,7 +2078,7 @@ void Gui::showProgress(float step)
 }
 
 // custom interval
-void Gui::showProgress(float step, int interval)
+void Gui::progressShow(float step, int interval)
 {
   if(progress_enable == false)
     return;
@@ -2098,7 +2099,7 @@ void Gui::showProgress(float step, int interval)
   progress->show();
 }
 
-int Gui::updateProgress(int y)
+int Gui::progressUpdate(int y)
 {
   if(progress_enable == false)
     return 0;
@@ -2106,7 +2107,7 @@ int Gui::updateProgress(int y)
   // user cancelled operation
   if(Fl::get_key(FL_Escape))
   {
-    hideProgress();
+    progressHide();
     Gui::getView()->drawMain(true);
     return -1;
   }
@@ -2125,7 +2126,7 @@ int Gui::updateProgress(int y)
   return 0;
 }
 
-void Gui::hideProgress()
+void Gui::progressHide()
 {
   if(progress_enable == false)
     return;
@@ -2141,18 +2142,18 @@ void Gui::hideProgress()
 
 // hack to externally enable/disable progress indicator
 // allows filters to be used internally
-void Gui::enableProgress(bool state)
+void Gui::progressEnable(bool state)
 {
   progress_enable = state;
 }
 
-void Gui::updateCoords(char *s)
+void Gui::statusCoords(char *s)
 {
   coords->copy_label(s);
   coords->redraw();
 }
 
-void Gui::updateInfo(char *s)
+void Gui::statusInfo(char *s)
 {
   info->copy_label(s);
   info->redraw();

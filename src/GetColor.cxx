@@ -62,8 +62,8 @@ void GetColor::push(View *view)
   {
     const int c = bmp->getpixel(view->imgx, view->imgy);
 
-    Gui::updateColor(c);
-    Gui::updateGetColor(c);
+    Gui::colorUpdate(c);
+    Gui::getcolorUpdate(c);
   }
 }
 

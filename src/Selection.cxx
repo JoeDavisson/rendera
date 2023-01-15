@@ -169,7 +169,7 @@ namespace
     Project::select_bmp = new Bitmap(w, h);
     Project::bmp->blit(Project::select_bmp, beginx, beginy, 0, 0, w, h);
 
-    Gui::checkSelectionValues(0, 0, 0, 0);
+    Gui::selectValues(0, 0, 0, 0);
   }
 
   void crop(View *view)
@@ -207,7 +207,7 @@ namespace
     view->ox = 0;
     view->oy = 0;
     view->drawMain(true);
-    Gui::checkSelectionValues(0, 0, 0, 0);
+    Gui::selectValues(0, 0, 0, 0);
   }
 }
 
@@ -322,7 +322,7 @@ void Selection::push(View *view)
     Blend::set(Project::brush->blend);
 
     const int trans = Project::brush->trans;
-    const int alpha = Gui::getSelectionAlpha();
+    const int alpha = Gui::selectGetAlpha();
 
     for(int y = 0; y < h; y++)
     {
@@ -428,7 +428,7 @@ void Selection::drag(View *view)
   int w = abs(temp_lastx - temp_beginx) + 1;
   int h = abs(temp_lasty - temp_beginy) + 1;
 
-  Gui::checkSelectionValues(x, y, w, h);
+  Gui::selectValues(x, y, w, h);
 }
 
 void Selection::release(View *view)
@@ -448,7 +448,7 @@ void Selection::release(View *view)
   const int h = abs(lasty - beginy) + 1;
 
   if(state != 3)
-    Gui::checkSelectionValues(x, y, w, h);
+    Gui::selectValues(x, y, w, h);
 }
 
 void Selection::move(View *view)
@@ -549,14 +549,14 @@ bool Selection::isActive()
 void Selection::reset()
 {
   state = 0;
-  Gui::checkSelectionValues(0, 0, 0, 0);
+  Gui::selectValues(0, 0, 0, 0);
   Gui::getView()->drawMain(true);
 }
 
 void Selection::reload()
 {
   state = 3;
-  Gui::checkSelectionValues(0, 0, 0, 0);
+  Gui::selectValues(0, 0, 0, 0);
   Gui::getView()->drawMain(true);
 }
 

@@ -71,7 +71,7 @@ void Normalize::apply(Bitmap *bmp)
   double g_scale = 255.0 / (g_high - g_low);
   double b_scale = 255.0 / (b_high - b_low);
 
-  Gui::showProgress(bmp->h);
+  Gui::progressShow(bmp->h);
 
   for(int y = bmp->ct; y <= bmp->cb; y++)
   {
@@ -89,11 +89,11 @@ void Normalize::apply(Bitmap *bmp)
       p++;
     }
 
-    if(Gui::updateProgress(y) < 0)
+    if(Gui::progressUpdate(y) < 0)
       return;
   }
 
-  Gui::hideProgress();
+  Gui::progressHide();
 }
 
 void Normalize::begin()

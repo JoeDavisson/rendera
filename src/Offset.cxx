@@ -84,7 +84,7 @@ void Offset::drag(View *view)
   offset_buffer->blit(Project::bmp, 0, 0, x, y, w - x, h - y);
 
   view->drawMain(true);
-  Gui::checkOffsetValues(dx, dy);
+  Gui::offsetValues(dx, dy);
 }
 
 void Offset::release(View *)
@@ -93,7 +93,7 @@ void Offset::release(View *)
     delete offset_buffer;
 
   offset_buffer = 0;
-  Gui::checkOffsetValues(0, 0);
+  Gui::offsetValues(0, 0);
 }
 
 void Offset::move(View *)

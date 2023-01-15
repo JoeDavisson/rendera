@@ -251,7 +251,7 @@ namespace Scale
         blur(bmp, size);
       }
 
-      Gui::showProgress(dh);
+      Gui::progressShow(dh);
 
       for(int y = 0; y < dh; y++) 
       {
@@ -331,7 +331,7 @@ namespace Scale
           c[3] -= u2;
         }
 
-        if(Gui::updateProgress(y) < 0)
+        if(Gui::progressUpdate(y) < 0)
           break;
       }
     }
@@ -356,7 +356,7 @@ namespace Scale
       float b[4][4];
       float a[4][4];
 
-      Gui::showProgress(dh);
+      Gui::progressShow(dh);
 
       for(int y = 0; y < dh; y++) 
       {
@@ -415,12 +415,12 @@ namespace Scale
           *d++ = makeRgba(rr, gg, bb, aa);
         }
 
-        if(Gui::updateProgress(y) < 0)
+        if(Gui::progressUpdate(y) < 0)
           break;
       }
     }
 
-    Gui::hideProgress();
+    Gui::progressHide();
     Project::replaceImageFromBitmap(temp);
 
     Gui::getView()->ox = 0;
@@ -648,7 +648,7 @@ namespace RotateArbitrary
     row_u -= bw * du_col + bh * du_row;
     row_v -= bw * dv_col + bh * dv_row;
 
-    Gui::showProgress(by2 - by1);
+    Gui::progressShow(by2 - by1);
 
     // draw image
     for(int y = by1; y <= by2; y++)
@@ -682,10 +682,10 @@ namespace RotateArbitrary
         *(temp->row[yy] + xx) = c;
       }
 
-      Gui::updateProgress(y - by1);
+      Gui::progressUpdate(y - by1);
     }
 
-    Gui::hideProgress();
+    Gui::progressHide();
     Project::replaceImageFromBitmap(temp);
 
     Gui::getView()->ox = 0;

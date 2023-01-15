@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 void Desaturate::apply(Bitmap *bmp)
 {
-  Gui::showProgress(bmp->h);
+  Gui::progressShow(bmp->h);
 
   for(int y = bmp->ct; y <= bmp->cb; y++)
   {
@@ -36,11 +36,11 @@ void Desaturate::apply(Bitmap *bmp)
       p++;
     }
 
-    if(Gui::updateProgress(y) < 0)
+    if(Gui::progressUpdate(y) < 0)
       return;
   }
 
-  Gui::hideProgress();
+  Gui::progressHide();
 }
 
 void Desaturate::begin()

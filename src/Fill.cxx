@@ -209,7 +209,7 @@ namespace
     Stroke *stroke = Project::stroke;
     int count = 0;
 
-    Gui::showProgress((cb - ct) + 1);
+    Gui::progressShow((cb - ct) + 1);
 
     for(y = ct; y <= cb; y++)
     {
@@ -226,7 +226,7 @@ namespace
         }
       }
 
-      if(Gui::updateProgress(y) < 0)
+      if(Gui::progressUpdate(y) < 0)
         return;
     }
 
@@ -246,7 +246,7 @@ namespace
     }
 
     root = make_tree(points, count, 0, 2);
-    Gui::showProgress((cb - ct) + 1);
+    Gui::progressShow((cb - ct) + 1);
 
     for(y = ct; y <= cb; y++)
     {
@@ -271,11 +271,11 @@ namespace
         bmp->setpixel(x, y, Blend::trans(c1, new_color, t));
       }
 
-      if(Gui::updateProgress(y) < 0)
+      if(Gui::progressUpdate(y) < 0)
         break;
     }
 
-    Gui::hideProgress();
+    Gui::progressHide();
     delete[] points;
   }
 }
@@ -301,7 +301,7 @@ void Fill::push(View *view)
     int target = Project::bmp->getpixel(view->imgx, view->imgy);
 
     fill(view->imgx, view->imgy, color, target,
-         Gui::getFillRange(), Gui::getFillFeather());
+         Gui::fillGetRange(), Gui::fillGetFeather());
 
     view->drawMain(true);
   }

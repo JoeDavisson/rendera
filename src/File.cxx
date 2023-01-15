@@ -301,7 +301,7 @@ int File::loadFile(const char *fn)
   {
     char s[256];
     getFilename(s, fn);
-    Gui::addFile(s);
+    Gui::imagesAddFile(s);
   }
 
   // redraw
@@ -1435,7 +1435,7 @@ void File::loadPalette()
       errorMessage();
       return;
     }
-    Gui::drawPalette();
+    Gui::paletteDraw();
   }
 }
 

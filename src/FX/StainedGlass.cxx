@@ -97,7 +97,7 @@ void StainedGlass::apply()
     color[i] = bmp->getpixel(seedx[i], seedy[i]);
   }
 
-  Gui::showProgress(bmp->h);
+  Gui::progressShow(bmp->h);
 
   // draw segments
   for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -143,7 +143,7 @@ void StainedGlass::apply()
       p++;
     }
 
-    if(Gui::updateProgress(y) < 0)
+    if(Gui::progressUpdate(y) < 0)
       return;
   }
 
@@ -184,7 +184,7 @@ void StainedGlass::apply()
     }
   }
 
-  Gui::hideProgress();
+  Gui::progressHide();
 }
 
 void StainedGlass::close()
@@ -196,7 +196,7 @@ void StainedGlass::close()
 
 void StainedGlass::quit()
 {
-  Gui::hideProgress();
+  Gui::progressHide();
   Items::dialog->hide();
 }
 

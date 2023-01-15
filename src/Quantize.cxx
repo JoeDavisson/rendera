@@ -284,7 +284,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
       err_data[i + (j + 1) * j / 2] = error(&colors[i], &colors[j]);
   }
 
-  Gui::showProgress(count - rep);
+  Gui::progressShow(count - rep);
 
   // measure offset between array elements
   const int step = &(colors[1].active) - &(colors[0].active);
@@ -331,10 +331,10 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     if(Fl::get_key(FL_Escape))
       return;
 
-    Gui::updateProgress(count);
+    Gui::progressUpdate(count);
   }
 
-  Gui::hideProgress();
+  Gui::progressHide();
 
   // build palette
   int index = 0;
@@ -362,7 +362,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 */
 
   // redraw palette widget
-  Gui::drawPalette();
+  Gui::paletteDraw();
   Project::palette->fillTable();
 }
 

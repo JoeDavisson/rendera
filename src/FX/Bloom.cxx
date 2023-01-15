@@ -51,7 +51,7 @@ void Bloom::apply(Bitmap *bmp, int radius, int threshold, int blend)
   }
 
   Bitmap temp(bmp->cw, bmp->ch);
-  Gui::showProgress(bmp->h);
+  Gui::progressShow(bmp->h);
 
   // x direction
   for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -88,11 +88,11 @@ void Bloom::apply(Bitmap *bmp, int radius, int threshold, int blend)
       p++;
     }
 
-    if(Gui::updateProgress(y) < 0)
+    if(Gui::progressUpdate(y) < 0)
       return;
   }
 
-  Gui::showProgress(bmp->h);
+  Gui::progressShow(bmp->h);
 
   // y direction
   for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -129,11 +129,11 @@ void Bloom::apply(Bitmap *bmp, int radius, int threshold, int blend)
       p++;
     }
 
-    if(Gui::updateProgress(y) < 0)
+    if(Gui::progressUpdate(y) < 0)
       return;
   }
 
-  Gui::hideProgress();
+  Gui::progressHide();
 }
 
 void Bloom::close()
@@ -150,7 +150,7 @@ void Bloom::close()
 
 void Bloom::quit()
 {
-  Gui::hideProgress();
+  Gui::progressHide();
   Items::dialog->hide();
 }
 

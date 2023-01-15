@@ -59,7 +59,7 @@ void Equalize::apply(Bitmap *bmp)
 
   const double scale = 255.0 / size;
 
-  Gui::showProgress(bmp->h);
+  Gui::progressShow(bmp->h);
 
   for(int y = bmp->ct; y <= bmp->cb; y++)
   {
@@ -81,11 +81,11 @@ void Equalize::apply(Bitmap *bmp)
       p++;
     }
 
-    if(Gui::updateProgress(y) < 0)
+    if(Gui::progressUpdate(y) < 0)
       return;
   }
 
-  Gui::hideProgress();
+  Gui::progressHide();
 }
 
 void Equalize::begin()

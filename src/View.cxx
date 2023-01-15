@@ -186,7 +186,7 @@ int View::handle(int event)
   imgx = mousex / zoom + ox;
   imgy = mousey / zoom + oy;
 
-  switch(Gui::getTool())
+  switch(Gui::toolGet())
   {
     case Tool::PAINT:
       if(gridsnap)
@@ -367,7 +367,7 @@ int View::handle(int event)
       coordx = clamp(coordx, Project::bmp->cw - 1);
       coordy = clamp(coordy, Project::bmp->ch - 1);
       sprintf(coords, "(%d, %d)", coordx, coordy);
-      Gui::updateCoords(coords);
+      Gui::statusCoords(coords);
 
       oldimgx = imgx;
       oldimgy = imgy;
@@ -586,7 +586,7 @@ void View::drawGrid()
 
 void View::changeCursor()
 {
-  switch(Gui::getTool())
+  switch(Gui::toolGet())
   {
     case Tool::GETCOLOR:
     case Tool::FILL:
@@ -608,7 +608,7 @@ void View::changeCursor()
 
 void View::drawCloneCursor()
 {
-  if(Gui::getTool() != Tool::PAINT && Gui::getTool() != Tool::TEXT)
+  if(Gui::toolGet() != Tool::PAINT && Gui::toolGet() != Tool::TEXT)
     return;
 
   int x = Clone::x;
@@ -667,7 +667,7 @@ void View::zoomIn(int x, int y)
   Project::tool->redraw(this);
   redraw();
 
-  Gui::checkZoom();
+  Gui::zoomLevel();
 }
 
 void View::zoomOut(int x, int y)
@@ -691,7 +691,7 @@ void View::zoomOut(int x, int y)
   Project::tool->redraw(this);
   redraw();
 
-  Gui::checkZoom();
+  Gui::zoomLevel();
 }
 
 void View::zoomOne()
@@ -703,7 +703,7 @@ void View::zoomOne()
   saveCoords();
 
   drawMain(true);
-  Gui::checkZoom();
+  Gui::zoomLevel();
 }
 
 void View::scroll(int dir, int amount)

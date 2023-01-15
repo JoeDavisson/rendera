@@ -400,7 +400,7 @@ namespace NewImage
     Gui::getView()->oy = 0;
     Gui::getView()->drawMain(true);
 
-    Gui::addFile("new");
+    Gui::imagesAddFile("new");
     Project::undo->reset();
   }
 
@@ -542,7 +542,7 @@ namespace Editor
       begin_undo = false;
       undo_palette->copy(Project::palette);
       Project::palette->draw(Items::palette);
-      Gui::drawPalette();
+      Gui::paletteDraw();
       Items::palette->do_callback();
     }
   }
@@ -662,7 +662,7 @@ namespace Editor
   
     c |= 0xFF000000;
   
-    Gui::updateColor(convertFormat((int)c, true));
+    Gui::colorUpdate(convertFormat((int)c, true));
     setHsvSliders();
     setHsv(true);
     updateHexColor();
@@ -691,7 +691,7 @@ namespace Editor
     setHsvSliders();
     setHsv(true);
     updateHexColor();
-    Gui::updateColor(c);
+    Gui::colorUpdate(c);
   }
 
   void insertColor()
@@ -699,7 +699,7 @@ namespace Editor
     storeUndo();
     Project::palette->insertColor(Project::brush->color, Items::palette->var);
     Project::palette->draw(Items::palette);
-    Gui::drawPalette();
+    Gui::paletteDraw();
     Items::palette->do_callback();
   }
 
@@ -708,7 +708,7 @@ namespace Editor
     storeUndo();
     Project::palette->deleteColor(Items::palette->var);
     Project::palette->draw(Items::palette);
-    Gui::drawPalette();
+    Gui::paletteDraw();
 
     if(Items::palette->var > Project::palette->max - 1)
       Items::palette->var = Project::palette->max - 1;
@@ -721,8 +721,8 @@ namespace Editor
     storeUndo();
     Project::palette->replaceColor(Project::brush->color, pos);
     Project::palette->draw(Items::palette);
-    Gui::updateColor(Project::brush->color);
-    Gui::drawPalette();
+    Gui::colorUpdate(Project::brush->color);
+    Gui::paletteDraw();
     Items::replace->value(0);
     Items::replace->redraw();
     Items::dialog->cursor(FL_CURSOR_DEFAULT);
@@ -783,7 +783,7 @@ namespace Editor
     Items::rgb_ramp->value(0);
     Items::rgb_ramp->redraw();
     Project::palette->draw(Items::palette);
-    Gui::drawPalette();
+    Gui::paletteDraw();
     ramp_state = 0;
     Items::dialog->cursor(FL_CURSOR_DEFAULT);
   }
@@ -827,7 +827,7 @@ namespace Editor
     Items::hsv_ramp->value(0);
     Items::hsv_ramp->redraw();
     Project::palette->draw(Items::palette);
-    Gui::drawPalette();
+    Gui::paletteDraw();
     ramp_state = 0;
     Items::dialog->cursor(FL_CURSOR_DEFAULT);
   }
@@ -869,7 +869,7 @@ namespace Editor
         Project::brush->color = pal->data[pos];
         updateHexColor();
         setHsvSliders();
-        Gui::updateColor(Project::brush->color);
+        Gui::colorUpdate(Project::brush->color);
         setHsv(true);
         Project::palette->draw(Items::palette);
       }
@@ -879,7 +879,7 @@ namespace Editor
         Project::brush->color = pal->data[pos];
         updateHexColor();
         setHsvSliders();
-        Gui::updateColor(Project::brush->color);
+        Gui::colorUpdate(Project::brush->color);
         setHsv(true);
         Project::palette->draw(Items::palette);
       }
@@ -888,12 +888,12 @@ namespace Editor
         Project::brush->color = pal->data[pos];
         updateHexColor();
         setHsvSliders();
-        Gui::updateColor(Project::brush->color);
+        Gui::colorUpdate(Project::brush->color);
         setHsv(true);
       }
     }
 
-    Gui::setPaletteIndex(pos);
+    Gui::paletteSetIndex(pos);
     updateIndex(pos);
     last_index = pos;
 
@@ -910,7 +910,7 @@ namespace Editor
     Blend::hsvToRgb(h, s, v, &r, &g, &b);
     Project::brush->color = makeRgb(r, g, b);
 
-    Gui::updateColor(Project::brush->color);
+    Gui::colorUpdate(Project::brush->color);
     updateHexColor();
     setHsv(true);
   }
@@ -925,7 +925,7 @@ namespace Editor
     Blend::hsvToRgb(h, s, v, &r, &g, &b);
     Project::brush->color = makeRgb(r, g, b);
 
-    Gui::updateColor(Project::brush->color);
+    Gui::colorUpdate(Project::brush->color);
     updateHexColor();
     setHsv(false);
   }
@@ -954,7 +954,7 @@ namespace Editor
 
   void begin()
   {
-    Items::palette->var = Gui::getPaletteIndex();
+    Items::palette->var = Gui::paletteGetIndex();
     last_index = Items::palette->var;
     Project::palette->draw(Items::palette);
     updateHexColor();

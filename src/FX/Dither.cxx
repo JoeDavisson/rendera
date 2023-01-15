@@ -153,7 +153,7 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
       break;
   }
 
-  Gui::showProgress(bmp->h);
+  Gui::progressShow(bmp->h);
 
   if(lum_only)
   {
@@ -215,7 +215,7 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
 	p++;
       }
 
-      if(Gui::updateProgress(y) < 0)
+      if(Gui::progressUpdate(y) < 0)
 	return;
     }
   }
@@ -306,12 +306,12 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
 	p++;
       }
 
-      if(Gui::updateProgress(y) < 0)
+      if(Gui::progressUpdate(y) < 0)
 	return;
     }
   }
 
-  Gui::hideProgress();
+  Gui::progressHide();
 }
 
 void Dither::close()
@@ -328,7 +328,7 @@ void Dither::close()
 
 void Dither::quit()
 {
-  Gui::hideProgress();
+  Gui::progressHide();
   Items::dialog->hide();
 }
 
