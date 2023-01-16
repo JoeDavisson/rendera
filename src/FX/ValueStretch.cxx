@@ -26,6 +26,30 @@ void ValueStretch::apply(Bitmap *bmp)
   std::vector<int> list_g(256, 0);
   std::vector<int> list_b(256, 0);
 
+  double rr = 0;
+  double gg = 0;
+  double bb = 0;
+  int count = 0;
+
+  // determine overall color cast
+  for(int y = bmp->ct; y <= bmp->cb; y++)
+  {
+    for(int x = bmp->cl; x <= bmp->cr; x++)
+    {
+      rgba_type rgba = getRgba(bmp->getpixel(x, y));
+
+      rr += rgba.r;
+      gg += rgba.g;
+      bb += rgba.b;
+
+      count++;
+    }
+  }
+
+  rr /= count;
+  gg /= count;
+  bb /= count;
+
   const int size = bmp->cw * bmp->ch;
 
   for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -43,6 +67,7 @@ void ValueStretch::apply(Bitmap *bmp)
       list_r[r]++;
       list_g[g]++;
       list_b[b]++;
+
       p++;
     }
   }
@@ -57,7 +82,7 @@ void ValueStretch::apply(Bitmap *bmp)
     }
   }
 
-  const double scale = 255.0 / size;
+  double scale = 255.0 / size;
 
   Gui::progressShow(bmp->h);
 
@@ -73,9 +98,17 @@ void ValueStretch::apply(Bitmap *bmp)
       int g = rgba.g;
       int b = rgba.b;
 
-      r = list_r[r] * scale;
-      g = list_g[g] * scale;
-      b = list_b[b] * scale;
+      const int ra = list_r[r] * scale;
+      const int ga = list_g[g] * scale;
+      const int ba = list_b[b] * scale;
+
+      r = ((ra * rr) + (r * (255 - rr))) / 255;
+      g = ((ga * gg) + (g * (255 - gg))) / 255;
+      b = ((ba * bb) + (b * (255 - bb))) / 255;
+
+      r = clamp(r, 255);
+      g = clamp(g, 255);
+      b = clamp(b, 255);
 
       *p = makeRgba(r, g, b, rgba.a);
       p++;
