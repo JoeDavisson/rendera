@@ -475,8 +475,8 @@ namespace Scale
     int h = Project::bmp->ch;
     char s[16];
 
-    w = (float)w * ((float)atoi(Items::percent->value()) / 100);
-    h = (float)h * ((float)atoi(Items::percent->value()) / 100);
+    w = (float)w * ((float)atoi(Items::percent->value()) / 100) + 0.5;
+    h = (float)h * ((float)atoi(Items::percent->value()) / 100) + 0.5;
 
     if(w < 1)
       w = 1;
