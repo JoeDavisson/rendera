@@ -449,7 +449,7 @@ void Gui::init()
 
   menubar->add("F&X/Photo/Restore...", 0,
     (Fl_Callback *)Restore::begin, 0, 0);
-  menubar->add("F&X/Photo/SideAbsorptions...", 0,
+  menubar->add("F&X/Photo/SideAbsorptions", 0,
     (Fl_Callback *)SideAbsorptions::begin, 0, 0);
   menubar->add("F&X/Photo/Remove Dust...", 0,
     (Fl_Callback *)RemoveDust::begin, 0, 0);
