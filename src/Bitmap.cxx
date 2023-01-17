@@ -177,6 +177,54 @@ void Bitmap::vline(int y1, int x, int y2, int c, int t)
   }
 }
 
+// non-blending version
+void Bitmap::hline(int x1, int y, int x2, int c)
+{
+  if(x1 > x2)
+    std::swap(x1, x2);
+
+  if(y < ct || y > cb)
+    return;
+  if(x1 > cr)
+    return;
+  if(x2 < cl)
+    return;
+
+  clip(&x1, &y, &x2, &y);
+
+  int *p = row[y] + x1;
+
+  for(int x = x1; x <= x2; x++)
+  {
+    *p = c;
+    p++;
+  }
+}
+
+// non-blending version
+void Bitmap::vline(int y1, int x, int y2, int c)
+{
+  if(y1 > y2)
+    std::swap(y1, y2);
+
+  if(x < cl || x > cr)
+    return;
+  if(y1 > cb)
+    return;
+  if(y2 < ct)
+    return;
+
+  clip(&x, &y1, &x, &y2);
+
+  int *p = row[y1] + x;
+
+  for(int y = y1; y <= y2; y++)
+  {
+    *p = c;
+    p += w;
+  }
+}
+
 void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
 {
   int dx = x2 - x1;
@@ -280,6 +328,27 @@ void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c, int t)
 
   for(; y1 <= y2; y1++)
     hline(x1, y1, x2, c, t);
+}
+
+// non-blending version
+void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c)
+{
+  if(x1 > x2)
+    std::swap(x1, x2);
+  if(y1 > y2)
+    std::swap(y1, y2);
+
+  if(x1 > cr)
+    return;
+  if(x2 < cl)
+    return;
+  if(y1 > cb)
+    return;
+  if(y2 < ct)
+    return;
+
+  for(; y1 <= y2; y1++)
+    hline(x1, y1, x2, c);
 }
 
 void Bitmap::xorLine(int x1, int y1, int x2, int y2)

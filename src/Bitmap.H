@@ -40,9 +40,12 @@ public:
   void clear(int);
   void hline(int, int, int, int, int);
   void vline(int, int, int, int, int);
+  void hline(int, int, int, int);
+  void vline(int, int, int, int);
   void line(int, int, int, int, int, int);
   void rect(int, int, int, int, int, int);
   void rectfill(int, int, int, int, int, int);
+  void rectfill(int, int, int, int, int);
   void xorLine(int, int, int, int);
   void xorHline(int, int, int);
   void xorVline(int, int, int);
