@@ -18,6 +18,11 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+/*
+This attempts to correct a color cast by computing adjustment factors
+based on an overall average, which are then used to "undo" the cast.
+*/
+
 #include "Restore.H"
 
 namespace
