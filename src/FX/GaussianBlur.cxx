@@ -19,27 +19,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 /*
-Fast gaussian blur based on the idea of using an "accumulator" found here:
-https://blog.ivank.net/fastest-gaussian-blur.html
+Fast gaussian blur based on the idea of using an "accumulator" I learned
+about here: https://blog.ivank.net/fastest-gaussian-blur.html
 
-Only works for sizes >= 3, so a box filter is used for 1 & 2 instead.
+My implementation only works for sizes >= 3, so a box filter is used
+for 1 & 2 instead.
 */
 
 #include "GaussianBlur.H"
 
 namespace
 {
-  // extends borders so edges turn out nicer
-  void extendBorders(Bitmap *bmp)
+  // extends borders so edges are handled correctly
+  void extendBorders(Bitmap *bmp, int border)
   {
-    const int cl = bmp->cl;
-    const int cr = bmp->cr;
-    const int ct = bmp->ct;
-    const int cb = bmp->cb;
+    const int cl = border;
+    const int cr = bmp->w - border - 1;
+    const int ct = border;
+    const int cb = bmp->h - border - 1;
     const int w = bmp->w;
     const int h = bmp->h;
-
-    bmp->setClip(0, 0, bmp->w - 1, bmp->h - 1);
 
     // left
     for(int y = ct; y <= cb; y++)
@@ -95,16 +94,16 @@ void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
   // make copy, extend borders
   Bitmap src(bmp->w + border * 2, bmp->h + border * 2);
   bmp->blit(&src, 0, 0, border, border, bmp->w, bmp->h);
-  extendBorders(&src);
+  extendBorders(&src, border);
 
   Bitmap temp(src.w, src.h);
   src.blit(&temp, 0, 0, 0, 0, src.w, src.h);
 
+  // use alternative blur for sizes 1 & 2
   if(size < 3)
   {
     Gui::progressShow(bmp->h);
 
-    // use alternative blur for sizes 1 & 2
     for(int pass = 0; pass < size; pass++)
     {
       for(int y = bmp->ct; y <= bmp->cb; y++)
@@ -136,20 +135,22 @@ void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
           g = Gamma::unfix(g);
           b = Gamma::unfix(b);
 
-          const int c1 = bmp->getpixel(x, y);
+          const int c1 = src.getpixel(x, y);
           const int c2 = makeRgba(r, g, b, a);
 
           switch(mode)
           {
             case 0:
-              temp.setpixel(x + border, y + border, Blend::trans(c1, c2, blend));
+              temp.setpixel(x + border, y + border,
+                            Blend::trans(c1, c2, blend));
               break;
             case 1:
               temp.setpixel(x + border, y + border,
                 Blend::trans(c1, Blend::keepLum(c2, getl(c1)), blend));
               break;
             case 2:
-              temp.setpixel(x + border, y + border, Blend::transAlpha(c1, c2, blend));
+              temp.setpixel(x + border, y + border,
+                            Blend::transAlpha(c1, c2, blend));
               break;
           }
         }
@@ -191,7 +192,7 @@ void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
 
     for(int y = src.ct; y <= src.cb; y++)
     {
-      for(int x = src.cl; x <= src.cr; x++)
+      for(int x = 0; x < src.w; x++)
       {
         rgba_type rgba = getRgba(src.getpixel(x, y));
         buf_r[x] = Gamma::fix(rgba.r);
@@ -240,7 +241,7 @@ void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
 
     for(int x = src.cl; x <= src.cr; x++)
     {
-      for(int y = src.ct; y <= src.cb; y++)
+      for(int y = 0; y < src.h; y++)
       {
         rgba_type rgba = getRgba(temp.getpixel(x, y));
         buf_r[y] = Gamma::fix(rgba.r);
@@ -332,14 +333,17 @@ void GaussianBlur::init()
   int hh = 0;
 
   Items::dialog = new DialogWindow(256, 0, "Gaussian Blur");
+
   Items::size = new InputInt(Items::dialog, 0, y1, 96, 24, "Size (1-60)", 0, 1, 60);
   y1 += 24 + 8;
   Items::size->value("1");
   Items::size->center();
+
   Items::blend = new InputInt(Items::dialog, 0, y1, 96, 24, "Blend %", 0, 0, 100);
   Items::blend->value("100");
   Items::blend->center();
   y1 += 24 + 8;
+
   Items::mode = new Fl_Choice(0, y1, 96, 24, "Mode:");
   Items::mode->labelsize(12);
   Items::mode->textsize(12);
@@ -349,8 +353,11 @@ void GaussianBlur::init()
   Items::mode->value(0);
   Items::mode->align(FL_ALIGN_LEFT);
   Items::mode->measure_label(ww, hh);
-  Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
+  Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2
+                      - (Items::mode->w() + ww) / 2 + ww,
+                      Items::mode->y(), Items::mode->w(), Items::mode->h());
   y1 += 24 + 8;
+
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
   Items::cancel->callback((Fl_Callback *)quit);
