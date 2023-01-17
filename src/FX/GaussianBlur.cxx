@@ -18,10 +18,18 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+/*
+Fast gaussian blur based on the idea of using an "accumulator" found here:
+https://blog.ivank.net/fastest-gaussian-blur.html
+
+Only works for sizes >= 3, so a box filter is used for 1 & 2 instead.
+*/
+
 #include "GaussianBlur.H"
 
 namespace
 {
+  // extends borders so edges turn out nicer
   void extendBorders(Bitmap *bmp)
   {
     const int cl = bmp->cl;
@@ -35,31 +43,31 @@ namespace
 
     // left
     for(int y = ct; y <= cb; y++)
-      bmp->hline(0, y, cl - 1, bmp->getpixel(cl, y), 0);
+      bmp->hline(0, y, cl - 1, bmp->getpixel(cl, y));
 
     // right
     for(int y = ct; y <= cb; y++)
-      bmp->hline(cr + 1, y, w - 1, bmp->getpixel(cr, y), 0);
+      bmp->hline(cr + 1, y, w - 1, bmp->getpixel(cr, y));
 
     // top
     for(int x = cl; x <= cr; x++)
-      bmp->vline(0, x, ct - 1, bmp->getpixel(x, ct), 0);
+      bmp->vline(0, x, ct - 1, bmp->getpixel(x, ct));
 
     // bottom
     for(int x = cl; x <= cr; x++)
-      bmp->vline(cb + 1, x, h - 1, bmp->getpixel(x, cb), 0);
+      bmp->vline(cb + 1, x, h - 1, bmp->getpixel(x, cb));
 
     // upper-left
-    bmp->rectfill(0, 0, cl - 1, ct - 1, bmp->getpixel(cl, ct), 0);
+    bmp->rectfill(0, 0, cl - 1, ct - 1, bmp->getpixel(cl, ct));
 
     // upper-right
-    bmp->rectfill(cr, 0, w - 1, ct - 1, bmp->getpixel(cr, ct), 0);
+    bmp->rectfill(cr, 0, w - 1, ct - 1, bmp->getpixel(cr, ct));
 
     // lower-left
-    bmp->rectfill(0, cb + 1, cl - 1, h - 1, bmp->getpixel(cl, cb), 0);
+    bmp->rectfill(0, cb + 1, cl - 1, h - 1, bmp->getpixel(cl, cb));
 
     // lower-right
-    bmp->rectfill(cr + 1, cb + 1, w - 1, h - 1, bmp->getpixel(cr, cb), 0);
+    bmp->rectfill(cr + 1, cb + 1, w - 1, h - 1, bmp->getpixel(cr, cb));
   }
 }
 
@@ -96,7 +104,7 @@ void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
   {
     Gui::progressShow(bmp->h);
 
-    // use alternative blur for smaller radius
+    // use alternative blur for sizes 1 & 2
     for(int pass = 0; pass < size; pass++)
     {
       for(int y = bmp->ct; y <= bmp->cb; y++)
