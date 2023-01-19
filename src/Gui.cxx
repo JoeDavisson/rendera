@@ -145,6 +145,7 @@ namespace
   Button *selection_flip;
   Button *selection_mirror;
   Button *selection_rotate;
+  Fl_Button *selection_paste;
   Fl_Button *selection_crop;
 
   StaticText *offset_x;
@@ -719,6 +720,10 @@ void Gui::init()
   selection_flip = new Button(selection, 8 + 33, pos, 30, 30, "Flip", images_select_flip_png, (Fl_Callback *)selectFlipY);
   selection_rotate = new Button(selection, 8 + 66, pos, 30, 30, "Rotate", images_select_rotate_png, (Fl_Callback *)selectRotate90);
   pos += 30 + 8;
+
+  selection_paste = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Paste");
+  selection_paste->callback((Fl_Callback *)selectPaste);
+  pos += 32 + 8;
 
   new Separator(selection, 4, pos, 106, 2, "");
   pos += 8;
@@ -1582,6 +1587,11 @@ void Gui::constrainEnable(Widget *, void *var)
 void Gui::selectCreate()
 {
   Project::tool->done(view, 0);
+}
+
+void Gui::selectPaste()
+{
+  Project::tool->done(view, 2);
 }
 
 void Gui::selectCrop()

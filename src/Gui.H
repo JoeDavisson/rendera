@@ -130,6 +130,7 @@ namespace Gui
   void progressShow(float, int);
 
   void selectCreate();
+  void selectPaste();
   void selectCrop();
   void selectFlipX();
   void selectFlipY();

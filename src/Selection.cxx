@@ -209,6 +209,48 @@ namespace
     view->drawMain(true);
     Gui::selectValues(0, 0, 0, 0);
   }
+
+  void paste(View *view)
+  {
+    Project::undo->push();
+    const int w = Project::select_bmp->w;
+    const int h = Project::select_bmp->h;
+
+//    int x1 = view->imgx - w / 2;
+//    int y1 = view->imgy - h / 2;
+    int x1 = beginx;
+    int y1 = beginy;
+
+    if(view->gridsnap)
+    {
+      x1 -= x1 % view->gridx;
+      y1 -= y1 % view->gridy;
+    }
+
+    Blend::set(Project::brush->blend);
+
+    const int trans = Project::brush->trans;
+    const int alpha = Gui::getSelectAlpha();
+
+    for(int y = 0; y < h; y++)
+    {
+      for(int x = 0; x < w; x++)
+      {
+        int c = Project::select_bmp->getpixel(x, y);
+        const int t = scaleVal(255 - geta(c), trans);
+
+        c |= 0xff000000;
+
+        if(alpha)
+          Project::bmp->setpixel(x1 + x, y1 + y, c, t);
+        else
+          Project::bmp->setpixel(x1 + x, y1 + y, c, trans);
+      }
+    }
+
+    Blend::set(Blend::TRANS);
+    view->drawMain(true);
+  }
 }
 
 Selection::Selection()
@@ -234,7 +276,7 @@ void Selection::push(View *view)
 
     state = 1;
   }
-  else if(state == 2)
+  else if(state == 2 || state == 3)
   {
     if(!drag_started && !resize_started)
     {
@@ -304,6 +346,7 @@ void Selection::push(View *view)
       }
     }
   }
+/*
   else if(state == 3)
   {
     Project::undo->push();
@@ -343,6 +386,7 @@ void Selection::push(View *view)
     Blend::set(Blend::TRANS);
     view->drawMain(true);
   }
+*/
 }
 
 void Selection::drag(View *view)
@@ -358,12 +402,12 @@ void Selection::drag(View *view)
     lastx = view->imgx;
     lasty = view->imgy;
 
-    redraw(view);
+//    redraw(view);
   }
-  else if(state == 2)
+  else if(state == 2 || state == 3)
   {
-    view->drawMain(false);
-    drawHandles(view, stroke, beginx, beginy, lastx, lasty);
+//    view->drawMain(false);
+//    drawHandles(view, stroke, beginx, beginy, lastx, lasty);
 
     if(drag_started)
     {
@@ -375,7 +419,7 @@ void Selection::drag(View *view)
       lastx += dx;
       lasty += dy;
     }
-    else if(resize_started)
+    else if(state == 2 && resize_started)
     {
       switch(side)
       {
@@ -413,8 +457,62 @@ void Selection::drag(View *view)
       }
     }
 
-    redraw(view);
+//    redraw(view);
   }
+
+  if(state == 3)
+  {
+    view->window()->cursor(FL_CURSOR_HAND);
+
+    if(inbox(view->imgx, view->imgy, beginx, beginy, lastx, lasty))
+    {
+//      stroke->size(beginx, beginy, lastx, lasty);
+
+      const int w = Project::select_bmp->w;
+      const int h = Project::select_bmp->h;
+/*
+
+//    int x1 = view->imgx - w / 2;
+//    int y1 = view->imgy - h / 2;
+*/
+      int x1 = beginx;
+      int y1 = beginy;
+
+      if(view->gridsnap)
+      {
+        x1 -= x1 % view->gridx;
+        y1 -= y1 % view->gridy;
+      }
+
+//    const int x2 = x1 + w - 1;
+//    const int y2 = y1 + h - 1;
+      const int x2 = x1 + w - 1;
+      const int y2 = y1 + h - 1;
+
+//    lastx = x2;
+//    lasty = y2;
+
+
+
+    stroke->size(x1, y1, x2, y2);
+
+//    view->drawMain(false);
+//    stroke->previewSelection(view);
+
+//    view->redraw();
+    }
+  }
+//FIXME
+//    redraw(view);
+//  }
+
+//  if(state == 2 || state == 3)
+//  {
+//    view->drawMain(false);
+//    stroke->previewSelection(view);
+//    drawHandles(view, stroke, beginx, beginy, lastx, lasty);
+//    view->redraw();
+//  }
 
   int temp_beginx = beginx;
   int temp_beginy = beginy;
@@ -429,6 +527,7 @@ void Selection::drag(View *view)
   int h = abs(temp_lasty - temp_beginy) + 1;
 
   Gui::selectValues(x, y, w, h);
+  redraw(view);
 }
 
 void Selection::release(View *view)
@@ -455,6 +554,7 @@ void Selection::move(View *view)
 {
   Stroke *stroke = Project::stroke;
 
+/*
   if(state == 3)
   {
     const int w = Project::select_bmp->w;
@@ -479,7 +579,7 @@ void Selection::move(View *view)
     stroke->previewSelection(view);
     view->redraw();
   }
-  else if(state == 2)
+  else*/ if(state == 2)
   {
     if(view->imgx < stroke->x1 && view->imgy < stroke->y1)
       view->window()->cursor(FL_CURSOR_NW);
@@ -517,7 +617,9 @@ void Selection::done(View *view, int mode)
   if(state == 0)
     return;
 
-  if(mode == 1)
+  if(mode == 2 && state == 3)
+    paste(view);
+  else if(mode == 1)
     crop(view);
   else
     select(view);
@@ -525,17 +627,24 @@ void Selection::done(View *view, int mode)
 
 void Selection::redraw(View *view)
 {
-  if(state == 3)
-  {
-    move(view);
-    return;
-  }
+//  if(state == 3)
+//  {
+//    move(view);
+//    return;
+//  }
 
   Stroke *stroke = Project::stroke;
 
   if(state == 1 || state == 2)
   {
     view->drawMain(false);
+    drawHandles(view, stroke, beginx, beginy, lastx, lasty);
+    view->redraw();
+  }
+  else if(state == 3)
+  {
+    view->drawMain(false);
+    stroke->previewSelection(view);
     drawHandles(view, stroke, beginx, beginy, lastx, lasty);
     view->redraw();
   }
