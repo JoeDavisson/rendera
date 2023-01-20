@@ -573,13 +573,11 @@ void Selection::reload()
 
   beginx = 0;
   beginy = 0;
-  lastx = w;
-  lasty = h;
-
+  lastx = w - 1;
+  lasty = h - 1;
   state = 3;
 
-//  Gui::selectValues(0, 0, 0, 0);
+  Project::stroke->size(beginx, beginy, lastx, lasty);
   Gui::selectValues(0, 0, w, h);
-  Gui::getView()->drawMain(true);
 }
 

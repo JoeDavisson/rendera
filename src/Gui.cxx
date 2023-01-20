@@ -1639,6 +1639,8 @@ void Gui::selectRotate90()
        *(Project::select_bmp->row[x] + h - 1 - y) = *p++;
     }
   }
+
+  Project::selection->reload();
 }
 
 void Gui::selectRotate180()
