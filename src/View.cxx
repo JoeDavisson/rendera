@@ -598,7 +598,7 @@ void View::changeCursor()
       window()->cursor(FL_CURSOR_HAND);
       break;
     default:
-      window()->cursor(FL_CURSOR_ARROW);
+      window()->cursor(FL_CURSOR_DEFAULT);
       break;
   }
 }

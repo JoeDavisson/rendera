@@ -957,8 +957,8 @@ void Stroke::previewSelection(View *view)
 
   int xx1 = x1 * zoom - ox;
   int yy1 = y1 * zoom - oy;
-  int xx2 = x2 * zoom - ox;
-  int yy2 = y2 * zoom - oy;
+  int xx2 = x2 * zoom - ox + zoom - 1;
+  int yy2 = y2 * zoom - oy + zoom - 1;
 
   // these preserve sign
   int xx3 = xx1;

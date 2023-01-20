@@ -1363,6 +1363,8 @@ void Gui::toolChange(Widget *, void *var)
   if(tool != Tool::FILL)
     fill->hide();
 
+  view->drawMain(true);
+
   switch(tool)
   {
     case Tool::PAINT:
@@ -1383,6 +1385,7 @@ void Gui::toolChange(Widget *, void *var)
     case Tool::SELECT:
       Project::setTool(Tool::SELECT);
       //  Project::tool->reset();
+      Project::tool->redraw(view);
       selection->show();
       statusInfo((char *)"Draw a box, then click inside box to move, outside to change size.");
       break;
@@ -1406,7 +1409,7 @@ void Gui::toolChange(Widget *, void *var)
       break;
   }
 
-  view->drawMain(true);
+//  view->drawMain(true);
 }
 
 void Gui::colorChange(Widget *widget, void *)

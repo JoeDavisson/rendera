@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "Gui.H"
 #include "Map.H"
-#include "ExtraMath.H"
 #include "Inline.H"
 #include "Project.H"
 #include "Selection.H"
@@ -69,6 +68,8 @@ namespace
 
     const int gridx = view->gridx;
     const int gridy = view->gridy;
+    const int w = *x2 - *x1;
+    const int h = *y2 - *y1;
 
     if(view->gridsnap)
     {
@@ -83,6 +84,12 @@ namespace
       *y2 += 1;
       *y2 -= *y2 % gridy;
       *y2 -= 1;
+    }
+
+    if(state == 3)
+    {
+      *x2 = *x1 + w;
+      *y2 = *y1 + h;
     }
   }
 
@@ -216,8 +223,6 @@ namespace
     const int w = Project::select_bmp->w;
     const int h = Project::select_bmp->h;
 
-//    int x1 = view->imgx - w / 2;
-//    int y1 = view->imgy - h / 2;
     int x1 = beginx;
     int y1 = beginy;
 
@@ -290,29 +295,29 @@ void Selection::push(View *view)
         if(view->imgx < beginx && view->imgy < beginy)
         {
           side = 4;
-          offsetx = ExtraMath::abs(view->imgx - beginx);
-          offsety = ExtraMath::abs(view->imgy - beginy);
+          offsetx = std::abs(view->imgx - beginx);
+          offsety = std::abs(view->imgy - beginy);
           resize_started = true;
         }
         else if(view->imgx > lastx && view->imgy < beginy)
         {
           side = 5;
-          offsetx = ExtraMath::abs(view->imgx - lastx);
-          offsety = ExtraMath::abs(view->imgy - beginy);
+          offsetx = std::abs(view->imgx - lastx);
+          offsety = std::abs(view->imgy - beginy);
           resize_started = true;
         }
         else if(view->imgx < beginx && view->imgy > lasty)
         {
           side = 6;
-          offsetx = ExtraMath::abs(view->imgx - beginx);
-          offsety = ExtraMath::abs(view->imgy - lasty);
+          offsetx = std::abs(view->imgx - beginx);
+          offsety = std::abs(view->imgy - lasty);
           resize_started = true;
         }
         else if(view->imgx > lastx && view->imgy > lasty)
         {
           side = 7;
-          offsetx = ExtraMath::abs(view->imgx - lastx);
-          offsety = ExtraMath::abs(view->imgy - lasty);
+          offsetx = std::abs(view->imgx - lastx);
+          offsety = std::abs(view->imgy - lasty);
           resize_started = true;
         }
 
@@ -320,25 +325,25 @@ void Selection::push(View *view)
         else if(view->imgx < beginx)
         {
           side = 0;
-          offsetx = ExtraMath::abs(view->imgx - beginx);
+          offsetx = std::abs(view->imgx - beginx);
           resize_started = true;
         }
         else if(view->imgx > lastx)
         {
           side = 1;
-          offsetx = ExtraMath::abs(view->imgx - lastx);
+          offsetx = std::abs(view->imgx - lastx);
           resize_started = true;
         }
         else if(view->imgy < beginy)
         {
           side = 2;
-          offsety = ExtraMath::abs(view->imgy - beginy);
+          offsety = std::abs(view->imgy - beginy);
           resize_started = true;
         }
         else if(view->imgy > lasty)
         {
           side = 3;
-          offsety = ExtraMath::abs(view->imgy - lasty);
+          offsety = std::abs(view->imgy - lasty);
           resize_started = true;
         }
 
@@ -346,47 +351,6 @@ void Selection::push(View *view)
       }
     }
   }
-/*
-  else if(state == 3)
-  {
-    Project::undo->push();
-    const int w = Project::select_bmp->w;
-    const int h = Project::select_bmp->h;
-
-    int x1 = view->imgx - w / 2;
-    int y1 = view->imgy - h / 2;
-
-    if(view->gridsnap)
-    {
-      x1 -= x1 % view->gridx;
-      y1 -= y1 % view->gridy;
-    }
-
-    Blend::set(Project::brush->blend);
-
-    const int trans = Project::brush->trans;
-    const int alpha = Gui::getSelectAlpha();
-
-    for(int y = 0; y < h; y++)
-    {
-      for(int x = 0; x < w; x++)
-      {
-        int c = Project::select_bmp->getpixel(x, y);
-        const int t = scaleVal(255 - geta(c), trans);
-
-        c |= 0xff000000;
-
-        if(alpha)
-          Project::bmp->setpixel(x1 + x, y1 + y, c, t);
-        else
-          Project::bmp->setpixel(x1 + x, y1 + y, c, trans);
-      }
-    }
-
-    Blend::set(Blend::TRANS);
-    view->drawMain(true);
-  }
-*/
 }
 
 void Selection::drag(View *view)
@@ -401,14 +365,9 @@ void Selection::drag(View *view)
 
     lastx = view->imgx;
     lasty = view->imgy;
-
-//    redraw(view);
   }
   else if(state == 2 || state == 3)
   {
-//    view->drawMain(false);
-//    drawHandles(view, stroke, beginx, beginy, lastx, lasty);
-
     if(drag_started)
     {
       const int dx = view->imgx - view->oldimgx;
@@ -456,8 +415,6 @@ void Selection::drag(View *view)
           break;
       }
     }
-
-//    redraw(view);
   }
 
   if(state == 3)
@@ -466,15 +423,9 @@ void Selection::drag(View *view)
 
     if(inbox(view->imgx, view->imgy, beginx, beginy, lastx, lasty))
     {
-//      stroke->size(beginx, beginy, lastx, lasty);
-
       const int w = Project::select_bmp->w;
       const int h = Project::select_bmp->h;
-/*
 
-//    int x1 = view->imgx - w / 2;
-//    int y1 = view->imgy - h / 2;
-*/
       int x1 = beginx;
       int y1 = beginy;
 
@@ -484,35 +435,12 @@ void Selection::drag(View *view)
         y1 -= y1 % view->gridy;
       }
 
-//    const int x2 = x1 + w - 1;
-//    const int y2 = y1 + h - 1;
       const int x2 = x1 + w - 1;
       const int y2 = y1 + h - 1;
 
-//    lastx = x2;
-//    lasty = y2;
-
-
-
-    stroke->size(x1, y1, x2, y2);
-
-//    view->drawMain(false);
-//    stroke->previewSelection(view);
-
-//    view->redraw();
+      stroke->size(x1, y1, x2, y2);
     }
   }
-//FIXME
-//    redraw(view);
-//  }
-
-//  if(state == 2 || state == 3)
-//  {
-//    view->drawMain(false);
-//    stroke->previewSelection(view);
-//    drawHandles(view, stroke, beginx, beginy, lastx, lasty);
-//    view->redraw();
-//  }
 
   int temp_beginx = beginx;
   int temp_beginy = beginy;
@@ -554,32 +482,7 @@ void Selection::move(View *view)
 {
   Stroke *stroke = Project::stroke;
 
-/*
-  if(state == 3)
-  {
-    const int w = Project::select_bmp->w;
-    const int h = Project::select_bmp->h;
-
-    int x1 = view->imgx - w / 2;
-    int y1 = view->imgy - h / 2;
-
-    if(view->gridsnap)
-    {
-      x1 -= x1 % view->gridx;
-      y1 -= y1 % view->gridy;
-    }
-
-    const int x2 = x1 + w - 1;
-    const int y2 = y1 + h - 1;
-
-    view->window()->cursor(FL_CURSOR_HAND);
-    stroke->size(x1, y1, x2, y2);
-
-    view->drawMain(false);
-    stroke->previewSelection(view);
-    view->redraw();
-  }
-  else*/ if(state == 2)
+  if(state == 2)
   {
     if(view->imgx < stroke->x1 && view->imgy < stroke->y1)
       view->window()->cursor(FL_CURSOR_NW);
@@ -601,6 +504,13 @@ void Selection::move(View *view)
 
     else
       view->window()->cursor(FL_CURSOR_HAND);
+  }
+  else if(state == 3)
+  {
+    if(inbox(view->imgx, view->imgy, beginx, beginy, lastx, lasty))
+      view->window()->cursor(FL_CURSOR_HAND);
+    else
+      view->window()->cursor(FL_CURSOR_DEFAULT);
   }
   else
   {
@@ -627,27 +537,21 @@ void Selection::done(View *view, int mode)
 
 void Selection::redraw(View *view)
 {
-//  if(state == 3)
-//  {
-//    move(view);
-//    return;
-//  }
-
   Stroke *stroke = Project::stroke;
+
+  view->drawMain(false);
 
   if(state == 1 || state == 2)
   {
-    view->drawMain(false);
     drawHandles(view, stroke, beginx, beginy, lastx, lasty);
-    view->redraw();
   }
   else if(state == 3)
   {
-    view->drawMain(false);
     stroke->previewSelection(view);
     drawHandles(view, stroke, beginx, beginy, lastx, lasty);
-    view->redraw();
   }
+
+  view->redraw();
 }
 
 bool Selection::isActive()
@@ -664,8 +568,18 @@ void Selection::reset()
 
 void Selection::reload()
 {
+  const int w = Project::select_bmp->w;
+  const int h = Project::select_bmp->h;
+
+  beginx = 0;
+  beginy = 0;
+  lastx = w;
+  lasty = h;
+
   state = 3;
-  Gui::selectValues(0, 0, 0, 0);
+
+//  Gui::selectValues(0, 0, 0, 0);
+  Gui::selectValues(0, 0, w, h);
   Gui::getView()->drawMain(true);
 }
 
