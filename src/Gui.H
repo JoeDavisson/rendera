@@ -129,9 +129,12 @@ namespace Gui
   void progressShow(float);
   void progressShow(float, int);
 
-  void selectCreate();
+  void selectCopy();
+  void selectCopyEnable(bool);
   void selectPaste();
+  void selectPasteEnable(bool);
   void selectCrop();
+  void selectCropEnable(bool);
   void selectFlipX();
   void selectFlipY();
   void selectFromImage();
@@ -154,127 +157,6 @@ namespace Gui
   void zoomOne(Button *, void *);
   void zoomLevel();
 }
-/*
-namespace Gui
-{
-  void init();
-  void show();
-  void setMenuItem(const char *);
-  void clearMenuItem(const char *);
-
-  void checkHexColor();
-  void updateHexColor();
-  void updateColor(int);
-  void updateSwatch();
-  void updateGetColor(int);
-  void setPaletteIndex(int);
-  int getPaletteIndex();
-  void checkPaletteSwatches(Widget *, void *);
-  void drawPalette();
-
-  void checkZoomIn(Button *, void *);
-  void checkZoomOut(Button *, void *);
-  void checkZoomOne(Button *, void *);
-  void checkZoom();
-
-  void checkGrid(ToggleButton *, void *);
-  void checkGridSnap(ToggleButton *, void *);
-  void checkGridX();
-  void checkGridY();
-
-  void changePaintSize(int);
-  void checkPaintSize(Widget *, void *);
-  void checkPaintSizeValue(Widget *, void *);
-  void checkPaintShape(Widget *, void *);
-  void checkPaintStroke(Widget *, void *);
-  void checkPaintCoarseEdge(Widget *, void *);
-  void checkPaintFineEdge(Widget *, void *);
-  void checkPaintBlurryEdge(Widget *, void *);
-  void checkPaintWatercolorEdge(Widget *, void *);
-  void checkPaintChalkEdge(Widget *, void *);
-  void checkPaintTextureEdge(Widget *, void *);
-  void checkPaintTextureMarb(Widget *, void *);
-  void checkPaintTextureTurb(Widget *, void *);
-  void checkPaintAverageEdge(Widget *, void *);
-
-  void checkTool(Widget *, void *);
-
-  void checkColor(Widget *, void *);
-  void checkHue(Widget *, void *);
-  void checkSatVal(Widget *, void *);
-  void checkTransInput(Widget *, void *);
-  void checkTrans(Widget *, void *);
-  void checkBlend(Widget *, void *);
-
-  void checkClone(Widget *, void *);
-  void checkOrigin(Widget *, void *);
-  void checkConstrain(Widget *, void *);
-
-  void checkSelectionCreate();
-  void checkSelectionCrop();
-  int getSelectionAlpha();
-  void checkSelectionFlipHorizontal();
-  void checkSelectionFlipVertical();
-  void checkSelectionRotate90();
-  void checkSelectionRotate180();
-  void checkSelectionReset();
-  void checkSelectionValues(int, int, int, int);
-  void checkImageToSelection();
-  void checkSelectionToNewImage();
-  void checkOffsetValues(int, int);
-  void checkOffsetLeft(Widget *, void *);
-  void checkOffsetRight(Widget *, void *);
-  void checkOffsetUp(Widget *, void *);
-  void checkOffsetDown(Widget *, void *);
-
-  const char *getTextInput();
-  int getFontFace();
-  int getFontSize();
-  void changedFontSize(InputInt *, void *);
-
-  void paletteSort();
-  void paletteDefault();
-  void paletteBlackAndWhite();
-  void paletteWebSafe();
-  void palette3LevelRGB();
-  void palette4LevelRGB();
-
-  void checkClearToPaintColor();
-  void checkClearToBlack();
-  void checkClearToWhite();
-  void checkClearToGray();
-  void checkClearToTransparent();
-
-  void checkFileBrowse();
-  void checkFileRename();
-  void addFile(const char *);
-  void closeFile();
-  void updateMemInfo();
-
-  Fl_Double_Window *getWindow();
-  Fl_Menu_Bar *getMenuBar();
-  View *getView();
-  int getTool();
-  int getClone();
-
-  void checkPaintMode();
-  int getPaintMode();
-  int getTextSmooth();
-  int getFillRange();
-  int getFillFeather();
-  void checkFillReset();
-  void duplicateImage();
-
-  void showProgress(float);
-  void showProgress(float, int);
-  int updateProgress(int);
-  void hideProgress();
-  void enableProgress(bool);
-
-  void updateCoords(char *);
-  void updateInfo(char *);
-}
-*/
 
 #endif
 

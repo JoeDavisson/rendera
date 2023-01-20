@@ -152,6 +152,9 @@ namespace
       return;
 
     state = 3;
+    Gui::selectCopyEnable(false);
+    Gui::selectPasteEnable(true);
+    Gui::selectCropEnable(false);
 
     absrect(view, &beginx, &beginy, &lastx, &lasty);
 
@@ -182,7 +185,6 @@ namespace
   void crop(View *view)
   {
     Project::undo->push();
-    state = 0;
 
     absrect(view, &beginx, &beginy, &lastx, &lasty);
 
@@ -461,7 +463,11 @@ void Selection::drag(View *view)
 void Selection::release(View *view)
 {
   if(state == 1)
+  {
     state = 2;
+    Gui::selectCopyEnable(true);
+    Gui::selectCropEnable(true);
+  }
 
   drag_started = false;
   resize_started = false;
@@ -528,11 +534,18 @@ void Selection::done(View *view, int mode)
     return;
 
   if(mode == 2 && state == 3)
+  {
     paste(view);
+  }
   else if(mode == 1)
+  {
     crop(view);
+    reset();
+  }
   else
+  {
     select(view);
+  }
 }
 
 void Selection::redraw(View *view)
@@ -563,6 +576,9 @@ void Selection::reset()
 {
   state = 0;
   Gui::selectValues(0, 0, 0, 0);
+  Gui::selectCopyEnable(false);
+  Gui::selectPasteEnable(false);
+  Gui::selectCropEnable(false);
   Gui::getView()->drawMain(true);
 }
 

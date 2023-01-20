@@ -140,7 +140,7 @@ namespace
   StaticText *selection_w;
   StaticText *selection_h;
   Fl_Button *selection_reset;
-  Fl_Button *selection_create;
+  Fl_Button *selection_copy;
   CheckBox *selection_alpha;
   Button *selection_flip;
   Button *selection_mirror;
@@ -703,13 +703,6 @@ void Gui::init()
   new Separator(selection, 4, pos, 106, 2, "");
   pos += 8;
 
-  selection_create = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Select");
-  selection_create->callback((Fl_Callback *)selectCreate);
-  pos += 32 + 8;
-
-  new Separator(selection, 4, pos, 106, 2, "");
-  pos += 8;
-
   selection_alpha = new CheckBox(selection, 8, pos, 16, 16, "Alpha Mask", 0);
   selection_alpha->labelsize(13);
   selection_alpha->center();
@@ -721,8 +714,17 @@ void Gui::init()
   selection_rotate = new Button(selection, 8 + 66, pos, 30, 30, "Rotate", images_select_rotate_png, (Fl_Callback *)selectRotate90);
   pos += 30 + 8;
 
+  new Separator(selection, 4, pos, 106, 2, "");
+  pos += 8;
+
+  selection_copy = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Copy");
+  selection_copy->callback((Fl_Callback *)selectCopy);
+  selection_copy->deactivate();
+  pos += 32 + 8;
+
   selection_paste = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Paste");
   selection_paste->callback((Fl_Callback *)selectPaste);
+  selection_paste->deactivate();
   pos += 32 + 8;
 
   new Separator(selection, 4, pos, 106, 2, "");
@@ -733,6 +735,7 @@ void Gui::init()
   pos += 32 + 8;
 
   selection->resizable(0);
+  selection_crop->deactivate();
   selection->end();
 
   // getcolor
@@ -1587,9 +1590,19 @@ void Gui::constrainEnable(Widget *, void *var)
   Project::stroke->constrain = *(int *)var;
 }
 
-void Gui::selectCreate()
+void Gui::selectCopy()
 {
   Project::tool->done(view, 0);
+}
+
+void Gui::selectCopyEnable(bool enable)
+{
+  if(enable == true)
+    selection_copy->activate();
+  else
+    selection_copy->deactivate();
+
+  selection_copy->redraw();
 }
 
 void Gui::selectPaste()
@@ -1597,9 +1610,29 @@ void Gui::selectPaste()
   Project::tool->done(view, 2);
 }
 
+void Gui::selectPasteEnable(bool enable)
+{
+  if(enable == true)
+    selection_paste->activate();
+  else
+    selection_paste->deactivate();
+
+  selection_paste->redraw();
+}
+
 void Gui::selectCrop()
 {
   Project::tool->done(view, 1);
+}
+
+void Gui::selectCropEnable(bool enable)
+{
+  if(enable == true)
+    selection_crop->activate();
+  else
+    selection_crop->deactivate();
+
+  selection_crop->redraw();
 }
 
 int Gui::getSelectAlpha()
