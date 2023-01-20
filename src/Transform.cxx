@@ -695,9 +695,7 @@ namespace RotateArbitrary
 
   void begin()
   {
-    char s[8];
-    snprintf(s, sizeof(s), "0");
-    Items::angle->value(s);
+    Items::scale->value("1.00");
     Items::dialog->show();
   }
 
@@ -725,7 +723,7 @@ namespace RotateArbitrary
     Items::angle->value("0");
     Items::scale = new InputFloat(Items::dialog, 0, y1, 96, 24, "Scale (1-4)", 0, 1, 4);
     Items::scale->center();
-    Items::scale->value("1.0");
+    Items::scale->value("1.00");
     y1 += 24 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
