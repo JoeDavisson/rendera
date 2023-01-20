@@ -48,7 +48,7 @@ namespace
     if(val > i->max)
       val = i->max;
 
-    snprintf(str, sizeof(str), "%.2f", val);
+    snprintf(str, sizeof(str), "%.5f", val);
     i->input.value(str);
     if(i->cb)
       i->cb(w, i);
@@ -72,7 +72,7 @@ InputFloat::InputFloat(Fl_Group *g, int x, int y, int w, int h,
   input.callback((Fl_Callback *)change, this);
   dec.callback((Fl_Callback *)change, this);
   inc.callback((Fl_Callback *)change, this);
-  input.maximum_size(5);
+  input.maximum_size(16);
   input.textsize(12);
   input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
   labelsize(12);
