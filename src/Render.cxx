@@ -422,24 +422,83 @@ namespace
   // gaussian blur
   void renderBlur()
   {
-    int w = (stroke->x2 - stroke->x1) + 1;
-    int h = (stroke->y2 - stroke->y1) + 1;
+    const int w = (stroke->x2 - stroke->x1) + 1;
+    const int h = (stroke->y2 - stroke->y1) + 1;
 
     Map temp(w, h);
     temp.clear(0);
 
-    int amount = (brush->blurry_edge + 2) * (brush->blurry_edge + 2) + 1;
+    const int amount = (brush->blurry_edge + 2) * (brush->blurry_edge + 2) + 1;
 
     std::vector<int> kernel(amount);
-    int div = 0;
-    int b = amount / 2;
+    const int b = amount / 2;
 
     for(int x = 0; x < amount; x++)
     {
-      kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) / ((b * b) / 2)));
-      div += kernel[x];
+      const int xb = x - b;
+
+      kernel[x] = 255 * std::exp(-((double)((xb) * (xb)) / ((b * b) / 2)));
     }
 
+    // x direction
+    for(int y = 0; y < h; y++)
+    {
+      const int y1 = y + stroke->y1;
+
+      for(int x = -b; x < w + b; x++)
+      {
+        int xx = stroke->x1 + x - b;
+        int val = 0;
+        int div = 0;
+
+        for(int i = 0; i < amount; i++)
+        {
+          if(xx >= 0 && xx < map->w)
+          {
+            val += *(map->row[y1] + xx) * kernel[i];
+            div += kernel[i];
+          }
+
+          xx++;
+        }
+
+        if(div > 0)
+          val /= div;
+
+        temp.setpixel(x, y, val);
+      }
+    }
+
+    // y direction
+    for(int y = -b; y < h + b; y++)
+    {
+      for(int x = 0; x < w; x++)
+      {
+        int yy = y - b;
+        int val = 0;
+        int div = 0;
+
+        for(int i = 0; i < amount; i++)
+        {
+          if(yy >= 0 && yy < h)
+          {
+            val += *(temp.row[yy] + x) * kernel[i];
+            div += kernel[i];
+          }
+
+          yy++;
+        }
+
+        if(div > 0)
+          val /= div;
+
+        const int x1 = x + stroke->x1;
+        const int y1 = y + stroke->y1;
+
+        map->setpixel(x1, y1, val);
+      }
+    }
+/*
     // x direction
     for(int y = 0; y < h; y++)
     {
@@ -487,6 +546,7 @@ namespace
         map->setpixel(x1, y1, val);
       }
     }
+*/
 
     // render
     for(int y = stroke->y1; y <= stroke->y2; y++)
