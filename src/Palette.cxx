@@ -110,9 +110,6 @@ void Palette::draw(Widget *widget)
     }
   }
 
-//  widget->bitmap->hline(0, h - 1, w - 1, makeRgb(0, 0, 0), 128);
-//  widget->bitmap->vline(0, w - 1, h - 1, makeRgb(0, 0, 0), 128);
-
   int div = widget->w() / step;
   int px = widget->var % div;
   int py = widget->var / div;
@@ -191,7 +188,7 @@ void Palette::fillTable()
       for(int r = 0; r <= 256 - step; r += step)
       {
         int c = makeRgb24(r + step / 2, g + step / 2, b + step / 2);
-        int smallest = 0xFFFFFF;
+        int smallest = 0xffffff;
         int use = 0;
 
         for(int i = 0; i < max; i++)
@@ -210,7 +207,7 @@ void Palette::fillTable()
     }
   }
 
-  // put exact matches back in
+  // include exact matches
   for(int i = 0; i < max; i++)
     table->writePath(getr(data[i]), getg(data[i]), getb(data[i]), i);
 }
@@ -218,9 +215,6 @@ void Palette::fillTable()
 // return the nearest palette entry for an RGB color
 int Palette::lookup(const int c)
 {
-//  rgba_type rgba = getRgba(c);
-//  return table->read(rgba.r, rgba.g, rgba.b);
-//  return table->read(c & 255, (c >> 8) & 255, (c >> 16) & 255);
   return table->read(c);
 }
 
@@ -333,37 +327,40 @@ void Palette::setDefault()
 void Palette::setCMYK()
 {
   int c, m, y, k;
-
   int index = 0;
 
-  for(c = 0; c < 4; c++) {
-  for(m = 0; m < 4; m++) {
-  for(y = 0; y < 4; y++) {
-  for(k = 0; k < 4; k++) {
-    int cc = ((float)c / 3) * 255; 
-    int mm = ((float)m / 3) * 255; 
-    int yy = ((float)y / 3) * 255; 
-    int kk = ((float)k / 3) * 255; 
+  for(c = 0; c < 4; c++)
+  {
+    for(m = 0; m < 4; m++)
+    {
+      for(y = 0; y < 4; y++)
+      {
+        for(k = 0; k < 4; k++)
+        {
+          int cc = ((float)c / 3) * 255; 
+          int mm = ((float)m / 3) * 255; 
+          int yy = ((float)y / 3) * 255; 
+          int kk = ((float)k / 3) * 255; 
 
-    int r = 255 - (cc + kk) / 2;
-    int g = 255 - (mm + kk) / 2;
-    int b = 255 - (yy + kk) / 2;
+          int r = 255 - (cc + kk) / 2;
+          int g = 255 - (mm + kk) / 2;
+          int b = 255 - (yy + kk) / 2;
 
-    r -= kk / 4;
-    g -= kk / 4;
-    b -= kk / 4;
+          r -= kk / 4;
+          g -= kk / 4;
+          b -= kk / 4;
 
-    if(r < 0)
-        r = 0;
-    if(g < 0)
-        g = 0;
-    if(b < 0)
-        b = 0;
+          if(r < 0)
+              r = 0;
+          if(g < 0)
+              g = 0;
+          if(b < 0)
+              b = 0;
 
-    data[index++] = makeRgb(r, g, b);
-  }
-  }
-  }
+          data[index++] = makeRgb(r, g, b);
+        }
+      }
+    }
   }
 
   data[0] = makeRgb(255, 255, 255);
