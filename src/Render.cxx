@@ -181,9 +181,6 @@ namespace
 
         p++;
       }
-
-//      if(update(y) < 0)
-//        break;
     }
   }
 
@@ -323,102 +320,6 @@ namespace
     delete[] points;
   }
 
-/*
-  // slow version
-
-  void renderFine()
-  {
-    int count = 0;
-
-    for(int y = stroke->y1; y <= stroke->y2; y++)
-    {
-      for(int x = stroke->x1; x <= stroke->x2; x++)
-      {
-        if(map->getpixel(x, y) && isEdge(map, x, y))
-        {
-          stroke->edge_x[count] = x;
-          stroke->edge_y[count] = y;
-          count++;
-          count &= 0xfffff;
-        }
-      }
-    }
-
-    for(int y = stroke->y1; y <= stroke->y2; y++)
-    {
-      unsigned char *p = map->row[y] + stroke->x1;
-
-      for(int x = stroke->x1; x <= stroke->x2; x++)
-      {
-        if(*p++ == 0)
-          continue;
-
-        int *cx = stroke->edge_x;
-        int *cy = stroke->edge_y;
-        const int dx = (x - *cx++);
-        const int dy = (y - *cy++);
-        int z = 0;
-        int temp1 = dx * dx + dy * dy;
-
-        for(int i = 1; i < count; i++)
-        {
-          const int dx = (x - *cx++);
-          const int dy = (y - *cy++);
-          const int temp2 = dx * dx + dy * dy;
-
-          if(temp2 < temp1)
-          {
-            temp1 = temp2;
-            z = i;
-          }
-        }
-
-        bmp->setpixel(x, y, color, fineEdge(x, y,
-                      stroke->edge_x[z], stroke->edge_y[z],
-                      brush->fine_edge, trans));
-      }
-
-      if(update(y) < 0)
-        break;
-    }
-  }
-*/
-
-/*
-  // experimental, doesn't work
-
-  void renderFine()
-  {
-    Quadtree quadtree;
-
-    for(int y = stroke->y1; y <= stroke->y2; y++)
-    {
-      for(int x = stroke->x1; x <= stroke->x2; x++)
-      {
-        if(map->getpixel(x, y) && isEdge(map, x, y))
-          //quadtree.write(x, y, 1);
-          quadtree.writePath(x, y, 1);
-      }
-    }
-
-    for(int y = stroke->y1; y <= stroke->y2; y++)
-    {
-      unsigned char *p = map->row[y] + stroke->x1;
-      for(int x = stroke->x1; x <= stroke->x2; x++)
-      {
-        if(*p++ == 0)
-          continue;
-        int qx, qy;
-        quadtree.read(x, y, &qx, &qy);
-        const int t = fineEdge(x, y, qx, qy, brush->fine_edge, trans);
-        bmp->setpixel(x, y, color, t);
-      }
-      if(update(y) < 0)
-        break;
-    }
-  }
-*/
-
   // gaussian blur
   void renderBlur()
   {
@@ -498,55 +399,6 @@ namespace
         map->setpixel(x1, y1, val);
       }
     }
-/*
-    // x direction
-    for(int y = 0; y < h; y++)
-    {
-      const int y1 = y + stroke->y1;
-
-      for(int x = 0; x < w; x++)
-      {
-        int xx = stroke->x1 + x - amount / 2;
-        int val = 0;
-
-        for(int i = 0; i < amount; i++)
-        {
-          if(xx >= 0 && xx < map->w)
-            val += *(map->row[y1] + xx) * kernel[i];
-
-          xx++;
-        }
-
-        val /= div;
-        temp.setpixel(x, y, val);
-      }
-    }
-
-    // y direction
-    for(int y = 0; y < h; y++)
-    {
-      for(int x = 0; x < w; x++)
-      {
-        int yy = y - amount / 2;
-        int val = 0;
-
-        for(int i = 0; i < amount; i++)
-        {
-          if(yy >= 0 && yy < h)
-            val += *(temp.row[yy] + x) * kernel[i];
-
-          yy++;
-        }
-
-        val /= div;
-
-        const int x1 = x + stroke->x1;
-        const int y1 = y + stroke->y1;
-
-        map->setpixel(x1, y1, val);
-      }
-    }
-*/
 
     // render
     for(int y = stroke->y1; y <= stroke->y2; y++)
@@ -768,7 +620,7 @@ namespace
   void renderTexture()
   {
     float soft_trans = 255;
-    const int j = (3 << brush->texture_edge);
+    int j = (3 << brush->texture_edge);
     float soft_step = (float)(255 - trans) / ((j >> 1) + 1);
     bool found = false;
 
@@ -786,6 +638,12 @@ namespace
     Fractal::marble(&plasma, &marble, &marbx, &marby, brush->texture_marb << 2, 100, 0);
 
     Map *src = &marble;
+
+    if(brush->texture_edge == 0)
+    {
+      j = 1;
+      soft_trans = trans;
+    }
 
     for(int i = 0; i < j; i++)
     {
