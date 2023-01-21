@@ -43,7 +43,6 @@ public:
   int save(const char *);
 
   void setDefault();
-  void setCMYK();
   void setBlackAndWhite();
   void setWebSafe();
   void set3LevelRGB();

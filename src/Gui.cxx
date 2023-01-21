@@ -396,8 +396,6 @@ void Gui::init()
     (Fl_Callback *)Dither::begin, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/Presets/Default", 0,
     (Fl_Callback *)paletteDefault, 0, 0);
-  menubar->add("&Palette/Presets/CMYK", 0,
-    (Fl_Callback *)paletteCMYK, 0, 0);
   menubar->add("Palette/Presets/Black and White", 0,
     (Fl_Callback *)paletteBlackAndWhite, 0, 0);
   menubar->add("&Palette/Presets/Web Safe", 0,
@@ -1820,13 +1818,6 @@ int Gui::getTool()
 void Gui::paletteDefault()
 {
   Project::palette->setDefault();
-  palette_swatches->var = 0;
-  Project::palette->draw(palette_swatches);
-}
-
-void Gui::paletteCMYK()
-{
-  Project::palette->setCMYK();
   palette_swatches->var = 0;
   Project::palette->draw(palette_swatches);
 }
