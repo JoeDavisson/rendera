@@ -116,6 +116,7 @@ namespace Gui
   void palette4LevelRGB();
   void paletteBlackAndWhite();
   void paletteDefault();
+  void paletteCMYK();
   void paletteDraw();
   void paletteIndex(int);
   void paletteSort();

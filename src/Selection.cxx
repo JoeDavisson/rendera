@@ -595,5 +595,8 @@ void Selection::reload()
 
   Project::stroke->size(beginx, beginy, lastx, lasty);
   Gui::selectValues(0, 0, w, h);
+  Gui::selectCopyEnable(false);
+  Gui::selectPasteEnable(true);
+  Gui::selectCropEnable(false);
 }
 

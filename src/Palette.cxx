@@ -330,6 +330,48 @@ void Palette::setDefault()
   fillTable();
 }
 
+void Palette::setCMYK()
+{
+  int c, m, y, k;
+
+  int index = 0;
+
+  for(c = 0; c < 4; c++) {
+  for(m = 0; m < 4; m++) {
+  for(y = 0; y < 4; y++) {
+  for(k = 0; k < 4; k++) {
+    int cc = ((float)c / 3) * 255; 
+    int mm = ((float)m / 3) * 255; 
+    int yy = ((float)y / 3) * 255; 
+    int kk = ((float)k / 3) * 255; 
+
+    int r = 255 - (cc + kk) / 2;
+    int g = 255 - (mm + kk) / 2;
+    int b = 255 - (yy + kk) / 2;
+
+    r -= kk / 4;
+    g -= kk / 4;
+    b -= kk / 4;
+
+    if(r < 0)
+        r = 0;
+    if(g < 0)
+        g = 0;
+    if(b < 0)
+        b = 0;
+
+    data[index++] = makeRgb(r, g, b);
+  }
+  }
+  }
+  }
+
+  data[0] = makeRgb(255, 255, 255);
+  data[255] = makeRgb(0, 0, 0);
+  max = 256;
+  fillTable();
+}
+
 void Palette::setBlackAndWhite()
 {
   data[0] = makeRgb(0, 0, 0);
