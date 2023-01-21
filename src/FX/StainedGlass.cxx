@@ -75,20 +75,20 @@ void StainedGlass::apply()
   {
     if(Items::uniform->value())
     {
-      seedx[i] = ExtraMath::rnd() % bmp->w; 
-      seedy[i] = ExtraMath::rnd() % bmp->h; 
+      seedx[i] = rnd() % bmp->w; 
+      seedy[i] = rnd() % bmp->h; 
     }
     else
     {
-      seedx[i] = ExtraMath::rnd() % bmp->w; 
-      seedy[i] = ExtraMath::rnd() % bmp->h; 
+      seedx[i] = rnd() % bmp->w; 
+      seedy[i] = rnd() % bmp->h; 
 
       int count = 0;
 
       do
       {
-	seedx[i] = ExtraMath::rnd() % bmp->w; 
-	seedy[i] = ExtraMath::rnd() % bmp->h; 
+	seedx[i] = rnd() % bmp->w; 
+	seedy[i] = rnd() % bmp->h; 
 	count++;
       }
       while(!isEdge(bmp, seedx[i], seedy[i], div) && count < 10000);

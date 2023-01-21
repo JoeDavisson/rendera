@@ -31,7 +31,7 @@ void Randomize::apply()
     {
       for(int x = bmp->cl + 1 + j; x <= bmp->cr; x += 2)
       {
-	if((ExtraMath::rnd() & 1) == 1)
+	if((rnd() & 1) == 1)
 	{
 	  const int temp = bmp->getpixel(x, y);
 
@@ -46,7 +46,7 @@ void Randomize::apply()
     {
       for(int y = bmp->ct + 1 + j; y <= bmp->cb; y += 2)
       {
-	if((ExtraMath::rnd() & 1) == 1)
+	if((rnd() & 1) == 1)
 	{
 	  const int temp = bmp->getpixel(x, y);
 

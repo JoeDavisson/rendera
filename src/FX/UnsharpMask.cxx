@@ -146,7 +146,7 @@ void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
       int a = getl(*p);
       int b = getl(*d);
 
-      if(ExtraMath::abs(a - b) >= threshold)
+      if(abs(a - b) >= threshold)
       {
 	int lum = a - (amount * (a - b)); 
 	lum = clamp(lum, 255);
