@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Inline.H"
 #include "KDtree.H"
 #include "Map.H"
-#include "ExtraMath.H"
 #include "Project.H"
 #include "Render.H"
 #include "Stroke.H"
@@ -444,7 +443,7 @@ namespace
       {
         for(int x = stroke->x1 + (inc & 1); x < stroke->x2 - 1; x += 2)
         {
-          int yy = y + !(ExtraMath::rnd() & 3);
+          int yy = y + !(rnd() & 3);
 
           unsigned char *s0 = map->row[yy] + x;
           unsigned char *s1 = map->row[yy] + x + 1;
@@ -466,7 +465,7 @@ namespace
 
           growBlock(s0, s1, s2, s3);
 
-          if(*s0 & !(ExtraMath::rnd() & 15))
+          if(*s0 & !(rnd() & 15))
           {
             *s0 = 1;
             *s1 = 1;
@@ -544,7 +543,7 @@ namespace
 
           if(!*s0 && d0)
           {
-            t = (int)soft_trans + (ExtraMath::rnd() & 63) - 32;
+            t = (int)soft_trans + (rnd() & 63) - 32;
             if(t < 0)
               t = 0;
             if(t > 255)
@@ -554,7 +553,7 @@ namespace
 
           if(!*s1 && d1)
           {
-            t = (int)soft_trans + (ExtraMath::rnd() & 63) - 32;
+            t = (int)soft_trans + (rnd() & 63) - 32;
             if(t < 0)
               t = 0;
             if(t > 255)
@@ -564,7 +563,7 @@ namespace
 
           if(!*s2 && d2)
           {
-            t = (int)soft_trans + (ExtraMath::rnd() & 63) - 32;
+            t = (int)soft_trans + (rnd() & 63) - 32;
             if(t < 0)
               t = 0;
             if(t > 255)
@@ -574,7 +573,7 @@ namespace
 
           if(!*s3 && d3)
           {
-            t = (int)soft_trans + (ExtraMath::rnd() & 63) - 32;
+            t = (int)soft_trans + (rnd() & 63) - 32;
             if(t < 0)
               t = 0;
             if(t > 255)
@@ -598,7 +597,7 @@ namespace
           {
             if(map->getpixel(x, y))
             {
-              int t = (int)soft_trans + (ExtraMath::rnd() & 63) - 32;
+              int t = (int)soft_trans + (rnd() & 63) - 32;
               if(t < 0)
                 t = 0;
               if(t > 255)

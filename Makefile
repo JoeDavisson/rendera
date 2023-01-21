@@ -99,7 +99,6 @@ OBJ= \
   $(SRC_DIR)/Project.o \
   $(SRC_DIR)/Fractal.o \
   $(SRC_DIR)/Render.o \
-  $(SRC_DIR)/ExtraMath.o \
   $(SRC_DIR)/Stroke.o \
   $(SRC_DIR)/Undo.o \
   $(SRC_DIR)/View.o \

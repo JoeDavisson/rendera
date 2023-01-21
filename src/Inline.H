@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
 #endif
 
+static int rnd_seed = 12345;
+
 // stuff for extracting all RGBA values quickly
 struct rgba_type
 {
@@ -224,6 +226,16 @@ inline int range(const int value, const int floor, const int ceiling)
     return ceiling;
   else
     return value;
+}
+
+// pseudo-random number
+inline int rnd(void)
+{
+  rnd_seed ^= rnd_seed << 17;
+  rnd_seed ^= rnd_seed >> 13;
+  rnd_seed ^= rnd_seed <<  5;
+
+  return rnd_seed;
 }
 
 // file access functions

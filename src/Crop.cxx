@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Crop.H"
 #include "Gui.H"
 #include "Map.H"
-#include "ExtraMath.H"
 #include "Inline.H"
 #include "Project.H"
 #include "Stroke.H"
@@ -214,29 +213,29 @@ void Crop::push(View *view)
         if(view->imgx < beginx && view->imgy < beginy)
         {
           side = 4;
-          offsetx = ExtraMath::abs(view->imgx - beginx);
-          offsety = ExtraMath::abs(view->imgy - beginy);
+          offsetx = std::abs(view->imgx - beginx);
+          offsety = std::abs(view->imgy - beginy);
           resize_started = true;
         }
         else if(view->imgx > lastx && view->imgy < beginy)
         {
           side = 5;
-          offsetx = ExtraMath::abs(view->imgx - lastx);
-          offsety = ExtraMath::abs(view->imgy - beginy);
+          offsetx = std::abs(view->imgx - lastx);
+          offsety = std::abs(view->imgy - beginy);
           resize_started = true;
         }
         else if(view->imgx < beginx && view->imgy > lasty)
         {
           side = 6;
-          offsetx = ExtraMath::abs(view->imgx - beginx);
-          offsety = ExtraMath::abs(view->imgy - lasty);
+          offsetx = std::abs(view->imgx - beginx);
+          offsety = std::abs(view->imgy - lasty);
           resize_started = true;
         }
         else if(view->imgx > lastx && view->imgy > lasty)
         {
           side = 7;
-          offsetx = ExtraMath::abs(view->imgx - lastx);
-          offsety = ExtraMath::abs(view->imgy - lasty);
+          offsetx = std::abs(view->imgx - lastx);
+          offsety = std::abs(view->imgy - lasty);
           resize_started = true;
         }
 
@@ -244,25 +243,25 @@ void Crop::push(View *view)
         else if(view->imgx < beginx)
         {
           side = 0;
-          offsetx = ExtraMath::abs(view->imgx - beginx);
+          offsetx = std::abs(view->imgx - beginx);
           resize_started = true;
         }
         else if(view->imgx > lastx)
         {
           side = 1;
-          offsetx = ExtraMath::abs(view->imgx - lastx);
+          offsetx = std::abs(view->imgx - lastx);
           resize_started = true;
         }
         else if(view->imgy < beginy)
         {
           side = 2;
-          offsety = ExtraMath::abs(view->imgy - beginy);
+          offsety = std::abs(view->imgy - beginy);
           resize_started = true;
         }
         else if(view->imgy > lasty)
         {
           side = 3;
-          offsety = ExtraMath::abs(view->imgy - lasty);
+          offsety = std::abs(view->imgy - lasty);
           resize_started = true;
         }
 

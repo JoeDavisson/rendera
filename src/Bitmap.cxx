@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Octree.H"
 #include "Palette.H"
 #include "Project.H"
-#include "ExtraMath.H"
 #include "Stroke.H"
 #include "Tool.H"
 #include "View.H"
@@ -232,8 +231,8 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
   int inx = dx > 0 ? 1 : -1;
   int iny = dy > 0 ? 1 : -1;
 
-  dx = ExtraMath::abs(dx);
-  dy = ExtraMath::abs(dy);
+  dx = std::abs(dx);
+  dy = std::abs(dy);
 
   if(dx >= dy)
   {
@@ -358,8 +357,8 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
   int inx = dx > 0 ? 1 : -1;
   int iny = dy > 0 ? 1 : -1;
 
-  dx = ExtraMath::abs(dx);
-  dy = ExtraMath::abs(dy);
+  dx = std::abs(dx);
+  dy = std::abs(dy);
 
   if(dx >= dy)
   {
@@ -920,20 +919,20 @@ void Bitmap::fastStretch(Bitmap *dest,
   yd2 += yd1;
   yd2--;
 
-  const int dx = ExtraMath::abs(yd2 - yd1);
-  const int dy = ExtraMath::abs(ys2 - ys1) << 1;
-  const int sx = ExtraMath::sign(yd2 - yd1);
-  const int sy = ExtraMath::sign(ys2 - ys1);
+  const int dx = std::abs(yd2 - yd1);
+  const int dy = std::abs(ys2 - ys1) << 1;
+  const int sx = std::signbit(yd2 - yd1);
+  const int sy = std::signbit(ys2 - ys1);
   const int dx2 = dx << 1;
 
   int e = dy - dx;
 
   for(int d = 0; d <= dx; d++)
   {
-    const int dx_1 = ExtraMath::abs(xd2 - xd1);
-    const int dy_1 = ExtraMath::abs(xs2 - xs1) << 1;
-    const int sx_1 = ExtraMath::sign(xd2 - xd1);
-    const int sy_1 = ExtraMath::sign(xs2 - xs1);
+    const int dx_1 = std::abs(xd2 - xd1);
+    const int dy_1 = std::abs(xs2 - xs1) << 1;
+    const int sx_1 = std::signbit(xd2 - xd1);
+    const int sy_1 = std::signbit(xs2 - xs1);
     const int dx2_1 = dx_1 << 1;
 
     int e_1 = dy_1 - dx_1;

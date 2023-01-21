@@ -46,14 +46,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Dialog.H"
-#include "ExtraMath.H"
 #include "File.H"
 #include "FileSP.H"
 #include "FilterMatrix.H"
 #include "Gui.H"
 #include "Inline.H"
 #include "Map.H"
-#include "ExtraMath.H"
 #include "Palette.H"
 #include "Project.H"
 #include "Stroke.H"
@@ -458,8 +456,8 @@ Bitmap *File::loadBmp(const char *fn)
   if(h >= 0)
     negy = true;
 
-  w = ExtraMath::abs(w);
-  h = ExtraMath::abs(h);
+  w = std::abs(w);
+  h = std::abs(h);
 
   Bitmap *temp = new Bitmap(w, h);
   std::vector<unsigned char> linebuf(w * mul + pad);

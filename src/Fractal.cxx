@@ -23,8 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/fl_draw.H>
 #include <FL/Fl_Group.H>
 
-#include "ExtraMath.H"
 #include "Fractal.H"
+#include "Inline.H"
 #include "Map.H"
 
 namespace
@@ -218,7 +218,6 @@ void Fractal::plasma(Map * map, int turbulence)
 {
   int w, h;
 
-//  seed = ExtraMath::rnd();
   map->clear(0);
   turb = turbulence;
   level = 0;
@@ -236,31 +235,30 @@ void Fractal::plasma(Map * map, int turbulence)
 
 int Fractal::adjust(Map * map, int xa, int ya, int x, int y, int xb, int yb)
 {
-  int rnd = (ExtraMath::rnd() % turb) >> level;
+  int r = (rnd() % turb) >> level;
 
-  if((ExtraMath::rnd() % 2) == 0)
-    rnd = -rnd;
+  if((rnd() % 2) == 0)
+    r = -r;
 
-  rnd = ((map->getpixel(xa, ya) +
-          map->getpixel(xb, yb) + 1) >> 1) + rnd;
+  r = ((map->getpixel(xa, ya) + map->getpixel(xb, yb) + 1) >> 1) + r;
 
-  if(rnd < 1)
-    rnd = 1;
-  if(rnd > 255)
-    rnd = 255;
+  if(r < 1)
+    r = 1;
+  if(r > 255)
+    r = 255;
 
-  map->setpixel(x, y, rnd);
+  map->setpixel(x, y, r);
 
   if(x == 0)
-    map->setpixel(map->w - 1, y, rnd);
+    map->setpixel(map->w - 1, y, r);
   if(y == 0)
-    map->setpixel(x, map->h - 1, rnd);
+    map->setpixel(x, map->h - 1, r);
   if(x == map->w - 1)
-    map->setpixel(0, y, rnd);
+    map->setpixel(0, y, r);
   if(y == map->h - 1)
-    map->setpixel(x, 0, rnd);
+    map->setpixel(x, 0, r);
 
-  return rnd;
+  return r;
 }
 
 void Fractal::divide(Map * map, int x1, int y1, int x2, int y2)

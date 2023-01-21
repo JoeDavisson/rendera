@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gui.H"
 #include "Inline.H"
 #include "Map.H"
-#include "ExtraMath.H"
 #include "Project.H"
 #include "Render.H"
 #include "Stroke.H"
@@ -45,7 +44,7 @@ namespace
     const int dx = x1 - *x2;
     const int dy = y1 - *y2;
 
-    if(ExtraMath::abs(dy) > ExtraMath::abs(dx))
+    if(std::abs(dy) > std::abs(dx))
     {
       switch(px + py)
       {
