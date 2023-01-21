@@ -1368,6 +1368,7 @@ void Gui::toolChange(Widget *, void *var)
   if(tool != Tool::FILL)
     fill->hide();
 
+  Project::map->clear(0);
   view->drawMain(true);
 
   switch(tool)
@@ -1413,8 +1414,6 @@ void Gui::toolChange(Widget *, void *var)
       statusInfo((char *)"Click to fill an area with the selected color. Blending modes ignored. Esc to cancel.");
       break;
   }
-
-//  view->drawMain(true);
 }
 
 void Gui::colorChange(Widget *widget, void *)
