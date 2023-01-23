@@ -22,9 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <FL/fl_draw.H>
 
-//FIXME remove
-#include "Dialog.H"
-
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Clone.H"
@@ -129,6 +126,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   rendering = false;
   bgr_order = false;
 
+  //FIXME this should handle desktop resolution changes
   #if defined linux
     backbuf = new Bitmap(Fl::w(), Fl::h());
 
@@ -233,7 +231,6 @@ int View::handle(int event)
   shift = Fl::event_shift() ? true : false;
   ctrl = Fl::event_ctrl() ? true : false;
   alt = Fl::event_alt() ? true : false;
-
 
   switch(event)
   {
@@ -639,8 +636,10 @@ void View::drawCloneCursor()
   backbuf->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 0);
   backbuf->xorRectfill(x1 - 7, y1, x1 + 7, y1);
   backbuf->xorRectfill(x1, y1 - 7, x1, y1 + 7);
-  backbuf->rectfill(x1 - 7, y1, x1 + 7, y1, convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
-  backbuf->rectfill(x1, y1 - 7, x1, y1 + 7, convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
+  backbuf->rectfill(x1 - 7, y1, x1 + 7, y1,
+                    convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
+  backbuf->rectfill(x1, y1 - 7, x1, y1 + 7,
+                    convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
 
   updateView(oldx1 - 12, oldy1 - 12,
              this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
