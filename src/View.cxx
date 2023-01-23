@@ -22,6 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <FL/fl_draw.H>
 
+//FIXME remove
+#include "Dialog.H"
+
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Clone.H"
@@ -415,54 +418,58 @@ int View::handle(int event)
 
     case FL_PASTE:
     {
-      // drag n drop
-      if(strncasecmp(Fl::event_text(), "file://", 7) == 0)
+      #ifndef WIN32
+        if(strncasecmp(Fl::event_text(), "file://", 7) != 0)
+          return 1;
+      #endif
+
+      const int length = Fl::event_length();
+      char *fn = new char[length];
+
+      #ifdef WIN32
+        strcpy(fn, Fl::event_text());
+      #else
+        strcpy(fn, Fl::event_text() + 7);
+      #endif
+
+      // convert to utf-8 (e.g. %20 becomes space)
+      File::decodeURI(fn);
+
+      int index = 0;
+
+      // separate individual file paths in the list
+      for(int i = 0; i < length; i++)
+        if(fn[i] == '\n')
+          fn[i] = '\0';
+
+      // try to load all the files in list
+      for(int i = 0; i < length; )
       {
-        const int length = Fl::event_length();
-        char *fn = new char[length];
-
-        // printf("length = %d\n", length);
-
-        // remove "file:///" from path?
-        #ifdef WIN32
-          strcpy(fn, Fl::event_text());
-        #else
-          strcpy(fn, Fl::event_text() + 7);
-        #endif
-
-        // convert to utf-8 (e.g. %20 becomes space)
-        File::decodeURI(fn);
-
-        int index = 0;
-
-        for(int i = 0, n = length; i < n; i += 0)
+        if(i == length - 1 || fn[i] == '\0')
         {
-          if(fn[i] == '\r' || fn[i] =='\n')
-          {
-            fn[i] = '\0';
-            File::loadFile(fn + index);
+          File::loadFile(fn + index);
 
-            #ifdef WIN32
-              i += 1;
-            #else
-              i += 8;
-            #endif
+          #ifdef WIN32
+            i += 1;
+          #else
+            i += 8;
+          #endif
 
-            index = i;
-          }
-          else
-          {
-            i++;
-          }
+          index = i;
         }
-
-        delete[] fn;
+        else
+        {
+          i += 1;
+        }
       }
 
-      changeCursor();
-
+      delete[] fn;
       return 1;
     }
+
+    changeCursor();
+
+    return 1;
   }
 
   return 0;
