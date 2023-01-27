@@ -38,64 +38,68 @@ class Offset;
 class Text;
 class Fill;
 
-namespace Project
+class Project
 {
+public:
   enum
   {
     THEME_LIGHT,
     THEME_DARK
   };
 
-  extern Bitmap *bmp;
-  extern Bitmap *select_bmp;
-  extern Map *map;
+  static Bitmap *bmp;
+  static Map *map;
+  static Bitmap *select_bmp;
 
-  extern Brush *brush;
-  extern Palette *palette;
-  extern Stroke *stroke;
-  extern Undo *undo;
+  static Brush *brush;
+  static Palette *palette;
+  static Stroke *stroke;
+  static Undo *undo;
 
-  extern Bitmap **bmp_list;
-  extern Undo **undo_list;
-  extern int ox_list[256];
-  extern int oy_list[256];
-  extern float zoom_list[256];
-  extern int current;
-  extern int last;
-  extern int mem_max;
-  extern int undo_max;
+  static int max_images;
+  static Bitmap **bmp_list;
+  static Undo **undo_list;
+  static int ox_list[256];
+  static int oy_list[256];
+  static float zoom_list[256];
+  static int current;
+  static int last;
+  static int mem_max;
+  static int undo_max;
 
-  extern Paint *paint;
-  extern GetColor *getcolor;
-  extern Selection *selection;
-  extern Offset *offset;
-  extern Text *text;
-  extern Fill *fill;
+  static Paint *paint;
+  static GetColor *getcolor;
+  static Selection *selection;
+  static Offset *offset;
+  static Text *text;
+  static Fill *fill;
 
-  extern Tool *tool;
+  static Tool *tool;
 
-  extern int mode;
-  extern int theme;
-  extern char theme_path[];
-  extern int theme_highlight_color;
-  extern Fl_Color fltk_theme_highlight_color;
-  extern Fl_Color fltk_theme_bevel_up;
-  extern Fl_Color fltk_theme_bevel_down;
+  static int theme;
+  static int theme_highlight_color;
+  static Fl_Color fltk_theme_highlight_color;
+  static Fl_Color fltk_theme_bevel_up;
+  static Fl_Color fltk_theme_bevel_down;
 
-  void init(int, int);
-  void setTool(int);
-  bool enoughMemory(int, int);
-  int newImage(int, int);
-  int newImageFromBitmap(Bitmap *);
-  void replaceImage(int, int);
-  void replaceImageFromBitmap(Bitmap *);
-  void resizeImage(int, int);
-  void switchImage(int);
-  bool removeImage();
-  double getImageMemory();
-  void pop();
-  void popRedo();
-}
+  static void init(int, int);
+  static void setTool(int);
+  static bool enoughMemory(int, int);
+  static int newImage(int, int);
+  static int newImageFromBitmap(Bitmap *);
+  static void replaceImage(int, int);
+  static void replaceImageFromBitmap(Bitmap *);
+  static void resizeImage(int, int);
+  static void switchImage(int);
+  static bool removeImage();
+  static double getImageMemory();
+  static void pop();
+  static void popRedo();
+
+private:
+  Project() { };
+  ~Project() { };
+};
 
 #endif
 

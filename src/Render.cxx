@@ -289,7 +289,7 @@ namespace
       points[i].x[1] = stroke->edge_y[i];
     }
 
-    root = make_tree(points, count, 0, 2);
+    root = KDtree::make_tree(points, count, 0, 2);
 
     for(int y = stroke->y1; y <= stroke->y2; y++)
     {
@@ -303,7 +303,7 @@ namespace
         test_node.x[0] = x;
         test_node.x[1] = y;
         found = 0;
-        nearest(root, &test_node, 0, 2, &found, &best_dist);
+        KDtree::nearest(root, &test_node, 0, 2, &found, &best_dist);
 
         const int zx = found->x[0];
         const int zy = found->x[1];

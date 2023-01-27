@@ -42,53 +42,61 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Tool.H"
 #include "Undo.H"
 
-// container for commonly-used objects and related functions
-namespace Project
-{
-  Bitmap *bmp = 0;
-  Bitmap *select_bmp = new Bitmap(8, 8);
-  Map *map = 0;
+Bitmap *Project::bmp;
+Bitmap *Project::select_bmp;
+Map *Project::map;
 
-  Brush *brush = new Brush();
-  Palette *palette = new Palette();
-  Stroke *stroke = new Stroke();
-  Undo *undo = 0;
+Brush *Project::brush;
+Palette *Project::palette;
+Stroke *Project::stroke;
+Undo *Project::undo;
 
-  Bitmap **bmp_list;
-  Undo **undo_list;
+int Project::max_images;
+Bitmap **Project::bmp_list;
+Undo **Project::undo_list;
+int Project::ox_list[256];
+int Project::oy_list[256];
+float Project::zoom_list[256];
+int Project::current;
+int Project::last;
+int Project::mem_max;
+int Project::undo_max;
+  
+Paint *Project::paint;
+GetColor *Project::getcolor;
+Selection *Project::selection;
+Offset *Project::offset;
+Text *Project::text;
+Fill *Project::fill;
 
-  // these store the pan/zoom information for each image
-  int ox_list[256];
-  int oy_list[256];
-  float zoom_list[256];
+Tool *Project::tool;
 
-  const int max_images = 256;
-  int current = 0;
-  int last = 0;
-  int mem_max = 1000;
-  int undo_max = 16;
-
-  // tools
-  Tool *tool = 0;
-
-  Paint *paint = new Paint();
-  GetColor *getcolor = new GetColor();
-  Selection *selection = new Selection();
-  Offset *offset = new Offset();
-  Text *text = new Text();
-  Fill *fill = new Fill();
-
-  int theme = THEME_DARK;
-  char theme_path[PATH_MAX];
-  int theme_highlight_color;
-  Fl_Color fltk_theme_highlight_color; 
-  Fl_Color fltk_theme_bevel_up; 
-  Fl_Color fltk_theme_bevel_down; 
-}
+int Project::theme;
+int Project::theme_highlight_color;
+Fl_Color Project::fltk_theme_highlight_color;
+Fl_Color Project::fltk_theme_bevel_up;
+Fl_Color Project::fltk_theme_bevel_down;
 
 // called when the program starts
 void Project::init(int memory_limit, int undo_limit)
 {
+  bmp = 0;
+  map = 0;
+  select_bmp = new Bitmap(8, 8);
+
+  brush = new Brush();
+  palette = new Palette();
+  stroke = new Stroke();
+  undo = 0;
+
+  paint = new Paint();
+  getcolor = new GetColor();
+  selection = new Selection();
+  offset = new Offset();
+  text = new Text();
+  fill = new Fill();
+
+  max_images = 256;
   mem_max = memory_limit;
   undo_max = undo_limit + 1;
 

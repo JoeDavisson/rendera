@@ -29,134 +29,139 @@ class View;
 class Fl_Double_Window;
 class Fl_Menu_Bar;
 
-namespace Gui
+class Gui
 {
-  int getClone();
-  int getFillFeather();
-  int getFillRange();
-  int getPaintMode();
-  int getPaletteIndex();
-  int getSelectAlpha();
-  int getTextFontFace();
-  int getTextFontSize();
-  int getTextSmooth();
-  int getTool();
+public:
+  static int getClone();
+  static int getFillFeather();
+  static int getFillRange();
+  static int getPaintMode();
+  static int getPaletteIndex();
+  static int getSelectAlpha();
+  static int getTextFontFace();
+  static int getTextFontSize();
+  static int getTextSmooth();
+  static int getTool();
 
-  Fl_Menu_Bar *getMenuBar();
-  View *getView();
-  Fl_Double_Window *getWindow();
+  static Fl_Menu_Bar *getMenuBar();
+  static View *getView();
+  static Fl_Double_Window *getWindow();
 
-  void init();
-  void show();
+  static void init();
+  static void show();
 
-  void clearToBlack();
-  void clearToColor();
-  void clearToGray();
-  void clearToTrans();
-  void clearToWhite();
+  static void clearToBlack();
+  static void clearToColor();
+  static void clearToGray();
+  static void clearToTrans();
+  static void clearToWhite();
 
-  void constrainEnable(Widget *, void *);
-  void cloneEnable(Widget *, void *);
+  static void constrainEnable(Widget *, void *);
+  static void cloneEnable(Widget *, void *);
 
-  void colorBlend(Widget *, void *);
-  void colorChange(Widget *, void *);
-  void colorHexInput();
-  void colorHexUpdate();
-  void colorHue(Widget *, void *);
-  void colorSatVal(Widget *, void *);
-  void colorSwatch();
-  void colorTrans(Widget *, void *);
-  void colorTransInput(Widget *, void *);
-  void colorUpdate(int);
+  static void colorBlend(Widget *, void *);
+  static void colorChange(Widget *, void *);
+  static void colorHexInput();
+  static void colorHexUpdate();
+  static void colorHue(Widget *, void *);
+  static void colorSatVal(Widget *, void *);
+  static void colorSwatch();
+  static void colorTrans(Widget *, void *);
+  static void colorTransInput(Widget *, void *);
+  static void colorUpdate(int);
 
-  void fillReset();
+  static void fillReset();
 
-  void getcolorUpdate(int);
+  static void getcolorUpdate(int);
 
-  void gridEnable(ToggleButton *, void *);
-  void gridSnap(ToggleButton *, void *);
-  void gridX();
-  void gridY();
+  static void gridEnable(ToggleButton *, void *);
+  static void gridSnap(ToggleButton *, void *);
+  static void gridX();
+  static void gridY();
 
-  void imagesBrowse();
-  void imagesRename();
-  void imagesAddFile(const char *);
-  void imagesCloseFile();
-  void imagesUpdateMemInfo();
-  void imagesDuplicate();
+  static void imagesBrowse();
+  static void imagesRename();
+  static void imagesAddFile(const char *);
+  static void imagesCloseFile();
+  static void imagesUpdateMemInfo();
+  static void imagesDuplicate();
 
-  void menuCheckItem(const char *);
-  void menuClearItem(const char *);
+  static void menuCheckItem(const char *);
+  static void menuClearItem(const char *);
 
-  void offsetValues(int, int);
-  void offsetLeft(Widget *, void *);
-  void offsetRight(Widget *, void *);
-  void offsetUp(Widget *, void *);
-  void offsetDown(Widget *, void *);
+  static void offsetValues(int, int);
+  static void offsetLeft(Widget *, void *);
+  static void offsetRight(Widget *, void *);
+  static void offsetUp(Widget *, void *);
+  static void offsetDown(Widget *, void *);
 
-  void originEnable(Widget *, void *);
+  static void originEnable(Widget *, void *);
 
-  void paintChangeSize(int);
-  void paintMode();
-  void paintSize(Widget *, void *);
-  void paintSizeValue(Widget *, void *);
-  void paintShape(Widget *, void *);
-  void paintStroke(Widget *, void *);
-  void paintCoarseEdge(Widget *, void *);
-  void paintFineEdge(Widget *, void *);
-  void paintBlurryEdge(Widget *, void *);
-  void paintWatercolorEdge(Widget *, void *);
-  void paintChalkEdge(Widget *, void *);
-  void paintTextureEdge(Widget *, void *);
-  void paintTextureMarb(Widget *, void *);
-  void paintTextureTurb(Widget *, void *);
-  void paintAverageEdge(Widget *, void *);
+  static void paintChangeSize(int);
+  static void paintMode();
+  static void paintSize(Widget *, void *);
+  static void paintSizeValue(Widget *, void *);
+  static void paintShape(Widget *, void *);
+  static void paintStroke(Widget *, void *);
+  static void paintCoarseEdge(Widget *, void *);
+  static void paintFineEdge(Widget *, void *);
+  static void paintBlurryEdge(Widget *, void *);
+  static void paintWatercolorEdge(Widget *, void *);
+  static void paintChalkEdge(Widget *, void *);
+  static void paintTextureEdge(Widget *, void *);
+  static void paintTextureMarb(Widget *, void *);
+  static void paintTextureTurb(Widget *, void *);
+  static void paintAverageEdge(Widget *, void *);
 
-  void palette3LevelRGB();
-  void palette4LevelRGB();
-  void paletteBlackAndWhite();
-  void paletteDefault();
-  void paletteDraw();
-  void paletteIndex(int);
-  void paletteSort();
-  void paletteSwatches(Widget *, void *);
-  void paletteWebSafe();
+  static void palette3LevelRGB();
+  static void palette4LevelRGB();
+  static void paletteBlackAndWhite();
+  static void paletteDefault();
+  static void paletteDraw();
+  static void paletteIndex(int);
+  static void paletteSort();
+  static void paletteSwatches(Widget *, void *);
+  static void paletteWebSafe();
 
 
-  int progressUpdate(int);
-  void progressEnable(bool);
-  void progressHide();
-  void progressShow(float);
-  void progressShow(float, int);
+  static int progressUpdate(int);
+  static void progressEnable(bool);
+  static void progressHide();
+  static void progressShow(float);
+  static void progressShow(float, int);
 
-  void selectCopy();
-  void selectCopyEnable(bool);
-  void selectPaste();
-  void selectPasteEnable(bool);
-  void selectCrop();
-  void selectCropEnable(bool);
-  void selectFlipX();
-  void selectFlipY();
-  void selectFromImage();
-  void selectReset();
-  void selectRotate180();
-  void selectRotate90();
-  void selectToImage();
-  void selectValues(int, int, int, int);
+  static void selectCopy();
+  static void selectCopyEnable(bool);
+  static void selectPaste();
+  static void selectPasteEnable(bool);
+  static void selectCrop();
+  static void selectCropEnable(bool);
+  static void selectFlipX();
+  static void selectFlipY();
+  static void selectFromImage();
+  static void selectReset();
+  static void selectRotate180();
+  static void selectRotate90();
+  static void selectToImage();
+  static void selectValues(int, int, int, int);
 
-  void statusCoords(char *);
-  void statusInfo(char *);
+  static void statusCoords(char *);
+  static void statusInfo(char *);
 
-  void textChangedSize(InputInt *, void *);
-  const char *textInput();
+  static void textChangedSize(InputInt *, void *);
+  static const char *textInput();
 
-  void toolChange(Widget *, void *);
+  static void toolChange(Widget *, void *);
 
-  void zoomIn(Button *, void *);
-  void zoomOut(Button *, void *);
-  void zoomOne(Button *, void *);
-  void zoomLevel();
-}
+  static void zoomIn(Button *, void *);
+  static void zoomOut(Button *, void *);
+  static void zoomOne(Button *, void *);
+  static void zoomLevel();
+
+private:
+  Gui() { }
+  ~Gui() { }
+};
 
 #endif
 
