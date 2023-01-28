@@ -30,20 +30,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
-namespace Clone
-{
-  int x = 0;
-  int y = 0;
-  int dx = 0;
-  int dy = 0;
-  int state = 0;
-  bool active = false;
-  bool moved = false;
-  Bitmap *buffer_bmp = 0;
+int Clone::x = 0;
+int Clone::y = 0;
+int Clone::dx = 0;
+int Clone::dy = 0;
+int Clone::state = 0;
+bool Clone::active = false;
+bool Clone::moved = false;
+Bitmap *Clone::buffer_bmp = 0;
 
-  Fl_Double_Window *window = 0;
-  Widget *preview = 0;
-}
+Fl_Double_Window *Clone::window = 0;
+Widget *Clone::preview = 0;
 
 void Clone::init()
 {

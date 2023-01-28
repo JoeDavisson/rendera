@@ -22,10 +22,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define CLONE_H
 
 class Bitmap;
+class Widget;
 class View;
 
-namespace Clone
+class Fl_Double_Window;
+
+class Clone
 {
+public:
   enum
   {
     RESET,
@@ -33,21 +37,28 @@ namespace Clone
     STARTED
   };
 
-  extern int x;
-  extern int y;
-  extern int dx;
-  extern int dy;
-  extern int state;
-  extern bool active;
-  extern bool moved;
-  extern Bitmap *buffer_bmp;
+  static int x;
+  static int y;
+  static int dx;
+  static int dy;
+  static int state;
+  static bool active;
+  static bool moved;
+  static Bitmap *buffer_bmp;
 
-  void init();
-  void move(int, int);
-  void refresh(int, int, int, int);
-  void show(bool);
-  void update(View *);
-}
+  static void init();
+  static void move(int, int);
+  static void refresh(int, int, int, int);
+  static void show(bool);
+  static void update(View *);
+
+private:
+  static Fl_Double_Window *window;
+  static Widget *preview;
+
+  Clone() { }
+  ~Clone() { }
+};
 
 #endif
 

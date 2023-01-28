@@ -97,8 +97,8 @@ public:
   static void popRedo();
 
 private:
-  Project() { };
-  ~Project() { };
+  Project() { }
+  ~Project() { }
 };
 
 #endif
