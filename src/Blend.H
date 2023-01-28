@@ -24,8 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Bitmap;
 class Palette;
 
-namespace Blend
+class Blend
 {
+public:
   enum
   {
     TRANS,
@@ -40,27 +41,39 @@ namespace Blend
     TRANS_NO_ALPHA,
   };
  
-  void set(const int);
-  void target(Bitmap *, const int, const int);
-  int current(const int, const int, const int);
-  int transAlpha(const int, const int, const int);
-  int transNoAlpha(const int, const int, const int);
-  int trans(const int, const int, const int);
-  int lighten(const int, const int, const int);
-  int darken(const int, const int, const int);
-  int colorize(const int, const int, const int);
-  int luminosity(const int, const int, const int);
-  int keepLum(const int, const int);
-  int alphaSub(const int, const int, const int);
-  int smooth(const int, const int, const int);
-  int fast(const int, const int, const int);
-  int invert(const int, const int, const int);
-  void rgbToHsv(const int, const int, const int, int *, int *, int *);
-  void hsvToRgb(const int, const int, const int, int *, int *, int *);
-  void rgbToYcc(const int, const int, const int, float *, float *, float *);
-  void yccToRgb(const float, const float, const float, int *, int *, int *);
-  void wheelToRgb(const int, const int, const int, int *, int *, int *);
-}
+  static void set(const int);
+  static void target(Bitmap *, const int, const int);
+  static int current(const int, const int, const int);
+  static int transAlpha(const int, const int, const int);
+  static int transNoAlpha(const int, const int, const int);
+  static int trans(const int, const int, const int);
+  static int lighten(const int, const int, const int);
+  static int darken(const int, const int, const int);
+  static int colorize(const int, const int, const int);
+  static int luminosity(const int, const int, const int);
+  static int keepLum(const int, const int);
+  static int alphaSub(const int, const int, const int);
+  static int smooth(const int, const int, const int);
+  static int fast(const int, const int, const int);
+  static int invert(const int, const int, const int);
+  static void rgbToHsv(const int, const int, const int, int *, int *, int *);
+  static void hsvToRgb(const int, const int, const int, int *, int *, int *);
+  static void rgbToYcc(const int, const int, const int,
+                       float *, float *, float *);
+  static void yccToRgb(const float, const float, const float,
+                       int *, int *, int *);
+  static void wheelToRgb(const int, const int, const int,
+                       int *, int *, int *);
+
+private:
+  static int (*current_blend)(const int, const int, const int);
+  static Bitmap *bmp;
+  static int xpos;
+  static int ypos;
+
+  Blend() { }
+  ~Blend() { }
+};
 
 #endif
 

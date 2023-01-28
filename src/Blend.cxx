@@ -28,12 +28,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Inline.H"
 #include "Palette.H"
 
-namespace
-{
-  int (*current_blend)(const int, const int, const int) = &Blend::trans;
-  Bitmap *bmp;
-  int xpos, ypos;
-}
+int (*Blend::current_blend)(const int, const int, const int) = &Blend::trans;
+Bitmap *Blend::bmp;
+int Blend::xpos;
+int Blend::ypos;
 
 // sets the blending mode for future operations
 void Blend::set(const int mode)
