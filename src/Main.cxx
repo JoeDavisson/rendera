@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Dialog.H"
 #include "File.H"
 #include "FX/FX.H"
+#include "Gamma.H"
 #include "Gui.H"
 #include "Inline.H"
 #include "Project.H"
@@ -222,6 +223,7 @@ int main(int argc, char *argv[])
   Fl::scheme("gtk+");
 
   // program initalization
+  Gamma::init();
   Project::init(memory_max, undo_max);
   File::init();
   FX::init();

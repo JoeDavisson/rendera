@@ -18,23 +18,29 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef GAMMA_H
-#define GAMMA_H
+#include <cmath>
 
-class Gamma
+#include "Gamma.H"
+
+int Gamma::table_fix[256];
+int Gamma::table_unfix[65536];
+
+void Gamma::init()
 {
-public:
-  static void init();
-  static int fix(const int);
-  static int unfix(const int);
+  for(int i = 0; i < 256; i++)
+    table_fix[i] = std::pow((double)i / 255, 2.2) * 65535;
 
-private:
-  static int table_fix[256];
-  static int table_unfix[65536];
+  for(int i = 0; i < 65536; i++)
+    table_unfix[i] = std::pow((double)i / 65535, (1.0 / 2.2)) * 255;
+}
 
-  Gamma() { }
-  ~Gamma() { }
-};
+int Gamma::fix(const int val)
+{
+  return table_fix[val];
+}
 
-#endif
+int Gamma::unfix(const int val)
+{
+  return table_unfix[val];
+}
 
