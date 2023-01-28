@@ -60,169 +60,165 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
-namespace
+#pragma pack(push)
+#pragma pack(1)
+
+// BMP file format structures
+struct bmp_file_header_type
 {
-  #pragma pack(push)
-  #pragma pack(1)
+  uint16_t bfType;
+  uint32_t bfSize;
+  uint16_t bfReserved1;
+  uint16_t bfReserved2;
+  uint32_t bfOffBits;
+};
 
-  // BMP file format structures
-  struct bmp_file_header_type
-  {
-    uint16_t bfType;
-    uint32_t bfSize;
-    uint16_t bfReserved1;
-    uint16_t bfReserved2;
-    uint32_t bfOffBits;
-  };
+struct bmp_info_header_type
+{
+  uint32_t biSize;
+  uint32_t biWidth;
+  uint32_t biHeight;
+  uint16_t biPlanes;
+  uint16_t biBitCount;
+  uint32_t biCompression;
+  uint32_t biSizeImage;
+  uint32_t biXPelsPerMeter;
+  uint32_t biYPelsPerMeter;
+  uint32_t biClrUsed;
+  uint32_t biClrImportant;
+};
 
-  struct bmp_info_header_type
-  {
-    uint32_t biSize;
-    uint32_t biWidth;
-    uint32_t biHeight;
-    uint16_t biPlanes;
-    uint16_t biBitCount;
-    uint32_t biCompression;
-    uint32_t biSizeImage;
-    uint32_t biXPelsPerMeter;
-    uint32_t biYPelsPerMeter;
-    uint32_t biClrUsed;
-    uint32_t biClrImportant;
-  };
+// targa file format structure
+struct targa_header_type
+{
+  uint8_t id_length;
+  uint8_t color_map_type;
+  uint8_t data_type;
+  uint16_t color_map_origin;
+  uint16_t color_map_length;
+  uint8_t color_map_depth;
+  uint16_t x;
+  uint16_t y;
+  uint16_t w;
+  uint16_t h;
+  uint8_t bpp;
+  uint8_t descriptor;
+};
 
-  // targa file format structure
-  struct targa_header_type
-  {
-    uint8_t id_length;
-    uint8_t color_map_type;
-    uint8_t data_type;
-    uint16_t color_map_origin;
-    uint16_t color_map_length;
-    uint8_t color_map_depth;
-    uint16_t x;
-    uint16_t y;
-    uint16_t w;
-    uint16_t h;
-    uint8_t bpp;
-    uint8_t descriptor;
-  };
+#pragma pack(pop)
 
-  #pragma pack(pop)
+struct my_error_mgr
+{
+  struct jpeg_error_mgr pub;
+  jmp_buf setjmp_buffer;
+};
 
-  // jpeg structures
-  struct my_error_mgr
-  {
-    struct jpeg_error_mgr pub;
-    jmp_buf setjmp_buffer;
-  };
+typedef struct my_error_mgr *my_error_ptr;
 
-  typedef struct my_error_mgr *my_error_ptr;
+struct png_state
+{
+  png_uint_32 pos;
+  png_uint_32 size;
+  const unsigned char *array;
+};
 
-  void jpg_exit(j_common_ptr cinfo)
-  {
-    my_error_ptr myerr = (my_error_ptr)cinfo->err;
-    (*cinfo->err->output_message)(cinfo);
-    longjmp(myerr->setjmp_buffer, 1);
-  }
+void jpg_exit(j_common_ptr cinfo)
+{
+  my_error_ptr myerr = (my_error_ptr)cinfo->err;
+  (*cinfo->err->output_message)(cinfo);
+  longjmp(myerr->setjmp_buffer, 1);
+}
 
-  // bitmap pointer used for FLTK's file preview
-  //Bitmap *preview_bmp = 0;
+// bitmap pointer used for FLTK's file preview
+//Bitmap *preview_bmp = 0;
 
-  // palette preview widget
-  //Widget *pal_preview;
+// palette preview widget
+//Widget *pal_preview;
 
-  enum
-  {
-    TYPE_PNG,
-    TYPE_JPG,
-    TYPE_BMP,
-    TYPE_TGA,
-    TYPE_TXT,
-  };
+enum
+{
+  TYPE_PNG,
+  TYPE_JPG,
+  TYPE_BMP,
+  TYPE_TGA,
+  TYPE_TXT,
+};
  
-  int last_type = 0;
+int File::last_type = 0;
 
-  const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
+// store previous directory paths
+char File::load_dir[256];
+char File::save_dir[256];
+char File::pal_load_dir[256];
+char File::pal_save_dir[256];
 
-  // store previous directory paths
-  char load_dir[256];
-  char save_dir[256];
-  char pal_load_dir[256];
-  char pal_save_dir[256];
+const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
 
-  // show error dialog
-  void errorMessage()
+// show error dialog
+void File::errorMessage()
+{
+  Dialog::message("File Error", "An error occured during the operation.");
+}
+
+// check if trying to overwrite existing file
+bool File::fileExists(const char *fn)
+{
+  FILE *temp = fopen(fn, "rb");
+
+  if(temp)
   {
-    Dialog::message("File Error", "An error occured during the operation.");
+    fclose(temp);
+    return 1;
   }
 
-  // check if trying to overwrite existing file
-  bool fileExists(const char *fn)
-  {
-    FILE *temp = fopen(fn, "rb");
+  return 0;
+}
 
-    if(temp)
-    {
-      fclose(temp);
-      return 1;
-    }
+// file header tests
+bool File::isPng(const unsigned char *header)
+{
+  return (png_sig_cmp((png_bytep)header, 0, 8) == 0);
+}
 
-    return 0;
-  }
+bool File::isJpeg(const unsigned char *header)
+{
+  const unsigned char id[2] = { 0xFF, 0xD8 };
+  return (memcmp(header, id, 2) == 0);
+}
 
-  // file header tests
-  bool isPng(const unsigned char *header)
-  {
-    return (png_sig_cmp((png_bytep)header, 0, 8) == 0);
-  }
+bool File::isBmp(const unsigned char *header)
+{
+  return (memcmp(header, "BM", 2) == 0);
+}
 
-  bool isJpeg(const unsigned char *header)
-  {
-    const unsigned char id[2] = { 0xFF, 0xD8 };
-    return (memcmp(header, id, 2) == 0);
-  }
+bool File::isTarga(const char *fn)
+{
+  // targa has no real header, will have to trust the file extension
+  const char *ext;
+  ext = fl_filename_ext(fn);
+  return (strcmp(ext, ".tga") == 0);
+}
 
-  bool isBmp(const unsigned char *header)
-  {
-    return (memcmp(header, "BM", 2) == 0);
-  }
+bool File::isGimpPalette(const unsigned char *header)
+{
+  return (memcmp(header, "GIMP Palette", 12) == 0);
+}
 
-  bool isTarga(const char *fn)
-  {
-    // targa has no real header, will have to trust the file extension
-    const char *ext;
-    ext = fl_filename_ext(fn);
-    return (strcmp(ext, ".tga") == 0);
-  }
-
-  bool isGimpPalette(const unsigned char *header)
-  {
-    return (memcmp(header, "GIMP Palette", 12) == 0);
-  }
-
-  struct png_state
-  {
-    png_uint_32 pos;
-    png_uint_32 size;
-    const unsigned char *array;
-  };
-
-  // callback for reading PNG from byte array
-  void pngReadFromArray(png_structp png_ptr, png_bytep dest, png_uint_32 length)
-  {
-    struct png_state *src = (struct png_state *)png_get_io_ptr(png_ptr);
-
-    memcpy(dest, src->array + src->pos, length);
-    src->pos += length;
-  }
+// callback for reading PNG from byte array
+void File::pngReadFromArray(png_structp png_ptr,
+                             png_bytep dest, png_uint_32 length)
+{
+  struct png_state *src = (struct png_state *)png_get_io_ptr(png_ptr);
+  memcpy(dest, src->array + src->pos, length);
+  src->pos += length;
 }
 
 void File::init()
 {
-    strcpy(load_dir, ".");
-    strcpy(save_dir, ".");
-    strcpy(pal_load_dir, ".");
-    strcpy(pal_save_dir, ".");
+  strcpy(load_dir, ".");
+  strcpy(save_dir, ".");
+  strcpy(pal_load_dir, ".");
+  strcpy(pal_save_dir, ".");
 }
 
 /*
@@ -258,7 +254,7 @@ void File::load(Fl_Widget *, void *)
       break;
   }
 
-  loadFile(fc.filename());
+  File::loadFile(fc.filename());
 }
 
 // load a file

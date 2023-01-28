@@ -21,31 +21,35 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef FILE_H
 #define FILE_H
 
+#include "../fltk/png/png.h"
+#include "../fltk/jpeg/jpeglib.h"
+
 class Fl_Widget;
 class Fl_Image;
 class Bitmap;
 
-namespace File
+class File
 {
-  void init();
-  void load(Fl_Widget *, void *);
-  int loadFile(const char *);
-  Bitmap *loadJpeg(const char *);
-  Bitmap *loadBmp(const char *);
-  Bitmap *loadTarga(const char *);
-  Bitmap *loadPng(const char *);
-  Bitmap *loadPngFromArray(const unsigned char *);
+public:
+  static void init();
+  static void load(Fl_Widget *, void *);
+  static int loadFile(const char *);
+  static Bitmap *loadJpeg(const char *);
+  static Bitmap *loadBmp(const char *);
+  static Bitmap *loadTarga(const char *);
+  static Bitmap *loadPng(const char *);
+  static Bitmap *loadPngFromArray(const unsigned char *);
 
-  void save(Fl_Widget *, void *);
-  int saveBmp(Bitmap *, const char *);
-  int saveTarga(Bitmap *, const char *);
-  int savePng(Bitmap *, const char *);
-  int saveJpeg(Bitmap *, const char *);
+  static void save(Fl_Widget *, void *);
+  static int saveBmp(Bitmap *, const char *);
+  static int saveTarga(Bitmap *, const char *);
+  static int savePng(Bitmap *, const char *);
+  static int saveJpeg(Bitmap *, const char *);
 
-  void loadPalette();
-  void savePalette();
-  void loadSelection();
-  void saveSelection();
+  static void loadPalette();
+  static void savePalette();
+  static void loadSelection();
+  static void saveSelection();
 
   //Fl_Image *previewJpeg(const char *, unsigned char *, int);
   //Fl_Image *previewPng(const char *, unsigned char *, int);
@@ -53,10 +57,30 @@ namespace File
   //Fl_Image *previewTarga(const char *, unsigned char *, int);
   //Fl_Image *previewGimpPalette(const char *, unsigned char *, int);
 
-  void decodeURI(char *);
-  void getDirectory(char *, const char *);
-  void getFilename(char *, const char *);
-}
+  static void decodeURI(char *);
+  static void getDirectory(char *, const char *);
+  static void getFilename(char *, const char *);
+
+private:
+  static int last_type;
+  static char load_dir[256];
+  static char save_dir[256];
+  static char pal_load_dir[256];
+  static char pal_save_dir[256];
+
+  static void jpeg_exit(j_common_ptr);
+  static void errorMessage();
+  static bool fileExists(const char *);
+  static bool isPng(const unsigned char *);
+  static bool isJpeg(const unsigned char *);
+  static bool isBmp(const unsigned char *);
+  static bool isTarga(const char *);
+  static bool isGimpPalette(const unsigned char *);
+  static void pngReadFromArray(png_structp, png_bytep, png_uint_32);
+  
+  File() { }
+  ~File() { }
+};
 
 #endif
 
