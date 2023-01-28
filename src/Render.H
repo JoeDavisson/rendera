@@ -21,10 +21,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef RENDER_H
 #define RENDER_H
 
+class Bitmap;
+class Map;
+class Brush;
+class Stroke;
 class View;
 
-namespace Render
+class Render
 {
+public:
   enum
   {
     SOLID,
@@ -37,9 +42,39 @@ namespace Render
     TEXTURE,
     AVERAGE
   };
- 
-  void begin();
-}
+
+  static Bitmap *bmp;
+  static Map *map;
+  static Brush *brush;
+  static Stroke *stroke;
+  static View *view;
+  static int color;
+  static int trans;
+
+  static void begin();
+
+private:
+  static bool isEdge(Map *, const int, const int);
+  static int fineEdge(int, int, const int, const int, const int, const int);
+  static void shrinkBlock(unsigned char *, unsigned char *,
+                          unsigned char *, unsigned char *);
+  static void growBlock(unsigned char *, unsigned char *,
+                        unsigned char *, unsigned char *);
+  static int update(int);
+
+  static void solid();
+  static void antialiased();
+  static void coarse();
+  static void fine();
+  static void blur();
+  static void watercolor();
+  static void chalk();
+  static void texture();
+  static void average();
+
+  Render() { }
+  ~Render() { }
+};
 
 #endif
 
