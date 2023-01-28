@@ -62,6 +62,9 @@ public:
   static void getFilename(char *, const char *);
 
 private:
+  File() { }
+  ~File() { }
+
   static int last_type;
   static char load_dir[256];
   static char save_dir[256];
@@ -77,9 +80,6 @@ private:
   static bool isTarga(const char *);
   static bool isGimpPalette(const unsigned char *);
   static void pngReadFromArray(png_structp, png_bytep, png_uint_32);
-  
-  File() { }
-  ~File() { }
 };
 
 #endif

@@ -66,13 +66,13 @@ public:
                        int *, int *, int *);
 
 private:
+  Blend() { }
+  ~Blend() { }
+
   static int (*current_blend)(const int, const int, const int);
   static Bitmap *bmp;
   static int xpos;
   static int ypos;
-
-  Blend() { }
-  ~Blend() { }
 };
 
 #endif

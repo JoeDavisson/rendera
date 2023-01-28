@@ -630,7 +630,7 @@ void Gui::init()
   paint_mode->add("Antialiased");
   paint_mode->add("Coarse");
   paint_mode->add("Fine");
-  paint_mode->add("Blurred");
+  paint_mode->add("Blur");
   paint_mode->add("Watercolor");
   paint_mode->add("Chalk");
   paint_mode->add("Texture");
@@ -1088,7 +1088,7 @@ void Gui::colorUpdate(int c)
 
   Blend::rgbToHsv(r, g, b, &h, &s, &v);
 
-  float angle = ((3.14159 * 2) / 1536) * h;
+  float angle = ((M_PI * 2) / 1536) * h;
   int mx = 64 + 56 * std::cos(angle);
   int my = 64 + 56 * std::sin(angle);
   hue->var = mx + 128 * my;
@@ -1449,7 +1449,7 @@ void Gui::colorChange(Widget *widget, void *)
     Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
     //Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
 
-    float angle = ((3.14159 * 2) / 1536) * i;
+    float angle = ((M_PI * 2) / 1536) * i;
     int x1 = 64 + 62 * std::cos(angle);
     int y1 = 64 + 62 * std::sin(angle);
     int x2 = 64 + 50 * std::cos(angle);
@@ -1464,7 +1464,7 @@ void Gui::colorChange(Widget *widget, void *)
     Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
     //Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
 
-    float angle = ((3.14159 * 2) / 1536) * i;
+    float angle = ((M_PI * 2) / 1536) * i;
     int x1 = 64 + 61 * std::cos(angle);
     int y1 = 64 + 61 * std::sin(angle);
     int x2 = 64 + 51 * std::cos(angle);
@@ -1479,7 +1479,7 @@ void Gui::colorChange(Widget *widget, void *)
     Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
     //Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
 
-    float angle = ((3.14159 * 2) / 1536) * i;
+    float angle = ((M_PI * 2) / 1536) * i;
     int x1 = 64 + 60 * std::cos(angle);
     int y1 = 64 + 60 * std::sin(angle);
     int x2 = 64 + 52 * std::cos(angle);

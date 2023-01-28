@@ -53,11 +53,11 @@ public:
   static void update(View *);
 
 private:
-  static Fl_Double_Window *window;
-  static Widget *preview;
-
   Clone() { }
   ~Clone() { }
+
+  static Fl_Double_Window *window;
+  static Widget *preview;
 };
 
 #endif

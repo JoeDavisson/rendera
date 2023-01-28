@@ -63,7 +63,6 @@ KDtree::node_type *KDtree::median(node_type *start, node_type *end, int index)
     const int pivot = md->x[index];
 
     swap(md, end - 1);
-
     store = start;
 
     for(p = start; p < end; p++)
@@ -91,7 +90,8 @@ KDtree::node_type *KDtree::median(node_type *start, node_type *end, int index)
   }
 }
 
-KDtree::node_type *KDtree::make_tree(node_type *t, const int len, int i, const int dim)
+KDtree::node_type *KDtree::make_tree(node_type *t,
+                                     const int len, int i, const int dim)
 {
   node_type *n;
 
@@ -108,7 +108,8 @@ KDtree::node_type *KDtree::make_tree(node_type *t, const int len, int i, const i
   return n;
 }
 
-void KDtree::nearest(node_type *r, node_type *nd, int i, const int dim, node_type **best, int *best_dist)
+void KDtree::nearest(node_type *r, node_type *nd,
+                     int i, const int dim, node_type **best, int *best_dist)
 {
   if(!r)
     return;

@@ -31,6 +31,9 @@ public:
   static void pca(Bitmap *, Palette *, int);
 
 private:
+  Quantize() { }
+  ~Quantize() { }
+
   struct color_type
   {
     float r, g, b, freq;
@@ -42,9 +45,6 @@ private:
   static float error(color_type *, color_type *);
   static void merge(color_type *, color_type *);
   static int limitColors(Octree *, color_type *, int);
-
-  Quantize() { }
-  ~Quantize() { }
 };
 
 #endif

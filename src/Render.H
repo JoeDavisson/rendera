@@ -54,6 +54,9 @@ public:
   static void begin();
 
 private:
+  Render() { }
+  ~Render() { }
+
   static bool isEdge(Map *, const int, const int);
   static int fineEdge(int, int, const int, const int, const int, const int);
   static void shrinkBlock(unsigned char *, unsigned char *,
@@ -71,9 +74,6 @@ private:
   static void chalk();
   static void texture();
   static void average();
-
-  Render() { }
-  ~Render() { }
 };
 
 #endif

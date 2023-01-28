@@ -576,8 +576,8 @@ namespace RotateArbitrary
     angle += 90;
 
     // rotation
-    int du_col = (int)((std::sin(angle * (3.14159 / 180)) * scale) * 65536);
-    int dv_col = (int)((std::sin((angle + 90) * (3.14159 / 180)) * scale) * 65536);
+    int du_col = (int)((std::sin(angle * (M_PI / 180)) * scale) * 65536);
+    int dv_col = (int)((std::sin((angle + 90) * (M_PI / 180)) * scale) * 65536);
     int du_row = -dv_col;
     int dv_row = du_col;
 
@@ -637,8 +637,8 @@ namespace RotateArbitrary
     bh /= 2;
 
     // rotation
-    du_col = (int)((std::sin(angle * (3.14159 / 180)) / scale) * 65536);
-    dv_col = (int)((std::sin((angle + 90) * (3.14159 / 180)) / scale) * 65536);
+    du_col = (int)((std::sin(angle * (M_PI / 180)) / scale) * 65536);
+    dv_col = (int)((std::sin((angle + 90) * (M_PI / 180)) / scale) * 65536);
     du_row = -dv_col;
     dv_row = du_col;
 

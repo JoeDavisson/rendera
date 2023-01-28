@@ -96,7 +96,8 @@ void Palette::draw(Widget *widget)
       int x1 = x * step;
       int y1 = y * step;
 
-      widget->bitmap->rectfill(x1, y1, x1 + step - 1, y1 + step - 1, data[i], 0);
+      widget->bitmap->rectfill(x1, y1, x1 + step - 1, y1 + step - 1,
+                               data[i], 0);
       i++;
     }
   }
@@ -118,10 +119,12 @@ void Palette::draw(Widget *widget)
   int y = py * step;
 
   widget->bitmap->rect(0, 0, w - 1, h - 1, makeRgb(0, 0, 0), 0);
-  widget->bitmap->rectfill(x, y, x + step - 1, y + step - 1, data[widget->var], 0);
+  widget->bitmap->rectfill(x, y, x + step - 1, y + step - 1,
+                           data[widget->var], 0);
   widget->bitmap->rect(x, y, x + step - 1, y + step - 1, makeRgb(0, 0, 0), 0);
   widget->bitmap->rect(x - 1, y - 1, x + step, y + step, makeRgb(0, 0, 0), 96);
-  widget->bitmap->rect(x - 2, y - 2, x + step + 1, y + step + 1, makeRgb(0, 0, 0), 160);
+  widget->bitmap->rect(x - 2, y - 2, x + step + 1, y + step + 1,
+                       makeRgb(0, 0, 0), 160);
   widget->bitmap->xorRect(x, y, x + step - 1, y + step - 1);
 
   widget->redraw();
@@ -295,7 +298,11 @@ int Palette::save(const char *fn)
 
 void Palette::setDefault()
 {
-  static int hue[] = { 0, 109, 192, 256, 328, 364, 512, 657, 768, 864, 940, 1024, 1160, 1280, 1425 }; 
+  static int hue[] =
+  {
+    0, 109, 192, 256, 328, 364, 512, 657,
+    768, 864, 940, 1024, 1160, 1280, 1425
+  }; 
 
   static int sat[] = { 192, 255, 144, 96 };
   static int val[] = { 128, 255, 255, 255 };

@@ -24,9 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // generic "smart pointer" template
 template<typename T> class SP
 {
-private:
-  T *data;
-
 public:
   SP(T *value) : data(value)
   {
@@ -51,6 +48,9 @@ public:
   {
     return data;
   }
+
+private:
+  T *data;
 };
 
 #endif
