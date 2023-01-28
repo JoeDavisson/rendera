@@ -34,177 +34,140 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
-namespace
-{
-/*
-  int getMsb(int val)
-  {
-    if(val == 0)
-      return 0;
-
-    val /= 2;
-
-    int msb = 0;
-
-    while(val != 0)
-    {
-      val /= 2;
-      msb++;
-    }
-
-    return msb;
-  }
-*/
-
-/*
-  bool sortByLum(const int c1, const int c2)
-  {
-    return getl(c1) < getl(c2);
-  }
-*/
-
-  struct color_type
-  {
-    float r, g, b, freq;
-    bool active;
-  };
-
-  void makeColor(color_type *c,
+void Quantize::makeColor(color_type *c,
                  const float r, const float g, const float b, const float freq)
+{
+  c->r = r;
+  c->g = g;
+  c->b = b;
+  c->freq = freq;
+  c->active = true;
+}
+
+// compute quantization error
+float Quantize::error(color_type *c1, color_type *c2)
+{
+  const float r = c1->r - c2->r;
+  const float g = c1->g - c2->g;
+  const float b = c1->b - c2->b;
+
+  return ((c1->freq * c2->freq) / (c1->freq + c2->freq)) *
+          (r * r + g * g + b * b);
+}
+
+// merge two colors
+void Quantize::merge(color_type *c1, color_type *c2)
+{
+  const float mul = 1.0f / (c1->freq + c2->freq);
+
+  c1->r = (c1->freq * c1->r + c2->freq * c2->r) * mul;
+  c1->g = (c1->freq * c1->g + c2->freq * c2->g) * mul;
+  c1->b = (c1->freq * c1->b + c2->freq * c2->b) * mul;
+  c1->freq += c2->freq;  
+}
+
+// reduces color count by averaging sections of the color cube
+int Quantize::limitColors(Octree *histogram, color_type *colors, int step)
+{
+  int count = 0;
+
+  for(int b = 0; b <= 256 - step; b += step)
   {
-    c->r = r;
-    c->g = g;
-    c->b = b;
-    c->freq = freq;
-    c->active = true;
-  }
-
-  // compute quantization error
-  float error(color_type *c1, color_type *c2)
-  {
-    const float r = c1->r - c2->r;
-    const float g = c1->g - c2->g;
-    const float b = c1->b - c2->b;
-
-    return ((c1->freq * c2->freq) / (c1->freq + c2->freq)) *
-            (r * r + g * g + b * b);
-  }
-
-  // merge two colors
-  void merge(color_type *c1, color_type *c2)
-  {
-    const float mul = 1.0f / (c1->freq + c2->freq);
-
-    c1->r = (c1->freq * c1->r + c2->freq * c2->r) * mul;
-    c1->g = (c1->freq * c1->g + c2->freq * c2->g) * mul;
-    c1->b = (c1->freq * c1->b + c2->freq * c2->b) * mul;
-    c1->freq += c2->freq;  
-  }
-
-  // reduces color count by averaging sections of the color cube
-  int limitColors(Octree *histogram, color_type *colors, int step)
-  {
-    int count = 0;
-
-    for(int b = 0; b <= 256 - step; b += step)
+    for(int g = 0; g <= 256 - step; g += step)
     {
-      for(int g = 0; g <= 256 - step; g += step)
+      for(int r = 0; r <= 256 - step; r += step)
       {
-        for(int r = 0; r <= 256 - step; r += step)
+        float rr = 0;
+        float gg = 0;
+        float bb = 0;
+        float div = 0;
+
+        for(int k = 0; k < step; k++)
         {
-          float rr = 0;
-          float gg = 0;
-          float bb = 0;
-          float div = 0;
+          const int bk = b + k;
 
-          for(int k = 0; k < step; k++)
+          for(int j = 0; j < step; j++)
           {
-            const int bk = b + k;
+            const int gj = g + j;
 
-            for(int j = 0; j < step; j++)
+            for(int i = 0; i < step; i++)
             {
-              const int gj = g + j;
+              const int ri = r + i;
+              const float d = histogram->read(ri, gj, bk);
 
-              for(int i = 0; i < step; i++)
-              {
-                const int ri = r + i;
-                const float d = histogram->read(ri, gj, bk);
+              if(d > 0)
+                histogram->write(ri, gj, bk, 0);
 
-                if(d > 0)
-                  histogram->write(ri, gj, bk, 0);
-
-                rr += d * ri;
-                gg += d * gj;
-                bb += d * bk;
-                div += d;
-              }
+              rr += d * ri;
+              gg += d * gj;
+              bb += d * bk;
+              div += d;
             }
           }
+        }
 
-          if(div > 0)
-          {
-            rr /= div;
-            gg /= div;
-            bb /= div;
-            makeColor(&colors[count], rr, gg, bb, div);
-            count++;
-          }
+        if(div > 0)
+        {
+          rr /= div;
+          gg /= div;
+          bb /= div;
+          makeColor(&colors[count], rr, gg, bb, div);
+          count++;
         }
       }
     }
-
-    return count;
   }
+
+  return count;
 }
 
-  // stretch a palette to obtain the exact number of colors desired
+// stretch a palette to obtain the exact number of colors desired
 /*
-  void stretchPalette(int *data, int current, int target)
+void Quantize::stretchPalette(int *data, int current, int target)
+{
+  std::vector<int> temp(target);
+
+  const float ax = (float)(current - 1) / (float)(target - 1);
+  int *c[2];
+
+  c[0] = c[1] = &data[0];
+
+  for(int x = 0; x < target; x++)
   {
-    std::vector<int> temp(target);
+    float uu = (x * ax);
+    int u1 = uu;
 
-    const float ax = (float)(current - 1) / (float)(target - 1);
-    int *c[2];
+    if(u1 > current - 1)
+      u1 = current - 1;
 
-    c[0] = c[1] = &data[0];
+    int u2 = (u1 < (current - 1) ? u1 + 1 : u1);
+    float u = uu - u1;
 
-    for(int x = 0; x < target; x++)
+    c[0] += u1;
+    c[1] += u2;
+
+    float f[2];
+
+    f[0] = (1.0 - u);
+    f[1] = u;
+
+    float r = 0, g = 0, b = 0;
+
+    for(int i = 0; i < 2; i++)
     {
-      float uu = (x * ax);
-      int u1 = uu;
-
-      if(u1 > current - 1)
-        u1 = current - 1;
-
-      int u2 = (u1 < (current - 1) ? u1 + 1 : u1);
-      float u = uu - u1;
-
-      c[0] += u1;
-      c[1] += u2;
-
-      float f[2];
-
-      f[0] = (1.0 - u);
-      f[1] = u;
-
-      float r = 0, g = 0, b = 0;
-
-      for(int i = 0; i < 2; i++)
-      {
-        r += (float)getr(*c[i]) * f[i];
-        g += (float)getg(*c[i]) * f[i];
-        b += (float)getb(*c[i]) * f[i];
-      }
-
-      temp[x] = makeRgb((int)r, (int)g, (int)b);
-
-      c[0] -= u1;
-      c[1] -= u2;
+      r += (float)getr(*c[i]) * f[i];
+      g += (float)getg(*c[i]) * f[i];
+      b += (float)getb(*c[i]) * f[i];
     }
 
-    for(int x = 0; x < target; x++)
-      data[x] = temp[x];
+    temp[x] = makeRgb((int)r, (int)g, (int)b);
+
+    c[0] -= u1;
+    c[1] -= u2;
   }
+
+  for(int x = 0; x < target; x++)
+    data[x] = temp[x];
 }
 */
 

@@ -22,11 +22,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define QUANTIZE_H
 
 class Bitmap;
+class Octree;
 class Palette;
 
-namespace Quantize
+class Quantize
 {
-  void pca(Bitmap *, Palette *, int);
-}
+public:
+  static void pca(Bitmap *, Palette *, int);
+
+private:
+  struct color_type
+  {
+    float r, g, b, freq;
+    bool active;
+  };
+
+  static void makeColor(color_type *,
+                        const float, const float, const float, const float);
+  static float error(color_type *, color_type *);
+  static void merge(color_type *, color_type *);
+  static int limitColors(Octree *, color_type *, int);
+
+  Quantize() { }
+  ~Quantize() { }
+};
 
 #endif
