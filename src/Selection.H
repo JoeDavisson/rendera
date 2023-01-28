@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Tool.H"
 
+class Stroke;
 class View;
 
 class Selection : public Tool
@@ -41,6 +42,22 @@ public:
   bool isActive();
   void reset();
   void reload();
+
+private:
+  int beginx, beginy, lastx, lasty;
+  int state;
+  bool drag_started;
+  bool resize_started;
+  int side;
+  int offsetx;
+  int offsety;
+
+  bool inbox(int, int, int, int, int, int);
+  void absrect(View *, int *, int *, int *, int *);
+  void drawHandles(View *, Stroke *, int, int, int, int);
+  void copy(View *);
+  void crop(View *);
+  void paste(View *);
 };
 
 #endif

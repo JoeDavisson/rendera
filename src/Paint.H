@@ -40,6 +40,9 @@ public:
   void redraw(View *);
   bool isActive();
   void reset();
+
+private:
+  bool active;
 };
 
 #endif

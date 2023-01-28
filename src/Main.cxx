@@ -40,80 +40,74 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Palette.H"
 
-namespace
+enum
 {
-  enum
+  OPTION_MEM,
+  OPTION_UNDOS,
+  OPTION_VERSION,
+  OPTION_HELP
+};
+
+static int verbose_flag;
+
+struct option long_options[] =
+{
+  { "mem", optional_argument,       &verbose_flag, OPTION_MEM },
+  { "undos", optional_argument,       &verbose_flag, OPTION_UNDOS },
+  { "version", no_argument,       &verbose_flag, OPTION_VERSION },
+  { "help",    no_argument,       &verbose_flag, OPTION_HELP    },
+  { 0, 0, 0, 0 }
+};
+
+void setDarkTheme()
+{
+  int r, g, b;
+  int h = 0;
+  int s = 0;
+
+  // 32 - 55
+  for(int i = 0; i < 24; i++)
   {
-    OPTION_MEM,
-    OPTION_UNDOS,
-    OPTION_VERSION,
-    OPTION_HELP
-  };
-
-  int verbose_flag;
-  int hue = 0;
-  int sat = 0;
-
-  struct option long_options[] =
-  {
-    { "mem", optional_argument,       &verbose_flag, OPTION_MEM },
-    { "undos", optional_argument,       &verbose_flag, OPTION_UNDOS },
-    { "version", no_argument,       &verbose_flag, OPTION_VERSION },
-    { "help",    no_argument,       &verbose_flag, OPTION_HELP    },
-    { 0, 0, 0, 0 }
-  };
-
-  void setDarkTheme()
-  {
-    int r, g, b, h = hue, s = sat;
-
-    // 32 - 55
-    for(int i = 0; i < 24; i++)
-    {
-      int v = i * 6;
-      Fl::set_color(32 + i, fl_rgb_color(v, v, v));
-    }
-
-    Project::theme = Project::THEME_DARK;
-
-    Blend::hsvToRgb(h, s, 64, &r, &g, &b);
-    Fl::set_color(FL_BACKGROUND_COLOR, fl_rgb_color(r, g, b));
-
-    Blend::hsvToRgb(h, s, 48, &r, &g, &b);
-    Fl::set_color(FL_BACKGROUND2_COLOR, fl_rgb_color(r, g, b));
-
-    Blend::hsvToRgb(h, s, 208, &r, &g, &b);
-    Fl::set_color(FL_FOREGROUND_COLOR, fl_rgb_color(r, g, b));
-
-    Blend::hsvToRgb(h, s, 56, &r, &g, &b);
-    Fl::set_color(FL_INACTIVE_COLOR, fl_rgb_color(r, g, b));
-
-    Blend::hsvToRgb(h, s, 208, &r, &g, &b);
-    Fl::set_color(FL_SELECTION_COLOR, fl_rgb_color(r, g, b));
-
-    Blend::hsvToRgb(0, 0, 128, &r, &g, &b);
-    Project::theme_highlight_color = makeRgb(r, g, b);
-
-    const int blend = Project::theme_highlight_color;
-    Project::fltk_theme_highlight_color = fl_rgb_color(getr(blend),
-                                                       getg(blend),
-                                                       getb(blend));
-    Blend::hsvToRgb(h, s, 128, &r, &g, &b);
-    Project::fltk_theme_bevel_up = fl_rgb_color(r, g, b);
-    Blend::hsvToRgb(h, s, 16, &r, &g, &b);
-    Project::fltk_theme_bevel_down = fl_rgb_color(r, g, b);
+    int v = i * 6;
+    Fl::set_color(32 + i, fl_rgb_color(v, v, v));
   }
 
-  void printHelp()
-  {
-    printf("Usage: rendera [OPTIONS] filename\n\n");
-    printf("--mem=<value>\t\t memory limit (in megabytes)\n");
-    printf("--undos=<value>\t\t undo limit (1-100)\n");
-    printf("--version\t\t version information\n\n");
-  }
+  Project::theme = Project::THEME_DARK;
 
-  int memory_max = 4000;
-  int undo_max = 16;
+  Blend::hsvToRgb(h, s, 64, &r, &g, &b);
+  Fl::set_color(FL_BACKGROUND_COLOR, fl_rgb_color(r, g, b));
+
+  Blend::hsvToRgb(h, s, 48, &r, &g, &b);
+  Fl::set_color(FL_BACKGROUND2_COLOR, fl_rgb_color(r, g, b));
+
+  Blend::hsvToRgb(h, s, 208, &r, &g, &b);
+  Fl::set_color(FL_FOREGROUND_COLOR, fl_rgb_color(r, g, b));
+
+  Blend::hsvToRgb(h, s, 56, &r, &g, &b);
+  Fl::set_color(FL_INACTIVE_COLOR, fl_rgb_color(r, g, b));
+
+  Blend::hsvToRgb(h, s, 208, &r, &g, &b);
+  Fl::set_color(FL_SELECTION_COLOR, fl_rgb_color(r, g, b));
+
+  Blend::hsvToRgb(0, 0, 128, &r, &g, &b);
+  Project::theme_highlight_color = makeRgb(r, g, b);
+
+  const int blend = Project::theme_highlight_color;
+  Project::fltk_theme_highlight_color = fl_rgb_color(getr(blend),
+                                                     getg(blend),
+                                                     getb(blend));
+  Blend::hsvToRgb(h, s, 128, &r, &g, &b);
+  Project::fltk_theme_bevel_up = fl_rgb_color(r, g, b);
+  Blend::hsvToRgb(h, s, 16, &r, &g, &b);
+  Project::fltk_theme_bevel_down = fl_rgb_color(r, g, b);
+}
+
+void printHelp()
+{
+  printf("Usage: rendera [OPTIONS] filename\n\n");
+  printf("--mem=<value>\t\t memory limit (in megabytes)\n");
+  printf("--undos=<value>\t\t undo limit (1-100)\n");
+  printf("--version\t\t version information\n\n");
 }
 
 int main(int argc, char *argv[])
@@ -121,6 +115,8 @@ int main(int argc, char *argv[])
   setDarkTheme();
 
   // parse command line
+  int memory_max = 4000;
+  int undo_max = 16;
   int option_index = 0;
   bool exit = false;
   bool custom_settings = false;
@@ -263,7 +259,7 @@ int main(int argc, char *argv[])
     }
 
 /*
-  // view theme palette (for testing)
+  // view FLTK theme palette (for testing)
   Project::palette->max = 256;
   for(int i = 20; i < 256; i++)
   {

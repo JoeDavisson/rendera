@@ -36,232 +36,230 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "View.H"
 
-namespace
+bool Selection::inbox(int x, int y, int x1, int y1, int x2, int y2)
 {
-  int beginx = 0, beginy = 0, lastx = 0, lasty = 0;
-  int state = 0;
-  bool drag_started = false;
-  bool resize_started = false;
-  int side = 0;
-  int offsetx = 0;
-  int offsety = 0;
+  if(x1 > x2)
+    std::swap(x1, x2);
+  if(y1 > y2)
+    std::swap(y1, y2);
 
-  bool inbox(int x, int y, int x1, int y1, int x2, int y2)
+  if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
+    return 1;
+  else
+    return 0;
+}
+
+void Selection::absrect(View *view, int *x1, int *y1, int *x2, int *y2)
+{
+  if(*x1 > *x2)
+    std::swap(*x1, *x2);
+  if(*y1 > *y2)
+    std::swap(*y1, *y2);
+
+  const int gridx = view->gridx;
+  const int gridy = view->gridy;
+  const int w = *x2 - *x1;
+  const int h = *y2 - *y1;
+
+  if(view->gridsnap)
   {
-    if(x1 > x2)
-      std::swap(x1, x2);
-    if(y1 > y2)
-      std::swap(y1, y2);
+    *x1 -= *x1 % gridx;
+    *y1 -= *y1 % gridy;
 
-    if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
-      return 1;
-    else
-      return 0;
+    *x2 += 1;
+    *x2 -= *x2 % gridx;
+    *x2 -= 1;
+
+    *y2 += 1;
+    *y2 -= *y2 % gridy;
+    *y2 -= 1;
   }
 
-  void absrect(View *view, int *x1, int *y1, int *x2, int *y2)
+  if(state == 3)
   {
-    if(*x1 > *x2)
-      std::swap(*x1, *x2);
-    if(*y1 > *y2)
-      std::swap(*y1, *y2);
+    *x2 = *x1 + w;
+    *y2 = *y1 + h;
+  }
+}
 
-    const int gridx = view->gridx;
-    const int gridy = view->gridy;
-    const int w = *x2 - *x1;
-    const int h = *y2 - *y1;
+void Selection::drawHandles(View *view, Stroke *stroke, int x1, int y1, int x2, int y2)
+{
+  int d = 8;
+  int s = 16;
 
-    if(view->gridsnap)
+  Bitmap *backbuf = view->backbuf;
+  float zoom = view->zoom;
+  int ox = view->ox * zoom;
+  int oy = view->oy * zoom;
+
+  absrect(view, &x1, &y1, &x2, &y2);
+  stroke->size(x1, y1, x2, y2);
+
+  x1 = x1 * zoom - ox;
+  y1 = y1 * zoom - oy;
+  x2 = x2 * zoom - ox + zoom - 1;
+  y2 = y2 * zoom - oy + zoom - 1;
+
+  int c1 = makeRgb(0, 0, 0);
+
+  backbuf->xorHline(x1 - s - 1, y1 - 1, x1 - d - 1);
+  backbuf->hline(x1 - s - 1, y1 - 2, x1 - d - 1, c1, 128);
+  backbuf->hline(x1 - s - 1, y1 - 3, x1 - d - 1, c1, 192);
+  backbuf->xorVline(y1 - s - 1, x1 - 1, y1 - d - 1);
+  backbuf->vline(y1 - s - 1, x1 - 2, y1 - d - 1, c1, 128);
+  backbuf->vline(y1 - s - 1, x1 - 3, y1 - d - 1, c1, 192);
+
+  backbuf->xorHline(x2 + d, y1 - 1, x2 + s);
+  backbuf->hline(x2 + d, y1 - 2, x2 + s, c1, 128);
+  backbuf->hline(x2 + d, y1 - 3, x2 + s, c1, 192);
+  backbuf->xorVline(y1 - s - 1, x2 + 1, y1 - d - 1);
+  backbuf->vline(y1 - s - 1, x2 + 2, y1 - d - 1, c1, 128);
+  backbuf->vline(y1 - s - 1, x2 + 3, y1 - d - 1, c1, 192);
+
+  backbuf->xorHline(x1 - s - 1, y2 + 1, x1 - d - 1);
+  backbuf->hline(x1 - s - 1, y2 + 2, x1 - d - 1, c1, 128);
+  backbuf->hline(x1 - s - 1, y2 + 3, x1 - d - 1, c1, 192);
+  backbuf->xorVline(y2 + d + 1, x1 - 1, y2 + s + 1);
+  backbuf->vline(y2 + d + 1, x1 - 2, y2 + s + 1, c1, 128);
+  backbuf->vline(y2 + d + 1, x1 - 3, y2 + s + 1, c1, 192);
+
+  backbuf->xorHline(x2 + d + 1, y2 + 1, x2 + s + 1);
+  backbuf->hline(x2 + d + 1, y2 + 2, x2 + s + 1, c1, 128);
+  backbuf->hline(x2 + d + 1, y2 + 3, x2 + s + 1, c1, 192);
+  backbuf->xorVline(y2 + d + 1, x2 + 1, y2 + s + 1);
+  backbuf->vline(y2 + d + 1, x2 + 2, y2 + s + 1, c1, 128);
+  backbuf->vline(y2 + d + 1, x2 + 3, y2 + s + 1, c1, 192);
+
+  backbuf->xorRect(x1 - 1, y1 - 1, x2 + 1, y2 + 1);
+  backbuf->rect(x1 - 2, y1 - 2, x2 + 2, y2 + 2, c1, 128);
+  backbuf->rect(x1 - 3, y1 - 3, x2 + 3, y2 + 3, c1, 192);
+}
+
+void Selection::copy(View *view)
+{
+  if(state == 3)
+    return;
+
+  state = 3;
+  Gui::selectCopyEnable(false);
+  Gui::selectPasteEnable(true);
+  Gui::selectCropEnable(false);
+
+  absrect(view, &beginx, &beginy, &lastx, &lasty);
+
+  if(beginx < Project::bmp->cl)
+    beginx = Project::bmp->cl;
+  if(beginy < Project::bmp->ct)
+    beginy = Project::bmp->ct;
+  if(lastx > Project::bmp->cr)
+    lastx = Project::bmp->cr;
+  if(lasty > Project::bmp->cb)
+    lasty = Project::bmp->cb;
+
+  int w = (lastx - beginx) + 1;
+  int h = (lasty - beginy) + 1;
+
+  if(w < 1)
+    w = 1;
+  if(h < 1)
+    h = 1;
+
+  delete(Project::select_bmp);
+  Project::select_bmp = new Bitmap(w, h);
+  Project::bmp->blit(Project::select_bmp, beginx, beginy, 0, 0, w, h);
+
+  Gui::selectValues(0, 0, 0, 0);
+}
+
+void Selection::crop(View *view)
+{
+  Project::undo->push();
+
+  absrect(view, &beginx, &beginy, &lastx, &lasty);
+
+  if(beginx < Project::bmp->cl)
+    beginx = Project::bmp->cl;
+  if(beginy < Project::bmp->ct)
+    beginy = Project::bmp->ct;
+  if(lastx > Project::bmp->cr)
+    lastx = Project::bmp->cr;
+  if(lasty > Project::bmp->cb)
+    lasty = Project::bmp->cb;
+
+  int w = (lastx - beginx) + 1;
+  int h = (lasty - beginy) + 1;
+
+  if(w < 1)
+    w = 1;
+  if(h < 1)
+    h = 1;
+
+  Bitmap *temp = new Bitmap(w, h);
+  Project::bmp->blit(temp, beginx, beginy, 0, 0, w, h);
+
+  Project::replaceImage(w, h);
+  temp->blit(Project::bmp, 0, 0, 0, 0, w, h);
+  delete temp;
+
+  view->zoom = 1;
+  view->ox = 0;
+  view->oy = 0;
+  view->drawMain(true);
+  Gui::selectValues(0, 0, 0, 0);
+}
+
+void Selection::paste(View *view)
+{
+  Project::undo->push();
+  const int w = Project::select_bmp->w;
+  const int h = Project::select_bmp->h;
+
+  int x1 = beginx;
+  int y1 = beginy;
+
+  if(view->gridsnap)
+  {
+    x1 -= x1 % view->gridx;
+    y1 -= y1 % view->gridy;
+  }
+
+  Blend::set(Project::brush->blend);
+
+  const int trans = Project::brush->trans;
+  const int alpha = Gui::getSelectAlpha();
+
+  for(int y = 0; y < h; y++)
+  {
+    for(int x = 0; x < w; x++)
     {
-      *x1 -= *x1 % gridx;
+      int c = Project::select_bmp->getpixel(x, y);
+      const int t = scaleVal(255 - geta(c), trans);
 
-      *y1 -= *y1 % gridy;
+      c |= 0xff000000;
 
-      *x2 += 1;
-      *x2 -= *x2 % gridx;
-      *x2 -= 1;
-
-      *y2 += 1;
-      *y2 -= *y2 % gridy;
-      *y2 -= 1;
-    }
-
-    if(state == 3)
-    {
-      *x2 = *x1 + w;
-      *y2 = *y1 + h;
+      if(alpha)
+        Project::bmp->setpixel(x1 + x, y1 + y, c, t);
+      else
+        Project::bmp->setpixel(x1 + x, y1 + y, c, trans);
     }
   }
 
-  void drawHandles(View *view, Stroke *stroke, int x1, int y1, int x2, int y2)
-  {
-    int d = 8;
-    int s = 16;
-
-    Bitmap *backbuf = view->backbuf;
-    float zoom = view->zoom;
-    int ox = view->ox * zoom;
-    int oy = view->oy * zoom;
-
-    absrect(view, &x1, &y1, &x2, &y2);
-    stroke->size(x1, y1, x2, y2);
-
-    x1 = x1 * zoom - ox;
-    y1 = y1 * zoom - oy;
-    x2 = x2 * zoom - ox + zoom - 1;
-    y2 = y2 * zoom - oy + zoom - 1;
-
-    int c1 = makeRgb(0, 0, 0);
-
-    backbuf->xorHline(x1 - s - 1, y1 - 1, x1 - d - 1);
-    backbuf->hline(x1 - s - 1, y1 - 2, x1 - d - 1, c1, 128);
-    backbuf->hline(x1 - s - 1, y1 - 3, x1 - d - 1, c1, 192);
-    backbuf->xorVline(y1 - s - 1, x1 - 1, y1 - d - 1);
-    backbuf->vline(y1 - s - 1, x1 - 2, y1 - d - 1, c1, 128);
-    backbuf->vline(y1 - s - 1, x1 - 3, y1 - d - 1, c1, 192);
-
-    backbuf->xorHline(x2 + d, y1 - 1, x2 + s);
-    backbuf->hline(x2 + d, y1 - 2, x2 + s, c1, 128);
-    backbuf->hline(x2 + d, y1 - 3, x2 + s, c1, 192);
-    backbuf->xorVline(y1 - s - 1, x2 + 1, y1 - d - 1);
-    backbuf->vline(y1 - s - 1, x2 + 2, y1 - d - 1, c1, 128);
-    backbuf->vline(y1 - s - 1, x2 + 3, y1 - d - 1, c1, 192);
-
-    backbuf->xorHline(x1 - s - 1, y2 + 1, x1 - d - 1);
-    backbuf->hline(x1 - s - 1, y2 + 2, x1 - d - 1, c1, 128);
-    backbuf->hline(x1 - s - 1, y2 + 3, x1 - d - 1, c1, 192);
-    backbuf->xorVline(y2 + d + 1, x1 - 1, y2 + s + 1);
-    backbuf->vline(y2 + d + 1, x1 - 2, y2 + s + 1, c1, 128);
-    backbuf->vline(y2 + d + 1, x1 - 3, y2 + s + 1, c1, 192);
-
-    backbuf->xorHline(x2 + d + 1, y2 + 1, x2 + s + 1);
-    backbuf->hline(x2 + d + 1, y2 + 2, x2 + s + 1, c1, 128);
-    backbuf->hline(x2 + d + 1, y2 + 3, x2 + s + 1, c1, 192);
-    backbuf->xorVline(y2 + d + 1, x2 + 1, y2 + s + 1);
-    backbuf->vline(y2 + d + 1, x2 + 2, y2 + s + 1, c1, 128);
-    backbuf->vline(y2 + d + 1, x2 + 3, y2 + s + 1, c1, 192);
-
-    backbuf->xorRect(x1 - 1, y1 - 1, x2 + 1, y2 + 1);
-    backbuf->rect(x1 - 2, y1 - 2, x2 + 2, y2 + 2, c1, 128);
-    backbuf->rect(x1 - 3, y1 - 3, x2 + 3, y2 + 3, c1, 192);
-  }
-
-  void select(View *view)
-  {
-    if(state == 3)
-      return;
-
-    state = 3;
-    Gui::selectCopyEnable(false);
-    Gui::selectPasteEnable(true);
-    Gui::selectCropEnable(false);
-
-    absrect(view, &beginx, &beginy, &lastx, &lasty);
-
-    if(beginx < Project::bmp->cl)
-      beginx = Project::bmp->cl;
-    if(beginy < Project::bmp->ct)
-      beginy = Project::bmp->ct;
-    if(lastx > Project::bmp->cr)
-      lastx = Project::bmp->cr;
-    if(lasty > Project::bmp->cb)
-      lasty = Project::bmp->cb;
-
-    int w = (lastx - beginx) + 1;
-    int h = (lasty - beginy) + 1;
-
-    if(w < 1)
-      w = 1;
-    if(h < 1)
-      h = 1;
-
-    delete(Project::select_bmp);
-    Project::select_bmp = new Bitmap(w, h);
-    Project::bmp->blit(Project::select_bmp, beginx, beginy, 0, 0, w, h);
-
-    Gui::selectValues(0, 0, 0, 0);
-  }
-
-  void crop(View *view)
-  {
-    Project::undo->push();
-
-    absrect(view, &beginx, &beginy, &lastx, &lasty);
-
-   if(beginx < Project::bmp->cl)
-      beginx = Project::bmp->cl;
-    if(beginy < Project::bmp->ct)
-      beginy = Project::bmp->ct;
-    if(lastx > Project::bmp->cr)
-      lastx = Project::bmp->cr;
-    if(lasty > Project::bmp->cb)
-      lasty = Project::bmp->cb;
-
-    int w = (lastx - beginx) + 1;
-    int h = (lasty - beginy) + 1;
-
-    if(w < 1)
-      w = 1;
-    if(h < 1)
-      h = 1;
-
-    Bitmap *temp = new Bitmap(w, h);
-    Project::bmp->blit(temp, beginx, beginy, 0, 0, w, h);
-
-    Project::replaceImage(w, h);
-    temp->blit(Project::bmp, 0, 0, 0, 0, w, h);
-    delete temp;
-
-    view->zoom = 1;
-    view->ox = 0;
-    view->oy = 0;
-    view->drawMain(true);
-    Gui::selectValues(0, 0, 0, 0);
-  }
-
-  void paste(View *view)
-  {
-    Project::undo->push();
-    const int w = Project::select_bmp->w;
-    const int h = Project::select_bmp->h;
-
-    int x1 = beginx;
-    int y1 = beginy;
-
-    if(view->gridsnap)
-    {
-      x1 -= x1 % view->gridx;
-      y1 -= y1 % view->gridy;
-    }
-
-    Blend::set(Project::brush->blend);
-
-    const int trans = Project::brush->trans;
-    const int alpha = Gui::getSelectAlpha();
-
-    for(int y = 0; y < h; y++)
-    {
-      for(int x = 0; x < w; x++)
-      {
-        int c = Project::select_bmp->getpixel(x, y);
-        const int t = scaleVal(255 - geta(c), trans);
-
-        c |= 0xff000000;
-
-        if(alpha)
-          Project::bmp->setpixel(x1 + x, y1 + y, c, t);
-        else
-          Project::bmp->setpixel(x1 + x, y1 + y, c, trans);
-      }
-    }
-
-    Blend::set(Blend::TRANS);
-    view->drawMain(true);
-  }
+  Blend::set(Blend::TRANS);
+  view->drawMain(true);
 }
 
 Selection::Selection()
 {
+  beginx = 0;
+  beginy = 0;
+  lastx = 0;
+  lasty = 0;
+  state = 0;
+  drag_started = false;
+  resize_started = false;
+  side = 0;
+  offsetx = 0;
+  offsety = 0;
 }
 
 Selection::~Selection()
@@ -544,7 +542,7 @@ void Selection::done(View *view, int mode)
   }
   else
   {
-    select(view);
+    copy(view);
   }
 }
 

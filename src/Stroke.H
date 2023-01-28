@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <vector>
 
 class Bitmap;
+class Map;
 class View;
 
 class Stroke
@@ -40,6 +41,19 @@ public:
     OVAL,
     FILLED_OVAL
   };
+
+  int x1, y1, x2, y2;
+  int origin, constrain;
+  int blitx, blity, blitw, blith;
+  int beginx, beginy;
+  int lastx, lasty;
+  int oldx, oldy;
+  int type;
+  int *poly_x;
+  int *poly_y;
+  int *edge_x;
+  int *edge_y;
+  int poly_count;
 
   Stroke();
   ~Stroke();
@@ -63,18 +77,9 @@ public:
   void previewPaint(View *);
   void previewSelection(View *);
 
-  int x1, y1, x2, y2;
-  int origin, constrain;
-  int blitx, blity, blitw, blith;
-  int beginx, beginy;
-  int lastx, lasty;
-  int oldx, oldy;
-  int type;
-  int *poly_x;
-  int *poly_y;
-  int *edge_x;
-  int *edge_y;
-  int poly_count;
+private:
+  void keepSquare(int, int, int *, int *);
+  bool isEdge(Map *, const int, const int);
 };
 
 #endif

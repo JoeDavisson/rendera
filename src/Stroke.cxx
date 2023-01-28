@@ -33,83 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.H"
 #include "View.H"
 
-namespace
-{
-  // keeps dimensions equal, for drawing circles/squares
-  void keepSquare(int x1, int y1, int *x2, int *y2)
-  {
-    const int px = (*x2 >= x1) ? 1 : 0;
-    const int py = (*y2 >= y1) ? 2 : 0;
-
-    const int dx = x1 - *x2;
-    const int dy = y1 - *y2;
-
-    if(std::abs(dy) > std::abs(dx))
-    {
-      switch(px + py)
-      {
-        case 0:
-          *x2 = x1 - dy;
-          break;
-        case 1:
-          *x2 = x1 + dy;
-          break;
-        case 2:
-          *x2 = x1 + dy;
-          break;
-        case 3:
-          *x2 = x1 - dy;
-          break;
-      }
-    }
-    else
-    {
-      switch (px + py)
-      {
-        case 0:
-          *y2 = y1 - dx;
-          break;
-        case 1:
-          *y2 = y1 + dx;
-          break;
-        case 2:
-          *y2 = y1 + dx;
-          break;
-        case 3:
-          *y2 = y1 - dx;
-          break;
-      }
-    }
-  }
-
-  inline bool isEdge(Map *map, const int x, const int y)
-  {
-    if(!map->getpixel(x, y - 1) ||
-       !map->getpixel(x - 1, y) ||
-       !map->getpixel(x + 1, y) ||
-       !map->getpixel(x, y + 1))
-    {
-      return true;
-    }
-
-    return false;
-  }
-
-/*
-  inline bool isEdge(Map *map, const int x, const int y)
-  {
-    if((map->getpixel(x, y) &&
-       (!map->getpixel(x - 1, y) ||
-       !map->getpixel(x + 1, y) ||
-       !map->getpixel(x, y - 1) ||
-       !map->getpixel(x, y + 1))))
-      return true;
-    else
-      return false;
-  }
-*/
-}
-
 Stroke::Stroke()
 {
   poly_x = new int[0x10000];
@@ -137,6 +60,66 @@ Stroke::~Stroke()
   delete[] poly_y;
   delete[] edge_x;
   delete[] edge_y;
+}
+
+// keeps dimensions equal, for drawing circles/squares
+void Stroke::keepSquare(int x1, int y1, int *x2, int *y2)
+{
+  const int px = (*x2 >= x1) ? 1 : 0;
+  const int py = (*y2 >= y1) ? 2 : 0;
+
+  const int dx = x1 - *x2;
+  const int dy = y1 - *y2;
+
+  if(std::abs(dy) > std::abs(dx))
+  {
+    switch(px + py)
+    {
+      case 0:
+        *x2 = x1 - dy;
+        break;
+      case 1:
+        *x2 = x1 + dy;
+        break;
+      case 2:
+        *x2 = x1 + dy;
+        break;
+      case 3:
+        *x2 = x1 - dy;
+        break;
+    }
+  }
+  else
+  {
+    switch (px + py)
+    {
+      case 0:
+        *y2 = y1 - dx;
+        break;
+      case 1:
+        *y2 = y1 + dx;
+        break;
+      case 2:
+        *y2 = y1 + dx;
+        break;
+      case 3:
+        *y2 = y1 - dx;
+        break;
+    }
+  }
+}
+
+bool Stroke::isEdge(Map *map, const int x, const int y)
+{
+  if(!map->getpixel(x, y - 1) ||
+     !map->getpixel(x - 1, y) ||
+     !map->getpixel(x + 1, y) ||
+     !map->getpixel(x, y + 1))
+  {
+    return true;
+  }
+
+  return false;
 }
 
 void Stroke::clip()
