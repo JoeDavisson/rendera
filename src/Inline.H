@@ -36,9 +36,7 @@ static int rnd_seed = 12345;
 // stuff for extracting all RGBA values quickly
 struct rgba_type
 {
-#if 0
-  /*  */
-#elif (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+#if (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
   uint8_t r;
   uint8_t g;
   uint8_t b;
@@ -251,14 +249,12 @@ inline uint16_t parseUint16(unsigned char *&buffer)
 {
   uint16_t num;
 
-#if 0
-  /*  */
-#elif ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
+#if ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
   num = buffer[0] | buffer[1] << 8;
 #elif ( __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ )
   num = buffer[1] | buffer[0] << 8;
 #else
-#  error "unsupported endianness"
+#error "unsupported endianness"
 #endif
 
   buffer += 2;
@@ -269,14 +265,12 @@ inline uint32_t parseUint32(unsigned char *&buffer)
 {
   uint32_t num;
 
-#if 0
-  /*  */
-#elif ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
+#if ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
   num = buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24;
 #elif ( __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ )
   num = buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24;
 #else
-#  error "unsupported endianness"
+#error "unsupported endianness"
 #endif
 
   buffer += 4;
@@ -290,9 +284,7 @@ inline void writeUint8(const uint8_t num, FILE *out)
 
 inline void writeUint16(const uint16_t num, FILE *out)
 {
-#if 0
-  /*  */
-#elif ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
+#if ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
   fputc(num & 0xff, out);
   fputc((num >> 8) & 0xff, out);
 #else
@@ -303,9 +295,7 @@ inline void writeUint16(const uint16_t num, FILE *out)
 
 inline void writeUint32(const uint32_t num, FILE *out)
 {
-#if 0
-  /*  */
-#elif ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
+#if ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
   fputc(num & 0xff, out);
   fputc((num >> 8) & 0xff, out);
   fputc((num >> 16) & 0xff, out);
