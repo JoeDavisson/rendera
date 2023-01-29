@@ -21,7 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef FILL_H
 #define FILL_H
 
+class Map;
 class View;
+
+#include <vector>
 
 #include "Tool.H"
 
@@ -40,6 +43,24 @@ public:
   void redraw(View *);
   bool isActive();
   void reset();
+
+private:
+  int *stack_x;
+  int *stack_y;
+  int stack_size;
+  int sp;
+
+  bool inbox(int, int, int, int, int, int);
+  bool isEdge(Map *, const int, const int);
+  int fineEdge(int, int, const int, const int, const int, const int);
+  bool pop(int *, int *);
+  bool push(int, int);
+  void emptyStack();
+  bool inRange(const int, const int, const int);
+  void fill(int, int, int, int, int, int);
+  
+  
+
 };
 
 #endif

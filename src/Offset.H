@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef OFFSET_H
 #define OFFSET_H
 
+class Bitmap;
 class View;
 
 #include "Tool.H"
@@ -40,6 +41,11 @@ public:
   void redraw(View *);
   bool isActive();
   void reset();
+
+private:
+  int beginx;
+  int beginy;
+  Bitmap *offset_buffer;
 };
 
 #endif
