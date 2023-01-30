@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
   setDarkTheme();
 
   // parse command line
-  int memory_max = 4000;
+  int memory_max = 1000;
   int undo_max = 16;
   int option_index = 0;
   bool exit = false;
