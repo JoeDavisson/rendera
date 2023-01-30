@@ -25,21 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 #include <vector>
 
-#include "../fltk/png/png.h"
-
-#ifdef __WIN32
-#define HAVE_BOOLEAN
-// prevent jmorecfg.h from defining INT32
-#ifndef XMD_H
-#define XMD_H
-#endif
-#endif
-
-#include "../fltk/jpeg/jpeglib.h"
-
-// this must be included after pnglib
-#include <setjmp.h>
-
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Native_File_Chooser.H>
