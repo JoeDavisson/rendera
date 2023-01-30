@@ -21,17 +21,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
-namespace Transform
+class Transform
 {
-  void init();
-  void flipHorizontal();
-  void flipVertical();
-  void resize();
-  void scale();
-  void rotateArbitrary();
-  void rotate90();
-  void rotate180();
-}
+public:
+  static void init();
+  static void flipHorizontal();
+  static void flipVertical();
+  static void resize();
+  static void scale();
+  static void rotateArbitrary();
+  static void rotate90();
+  static void rotate180();
+
+private:
+  Transform() { }
+  ~Transform() { }
+};
 
 #endif
 
