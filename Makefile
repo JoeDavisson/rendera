@@ -10,7 +10,7 @@ PLATFORM=linux
 #PLATFORM=mingw32
 #PLATFORM=mingw64
 
-VERSION=$(shell git describe --abbrev=0)
+VERSION=$(shell git describe --tags --abbrev=0)
 
 SRC_DIR=src
 SRC_DIR_FX=src/FX 
