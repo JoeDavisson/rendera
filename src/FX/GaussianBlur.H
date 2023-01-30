@@ -25,13 +25,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 class Bitmap;
 
-namespace GaussianBlur
+class GaussianBlur
 {
-  void apply(Bitmap *bmp, int, int, int);
-  void close();
-  void quit();
-  void begin();
-  void init();
+public:
+  static void apply(Bitmap *bmp, int, int, int);
+  static void close();
+  static void quit();
+  static void begin();
+  static void init();
+
+private:
+  GaussianBlur() { }
+  ~GaussianBlur() { }
 };
 
 #endif

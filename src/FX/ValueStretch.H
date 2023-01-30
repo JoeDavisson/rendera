@@ -23,10 +23,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX.H"
 
-namespace ValueStretch
+class ValueStretch
 {
-  void apply(Bitmap *);
-  void begin();
+public:
+  static void apply(Bitmap *);
+  static void begin();
+
+private:
+  ValueStretch() { }
+  ~ValueStretch() { }
 };
 
 #endif

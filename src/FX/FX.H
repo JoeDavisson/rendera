@@ -78,10 +78,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Dither.H"
 #include "SideAbsorptions.H"
 
-namespace FX
+class FX
 {
-  void drawPreview(Bitmap *, Bitmap *);
-  void init();
+public:
+  static void drawPreview(Bitmap *, Bitmap *);
+  static void init();
+
+private:
+  FX() { }
+  ~FX() { }
 };
 
 #endif

@@ -23,10 +23,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX.H"
 
-namespace Randomize
+class Randomize
 {
-  void apply();
-  void begin();
+public:
+  static void apply();
+  static void begin();
+
+private:
+  Randomize() { }
+  ~Randomize() { }
 };
 
 #endif

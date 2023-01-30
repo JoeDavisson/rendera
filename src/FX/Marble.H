@@ -23,20 +23,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX.H"
 
-namespace Marble
+class Marble
 {
-  void apply(Bitmap *);
-  void close();
-  void quit();
-  void begin();
-  void init();
+public:
+  static void apply(Bitmap *);
+  static void close();
+  static void quit();
+  static void begin();
+  static void init();
 
-  void update();
-  void setMarb();
-  void setTurb();
-  void setBlend();
-  void setThreshold();
-  void getColor();
+private:
+  Marble() { }
+  ~Marble() { }
+
+  static void update();
+  static void setMarb();
+  static void setTurb();
+  static void setBlend();
+  static void setThreshold();
+  static void getColor();
 };
 
 #endif

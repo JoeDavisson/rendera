@@ -23,10 +23,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX.H"
 
-namespace Colorize
+class Colorize
 {
-  void apply(Bitmap *, int);
-  void begin();
+public:
+  static void apply(Bitmap *, int);
+  static void begin();
+
+private:
+  Colorize() { }
+  ~Colorize() { }
 };
 
 #endif

@@ -23,16 +23,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX.H"
 
-namespace RotateHue
+class RotateHue
 {
-  void apply(Bitmap *, bool);
-  void begin();
-  void close();
-  void quit();
-  void init();
-  void setHue();
-  void incHue();
-  void decHue();
+public:
+  static void apply(Bitmap *, bool);
+  static void begin();
+  static void close();
+  static void quit();
+  static void init();
+
+private:
+  RotateHue() { }
+  ~RotateHue() { }
+
+  static void setHue();
+  static void incHue();
+  static void decHue();
 };
 
 #endif

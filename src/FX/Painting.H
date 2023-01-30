@@ -23,13 +23,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX.H"
 
-namespace Painting
+class Painting
 {
-  void apply();
-  void close();
-  void quit();
-  void begin();
-  void init();
+public:
+  static void apply();
+  static void close();
+  static void quit();
+  static void begin();
+  static void init();
+
+private:
+  Painting() { }
+  ~Painting() { }
 };
 
 #endif

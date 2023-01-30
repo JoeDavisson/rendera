@@ -23,13 +23,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX.H"
 
-namespace Bloom
+class Bloom
 {
-  void apply(Bitmap *, int, int, int);
-  void close();
-  void quit();
-  void begin();
-  void init();
+public:
+  static void apply(Bitmap *, int, int, int);
+  static void close();
+  static void quit();
+  static void begin();
+  static void init();
+
+private:
+  Bloom() { }
+  ~Bloom() { }
 };
 
 #endif

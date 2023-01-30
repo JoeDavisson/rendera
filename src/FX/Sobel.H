@@ -23,13 +23,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX.H"
 
-namespace Sobel
+class Sobel
 {
-  void apply(Bitmap *, int);
-  void close();
-  void quit();
-  void begin();
-  void init();
+public:
+  static void apply(Bitmap *, int);
+  static void close();
+  static void quit();
+  static void begin();
+  static void init();
+
+private:
+  Sobel() { }
+  ~Sobel() { }
 };
 
 #endif

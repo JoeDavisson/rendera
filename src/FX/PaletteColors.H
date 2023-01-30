@@ -23,10 +23,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX.H"
 
-namespace PaletteColors
+class PaletteColors
 {
-  void apply(Bitmap *, Palette *);
-  void begin();
+public:
+  static void apply(Bitmap *, Palette *);
+  static void begin();
+
+private:
+  PaletteColors() { }
+  ~PaletteColors() { }
 };
 
 #endif
