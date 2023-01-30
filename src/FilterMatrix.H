@@ -22,78 +22,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define FILTER_MATRIX_H
 
 // data used by the convolution matrix filter
-namespace FilterMatrix
+class FilterMatrix
 {
-  const int identity[3][3] =
-  {
-    {  0,  0,  0 },
-    {  0,  1,  0 },
-    {  0,  0,  0 }
-  };
+public:
+  static const int identity[3][3];
+  static const int blur[3][3];
+  static const int sharpen[3][3];
+  static const int gaussian[3][3];
+  static const int edge[3][3];
+  static const int emboss[3][3];
+  static const int emboss_reverse[3][3];
+  static const int sobel1[3][3];
+  static const int sobel2[3][3];
+  static const int test[3][3];
 
-  const int blur[3][3] =
-  {
-    {  1,  1,  1 },
-    {  1,  1,  1 },
-    {  1,  1,  1 }
-  };
-
-  const int sharpen[3][3] =
-  {
-    {  0, -1,  0 },
-    { -1,  5, -1 },
-    {  0, -1,  0 }
-  };
-
-  const int gaussian[3][3] =
-  {
-    {  1,  2,  1 },
-    {  2,  4,  2 },
-    {  1,  2,  1 }
-  };
-
-  const int edge[3][3] =
-  {
-    { -1, -1, -1 },
-    { -1,  8, -1 },
-    { -1, -1, -1 }
-  };
-
-  const int emboss[3][3] =
-  {
-    { -2, -1,  0 },
-    { -1,  1,  1 },
-    {  0,  1,  2 }
-  };
-
-  const int emboss_reverse[3][3] =
-  {
-    {  2,  1,  0 },
-    {  1,  1, -1 },
-    {  0, -1, -2 }
-  };
-
-  const int sobel1[3][3] =
-  {
-    { -1,  0,  1 },
-    { -2,  0,  2 },
-    { -1,  0,  1 }
-  };
-
-  const int sobel2[3][3] =
-  {
-    {  1,  2,  1 },
-    {  0,  0,  0 },
-    { -1, -2, -1 }
-  };
-
-  const int test[3][3] =
-  {
-    {  0,  0,  0 },
-    {  0,  1,  0 },
-    {  0,  0,  0 }
-  };
-}
+private:
+  FilterMatrix() { }
+  ~FilterMatrix() { }
+};
 
 #endif
 

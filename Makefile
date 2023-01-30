@@ -69,6 +69,7 @@ OBJ= \
   $(SRC_DIR)/FX/Marble.o \
   $(SRC_DIR)/FX/Dither.o \
   $(SRC_DIR)/FX/SideAbsorptions.o \
+  $(SRC_DIR)/FilterMatrix.o \
   $(SRC_DIR)/Gamma.o \
   $(SRC_DIR)/File.o \
   $(SRC_DIR)/FileSP.o \
