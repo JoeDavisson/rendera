@@ -630,7 +630,10 @@ namespace Editor
 
     c = makeRgba(r, g, b, 255);
 
-    Items::color->bitmap->rect(0, 0, Items::color->bitmap->w - 1, Items::color->bitmap->h - 1, makeRgb(0, 0, 0), 0);
+    Items::color->bitmap->rect(0, 0,
+      Items::color->bitmap->w - 1, Items::color->bitmap->h - 1,
+      makeRgb(0, 0, 0), 0);
+
     Items::color->redraw();
   }
 
@@ -639,11 +642,11 @@ namespace Editor
     char hex_string[8];
 
     snprintf(hex_string, sizeof(hex_string),
-       "%06x", (unsigned)convertFormat(Project::brush->color, true) & 0xFFFFFF);
+       "%06x", (unsigned)convertFormat(Project::brush->color, true) & 0xffffff);
     Items::hexcolor->value(hex_string);
 
     // shortcut hex
-    int c = (unsigned)convertFormat(Project::brush->color, true) & 0xFFFFFF;
+    int c = (unsigned)convertFormat(Project::brush->color, true) & 0xffffff;
     rgba_type rgba = getRgba(c);
 
     snprintf(hex_string, sizeof(hex_string),
@@ -657,10 +660,10 @@ namespace Editor
   
     sscanf(Items::hexcolor->value(), "%06x", &c);
   
-    if(c > 0xFFFFFF)
-      c = 0xFFFFFF;
+    if(c > 0xffffff)
+      c = 0xffffff;
   
-    c |= 0xFF000000;
+    c |= 0xff000000;
   
     Gui::colorUpdate(convertFormat((int)c, true));
     setHsvSliders();
@@ -674,12 +677,12 @@ namespace Editor
   
     sscanf(Items::hexcolor_web->value(), "%03x", &c);
   
-    if(c > 0xFFF)
-      c = 0xFFF;
+    if(c > 0xfff)
+      c = 0xfff;
 
-    int r = (c & 0xFFF) >> 8;
-    int g = (c & 0xFF) >> 4;
-    int b = c & 0xF;
+    int r = (c & 0xfff) >> 8;
+    int g = (c & 0xff) >> 4;
+    int b = c & 0xf;
 
     r = (r << 4) + r;
     g = (g << 4) + g;

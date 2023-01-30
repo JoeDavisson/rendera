@@ -21,25 +21,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef DIALOG_H
 #define DIALOG_H
 
-namespace Dialog
+class Dialog
 {
-  void init();
-  void about();
-  void jpegQuality();
-  int jpegQualityValue();
-  void javaExport();
-  int javaExportOption();
-  void pngOptions();
-  void textOptions();
-  int pngUsePalette();
-  int pngUseAlpha();
-  int pngAlphaLevels();
-  void newImage();
-  void makePalette();
-  void editor();
-  void message(const char *, const char *);
-  bool choice(const char *, const char *);
-}
+public:
+  static void init();
+  static void about();
+  static void jpegQuality();
+  static int jpegQualityValue();
+  static void javaExport();
+  static int javaExportOption();
+  static void pngOptions();
+  static void textOptions();
+  static int pngUsePalette();
+  static int pngUseAlpha();
+  static int pngAlphaLevels();
+  static void newImage();
+  static void makePalette();
+  static void editor();
+  static void message(const char *, const char *);
+  static bool choice(const char *, const char *);
+
+private:
+  Dialog() { }
+  ~Dialog() { }
+};
 
 #endif
 
