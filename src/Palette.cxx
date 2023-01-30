@@ -28,12 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Palette.H"
 #include "Widget.H"
 
-namespace
+static bool sortByLum(const int c1, const int c2)
 {
-  bool sortByLum(const int c1, const int c2)
-  {
-    return getl(c1) < getl(c2);
-  }
+  return getl(c1) < getl(c2);
 }
 
 Palette::Palette()
