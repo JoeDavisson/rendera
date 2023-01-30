@@ -22,83 +22,78 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define FILTER_MATRIX_H
 
 // data used by the convolution matrix filter
-class FilterMatrix
+namespace FilterMatrix
 {
-public:
-  static constexpr int identity[3][3] =
+  const int identity[3][3] =
   {
     {  0,  0,  0 },
     {  0,  1,  0 },
     {  0,  0,  0 }
   };
 
-  static constexpr int blur[3][3] =
+  const int blur[3][3] =
   {
     {  1,  1,  1 },
     {  1,  1,  1 },
     {  1,  1,  1 }
   };
 
-  static constexpr int sharpen[3][3] =
+  const int sharpen[3][3] =
   {
     {  0, -1,  0 },
     { -1,  5, -1 },
     {  0, -1,  0 }
   };
 
-  static constexpr int gaussian[3][3] =
+  const int gaussian[3][3] =
   {
     {  1,  2,  1 },
     {  2,  4,  2 },
     {  1,  2,  1 }
   };
 
-  static constexpr int edge[3][3] =
+  const int edge[3][3] =
   {
     { -1, -1, -1 },
     { -1,  8, -1 },
     { -1, -1, -1 }
   };
 
-  static constexpr int emboss[3][3] =
+  const int emboss[3][3] =
   {
     { -2, -1,  0 },
     { -1,  1,  1 },
     {  0,  1,  2 }
   };
 
-  static constexpr int emboss_reverse[3][3] =
+  const int emboss_reverse[3][3] =
   {
     {  2,  1,  0 },
     {  1,  1, -1 },
     {  0, -1, -2 }
   };
 
-  static constexpr int sobel1[3][3] =
+  const int sobel1[3][3] =
   {
     { -1,  0,  1 },
     { -2,  0,  2 },
     { -1,  0,  1 }
   };
 
-  static constexpr int sobel2[3][3] =
+  const int sobel2[3][3] =
   {
     {  1,  2,  1 },
     {  0,  0,  0 },
     { -1, -2, -1 }
   };
 
-  static constexpr int test[3][3] =
+  const int test[3][3] =
   {
     {  0,  0,  0 },
     {  0,  1,  0 },
     {  0,  0,  0 }
   };
-
-private:
-  FilterMatrix() { }
-  ~FilterMatrix() { }
-};
+}
 
 #endif
 
