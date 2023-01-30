@@ -34,13 +34,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "View.H"
 
-namespace
-{
-  Bitmap *temp = 0;
-}
-
 Text::Text()
 {
+  temp = 0;
 }
 
 Text::~Text()
@@ -105,7 +101,6 @@ void Text::push(View *view)
 
   Blend::set(Blend::TRANS);
 
-  //state = 0;
   view->drawMain(true);
 }
 

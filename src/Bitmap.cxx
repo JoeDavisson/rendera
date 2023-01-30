@@ -37,16 +37,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Tool.H"
 #include "View.H"
 
-namespace
+static inline int xorValue(const int x, const int y)
 {
+  static const unsigned int xor_colors[2] = { 0x00000000, 0xffffffff };
 
-  // checkerboard pattern
-  inline int xorValue(const int x, const int y)
-  {
-    static const unsigned int xor_colors[2] = { 0x00000000, 0xffffffff };
-
-    return xor_colors[(x & 1) ^ (y & 1)];
-  }
+  return xor_colors[(x & 1) ^ (y & 1)];
 }
 
 // creates bitmap

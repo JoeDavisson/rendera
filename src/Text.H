@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef TEXT_H
 #define TEXT_H
 
+class Bitmap;
 class View;
 
 #include "Tool.H"
@@ -40,6 +41,9 @@ public:
   void redraw(View *);
   bool isActive();
   void reset();
+
+private:
+  Bitmap *temp;
 };
 
 #endif
