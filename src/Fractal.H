@@ -25,13 +25,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Map.H"
 
-namespace Fractal
+class Fractal
 {
-  void marble(Map *, Map *, Map *, Map *, float, float, int);
-  void plasma(Map *, int);
-  int adjust(Map *, int, int, int, int, int, int);
-  void divide(Map *, int, int, int, int);
-}
+public:
+  static void marble(Map *, Map *, Map *, Map *, float, float, int);
+  static void plasma(Map *, int);
+  static int adjust(Map *, int, int, int, int, int, int);
+  static void divide(Map *, int, int, int, int);
+
+private:
+  Fractal() { }
+  ~Fractal() { }
+};
 
 #endif
 

@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Blend.H"
-#include "FilterMatrix.H"
 #include "Gamma.H"
 #include "Inline.H"
 #include "Palette.H"
@@ -249,16 +248,23 @@ int Blend::smooth(const int c1, const int, const int t)
 {
   int r = 0, g = 0, b = 0, a = 0;
 
+  const int matrix[3][3] =
+  {
+    {  1,  2,  1 },
+    {  2,  4,  2 },
+    {  1,  2,  1 }
+  };
+
   for(int j = 0; j < 3; j++)
   {
     for(int i = 0; i < 3; i++)
     {
       const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
 
-      r += rgba.r * FilterMatrix::gaussian[i][j];
-      g += rgba.g * FilterMatrix::gaussian[i][j];
-      b += rgba.b * FilterMatrix::gaussian[i][j];
-      a += rgba.a * FilterMatrix::gaussian[i][j];
+      r += rgba.r * matrix[i][j];
+      g += rgba.g * matrix[i][j];
+      b += rgba.b * matrix[i][j];
+      a += rgba.a * matrix[i][j];
     }
   }
 
