@@ -83,10 +83,14 @@ namespace
   }
 }
 
-void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
+void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
 {
   if(size < 1)
+  {
+    float f = size - (int)size;
+    blend = 255 - f * 255;
     size = 1;
+  }
 
   const int border = 128;
   const int matrix[9] = { 0, 1, 0, 1, 2, 1, 0, 1, 0 };
@@ -142,15 +146,15 @@ void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
           {
             case 0:
               temp.setpixel(x + border, y + border,
-                            Blend::trans(c1, c2, blend));
+                            Blend::trans(c1, c2, 0));
               break;
             case 1:
               temp.setpixel(x + border, y + border,
-                Blend::trans(c1, Blend::keepLum(c2, getl(c1)), blend));
+                Blend::trans(c1, Blend::keepLum(c2, getl(c1)), 0));
               break;
             case 2:
               temp.setpixel(x + border, y + border,
-                            Blend::transAlpha(c1, c2, blend));
+                            Blend::transAlpha(c1, c2, 0));
               break;
           }
         }
@@ -158,8 +162,14 @@ void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
         if(Gui::progressUpdate(y) < 0)
           break;
       }
+    }
 
-      temp.blit(bmp, border, border, 0, 0, bmp->w, bmp->h);
+    for(int y = 0; y < bmp->h; y++)
+    {
+      for(int x = 0; x < bmp->w; x++)
+      {
+        bmp->setpixelSolid(x, y, temp.getpixel(border + x, border + y), blend);
+      }
     }
   
     Gui::progressHide();
@@ -170,8 +180,8 @@ void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
     size = border / 2 - 2;
 
   // force odd value to prevent image shift
-  if((size & 1) == 0)
-    size++;
+//  if((size & 1) == 0)
+//    size++;
 
   int larger = src.w > src.h ? src.w : src.h;
 
