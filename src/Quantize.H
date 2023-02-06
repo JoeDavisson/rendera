@@ -36,13 +36,13 @@ private:
 
   struct color_type
   {
-    double r, g, b, l, freq;
+    float r, g, b, l, freq;
     bool active;
   };
 
   static void makeColor(color_type *,
-                        const double, const double, const double, const double);
-  static double error(color_type *, color_type *);
+                        const float, const float, const float, const float);
+  static float error(color_type *, color_type *);
   static void merge(color_type *, color_type *);
   static int limitColors(Octree *, color_type *, int);
 };
