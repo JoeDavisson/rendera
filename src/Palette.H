@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define PALETTE_H
 
 class Widget;
-class Octree;
 
 class Palette
 {
@@ -49,7 +48,7 @@ public:
   void set4LevelRGB();
 
   int *data;
-  Octree *table;
+  unsigned char *table;
   int max;
 };
 

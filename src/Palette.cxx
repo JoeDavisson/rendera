@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "FileSP.H"
 #include "Inline.H"
-#include "Octree.H"
 #include "Palette.H"
 #include "Widget.H"
 
@@ -39,7 +38,7 @@ Palette::Palette()
   data = new int[256];
 
   // data structure for color lookup
-  table = new Octree();
+  table = new unsigned char[16777216];
 
   // use a default palette
   setDefault();
@@ -47,7 +46,7 @@ Palette::Palette()
 
 Palette::~Palette()
 {
-  delete table;
+  delete[] table;
   delete[] data;
 }
 
@@ -176,10 +175,10 @@ void Palette::swapColor(int c1, int c2)
 // generate color lookup table
 void Palette::fillTable()
 {
-  delete table;
-  table = new Octree();
+  delete[] table;
+  table = new unsigned char[16777216];
 
-  const int step = 8;
+  const int step = 4;
 
   for(int b = 0; b <= 256 - step; b += step)
   {
@@ -187,7 +186,7 @@ void Palette::fillTable()
     {
       for(int r = 0; r <= 256 - step; r += step)
       {
-        int c = makeRgb24(r + step / 2, g + step / 2, b + step / 2);
+        const int c = makeRgb24(r + step / 2, g + step / 2, b + step / 2);
         int smallest = 0xffffff;
         int use = 0;
 
@@ -202,20 +201,34 @@ void Palette::fillTable()
           }
         }
 
-        table->writePath(r, g, b, use);
+        for(int k = 0; k < step; k++)
+        {
+          const int bk = b + k;
+
+          for(int j = 0; j < step; j++)
+          {
+            const int gj = g + j;
+
+            for(int i = 0; i < step; i++)
+            {
+              const int ri = r + i;
+
+              table[makeRgb24(ri, gj, bk) & 0xffffff] = use;
+            }
+          }
+        }
       }
     }
   }
 
-  // include exact matches
   for(int i = 0; i < max; i++)
-    table->writePath(getr(data[i]), getg(data[i]), getb(data[i]), i);
+    table[data[i] & 0xffffff] = (unsigned char)i;
 }
 
 // return the nearest palette entry for an RGB color
 int Palette::lookup(const int c)
 {
-  return table->read(c);
+  return table[c & 0xffffff];
 }
 
 void Palette::sort()
