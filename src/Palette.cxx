@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "FileSP.H"
+#include "KDtree.H"
 #include "Inline.H"
 #include "Palette.H"
 #include "Widget.H"
@@ -178,7 +179,23 @@ void Palette::fillTable()
   delete[] table;
   table = new unsigned char[16777216];
 
+  KDtree::node_type test_node;
+  KDtree::node_type *root, *found;
+  KDtree::node_type *colors = new KDtree::node_type[max];
+
+  int best_dist;
   const int step = 4;
+
+  for(int i = 0; i < max; i++)
+  {
+    const int c = data[i];
+    colors[i].x[0] = getr(c);
+    colors[i].x[1] = getg(c);
+    colors[i].x[2] = getb(c);
+    colors[i].index = i;
+  }
+
+  root = KDtree::make_tree(colors, max, 0, 3);
 
   for(int b = 0; b <= 256 - step; b += step)
   {
@@ -186,20 +203,12 @@ void Palette::fillTable()
     {
       for(int r = 0; r <= 256 - step; r += step)
       {
-        const int c = makeRgb24(r + step / 2, g + step / 2, b + step / 2);
-        int smallest = 0xffffff;
-        int use = 0;
+        test_node.x[0] = r;
+        test_node.x[1] = g;
+        test_node.x[2] = b;
 
-        for(int i = 0; i < max; i++)
-        {
-          int d = diff24(c, data[i]);
-
-          if(d < smallest)
-          {
-            smallest = d;
-            use = i;
-          }
-        }
+        found = 0;
+        KDtree::nearest(root, &test_node, 0, 3, &found, &best_dist);
 
         for(int k = 0; k < step; k++)
         {
@@ -212,8 +221,7 @@ void Palette::fillTable()
             for(int i = 0; i < step; i++)
             {
               const int ri = r + i;
-
-              table[makeRgb24(ri, gj, bk) & 0xffffff] = use;
+              table[makeRgb24(ri, gj, bk)] = found->index;
             }
           }
         }
@@ -222,7 +230,9 @@ void Palette::fillTable()
   }
 
   for(int i = 0; i < max; i++)
-    table[data[i] & 0xffffff] = (unsigned char)i;
+    table[data[i] & 0xffffff] = i;
+
+  delete[] colors;
 }
 
 // return the nearest palette entry for an RGB color

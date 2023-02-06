@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 // based on example at https://rosettacode.org/wiki/K-d_tree
 
-inline int KDtree::dist(node_type *a, node_type *b, int dim)
+int KDtree::dist(node_type *a, node_type *b, int dim)
 {
   int t;
   int d = 0;
@@ -40,9 +40,14 @@ inline int KDtree::dist(node_type *a, node_type *b, int dim)
   return d;
 }
 
-inline void KDtree::swap(node_type *x, node_type *y)
+void KDtree::swap(node_type *x, node_type *y)
 {
   int temp[max_dim];
+  int temp_index;
+
+  temp_index = x->index;
+  x->index = y->index;
+  y->index = temp_index;
 
   std::memcpy(temp, x->x, sizeof(temp));
   std::memcpy(x->x, y->x, sizeof(temp));
