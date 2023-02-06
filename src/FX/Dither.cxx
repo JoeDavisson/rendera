@@ -179,10 +179,16 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
 	if(fix_gamma)
 	{
 	  el = Gamma::fix(old_l) - Gamma::fix(new_l);
+
+          if(el < -32767) el = -32767;
+          if(el > 32767) el = 32767;
 	}
 	else
 	{
 	  el = old_l - new_l;
+
+          if(el < -127) el = -127;
+          if(el > 127) el = 127;
 	}
 
 	for(int j = 0; j < h; j++)
@@ -249,12 +255,26 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
 	  er = Gamma::fix(old_r) - Gamma::fix(new_r);
 	  eg = Gamma::fix(old_g) - Gamma::fix(new_g);
 	  eb = Gamma::fix(old_b) - Gamma::fix(new_b);
+
+          if(er < -32767) er = -32767;
+          if(er > 32767) er = 32767;
+          if(eg < -32767) eg = -32767;
+          if(eg > 32767) eg = 32767;
+          if(eb < -32767) eb = -32767;
+          if(eb > 32767) eb = 32767;
 	}
 	else
 	{
 	  er = old_r - new_r;
 	  eg = old_g - new_g;
 	  eb = old_b - new_b;
+
+          if(er < -127) er = -127;
+          if(er > 127) er = 127;
+          if(eg < -127) eg = -127;
+          if(eg > 127) eg = 127;
+          if(eb < -127) eb = -127;
+          if(eb > 127) eb = 127;
 	}
 
 	for(int j = 0; j < h; j++)
