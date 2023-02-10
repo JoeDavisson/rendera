@@ -363,7 +363,7 @@ int View::handle(int event)
       int coordy = imgy;
       coordx = clamp(coordx, Project::bmp->cw - 1);
       coordy = clamp(coordy, Project::bmp->ch - 1);
-      sprintf(coords, "(%d, %d)", coordx, coordy);
+      snprintf(coords, sizeof(coords), "(%d, %d)", coordx, coordy);
       Gui::statusCoords(coords);
 
       oldimgx = imgx;

@@ -82,6 +82,7 @@ private:
   static char save_dir[256];
   static char pal_load_dir[256];
   static char pal_save_dir[256];
+  static const char *ext_string[];
 
   static void jpeg_exit(j_common_ptr);
   static void errorMessage();

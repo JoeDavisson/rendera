@@ -21,8 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
+#include <cstdio>
 #include <cmath>
-#include <algorithm>
 #include <vector>
 
 #include <FL/Fl_Group.H>
@@ -136,7 +136,7 @@ char File::save_dir[256];
 char File::pal_load_dir[256];
 char File::pal_save_dir[256];
 
-const char *ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
+const char *File::ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
 
 // show error dialog
 void File::errorMessage()

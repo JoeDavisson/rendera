@@ -524,7 +524,7 @@ namespace Editor
   {
     char s[256];
 
-    sprintf(s, "  Index = %d", index);
+    snprintf(s, sizeof(s), "  Index = %d", index);
     Items::index_text->copy_label(s);
     Items::index_text->redraw();
   }

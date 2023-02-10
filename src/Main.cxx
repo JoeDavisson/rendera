@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Clone.H"
 #include "Dialog.H"
+#include "ExportData.H"
 #include "File.H"
 #include "FX/FX.H"
 #include "Gamma.H"
@@ -222,6 +223,7 @@ int main(int argc, char *argv[])
   Gamma::init();
   Project::init(memory_max, undo_max);
   File::init();
+  ExportData::init();
   FX::init();
   Transform::init();
   Clone::init();

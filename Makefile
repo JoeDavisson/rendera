@@ -71,6 +71,7 @@ OBJ= \
   $(SRC_DIR)/FX/SideAbsorptions.o \
   $(SRC_DIR)/FilterMatrix.o \
   $(SRC_DIR)/Gamma.o \
+  $(SRC_DIR)/ExportData.o \
   $(SRC_DIR)/File.o \
   $(SRC_DIR)/FileSP.o \
   $(SRC_DIR)/Transform.o \

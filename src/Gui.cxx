@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "CheckBox.H"
 #include "Clone.H"
 #include "Dialog.H"
+#include "ExportData.H"
 #include "FX/FX.H"
 #include "File.H"
 #include "Gamma.H"
@@ -334,7 +335,7 @@ void Gui::init()
   menubar->box(FL_THIN_UP_BOX);
   menubar->color(FL_INACTIVE_COLOR);
 
-  menubar->add("&File/New...", 0,
+  menubar->add("&File/&New...", 0,
     (Fl_Callback *)Dialog::newImage, 0, 0);
   menubar->add("&File/&Open...", 0,
     (Fl_Callback *)File::load, 0, 0);
@@ -342,6 +343,8 @@ void Gui::init()
     (Fl_Callback *)File::save, 0, FL_MENU_DIVIDER);
   menubar->add("&File/&Close...", 0,
     (Fl_Callback *)imagesCloseFile, 0, FL_MENU_DIVIDER);
+  menubar->add("&File/Export &Data...", 0,
+    (Fl_Callback *)ExportData::save, 0, FL_MENU_DIVIDER);
   menubar->add("&File/E&xit...", 0,
     (Fl_Callback *)quit, 0, 0);
 
@@ -1990,7 +1993,7 @@ void Gui::imagesUpdateMemInfo()
   const int redos =
     Project::undo_max - Project::undo_list[Project::current]->redo_current - 1;
 
-  sprintf(s, "%.1lf %s / %.1lf %s used\n%d/%d undos, %d redos",
+  snprintf(s, sizeof(s), "%.1lf %s / %.1lf %s used\n%d/%d undos, %d redos",
           mem, mem_gb ? "GB" : "MB", max, max_gb ? "GB" : "MB",
           undos, Project::undo_max - 1, redos);
 

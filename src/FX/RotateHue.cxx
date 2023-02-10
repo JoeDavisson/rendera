@@ -154,7 +154,7 @@ void RotateHue::setHue()
   char degree[16];
 
   Items::hue->copy_label("                ");
-  sprintf(degree, "%d\xB0", (int)(hx - 180));
+  snprintf(degree, sizeof(degree), "%d\xB0", (int)(hx - 180));
 
   Items::hue->copy_label(degree);
   apply(Items::preview->bitmap, false);
