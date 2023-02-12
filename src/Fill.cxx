@@ -284,31 +284,6 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
 //    points[i].x[1] = stroke->edge_y[i];
   }
 
-/*
-  tl -= feather;
-  if(tl < cl)
-    tl = cl; 
-
-  tr += feather;
-  if(tr > cr)
-    tr = cr; 
-
-  tt -= feather;
-  if(tt < ct)
-    tt = ct; 
-
-  tb += feather;
-  if(tb > cb)
-    tb = cb; 
-
-  if(tl > tr)
-    std::swap(tl, tr);
-
-  if(tt > tb)
-    std::swap(tt, tb);
-*/
-  printf("count = %d\n", count);
-
   root = KDtree::make_tree(points, count, 0, 2);
   Gui::progressShow((cb - ct) + 1);
 
@@ -339,7 +314,9 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
       break;
   }
 
-  bmp->rect(tl, tt, tr, tb, makeRgb(255, 0, 255), 64);
+  // show bounding box (for testing)
+  //bmp->rect(tl, tt, tr, tb, makeRgb(255, 0, 255), 64);
+  //printf("count = %d\n", count);
 
   Gui::progressHide();
   delete[] points;
