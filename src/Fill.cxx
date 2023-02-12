@@ -69,7 +69,12 @@ bool Fill::inbox(int x, int y, int x1, int y1, int x2, int y2)
 bool Fill::isEdge(Map *map, const int x, const int y)
 {
   if(x < 1 || x > map->w - 2 || y < 1 || y > map->h - 2)
-    return 1;
+  {
+    if(*(map->row[y] + x))
+      return 0;
+    else
+      return 1;
+  }
 
   if( *(map->row[y - 1] + x) &&
       *(map->row[y] + x - 1) &&
@@ -250,11 +255,42 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
 
   int best_dist;
 
+  int tl = 0xfffff;
+  int tr = 0;
+  int tt = 0xfffff;
+  int tb = 0;
+
   for(int i = 0; i < count; i++)
   {
-    points[i].x[0] = stroke->edge_x[i];
-    points[i].x[1] = stroke->edge_y[i];
+    const int ex = stroke->edge_x[i];
+    const int ey = stroke->edge_y[i];
+
+    if(ex < tl)
+      tl = ex;
+
+    if(ex > tr)
+      tr = ex;
+
+    if(ey < tt)
+      tt = ey;
+
+    if(ey > tb)
+      tb = ey;
+
+    points[i].x[0] = ex;
+    points[i].x[1] = ey;
+
+//    points[i].x[0] = stroke->edge_x[i];
+//    points[i].x[1] = stroke->edge_y[i];
   }
+
+  if(tl > tr)
+    std::swap(tl, tr);
+
+  if(tt > tb)
+    std::swap(tt, tb);
+
+  printf("count = %d\n", count);
 
   root = KDtree::make_tree(points, count, 0, 2);
   Gui::progressShow((cb - ct) + 1);
@@ -285,6 +321,8 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
     if(Gui::progressUpdate(y) < 0)
       break;
   }
+
+  //bmp->rect(tl, tt, tr, tb, makeRgb(255, 0, 255), 0);
 
   Gui::progressHide();
   delete[] points;
