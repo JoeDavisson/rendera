@@ -34,10 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "View.H"
 
-//static const int stack_size = 4096;
-//static std::vector<int> stack_x(stack_size);
-//static std::vector<int> stack_y(stack_size);
-
 Fill::Fill()
 {
   stack_size = 4096;
@@ -65,9 +61,10 @@ bool Fill::inbox(int x, int y, int x1, int y1, int x2, int y2)
     return 0;
 }
 
-// returns true if pixel is on a boundary
+// finds edges
 bool Fill::isEdge(Map *map, const int x, const int y)
 {
+  // special case
   if(x < 1 || x > map->w - 2 || y < 1 || y > map->h - 2)
   {
     if(*(map->row[y] + x))
@@ -128,7 +125,7 @@ bool Fill::push(const int x, const int y)
   return false;
 }
 
-void Fill::emptyStack()
+void Fill::clear()
 {
   int x, y;
 
@@ -151,7 +148,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
   if(old_color == new_color)
     return;
 
-  emptyStack();
+  clear();
   
   if(!push(x, y))
     return;
@@ -279,24 +276,22 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
 
     points[i].x[0] = ex;
     points[i].x[1] = ey;
-
-//    points[i].x[0] = stroke->edge_x[i];
-//    points[i].x[1] = stroke->edge_y[i];
   }
 
   tl -= feather;
+  tr += feather;
+  tt -= feather;
+  tb += feather;
+
   if(tl < cl)
     tl = cl; 
 
-  tr += feather;
   if(tr > cr)
     tr = cr; 
 
-  tt -= feather;
   if(tt < ct)
     tt = ct; 
 
-  tb += feather;
   if(tb > cb)
     tb = cb; 
 
@@ -306,20 +301,25 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
   if(tt > tb)
     std::swap(tt, tb);
 
-  //printf("count = %d\n", count);
-
   root = KDtree::make_tree(points, count, 0, 2);
   Gui::progressShow((cb - ct) + 1);
+
+  for(y = ct; y <= cb; y++)
+  {
+    for(x = cl; x <= cr; x++)
+    {
+      if(x > tl || x < tr || y < tt || y > tb)
+        if(map->getpixel(x - cl, y - ct) == 255)
+          bmp->setpixel(x, y, new_color);
+    }
+  }
 
   for(y = tt; y <= tb; y++)
   {
     for(x = tl; x <= tr; x++)
     {
       if(map->getpixel(x - cl, y - ct) == 255)
-      {
-	bmp->setpixel(x, y, new_color);
-	continue;
-      }
+        continue;
 
       test_node.x[0] = x;
       test_node.x[1] = y;
@@ -331,14 +331,12 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
       const int c1 = bmp->getpixel(x, y);
       const int t = fineEdge(x, y, zx, zy, feather, 0);
 
-      bmp->setpixel(x, y, Blend::trans(c1, new_color, t));
+       bmp->setpixel(x, y, Blend::trans(c1, new_color, t));
     }
 
     if(Gui::progressUpdate(y) < 0)
       break;
   }
-
-  //bmp->rect(tl, tt, tr, tb, makeRgb(255, 0, 255), 64);
 
   Gui::progressHide();
   delete[] points;

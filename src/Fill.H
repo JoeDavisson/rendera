@@ -55,12 +55,9 @@ private:
   int fineEdge(int, int, const int, const int, const int, const int);
   bool pop(int *, int *);
   bool push(int, int);
-  void emptyStack();
+  void clear();
   bool inRange(const int, const int, const int);
   void fill(int, int, int, int, int, int);
-  
-  
-
 };
 
 #endif
