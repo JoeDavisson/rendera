@@ -281,7 +281,6 @@ int View::handle(int event)
             Clone::dy = 0;
             Clone::moved = true;
             Clone::state = Clone::PLACED;
-            Clone::update(this);
             redraw();
           }
           else

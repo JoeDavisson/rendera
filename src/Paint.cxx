@@ -66,7 +66,6 @@ void Paint::push(View *view)
   {
     stroke->begin(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
     Clone::state = Clone::STARTED;
-    Clone::update(view);
     active = true;
   }
 
@@ -82,7 +81,6 @@ void Paint::drag(View *view)
     view->drawMain(false);
     stroke->previewPaint(view);
 
-    Clone::update(view);
     view->redraw();
   }
 }
@@ -139,7 +137,6 @@ void Paint::move(View *view)
       break;
   }
 
-  Clone::update(view);
   view->redraw();
 }
 

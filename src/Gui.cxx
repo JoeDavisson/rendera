@@ -223,7 +223,6 @@ namespace
       // hide any open windows so FLTK ends the program
       if(Dialog::choice("Exit", "Are You Sure?"))
       {
-        Clone::show(false);
         widget->hide();
       }
     }
@@ -1579,7 +1578,6 @@ void Gui::colorBlend(Widget *, void *)
 void Gui::cloneEnable(Widget *, void *var)
 {
   Clone::active = *(int *)var;
-  Clone::show(*(int *)var);
 }
 
 void Gui::originEnable(Widget *, void *var)

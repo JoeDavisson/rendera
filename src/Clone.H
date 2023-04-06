@@ -46,18 +46,12 @@ public:
   static bool moved;
   static Bitmap *buffer_bmp;
 
-  static void init();
   static void move(int, int);
   static void refresh(int, int, int, int);
-  static void show(bool);
-  static void update(View *);
 
 private:
   Clone() { }
   ~Clone() { }
-
-  static Fl_Double_Window *window;
-  static Widget *preview;
 };
 
 #endif
