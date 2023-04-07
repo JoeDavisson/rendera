@@ -882,10 +882,10 @@ void Stroke::previewPaint(View *view)
           int ty1 = ymod;
           int ty2 = ((int)zoom - 1 - ymod);
 
-          tx1 = tx1 == 0 ? 0 : 255;
-          tx2 = tx2 == 0 ? 0 : 255;
-          ty1 = ty1 == 0 ? 0 : 255;
-          ty2 = ty2 == 0 ? 0 : 255;
+          tx1 = tx1 == 0 ? 0 : 256;
+          tx2 = tx2 == 0 ? 0 : 256;
+          ty1 = ty1 == 0 ? 0 : 256;
+          ty2 = ty2 == 0 ? 0 : 256;
 
           const int checker = visibleColor(x, y);
 
