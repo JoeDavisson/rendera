@@ -244,7 +244,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
                                Gamma::unfix(accum_b / div),
                                accum_a / div);
 
-        temp.setpixel(x - size / 2, y - size / 2, c);
+        temp.setpixel(x - size / 2 + 1, y - size / 2 + 1, c);
       }
     }
 
