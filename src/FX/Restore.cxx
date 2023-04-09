@@ -93,9 +93,9 @@ void Restore::apply()
       const int l = getl(*p);
 
       // apply adjustments
-      r = 255 * pow((double)r / 255, ra);
-      g = 255 * pow((double)g / 255, ga);
-      b = 255 * pow((double)b / 255, ba);
+      r = 255 * std::pow((double)r / 255, ra);
+      g = 255 * std::pow((double)g / 255, ga);
+      b = 255 * std::pow((double)b / 255, ba);
 
       r = clamp(r, 255);
       g = clamp(g, 255);

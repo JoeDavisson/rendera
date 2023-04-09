@@ -100,7 +100,7 @@ namespace ExportOptions
   void init()
   {
     int y1 = 8;
-    int ww, hh;
+    int ww = 0, hh = 0;
 
     Items::dialog = new DialogWindow(256, 0, "Export Data Options");
 

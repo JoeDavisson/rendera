@@ -19,19 +19,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include <cmath>
+#include <vector>
 
 #include "Gamma.H"
+#include "Inline.H"
 
-int Gamma::table_fix[256];
-int Gamma::table_unfix[65536];
+std::vector<int> table_fix(256);
+std::vector<int> table_unfix(65536);
 
 void Gamma::init()
 {
   for(int i = 0; i < 256; i++)
+  {
     table_fix[i] = std::pow((double)i / 255, 2.2) * 65535;
+  }
 
   for(int i = 0; i < 65536; i++)
+  {
     table_unfix[i] = std::pow((double)i / 65535, (1.0 / 2.2)) * 255;
+  }
 }
 
 int Gamma::fix(const int val)

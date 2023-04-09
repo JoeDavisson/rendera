@@ -31,9 +31,6 @@ public:
 private:
   Gamma() { }
   ~Gamma() { }
-
-  static int table_fix[256];
-  static int table_unfix[65536];
 };
 
 #endif

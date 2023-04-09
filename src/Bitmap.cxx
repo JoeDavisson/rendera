@@ -55,11 +55,13 @@ Bitmap::Bitmap(int width, int height)
   data = new int [width * height];
   row = new int *[height];
 
+  memset(data, 0, sizeof(int) * width * height);
+  memset(row, 0, sizeof(int *) * height);
+
   x = 0;
   y = 0;
   w = width;
   h = height;
-  active = false;
 
   setClip(0, 0, w - 1, h - 1);
 
@@ -80,11 +82,13 @@ Bitmap::Bitmap(int width, int height, int *image_data)
   data = image_data;
   row = new int *[height];
 
+  memset(data, 0, sizeof(int) * width * height);
+  memset(row, 0, sizeof(int *) * height);
+
   x = 0;
   y = 0;
   w = width;
   h = height;
-  active = false;
 
   for(int i = 0; i < height; i++)
     row[i] = &data[width * i];
@@ -100,7 +104,7 @@ Bitmap::~Bitmap()
 
 bool getm(int c)
 {
-    return (geta(c) > 0) ? true : false;
+  return (geta(c) > 0) ? true : false;
 }
 
 bool Bitmap::isEdge(int x, int y)

@@ -308,7 +308,7 @@ namespace Scale
           f[2] = (1.0f - u) * v;
           f[3] = u * v;
 
-          float r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f;
+          float r = 0, g = 0, b = 0, a = 0;
 
           for(int i = 0; i < 4; i++)
           {
@@ -398,7 +398,7 @@ namespace Scale
               if(xx > sw - 1)
                 xx = sw - 1;
 
-              const rgba_type rgba = getRgba(bmp->getpixel(sx + xx, sy + yy));
+              rgba_type rgba = getRgba(bmp->getpixel(sx + xx, sy + yy));
 
               r[i][j] = Gamma::fix(rgba.r);
               g[i][j] = Gamma::fix(rgba.g);

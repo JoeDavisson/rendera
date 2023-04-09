@@ -185,10 +185,10 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
 
   int larger = src.w > src.h ? src.w : src.h;
 
-  std::vector<int> buf_r(larger);
-  std::vector<int> buf_g(larger);
-  std::vector<int> buf_b(larger);
-  std::vector<int> buf_a(larger);
+  std::vector<int> buf_r(larger, 0);
+  std::vector<int> buf_g(larger, 0);
+  std::vector<int> buf_b(larger, 0);
+  std::vector<int> buf_a(larger, 0);
 
   Gui::progressShow(6, 1);
 
@@ -221,10 +221,13 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
       {
         const int mx = x - div;
 
-        accum_r -= buf_r[mx];
-        accum_g -= buf_g[mx];
-        accum_b -= buf_b[mx];
-        accum_a -= buf_a[mx];
+        if(mx >= 0)
+        {
+          accum_r -= buf_r[mx];
+          accum_g -= buf_g[mx];
+          accum_b -= buf_b[mx];
+          accum_a -= buf_a[mx];
+        }
 
         accum_r += buf_r[x];
         accum_g += buf_g[x];
@@ -270,10 +273,13 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
       {
         const int my = y - div;
 
-        accum_r -= buf_r[my];
-        accum_g -= buf_g[my];
-        accum_b -= buf_b[my];
-        accum_a -= buf_a[my];
+        if(my >= 0)
+        {
+          accum_r -= buf_r[my];
+          accum_g -= buf_g[my];
+          accum_b -= buf_b[my];
+          accum_a -= buf_a[my];
+        }
 
         accum_r += buf_r[y];
         accum_g += buf_g[y];

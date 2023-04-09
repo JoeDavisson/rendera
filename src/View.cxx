@@ -420,7 +420,9 @@ int View::handle(int event)
       #endif
 
       const int length = Fl::event_length();
-      char *fn = new char[length];
+      char fn[length];
+
+      memset(fn, 0, sizeof(char) * length);
 
       #ifdef WIN32
         strcpy(fn, Fl::event_text());
@@ -459,7 +461,7 @@ int View::handle(int event)
         }
       }
 
-      delete[] fn;
+//      delete[] fn;
       return 1;
     }
 

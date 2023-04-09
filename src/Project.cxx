@@ -88,6 +88,7 @@ void Project::init(int memory_limit, int undo_limit)
   palette = new Palette();
   stroke = new Stroke();
   undo = 0;
+  last = 0;
 
   paint = new Paint();
   getcolor = new GetColor();
@@ -282,7 +283,7 @@ void Project::switchImage(int index)
 
 bool Project::removeImage()
 {
-  if(last < 2)
+  if(last <= 1)
   {
     Dialog::message("Last Image", "Cannot close last image, there\nmust be at least one.");
     return false;
@@ -317,25 +318,25 @@ double Project::getImageMemory()
 
   for(int j = 0; j < last; j++)
   {
-    Bitmap *bmp = bmp_list[j];
+    Bitmap *temp = bmp_list[j];
 
-    bytes += bmp->w * bmp->h * sizeof(int);
-    bytes += bmp->h * sizeof(int *);
+    bytes += temp->w * temp->h * sizeof(int);
+    bytes += temp->h * sizeof(int *);
 
     for(int i = 0; i < undo_list[j]->levels; i++)
     {
-      Bitmap *bmp = undo_list[j]->undo_stack[i];
+      Bitmap *temp = undo_list[j]->undo_stack[i];
 
-      bytes += bmp->w * bmp->h * sizeof(int);
-      bytes += bmp->h * sizeof(int *);
+      bytes += temp->w * temp->h * sizeof(int);
+      bytes += temp->h * sizeof(int *);
     }
 
     for(int i = 0; i < undo_list[j]->levels; i++)
     {
-      Bitmap *bmp = undo_list[j]->redo_stack[i];
+      Bitmap *temp = undo_list[j]->redo_stack[i];
 
-      bytes += bmp->w * bmp->h * sizeof(int);
-      bytes += bmp->h * sizeof(int *);
+      bytes += temp->w * temp->h * sizeof(int);
+      bytes += temp->h * sizeof(int *);
     }
   }
 
