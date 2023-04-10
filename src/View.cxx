@@ -131,7 +131,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
     backbuf = new Bitmap(Fl::w(), Fl::h());
 
     // try to detect pixelformat (almost always RGB or BGR)
-    if(fl_visual->visual->blue_mask == 0xFF)
+    if(fl_visual->visual->blue_mask == 0xff)
       bgr_order = true;
 
     ximage = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,

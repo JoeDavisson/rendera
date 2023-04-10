@@ -26,9 +26,9 @@ void Normalize::apply(Bitmap *bmp)
   int r_high = 0;
   int g_high = 0;
   int b_high = 0;
-  int r_low = 0xFFFFFF;
-  int g_low = 0xFFFFFF;
-  int b_low = 0xFFFFFF;
+  int r_low = 0xffffff;
+  int g_low = 0xffffff;
+  int b_low = 0xffffff;
 
   for(int y = bmp->ct; y <= bmp->cb; y++)
   {

@@ -30,7 +30,7 @@ void AlphaClear::apply(Bitmap *bmp)
 
     for(int x = bmp->cl; x <= bmp->cr; x++)
     {
-      *p++ |= 0xFF000000;
+      *p++ |= 0xff000000;
     }
 
     if(Gui::progressUpdate(y) < 0)

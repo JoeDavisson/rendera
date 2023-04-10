@@ -479,10 +479,10 @@ void Map::setpixelAA(int x, int y, int c)
   const int xx = (x >> 2);
   const int yy = (y >> 2);
 
-  blendAA(xx, yy, (a & 0x000001FF) >> shift1);
-  blendAA(xx + 1, yy, (a & 0x01FF0000) >> shift2);
-  blendAA(xx, yy + 1, (b & 0x000001FF) >> shift1);
-  blendAA(xx + 1, yy + 1, (b & 0x01FF0000) >> shift2);
+  blendAA(xx, yy, (a & 0x000001ff) >> shift1);
+  blendAA(xx + 1, yy, (a & 0x01ff0000) >> shift2);
+  blendAA(xx, yy + 1, (b & 0x000001ff) >> shift1);
+  blendAA(xx + 1, yy + 1, (b & 0x01ff0000) >> shift2);
 }
 
 // draw horizontal antialised line (used by filled oval/rectangle)

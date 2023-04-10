@@ -279,10 +279,10 @@ int Blend::smooth(const int c1, const int, const int t)
 int Blend::fast(const int c1, const int c2, const int t)
 {
   const int rb =
-    (((((c1 & 0xFF00FF) - (c2 & 0xFF00FF)) * t) >> 8) + c2) & 0xFF00FF;
-  const int g = (((((c1 & 0xFF00) - (c2 & 0xFF00)) * t) >> 8) + c2) & 0xFF00;
+    (((((c1 & 0xff00ff) - (c2 & 0xff00ff)) * t) >> 8) + c2) & 0xff00ff;
+  const int g = (((((c1 & 0xff00) - (c2 & 0xff00)) * t) >> 8) + c2) & 0xff00;
 
-  return rb | g | 0xFF000000;
+  return rb | g | 0xff000000;
 }
 
 int Blend::invert(const int c1, const int, const int)

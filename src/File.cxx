@@ -166,7 +166,7 @@ bool File::isPng(const unsigned char *header)
 
 bool File::isJpeg(const unsigned char *header)
 {
-  const unsigned char id[2] = { 0xFF, 0xD8 };
+  const unsigned char id[2] = { 0xff, 0xd8 };
   return (memcmp(header, id, 2) == 0);
 }
 
@@ -337,9 +337,9 @@ Bitmap *File::loadJpeg(const char *fn)
 
       for(int x = 0; x < row_stride; x += 3)
       {
-        *p++ = makeRgb(linebuf[0][x + 0] & 0xFF,
-                       linebuf[0][x + 1] & 0xFF,
-                       linebuf[0][x + 2] & 0xFF);
+        *p++ = makeRgb(linebuf[0][x + 0] & 0xff,
+                       linebuf[0][x + 1] & 0xff,
+                       linebuf[0][x + 2] & 0xff);
       }
     }
   }
@@ -351,9 +351,9 @@ Bitmap *File::loadJpeg(const char *fn)
 
       for(int x = 0; x < row_stride; x += 1)
       {
-        *p++ = makeRgb(linebuf[0][x] & 0xFF,
-                       linebuf[0][x] & 0xFF,
-                       linebuf[0][x] & 0xFF);
+        *p++ = makeRgb(linebuf[0][x] & 0xff,
+                       linebuf[0][x] & 0xff,
+                       linebuf[0][x] & 0xff);
       }
     }
   }
@@ -457,9 +457,9 @@ Bitmap *File::loadBmp(const char *fn)
       for(int x = 0; x < w; x++)
       {
         int x1 = negx ? w - 1 - x : x;
-        *(temp->row[y1] + x1) = makeRgb(linebuf[xx + 2] & 0xFF,
-                                        linebuf[xx + 1] & 0xFF,
-                                        linebuf[xx + 0] & 0xFF);
+        *(temp->row[y1] + x1) = makeRgb(linebuf[xx + 2] & 0xff,
+                                        linebuf[xx + 1] & 0xff,
+                                        linebuf[xx + 0] & 0xff);
         xx += mul;
       }
     }
@@ -553,16 +553,16 @@ Bitmap *File::loadTarga(const char *fn)
     {
       if(depth == 3)
       {
-        *(temp->row[y] + x) = makeRgb((linebuf[x * depth + 2] & 0xFF),
-                                      (linebuf[x * depth + 1] & 0xFF),
-                                      (linebuf[x * depth + 0] & 0xFF));
+        *(temp->row[y] + x) = makeRgb((linebuf[x * depth + 2] & 0xff),
+                                      (linebuf[x * depth + 1] & 0xff),
+                                      (linebuf[x * depth + 0] & 0xff));
       }
       else if(depth == 4)
       {
-        *(temp->row[y] + x) = makeRgba((linebuf[x * depth + 2] & 0xFF),
-                                       (linebuf[x * depth + 1] & 0xFF),
-                                       (linebuf[x * depth + 0] & 0xFF),
-                                       (linebuf[x * depth + 3] & 0xFF));
+        *(temp->row[y] + x) = makeRgba((linebuf[x * depth + 2] & 0xff),
+                                       (linebuf[x * depth + 1] & 0xff),
+                                       (linebuf[x * depth + 0] & 0xff),
+                                       (linebuf[x * depth + 3] & 0xff));
       }
     }
   }
@@ -684,16 +684,16 @@ Bitmap *File::loadPng(const char *fn)
       {
         if(channels == 3)
         {
-          *p++ = makeRgb(row[xx + 0] & 0xFF,
-                         row[xx + 1] & 0xFF,
-                         row[xx + 2] & 0xFF);
+          *p++ = makeRgb(row[xx + 0] & 0xff,
+                         row[xx + 1] & 0xff,
+                         row[xx + 2] & 0xff);
         }
         else if(channels == 4)
         {
-           *p++ = makeRgba(row[xx + 0] & 0xFF,
-                           row[xx + 1] & 0xFF,
-                           row[xx + 2] & 0xFF,
-                           row[xx + 3] & 0xFF);
+           *p++ = makeRgba(row[xx + 0] & 0xff,
+                           row[xx + 1] & 0xff,
+                           row[xx + 2] & 0xff,
+                           row[xx + 3] & 0xff);
         }
 
         xx += channels;
@@ -718,16 +718,16 @@ Bitmap *File::loadPng(const char *fn)
       {
         if(channels == 3)
         {
-          *p++ = makeRgb(linebuf[xx + 0] & 0xFF,
-                         linebuf[xx + 1] & 0xFF,
-                         linebuf[xx + 2] & 0xFF);
+          *p++ = makeRgb(linebuf[xx + 0] & 0xff,
+                         linebuf[xx + 1] & 0xff,
+                         linebuf[xx + 2] & 0xff);
         }
         else if(channels == 4)
         {
-           *p++ = makeRgba(linebuf[xx + 0] & 0xFF,
-                           linebuf[xx + 1] & 0xFF,
-                           linebuf[xx + 2] & 0xFF,
-                           linebuf[xx + 3] & 0xFF);
+           *p++ = makeRgba(linebuf[xx + 0] & 0xff,
+                           linebuf[xx + 1] & 0xff,
+                           linebuf[xx + 2] & 0xff,
+                           linebuf[xx + 3] & 0xff);
         }
 
         xx += channels;
@@ -849,16 +849,16 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
       {
         if(channels == 3)
         {
-          *p++ = makeRgb(row[xx + 0] & 0xFF,
-                         row[xx + 1] & 0xFF,
-                         row[xx + 2] & 0xFF);
+          *p++ = makeRgb(row[xx + 0] & 0xff,
+                         row[xx + 1] & 0xff,
+                         row[xx + 2] & 0xff);
         }
         else if(channels == 4)
         {
-           *p++ = makeRgba(row[xx + 0] & 0xFF,
-                           row[xx + 1] & 0xFF,
-                           row[xx + 2] & 0xFF,
-                           row[xx + 3] & 0xFF);
+           *p++ = makeRgba(row[xx + 0] & 0xff,
+                           row[xx + 1] & 0xff,
+                           row[xx + 2] & 0xff,
+                           row[xx + 3] & 0xff);
         }
 
         xx += channels;
@@ -883,16 +883,16 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
       {
         if(channels == 3)
         {
-          *p++ = makeRgb(linebuf[xx + 0] & 0xFF,
-                         linebuf[xx + 1] & 0xFF,
-                         linebuf[xx + 2] & 0xFF);
+          *p++ = makeRgb(linebuf[xx + 0] & 0xff,
+                         linebuf[xx + 1] & 0xff,
+                         linebuf[xx + 2] & 0xff);
         }
         else if(channels == 4)
         {
-           *p++ = makeRgba(linebuf[xx + 0] & 0xFF,
-                           linebuf[xx + 1] & 0xFF,
-                           linebuf[xx + 2] & 0xFF,
-                           linebuf[xx + 3] & 0xFF);
+           *p++ = makeRgba(linebuf[xx + 0] & 0xff,
+                           linebuf[xx + 1] & 0xff,
+                           linebuf[xx + 2] & 0xff,
+                           linebuf[xx + 3] & 0xff);
         }
 
         xx += channels;

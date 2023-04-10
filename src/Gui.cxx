@@ -490,8 +490,8 @@ void Gui::init()
   progress->minimum(0);
   progress->maximum(100);
   progress->color(0x44444400);
-  progress->selection_color(0xBBBBBB00);
-  progress->labelcolor(0xFFFFFF00);
+  progress->selection_color(0xbbbbbb00);
+  progress->labelcolor(0xffffff00);
   progress->hide();
 
   status->resizable(0);
@@ -1063,10 +1063,10 @@ void Gui::colorHexInput()
 
   sscanf(hexcolor->value(), "%06x", &c);
 
-  if(c > 0xFFFFFF)
-    c = 0xFFFFFF;
+  if(c > 0xffffff)
+    c = 0xffffff;
 
-  c |= 0xFF000000;
+  c |= 0xff000000;
 
   colorUpdate(convertFormat((int)c, true));
   colorHexUpdate();
@@ -1076,7 +1076,7 @@ void Gui::colorHexUpdate()
 {
   char hex_string[8];
   snprintf(hex_string, sizeof(hex_string),
-       "%06x", (unsigned)convertFormat(Project::brush->color, true) & 0xFFFFFF);
+       "%06x", (unsigned)convertFormat(Project::brush->color, true) & 0xffffff);
   hexcolor->value(hex_string);
 }
 
@@ -1889,7 +1889,7 @@ void Gui::clearToGray()
 
   for(int y = bmp->ct; y <= bmp->cb; y++)
     for(int x = bmp->cl; x <= bmp->cr; x++)
-      *(bmp->row[y] + x) = 0xFF808080;
+      *(bmp->row[y] + x) = 0xff808080;
 
   view->drawMain(true);
 }
