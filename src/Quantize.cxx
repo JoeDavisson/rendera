@@ -121,56 +121,6 @@ int Quantize::limitColors(Octree *histogram, color_type *colors, int step)
   return count;
 }
 
-// stretch a palette to obtain the exact number of colors desired
-/*
-void Quantize::stretchPalette(int *data, int current, int target)
-{
-  std::vector<int> temp(target);
-
-  const float ax = (float)(current - 1) / (float)(target - 1);
-  int *c[2];
-
-  c[0] = c[1] = &data[0];
-
-  for(int x = 0; x < target; x++)
-  {
-    float uu = (x * ax);
-    int u1 = uu;
-
-    if(u1 > current - 1)
-      u1 = current - 1;
-
-    int u2 = (u1 < (current - 1) ? u1 + 1 : u1);
-    float u = uu - u1;
-
-    c[0] += u1;
-    c[1] += u2;
-
-    float f[2];
-
-    f[0] = (1.0 - u);
-    f[1] = u;
-
-    float r = 0, g = 0, b = 0;
-
-    for(int i = 0; i < 2; i++)
-    {
-      r += (float)getr(*c[i]) * f[i];
-      g += (float)getg(*c[i]) * f[i];
-      b += (float)getb(*c[i]) * f[i];
-    }
-
-    temp[x] = makeRgb((int)r, (int)g, (int)b);
-
-    c[0] -= u1;
-    c[1] -= u2;
-  }
-
-  for(int x = 0; x < target; x++)
-    data[x] = temp[x];
-}
-*/
-
 // Pairwise clustering quantization, adapted from the algorithm described here:
 //
 // http://www.visgraf.impa.br/Projects/quantization/quant.html
