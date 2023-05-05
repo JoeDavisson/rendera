@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cstring>
 #include <cstdio>
 #include <cmath>
+#include <stdint.h>
 #include <vector>
 
 #include <FL/Fl_Group.H>
@@ -140,7 +141,7 @@ int ExportData::last_type = 0;
 // store previous directory paths
 char ExportData::save_dir[256];
 
-const char *ExportData::ext_string[] = { ".asm", ".java" };
+const char *ExportData::ext_string[] = { ".bin", ".asm", ".java" };
 
 // show error dialog
 void ExportData::errorMessage()
@@ -175,7 +176,8 @@ void ExportData::save(Fl_Widget *, void *)
 
   Fl_Native_File_Chooser fc;
   fc.title("Save Image");
-  fc.filter("Assembly \t*.asm\n"
+  fc.filter("Binary Data \t*.bin\n"
+            "Assembly \t*.asm\n"
             "Java Array \t*.java\n");
 
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
@@ -217,6 +219,8 @@ int ExportData::beginTile(FILE *outp, int ext_value, int index)
 {
   switch(ext_value)
   {
+    case TYPE_BIN:
+      break;
     case TYPE_ASM:
       if(fprintf(outp, "tile_%d:\n  db ", index) < 0)
         return -1;
@@ -230,10 +234,14 @@ int ExportData::beginTile(FILE *outp, int ext_value, int index)
   return 0;
 }
 
-int ExportData::writeByte(FILE *outp, int ext_value, int value)
+int ExportData::writeByte(FILE *outp, int ext_value, uint8_t value)
 {
   switch(ext_value)
   {
+    case TYPE_BIN:
+      if(fputc(value, outp) != value)
+         return -1;
+      break;
     case TYPE_ASM:
       if(fprintf(outp, "0x%02x", value) < 0)
          return -1;
@@ -256,6 +264,8 @@ int ExportData::newLine(FILE *outp, int ext_value)
 {
   switch(ext_value)
   {
+    case TYPE_BIN:
+      break;
     case TYPE_ASM:
       if(fprintf(outp, "  db ") < 0)
         return -1;
@@ -275,6 +285,8 @@ int ExportData::endTile(FILE *outp, int ext_value)
 {
   switch(ext_value)
   {
+    case TYPE_BIN:
+      break;
     case TYPE_ASM:
       if(fprintf(outp, "\n") < 0)
         return -1;
@@ -292,7 +304,10 @@ int ExportData::endTile(FILE *outp, int ext_value)
 
 int ExportData::saveText(const char *fn, int ext_value)
 {
-  FileSP out(fn, "w");
+  const char *mode_str[2] = { "wb", "w" };
+
+  FileSP out(fn, mode_str[ext_value == TYPE_BIN ? 0 : 1]);
+
   FILE *outp = out.get();
   if(!outp)
     return -1;
@@ -354,8 +369,9 @@ int ExportData::saveText(const char *fn, int ext_value)
           {
             count = 0;
 
-            if(fprintf(outp, "\n") < 0)
-              return -1;
+            if(ext_value != TYPE_BIN)
+              if(fprintf(outp, "\n") < 0)
+                return -1;
 
             if(tile_byte_count < tile_bytes - 1)
               if(newLine(outp, ext_value) < 0)
@@ -363,8 +379,9 @@ int ExportData::saveText(const char *fn, int ext_value)
           }
           else
           {
-            if(fprintf(outp, ", ") < 0)
-              return -1;
+            if(ext_value != TYPE_BIN)
+              if(fprintf(outp, ", ") < 0)
+                return -1;
           }
 
           tile_byte_count++;

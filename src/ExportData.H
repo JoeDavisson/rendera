@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define EXPORT_DATA_H
 
 #include <cstdio>
+#include <stdint.h>
 
 class Fl_Widget;
 class Fl_Image;
@@ -32,6 +33,7 @@ class ExportData
 public:
   enum
   {
+    TYPE_BIN,
     TYPE_ASM,
     TYPE_JAVA
   };
@@ -40,7 +42,7 @@ public:
 
   static void save(Fl_Widget *, void *);
   static int beginTile(FILE *, int, int);
-  static int writeByte(FILE *, int, int);
+  static int writeByte(FILE *, int, uint8_t);
   static int newLine(FILE *, int);
   static int endTile(FILE *, int);
   static int saveText(const char *, int);
