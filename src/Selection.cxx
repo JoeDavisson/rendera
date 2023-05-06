@@ -297,28 +297,24 @@ void Selection::push(View *view)
           side = 4;
           offsetx = std::abs(view->imgx - beginx);
           offsety = std::abs(view->imgy - beginy);
-          resize_started = true;
         }
         else if(view->imgx > lastx && view->imgy < beginy)
         {
           side = 5;
           offsetx = std::abs(view->imgx - lastx);
           offsety = std::abs(view->imgy - beginy);
-          resize_started = true;
         }
         else if(view->imgx < beginx && view->imgy > lasty)
         {
           side = 6;
           offsetx = std::abs(view->imgx - beginx);
           offsety = std::abs(view->imgy - lasty);
-          resize_started = true;
         }
         else if(view->imgx > lastx && view->imgy > lasty)
         {
           side = 7;
           offsetx = std::abs(view->imgx - lastx);
           offsety = std::abs(view->imgy - lasty);
-          resize_started = true;
         }
 
         // sides
@@ -326,25 +322,21 @@ void Selection::push(View *view)
         {
           side = 0;
           offsetx = std::abs(view->imgx - beginx);
-          resize_started = true;
         }
         else if(view->imgx > lastx)
         {
           side = 1;
           offsetx = std::abs(view->imgx - lastx);
-          resize_started = true;
         }
         else if(view->imgy < beginy)
         {
           side = 2;
           offsety = std::abs(view->imgy - beginy);
-          resize_started = true;
         }
         else if(view->imgy > lasty)
         {
           side = 3;
           offsety = std::abs(view->imgy - lasty);
-          resize_started = true;
         }
 
         resize_started = true;

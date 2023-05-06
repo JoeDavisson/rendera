@@ -325,7 +325,7 @@ double Project::getImageMemory()
 
     for(int i = 0; i < undo_list[j]->levels; i++)
     {
-      Bitmap *temp = undo_list[j]->undo_stack[i];
+      temp = undo_list[j]->undo_stack[i];
 
       bytes += temp->w * temp->h * sizeof(int);
       bytes += temp->h * sizeof(int *);
@@ -333,7 +333,7 @@ double Project::getImageMemory()
 
     for(int i = 0; i < undo_list[j]->levels; i++)
     {
-      Bitmap *temp = undo_list[j]->redo_stack[i];
+      temp = undo_list[j]->redo_stack[i];
 
       bytes += temp->w * temp->h * sizeof(int);
       bytes += temp->h * sizeof(int *);

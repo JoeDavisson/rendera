@@ -42,16 +42,22 @@ Stroke::Stroke()
 
   poly_count = 0;
   type = 0;
-  origin = false;
-  constrain = false;
   x1 = 0;
   y1 = 0;
   x2 = 0;
   y2 = 0;
+  origin = false;
+  constrain = false;
   blitx = 0;
   blity = 0;
   blitw = 0;
   blith = 0;
+  beginx = 0;
+  beginy = 0;
+  lastx = 0;
+  lasty = 0;
+  oldx = 0;
+  oldy = 0;
 }
 
 Stroke::~Stroke()
@@ -568,11 +574,9 @@ void Stroke::end(int x, int y)
 {
   Brush *brush = Project::brush;
   Map *map = Project::map;
-
-  map->thick_aa = 0;
-
   int w = 0, h = 0;
 
+  map->thick_aa = 0;
   Clone::refresh(x1, y1, x2, y2);
 
   if(brush->aa)

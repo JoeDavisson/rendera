@@ -177,7 +177,7 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
     return;
   }
 
-  if(h <= 0 && w >= 0)
+  if(h <= 0)
   {
     hline(x1, y1, x2, c);
     return;
@@ -271,7 +271,7 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
     return;
   }
 
-  if(h <= 0 && w >= 0)
+  if(h <= 0)
   {
     hline(x1, y1, x2, c);
     return;
@@ -585,7 +585,7 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
     return;
   }
 
-  if(h <= 0 && w >= 0)
+  if(h <= 0)
   {
     hlineAA(x1, y1, x2, c);
     return;
@@ -640,8 +640,6 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
   }
   while(y > 1);
 
-  y--;
-
   hlineAA(x1 - w / 2, y1, x1 - x, c);
   hlineAA(x1 + x + ex, y1, x1 + w / 2 + ex, c);
 
@@ -680,7 +678,7 @@ void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
   if(ww <= 1 && hh <= 1)
     return;
 
-  if(hh <= 0 && ww >= 0)
+  if(hh <= 0)
     return;
 
   x1 += a;

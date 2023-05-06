@@ -168,9 +168,9 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
 
 	const int pal_index =
 	  (int)Project::palette->lookup(Blend::keepLum(*p, old_l));
-	const int c = Project::palette->data[pal_index];
+	const int cp = Project::palette->data[pal_index];
 
-	struct rgba_type rgba = getRgba(c);
+	rgba_type rgba = getRgba(cp);
 	*p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
 
 	const int new_l = getl(*p);
@@ -210,7 +210,7 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
 	      else
 		l = clamp(l, 255);
 
-	      rgba_type rgba = getRgba(Blend::keepLum(c, l));
+	      rgba = getRgba(Blend::keepLum(c, l));
 
 	      bmp->setpixelSolid(x - w / 2 + i, y + j,
 			       makeRgba(rgba.r, rgba.g, rgba.b, rgba.a), 0);
@@ -283,7 +283,7 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
 	  {
 	    if(matrix[j][i] > 0)
 	    {
-	      rgba_type rgba = getRgba(bmp->getpixel(x - w / 2 + i, y + j));
+	      rgba = getRgba(bmp->getpixel(x - w / 2 + i, y + j));
 	      int r, g, b;
 
 	      if(fix_gamma)

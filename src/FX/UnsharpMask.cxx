@@ -40,12 +40,12 @@ void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
   int div = 0;
 
   // bell curve
-  const int b = radius / 2;
+  const int rb = radius / 2;
 
   for(int x = 0; x < radius; x++)
   {
-    kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) /
-					 ((b * b) / 2)));
+    kernel[x] = 255 * std::exp(-((double)((x - rb) * (x - rb)) /
+					 ((rb * rb) / 2)));
     div += kernel[x];
   }
 

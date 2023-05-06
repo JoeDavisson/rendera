@@ -460,7 +460,7 @@ void Render::watercolor()
 
         growBlock(s0, s1, s2, s3);
 
-        if(*s0 & !(rnd() & 15))
+        if(*s0 & (!(rnd() & 15)))
         {
           *s0 = 1;
           *s1 = 1;
@@ -616,7 +616,6 @@ void Render::texture()
   float soft_trans = 255;
   int j = (3 << brush->texture_edge);
   float soft_step = (float)(255 - trans) / ((j >> 1) + 1);
-  bool found = false;
 
   int w = 256;
   int h = 256;
@@ -649,7 +648,7 @@ void Render::texture()
       break;
     }
 
-    found = false;
+    bool found = false;
 
     for(int y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
     {

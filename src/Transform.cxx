@@ -659,8 +659,8 @@ namespace RotateArbitrary
       row_u += du_row;
       row_v += dv_row;
 
-      const int yy = ((temp->ch) / 2) + y;
-      if(yy < temp->ct || yy > temp->cb)
+      const int ty = ((temp->ch) / 2) + y;
+      if(ty < temp->ct || ty > temp->cb)
         continue;
 
       for(int x = bx1; x <= bx2; x++)
@@ -674,12 +674,12 @@ namespace RotateArbitrary
         if(uu < bmp->cl || uu > bmp->cr || vv < bmp->ct || vv > bmp->cb)
           continue;
 
-        const int xx = ((temp->cw) / 2) + x;
-        if(xx < temp->cl || xx > temp->cr)
+        const int tx = ((temp->cw) / 2) + x;
+        if(tx < temp->cl || tx > temp->cr)
           continue;
 
-        int c = *(bmp->row[vv] + uu);
-        *(temp->row[yy] + xx) = c;
+        const int c = *(bmp->row[vv] + uu);
+        *(temp->row[ty] + tx) = c;
       }
 
       Gui::progressUpdate(y - by1);
