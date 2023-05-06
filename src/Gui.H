@@ -116,6 +116,7 @@ public:
   static void palette3LevelRGB();
   static void palette4LevelRGB();
   static void paletteBlackAndWhite();
+  static void paletteFourGrays();
   static void paletteDefault();
   static void paletteDraw();
   static void paletteIndex(int);

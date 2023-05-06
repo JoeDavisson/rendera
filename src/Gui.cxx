@@ -400,6 +400,8 @@ void Gui::init()
     (Fl_Callback *)paletteDefault, 0, 0);
   menubar->add("Palette/Presets/Black and White", 0,
     (Fl_Callback *)paletteBlackAndWhite, 0, 0);
+  menubar->add("Palette/Presets/Four Grays", 0,
+    (Fl_Callback *)paletteFourGrays, 0, 0);
   menubar->add("&Palette/Presets/Web Safe", 0,
     (Fl_Callback *)paletteWebSafe, 0, 0);
   menubar->add("&Palette/Presets/3-level RGB", 0,
@@ -1826,6 +1828,13 @@ void Gui::paletteDefault()
 void Gui::paletteBlackAndWhite()
 {
   Project::palette->setBlackAndWhite();
+  palette_swatches->var = 0;
+  Project::palette->draw(palette_swatches);
+}
+
+void Gui::paletteFourGrays()
+{
+  Project::palette->setFourGrays();
   palette_swatches->var = 0;
   Project::palette->draw(palette_swatches);
 }

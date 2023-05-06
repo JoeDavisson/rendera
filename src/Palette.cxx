@@ -360,6 +360,17 @@ void Palette::setBlackAndWhite()
   fillTable();
 }
 
+void Palette::setFourGrays()
+{
+  data[0] = makeRgb(0, 0, 0);
+  data[1] = makeRgb(64, 64, 64);
+  data[2] = makeRgb(128, 128, 128);
+  data[3] = makeRgb(192, 192, 192);
+
+  max = 4;
+  fillTable();
+}
+
 void Palette::setWebSafe()
 {
   int index = 0;
