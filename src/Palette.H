@@ -44,6 +44,7 @@ public:
   void setDefault();
   void setBlackAndWhite();
   void setFourGrays();
+  void setC64();
   void setWebSafe();
   void set3LevelRGB();
   void set4LevelRGB();

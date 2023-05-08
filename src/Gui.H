@@ -50,6 +50,8 @@ public:
   static void init();
   static void show();
 
+  static void aspectMode();
+
   static void clearToBlack();
   static void clearToColor();
   static void clearToGray();
@@ -117,6 +119,7 @@ public:
   static void palette4LevelRGB();
   static void paletteBlackAndWhite();
   static void paletteFourGrays();
+  static void paletteC64();
   static void paletteDefault();
   static void paletteDraw();
   static void paletteIndex(int);

@@ -114,6 +114,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   ox = 0;
   oy = 0;
   zoom = 1;
+  aspect = ASPECT_NORMAL;
   panning = false;
   last_ox = 0;
   last_oy = 0;
@@ -129,13 +130,14 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   //FIXME this should handle desktop resolution changes
   #if defined linux
     backbuf = new Bitmap(Fl::w(), Fl::h());
+    backbuf2 = new Bitmap(Fl::w(), Fl::h());
 
     // try to detect pixelformat (almost always RGB or BGR)
     if(fl_visual->visual->blue_mask == 0xff)
       bgr_order = true;
 
     ximage = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
-                          (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
+                          (char *)backbuf2->data, backbuf2->w, backbuf2->h, 32, 0);
   #elif defined WIN32
     bgr_order = true;
     buffer_dc = CreateCompatibleDC(fl_gc);
@@ -181,8 +183,25 @@ int View::handle(int event)
   mousex = Fl::event_x() - x();
   mousey = Fl::event_y() - y();
 
-  imgx = mousex / zoom + ox;
-  imgy = mousey / zoom + oy;
+  int ax = 1;
+  int ay = 1;
+
+  switch(aspect)
+  {
+    case ASPECT_NORMAL:
+      break;
+    case ASPECT_WIDE:
+      ax = 2;
+      break;
+    case ASPECT_TALL:
+      ay = 2;
+      break;
+  }
+
+  imgx = mousex / zoom + ox * ax;
+  imgy = mousey / zoom + oy * ay;
+  imgx /= ax;
+  imgy /= ay;
 
   switch(Gui::getTool())
   {
@@ -291,8 +310,8 @@ int View::handle(int event)
           break;
         case 2:
           // begin image panning
-          last_ox = (w() - 1 - mousex) / zoom - ox;
-          last_oy = (h() - 1 - mousey) / zoom - oy;
+          last_ox = (w() - 1 - (mousex / ax)) / zoom - ox;
+          last_oy = (h() - 1 - (mousey / ay)) / zoom - oy;
          break;
         case 4:
           Project::tool->push(this);
@@ -321,8 +340,8 @@ int View::handle(int event)
         case 2:
           // continue image panning
           panning = true;
-          ox = (w() - 1 - mousex) / zoom - last_ox;
-          oy = (h() - 1 - mousey) / zoom - last_oy; 
+          ox = (w() - 1 - (mousex / ax)) / zoom - last_ox;
+          oy = (h() - 1 - (mousey / ay)) / zoom - last_oy; 
 
           clipOrigin();
           drawMain(false);
@@ -379,11 +398,11 @@ int View::handle(int event)
 
       if(Fl::event_dy() >= 0)
       {
-        zoomOut(mousex, mousey);
+        zoomOut(mousex / ax, mousey / ay);
       }
       else
       {
-        zoomIn(mousex, mousey);
+        zoomIn(mousex / ax, mousey / ay);
       }
 
       Project::tool->redraw(this);
@@ -485,6 +504,11 @@ void View::redraw()
 {
   damage(FL_DAMAGE_ALL);
   Fl::flush();
+}
+
+void View::changeAspect(int new_aspect)
+{
+  aspect = new_aspect;
 }
 
 void View::drawMain(bool refresh)
@@ -633,13 +657,25 @@ void View::drawCloneCursor()
     y1 = (y1 - oy) * zoom;
   }
 
-  backbuf->rect(x1 - 8, y1 - 1, x1 + 8, y1 + 1, makeRgb(0, 0, 0), 0);
-  backbuf->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 0);
-  backbuf->xorRectfill(x1 - 7, y1, x1 + 7, y1);
-  backbuf->xorRectfill(x1, y1 - 7, x1, y1 + 7);
-  backbuf->rectfill(x1 - 7, y1, x1 + 7, y1,
+  switch(aspect)
+  {
+    case ASPECT_NORMAL:
+      break;
+    case ASPECT_WIDE:
+      x1 *= 2;
+      break;
+    case ASPECT_TALL:
+      y1 *= 2;
+      break;
+  }
+
+  backbuf2->rect(x1 - 8, y1 - 1, x1 + 8, y1 + 1, makeRgb(0, 0, 0), 0);
+  backbuf2->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 0);
+  backbuf2->xorRectfill(x1 - 7, y1, x1 + 7, y1);
+  backbuf2->xorRectfill(x1, y1 - 7, x1, y1 + 7);
+  backbuf2->rectfill(x1 - 7, y1, x1 + 7, y1,
                     convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
-  backbuf->rectfill(x1, y1 - 7, x1, y1 + 7,
+  backbuf2->rectfill(x1, y1 - 7, x1, y1 + 7,
                     convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
 
   updateView(oldx1 - 12, oldy1 - 12,
@@ -793,6 +829,24 @@ void View::saveCoords()
 // do not call directly, call redraw() instead
 void View::draw()
 {
+  int ax = 1;
+  int ay = 1;
+
+  switch(aspect)
+  {
+    case ASPECT_NORMAL:
+      break;
+    case ASPECT_WIDE:
+      ax = 2;
+      break;
+    case ASPECT_TALL:
+      ay = 2;
+      break;
+  }
+
+  backbuf->pointStretch(backbuf2, 0, 0, backbuf->w / ax, backbuf->h / ay,
+                        0, 0, backbuf2->w, backbuf2->h, 0, 0, 0, 0, false);
+
   if(Project::tool->isActive())
   {
     int blitx = Project::stroke->blitx;
@@ -811,13 +865,15 @@ void View::draw()
     if(blitw < 1 || blith < 1)
       return;
 
-    updateView(blitx, blity, x() + blitx, y() + blity, blitw, blith);
+
+    updateView(blitx * ax, blity * ay, x() + blitx * ax, y() + blity * ay, blitw * ax, blith * ay);
 
     if(Gui::getClone())
       drawCloneCursor();
   }
   else
   {
+//      backbuf->pointStretch(backbuf2, 0, 0, backbuf->w / 2, backbuf->h, 0, 0, backbuf2->w, backbuf2->h, 0, 0, 0, 0, false);
     updateView(0, 0, x(), y(), w(), h());
 
     if(Gui::getClone())

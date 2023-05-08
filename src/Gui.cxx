@@ -109,6 +109,7 @@ namespace
   ToggleButton *gridsnap;
   InputInt *gridx;
   InputInt *gridy;
+  Fl_Choice *aspect;
 
   // tools
   Widget *tool;
@@ -402,6 +403,8 @@ void Gui::init()
     (Fl_Callback *)paletteBlackAndWhite, 0, 0);
   menubar->add("Palette/Presets/Four Grays", 0,
     (Fl_Callback *)paletteFourGrays, 0, 0);
+  menubar->add("Palette/Presets/C64", 0,
+    (Fl_Callback *)paletteC64, 0, 0);
   menubar->add("&Palette/Presets/Web Safe", 0,
     (Fl_Callback *)paletteWebSafe, 0, 0);
   menubar->add("&Palette/Presets/3-level RGB", 0,
@@ -545,6 +548,16 @@ void Gui::init()
                        (Fl_Callback *)gridY, 1, 256);
   gridy->value("8");
   pos += 64 + 8;
+
+  aspect = new Fl_Choice(pos, 8, 96, 24, "");
+  aspect->tooltip("Aspect Ratio");
+  aspect->textsize(10);
+  aspect->resize(top->x() + pos, top->y() + 8, 96, 24);
+  aspect->add("Normal (1:1)");
+  aspect->add("Wide (2:1)");
+  aspect->add("Tall (1:2)");
+  aspect->value(0);
+  aspect->callback((Fl_Callback *)aspectMode);
   
   top->resizable(0);
   top->end();
@@ -1839,6 +1852,13 @@ void Gui::paletteFourGrays()
   Project::palette->draw(palette_swatches);
 }
 
+void Gui::paletteC64()
+{
+  Project::palette->setC64();
+  palette_swatches->var = 0;
+  Project::palette->draw(palette_swatches);
+}
+
 void Gui::paletteWebSafe()
 {
   Project::palette->setWebSafe();
@@ -1860,13 +1880,11 @@ void Gui::palette4LevelRGB()
   Project::palette->draw(palette_swatches);
 }
 
-void Gui::clearToColor()
+void Gui::aspectMode()
 {
-  Project::undo->push();
-
-  Bitmap *bmp = Project::bmp;
-
-  bmp->rectfill(bmp->cl, bmp->ct, bmp->cr, bmp->cb, Project::brush->color, 0);
+  view->changeAspect(aspect->value());
+  view->ox = 0;
+  view->oy = 0;
   view->drawMain(true);
 }
 
@@ -1880,13 +1898,13 @@ void Gui::clearToBlack()
   view->drawMain(true);
 }
 
-void Gui::clearToWhite()
+void Gui::clearToColor()
 {
   Project::undo->push();
 
   Bitmap *bmp = Project::bmp;
 
-  bmp->rectfill(bmp->cl, bmp->ct, bmp->cr, bmp->cb, makeRgb(255, 255, 255), 0);
+  bmp->rectfill(bmp->cl, bmp->ct, bmp->cr, bmp->cb, Project::brush->color, 0);
   view->drawMain(true);
 }
 
@@ -1913,6 +1931,16 @@ void Gui::clearToTrans()
     for(int x = bmp->cl; x <= bmp->cr; x++)
       *(bmp->row[y] + x) = 0x00808080;
 
+  view->drawMain(true);
+}
+
+void Gui::clearToWhite()
+{
+  Project::undo->push();
+
+  Bitmap *bmp = Project::bmp;
+
+  bmp->rectfill(bmp->cl, bmp->ct, bmp->cr, bmp->cb, makeRgb(255, 255, 255), 0);
   view->drawMain(true);
 }
 

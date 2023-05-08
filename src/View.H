@@ -29,6 +29,13 @@ class Tool;
 class View : public Fl_Widget
 {
 public:
+  enum
+  {
+    ASPECT_NORMAL,
+    ASPECT_WIDE,
+    ASPECT_TALL
+  };
+
   View(Fl_Group *, int, int, int, int, const char *);
   ~View();
 
@@ -36,7 +43,7 @@ public:
   void resize(int, int, int, int);
   void redraw();
 
-  void drawMove();
+  void changeAspect(int);
   void drawMain(bool);
   void drawGrid();
   void changeCursor();
@@ -50,13 +57,14 @@ public:
   void saveCoords();
 
   Fl_Group *group;
-  Bitmap *backbuf;
+  Bitmap *backbuf, *backbuf2;
   int mousex, mousey;
   int imgx, imgy;
   int oldimgx, oldimgy;
   int last_ox, last_oy;
   int ox, oy;
   float zoom;
+  int aspect;
   bool panning;
   bool grid, gridsnap;
   int gridx, gridy;
