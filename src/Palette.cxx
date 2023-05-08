@@ -371,25 +371,25 @@ void Palette::setFourGrays()
   fillTable();
 }
 
-// from c64-wiki.com/wiki/Color
+// from colordore.com
 void Palette::setC64()
 {
   data[0] = makeRgb(0, 0, 0);
   data[1] = makeRgb(255, 255, 255);
-  data[2] = makeRgb(136, 0, 0);
-  data[3] = makeRgb(170, 255, 238);
-  data[4] = makeRgb(204, 68, 204);
-  data[5] = makeRgb(0, 204, 85);
-  data[6] = makeRgb(0, 0, 170);
-  data[7] = makeRgb(238, 238, 119);
-  data[8] = makeRgb(221, 136, 85);
-  data[9] = makeRgb(102, 68, 0);
-  data[10] = makeRgb(255, 119, 119);
-  data[11] = makeRgb(51, 51, 51);
-  data[12] = makeRgb(119, 119, 119);
-  data[13] = makeRgb(170, 255, 102);
-  data[14] = makeRgb(0, 136, 255);
-  data[15] = makeRgb(187, 187, 187);
+  data[2] = makeRgb(129, 51, 56);
+  data[3] = makeRgb(117, 206, 200);
+  data[4] = makeRgb(142, 60, 151);
+  data[5] = makeRgb(86, 172, 77);
+  data[6] = makeRgb(46, 44, 155);
+  data[7] = makeRgb(237, 241, 113);
+  data[8] = makeRgb(142, 80, 41);
+  data[9] = makeRgb(85, 56, 0);
+  data[10] = makeRgb(196, 108, 113);
+  data[11] = makeRgb(74, 74, 74);
+  data[12] = makeRgb(123, 123, 123);
+  data[13] = makeRgb(169, 255, 159);
+  data[14] = makeRgb(112, 109, 235);
+  data[15] = makeRgb(178, 178, 178);
 
   max = 16;
   fillTable();
