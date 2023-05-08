@@ -271,16 +271,6 @@ void Stroke::drawBrushAA(int x, int y, int c)
 
   for(int i = 0; i < brush->solid_count; i++)
   {
-/*
-    map->setpixelAA(((x + brush->solidx[i]) << 2) - 1,
-                    ((y + brush->solidy[i]) << 2), c);
-    map->setpixelAA(((x + brush->solidx[i]) << 2) + 1,
-                    ((y + brush->solidy[i]) << 2), c);
-    map->setpixelAA(((x + brush->solidx[i]) << 2),
-                    ((y + brush->solidy[i]) << 2) - 1, c);
-    map->setpixelAA(((x + brush->solidx[i]) << 2),
-                    ((y + brush->solidy[i]) << 2) + 1, c);
-*/
     map->setpixelAA(((x + brush->solidx[i]) << 2) - 1,
                     ((y + brush->solidy[i]) << 2) - 1, c);
     map->setpixelAA(((x + brush->solidx[i]) << 2) + 1,
@@ -442,7 +432,6 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
     case POLYGON:
     {
       map->line(oldx, oldy, lastx, lasty, 0);
-//      map->rectfill(oldx - 1, oldy - 1, oldx + 1, oldy + 1, 255);
       makeBlitRect(x, y, lastx, lasty, ox, oy, 1, zoom);
       poly_x[poly_count] = x;
       poly_y[poly_count] = y;

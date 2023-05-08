@@ -480,7 +480,6 @@ int View::handle(int event)
         }
       }
 
-//      delete[] fn;
       return 1;
     }
 
@@ -866,14 +865,14 @@ void View::draw()
       return;
 
 
-    updateView(blitx * ax, blity * ay, x() + blitx * ax, y() + blity * ay, blitw * ax, blith * ay);
+    updateView(blitx * ax, blity * ay, x() + blitx * ax, y() + blity * ay,
+               blitw * ax, blith * ay);
 
     if(Gui::getClone())
       drawCloneCursor();
   }
   else
   {
-//      backbuf->pointStretch(backbuf2, 0, 0, backbuf->w / 2, backbuf->h, 0, 0, backbuf2->w, backbuf2->h, 0, 0, 0, 0, false);
     updateView(0, 0, x(), y(), w(), h());
 
     if(Gui::getClone())
