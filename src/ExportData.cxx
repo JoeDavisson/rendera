@@ -57,14 +57,6 @@ namespace ExportOptions
 
   int begin()
   {
-    char s[64];
-
-    snprintf(s, sizeof(s), "%d", Gui::getView()->gridx);
-    Items::tilex->value(s);
-
-    snprintf(s, sizeof(s), "%d", Gui::getView()->gridy);
-    Items::tiley->value(s);
-
     Items::dialog->show();
 
     while(true)
