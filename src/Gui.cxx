@@ -549,6 +549,10 @@ void Gui::init()
   gridy->value("8");
   pos += 64 + 8;
 
+  new Separator(top, pos, 4, 2, 34, "");
+
+  pos += 8;
+
   aspect = new Fl_Choice(pos, 8, 96, 24, "");
   aspect->tooltip("Aspect Ratio");
   aspect->textsize(10);
@@ -558,7 +562,7 @@ void Gui::init()
   aspect->add("Tall (1:2)");
   aspect->value(0);
   aspect->callback((Fl_Callback *)aspectMode);
-  
+
   top->resizable(0);
   top->end();
 
