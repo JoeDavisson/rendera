@@ -2,13 +2,13 @@
 #
 # The official fltk-1.3.7 source tree must in this directory.
 # Please run "make fltklibs" first.
-# Also run "make clean" before "make" the first time to build the images header.
+# Also run "make header" before "make" the first time to build the images header.
 
 # libxft-dev should be installed before compiling FLTK on linux
 # (otherwise you'll have ugly, non-resizable fonts)
-PLATFORM=linux
+#PLATFORM=linux
 #PLATFORM=mingw32
-#PLATFORM=mingw64
+PLATFORM=mingw64
 
 VERSION=$(shell git describe --tags --abbrev=0)
 
@@ -120,7 +120,7 @@ fltklibs:
 	cd ./fltk; \
 	make clean; \
 	./configure --host=$(HOST) --enable-xft --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
-	make; \
+	make -j20; \
 	cd ..; \
 	echo "FLTK libs built.";
 

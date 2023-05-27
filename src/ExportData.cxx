@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <stdint.h>
 #include <vector>
 
+#include <FL/Fl_Choice.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Native_File_Chooser.H>
