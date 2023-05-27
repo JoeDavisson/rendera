@@ -50,7 +50,7 @@ namespace
     BITMAPINFO *bi;
     HDC buffer_dc;
     HBITMAP hbuffer;
-    int *backbuf_data;
+    int *backbuf2_data;
   #else
     Fl_RGB_Image *wimage;
   #endif
@@ -156,14 +156,16 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
     bi->bmiHeader.biHeight = -Fl::h();
 
     hbuffer = CreateDIBSection(buffer_dc, bi, DIB_RGB_COLORS,
-                               (void **)&backbuf_data, 0, 0);
+                               (void **)&backbuf2_data, 0, 0);
 
-    backbuf = new Bitmap(Fl::w(), Fl::h(), backbuf_data);
+    backbuf = new Bitmap(Fl::w(), Fl::h());
+    backbuf2 = new Bitmap(Fl::w(), Fl::h(), backbuf2_data);
 
     SelectObject(buffer_dc, hbuffer);
   #else
     backbuf = new Bitmap(Fl::w(), Fl::h());
-    wimage = new Fl_RGB_Image((unsigned char *)backbuf->data,
+    backbuf2 = new Bitmap(Fl::w(), Fl::h());
+    wimage = new Fl_RGB_Image((unsigned char *)backbuf2->data,
                                 Fl::w(), Fl::h(), 4, 0);
   #endif
 
