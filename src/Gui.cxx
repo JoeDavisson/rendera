@@ -402,8 +402,8 @@ void Gui::init()
     (Fl_Callback *)paletteDefault, 0, 0);
   menubar->add("Palette/Presets/Black and White", 0,
     (Fl_Callback *)paletteBlackAndWhite, 0, 0);
-  menubar->add("Palette/Presets/Four Grays", 0,
-    (Fl_Callback *)paletteFourGrays, 0, 0);
+  menubar->add("Palette/Presets/Two Bits", 0,
+    (Fl_Callback *)paletteTwoBits, 0, 0);
   menubar->add("Palette/Presets/C64", 0,
     (Fl_Callback *)paletteC64, 0, 0);
   menubar->add("&Palette/Presets/Web Safe", 0,
@@ -1865,9 +1865,9 @@ void Gui::paletteBlackAndWhite()
   Project::palette->draw(palette_swatches);
 }
 
-void Gui::paletteFourGrays()
+void Gui::paletteTwoBits()
 {
-  Project::palette->setFourGrays();
+  Project::palette->setTwoBits();
   palette_swatches->var = 0;
   Project::palette->draw(palette_swatches);
 }

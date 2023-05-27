@@ -360,7 +360,7 @@ void Palette::setBlackAndWhite()
   fillTable();
 }
 
-void Palette::setFourGrays()
+void Palette::setTwoBits()
 {
   data[0] = makeRgb(0, 0, 0);
   data[1] = makeRgb(64, 64, 64);
@@ -371,7 +371,7 @@ void Palette::setFourGrays()
   fillTable();
 }
 
-// from colordore.com
+// from colodore.com
 void Palette::setC64()
 {
   data[0] = makeRgb(0, 0, 0);
