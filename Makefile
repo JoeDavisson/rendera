@@ -6,9 +6,9 @@
 
 # libxft-dev should be installed before compiling FLTK on linux
 # (otherwise you'll have ugly, non-resizable fonts)
-#PLATFORM=linux
+PLATFORM=linux
 #PLATFORM=mingw32
-PLATFORM=mingw64
+#PLATFORM=mingw64
 
 VERSION=$(shell git describe --tags --abbrev=0)
 
@@ -20,7 +20,7 @@ LIBS=$(shell ./fltk/fltk-config --use-images --ldstaticflags)
 ifeq ($(PLATFORM),linux)
   HOST=
   CXX=g++
-  CXXFLAGS= -O3 -ffast-math -Wall -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -O3 -Wall -ffast-math -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   EXE=rendera
 endif
 
@@ -120,7 +120,7 @@ fltklibs:
 	cd ./fltk; \
 	make clean; \
 	./configure --host=$(HOST) --enable-xft --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
-	make -j20; \
+	make; \
 	cd ..; \
 	echo "FLTK libs built.";
 
