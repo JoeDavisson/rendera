@@ -115,6 +115,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   oy = 0;
   zoom = 1;
   aspect = ASPECT_NORMAL;
+  view_mode = VIEW_MODE_NORMAL;
   panning = false;
   last_ox = 0;
   last_oy = 0;
@@ -510,6 +511,15 @@ void View::redraw()
 void View::changeAspect(int new_aspect)
 {
   aspect = new_aspect;
+  ox = 0;
+  oy = 0;
+  drawMain(true);
+}
+
+void View::changeViewMode(int new_view_mode)
+{
+  view_mode = new_view_mode;
+  drawMain(true);
 }
 
 void View::drawMain(bool refresh)
@@ -544,11 +554,22 @@ void View::drawMain(bool refresh)
 
   Bitmap *bmp = Project::bmp;
 
-  bmp->pointStretch(backbuf,
+  if(view_mode == VIEW_MODE_NORMAL)
+  {
+    bmp->pointStretch(backbuf,
                     ox, oy, sw - offx, sh - offy,
                     offx * zoom, offy * zoom,
                     dw - offx * zoom, dh - offy * zoom,
                     overx, overy, ox, oy, bgr_order);
+  }
+  else if(view_mode == VIEW_MODE_INDEXED)
+  {
+    bmp->pointStretchIndexed(backbuf, Project::palette,
+                    ox, oy, sw - offx, sh - offy,
+                    offx * zoom, offy * zoom,
+                    dw - offx * zoom, dh - offy * zoom,
+                    overx, overy, ox, oy, bgr_order);
+  }
 
   if(grid)
     drawGrid();

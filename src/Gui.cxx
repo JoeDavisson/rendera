@@ -110,6 +110,7 @@ namespace
   InputInt *gridx;
   InputInt *gridy;
   Fl_Choice *aspect;
+  Fl_Choice *view_mode;
 
   // tools
   Widget *tool;
@@ -562,6 +563,21 @@ void Gui::init()
   aspect->add("Tall (1:2)");
   aspect->value(0);
   aspect->callback((Fl_Callback *)aspectMode);
+
+  pos += 96 + 8;
+
+  new Separator(top, pos, 4, 2, 34, "");
+
+  pos += 8;
+
+  view_mode = new Fl_Choice(pos, 8, 104, 24, "");
+  view_mode->tooltip("View Mode");
+  view_mode->textsize(10);
+  view_mode->resize(top->x() + pos, top->y() + 8, 104, 24);
+  view_mode->add("Full Color");
+  view_mode->add("Palette Colors");
+  view_mode->value(0);
+  view_mode->callback((Fl_Callback *)viewMode);
 
   top->resizable(0);
   top->end();
@@ -1887,9 +1903,11 @@ void Gui::palette4LevelRGB()
 void Gui::aspectMode()
 {
   view->changeAspect(aspect->value());
-  view->ox = 0;
-  view->oy = 0;
-  view->drawMain(true);
+}
+
+void Gui::viewMode()
+{
+  view->changeViewMode(view_mode->value());
 }
 
 void Gui::clearToBlack()

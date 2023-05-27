@@ -855,6 +855,99 @@ void Bitmap::pointStretch(Bitmap *dest,
   }
 }
 
+void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
+                          int sx, int sy, int sw, int sh,
+                          int dx, int dy, int dw, int dh,
+                          int overx, int overy,
+                          int ox, int oy,
+                          bool bgr_order)
+{
+  const int ax = ((float)dw / sw) * 65536;
+  const int ay = ((float)dh / sh) * 65536;
+  const int bx = ((float)sw / dw) * 65536;
+  const int by = ((float)sh / dh) * 65536;
+
+  ox = (ox * ax) >> 16;
+  oy = (oy * ay) >> 16;
+
+  dw -= overx;
+  dh -= overy;
+
+  if(sx < 0)
+    sx = 0;
+
+  if(sy < 0)
+    sy = 0;
+
+  if(dx < dest->cl)
+  {
+    const int d = dest->cl - dx;
+    dx = dest->cl;
+    dw -= d;
+    sx += (d * ax) >> 16;
+    sw -= (d * ax) >> 16;
+  }
+
+  if(dx + dw > dest->cr)
+  {
+    const int d = dx + dw - dest->cr;
+    dw -= d;
+    sw -= (d * ax) >> 16;
+  }
+
+  if(dy < dest->ct)
+  {
+    const int d = dest->ct - dy;
+    dy = dest->ct;
+    dh -= d;
+    sy += (d * ay) >> 16;
+    sh -= (d * ay) >> 16;
+  }
+
+  if(dy + dh > dest->cb)
+  {
+    const int d = dy + dh - dest->cb;
+    dh -= d;
+    sh -= (d * ay) >> 16;
+  }
+
+  dw -= (dw - ((sw * ax) >> 16));
+  dh -= (dh - ((sh * ay) >> 16));
+
+  if(sw < 1 || sh < 1)
+    return;
+
+  if(dw < 1 || dh < 1)
+    return;
+
+  for(int y = 0; y < dh; y++)
+  {
+    const int y1 = sy + ((y * by) >> 16);
+
+    if(y1 < 0 || y1 >= h)
+      continue;
+    if(dy + y < 0 || dy + y >= dest->h)
+      continue;
+
+    for(int x = 0; x < dw; x++)
+    {
+      const int x1 = sx + ((x * bx) >> 16);
+
+      if(x1 < 0 || x1 >= w)
+        continue;
+      if(dx + x < 0 || dx + x >= dest->w)
+        continue;
+
+      const int c = *(row[y1] + x1);
+      const int cpal = (c & 0xff000000) | pal->data[pal->lookup(c)];
+      const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
+                          ? 0x989898 : 0x686868;
+
+      *(dest->row[dy + y] + dx + x) =
+           convertFormat(blendFast(checker, cpal, 255 - geta(cpal)), bgr_order);
+    }
+  }
+}
 void Bitmap::flipHorizontal()
 {
   for(int y = 0; y < h; y++)

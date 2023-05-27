@@ -51,6 +51,7 @@ public:
   static void show();
 
   static void aspectMode();
+  static void viewMode();
 
   static void clearToBlack();
   static void clearToColor();
