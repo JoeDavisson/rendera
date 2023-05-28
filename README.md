@@ -14,7 +14,6 @@ Package includes binaries for 32 and 64-bit Windows:
 
 ## Features
  * variety of painting and blending options
- * clone mode displays second cursor for visual assistance
  * colorize mode preserves luminosity for realistic results
  * high-quality color reduction and dithering
  * cut/paste selections
