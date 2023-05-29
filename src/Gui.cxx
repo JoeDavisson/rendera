@@ -1788,7 +1788,7 @@ void Gui::offsetLeft(Widget *, void *)
   view->imgx = 0;
   view->imgy = 0;
   Project::tool->push(view);
-  view->imgx = -1;
+  view->imgx = view->gridsnap ? -view->gridx : -1;
   Project::tool->drag(view);
   Project::tool->release(view);
 }
@@ -1798,7 +1798,7 @@ void Gui::offsetRight(Widget *, void *)
   view->imgx = 0;
   view->imgy = 0;
   Project::tool->push(view);
-  view->imgx = 1;
+  view->imgx = view->gridsnap ? view->gridx : 1;
   Project::tool->drag(view);
   Project::tool->release(view);
 }
@@ -1808,7 +1808,7 @@ void Gui::offsetUp(Widget *, void *)
   view->imgx = 0;
   view->imgy = 0;
   Project::tool->push(view);
-  view->imgy = -1;
+  view->imgy = view->gridsnap ? -view->gridy : -1;
   Project::tool->drag(view);
   Project::tool->release(view);
 }
@@ -1818,7 +1818,7 @@ void Gui::offsetDown(Widget *, void *)
   view->imgx = 0;
   view->imgy = 0;
   Project::tool->push(view);
-  view->imgy = 1;
+  view->imgy = view->gridsnap ? view->gridy : 1;
   Project::tool->drag(view);
   Project::tool->release(view);
 }

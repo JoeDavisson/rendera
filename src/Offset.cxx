@@ -58,12 +58,16 @@ void Offset::drag(View *view)
 {
   int w = Project::bmp->cw;
   int h = Project::bmp->ch;
-
   int dx = view->imgx - beginx;
   int dy = view->imgy - beginy;
-
   int x = dx;
   int y = dy;
+
+  if(view->gridsnap)
+  {
+    x -= x % view->gridx;
+    y -= y % view->gridy;
+  }
 
   while(x < 0)
     x += w;

@@ -119,8 +119,8 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   panning = false;
   last_ox = 0;
   last_oy = 0;
-  grid = 0;
-  gridsnap = 0;
+  grid = false;
+  gridsnap = false;
   gridx = 8;
   gridy = 8;
   oldimgx = 0;
