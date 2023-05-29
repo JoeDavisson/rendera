@@ -184,6 +184,7 @@ inline int blendFast(const int c1, const int c2, const int t)
   return rb | g | 0xff000000;
 }
 
+// brushstroke outline
 inline int visibleColor(const int x, const int y)
 {
    return ((x >> 2) ^ (y >> 2)) & 1 ? 0xa0a0a0 : 0x606060;
