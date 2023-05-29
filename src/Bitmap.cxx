@@ -948,6 +948,7 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
     }
   }
 }
+
 void Bitmap::flipHorizontal()
 {
   for(int y = 0; y < h; y++)
