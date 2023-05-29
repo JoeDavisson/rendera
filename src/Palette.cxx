@@ -360,6 +360,17 @@ void Palette::setBlackAndWhite()
   fillTable();
 }
 
+void Palette::setGrays()
+{
+  for(int i = 0; i < 16; i++)
+  {
+    data[i] = makeRgb(i * 17, i * 17, i * 17);
+  }
+
+  max = 16;
+  fillTable();
+}
+
 void Palette::setTwoBits()
 {
   data[0] = makeRgb(0, 0, 0);

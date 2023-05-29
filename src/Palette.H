@@ -43,6 +43,7 @@ public:
 
   void setDefault();
   void setBlackAndWhite();
+  void setGrays();
   void setTwoBits();
   void setC64();
   void setWebSafe();
