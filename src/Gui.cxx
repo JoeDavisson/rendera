@@ -402,6 +402,8 @@ void Gui::init()
     (Fl_Callback *)paletteDefault, 0, 0);
   menubar->add("Palette/Presets/Black and White", 0,
     (Fl_Callback *)paletteBlackAndWhite, 0, 0);
+  menubar->add("Palette/Presets/Grays", 0,
+    (Fl_Callback *)paletteGrays, 0, 0);
   menubar->add("Palette/Presets/Two Bits", 0,
     (Fl_Callback *)paletteTwoBits, 0, 0);
   menubar->add("Palette/Presets/C64", 0,
@@ -1861,6 +1863,13 @@ void Gui::paletteDefault()
 void Gui::paletteBlackAndWhite()
 {
   Project::palette->setBlackAndWhite();
+  palette_swatches->var = 0;
+  Project::palette->draw(palette_swatches);
+}
+
+void Gui::paletteGrays()
+{
+  Project::palette->setGrays();
   palette_swatches->var = 0;
   Project::palette->draw(palette_swatches);
 }
