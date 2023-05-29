@@ -2013,27 +2013,37 @@ void Gui::imagesAddFile(const char *name)
 
 void Gui::imagesCloseFile()
 {
-  if(Project::removeImage() == true)
+  if(Project::removeImage() == false)
+    return;
+
+  file_browse->remove(Project::current + 1);
+
+  if(Project::current > 0)
+    file_browse->select(Project::current, 1);
+  else
+    file_browse->select(Project::current + 1, 1);
+
+  if(Project::current > 0)
+    Project::switchImage(Project::current - 1);
+  else
+    Project::switchImage(Project::current);
+
+  file_rename->value(file_browse->text(file_browse->value()));
+
+  if(Project::last == 0)
   {
-    file_browse->remove(Project::current + 1);
-
-    if(Project::current > 0)
-      file_browse->select(Project::current, 1);
-    else
-      file_browse->select(Project::current + 1, 1);
-
-    if(Project::current > 0)
-      Project::switchImage(Project::current - 1);
-    else
-      Project::switchImage(Project::current);
-
-    file_rename->value(file_browse->text(file_browse->value()));
-    view->drawMain(true);
+    imagesAddFile("new");
+    Project::last = 1;
   }
+
+  view->drawMain(true);
 }
 
 void Gui::imagesUpdateMemInfo()
 {
+  if(Project::last < 1)
+    return;
+
   char s[256];
 
   double mem = Project::getImageMemory() / 1000000;

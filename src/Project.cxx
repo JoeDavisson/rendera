@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Dialog.H"
 #include "Fill.H"
 #include "GetColor.H"
-#include "Gui.H"
 #include "Inline.H"
 #include "Map.H"
 #include "Offset.H"
@@ -283,31 +282,41 @@ void Project::switchImage(int index)
 
 bool Project::removeImage()
 {
-  if(last <= 1)
-  {
-    Dialog::message("Last Image", "Cannot close last image, there\nmust be at least one.");
-    return false;
-  }
-
   if(Dialog::choice("Close Image", "Are you sure?") == false)
     return false;
 
-  //puts("removeImage()");
-  //printf("current = %d, last = %d\n", current, last);
-
-  delete bmp_list[current];
-  delete undo_list[current];
-
-  for(int i = current; i < last; i++)
+  if(last == 1)
   {
-    bmp_list[i] = bmp_list[i + 1];
-    undo_list[i] = undo_list[i + 1];
+    delete bmp_list[0];
+    delete undo_list[0];
+
+    bmp_list[0] = new Bitmap(512, 512);
+    undo_list[0] = new Undo();
+    bmp = bmp_list[0];
+    undo = undo_list[0];
+    current = 0;
+    last = 0;
+
+    delete map;
+    map = new Map(bmp->w, bmp->h);
+    map->clear(0);
   }
+  else
+  {
+    delete bmp_list[current];
+    delete undo_list[current];
 
-  delete bmp_list[last];
-  delete undo_list[last];
+    for(int i = current; i < last; i++)
+    {
+      bmp_list[i] = bmp_list[i + 1];
+      undo_list[i] = undo_list[i + 1];
+    }
 
-  last--;
+    delete bmp_list[last];
+    delete undo_list[last];
+
+    last--;
+  }
 
   return true;
 }
