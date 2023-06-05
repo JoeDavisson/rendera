@@ -417,6 +417,8 @@ void Gui::init()
   menubar->add("&Palette/&Editor... (E)", 0,
     (Fl_Callback *)Dialog::editor, 0, 0);
 
+//  menubar->add("F&X/Color/Test", 0,
+//    (Fl_Callback *)Test::begin, 0, 0);
   menubar->add("F&X/Color/Normalize", 0,
     (Fl_Callback *)Normalize::begin, 0, 0);
   menubar->add("F&X/Color/Equalize", 0,
@@ -1475,8 +1477,9 @@ void Gui::colorChange(Widget *widget, void *)
 
   int r, g, b;
 
-  Blend::hsvToRgb(h, s, v, &r, &g, &b);
-  //Blend::wheelToRgb(h, s, v, &r, &g, &b);
+  //joe
+  //Blend::hsvToRgb(h, s, v, &r, &g, &b);
+  Blend::wheelToRgb(h, s, v, &r, &g, &b);
   Project::brush->color = makeRgb(r, g, b);
   Project::brush->blend = blend->value();
 
@@ -1485,8 +1488,9 @@ void Gui::colorChange(Widget *widget, void *)
 
   for(int i = 1; i < 1536; i++)
   {
-    Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
-    //Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
+    //joe
+    //Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
+    Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
 
     float angle = ((M_PI * 2) / 1536) * i;
     int x1 = 64 + 62 * std::cos(angle);
@@ -1500,8 +1504,9 @@ void Gui::colorChange(Widget *widget, void *)
 
   for(int i = 1; i < 1536; i++)
   {
-    Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
-    //Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
+    //joe
+    //Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
+    Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
 
     float angle = ((M_PI * 2) / 1536) * i;
     int x1 = 64 + 61 * std::cos(angle);
@@ -1515,8 +1520,9 @@ void Gui::colorChange(Widget *widget, void *)
 
   for(int i = 1; i < 1536; i++)
   {
-    Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
-    //Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
+    //joe
+    //Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
+    Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
 
     float angle = ((M_PI * 2) / 1536) * i;
     int x1 = 64 + 60 * std::cos(angle);
@@ -1531,8 +1537,9 @@ void Gui::colorChange(Widget *widget, void *)
   const int x1 = 64 + 56 * std::cos(mouse_angle);
   const int y1 = 64 + 56 * std::sin(mouse_angle);
 
-  Blend::hsvToRgb(h, 255, 255, &r, &g, &b);
-  //Blend::wheelToRgb(h, 255, 255, &r, &g, &b);
+  //joe
+  //Blend::hsvToRgb(h, 255, 255, &r, &g, &b);
+  Blend::wheelToRgb(h, 255, 255, &r, &g, &b);
   hue->bitmap->rect(x1 - 6, y1 - 6, x1 + 6, y1 + 6, makeRgb(0, 0, 0), 192);
   hue->bitmap->rect(x1 - 5, y1 - 5, x1 + 5, y1 + 5, makeRgb(0, 0, 0), 96);
   hue->bitmap->xorRect(x1 - 4, y1 - 4, x1 + 4, y1 + 4);
@@ -1547,8 +1554,10 @@ void Gui::colorChange(Widget *widget, void *)
   {
     for(int x = 0; x < 64; x++)
     {
-      Blend::hsvToRgb(h, x * 4.05, y * 4.05, &r, &g, &b);
+      //joe
+      //Blend::hsvToRgb(h, x * 4.05, y * 4.05, &r, &g, &b);
       //Blend::wheelToRgb(h, x * 5.43, y * 5.43, &r, &g, &b);
+      Blend::wheelToRgb(h, x * 4.05, y * 4.05, &r, &g, &b);
       satval->bitmap->setpixelSolid(x, y, makeRgb(r, g, b), 0);
     }
   }

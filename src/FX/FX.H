@@ -77,6 +77,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Marble.H"
 #include "Dither.H"
 #include "SideAbsorptions.H"
+#include "Test.H"
 
 class FX
 {

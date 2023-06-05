@@ -68,6 +68,7 @@ OBJ= \
   $(SRC_DIR)/FX/Marble.o \
   $(SRC_DIR)/FX/Dither.o \
   $(SRC_DIR)/FX/SideAbsorptions.o \
+  $(SRC_DIR)/FX/Test.o \
   $(SRC_DIR)/FilterMatrix.o \
   $(SRC_DIR)/Gamma.o \
   $(SRC_DIR)/ExportData.o \
@@ -120,7 +121,7 @@ fltklibs:
 	cd ./fltk; \
 	make clean; \
 	./configure --host=$(HOST) --enable-xft --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
-	make; \
+	make -j12; \
 	cd ..; \
 	echo "FLTK libs built.";
 
