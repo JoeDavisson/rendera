@@ -457,6 +457,8 @@ namespace MakePalette
   {
     Items::dialog->hide();
     Quantize::pca(Project::bmp, Project::palette, atoi(Items::colors->value()));
+    Gui::paletteDraw();
+    Project::palette->fillTable();
   }
 
   void quit()

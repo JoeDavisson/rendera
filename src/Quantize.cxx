@@ -277,7 +277,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 */
 
   // redraw palette widget
-  Gui::paletteDraw();
-  Project::palette->fillTable();
+//  Gui::paletteDraw();
+//  Project::palette->fillTable();
 }
 
