@@ -577,10 +577,12 @@ void Selection::reload()
   const int w = Project::select_bmp->w;
   const int h = Project::select_bmp->h;
 
-  beginx = 0;
-  beginy = 0;
-  lastx = w - 1;
-  lasty = h - 1;
+//  beginx = 0;
+//  beginy = 0;
+//  lastx = w - 1;
+//  lasty = h - 1;
+  lastx = beginx + w - 1;
+  lasty = beginy + h - 1;
   state = 3;
 
   Project::stroke->size(beginx, beginy, lastx, lasty);

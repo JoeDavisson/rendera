@@ -308,6 +308,14 @@ public:
             else if(ctrl)
               Project::undo->pop();
             break;
+          case 'c':
+            if(ctrl)
+              Gui::selectCopy();
+            break;
+          case 'v':
+            if(ctrl)
+              Gui::selectPaste();
+            break;
           case 'e':
             Dialog::editor();
             break;
@@ -417,8 +425,8 @@ void Gui::init()
   menubar->add("&Palette/&Editor... (E)", 0,
     (Fl_Callback *)Dialog::editor, 0, 0);
 
-//  menubar->add("F&X/Color/Test", 0,
-//    (Fl_Callback *)Test::begin, 0, 0);
+  menubar->add("F&X/Color/Test", 0,
+    (Fl_Callback *)Test::begin, 0, 0);
   menubar->add("F&X/Color/Normalize", 0,
     (Fl_Callback *)Normalize::begin, 0, 0);
   menubar->add("F&X/Color/Equalize", 0,
@@ -759,11 +767,13 @@ void Gui::init()
   pos += 8;
 
   selection_copy = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Copy");
+  selection_copy->tooltip("Control-C");
   selection_copy->callback((Fl_Callback *)selectCopy);
   selection_copy->deactivate();
   pos += 32 + 8;
 
   selection_paste = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Paste");
+  selection_paste->tooltip("Control-V");
   selection_paste->callback((Fl_Callback *)selectPaste);
   selection_paste->deactivate();
   pos += 32 + 8;
