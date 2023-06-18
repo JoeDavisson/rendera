@@ -425,8 +425,8 @@ void Gui::init()
   menubar->add("&Palette/&Editor... (E)", 0,
     (Fl_Callback *)Dialog::editor, 0, 0);
 
-  menubar->add("F&X/Color/Test", 0,
-    (Fl_Callback *)Test::begin, 0, 0);
+//  menubar->add("F&X/Color/Test", 0,
+//    (Fl_Callback *)Test::begin, 0, 0);
   menubar->add("F&X/Color/Normalize", 0,
     (Fl_Callback *)Normalize::begin, 0, 0);
   menubar->add("F&X/Color/Equalize", 0,
