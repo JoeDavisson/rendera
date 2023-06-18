@@ -110,7 +110,8 @@ OBJ= \
   $(SRC_DIR)/GetColor.o \
   $(SRC_DIR)/Offset.o \
   $(SRC_DIR)/Paint.o \
-  $(SRC_DIR)/Text.o
+  $(SRC_DIR)/Text.o \
+  $(SRC_DIR)/Help.o
 
 # build program
 default: $(OBJ)
@@ -121,7 +122,7 @@ fltklibs:
 	cd ./fltk; \
 	make clean; \
 	./configure --host=$(HOST) --enable-xft --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
-	make -j12; \
+	make; \
 	cd ..; \
 	echo "FLTK libs built.";
 
