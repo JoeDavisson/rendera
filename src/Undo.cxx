@@ -127,9 +127,7 @@ void Undo::pop()
   int h = undo_stack[undo_current]->h;
 
   Project::replaceImage(w, h);
-
   undo_stack[undo_current]->blit(Project::bmp, 0, 0, 0, 0, w, h);
-
   Gui::getView()->drawMain(true);
 }
 
@@ -181,9 +179,7 @@ void Undo::popRedo()
   int h = redo_stack[redo_current]->h;
 
   Project::replaceImage(w, h);
-
   redo_stack[redo_current]->blit(Project::bmp, 0, 0, 0, 0, w, h);
-
   Gui::getView()->drawMain(true);
 }
 
