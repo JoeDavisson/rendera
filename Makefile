@@ -111,7 +111,6 @@ OBJ= \
   $(SRC_DIR)/Offset.o \
   $(SRC_DIR)/Paint.o \
   $(SRC_DIR)/Text.o \
-  $(SRC_DIR)/Help.o
 
 # build program
 default: $(OBJ)
