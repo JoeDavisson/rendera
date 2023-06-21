@@ -25,8 +25,19 @@ class Gamma
 {
 public:
   static void init();
-  static int fix(const int);
-  static int unfix(const int);
+
+  static inline int fix(const int val)
+  {
+    return table_fix[val];
+  }
+
+  static inline int unfix(const int val)
+  {
+    return table_unfix[val];
+  }
+
+  static int *table_fix;
+  static int *table_unfix;
 
 private:
   Gamma() { }
