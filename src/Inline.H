@@ -58,7 +58,7 @@ union un_rgba_type
 };
 
 // get rgba values all at once
-inline rgba_type getRgba(const uint32_t n)
+inline rgba_type getRgba(const uint32_t &n)
 {
   un_rgba_type u;
   u.uint32_ = n;
@@ -66,55 +66,55 @@ inline rgba_type getRgba(const uint32_t n)
 }
 
 // make RGB color with no alpha
-inline int makeRgb(const int r, const int g, const int b)
+inline int makeRgb(const int &r, const int &g, const int &b)
 {
   return r | g << 8 | b << 16 | 0xff000000;
 }
 
 // make RGBA color
-inline int makeRgba(const int r, const int g, const int b, const int a)
+inline int makeRgba(const int &r, const int &g, const int &b, const int &a)
 {
   return r | g << 8 | b << 16 | a << 24;
 }
 
 // make RGB color, 24-bits only
-inline int makeRgb24(const int r, const int g, const int b)
+inline int makeRgb24(const int &r, const int &g, const int &b)
 {
   return r | g << 8 | b << 16;
 }
 
 // get red channel
-inline int getr(const int c)
+inline int getr(const int &c)
 {
   return c & 255;
 }
 
 // get green channel
-inline int getg(const int c)
+inline int getg(const int &c)
 {
   return (c >> 8) & 255;
 }
 
 // get blue channel
-inline int getb(const int c)
+inline int getb(const int &c)
 {
   return (c >> 16) & 255;
 }
 
 // get alpha channel
-inline int geta(const int c)
+inline int geta(const int &c)
 {
   return (c >> 24) & 255;
 }
 
 // get value
-inline int getv(const int c)
+inline int getv(const int &c)
 {
   return (getr(c) + getg(c) + getb(c)) / 3;
 }
 
 // get rec 601 luminance
-inline int getl(const int c)
+inline int getl(const int &c)
 {
   return ((76 * getr(c)) + (150 * getg(c)) + (29 * getb(c))) / 255;
 
@@ -128,7 +128,7 @@ inline int getl(const int c)
 }
 
 // get rec 601 luminance from unpacked RGB values
-inline int getlUnpacked(const int r, const int g, const int b)
+inline int getlUnpacked(const int &r, const int &g, const int &b)
 {
   return (76 * r + 150 * g + 29 * b) / 255;
 /*
@@ -144,13 +144,13 @@ inline int getlUnpacked(const int r, const int g, const int b)
 
 
 // scales a gray value to a particular level
-inline int scaleVal(const int a, const int b)
+inline int scaleVal(const int &a, const int &b)
 {
   return (a * (255 - b) / 255) + b;
 }
 
 // 3D distance
-inline int diff24(const int c1, const int c2)
+inline int diff24(const int &c1, const int &c2)
 {
   const struct rgba_type rgba1 = getRgba(c1);
   const struct rgba_type rgba2 = getRgba(c2);
@@ -162,7 +162,7 @@ inline int diff24(const int c1, const int c2)
 }
 
 // 4D distance
-inline int diff32(const int c1, const int c2)
+inline int diff32(const int &c1, const int &c2)
 {
   const struct rgba_type rgba1 = getRgba(c1);
   const struct rgba_type rgba2 = getRgba(c2);
@@ -175,7 +175,7 @@ inline int diff32(const int c1, const int c2)
 }
 
 // blend approximation
-inline int blendFast(const int c1, const int c2, const int t)
+inline int blendFast(const int &c1, const int &c2, const int &t)
 {
   const int rb =
     (((((c1 & 0xff00ff) - (c2 & 0xff00ff)) * t) >> 8) + c2) & 0xff00ff;
@@ -185,7 +185,7 @@ inline int blendFast(const int c1, const int c2, const int t)
 }
 
 // brushstroke outline
-inline int visibleColor(const int x, const int y)
+inline int visibleColor(const int &x, const int &y)
 {
    return ((x >> 2) ^ (y >> 2)) & 1 ? 0xa0a0a0 : 0x606060;
 }
@@ -193,7 +193,7 @@ inline int visibleColor(const int x, const int y)
 // convert internal RGB format to whatever the graphics card needs
 // currently only supporting RGB/BGR as I don't think anything
 // else really exists
-inline int convertFormat(const int c, const bool bgr_order)
+inline int convertFormat(const int &c, const bool &bgr_order)
 {
   if(bgr_order)
     return makeRgba(getb(c), getg(c), getr(c), geta(c));
@@ -202,12 +202,12 @@ inline int convertFormat(const int c, const bool bgr_order)
 }
 
 // get an FLTK color
-inline int getFltkColor(const int c)
+inline int getFltkColor(const int &c)
 {
   return (Fl::get_color(c) >> 8) | 0xff000000;
 }
 
-inline int clamp(const int value, const int ceiling)
+inline int clamp(const int &value, const int &ceiling)
 {
   if(value < 0)
     return 0;
@@ -217,7 +217,7 @@ inline int clamp(const int value, const int ceiling)
     return value;
 }
 
-inline int range(const int value, const int floor, const int ceiling)
+inline int range(const int &value, const int &floor, const int &ceiling)
 {
   if(value < floor)
     return floor;
@@ -228,7 +228,7 @@ inline int range(const int value, const int floor, const int ceiling)
 }
 
 // pseudo-random number
-inline int rnd(void)
+inline int rnd()
 {
   rnd_seed ^= rnd_seed << 17;
   rnd_seed ^= rnd_seed >> 13;
@@ -278,12 +278,12 @@ inline uint32_t parseUint32(unsigned char *&buffer)
   return num;
 }
 
-inline void writeUint8(const uint8_t num, FILE *out)
+inline void writeUint8(const uint8_t &num, FILE *&out)
 {
   fputc(num, out);
 }
 
-inline void writeUint16(const uint16_t num, FILE *out)
+inline void writeUint16(const uint16_t &num, FILE *&out)
 {
 #if ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
   fputc(num & 0xff, out);
@@ -294,7 +294,7 @@ inline void writeUint16(const uint16_t num, FILE *out)
 #endif
 }
 
-inline void writeUint32(const uint32_t num, FILE *out)
+inline void writeUint32(const uint32_t &num, FILE *&out)
 {
 #if ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
   fputc(num & 0xff, out);
