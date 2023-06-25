@@ -373,10 +373,10 @@ void Palette::setGrays()
 
 void Palette::setTwoBits()
 {
-  data[0] = makeRgb(0, 0, 0);
-  data[1] = makeRgb(64, 64, 64);
-  data[2] = makeRgb(128, 128, 128);
-  data[3] = makeRgb(192, 192, 192);
+  data[0] = makeRgb(0x00, 0x00, 0x00);
+  data[1] = makeRgb(0x4a, 0x4a, 0x4a);
+  data[2] = makeRgb(0x7b, 0x7b, 0x7b);
+  data[3] = makeRgb(0xb2, 0xb2, 0xb2);
 
   max = 4;
   fillTable();
