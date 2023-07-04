@@ -118,7 +118,8 @@ namespace Resize
     Bitmap *bmp = Project::bmp;
     Bitmap *temp = new Bitmap(w, h);
 
-    temp->rectfill(temp->cl, temp->ct, temp->cr, temp->cb, makeRgba(0, 0, 0, 0), 0);
+    temp->rectfill(temp->cl, temp->ct, temp->cr, temp->cb,
+                   makeRgba(0, 0, 0, 0), 0);
     bmp->blit(temp, 0, 0, 0, 0, bmp->cw, bmp->ch);
 
     Project::replaceImageFromBitmap(temp);
@@ -175,7 +176,7 @@ namespace Scale
     Fl_Button *cancel;
   }
 
-  void blur(Bitmap *bmp, float size)
+  void do_blur(Bitmap *bmp, float size)
   {
     GaussianBlur::apply(bmp, size / 2, 0, 0);
   }
@@ -219,7 +220,22 @@ namespace Scale
     const float ax = ((float)sw / dw);
     const float ay = ((float)sh / dh);
 
-    if(Items::mode->value() == 0)
+    float mipx = 1, mipy = 1;
+    bool blur = false;
+    float blur_size = 0;
+
+    if(sw > dw)
+      mipx = (sw / dw);
+    if(sh > dh)
+      mipy = (sh / dh);
+
+    if(mipx > .5 || mipy > .5)
+    {
+      blur_size = mipx > mipy ? mipx : mipy;
+      blur = true;
+    }
+
+   if(Items::mode->value() == 0)
     {
       // nearest
       for(int y = 0; y < dh; y++) 
@@ -238,18 +254,8 @@ namespace Scale
     else if(Items::mode->value() == 1)
     {
       // bilinear
-      float mipx = 1, mipy = 1;
-
-      if(sw > dw)
-        mipx = (sw / dw);
-      if(sh > dh)
-        mipy = (sh / dh);
-
-      if(mipx > .5 || mipy > .5)
-      {
-        float size = mipx > mipy ? mipx : mipy;
-        blur(bmp, size);
-      }
+      if(blur)
+        do_blur(bmp, blur_size);
 
       Gui::progressShow(dh);
 
@@ -337,20 +343,10 @@ namespace Scale
     }
     else if(Items::mode->value() == 2)
     {
+      if(blur)
+        do_blur(bmp, blur_size);
+
       // bicubic
-      float mipx = 1, mipy = 1;
-
-      if(sw > dw)
-        mipx = (float)sw / dw;
-      if(sh > dh)
-        mipy = (float)sh / dh;
-
-      if(mipx > .5 || mipy > .5)
-      {
-        float size = mipx < mipy ? mipx : mipy;
-        blur(bmp, size);
-      }
-
       float r[4][4];
       float g[4][4];
       float b[4][4];
@@ -660,6 +656,7 @@ namespace RotateArbitrary
       row_v += dv_row;
 
       const int ty = ((temp->ch) / 2) + y;
+
       if(ty < temp->ct || ty > temp->cb)
         continue;
 
