@@ -283,7 +283,6 @@ int File::loadFile(const char *fn)
   }
 
   // redraw
-//  Project::selection->reset();
   Project::stroke->clip();
   Gui::getView()->drawMain(true);
 
