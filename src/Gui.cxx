@@ -1623,7 +1623,6 @@ void Gui::colorTransInput(Widget *, void *)
   colorSwatch();
 }
 
-
 void Gui::colorTrans(Widget *, void *)
 {
 //  Project::brush->trans = trans->var * 16.8;

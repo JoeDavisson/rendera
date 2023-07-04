@@ -988,6 +988,7 @@ namespace Editor
     ramp_state = 0;
     updateInfo((char *)"  Shift to swap, Ctrl to copy, Right-click to move cursor.");
     updateIndex(Items::palette->var);
+
     while(Items::dialog->shown())
       Fl::wait();
   }
@@ -1101,7 +1102,7 @@ namespace Editor
     Items::index_text = new Fl_Box(FL_NO_BOX, Items::index->x(), Items::index->y(), Items::index->w(), Items::index->h(), "");
     Items::index_text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    Items::dialog->set_non_modal();
+    Items::dialog->set_modal();
     Items::dialog->end(); 
 
     undo_palette = new Palette();

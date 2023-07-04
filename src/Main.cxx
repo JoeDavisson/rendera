@@ -225,8 +225,8 @@ int main(int argc, char *argv[])
   ExportData::init();
   FX::init();
   Transform::init();
-  Gui::init();
   Dialog::init();
+  Gui::init();
 
   //Fl_Shared_Image::add_handler(File::previewJpeg);
   //Fl_Shared_Image::add_handler(File::previewPng);
