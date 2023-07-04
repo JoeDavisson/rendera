@@ -1113,6 +1113,16 @@ namespace Editor
     Items::dialog->set_modal();
     Items::dialog->end(); 
 
+/*
+    const int x = Gui::getWindow()->x()
+                  + (Gui::getWindow()->w() - Items::dialog->w()) / 2;
+    const int y = Gui::getWindow()->y()
+                  + (Gui::getWindow()->h() - Items::dialog->h()) / 2;
+
+    Items::dialog->xpos = x;
+    Items::dialog->ypos = y;
+    Items::dialog->resize(x, y, Items::dialog->w(), Items::dialog->h());
+*/
     undo_palette = new Palette();
   }
 }

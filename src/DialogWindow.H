@@ -34,6 +34,12 @@ public:
   void addOkButton(Fl_Button **, int *);
   void addOkCancelButtons(Fl_Button **, Fl_Button **, int *);
   void show();
+  void hide();
+
+  int xpos, ypos;
+
+private:
+  bool first_show;
 };
 
 #endif

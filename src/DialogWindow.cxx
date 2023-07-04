@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 DialogWindow::DialogWindow(int w, int h, const char *l)
 : Fl_Double_Window(w, h, l)
 {
+  first_show = true;
 }
 
 DialogWindow::~DialogWindow()
@@ -60,10 +61,27 @@ void DialogWindow::addOkCancelButtons(Fl_Button **ok, Fl_Button **cancel, int *y
 
 void DialogWindow::show()
 {
-//  const int x = Gui::getWindow()->x() + (Gui::getWindow()->w() - w()) / 2;
-//  const int y = Gui::getWindow()->y() + (Gui::getWindow()->h() - h()) / 2;
+  if(first_show == true)
+  {
+    const int x = Gui::getWindow()->x() + (Gui::getWindow()->w() - w()) / 2;
+    const int y = Gui::getWindow()->y() + (Gui::getWindow()->h() - h()) / 2;
 
-//  resize(x, y, w(), h());
+    resize(x, y, w(), h());
+    first_show = false;
+  }
+  else
+  {
+    resize(xpos, ypos, w(), h());
+  }
+
   Fl_Double_Window::show();
+}
+
+void DialogWindow::hide()
+{
+  xpos = x();
+  ypos = y();
+
+  Fl_Double_Window::hide();
 }
 
