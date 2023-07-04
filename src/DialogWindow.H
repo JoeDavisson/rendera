@@ -33,6 +33,7 @@ public:
 
   void addOkButton(Fl_Button **, int *);
   void addOkCancelButtons(Fl_Button **, Fl_Button **, int *);
+  int handle(int);
   void show();
   void hide();
 

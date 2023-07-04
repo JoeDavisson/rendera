@@ -18,6 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <FL/Fl.H>
+#include <FL/Fl_Button.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/fl_draw.H>
@@ -59,21 +61,34 @@ void DialogWindow::addOkCancelButtons(Fl_Button **ok, Fl_Button **cancel, int *y
   resize(x(), y(), w(), *y1);
 }
 
+int DialogWindow::handle(int event)
+{
+  int button1 = Fl::event_button1() ? 1 : 0;
+  int button2 = Fl::event_button2() ? 2 : 0;
+  int button3 = Fl::event_button3() ? 4 : 0;
+  int button = button1 | button2 | button3;
+
+  switch(event)
+  {
+    case FL_PUSH:
+      xpos = x();
+      ypos = y();
+      break;
+  }
+
+  return Fl_Double_Window::handle(event);
+}
+
 void DialogWindow::show()
 {
   if(first_show == true)
   {
-    const int x = Gui::getWindow()->x() + (Gui::getWindow()->w() - w()) / 2;
-    const int y = Gui::getWindow()->y() + (Gui::getWindow()->h() - h()) / 2;
-
-    resize(x, y, w(), h());
+    xpos = Gui::getWindow()->x() + (Gui::getWindow()->w() - w()) / 2;
+    ypos = Gui::getWindow()->y() + (Gui::getWindow()->h() - h()) / 2;
     first_show = false;
   }
-  else
-  {
-    resize(xpos, ypos, w(), h());
-  }
 
+  resize(xpos, ypos, w(), h());
   Fl_Double_Window::show();
 }
 
