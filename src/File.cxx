@@ -1002,8 +1002,30 @@ int File::saveBmp(Bitmap *bmp, const char *fn)
   writeUint32(0, outp);
   writeUint32(0, outp);
 
-  int *p = bmp->data;
   std::vector<unsigned char> linebuf(w * 3 + pad);
+
+  // warn if image has an alpha channel
+  bool found_alpha = false;
+  int *p = bmp->data;
+
+  for(int y = 0; y < h; y++)
+  {
+    for(int x = 0; x < w; x++)
+    {
+      if(geta(*p++) < 0xff)
+      {
+        found_alpha = true;
+        break;
+      }
+    }
+  }
+
+  if(found_alpha)
+  {
+    Dialog::message("Warning", "Image contains transparency information\nwhich will be discarded.");
+  }
+
+  p = bmp->data;
 
   for(int y = 0; y < h; y++)
   {
