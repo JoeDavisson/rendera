@@ -878,12 +878,16 @@ void View::draw()
 
     if(blitx < 0)
       blitx = 0;
+
     if(blity < 0)
       blity = 0;
+
     if(blitx + blitw > w() - 1)
       blitw = w() - 1 - blitx;
+
     if(blity + blith > h() - 1)
       blith = h() - 1 - blity;
+
     if(blitw < 1 || blith < 1)
       return;
 

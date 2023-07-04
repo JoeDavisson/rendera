@@ -144,8 +144,10 @@ int Blend::darken(const int c1, const int c2, const int t)
 
   rgbToHsv(rgba2.r, rgba2.g, rgba2.b, &h, &s, &v);
   h += 768;
+
   if(h >= 1536)
         h -= 1536;
+
   hsvToRgb(h, s, v, &r, &g, &b);
 
   r = rgba1.r - r * (255 - t) / 255;
@@ -199,6 +201,7 @@ int Blend::keepLum(const int c, const int lum)
       {
         n[i]++;
         src = getlUnpacked(n[1], n[0], n[2]);
+
         if(src >= lum)
           break;
       }
@@ -217,6 +220,7 @@ int Blend::keepLum(const int c, const int lum)
       {
         n[i]--;
         src = getlUnpacked(n[1], n[0], n[2]);
+
         if(src <= lum)
           break;
       }
@@ -227,16 +231,6 @@ int Blend::keepLum(const int c, const int lum)
 
   return makeRgba(n[1], n[0], n[2], rgba.a);
 }
-
-/*
-int Blend::alphaSub(const int c1, const int c2, const int t)
-{
-  const rgba_type rgba = getRgba(c2);
-  const int a = geta(c1);
-
-  return trans(c1, makeRgba(rgba.r, rgba.g, rgba.b, (a * t) / 255), t);
-}
-*/
 
 int Blend::alphaSub(const int c1, const int, const int t)
 {
