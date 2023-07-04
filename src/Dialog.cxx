@@ -513,6 +513,7 @@ namespace Editor
   int replace_state = 0;
   int ramp_begin = 0;
   int ramp_state = 0;
+  bool button_down = false;
   bool begin_undo;
   int oldsvx, oldsvy, oldhy;
   Palette *undo_palette;
@@ -847,8 +848,10 @@ namespace Editor
       widget->var = pos;
     }
 
-    if(Fl::event_button1())
+    if(Fl::event_button1() && button_down == false)
     {
+      button_down = true;
+
       if(ramp_state)
       {
         ramp_begin = last_index;
@@ -990,7 +993,12 @@ namespace Editor
     updateIndex(Items::palette->var);
 
     while(Items::dialog->shown())
+    {
+      if(Fl::event_button1() == 0)
+        button_down = false;
+
       Fl::wait();
+    }
   }
 
   void close()
