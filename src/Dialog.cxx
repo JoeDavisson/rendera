@@ -490,6 +490,7 @@ namespace Editor
     Widget *hue;
     Widget *lum;
     Widget *sat_val;
+    Widget *trans;
     Fl_Repeat_Button *insert;
     Fl_Repeat_Button *remove;
     Fl_Button *replace;
@@ -604,8 +605,6 @@ namespace Editor
 
     Items::hue->bitmap->rect(0, hy - 6, 23, hy + 6, makeRgb(0, 0, 0), 192);
     Items::hue->bitmap->rect(0, hy - 5, 23, hy + 5, makeRgb(0, 0, 0), 128);
-
-
     Items::hue->bitmap->xorRect(0, hy - 4, 23, hy + 4);
     Items::hue->bitmap->rectfill(0, hy - 3 , 23, hy + 3, c, 0);
     Items::hue->bitmap->rect(0, 0, 23, 255, makeRgb(0, 0, 0), 0);
@@ -920,6 +919,22 @@ namespace Editor
     setHsv(true);
   }
 
+  void getTrans()
+  {
+    Items::trans->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR)); 
+
+    for(int i = 0; i < 256; i++)
+      Items::trans->bitmap->vline(0, i, 23, makeRgb(255, 255, 255), i);
+
+    int tx = Items::trans->var & 255;
+
+    Items::trans->bitmap->rect(tx - 6, 0, tx + 6, 23, makeRgb(0, 0, 0), 192);
+    Items::trans->bitmap->rect(tx - 5, 0, tx + 5, 23, makeRgb(0, 0, 0), 128);
+    Items::trans->bitmap->xorRect(tx - 4, 0, tx + 4, 23);
+    Items::trans->bitmap->rect(0, 0, 255, 23, makeRgb(0, 0, 0), 0);
+    Gui::transUpdate(tx);
+  }
+
   void getSatVal()
   {
     int h = (Items::hue->var / 24) * 6;
@@ -965,6 +980,8 @@ namespace Editor
     updateHexColor();
     setHsvSliders();
     setHsv(1);
+    Items::trans->var = Project::brush->trans;
+    getTrans();
     Items::dialog->show();
     begin_undo = false;
     ramp_begin = 0;
@@ -991,12 +1008,15 @@ namespace Editor
   {
     int x1, y1;
 
-    Items::dialog = new DialogWindow(480, 346, "Palette Editor");
+    Items::dialog = new DialogWindow(480, 346 + 32, "Palette Editor");
 
     Items::hue = new Widget(Items::dialog, 8, 8, 24, 256, 0, 1, 1, (Fl_Callback *)getHue);
 
     Items::sat_val = new Widget(Items::dialog, 40, 8, 256, 256,
                                 0, 1, 1, (Fl_Callback *)getSatVal);
+
+    Items::trans = new Widget(Items::dialog, 40, 256 + 16, 256, 24,
+                              0, 1, 1, (Fl_Callback *)getTrans);
 
     y1 = 8;
     Items::insert = new Fl_Repeat_Button(304, y1, 44, 32, "+");
@@ -1041,10 +1061,10 @@ namespace Editor
     Items::palette = new Widget(Items::dialog, 408, 8, 64, 256,
                                 "", 24, 24, (Fl_Callback *)checkPalette);
 
-    new Separator(Items::dialog, 2, 272, Items::dialog->w() - 4, 2, "");
+    new Separator(Items::dialog, 2, 272 + 32, Items::dialog->w() - 4, 2, "");
 
     x1 = 8;
-    y1 = 272 + 8;
+    y1 = 272 + 40;
 
     Items::hexcolor = new InputText(Items::dialog, x1, y1, 80, 24, "Hexadecimal", (Fl_Callback *)checkHexColor);
     Items::hexcolor->maximum_size(6);
@@ -1067,7 +1087,7 @@ namespace Editor
     new Separator(Items::dialog, x1, y1 - 5, 2, 46, "");
     x1 += 8;
 
-    Items::done = new Fl_Button(Items::dialog->w() - 96 - 8, 280, 96, 36, "Done (E)");
+    Items::done = new Fl_Button(Items::dialog->w() - 96 - 8, y1, 96, 36, "Done (E)");
     Items::done->shortcut('e');
     Items::done->callback((Fl_Callback *)close);
 
@@ -1081,7 +1101,7 @@ namespace Editor
     Items::index_text = new Fl_Box(FL_NO_BOX, Items::index->x(), Items::index->y(), Items::index->w(), Items::index->h(), "");
     Items::index_text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-    Items::dialog->set_modal();
+    Items::dialog->set_non_modal();
     Items::dialog->end(); 
 
     undo_palette = new Palette();

@@ -60,10 +60,10 @@ void DialogWindow::addOkCancelButtons(Fl_Button **ok, Fl_Button **cancel, int *y
 
 void DialogWindow::show()
 {
-  const int x = Gui::getWindow()->x() + (Gui::getWindow()->w() - w()) / 2;
-  const int y = Gui::getWindow()->y() + (Gui::getWindow()->h() - h()) / 2;
+//  const int x = Gui::getWindow()->x() + (Gui::getWindow()->w() - w()) / 2;
+//  const int y = Gui::getWindow()->y() + (Gui::getWindow()->h() - h()) / 2;
 
-  resize(x, y, w(), h());
+//  resize(x, y, w(), h());
   Fl_Double_Window::show();
 }
 

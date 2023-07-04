@@ -72,6 +72,7 @@ public:
   static void colorTrans(Widget *, void *);
   static void colorTransInput(Widget *, void *);
   static void colorUpdate(int);
+  static void transUpdate(int);
 
   static void fillReset();
 
@@ -128,7 +129,6 @@ public:
   static void paletteSort();
   static void paletteSwatches(Widget *, void *);
   static void paletteWebSafe();
-
 
   static int progressUpdate(int);
   static void progressEnable(bool);

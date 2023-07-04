@@ -1152,6 +1152,18 @@ void Gui::colorUpdate(int c)
   colorSwatch();
 }
 
+void Gui::transUpdate(int t)
+{
+  trans->var = t / 8;
+  trans->redraw();
+  Project::brush->trans = t;
+  char s[16];
+  snprintf(s, sizeof(s), "%d", Project::brush->trans);
+  trans_input->value(s);
+  trans_input->redraw();
+  colorSwatch();
+}
+
 void Gui::colorSwatch()
 {
   swatch->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
