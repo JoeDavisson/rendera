@@ -284,7 +284,7 @@ void Render::fine()
     points[i].x[1] = stroke->edge_y[i];
   }
 
-  root = KDtree::make_tree(points, count, 0, 2);
+  root = KDtree::build(points, count, 0, 2);
 
   for(int y = stroke->y1; y <= stroke->y2; y++)
   {

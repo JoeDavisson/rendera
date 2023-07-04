@@ -36,7 +36,7 @@ public:
   static int dist(node_type *, node_type *, int);
   static void swap(node_type *, node_type *);
   static node_type *median(node_type *, node_type *, int);
-  static node_type *make_tree(node_type *, const int, int, const int);
+  static node_type *build(node_type *, const int, int, const int);
   static void nearest(node_type *, node_type *, int, const int, node_type **, int *);
 
 private:

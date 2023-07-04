@@ -54,49 +54,49 @@ void KDtree::swap(node_type *x, node_type *y)
   std::memcpy(y->x, temp, sizeof(temp));
 }
 
-KDtree::node_type *KDtree::median(node_type *start, node_type *end, int index)
+KDtree::node_type *KDtree::median(node_type *begin, node_type *end, int index)
 {
-  if(end <= start)
+  if(end <= begin)
     return 0;
 
   node_type *p; 
-  node_type *store; 
-  node_type *md = start + (end - start) / 2; 
+  node_type *temp; 
+  node_type *mid = begin + (end - begin) / 2; 
 
   while(true)
   {
-    const int pivot = md->x[index];
+    const int pivot = mid->x[index];
 
-    swap(md, end - 1);
-    store = start;
+    swap(mid, end - 1);
+    temp = begin;
 
-    for(p = start; p < end; p++)
+    for(p = begin; p < end; p++)
     {
-      if(end == start + 1)
-        return start;
+      if(end == begin + 1)
+        return begin;
 
       if(p->x[index] < pivot)
       {
-        if(p != store)
-          swap(p, store);
+        if(p != temp)
+          swap(p, temp);
 
-        store++;
+        temp++;
       }
     }
 
-    swap(store, end - 1);
+    swap(temp, end - 1);
 
-    if(store == md)
-      return md;
-    else if(store->x[index] > md->x[index])
-      end = store;
+    if(temp == mid)
+      return mid;
+    else if(temp->x[index] > mid->x[index])
+      end = temp;
     else
-      start = store + 1;
+      begin = temp + 1;
   }
 }
 
-KDtree::node_type *KDtree::make_tree(node_type *t,
-                                     const int len, int i, const int dim)
+KDtree::node_type *KDtree::build(node_type *t,
+                                 const int len, int i, const int dim)
 {
   node_type *n;
 
@@ -106,8 +106,8 @@ KDtree::node_type *KDtree::make_tree(node_type *t,
   if((n = median(t, t + len, i)))
   {
     i = (i + 1) % dim;
-    n->left = make_tree(t, n - t, i, dim);
-    n->right = make_tree(n + 1, t + len - (n + 1), i, dim);
+    n->left = build(t, n - t, i, dim);
+    n->right = build(n + 1, t + len - (n + 1), i, dim);
   }
 
   return n;
@@ -116,7 +116,7 @@ KDtree::node_type *KDtree::make_tree(node_type *t,
 void KDtree::nearest(node_type *r, node_type *nd,
                      int i, const int dim, node_type **best, int *best_dist)
 {
-  if(!r)
+  if(r == 0)
     return;
 
   const int d = dist(r, nd, dim);

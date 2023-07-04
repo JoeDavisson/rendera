@@ -195,7 +195,7 @@ void Palette::fillTable()
     colors[i].index = i;
   }
 
-  root = KDtree::make_tree(colors, max, 0, 3);
+  root = KDtree::build(colors, max, 0, 3);
 
   for(int b = 0; b <= 256 - step; b += step)
   {
