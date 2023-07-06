@@ -37,7 +37,6 @@ public:
   static int pngAlphaLevels();
   static void newImage();
   static void makePalette();
-  static void editor();
   static void message(const char *, const char *);
   static bool choice(const char *, const char *);
 

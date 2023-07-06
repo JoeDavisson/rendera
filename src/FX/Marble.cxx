@@ -250,7 +250,7 @@ void Marble::setThreshold()
 
 void Marble::getColor()
 {
-  Dialog::editor();
+  Editor::begin();
   Items::color->bitmap->clear(Project::brush->color);
   Items::color->bitmap->rect(0, 0, Items::color->bitmap->w - 1, Items::color->bitmap->h - 1, makeRgb(0, 0, 0), 0);
   Items::color->redraw();

@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "CheckBox.H"
 #include "Clone.H"
 #include "Dialog.H"
+#include "Editor.H"
 #include "ExportData.H"
 #include "FX/FX.H"
 #include "File.H"
@@ -317,7 +318,7 @@ public:
               Gui::selectPaste();
             break;
           case 'e':
-            Dialog::editor();
+            Editor::begin();
             break;
           default:
             break;
@@ -423,7 +424,7 @@ void Gui::init()
   menubar->add("&Palette/Presets/4-level RGB", 0,
     (Fl_Callback *)palette4LevelRGB, 0, 0);
   menubar->add("&Palette/&Editor... (E)", 0,
-    (Fl_Callback *)Dialog::editor, 0, 0);
+    (Fl_Callback *)Editor::begin, 0, 0);
 
 //  menubar->add("F&X/Color/Test", 0,
 //    (Fl_Callback *)Test::begin, 0, 0);
@@ -916,7 +917,7 @@ void Gui::init()
   pos += 256 + 8;
 
   palette_editor = new Fl_Button(palette->x() + 8, palette->y() + pos, 64, 24, "Editor...");
-  palette_editor->callback((Fl_Callback *)Dialog::editor);
+  palette_editor->callback((Fl_Callback *)Editor::begin);
   palette_editor->labelsize(12);
 
   palette->resizable(0);

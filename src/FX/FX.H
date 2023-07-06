@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "FilterMatrix.H"
 #include "Dialog.H"
 #include "DialogWindow.H"
+#include "Editor.H"
 #include "Gamma.H"
 #include "Gui.H"
 #include "Inline.H"

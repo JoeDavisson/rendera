@@ -98,6 +98,7 @@ OBJ= \
   $(SRC_DIR)/Brush.o \
   $(SRC_DIR)/Clone.o \
   $(SRC_DIR)/Dialog.o \
+  $(SRC_DIR)/Editor.o \
   $(SRC_DIR)/Gui.o \
   $(SRC_DIR)/Project.o \
   $(SRC_DIR)/Fractal.o \
