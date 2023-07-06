@@ -63,11 +63,6 @@ void DialogWindow::addOkCancelButtons(Fl_Button **ok, Fl_Button **cancel, int *y
 
 int DialogWindow::handle(int event)
 {
-  int button1 = Fl::event_button1() ? 1 : 0;
-  int button2 = Fl::event_button2() ? 2 : 0;
-  int button3 = Fl::event_button3() ? 4 : 0;
-  int button = button1 | button2 | button3;
-
   switch(event)
   {
     case FL_PUSH:
