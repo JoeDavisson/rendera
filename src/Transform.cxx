@@ -60,6 +60,7 @@ namespace Resize
     InputInt *width;
     InputInt *height;
     CheckBox *keep_aspect;
+    CheckBox *center;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -106,8 +107,8 @@ namespace Resize
 
   void close()
   {
-    int w = atoi(Items::width->value());
-    int h = atoi(Items::height->value());
+    const int w = atoi(Items::width->value());
+    const int h = atoi(Items::height->value());
 
     if(Project::enoughMemory(w, h) == false)
       return;
@@ -118,9 +119,15 @@ namespace Resize
     Bitmap *bmp = Project::bmp;
     Bitmap *temp = new Bitmap(w, h);
 
-    temp->rectfill(temp->cl, temp->ct, temp->cr, temp->cb,
-                   makeRgba(0, 0, 0, 0), 0);
-    bmp->blit(temp, 0, 0, 0, 0, bmp->cw, bmp->ch);
+    temp->clear(makeRgba(0, 0, 0, 0));
+
+    const int xx = (temp->w - bmp->w) / 2;
+    const int yy = (temp->h - bmp->h) / 2;
+
+    if(Items::center->value() == 1)
+      bmp->blit(temp, 0, 0, xx, yy, bmp->w, bmp->h);
+    else
+      bmp->blit(temp, 0, 0, 0, 0, bmp->w, bmp->h);
 
     Project::replaceImageFromBitmap(temp);
 
@@ -152,7 +159,11 @@ namespace Resize
     Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
     Items::keep_aspect->center();
     y1 += 16 + 8;
-    Items::keep_aspect->value();
+    Items::keep_aspect->value(0);
+    Items::center = new CheckBox(Items::dialog, 0, y1, 16, 16, "Center", 0);
+    Items::center->center();
+    y1 += 16 + 8;
+    Items::center->value(1);
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
