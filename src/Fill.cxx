@@ -137,7 +137,7 @@ void Fill::clear()
 
 bool Fill::inRange(const int c1, const int c2, const int range)
 {
-  if((std::sqrt(diff24(c1, c2)) / 2) <= range)
+  if((std::sqrt(diff32(c1, c2)) / 2) <= range)
     return true;
   else
     return false;
