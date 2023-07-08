@@ -36,7 +36,7 @@ private:
 
   struct color_type
   {
-    float r, g, b, l, freq;
+    float r, g, b, freq;
     bool active;
   };
 
