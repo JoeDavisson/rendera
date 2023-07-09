@@ -145,12 +145,6 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     for(int i = src->cl; i <= src->cr; i++)
     {
       rgba_type rgba = getRgba(*p++);
-/*
-      rgba_type rgba = getRgba(*p++);
-      rgba.r = (rgba.r >> 4) * 17;
-      rgba.g = (rgba.g >> 4) * 17;
-      rgba.b = (rgba.b >> 4) * 17;
-*/
       float freq = histogram.read(rgba.r, rgba.g, rgba.b);
 
       if(freq < inc)
