@@ -221,6 +221,7 @@ void Palette::fillTable()
             for(int i = 0; i < step; i++)
             {
               const int ri = r + i;
+
               table[makeRgb24(ri, gj, bk)] = found->index;
             }
           }
