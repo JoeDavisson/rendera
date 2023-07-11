@@ -166,8 +166,7 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
 	const int alpha = geta(*p);
 	const int old_l = getl(*p);
 
-	const int pal_index =
-	  (int)Project::palette->lookup(Blend::keepLum(*p, old_l));
+	const int pal_index = Project::palette->lookup(Blend::keepLum(*p, old_l));
 	const int cp = Project::palette->data[pal_index];
 
 	rgba_type rgba = getRgba(cp);
@@ -239,7 +238,7 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
 	const int old_g = rgba.g;
 	const int old_b = rgba.b;
 
-	const int pal_index = (int)Project::palette->lookup(*p);
+	const int pal_index = Project::palette->lookup(*p);
 	const int c = Project::palette->data[pal_index];
 
 	rgba = getRgba(c);
