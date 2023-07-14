@@ -180,8 +180,8 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
     size = border / 2 - 2;
 
   // force odd value to prevent image shift
-//  if((size & 1) == 0)
-//    size++;
+  if(((int)size & 1) == 0)
+    size += 1;
 
   int larger = src.w > src.h ? src.w : src.h;
 
