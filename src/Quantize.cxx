@@ -265,18 +265,5 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   }
 
   pal->max = index;
-
-/*
-  // stretch palette
-  if(pal->max != size)
-  {
-    stretchPalette(pal->data, pal->max, size);
-    pal->max = size;
-  }
-*/
-
-  // redraw palette widget
-//  Gui::paletteDraw();
-//  Project::palette->fillTable();
 }
 
