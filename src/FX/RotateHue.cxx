@@ -42,14 +42,14 @@ void RotateHue::apply(Bitmap *dest, bool show_progress)
 
   FX::drawPreview(Project::bmp, Items::preview->bitmap);
 
-  if(show_progress)
+  if (show_progress)
     Gui::progressShow(dest->h);
 
-  for(int y = dest->ct; y <= dest->cb; y++)
+  for (int y = dest->ct; y <= dest->cb; y++)
   {
     int *p = dest->row[y] + dest->cl;
 
-    for(int x = dest->cl; x <= dest->cr; x++)
+    for (int x = dest->cl; x <= dest->cr; x++)
     {
       int c = *p;
 
@@ -68,7 +68,7 @@ void RotateHue::apply(Bitmap *dest, bool show_progress)
       Blend::hsvToRgb(h, s, v, &r, &g, &b);
       c = makeRgba(r, g, b, rgba.a);
 
-      if(keep_lum)
+      if (keep_lum)
         *p = Blend::keepLum(c, l);
       else
         *p = c;
@@ -76,8 +76,8 @@ void RotateHue::apply(Bitmap *dest, bool show_progress)
       p++;
     }
 
-    if(show_progress)
-      if(Gui::progressUpdate(y) < 0)
+    if (show_progress)
+      if (Gui::progressUpdate(y) < 0)
         return;
   }
 
@@ -137,13 +137,13 @@ void RotateHue::setHue()
 
   Items::hue->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
-  for(int x = 0; x < 360; x++)
+  for (int x = 0; x < 360; x++)
   {
-    if(!(x % 60))
+    if (!(x % 60))
       Items::hue->bitmap->vline(8, x, 23, getFltkColor(FL_FOREGROUND_COLOR), 160);
-    else if(!(x % 30))
+    else if (!(x % 30))
       Items::hue->bitmap->vline(16, x, 23, getFltkColor(FL_FOREGROUND_COLOR), 160);
-    else if(!(x % 15))
+    else if (!(x % 15))
       Items::hue->bitmap->vline(20, x, 23, getFltkColor(FL_FOREGROUND_COLOR), 160);
   }
 
@@ -164,7 +164,7 @@ void RotateHue::setHue()
 void RotateHue::incHue()
 {
   Items::hue->var++;
-  if(Items::hue->var > 359)
+  if (Items::hue->var > 359)
     Items::hue->var = 359;
   setHue();
 }
@@ -172,7 +172,7 @@ void RotateHue::incHue()
 void RotateHue::decHue()
 {
   Items::hue->var--;
-  if(Items::hue->var < 0)
+  if (Items::hue->var < 0)
     Items::hue->var = 0;
   setHue();
 }

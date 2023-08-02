@@ -31,7 +31,7 @@ int KDtree::dist(node_type *a, node_type *b, int dim)
   int t;
   int d = 0;
 
-  while(dim--)
+  while (dim--)
   {
     t = a->x[dim] - b->x[dim];
     d += t * t;
@@ -56,28 +56,28 @@ void KDtree::swap(node_type *x, node_type *y)
 
 KDtree::node_type *KDtree::median(node_type *begin, node_type *end, int index)
 {
-  if(end <= begin)
+  if (end <= begin)
     return 0;
 
   node_type *p; 
   node_type *temp; 
   node_type *mid = begin + (end - begin) / 2; 
 
-  while(true)
+  while (true)
   {
     const int pivot = mid->x[index];
 
     swap(mid, end - 1);
     temp = begin;
 
-    for(p = begin; p < end; p++)
+    for (p = begin; p < end; p++)
     {
-      if(end == begin + 1)
+      if (end == begin + 1)
         return begin;
 
-      if(p->x[index] < pivot)
+      if (p->x[index] < pivot)
       {
-        if(p != temp)
+        if (p != temp)
           swap(p, temp);
 
         temp++;
@@ -86,9 +86,9 @@ KDtree::node_type *KDtree::median(node_type *begin, node_type *end, int index)
 
     swap(temp, end - 1);
 
-    if(temp == mid)
+    if (temp == mid)
       return mid;
-    else if(temp->x[index] > mid->x[index])
+    else if (temp->x[index] > mid->x[index])
       end = temp;
     else
       begin = temp + 1;
@@ -100,10 +100,10 @@ KDtree::node_type *KDtree::build(node_type *t,
 {
   node_type *n;
 
-  if(!len)
+  if (!len)
     return 0;
 
-  if((n = median(t, t + len, i)))
+  if ((n = median(t, t + len, i)))
   {
     i = (i + 1) % dim;
     n->left = build(t, n - t, i, dim);
@@ -116,27 +116,27 @@ KDtree::node_type *KDtree::build(node_type *t,
 void KDtree::nearest(node_type *r, node_type *nd,
                      int i, const int dim, node_type **best, int *best_dist)
 {
-  if(r == 0)
+  if (r == 0)
     return;
 
   const int d = dist(r, nd, dim);
   const int dx = r->x[i] - nd->x[i];
 
-  if(!*best || d < *best_dist)
+  if (!*best || d < *best_dist)
   {
     *best_dist = d;
     *best = r;
   }
 
-  if(!*best_dist)
+  if (!*best_dist)
     return;
 
-  if(++i >= dim)
+  if (++i >= dim)
      i = 0;
 
   nearest(dx > 0 ? r->left : r->right, nd, i, dim, best, best_dist);
 
-  if(dx * dx < *best_dist)
+  if (dx * dx < *best_dist)
     nearest(dx > 0 ? r->right : r->left, nd, i, dim, best, best_dist);
 }
 

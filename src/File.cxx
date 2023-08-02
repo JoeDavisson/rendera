@@ -149,7 +149,7 @@ bool File::fileExists(const char *fn)
 {
   FILE *temp = fopen(fn, "rb");
 
-  if(temp)
+  if (temp)
   {
     fclose(temp);
     return 1;
@@ -228,7 +228,7 @@ void File::load(Fl_Widget *, void *)
   fc.filter_value(last_type);
   fc.directory(load_dir);
 
-  switch(fc.show())
+  switch (fc.show())
   {
     case -1:
     case 1:
@@ -245,37 +245,37 @@ void File::load(Fl_Widget *, void *)
 int File::loadFile(const char *fn)
 {
   FileSP in(fn, "rb");
-  if(!in.get())
+  if (!in.get())
     return -1;
 
   unsigned char header[8];
-  if(fread(&header, 1, 8, in.get()) != 8)
+  if (fread(&header, 1, 8, in.get()) != 8)
     return -1;
 
   // load to a temporary bitmap first
   Bitmap *temp = 0;
 
-  if(isPng(header))
+  if (isPng(header))
     temp = File::loadPng((const char *)fn);
-  else if(isJpeg(header))
+  else if (isJpeg(header))
     temp = File::loadJpeg((const char *)fn);
-  else if(isBmp(header))
+  else if (isBmp(header))
     temp = File::loadBmp((const char *)fn);
-  else if(isTarga(fn))
+  else if (isTarga(fn))
     temp = File::loadTarga((const char *)fn);
 
-  if(!temp)
+  if (!temp)
   {
     errorMessage();
     return -1;
   }
 
-  if(Project::newImageFromBitmap(temp) == -1)
+  if (Project::newImageFromBitmap(temp) == -1)
   {
     delete temp;
     return -1;
   }
-  else
+    else
   {
     char s[256];
     getFilename(s, fn);
@@ -295,13 +295,13 @@ Bitmap *File::loadJpeg(const char *fn)
   struct my_error_mgr jerr;
 
   FileSP in(fn, "rb");
-  if(!in.get())
+  if (!in.get())
     return 0;
 
   cinfo.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = jpg_exit;
 
-  if(setjmp(jerr.setjmp_buffer))
+  if (setjmp(jerr.setjmp_buffer))
   {
     // jpeglib does a goto here if there is an error
     jpeg_destroy_decompress(&cinfo);
@@ -328,13 +328,13 @@ Bitmap *File::loadJpeg(const char *fn)
   Bitmap *volatile temp = new Bitmap(w, h);
   int *p = temp->data;
 
-  if(bytes == 3)
+  if (bytes == 3)
   {
-    while(cinfo.output_scanline < cinfo.output_height)
+    while (cinfo.output_scanline < cinfo.output_height)
     {
       jpeg_read_scanlines(&cinfo, linebuf, 1);
 
-      for(int x = 0; x < row_stride; x += 3)
+      for (int x = 0; x < row_stride; x += 3)
       {
         *p++ = makeRgb(linebuf[0][x + 0] & 0xff,
                        linebuf[0][x + 1] & 0xff,
@@ -342,13 +342,13 @@ Bitmap *File::loadJpeg(const char *fn)
       }
     }
   }
-  else if(bytes == 1)
+  else if (bytes == 1)
   {
-    while(cinfo.output_scanline < cinfo.output_height)
+    while (cinfo.output_scanline < cinfo.output_height)
     {
       jpeg_read_scanlines(&cinfo, linebuf, 1);
 
-      for(int x = 0; x < row_stride; x += 1)
+      for (int x = 0; x < row_stride; x += 1)
       {
         *p++ = makeRgb(linebuf[0][x] & 0xff,
                        linebuf[0][x] & 0xff,
@@ -356,7 +356,7 @@ Bitmap *File::loadJpeg(const char *fn)
       }
     }
   }
-  else
+    else
   {
     jpeg_finish_decompress(&cinfo);
     jpeg_destroy_decompress(&cinfo);
@@ -373,13 +373,13 @@ Bitmap *File::loadJpeg(const char *fn)
 Bitmap *File::loadBmp(const char *fn)
 {
   FileSP in(fn, "rb");
-  if(!in.get())
+  if (!in.get())
     return 0;
 
   bmp_info_header_type bm;
   unsigned char buffer[64];
 
-  if(fread(buffer, 1, sizeof(bmp_file_header_type), in.get()) !=
+  if (fread(buffer, 1, sizeof(bmp_file_header_type), in.get()) !=
      (unsigned)sizeof(bmp_file_header_type))
   {
     return 0;
@@ -393,7 +393,7 @@ Bitmap *File::loadBmp(const char *fn)
   /* bh.bfReserved2 = parseUint16(p); */
   /* bh.bfOffBits = parseUint32(p); */
 
-  if(fread(buffer, 1, sizeof(bmp_info_header_type), in.get())
+  if (fread(buffer, 1, sizeof(bmp_info_header_type), in.get())
      != (unsigned)sizeof(bmp_info_header_type))
   {
     return 0;
@@ -416,11 +416,11 @@ Bitmap *File::loadBmp(const char *fn)
   int h = bm.biHeight;
   int bits = bm.biBitCount;
 
-  if(bits != 24)
+  if (bits != 24)
     return 0;
 
   // skip additional header info if it exists
-  if(bm.biSize > 40)
+  if (bm.biSize > 40)
     fseek(in.get(), bm.biSize - 40, SEEK_CUR);
 
   //dpix = bm.biXPelsPerMeter / 39.370079 + .5;
@@ -430,9 +430,9 @@ Bitmap *File::loadBmp(const char *fn)
   bool negx = false, negy = false;
   int pad = w % 4;
 
-  if(w < 0)
+  if (w < 0)
     negx = true;
-  if(h >= 0)
+  if (h >= 0)
     negy = true;
 
   w = std::abs(w);
@@ -441,19 +441,19 @@ Bitmap *File::loadBmp(const char *fn)
   Bitmap *temp = new Bitmap(w, h);
   std::vector<unsigned char> linebuf(w * mul + pad);
 
-  for(int y = 0; y < h; y++)
+  for (int y = 0; y < h; y++)
   {
     int y1 = negy ? h - 1 - y : y;
 
-    if(fread(&linebuf[0], 1, w * mul + pad, in.get()) !=
+    if (fread(&linebuf[0], 1, w * mul + pad, in.get()) !=
        (unsigned)(w * mul + pad))
     {
       return 0;
     }
-    else
+      else
     {
       int xx = 0;
-      for(int x = 0; x < w; x++)
+      for (int x = 0; x < w; x++)
       {
         int x1 = negx ? w - 1 - x : x;
         *(temp->row[y1] + x1) = makeRgb(linebuf[xx + 2] & 0xff,
@@ -470,14 +470,14 @@ Bitmap *File::loadBmp(const char *fn)
 Bitmap *File::loadTarga(const char *fn)
 {
   FileSP in(fn, "rb");
-  if(!in.get())
+  if (!in.get())
     return 0;
 
   targa_header_type header;
 
   unsigned char buffer[64];
 
-  if(fread(buffer, 1, sizeof(targa_header_type), in.get()) !=
+  if (fread(buffer, 1, sizeof(targa_header_type), in.get()) !=
      (unsigned)sizeof(targa_header_type))
   {
     return 0;
@@ -498,18 +498,18 @@ Bitmap *File::loadTarga(const char *fn)
   header.bpp = parseUint8(p);
   header.descriptor = parseUint8(p);
 
-  if(header.data_type != 2)
+  if (header.data_type != 2)
     return 0;
 
-  if(header.bpp != 24 && header.bpp != 32)
+  if (header.bpp != 24 && header.bpp != 32)
     return 0;
 
   int depth = header.bpp / 8;
 
   // skip additional header info if it exists
-  if(header.id_length > 0)
+  if (header.id_length > 0)
     fseek(in.get(), header.id_length, SEEK_CUR);
-  if(header.color_map_type > 0)
+  if (header.color_map_type > 0)
     fseek(in.get(), header.color_map_length, SEEK_CUR);
 
   int w = header.w;
@@ -521,9 +521,9 @@ Bitmap *File::loadTarga(const char *fn)
   bool negx = true;
   bool negy = true;
 
-  if(header.descriptor & (1 << 4))
+  if (header.descriptor & (1 << 4))
     negx = false;
-  if(header.descriptor & (1 << 5))
+  if (header.descriptor & (1 << 5))
     negy = false;
 
   int xstart = 0;
@@ -531,32 +531,32 @@ Bitmap *File::loadTarga(const char *fn)
   int ystart = 0;
   int yend = h;
 
-  if(negx)
+  if (negx)
   {
     xstart = w - 1;
     xend = -1;
   }
 
-  if(negy)
+  if (negy)
   {
     ystart = h - 1;
     yend = -1;
   }
 
-  for(int y = ystart; y != yend; y += negy ? -1 : 1)
+  for (int y = ystart; y != yend; y += negy ? -1 : 1)
   {
-    if(fread(&linebuf[0], 1, w * depth, in.get()) != (unsigned)(w * depth))
+    if (fread(&linebuf[0], 1, w * depth, in.get()) != (unsigned)(w * depth))
       return 0;
 
-    for(int x = xstart; x != xend; x += negx ? -1 : 1)
+    for (int x = xstart; x != xend; x += negx ? -1 : 1)
     {
-      if(depth == 3)
+      if (depth == 3)
       {
         *(temp->row[y] + x) = makeRgb((linebuf[x * depth + 2] & 0xff),
                                       (linebuf[x * depth + 1] & 0xff),
                                       (linebuf[x * depth + 0] & 0xff));
       }
-      else if(depth == 4)
+      else if (depth == 4)
       {
         *(temp->row[y] + x) = makeRgba((linebuf[x * depth + 2] & 0xff),
                                        (linebuf[x * depth + 1] & 0xff),
@@ -572,32 +572,32 @@ Bitmap *File::loadTarga(const char *fn)
 Bitmap *File::loadPng(const char *fn)
 {
   FileSP in(fn, "rb");
-  if(!in.get())
+  if (!in.get())
     return 0;
 
   unsigned char header[64];
 
-  if(fread(header, 1, 8, in.get()) != 8)
+  if (fread(header, 1, 8, in.get()) != 8)
     return 0;
 
-  if(!isPng(header))
+  if (!isPng(header))
     return 0;
 
   png_structp png_ptr;
   png_infop info_ptr;
 
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-  if(!png_ptr)
+  if (!png_ptr)
     return 0;
 
   info_ptr = png_create_info_struct(png_ptr);
-  if(!info_ptr)
+  if (!info_ptr)
   {
     png_destroy_read_struct(&png_ptr, 0, 0);
     return 0;
   }
 
-  if(setjmp(png_jmpbuf(png_ptr)))
+  if (setjmp(png_jmpbuf(png_ptr)))
   {
     // pnglib does a goto here if there is an error
     png_destroy_read_struct(&png_ptr, &info_ptr, 0);
@@ -626,30 +626,30 @@ Bitmap *File::loadPng(const char *fn)
   bool interlace = png_set_interlace_handling(png_ptr) > 1 ? 1 : 0;
 
   // expand paletted images to RGB
-  if(color_type == PNG_COLOR_TYPE_PALETTE)
+  if (color_type == PNG_COLOR_TYPE_PALETTE)
     png_set_expand(png_ptr);
 
   // expand low-color images to RGB
-  if(color_type == PNG_COLOR_TYPE_GRAY && bits_per_channel < 8)
+  if (color_type == PNG_COLOR_TYPE_GRAY && bits_per_channel < 8)
     png_set_expand(png_ptr);
 
   // check for alpha channel
-  if(png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+  if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
     png_set_expand(png_ptr);
 
   // convert 16-bit images to 8
-  if(bits_per_channel == 16)
+  if (bits_per_channel == 16)
     png_set_strip_16(png_ptr);
 
   // expand grayscale images to RGB
-  if(color_type == PNG_COLOR_TYPE_GRAY ||
+  if (color_type == PNG_COLOR_TYPE_GRAY ||
      color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
     png_set_gray_to_rgb(png_ptr);
 
   // perform gamma correction if the file requires it
   // gonna ignore this for now
 //  double gamma = 0;
-//  if(png_get_gAMA(png_ptr, info_ptr, &gamma))
+//  if (png_get_gAMA(png_ptr, info_ptr, &gamma))
 //    png_set_gamma(png_ptr, 2.2, gamma);
 
   png_read_update_info(png_ptr, info_ptr);
@@ -659,35 +659,35 @@ Bitmap *File::loadPng(const char *fn)
 
   Bitmap *volatile temp = new Bitmap(w, h);
 
-  if(interlace)
+  if (interlace)
   {
     // interlaced images require a buffer the size of the entire image
     std::vector<png_byte> data(rowbytes * h);
     std::vector<png_bytep> row_pointers(h);
 
-    for(int y = 0; y < h; y++)
+    for (int y = 0; y < h; y++)
       row_pointers[y] = &data[y * rowbytes];
 
     // read image all at once
     png_read_image(png_ptr, &row_pointers[0]);
 
     // convert image
-    for(int y = 0; y < h; y++)
+    for (int y = 0; y < h; y++)
     {
       int *p = temp->row[y];
       int xx = 0;
 
       png_bytep row = row_pointers[y];
 
-      for(int x = 0; x < w; x++)
+      for (int x = 0; x < w; x++)
       {
-        if(channels == 3)
+        if (channels == 3)
         {
           *p++ = makeRgb(row[xx + 0] & 0xff,
                          row[xx + 1] & 0xff,
                          row[xx + 2] & 0xff);
         }
-        else if(channels == 4)
+        else if (channels == 4)
         {
            *p++ = makeRgba(row[xx + 0] & 0xff,
                            row[xx + 1] & 0xff,
@@ -699,12 +699,12 @@ Bitmap *File::loadPng(const char *fn)
       }
     }
   }
-  else
+    else
   {
     // non-interlace images can be read line-by-line
     std::vector<png_byte> linebuf(rowbytes);
 
-    for(int y = 0; y < h; y++)
+    for (int y = 0; y < h; y++)
     {
       // read line
       png_read_row(png_ptr, &linebuf[0], 0);
@@ -713,15 +713,15 @@ Bitmap *File::loadPng(const char *fn)
       int xx = 0;
 
       // convert line
-      for(int x = 0; x < w; x++)
+      for (int x = 0; x < w; x++)
       {
-        if(channels == 3)
+        if (channels == 3)
         {
           *p++ = makeRgb(linebuf[xx + 0] & 0xff,
                          linebuf[xx + 1] & 0xff,
                          linebuf[xx + 2] & 0xff);
         }
-        else if(channels == 4)
+        else if (channels == 4)
         {
            *p++ = makeRgba(linebuf[xx + 0] & 0xff,
                            linebuf[xx + 1] & 0xff,
@@ -746,17 +746,17 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
   png_infop info_ptr;
 
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-  if(!png_ptr)
+  if (!png_ptr)
     return 0;
 
   info_ptr = png_create_info_struct(png_ptr);
-  if(!info_ptr)
+  if (!info_ptr)
   {
     png_destroy_read_struct(&png_ptr, 0, 0);
     return 0;
   }
 
-  if(setjmp(png_jmpbuf(png_ptr)))
+  if (setjmp(png_jmpbuf(png_ptr)))
   {
     // pnglib does a goto here if there is an error
     png_destroy_read_struct(&png_ptr, &info_ptr, 0);
@@ -791,30 +791,30 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
   bool interlace = png_set_interlace_handling(png_ptr) > 1 ? 1 : 0;
 
   // expand paletted images to RGB
-  if(color_type == PNG_COLOR_TYPE_PALETTE)
+  if (color_type == PNG_COLOR_TYPE_PALETTE)
     png_set_expand(png_ptr);
 
   // expand low-color images to RGB
-  if(color_type == PNG_COLOR_TYPE_GRAY && bits_per_channel < 8)
+  if (color_type == PNG_COLOR_TYPE_GRAY && bits_per_channel < 8)
     png_set_expand(png_ptr);
 
   // check for alpha channel
-  if(png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+  if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
     png_set_expand(png_ptr);
 
   // convert 16-bit images to 8
-  if(bits_per_channel == 16)
+  if (bits_per_channel == 16)
     png_set_strip_16(png_ptr);
 
   // expand grayscale images to RGB
-  if(color_type == PNG_COLOR_TYPE_GRAY ||
+  if (color_type == PNG_COLOR_TYPE_GRAY ||
      color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
     png_set_gray_to_rgb(png_ptr);
 
   // perform gamma correction if the file requires it
   // gonna ignore this for now
 //  double gamma = 0;
-//  if(png_get_gAMA(png_ptr, info_ptr, &gamma))
+//  if (png_get_gAMA(png_ptr, info_ptr, &gamma))
 //    png_set_gamma(png_ptr, 2.2, gamma);
 
   png_read_update_info(png_ptr, info_ptr);
@@ -824,35 +824,35 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
 
   Bitmap *volatile temp = new Bitmap(w, h);
 
-  if(interlace)
+  if (interlace)
   {
     // interlaced images require a buffer the size of the entire image
     std::vector<png_byte> data(rowbytes * h);
     std::vector<png_bytep> row_pointers(h);
 
-    for(int y = 0; y < h; y++)
+    for (int y = 0; y < h; y++)
       row_pointers[y] = &data[y * rowbytes];
 
     // read image all at once
     png_read_image(png_ptr, &row_pointers[0]);
 
     // convert image
-    for(int y = 0; y < h; y++)
+    for (int y = 0; y < h; y++)
     {
       int *p = temp->row[y];
       int xx = 0;
 
       png_bytep row = row_pointers[y];
 
-      for(int x = 0; x < w; x++)
+      for (int x = 0; x < w; x++)
       {
-        if(channels == 3)
+        if (channels == 3)
         {
           *p++ = makeRgb(row[xx + 0] & 0xff,
                          row[xx + 1] & 0xff,
                          row[xx + 2] & 0xff);
         }
-        else if(channels == 4)
+        else if (channels == 4)
         {
            *p++ = makeRgba(row[xx + 0] & 0xff,
                            row[xx + 1] & 0xff,
@@ -864,12 +864,12 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
       }
     }
   }
-  else
+    else
   {
     // non-interlace images can be read line-by-line
     std::vector<png_byte> linebuf(rowbytes);
 
-    for(int y = 0; y < h; y++)
+    for (int y = 0; y < h; y++)
     {
       // read line
       png_read_row(png_ptr, &linebuf[0], 0);
@@ -878,15 +878,15 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
       int xx = 0;
 
       // convert line
-      for(int x = 0; x < w; x++)
+      for (int x = 0; x < w; x++)
       {
-        if(channels == 3)
+        if (channels == 3)
         {
           *p++ = makeRgb(linebuf[xx + 0] & 0xff,
                          linebuf[xx + 1] & 0xff,
                          linebuf[xx + 2] & 0xff);
         }
-        else if(channels == 4)
+        else if (channels == 4)
         {
            *p++ = makeRgba(linebuf[xx + 0] & 0xff,
                            linebuf[xx + 1] & 0xff,
@@ -919,7 +919,7 @@ void File::save(Fl_Widget *, void *)
   fc.filter_value(last_type);
   fc.directory(save_dir);
 
-  switch(fc.show())
+  switch (fc.show())
   {
     case -1:
     case 1:
@@ -934,15 +934,15 @@ void File::save(Fl_Widget *, void *)
   int ext_value = fc.filter_value();
   fl_filename_setext(fn, sizeof(fn), ext_string[ext_value]);
 
-  if(fileExists(fn))
+  if (fileExists(fn))
   {
-    if(!Dialog::choice("Replace File?", "Overwrite?"))
+    if (!Dialog::choice("Replace File?", "Overwrite?"))
       return;
   }
 
   int ret = 0;
   
-  switch(ext_value)
+  switch (ext_value)
   {
     case TYPE_PNG:
       ret = File::savePng(Project::bmp, fn);
@@ -961,7 +961,7 @@ void File::save(Fl_Widget *, void *)
       ret = -1;
   }
 
-  if(ret < 0)
+  if (ret < 0)
     errorMessage();
 
   last_type = ext_value;
@@ -971,7 +971,7 @@ int File::saveBmp(Bitmap *bmp, const char *fn)
 {
   FileSP out(fn, "wb");
   FILE *outp = out.get();
-  if(!outp)
+  if (!outp)
     return -1;
 
   int w = bmp->cw;
@@ -1007,11 +1007,11 @@ int File::saveBmp(Bitmap *bmp, const char *fn)
   bool found_alpha = false;
   int *p = bmp->data;
 
-  for(int y = 0; y < h; y++)
+  for (int y = 0; y < h; y++)
   {
-    for(int x = 0; x < w; x++)
+    for (int x = 0; x < w; x++)
     {
-      if(geta(*p++) < 0xff)
+      if (geta(*p++) < 0xff)
       {
         found_alpha = true;
         break;
@@ -1019,17 +1019,17 @@ int File::saveBmp(Bitmap *bmp, const char *fn)
     }
   }
 
-  if(found_alpha)
+  if (found_alpha)
   {
     Dialog::message("Warning", "Image contains transparency information\nwhich will be discarded.");
   }
 
   p = bmp->data;
 
-  for(int y = 0; y < h; y++)
+  for (int y = 0; y < h; y++)
   {
     int xx = 0;
-    for(int x = 0; x < w; x++)
+    for (int x = 0; x < w; x++)
     {
       linebuf[xx + 0] = (*p >> 16) & 0xff;
       linebuf[xx + 1] = (*p >> 8) & 0xff;
@@ -1038,10 +1038,10 @@ int File::saveBmp(Bitmap *bmp, const char *fn)
       xx += 3;
     }
 
-    for(int x = 0; x < pad; x++)
+    for (int x = 0; x < pad; x++)
       linebuf[xx++] = 0;
 
-    if(fwrite(&linebuf[0], 1, w * 3 + pad, outp) != (unsigned)(w * 3 + pad))
+    if (fwrite(&linebuf[0], 1, w * 3 + pad, outp) != (unsigned)(w * 3 + pad))
       return -1;
   }
 
@@ -1052,7 +1052,7 @@ int File::saveTarga(Bitmap *bmp, const char *fn)
 {
   FileSP out(fn, "wb");
   FILE *outp = out.get();
-  if(!outp)
+  if (!outp)
     return -1;
 
   int w = bmp->cw;
@@ -1074,11 +1074,11 @@ int File::saveTarga(Bitmap *bmp, const char *fn)
   int *p = bmp->data;
   std::vector<unsigned char> linebuf(w * 4);
 
-  for(int y = 0; y < h; y++)
+  for (int y = 0; y < h; y++)
   {
     int xx = 0;
 
-    for(int x = 0; x < w; x++)
+    for (int x = 0; x < w; x++)
     {
       linebuf[xx + 0] = (*p >> 16) & 0xff;
       linebuf[xx + 1] = (*p >> 8) & 0xff;
@@ -1088,7 +1088,7 @@ int File::saveTarga(Bitmap *bmp, const char *fn)
       xx += 4;
     }
 
-    if(fwrite(&linebuf[0], 1, w * 4, outp) != (unsigned)(w * 4))
+    if (fwrite(&linebuf[0], 1, w * 4, outp) != (unsigned)(w * 4))
       return -1;
   }
 
@@ -1104,7 +1104,7 @@ int File::savePng(Bitmap *bmp, const char *fn)
   float alpha_step = 255.0 / (alpha_levels - 1);
   Palette *pal = Project::palette;
 
-  if(use_palette && use_alpha && pal->max * alpha_levels > 256)
+  if (use_palette && use_alpha && pal->max * alpha_levels > 256)
   {
     Dialog::message("PNG Error",
                     "Not enough palette entries left for this\n"
@@ -1116,24 +1116,24 @@ int File::savePng(Bitmap *bmp, const char *fn)
   std::vector<png_byte> trans(256);
 
   FileSP out(fn, "wb");
-  if(!out.get())
+  if (!out.get())
     return -1;
 
   png_structp png_ptr;
   png_infop info_ptr;
 
   png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-  if(!png_ptr)
+  if (!png_ptr)
     return -1;
 
   info_ptr = png_create_info_struct(png_ptr);
-  if(!info_ptr)
+  if (!info_ptr)
   {
     png_destroy_write_struct(&png_ptr, 0);
     return -1;
   }
 
-  if(setjmp(png_jmpbuf(png_ptr)))
+  if (setjmp(png_jmpbuf(png_ptr)))
   {
     png_destroy_write_struct(&png_ptr, &info_ptr);
     return -1;
@@ -1144,17 +1144,17 @@ int File::savePng(Bitmap *bmp, const char *fn)
 
   png_init_io(png_ptr, out.get());
 
-  if(use_palette)
+  if (use_palette)
   {
-    if(use_alpha)
+    if (use_alpha)
     {
       int index = 0;
 
-      for(int j = 0; j < alpha_levels; j++)
+      for (int j = 0; j < alpha_levels; j++)
       {
         int value = 255 - (int)(j * alpha_step);
 
-        for(int i = 0; i < pal->max; i++)
+        for (int i = 0; i < pal->max; i++)
         {
           rgba_type rgba = getRgba(pal->data[i]);
 
@@ -1166,9 +1166,9 @@ int File::savePng(Bitmap *bmp, const char *fn)
         }
       }
     }
-    else
+      else
     {
-      for(int i = 0; i < pal->max; i++)
+      for (int i = 0; i < pal->max; i++)
       {
         rgba_type rgba = getRgba(pal->data[i]);
 
@@ -1185,10 +1185,10 @@ int File::savePng(Bitmap *bmp, const char *fn)
     png_set_PLTE(png_ptr, info_ptr, &palette[0],
                  use_alpha ? pal->max * alpha_levels : pal->max);
 
-    if(use_palette && use_alpha)
+    if (use_palette && use_alpha)
       png_set_tRNS(png_ptr, info_ptr, &trans[0], pal->max * alpha_levels, 0);
   }
-  else
+    else
   {
     png_set_IHDR(png_ptr, info_ptr, w, h, 8,
                  use_alpha ? PNG_COLOR_TYPE_RGBA : PNG_COLOR_TYPE_RGB,
@@ -1199,33 +1199,33 @@ int File::savePng(Bitmap *bmp, const char *fn)
   png_write_info(png_ptr, info_ptr);
 
   int bytes = 3;
-  if(use_alpha)
+  if (use_alpha)
     bytes = 4;
-  if(use_palette)
+  if (use_palette)
     bytes = 1;
 
   std::vector<png_byte> linebuf(w * bytes);
 
-  for(int y = 0; y < h; y++)
+  for (int y = 0; y < h; y++)
   {
     int *p = bmp->row[y];
 
-    for(int x = 0; x < w * bytes; x += bytes)
+    for (int x = 0; x < w * bytes; x += bytes)
     {
-      if(use_palette)
+      if (use_palette)
       {
-        if(use_alpha)
+        if (use_alpha)
           linebuf[x] = pal->lookup(*p) +
                        (int)(pal->max * ((255 - geta(*p)) / (int)alpha_step));
         else
           linebuf[x] = pal->lookup(*p);
       }
-      else
+        else
       {
         linebuf[x + 0] = getr(*p); 
         linebuf[x + 1] = getg(*p); 
         linebuf[x + 2] = getb(*p); 
-        if(use_alpha)
+        if (use_alpha)
           linebuf[x + 3] = geta(*p); 
       }
 
@@ -1244,7 +1244,7 @@ int File::savePng(Bitmap *bmp, const char *fn)
 int File::saveJpeg(Bitmap *bmp, const char *fn)
 {
   FileSP out(fn, "wb");
-  if(!out.get())
+  if (!out.get())
     return -1;
 
   // show quality dialog
@@ -1273,9 +1273,9 @@ int File::saveJpeg(Bitmap *bmp, const char *fn)
 
   int *p = bmp->data;
 
-  while(cinfo.next_scanline < cinfo.image_height)
+  while (cinfo.next_scanline < cinfo.image_height)
   {
-    for(int x = 0; x < w * 3; x += 3)
+    for (int x = 0; x < w * 3; x += 3)
     {
       linebuf[x + 0] = getr(*p); 
       linebuf[x + 1] = getg(*p); 
@@ -1297,16 +1297,16 @@ int File::saveJpeg(Bitmap *bmp, const char *fn)
 /*
 Fl_Image *File::previewPng(const char *fn, unsigned char *header, int)
 {
-  if(!isPng(header))
+  if (!isPng(header))
     return 0;
 
   Bitmap *temp = 0;
   temp = loadPng(fn, 0);
 
-  if(!temp)
+  if (!temp)
     return 0;
 
-  if(preview_bmp)
+  if (preview_bmp)
     delete preview_bmp;
 
   preview_bmp = temp;
@@ -1317,16 +1317,16 @@ Fl_Image *File::previewPng(const char *fn, unsigned char *header, int)
 
 Fl_Image *File::previewJpeg(const char *fn, unsigned char *header, int)
 {
-  if(!isJpeg(header))
+  if (!isJpeg(header))
     return 0;
 
   Bitmap *temp = 0;
   temp = loadJpeg(fn, 0);
 
-  if(!temp)
+  if (!temp)
     return 0;
 
-  if(preview_bmp)
+  if (preview_bmp)
     delete preview_bmp;
 
   preview_bmp = temp;
@@ -1337,16 +1337,16 @@ Fl_Image *File::previewJpeg(const char *fn, unsigned char *header, int)
 
 Fl_Image *File::previewBmp(const char *fn, unsigned char *header, int)
 {
-  if(!isBmp(header))
+  if (!isBmp(header))
     return 0;
 
   Bitmap *temp = 0;
   temp = loadBmp(fn, 0);
 
-  if(!temp)
+  if (!temp)
     return 0;
 
-  if(preview_bmp)
+  if (preview_bmp)
     delete preview_bmp;
 
   preview_bmp = temp;
@@ -1357,16 +1357,16 @@ Fl_Image *File::previewBmp(const char *fn, unsigned char *header, int)
 
 Fl_Image *File::previewTarga(const char *fn, unsigned char *, int)
 {
-  if(!isTarga(fn))
+  if (!isTarga(fn))
     return 0;
 
   Bitmap *temp = 0;
   temp = loadTarga(fn, 0);
 
-  if(!temp)
+  if (!temp)
     return 0;
 
-  if(preview_bmp)
+  if (preview_bmp)
     delete preview_bmp;
 
   preview_bmp = temp;
@@ -1377,13 +1377,13 @@ Fl_Image *File::previewTarga(const char *fn, unsigned char *, int)
 
 Fl_Image *File::previewGimpPalette(const char *fn, unsigned char *header, int)
 {
-  if(!isGimpPalette(header))
+  if (!isGimpPalette(header))
     return 0;
 
   Palette *temp_pal = new Palette();
 
   temp_pal->load(fn);
-  if(temp_pal->max == 0)
+  if (temp_pal->max == 0)
     return 0;
 
   temp_pal->draw(pal_preview);
@@ -1403,7 +1403,7 @@ void File::loadPalette()
   fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
   fc.directory(pal_load_dir);
 
-  switch(fc.show())
+  switch (fc.show())
   {
     case -1:
     case 1:
@@ -1417,19 +1417,19 @@ void File::loadPalette()
   strcpy(fn, fc.filename());
 
   FileSP in(fn, "r");
-  if(!in.get())
+  if (!in.get())
     return;
 
   unsigned char header[12];
-  if(fread(&header, 1, 12, in.get()) != 12)
+  if (fread(&header, 1, 12, in.get()) != 12)
   {
     errorMessage();
     return;
   }
 
-  if(isGimpPalette(header))
+  if (isGimpPalette(header))
   {
-    if(Project::palette->load((const char*)fn) < 0)
+    if (Project::palette->load((const char*)fn) < 0)
     {
       errorMessage();
       return;
@@ -1448,7 +1448,7 @@ void File::savePalette()
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc.directory(pal_save_dir);
 
-  switch(fc.show())
+  switch (fc.show())
   {
     case -1:
     case 1:
@@ -1462,16 +1462,16 @@ void File::savePalette()
   strcpy(fn, fc.filename());
   fl_filename_setext(fn, sizeof(fn), ".gpl");
 
-  if(fileExists(fn))
+  if (fileExists(fn))
   {
-    if(!Dialog::choice("Replace File?",
+    if (!Dialog::choice("Replace File?",
                       "Do you want to overwrite this file?"))
     {
       return;
     }
   }
   
-  if(Project::palette->save(fn) < 0)
+  if (Project::palette->save(fn) < 0)
   {
     errorMessage();
     return;
@@ -1487,7 +1487,7 @@ void File::loadSelection()
   fc.filter_value(0);
   fc.directory(load_dir);
 
-  switch(fc.show())
+  switch (fc.show())
   {
     case -1:
     case 1:
@@ -1498,17 +1498,17 @@ void File::loadSelection()
   }
 
   FileSP in(fc.filename(), "rb");
-  if(!in.get())
+  if (!in.get())
     return;
 
   unsigned char header[8];
-  if(fread(&header, 1, 8, in.get()) != 8)
+  if (fread(&header, 1, 8, in.get()) != 8)
     return;
 
   // load to a temporary bitmap first
   Bitmap *temp = 0;
 
-  if(isPng(header))
+  if (isPng(header))
     temp = File::loadPng((const char *)fc.filename());
   else
     return;
@@ -1527,7 +1527,7 @@ void File::saveSelection()
   fc.filter_value(0);
   fc.directory(save_dir);
 
-  switch(fc.show())
+  switch (fc.show())
   {
     case -1:
     case 1:
@@ -1542,15 +1542,15 @@ void File::saveSelection()
   int ext_value = fc.filter_value();
   fl_filename_setext(fn, sizeof(fn), ext_string[ext_value]);
 
-  if(fileExists(fn))
+  if (fileExists(fn))
   {
-    if(!Dialog::choice("Replace File?", "Overwrite?"))
+    if (!Dialog::choice("Replace File?", "Overwrite?"))
       return;
   }
 
   int ret = 0;
 
-  switch(ext_value)
+  switch (ext_value)
   {
     case TYPE_PNG:
       ret = File::savePng(Project::select_bmp, fn);
@@ -1560,7 +1560,7 @@ void File::saveSelection()
       ret = -1;
   }
 
-  if(ret < 0)
+  if (ret < 0)
     errorMessage();
 }
 
@@ -1570,16 +1570,16 @@ void File::decodeURI(char *s)
   unsigned int c;
   int len = strlen(s);
 
-  for(int i = 0; i < len - 2; i++)
+  for (int i = 0; i < len - 2; i++)
   {
-    if(s[i] == '%')
+    if (s[i] == '%')
     {
-      if(sscanf(&s[i + 1], "%2X", &c) != 1)
+      if (sscanf(&s[i + 1], "%2X", &c) != 1)
         break;
 
       s[i] = c;
 
-      for(int j = 0; j < len - (i + 2); j++)
+      for (int j = 0; j < len - (i + 2); j++)
         s[i + 1 + j] = s[i + 3 + j];
 
       len -= 2;
@@ -1593,12 +1593,12 @@ void File::getDirectory(char *dest, const char *src)
   strcpy(dest, src);
 
   int len = strlen(dest);
-  if(len < 2)
+  if (len < 2)
     return;
 
-  for(int i = len - 1; i > 0; i--)
+  for (int i = len - 1; i > 0; i--)
   {
-    if(dest[i - 1] == '/')
+    if (dest[i - 1] == '/')
     {
       dest[i] = '\0';
       break;
@@ -1610,15 +1610,15 @@ void File::getDirectory(char *dest, const char *src)
 void File::getFilename(char *dest, const char *src)
 {
   int len = strlen(src);
-  if(len < 2)
+  if (len < 2)
     return;
 
   int start = 0;
   int count = 0;
 
-  for(int i = len - 1; i > 0; i--)
+  for (int i = len - 1; i > 0; i--)
   {
-    if(src[i] == '/')
+    if (src[i] == '/')
     {
       start = i + 1; 
       break;
@@ -1627,7 +1627,7 @@ void File::getFilename(char *dest, const char *src)
     count++;
   }
 
-  for(int i = 0; i < count; i++)
+  for (int i = 0; i < count; i++)
     dest[i] = src[start + i];
 
   dest[count] = '\0';

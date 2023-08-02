@@ -37,20 +37,20 @@ namespace
   {
     double val = std::atof(i->input.value());
 
-    if(w == &i->dec)
+    if (w == &i->dec)
       val -= 1;
-    else if(w == &i->inc)
+    else if (w == &i->inc)
       val += 1;
 
-    if(val < i->min)
+    if (val < i->min)
       val = i->min;
 
-    if(val > i->max)
+    if (val > i->max)
       val = i->max;
 
     snprintf(str, sizeof(str), "%.5f", val);
     i->input.value(str);
-    if(i->cb)
+    if (i->cb)
       i->cb(w, i);
   }
 }

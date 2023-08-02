@@ -61,7 +61,7 @@ namespace
   inline void gridSetpixel(const Bitmap *bmp, const int x, const int y,
                            const int c, const int t)
   {
-    if(x < 0 || y < 0 || x >= bmp->w || y >= bmp->h)
+    if (x < 0 || y < 0 || x >= bmp->w || y >= bmp->h)
       return;
 
     int *p = bmp->row[y] + x;
@@ -71,21 +71,21 @@ namespace
   inline void gridHline(Bitmap *bmp, int x1, const int y, int x2,
                         const int c, const int t)
   {
-    if(y < 0 || y >= bmp->h)
+    if (y < 0 || y >= bmp->h)
       return;
 
-    if(x1 < 0)
+    if (x1 < 0)
       x1 = 0;
-    if(x1 > bmp->w - 1)
+    if (x1 > bmp->w - 1)
       x1 = bmp->w - 1;
-    if(x2 < 0)
+    if (x2 < 0)
       x2 = 0;
-    if(x2 > bmp->w - 1)
+    if (x2 > bmp->w - 1)
       x2 = bmp->w - 1;
 
     int *p = bmp->row[y] + x1;
 
-    for(int x = x1; x <= x2; x++)
+    for (int x = x1; x <= x2; x++)
     {
       *p = blendFast(*p, c, t);
       p++;
@@ -134,7 +134,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
     backbuf2 = new Bitmap(Fl::w(), Fl::h());
 
     // try to detect pixelformat (almost always RGB or BGR)
-    if(fl_visual->visual->blue_mask == 0xff)
+    if (fl_visual->visual->blue_mask == 0xff)
       bgr_order = true;
 
     ximage = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
@@ -180,7 +180,7 @@ View::~View()
 
 int View::handle(int event)
 {
-  if(rendering)
+  if (rendering)
     return 0;
 
   mousex = Fl::event_x() - x();
@@ -189,7 +189,7 @@ int View::handle(int event)
   int ax = 1;
   int ay = 1;
 
-  switch(aspect)
+  switch (aspect)
   {
     case ASPECT_NORMAL:
       break;
@@ -206,20 +206,20 @@ int View::handle(int event)
   imgx /= ax;
   imgy /= ay;
 
-  switch(Gui::getTool())
+  switch (Gui::getTool())
   {
     case Tool::PAINT:
-      if(gridsnap)
+      if (gridsnap)
       {
-	if((Project::stroke->type != Stroke::FREEHAND)
+        if ((Project::stroke->type != Stroke::FREEHAND)
           && (Project::stroke->type != Stroke::REGION))
-	{
-          if(imgx % gridx < gridx / 2)
+        {
+          if (imgx % gridx < gridx / 2)
             imgx -= imgx % gridx;
           else
             imgx += gridx - imgx % gridx - 1;
 
-          if(imgy % gridy < gridy / 2)
+          if (imgy % gridy < gridy / 2)
             imgy -= imgy % gridy;
           else
             imgy += gridy - imgy % gridy - 1;
@@ -227,14 +227,14 @@ int View::handle(int event)
       }
       break;
     case Tool::SELECT:
-      if(gridsnap)
+      if (gridsnap)
       {
-        if(imgx % gridx < gridx / 2)
+        if (imgx % gridx < gridx / 2)
           imgx -= imgx % gridx;
 //        else
 //          imgx += gridx - imgx % gridx - 1;
 
-        if(imgy % gridy < gridy / 2)
+        if (imgy % gridy < gridy / 2)
           imgy -= imgy % gridy;
 //        else
 //          imgy += gridy - imgy % gridy - 1;
@@ -254,7 +254,7 @@ int View::handle(int event)
   ctrl = Fl::event_ctrl() ? true : false;
   alt = Fl::event_alt() ? true : false;
 
-  switch(event)
+  switch (event)
   {
     case FL_FOCUS:
     {
@@ -288,13 +288,13 @@ int View::handle(int event)
     case FL_PUSH:
     {
       // gives viewport focus when clicked on
-      if(Fl::focus() != this)
+      if (Fl::focus() != this)
         Fl::focus(this);
 
-      switch(button)
+      switch (button)
       {
         case 1:
-          if(ctrl)
+          if (ctrl)
           {
             // update clone target
             Clone::x = imgx;
@@ -305,7 +305,7 @@ int View::handle(int event)
             Clone::state = Clone::PLACED;
             redraw();
           }
-          else
+            else
           {
             Project::tool->push(this);
           }
@@ -332,10 +332,10 @@ int View::handle(int event)
     case FL_DRAG:
     {
       // gives viewport focus when clicked on
-      if(Fl::focus() != this)
+      if (Fl::focus() != this)
         Fl::focus(this);
 
-      switch(button)
+      switch (button)
       {
         case 1:
           Project::tool->drag(this);
@@ -365,10 +365,10 @@ int View::handle(int event)
     {
       Project::tool->release(this);
 
-      if(panning)
+      if (panning)
         panning = false;
 
-      if(Project::tool->isActive())
+      if (Project::tool->isActive())
         Project::tool->redraw(this);
 
       return 1;
@@ -396,14 +396,14 @@ int View::handle(int event)
     case FL_MOUSEWHEEL:
     {
       // ignore wheel during image navigation
-      if(panning)
+      if (panning)
         break;
 
-      if(Fl::event_dy() >= 0)
+      if (Fl::event_dy() >= 0)
       {
         zoomOut(mousex / ax, mousey / ay);
       }
-      else
+        else
       {
         zoomIn(mousex / ax, mousey / ay);
       }
@@ -437,7 +437,7 @@ int View::handle(int event)
     case FL_PASTE:
     {
       #ifndef WIN32
-        if(strncasecmp(Fl::event_text(), "file://", 7) != 0)
+        if (strncasecmp(Fl::event_text(), "file://", 7) != 0)
           return 1;
       #endif
 
@@ -458,14 +458,14 @@ int View::handle(int event)
       int index = 0;
 
       // separate individual file paths in the list
-      for(int i = 0; i < length; i++)
-        if(fn[i] == '\n')
+      for (int i = 0; i < length; i++)
+        if (fn[i] == '\n')
           fn[i] = '\0';
 
       // try to load all the files in list
-      for(int i = 0; i < length; )
+      for (int i = 0; i < length; )
       {
-        if(i == length - 1 || fn[i] == '\0')
+        if (i == length - 1 || fn[i] == '\0')
         {
           File::loadFile(fn + index);
 
@@ -477,7 +477,7 @@ int View::handle(int event)
 
           index = i;
         }
-        else
+          else
         {
           i += 1;
         }
@@ -536,7 +536,7 @@ void View::drawMain(bool refresh)
   int overx = dw - w();
   int overy = dh - h();
 
-  if(zoom < 2)
+  if (zoom < 2)
   {
     overx = 0;
     overy = 0;
@@ -547,14 +547,14 @@ void View::drawMain(bool refresh)
   int offx = 0;
   int offy = 0;
 
-  if(ox < 0)
+  if (ox < 0)
     offx = -ox;
-  if(oy < 0)
+  if (oy < 0)
     offy = -oy;
 
   Bitmap *bmp = Project::bmp;
 
-  if(view_mode == VIEW_MODE_NORMAL)
+  if (view_mode == VIEW_MODE_NORMAL)
   {
     bmp->pointStretch(backbuf,
                     ox, oy, sw - offx, sh - offy,
@@ -562,7 +562,7 @@ void View::drawMain(bool refresh)
                     dw - offx * zoom, dh - offy * zoom,
                     overx, overy, ox, oy, bgr_order);
   }
-  else if(view_mode == VIEW_MODE_INDEXED)
+  else if (view_mode == VIEW_MODE_INDEXED)
   {
     bmp->pointStretchIndexed(backbuf, Project::palette,
                     ox, oy, sw - offx, sh - offy,
@@ -571,10 +571,10 @@ void View::drawMain(bool refresh)
                     overx, overy, ox, oy, bgr_order);
   }
 
-  if(grid)
+  if (grid)
     drawGrid();
 
-  if(refresh)
+  if (refresh)
     redraw();
 }
 
@@ -583,10 +583,10 @@ void View::drawGrid()
   int x1, y1, x2, y2, t, i;
   int offx = 0, offy = 0;
 
-  if(zoom < 1)
+  if (zoom < 1)
     return;
 
-  if(zoom < 2 && (gridx == 1 || gridy == 1))
+  if (zoom < 2 && (gridx == 1 || gridy == 1))
     return;
 
   x2 = w() - 1;
@@ -594,7 +594,7 @@ void View::drawGrid()
 
   t = 216 - zoom;
 
-  if(t < 96)
+  if (t < 96)
     t = 96;
 
   int zx = zoom * gridx;
@@ -621,20 +621,20 @@ void View::drawGrid()
         gridSetpixel(backbuf, x1 + zx - 1, y1, makeRgb(0, 0, 0), t);
         x1 += zx;
       }
-      while(x1 <= x2);
+      while (x1 <= x2);
 
       y1++;
       i++;
     }
-    while(i < zy);
+    while (i < zy);
   }
-  while(y1 <= y2);
+  while (y1 <= y2);
 }
 
 
 void View::changeCursor()
 {
-  switch(Gui::getTool())
+  switch (Gui::getTool())
   {
     case Tool::GETCOLOR:
     case Tool::FILL:
@@ -656,7 +656,7 @@ void View::changeCursor()
 
 void View::drawCloneCursor()
 {
-  if(Gui::getTool() != Tool::PAINT && Gui::getTool() != Tool::TEXT)
+  if (Gui::getTool() != Tool::PAINT && Gui::getTool() != Tool::TEXT)
     return;
 
   int x = Clone::x;
@@ -668,18 +668,18 @@ void View::drawCloneCursor()
   int x1 = imgx - dx;
   int y1 = imgy - dy;
 
-  if(state == Clone::RESET || state == Clone::PLACED)
+  if (state == Clone::RESET || state == Clone::PLACED)
   {
     x1 = (x - ox) * zoom;
     y1 = (y - oy) * zoom;
   }
-  else
+    else
   {
     x1 = (x1 - ox) * zoom;
     y1 = (y1 - oy) * zoom;
   }
 
-  switch(aspect)
+  switch (aspect)
   {
     case ASPECT_NORMAL:
       break;
@@ -713,11 +713,11 @@ void View::zoomIn(int x, int y)
 {
   zoom *= 2;
 
-  if(zoom > 64)
+  if (zoom > 64)
   {
     zoom = 64;
   }
-  else
+    else
   {
     ox += x / zoom;
     oy += y / zoom;
@@ -737,11 +737,11 @@ void View::zoomOut(int x, int y)
   float oldzoom = zoom;
   zoom /= 2;
 
-  if(zoom < .125)
+  if (zoom < .125)
   {
     zoom = .125;
   }
-  else
+    else
   {
     ox -= x / oldzoom;
     oy -= y / oldzoom;
@@ -772,18 +772,18 @@ void View::scroll(int dir, int amount)
 {
   int x, y;
 
-  switch(dir)
+  switch (dir)
   {
     case 0:
     {
       x = Project::bmp->w - w() / zoom;
 
-      if(x < 0)
+      if (x < 0)
         return;
 
       ox += amount / zoom;
 
-      if(ox > x)
+      if (ox > x)
         ox = x;
 
       break;
@@ -792,7 +792,7 @@ void View::scroll(int dir, int amount)
     {
       ox -= amount / zoom;
 
-      if(ox < 0)
+      if (ox < 0)
         ox = 0;
 
       break;
@@ -801,12 +801,12 @@ void View::scroll(int dir, int amount)
     {
       y = Project::bmp->h - h() / zoom;
 
-      if(y < 0)
+      if (y < 0)
         return;
 
       oy += amount / zoom;
 
-      if(oy > y)
+      if (oy > y)
         oy = y;
 
       break;
@@ -815,14 +815,14 @@ void View::scroll(int dir, int amount)
     {
       oy -= amount / zoom;
 
-      if(oy < 0)
+      if (oy < 0)
         oy = 0;
 
       break;
     }
   }
 
-  if(Project::tool->isActive())
+  if (Project::tool->isActive())
     Project::tool->redraw(this);
   else
     drawMain(true);
@@ -830,13 +830,13 @@ void View::scroll(int dir, int amount)
 
 void View::clipOrigin()
 {
-  if(ox < (Project::bmp->cl + 1) - w() / zoom)
+  if (ox < (Project::bmp->cl + 1) - w() / zoom)
     ox = (Project::bmp->cl + 1) - w() / zoom;
-  if(oy < (Project::bmp->ct + 1) - h() / zoom)
+  if (oy < (Project::bmp->ct + 1) - h() / zoom)
     oy = (Project::bmp->ct + 1) - h() / zoom;
-  if(ox > Project::bmp->cr)
+  if (ox > Project::bmp->cr)
     ox = Project::bmp->cr;
-  if(oy > Project::bmp->cb)
+  if (oy > Project::bmp->cb)
     oy = Project::bmp->cb;
 }
 
@@ -854,7 +854,7 @@ void View::draw()
   int ax = 1;
   int ay = 1;
 
-  switch(aspect)
+  switch (aspect)
   {
     case ASPECT_NORMAL:
       break;
@@ -869,40 +869,40 @@ void View::draw()
   backbuf->pointStretch(backbuf2, 0, 0, backbuf->w / ax, backbuf->h / ay,
                         0, 0, backbuf2->w, backbuf2->h, 0, 0, 0, 0, false);
 
-  if(Project::tool->isActive())
+  if (Project::tool->isActive())
   {
     int blitx = Project::stroke->blitx;
     int blity = Project::stroke->blity;
     int blitw = Project::stroke->blitw;
     int blith = Project::stroke->blith;
 
-    if(blitx < 0)
+    if (blitx < 0)
       blitx = 0;
 
-    if(blity < 0)
+    if (blity < 0)
       blity = 0;
 
-    if(blitx + blitw > w() - 1)
+    if (blitx + blitw > w() - 1)
       blitw = w() - 1 - blitx;
 
-    if(blity + blith > h() - 1)
+    if (blity + blith > h() - 1)
       blith = h() - 1 - blity;
 
-    if(blitw < 1 || blith < 1)
+    if (blitw < 1 || blith < 1)
       return;
 
 
     updateView(blitx * ax, blity * ay, x() + blitx * ax, y() + blity * ay,
                blitw * ax, blith * ay);
 
-    if(Gui::getClone())
+    if (Gui::getClone())
       drawCloneCursor();
   }
-  else
+    else
   {
     updateView(0, 0, x(), y(), w(), h());
 
-    if(Gui::getClone())
+    if (Gui::getClone())
       drawCloneCursor();
   }
 }

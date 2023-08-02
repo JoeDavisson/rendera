@@ -50,12 +50,12 @@ Fill::~Fill()
 
 bool Fill::inbox(int x, int y, int x1, int y1, int x2, int y2)
 {
-  if(x1 > x2)
+  if (x1 > x2)
     std::swap(x1, x2);
-  if(y1 > y2)
+  if (y1 > y2)
     std::swap(y1, y2);
 
-  if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
+  if (x >= x1 && x <= x2 && y >= y1 && y <= y2)
     return 1;
   else
     return 0;
@@ -65,26 +65,30 @@ bool Fill::inbox(int x, int y, int x1, int y1, int x2, int y2)
 bool Fill::isEdge(Map *map, const int x, const int y)
 {
   // special case
-  if(x < 1 || x > map->w - 2 || y < 1 || y > map->h - 2)
+  if (x < 1 || x > map->w - 2 || y < 1 || y > map->h - 2)
   {
-    if(*(map->row[y] + x))
+    if (*(map->row[y] + x))
       return 0;
     else
       return 1;
   }
 
-  if( *(map->row[y - 1] + x) &&
+  if ( *(map->row[y - 1] + x) &&
       *(map->row[y] + x - 1) &&
       *(map->row[y] + x + 1) &&
       *(map->row[y + 1] + x) )
+  {
     return 0;
-  else
+  }
+    else
+  {
     return 1;
+  }
 }
 
 // edge feathering
 int Fill::fineEdge(int x1, int y1, const int x2, const int y2,
-	     const int feather, const int trans)
+             const int feather, const int trans)
 {
   x1 -= x2;
   y1 -= y2;
@@ -101,7 +105,7 @@ int Fill::fineEdge(int x1, int y1, const int x2, const int y2,
 // flood-fill related stack routines
 bool Fill::pop(int *x, int *y)
 {
-  if(sp > 0)
+  if (sp > 0)
   {
     *x = stack_x[sp];
     *y = stack_y[sp];
@@ -114,7 +118,7 @@ bool Fill::pop(int *x, int *y)
 
 bool Fill::push(const int x, const int y)
 {
-  if(sp < stack_size - 1)
+  if (sp < stack_size - 1)
   {
     sp++;
     stack_x[sp] = x;
@@ -129,7 +133,7 @@ void Fill::clear()
 {
   int x, y;
 
-  while(pop(&x, &y))
+  while (pop(&x, &y))
   {
     // loop until pop returns false
   }
@@ -137,7 +141,7 @@ void Fill::clear()
 
 bool Fill::inRange(const int c1, const int c2, const int range)
 {
-  if((std::sqrt(diff32(c1, c2)) / 2) <= range)
+  if ((std::sqrt(diff32(c1, c2)) / 2) <= range)
     return true;
   else
     return false;
@@ -145,12 +149,12 @@ bool Fill::inRange(const int c1, const int c2, const int range)
 
 void Fill::fill(int x, int y, int new_color, int old_color, int range, int feather)
 {
-  if(old_color == new_color)
+  if (old_color == new_color)
     return;
 
   clear();
   
-  if(!push(x, y))
+  if (!push(x, y))
     return;
 
   Bitmap *bmp = Project::bmp;
@@ -164,11 +168,11 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
   int ct = bmp->ct;
   int cb = bmp->cb;
 
-  while(pop(&x, &y))
+  while (pop(&x, &y))
   {    
     int x1 = x;
 
-    while(x1 >= cl && inRange(temp.getpixel(x1, y), old_color, range))
+    while (x1 >= cl && inRange(temp.getpixel(x1, y), old_color, range))
       x1--;
 
     x1++;
@@ -176,44 +180,44 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
     bool span_t = false;
     bool span_b = false;
 
-    while(x1 <= cr && inRange(temp.getpixel(x1, y), old_color, range))
+    while (x1 <= cr && inRange(temp.getpixel(x1, y), old_color, range))
     {
       temp.setpixel(x1, y, new_color);
       map->setpixel(x1 - bmp->cl, y - bmp->ct, 255);
 
-      if((!span_t && y > ct) && inRange(temp.getpixel(x1, y - 1),
-					old_color, range))
+      if ((!span_t && y > ct) && inRange(temp.getpixel(x1, y - 1),
+                                        old_color, range))
       {
-	if(!push(x1, y - 1))
-	  return;
+        if (!push(x1, y - 1))
+          return;
 
-	span_t = true;
+        span_t = true;
       }
-      else if((span_t && y > ct) && !inRange(temp.getpixel(x1, y - 1),
-					     old_color, range))
+      else if ((span_t && y > ct) && !inRange(temp.getpixel(x1, y - 1),
+                                             old_color, range))
       {
-	span_t = false;
+        span_t = false;
       }
 
-      if((!span_b && y < cb) && inRange(temp.getpixel(x1, y + 1),
-					old_color, range))
+      if ((!span_b && y < cb) && inRange(temp.getpixel(x1, y + 1),
+                                        old_color, range))
       {
-	if(!push(x1, y + 1))
-	  return;
+        if (!push(x1, y + 1))
+          return;
 
-	span_b = true;
+        span_b = true;
       }
-      else if((span_b && y < cb) && !inRange(temp.getpixel(x1, y + 1),
-					     old_color, range))
+      else if ((span_b && y < cb) && !inRange(temp.getpixel(x1, y + 1),
+                                             old_color, range))
       {
-	span_b = false;
+        span_b = false;
       } 
 
       x1++;
     }
   }
 
-  if(feather == 0)
+  if (feather == 0)
   {
     temp.blit(bmp, 0, 0, 0, 0, temp.w, temp.h);
     return;
@@ -224,26 +228,26 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
 
   Gui::progressShow((cb - ct) + 1);
 
-  for(y = ct; y <= cb; y++)
+  for (y = ct; y <= cb; y++)
   {
-    for(x = cl; x <= cr; x++)
+    for (x = cl; x <= cr; x++)
     {
-      if(map->getpixel(x - cl, y - ct) && isEdge(map, x - cl, y - ct))
+      if (map->getpixel(x - cl, y - ct) && isEdge(map, x - cl, y - ct))
       {
-	stroke->edge_x[count] = x;
-	stroke->edge_y[count] = y;
-	count++;
+        stroke->edge_x[count] = x;
+        stroke->edge_y[count] = y;
+        count++;
 
-	if(count > 0xfffff)
-	  break;
+        if (count > 0xfffff)
+          break;
       }
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 
-  if(count == 0)
+  if (count == 0)
     return;
 
   KDtree::node_type test_node;
@@ -257,21 +261,21 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
   int tt = 0xfffff;
   int tb = 0;
 
-  for(int i = 0; i < count; i++)
+  for (int i = 0; i < count; i++)
   {
     const int ex = stroke->edge_x[i];
     const int ey = stroke->edge_y[i];
 
-    if(ex < tl)
+    if (ex < tl)
       tl = ex;
 
-    if(ex > tr)
+    if (ex > tr)
       tr = ex;
 
-    if(ey < tt)
+    if (ey < tt)
       tt = ey;
 
-    if(ey > tb)
+    if (ey > tb)
       tb = ey;
 
     points[i].x[0] = ex;
@@ -283,42 +287,42 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
   tt -= feather;
   tb += feather;
 
-  if(tl < cl)
+  if (tl < cl)
     tl = cl; 
 
-  if(tr > cr)
+  if (tr > cr)
     tr = cr; 
 
-  if(tt < ct)
+  if (tt < ct)
     tt = ct; 
 
-  if(tb > cb)
+  if (tb > cb)
     tb = cb; 
 
-  if(tl > tr)
+  if (tl > tr)
     std::swap(tl, tr);
 
-  if(tt > tb)
+  if (tt > tb)
     std::swap(tt, tb);
 
   root = KDtree::build(points, count, 0, 2);
   Gui::progressShow((cb - ct) + 1);
 
-  for(y = ct; y <= cb; y++)
+  for (y = ct; y <= cb; y++)
   {
-    for(x = cl; x <= cr; x++)
+    for (x = cl; x <= cr; x++)
     {
-      if(x > tl || x < tr || y < tt || y > tb)
-        if(map->getpixel(x - cl, y - ct) == 255)
+      if (x > tl || x < tr || y < tt || y > tb)
+        if (map->getpixel(x - cl, y - ct) == 255)
           bmp->setpixel(x, y, new_color);
     }
   }
 
-  for(y = tt; y <= tb; y++)
+  for (y = tt; y <= tb; y++)
   {
-    for(x = tl; x <= tr; x++)
+    for (x = tl; x <= tr; x++)
     {
-      if(map->getpixel(x - cl, y - ct) == 255)
+      if (map->getpixel(x - cl, y - ct) == 255)
         continue;
 
       test_node.x[0] = x;
@@ -334,7 +338,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
        bmp->setpixel(x, y, Blend::trans(c1, new_color, t));
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       break;
   }
 
@@ -344,7 +348,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
 
 void Fill::push(View *view)
 {
-  if(inbox(view->imgx, view->imgy, Project::bmp->cl, Project::bmp->ct,
+  if (inbox(view->imgx, view->imgy, Project::bmp->cl, Project::bmp->ct,
                                    Project::bmp->cr, Project::bmp->cb))
   {
     Project::undo->push();

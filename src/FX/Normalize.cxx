@@ -30,11 +30,11 @@ void Normalize::apply(Bitmap *bmp)
   int g_low = 0xffffff;
   int b_low = 0xffffff;
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       rgba_type rgba = getRgba(*p);
 
@@ -42,28 +42,28 @@ void Normalize::apply(Bitmap *bmp)
       const int g = rgba.g;
       const int b = rgba.b;
 
-      if(r < r_low)
+      if (r < r_low)
         r_low = r;
-      if(r > r_high)
+      if (r > r_high)
         r_high = r;
-      if(g < g_low)
+      if (g < g_low)
         g_low = g;
-      if(g > g_high)
+      if (g > g_high)
         g_high = g;
-      if(b < b_low)
+      if (b < b_low)
         b_low = b;
-      if(b > b_high)
+      if (b > b_high)
         b_high = b;
 
       p++;
     }
   }
 
-  if(!(r_high - r_low))
+  if (!(r_high - r_low))
     r_high++;
-  if(!(g_high - g_low))
+  if (!(g_high - g_low))
     g_high++;
-  if(!(b_high - b_low))
+  if (!(b_high - b_low))
     b_high++;
 
   // scale image
@@ -73,11 +73,11 @@ void Normalize::apply(Bitmap *bmp)
 
   Gui::progressShow(bmp->h);
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       rgba_type rgba = getRgba(*p);
 
@@ -89,7 +89,7 @@ void Normalize::apply(Bitmap *bmp)
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 

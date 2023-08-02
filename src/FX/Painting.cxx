@@ -38,40 +38,40 @@ void Painting::apply()
 
   Gui::progressShow(bmp->h);
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       int r = 0;
       int g = 0;
       int b = 0;
       int count = 0;
 
-      for(int j = -amount; j <= amount; j++) 
+      for (int j = -amount; j <= amount; j++) 
       {
-	for(int i = -amount; i <= amount; i++) 
-	{
-	  const int c3 = *p;
-	  const int c1 = bmp->getpixel(x + i, y + j);
-	  const int c2 = bmp->getpixel(x - i, y - j);
+        for (int i = -amount; i <= amount; i++) 
+        {
+          const int c3 = *p;
+          const int c1 = bmp->getpixel(x + i, y + j);
+          const int c2 = bmp->getpixel(x - i, y - j);
 
-	  if(diff24(c3, c1) < diff24(c3, c2))
-	  {
-	    r += getr(c1);
-	    g += getg(c1);
-	    b += getb(c1);
-	  }
-	  else
-	  {
-	    r += getr(c2);
-	    g += getg(c2);
-	    b += getb(c2);
-	  }
+          if (diff24(c3, c1) < diff24(c3, c2))
+          {
+            r += getr(c1);
+            g += getg(c1);
+            b += getb(c1);
+          }
+            else
+          {
+            r += getr(c2);
+            g += getg(c2);
+            b += getb(c2);
+          }
 
-	  count++;
-	}
+          count++;
+        }
       }
 
       r /= count;
@@ -82,7 +82,7 @@ void Painting::apply()
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 

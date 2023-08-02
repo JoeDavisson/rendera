@@ -24,11 +24,11 @@ void AlphaColor::apply(Bitmap *bmp, int color)
 {
   Gui::progressShow(bmp->h);
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       int c = Blend::trans(*p, color, geta(*p));
 
@@ -38,7 +38,7 @@ void AlphaColor::apply(Bitmap *bmp, int color)
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 

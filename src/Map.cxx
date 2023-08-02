@@ -41,9 +41,9 @@ namespace
 // before being rendered.
 Map::Map(int width, int height)
 {
-  if(width < 1)
+  if (width < 1)
     width = 1;
-  if(height < 1)
+  if (height < 1)
     height = 1;
 
   data = new unsigned char [width * height];
@@ -52,7 +52,7 @@ Map::Map(int width, int height)
   w = width;
   h = height;
 
-  for(int i = 0; i < height; i++)
+  for (int i = 0; i < height; i++)
     row[i] = &data[width * i];
 
   thick_aa = 0;
@@ -66,19 +66,19 @@ Map::~Map()
 
 void Map::clear(int c)
 {
-  for(int i = 0; i < w * h; i++)
+  for (int i = 0; i < w * h; i++)
     data[i] = c & 0xff;
 }
 
 void Map::invert()
 {
-  for(int i = 0; i < w * h; i++)
+  for (int i = 0; i < w * h; i++)
     data[i] = 255 - data[i];
 }
 
 void Map::setpixel(int x, int y, int c)
 {
-  if(x < 0 || x >= w || y < 0 || y >= h)
+  if (x < 0 || x >= w || y < 0 || y >= h)
     return;
 
   *(row[y] + x) = c & 0xff;
@@ -86,7 +86,7 @@ void Map::setpixel(int x, int y, int c)
 
 int Map::getpixel(int x, int y)
 {
-  if(x < 0 || x >= w || y < 0 || y >= h)
+  if (x < 0 || x >= w || y < 0 || y >= h)
     return 0;
 
   return *(row[y] + x) & 0xff;
@@ -104,17 +104,17 @@ void Map::line(int x1, int y1, int x2, int y2, int c)
   dx = std::abs(dx);
   dy = std::abs(dy);
 
-  if(dx >= dy)
+  if (dx >= dy)
   {
     dy <<= 1;
     e = dy - dx;
     dx <<= 1;
 
-    while(x1 != x2)
+    while (x1 != x2)
     {
       setpixel(x1, y1, c);
 
-      if(e >= 0)
+      if (e >= 0)
       {
         y1 += iny;
         e -= dx;
@@ -124,17 +124,17 @@ void Map::line(int x1, int y1, int x2, int y2, int c)
       x1 += inx;
     }
   }
-  else
+    else
   {
     dx <<= 1;
     e = dx - dy;
     dy <<= 1;
 
-    while(y1 != y2)
+    while (y1 != y2)
     {
       setpixel(x1, y1, c);
 
-      if(e >= 0)
+      if (e >= 0)
       {
         x1 += inx;
         e -= dy;
@@ -160,15 +160,15 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
   int64_t a2, b2;
   int64_t s, t;
 
-  if(x1 > x2)
+  if (x1 > x2)
     std::swap(x1, x2);
-  if(y1 > y2)
+  if (y1 > y2)
     std::swap(y1, y2);
 
   ex = (w & 1);
   ey = (h & 1);
 
-  if(w <= 1 && h <= 1)
+  if (w <= 1 && h <= 1)
   {
     setpixel(x1, y1, c);
     setpixel(x1 + ex, y1, c);
@@ -177,7 +177,7 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
     return;
   }
 
-  if(h <= 0)
+  if (h <= 0)
   {
     hline(x1, y1, x2, c);
     return;
@@ -202,22 +202,22 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
 
   do
   {
-    if(s < 0)
+    if (s < 0)
     {
       s += 2 * b2 * (2 * x + 3);
       t += 4 * b2 * (x + 1);
       x++;
     }
-    else
+      else
     {
-      if(t < 0)
+      if (t < 0)
       {
         s += 2 * b2 * (2 * x + 3) - 4 * a2 * (y - 1);
         t += 4 * b2 * (x + 1) - 2 * a2 * (2 * y - 3);
         x++;
         y--;
       }
-      else
+        else
       {
         s -= 4 * a2 * (y - 1);
         t -= 2 * a2 * (2 * y - 3);
@@ -230,12 +230,12 @@ void Map::oval(int x1, int y1, int x2, int y2, int c)
     setpixel(x1 - x, y1 - y, c);
     setpixel(x1 + x + ex, y1 - y, c);
   }
-  while(y > 0);
+  while (y > 0);
 
   hline(x1 - w / 2, y1, x1 - x, c);
   hline(x1 + x + ex, y1, x1 + w / 2 + ex, c);
 
-  if(ey)
+  if (ey)
   {
     hline(x1 - w / 2, y1 + 1, x1 - x, c);
     hline(x1 + x + ex, y1 + 1, x1 + w / 2 + ex, c);
@@ -254,15 +254,15 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
   int64_t a2, b2;
   int64_t s, t;
 
-  if(x1 > x2)
+  if (x1 > x2)
     std::swap(x1, x2);
-  if(y1 > y2)
+  if (y1 > y2)
     std::swap(y1, y2);
 
   ex = (w & 1);
   ey = (h & 1);
 
-  if(w <= 1 && h <= 1)
+  if (w <= 1 && h <= 1)
   {
     setpixel(x1, y1, c);
     setpixel(x1 + ex, y1, c);
@@ -271,7 +271,7 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
     return;
   }
 
-  if(h <= 0)
+  if (h <= 0)
   {
     hline(x1, y1, x2, c);
     return;
@@ -296,22 +296,22 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
 
   do
   {
-    if(s < 0)
+    if (s < 0)
     {
       s += 2 * b2 * (2 * x + 3);
       t += 4 * b2 * (x + 1);
       x++;
     }
-    else
+      else
     {
-      if(t < 0)
+      if (t < 0)
       {
         s += 2 * b2 * (2 * x + 3) - 4 * a2 * (y - 1);
         t += 4 * b2 * (x + 1) - 2 * a2 * (2 * y - 3);
         x++;
         y--;
       }
-      else
+        else
       {
         s -= 4 * a2 * (y - 1);
         t -= 2 * a2 * (2 * y - 3);
@@ -322,12 +322,12 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
     hline(x1 - x, y1 + y + ey, x1 + x + ex, c);
     hline(x1 - x, y1 - y, x1 + x + ex, c);
   }
-  while(y > 0);
+  while (y > 0);
 
   hline(x1 - w / 2, y1, x1 - x, c);
   hline(x1 + x + ex, y1, x1 + w / 2 + ex, c);
 
-  if(ey)
+  if (ey)
   {
     hline(x1 - w / 2, y1 + 1, x1 - x, c);
     hline(x1 + x + ex, y1 + 1, x1 + w / 2 + ex, c);
@@ -336,14 +336,14 @@ void Map::ovalfill(int x1, int y1, int x2, int y2, int c)
 
 void Map::rect(int x1, int y1, int x2, int y2, int c)
 {
-  if(x1 > x2)
+  if (x1 > x2)
     std::swap(x1, x2);
-  if(y1 > y2)
+  if (y1 > y2)
     std::swap(y1, y2);
 
   hline(x1, y1, x2, c);
 
-  for(int y = y1 + 1; y < y2; y++)
+  for (int y = y1 + 1; y < y2; y++)
   {
     setpixel(x1, y, c);
     setpixel(x2, y, c);
@@ -354,28 +354,28 @@ void Map::rect(int x1, int y1, int x2, int y2, int c)
 
 void Map::rectfill(int x1, int y1, int x2, int y2, int c)
 {
-  if(x1 > x2)
+  if (x1 > x2)
     std::swap(x1, x2);
-  if(y1 > y2)
+  if (y1 > y2)
     std::swap(y1, y2);
 
-  for(; y1 <= y2; y1++)
+  for (; y1 <= y2; y1++)
     hline(x1, y1, x2, c);
 }
 
 void Map::hline(int x1, int y, int x2, int c)
 {
-  if(x1 < 0)
+  if (x1 < 0)
     x1 = 0;
-  if(x1 > w - 1)
+  if (x1 > w - 1)
     return;
-  if(x2 > w - 1)
+  if (x2 > w - 1)
     x2 = w - 1;
-  if(x2 < 0)
+  if (x2 < 0)
     return;
-  if(y < 0)
+  if (y < 0)
     return;
-  if(y > h - 1)
+  if (y > h - 1)
     return;
 
   unsigned char *x = row[y] + x2;
@@ -386,14 +386,14 @@ void Map::hline(int x1, int y, int x2, int c)
     *x = c;
     x--;
   }
-  while(x >= z);
+  while (x >= z);
 }
 
 void Map::vline(int y1, int x, int y2, int c)
 {
-  if(y1 < 0)
+  if (y1 < 0)
     y1 = 0;
-  if(y2 > h - 1)
+  if (y2 > h - 1)
     y2 = h - 1;
 
   unsigned char *y = row[y2] + x;
@@ -404,21 +404,21 @@ void Map::vline(int y1, int x, int y2, int c)
     y -= w;
     y2--;
   }
-  while(y2 >= y1);
+  while (y2 >= y1);
 }
 
 void Map::polyfill(int *px, int *py, int count, int y1, int y2, int c)
 {
   std::vector<int> nodex(65536);
 
-  for(int y = y1; y <= y2; y++)
+  for (int y = y1; y <= y2; y++)
   {
     int nodes = 0;
     int j = count - 1;
 
-    for(int i = 0; i < count; i++)
+    for (int i = 0; i < count; i++)
     {
-      if((py[i] < y && py[j] >= y) || (py[j] < y && py[i] >= y))
+      if ((py[i] < y && py[j] >= y) || (py[j] < y && py[i] >= y))
       {
         nodex[nodes++] =
           (px[i] + (float)(y - py[i]) / (py[j] - py[i]) * (px[j] - px[i]));
@@ -429,9 +429,9 @@ void Map::polyfill(int *px, int *py, int count, int y1, int y2, int c)
 
     std::qsort(&nodex[0], nodes, sizeof(int), node_cmp);
 
-    for(int i = 0; i < nodes; i += 2)
+    for (int i = 0; i < nodes; i += 2)
     {
-      for(int x = nodex[i]; x < nodex[i + 1]; x++)
+      for (int x = nodex[i]; x < nodex[i + 1]; x++)
         setpixel(x + 1, y, c);
     }
   }
@@ -444,7 +444,7 @@ void Map::blendAA(int x, int y, int c2)
 
   c1 += c2;
 
-  if(c1 > 255)
+  if (c1 > 255)
     c1 = 255;
 
   *(row[y] + x) = c1;
@@ -454,7 +454,7 @@ void Map::blendAA(int x, int y, int c2)
 // each real pixel is treated like 4x4 virtual pixels
 void Map::setpixelAA(int x, int y, int c)
 {
-  if(c == 0 ||
+  if (c == 0 ||
     x < 0 || x >= ((w - 1) << 2) ||
     y < 0 || y >= ((h - 1) << 2))
     return;
@@ -462,7 +462,7 @@ void Map::setpixelAA(int x, int y, int c)
   int shift1 = 4;
   int shift2 = 20;
 
-  if(thick_aa)
+  if (thick_aa)
   {
     shift1 = 2;
     shift2 = 18;
@@ -488,7 +488,7 @@ void Map::setpixelAA(int x, int y, int c)
 // draw horizontal antialised line (used by filled oval/rectangle)
 void Map::hlineAA(int x1, int y, int x2, int c)
 {
-  for(int x = x1; x <= x2; x++)
+  for (int x = x1; x <= x2; x++)
     setpixelAA(x, y, c);
 }
 
@@ -509,17 +509,17 @@ void Map::lineAA(int x1, int y1, int x2, int y2, int c)
   dx = std::abs(dx);
   dy = std::abs(dy);
 
-  if(dx >= dy)
+  if (dx >= dy)
   {
     dy <<= 1;
     e = dy - dx;
     dx <<= 1;
 
-    while(x1 != x2)
+    while (x1 != x2)
     {
       setpixelAA(x1, y1, c);
 
-      if(e >= 0)
+      if (e >= 0)
       {
         y1 += iny;
         e -= dx;
@@ -529,17 +529,17 @@ void Map::lineAA(int x1, int y1, int x2, int y2, int c)
       x1 += inx;
     }
   }
-  else
+    else
   {
     dx <<= 1;
     e = dx - dy;
     dy <<= 1;
 
-    while(y1 != y2)
+    while (y1 != y2)
     {
       setpixelAA(x1, y1, c);
 
-      if(e >= 0)
+      if (e >= 0)
       {
         x1 += inx;
         e -= dy;
@@ -568,15 +568,15 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
   int64_t a2, b2;
   int64_t s, t;
 
-  if(x1 > x2)
+  if (x1 > x2)
     std::swap(x1, x2);
-  if(y1 > y2)
+  if (y1 > y2)
     std::swap(y1, y2);
 
   ex = (w & 1);
   ey = (h & 1);
 
-  if(w <= 1 && h <= 1)
+  if (w <= 1 && h <= 1)
   {
     setpixelAA(x1, y1, c);
     setpixelAA(x1 + ex, y1, c);
@@ -585,7 +585,7 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
     return;
   }
 
-  if(h <= 0)
+  if (h <= 0)
   {
     hlineAA(x1, y1, x2, c);
     return;
@@ -610,22 +610,22 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
 
   do
   {
-    if(s < 0)
+    if (s < 0)
     {
       s += 2 * b2 * (2 * x + 3);
       t += 4 * b2 * (x + 1);
       x++;
     }
-    else
+      else
     {
-      if(t < 0)
+      if (t < 0)
       {
         s += 2 * b2 * (2 * x + 3) - 4 * a2 * (y - 1);
         t += 4 * b2 * (x + 1) - 2 * a2 * (2 * y - 3);
         x++;
         y--;
       }
-      else
+        else
       {
         s -= 4 * a2 * (y - 1);
         t -= 2 * a2 * (2 * y - 3);
@@ -638,12 +638,12 @@ void Map::ovalAA(int x1, int y1, int x2, int y2, int c)
     setpixelAA(x1 - x, y1 - y, c);
     setpixelAA(x1 + x + ex, y1 - y, c);
   }
-  while(y > 1);
+  while (y > 1);
 
   hlineAA(x1 - w / 2, y1, x1 - x, c);
   hlineAA(x1 + x + ex, y1, x1 + w / 2 + ex, c);
 
-  if(ey)
+  if (ey)
   {
     hlineAA(x1 - w / 2, y1 + 1, x1 - x, c);
     hlineAA(x1 + x + ex, y1 + 1, x1 + w / 2 + ex, c);
@@ -667,18 +667,18 @@ void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
   int64_t a2, b2;
   int64_t s, t;
 
-  if(x1 > x2)
+  if (x1 > x2)
     std::swap(x1, x2);
-  if(y1 > y2)
+  if (y1 > y2)
     std::swap(y1, y2);
 
   ex = (ww & 1);
   ey = (hh & 1);
 
-  if(ww <= 1 && hh <= 1)
+  if (ww <= 1 && hh <= 1)
     return;
 
-  if(hh <= 0)
+  if (hh <= 0)
     return;
 
   x1 += a;
@@ -695,22 +695,22 @@ void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
 
   do
   {
-    if(s < 0)
+    if (s < 0)
     {
       s += 2 * b2 * (2 * x + 3);
       t += 4 * b2 * (x + 1);
       x++;
     }
-    else
+      else
     {
-      if(t < 0)
+      if (t < 0)
       {
         s += 2 * b2 * (2 * x + 3) - 4 * a2 * (y - 1);
         t += 4 * b2 * (x + 1) - 2 * a2 * (2 * y - 3);
         x++;
         y--;
       }
-      else
+        else
       {
         s -= 4 * a2 * (y - 1);
         t -= 2 * a2 * (2 * y - 3);
@@ -721,11 +721,11 @@ void Map::ovalfillAA(int x1, int y1, int x2, int y2, int c)
       hlineAA(x1 - x, y1 - y, x1 + x + ex, c);
     }
   }
-  while(y > 1);
+  while (y > 1);
 
   y--;
 
-  if(ey)
+  if (ey)
     hlineAA(x1 - x, y1 + y + ey, x1 + x + ex, c);
 
   hlineAA(x1 - x, y1 - y, x1 + x + ex, c);
@@ -746,18 +746,18 @@ void Map::rectfillAA(int x1, int y1, int x2, int y2, int c)
   x2 <<= 2;
   y2 <<= 2;
 
-  if(x1 > x2)
+  if (x1 > x2)
     std::swap(x1, x2);
-  if(y1 > y2)
+  if (y1 > y2)
     std::swap(y1, y2);
 
-  for(; y1 <= y2; y1++)
+  for (; y1 <= y2; y1++)
     hlineAA(x1, y1, x2, c);
 }
 
 void Map::polyfillAA(int *px, int *py, int count, int y1, int y2, int c)
 {
-  for(int i = 0; i < count; i++)
+  for (int i = 0; i < count; i++)
   {
     px[i] <<= 2;
     py[i] <<= 2;
@@ -765,14 +765,14 @@ void Map::polyfillAA(int *px, int *py, int count, int y1, int y2, int c)
 
   std::vector<int> nodex(65536);
 
-  for(int y = (y1 << 2); y <= (y2 << 2); y++)
+  for (int y = (y1 << 2); y <= (y2 << 2); y++)
   {
     int j = count - 1;
     int nodes = 0;
 
-    for(int i = 0; i < count; i++)
+    for (int i = 0; i < count; i++)
     {
-      if((py[i] < y && py[j] >= y) || (py[j] < y && py[i] >= y))
+      if ((py[i] < y && py[j] >= y) || (py[j] < y && py[i] >= y))
       {
         nodex[nodes++] =
           (px[i] + (double)(y - py[i]) / (py[j] - py[i]) * (px[j] - px[i]));
@@ -783,9 +783,9 @@ void Map::polyfillAA(int *px, int *py, int count, int y1, int y2, int c)
 
     std::qsort(&nodex[0], nodes, sizeof(int), node_cmp);
 
-    for(int i = 0; i < nodes; i += 2)
+    for (int i = 0; i < nodes; i += 2)
     {
-      for(int x = nodex[i]; x <= nodex[i + 1]; x++)
+      for (int x = nodex[i]; x <= nodex[i + 1]; x++)
         setpixelAA(x, y, c);
     }
   }
@@ -802,25 +802,25 @@ void Map::blur(int radius)
   int div = 0;
   int b = radius / 2;
 
-  for(int x = 0; x < radius; x++)
+  for (int x = 0; x < radius; x++)
   {
     kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) / ((b * b) / 2)));
     div += kernel[x];
   }
 
   // x direction
-  for(int y = 0; y < h; y++)
+  for (int y = 0; y < h; y++)
   {
     const int y1 = y;
 
-    for(int x = 0; x < w; x++)
+    for (int x = 0; x < w; x++)
     {
       int xx = x - radius / 2;
       int val = 0;
 
-      for(int i = 0; i < radius; i++)
+      for (int i = 0; i < radius; i++)
       {
-        if(xx >= 0 && xx < this->w)
+        if (xx >= 0 && xx < this->w)
           val += *(this->row[y1] + xx) * kernel[i];
 
         xx++;
@@ -832,16 +832,16 @@ void Map::blur(int radius)
   }
 
   // y direction
-  for(int y = 0; y < h; y++)
+  for (int y = 0; y < h; y++)
   {
-    for(int x = 0; x < w; x++)
+    for (int x = 0; x < w; x++)
     {
       int yy = y - radius / 2;
       int val = 0;
 
-      for(int i = 0; i < radius; i++)
+      for (int i = 0; i < radius; i++)
       {
-        if(yy >= 0 && yy < h)
+        if (yy >= 0 && yy < h)
           val += *(temp.row[yy] + x) * kernel[i];
 
         yy++;
@@ -869,25 +869,25 @@ void Map::scale(Map *dest)
   const float ax = ((float)sw / dw);
   const float ay = ((float)sh / dh);
 
-  if(sw < 1 || sh < 1)
+  if (sw < 1 || sh < 1)
     return;
 
-  if(dw < 1 || dh < 1)
+  if (dw < 1 || dh < 1)
     return;
 
-  for(int y = 0; y < dh; y++) 
+  for (int y = 0; y < dh; y++) 
   {
     int *d = dest->row[dy + y] + dx;
     const float vv = (y * ay);
     const int v1 = vv;
     const float v = vv - v1;
 
-    if(sy + v1 >= h)
+    if (sy + v1 >= h)
       break;
 
     int v2 = v1 + 1;
 
-    if(v2 >= sh)
+    if (v2 >= sh)
     {
       v2--;
     }
@@ -896,18 +896,18 @@ void Map::scale(Map *dest)
     c[0] = c[1] = row[sy + v1] + sx;
     c[2] = c[3] = row[sy + v2] + sx;
 
-    for(int x = 0; x < dw; x++) 
+    for (int x = 0; x < dw; x++) 
     {
       const float uu = (x * ax);
       const int u1 = uu;
       const float u = uu - u1;
 
-      if(sx + u1 >= w)
+      if (sx + u1 >= w)
         break;
 
       int u2 = u1 + 1;
 
-      if(u2 >= sw)
+      if (u2 >= sw)
       {
         u2--;
       }
@@ -926,7 +926,7 @@ void Map::scale(Map *dest)
 
       float r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f;
 
-      for(int i = 0; i < 4; i++)
+      for (int i = 0; i < 4; i++)
       {
         rgba_type rgba = getRgba(*c[i]);
         r += (float)Gamma::fix(rgba.r) * f[i];

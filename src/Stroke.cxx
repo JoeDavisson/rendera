@@ -77,9 +77,9 @@ void Stroke::keepSquare(int x1, int y1, int *x2, int *y2)
   const int dx = x1 - *x2;
   const int dy = y1 - *y2;
 
-  if(std::abs(dy) > std::abs(dx))
+  if (std::abs(dy) > std::abs(dx))
   {
-    switch(px + py)
+    switch (px + py)
     {
       case 0:
         *x2 = x1 - dy;
@@ -95,7 +95,7 @@ void Stroke::keepSquare(int x1, int y1, int *x2, int *y2)
         break;
     }
   }
-  else
+    else
   {
     switch (px + py)
     {
@@ -117,7 +117,7 @@ void Stroke::keepSquare(int x1, int y1, int *x2, int *y2)
 
 bool Stroke::isEdge(Map *map, const int x, const int y)
 {
-  if(!map->getpixel(x, y - 1) ||
+  if (!map->getpixel(x, y - 1) ||
      !map->getpixel(x - 1, y) ||
      !map->getpixel(x + 1, y) ||
      !map->getpixel(x, y + 1))
@@ -130,35 +130,35 @@ bool Stroke::isEdge(Map *map, const int x, const int y)
 
 void Stroke::clip()
 {
-  if(x1 < 0)
+  if (x1 < 0)
     x1 = 0;
-  if(y1 < 0)
+  if (y1 < 0)
     y1 = 0;
-  if(x2 > Project::bmp->w - 1)
+  if (x2 > Project::bmp->w - 1)
     x2 = Project::bmp->w - 1;
-  if(y2 > Project::bmp->h - 1)
+  if (y2 > Project::bmp->h - 1)
     y2 = Project::bmp->h - 1;
 }
 
 void Stroke::sizeLinear(int bx, int by, int x, int y)
 {
-  if(bx > x)
+  if (bx > x)
   {
     x1 = x - 48;
     x2 = bx + 48;
   }
-  else
+    else
   {
     x1 = bx - 48;
     x2 = x + 48;
   }
 
-  if(by > y)
+  if (by > y)
   {
     y1 = y - 48;
     y2 = by + 48;
   }
-  else
+    else
   {
     y1 = by - 48;
     y2 = y + 48;
@@ -182,9 +182,9 @@ void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
   x2 *= zoom;
   y2 *= zoom;
 
-  if(x2 < x1)
+  if (x2 < x1)
     std::swap(x1, x2);
-  if(y2 < y1)
+  if (y2 < y1)
     std::swap(y1, y2);
 
   x1 -= r;
@@ -197,17 +197,17 @@ void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
   blitw = x2 - x1;
   blith = y2 - y1;
 
-  if(blitw < 1)
+  if (blitw < 1)
     blitw = 1;
-  if(blith < 1)
+  if (blith < 1)
     blith = 1;
 }
 
 void Stroke::size(int x1, int y1, int x2, int y2)
 {
-  if(x1 > x2)
+  if (x1 > x2)
     std::swap(x1, x2);
-  if(y1 > y2)
+  if (y1 > y2)
     std::swap(y1, y2);
 
   this->x1 = x1;
@@ -221,7 +221,7 @@ void Stroke::drawBrush(int x, int y, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  for(int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->solid_count; i++)
     map->setpixel(x + brush->solidx[i], y + brush->solidy[i], c);
 }
 
@@ -233,7 +233,7 @@ void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
   drawBrush(x1, y1, c);
   drawBrush(x2, y2, c);
 
-  for(int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->solid_count; i++)
   {
     map->line(x1 + brush->solidx[i], y1 + brush->solidy[i],
               x2 + brush->solidx[i], y2 + brush->solidy[i], c);
@@ -245,7 +245,7 @@ void Stroke::drawBrushRect(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  for(int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->solid_count; i++)
   {
     map->rect(x1 + brush->solidx[i], y1 + brush->solidy[i],
               x2 + brush->solidx[i], y2 + brush->solidy[i], c);
@@ -257,7 +257,7 @@ void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  for(int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->solid_count; i++)
   {
     map->oval(x1 + brush->solidx[i], y1 + brush->solidy[i],
               x2 + brush->solidx[i], y2 + brush->solidy[i], c);
@@ -269,7 +269,7 @@ void Stroke::drawBrushAA(int x, int y, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  for(int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->solid_count; i++)
   {
     map->setpixelAA(((x + brush->solidx[i]) << 2) - 1,
                     ((y + brush->solidy[i]) << 2) - 1, c);
@@ -287,7 +287,7 @@ void Stroke::drawBrushLineAA(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  for(int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->solid_count; i++)
   {
     map->lineAA(x1 + brush->solidx[i],
                 y1 + brush->solidy[i],
@@ -301,7 +301,7 @@ void Stroke::drawBrushRectAA(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  for(int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->solid_count; i++)
   {
     map->rectAA(x1 + brush->solidx[i],
                 y1 + brush->solidy[i],
@@ -315,7 +315,7 @@ void Stroke::drawBrushOvalAA(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  for(int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->solid_count; i++)
   {
     map->ovalAA(x1 + brush->solidx[i],
                 y1 + brush->solidy[i],
@@ -359,16 +359,16 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
   int r = brush->size / 2;
   int w = 0, h = 0;
 
-  if(x - r - 1 < x1)
+  if (x - r - 1 < x1)
     x1 = x - r - 1;
-  if(y - r - 1 < y1)
+  if (y - r - 1 < y1)
     y1 = y - r - 1;
-  if(x + r + 1 > x2)
+  if (x + r + 1 > x2)
     x2 = x + r + 1;
-  if(y + r + 1 > y2)
+  if (y + r + 1 > y2)
     y2 = y + r + 1;
 
-  switch(type)
+  switch (type)
   {
     case FREEHAND:
     {
@@ -376,7 +376,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       makeBlitRect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
 
       // without this slowly-drawn strokes don't look as nice
-      if(brush->aa && ((x == lastx) ^ (y == lasty)))
+      if (brush->aa && ((x == lastx) ^ (y == lasty)))
         return;
 
       poly_x[poly_count] = x;
@@ -393,7 +393,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       makeBlitRect(x, y, lastx, lasty, ox, oy, 1, zoom);
 
       // without this slowly-drawn strokes don't look as nice
-      if(brush->aa && ((x == lastx) ^ (y == lasty)))
+      if (brush->aa && ((x == lastx) ^ (y == lasty)))
         return;
 
       poly_x[poly_count] = x;
@@ -408,7 +408,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
     case LINE:
     {
-      if(origin)
+      if (origin)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
@@ -418,7 +418,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         drawBrushLine(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         sizeLinear(beginx - w, beginy - h, x + w, y + h);
       }
-      else
+        else
       {
         drawBrushLine(lastx, lasty, beginx, beginy, 0);
         drawBrushLine(x, y, beginx, beginy, 255);
@@ -445,10 +445,10 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
     case RECT:
     {
-      if(constrain)
+      if (constrain)
         keepSquare(beginx, beginy, &x, &y);
 
-      if(origin)
+      if (origin)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
@@ -458,7 +458,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         drawBrushRect(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         sizeLinear(beginx - w, beginy - h, x + w, y + h);
       }
-      else
+        else
       {
         drawBrushRect(lastx, lasty, beginx, beginy, 0);
         drawBrushRect(x, y, beginx, beginy, 255);
@@ -472,10 +472,10 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
     case FILLED_RECT:
     {
-      if(constrain)
+      if (constrain)
         keepSquare(beginx, beginy, &x, &y);
 
-      if(origin)
+      if (origin)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
@@ -485,7 +485,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         map->rectfill(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         sizeLinear(beginx - w, beginy - h, x + w, y + h);
       }
-      else
+        else
       {
         map->rectfill(lastx, lasty, beginx, beginy, 0);
         map->rectfill(x, y, beginx, beginy, 255);
@@ -499,10 +499,10 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
     case OVAL:
     {
-      if(constrain)
+      if (constrain)
         keepSquare(beginx, beginy, &x, &y);
 
-      if(origin)
+      if (origin)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
@@ -512,7 +512,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         drawBrushOval(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         sizeLinear(beginx - w, beginy - h, x + w, y + h);
       }
-      else
+        else
       {
         drawBrushOval(lastx, lasty, beginx, beginy, 0);
         drawBrushOval(x, y, beginx, beginy, 255);
@@ -526,10 +526,10 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
     case FILLED_OVAL:
     {
-      if(constrain)
+      if (constrain)
         keepSquare(beginx, beginy, &x, &y);
 
-      if(origin)
+      if (origin)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
@@ -539,7 +539,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         map->ovalfill(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         sizeLinear(beginx - w, beginy - h, x + w, y + h);
       }
-      else
+        else
       {
         map->ovalfill(lastx, lasty, beginx, beginy, 0);
         map->ovalfill(x, y, beginx, beginy, 255);
@@ -568,12 +568,12 @@ void Stroke::end(int x, int y)
   map->thick_aa = 0;
   Clone::refresh(x1, y1, x2, y2);
 
-  if(brush->aa)
+  if (brush->aa)
   {
     // antialiased drawing
     map->clear(0);
 
-    switch(type)
+    switch (type)
     {
       case FREEHAND:
       {
@@ -582,18 +582,18 @@ void Stroke::end(int x, int y)
         poly_count++;
         poly_count &= 0xffff;
 
-        if(poly_count > 2)
+        if (poly_count > 2)
         {
-          if(brush->size < 5)
+          if (brush->size < 5)
             map->thick_aa = 1;
 
-          for(int i = 1; i < poly_count; i++)
+          for (int i = 1; i < poly_count; i++)
           {
             drawBrushLineAA(poly_x[i], poly_y[i],
                             poly_x[i - 1], poly_y[i - 1], 255);
           }
         }
-        else
+          else
         {
           map->thick_aa = 1;
           drawBrushAA(x, y, 255);
@@ -615,16 +615,16 @@ void Stroke::end(int x, int y)
 
       case LINE:
       {
-        if(brush->size == 1)
+        if (brush->size == 1)
           map->thick_aa = 1;
 
-        if(origin)
+        if (origin)
         {
           w = (x - beginx);
           h = (y - beginy);
           drawBrushLineAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         }
-        else
+          else
         {
           drawBrushLineAA(x, y, beginx, beginy, 255);
         }
@@ -639,7 +639,7 @@ void Stroke::end(int x, int y)
         poly_y[poly_count] = beginy;
         poly_count++;
         poly_count &= 0xffff;
-        if(poly_count > 3)
+        if (poly_count > 3)
           map->polyfillAA(poly_x, poly_y, poly_count, y1, y2, 255);
 
         break;
@@ -647,19 +647,19 @@ void Stroke::end(int x, int y)
 
       case RECT:
       {
-        if(brush->size == 1)
+        if (brush->size == 1)
           map->thick_aa = 1;
 
-        if(constrain)
+        if (constrain)
           keepSquare(beginx, beginy, &x, &y);
 
-        if(origin)
+        if (origin)
         {
           w = (x - beginx);
           h = (y - beginy);
           drawBrushRectAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         }
-        else
+          else
         {
           drawBrushRectAA(x, y, beginx, beginy, 255);
         }
@@ -669,16 +669,16 @@ void Stroke::end(int x, int y)
 
       case FILLED_RECT:
       {
-        if(constrain)
+        if (constrain)
           keepSquare(beginx, beginy, &x, &y);
 
-        if(origin)
+        if (origin)
         {
           w = (x - beginx);
           h = (y - beginy);
           map->rectfillAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         }
-        else
+          else
         {
           map->rectfillAA(x, y, beginx, beginy, 255);
         }
@@ -688,19 +688,19 @@ void Stroke::end(int x, int y)
 
       case OVAL:
       {
-        if(brush->size == 1)
+        if (brush->size == 1)
           map->thick_aa = 1;
 
-        if(constrain)
+        if (constrain)
           keepSquare(beginx, beginy, &x, &y);
 
-        if(origin)
+        if (origin)
         {
           w = (x - beginx);
           h = (y - beginy);
           drawBrushOvalAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         }
-        else
+          else
         {
           drawBrushOvalAA(x, y, beginx, beginy, 255);
         }
@@ -710,16 +710,16 @@ void Stroke::end(int x, int y)
 
       case FILLED_OVAL:
       {
-        if(constrain)
+        if (constrain)
           keepSquare(beginx, beginy, &x, &y);
 
-        if(origin)
+        if (origin)
         {
           w = (x - beginx);
           h = (y - beginy);
           map->ovalfillAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         }
-        else
+          else
         {
           map->ovalfillAA(x, y, beginx, beginy, 255);
         }
@@ -731,11 +731,11 @@ void Stroke::end(int x, int y)
         break;
     }
   }
-  else
+    else
   {
     // normal drawing for filled polygons
     // (other types have already been drawn correctly)
-    switch(type)
+    switch (type)
     {
       case REGION:
       case POLYGON:
@@ -745,11 +745,11 @@ void Stroke::end(int x, int y)
         poly_y[poly_count] = beginy;
         poly_count++;
         poly_count &= 0xffff;
-        if(poly_count > 3)
+        if (poly_count > 3)
         {
           map->polyfill(poly_x, poly_y, poly_count, y1, y2, 255);
 
-          for(int i = 0; i < poly_count - 1; i++)
+          for (int i = 0; i < poly_count - 1; i++)
           {
             map->line(poly_x[i], poly_y[i],
                 poly_x[i + 1], poly_y[i + 1], 255);
@@ -768,19 +768,19 @@ void Stroke::polyLine(int x, int y, int ox, int oy, float zoom)
 {
   Map *map = Project::map;
 
-  if(x - 1 < x1)
+  if (x - 1 < x1)
     x1 = x - 1;
-  if(y - 1 < y1)
+  if (y - 1 < y1)
     y1 = y - 1;
-  if(x + 1 > x2)
+  if (x + 1 > x2)
     x2 = x + 1;
-  if(y + 1 > y2)
+  if (y + 1 > y2)
     y2 = y + 1;
 
   map->line(oldx, oldy, lastx, lasty, 0);
   map->line(oldx, oldy, x, y, 255);
 
-  for(int i = 0; i < poly_count - 1; i++)
+  for (int i = 0; i < poly_count - 1; i++)
   {
     map->line(poly_x[i], poly_y[i],
               poly_x[i + 1], poly_y[i + 1], 255);
@@ -818,53 +818,53 @@ void Stroke::previewPaint(View *view)
   clip();
 
   // draw brushstroke preview
-  if(xx1 < 0)
+  if (xx1 < 0)
     xx1 = 0;
 
-  if(yy1 < 0)
+  if (yy1 < 0)
     yy1 = 0;
 
-  if(xx1 >= backbuf->w - 1)
+  if (xx1 >= backbuf->w - 1)
     xx1 = backbuf->w - 1;
 
-  if(yy1 >= backbuf->h - 1)
+  if (yy1 >= backbuf->h - 1)
     yy1 = backbuf->h - 1;
 
-  if(xx2 < 0)
+  if (xx2 < 0)
     xx2 = 0;
 
-  if(yy2 < 0)
+  if (yy2 < 0)
     yy2 = 0;
 
-  if(xx2 >= backbuf->w - 1)
+  if (xx2 >= backbuf->w - 1)
     xx2 = backbuf->w - 1;
 
-  if(yy2 >= backbuf->h - 1)
+  if (yy2 >= backbuf->h - 1)
     yy2 = backbuf->h - 1;
 
-  for(int y = yy1; y <= yy2; y++)
+  for (int y = yy1; y <= yy2; y++)
   {
     const int ym = ((y + oy) * zr) >> 16;
     int *p = backbuf->row[y] + xx1;
 
-    for(int x = xx1; x <= xx2; x++)
+    for (int x = xx1; x <= xx2; x++)
     {
       const int xm = ((x + ox) * zr) >> 16;
 
-      if(map->getpixel(xm, ym))
+      if (map->getpixel(xm, ym))
       {
-        if(Clone::active == false)
+        if (Clone::active == false)
         {
           *p = blendFast(*p, color, trans);
         }
-        else
+          else
         {
           *p = blendFast(*p, convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
         }
       }
-      else
+        else
       {
-        if(zoom >= 1)
+        if (zoom >= 1)
         {
           // shade edges for contrast
           int xmod = x % (int)zoom;
@@ -882,28 +882,28 @@ void Stroke::previewPaint(View *view)
 
           const int checker = visibleColor(x, y);
 
-          if(map->getpixel(xm - 1, ym - 1))
+          if (map->getpixel(xm - 1, ym - 1))
             *p = blendFast(*p, checker, tx1 | ty1);
 
-          if(map->getpixel(xm, ym - 1))
+          if (map->getpixel(xm, ym - 1))
             *p = blendFast(*p, checker, ty1);
 
-          if(map->getpixel(xm + 1, ym - 1))
+          if (map->getpixel(xm + 1, ym - 1))
             *p = blendFast(*p, checker, tx2 | ty1);
 
-          if(map->getpixel(xm - 1, ym))
+          if (map->getpixel(xm - 1, ym))
             *p = blendFast(*p, checker, tx1);
 
-          if(map->getpixel(xm + 1, ym))
+          if (map->getpixel(xm + 1, ym))
             *p = blendFast(*p, checker, tx2);
 
-          if(map->getpixel(xm - 1, ym + 1))
+          if (map->getpixel(xm - 1, ym + 1))
             *p = blendFast(*p, checker, tx1 | ty2);
 
-          if(map->getpixel(xm, ym + 1))
+          if (map->getpixel(xm, ym + 1))
             *p = blendFast(*p, checker, ty2);
 
-          if(map->getpixel(xm + 1, ym + 1))
+          if (map->getpixel(xm + 1, ym + 1))
             *p = blendFast(*p, checker, tx2 | ty2);
         }
       }
@@ -941,42 +941,42 @@ void Stroke::previewSelection(View *view)
 
   clip();
 
-  if(xx1 < 0)
+  if (xx1 < 0)
     xx1 = 0;
 
-  if(yy1 < 0)
+  if (yy1 < 0)
     yy1 = 0;
 
-  if(xx1 >= backbuf->w - 1)
+  if (xx1 >= backbuf->w - 1)
     xx1 = backbuf->w - 1;
 
-  if(yy1 >= backbuf->h - 1)
+  if (yy1 >= backbuf->h - 1)
     yy1 = backbuf->h - 1;
 
-  if(xx2 < 0)
+  if (xx2 < 0)
     xx2 = 0;
 
-  if(yy2 < 0)
+  if (yy2 < 0)
     yy2 = 0;
 
-  if(xx2 >= backbuf->w - 1)
+  if (xx2 >= backbuf->w - 1)
     xx2 = backbuf->w - 1;
 
-  if(yy2 >= backbuf->h - 1)
+  if (yy2 >= backbuf->h - 1)
     yy2 = backbuf->h - 1;
 
-  for(int y = yy1; y <= yy2; y++)
+  for (int y = yy1; y <= yy2; y++)
   {
     int ym = ((y - yy3) * zr) >> 16;
     
     int *p = backbuf->row[y] + xx1;
 
-    for(int x = xx1; x <= xx2; x++)
+    for (int x = xx1; x <= xx2; x++)
     {
       const int xm = ((x - xx3) * zr) >> 16;
       const int c = convertFormat(select_bmp->getpixel(xm, ym), bgr_order);
 
-      if(use_alpha)
+      if (use_alpha)
         *p = blendFast(*p, c, scaleVal(255 - geta(c), trans));
       else
         *p = blendFast(*p, c, trans);

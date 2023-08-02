@@ -60,20 +60,20 @@ namespace ExportOptions
   {
     Items::dialog->show();
 
-    while(true)
+    while (true)
     {
       Fl_Widget *action = Fl::readqueue();
 
-      if(!action)
+      if (!action)
       {
         Fl::wait();
       }
-      else if(action == Items::ok)
+      else if (action == Items::ok)
       {
         Items::dialog->hide();
         return 0;
       }
-      else if(action == Items::cancel)
+      else if (action == Items::cancel)
       {
         Items::dialog->hide();
         return -1;
@@ -147,7 +147,7 @@ bool ExportData::fileExists(const char *fn)
 {
   FILE *temp = fopen(fn, "rb");
 
-  if(temp)
+  if (temp)
   {
     fclose(temp);
     return 1;
@@ -164,7 +164,7 @@ void ExportData::init()
 
 void ExportData::save(Fl_Widget *, void *)
 {
-  if(ExportOptions::begin() == -1)
+  if (ExportOptions::begin() == -1)
     return;
 
   Fl_Native_File_Chooser fc;
@@ -177,7 +177,7 @@ void ExportData::save(Fl_Widget *, void *)
   fc.filter_value(last_type);
   fc.directory(save_dir);
 
-  switch(fc.show())
+  switch (fc.show())
   {
     case -1:
     case 1:
@@ -192,9 +192,9 @@ void ExportData::save(Fl_Widget *, void *)
   int ext_value = fc.filter_value();
   fl_filename_setext(fn, sizeof(fn), ext_string[ext_value]);
 
-  if(fileExists(fn))
+  if (fileExists(fn))
   {
-    if(!Dialog::choice("Replace File?", "Overwrite?"))
+    if (!Dialog::choice("Replace File?", "Overwrite?"))
       return;
   }
 
@@ -202,7 +202,7 @@ void ExportData::save(Fl_Widget *, void *)
   
   ret = ExportData::saveText(fn, ext_value);
 
-  if(ret < 0)
+  if (ret < 0)
     errorMessage();
 
   last_type = ext_value;
@@ -210,16 +210,16 @@ void ExportData::save(Fl_Widget *, void *)
 
 int ExportData::beginTile(FILE *outp, int ext_value, int index)
 {
-  switch(ext_value)
+  switch (ext_value)
   {
     case TYPE_BIN:
       break;
     case TYPE_ASM:
-      if(fprintf(outp, "tile_%d:\n  db ", index) < 0)
+      if (fprintf(outp, "tile_%d:\n  db ", index) < 0)
         return -1;
       break;
     case TYPE_JAVA:
-      if(fprintf(outp, "  public static byte[] tile_%d =\n  {\n    ", index) < 0)
+      if (fprintf(outp, "  public static byte[] tile_%d =\n  {\n    ", index) < 0)
         return -1;
       break;
   }
@@ -229,21 +229,21 @@ int ExportData::beginTile(FILE *outp, int ext_value, int index)
 
 int ExportData::writeByte(FILE *outp, int ext_value, uint8_t value)
 {
-  switch(ext_value)
+  switch (ext_value)
   {
     case TYPE_BIN:
-      if(fputc(value, outp) != value)
+      if (fputc(value, outp) != value)
          return -1;
       break;
     case TYPE_ASM:
-      if(fprintf(outp, "0x%02x", value) < 0)
+      if (fprintf(outp, "0x%02x", value) < 0)
          return -1;
       break;
     case TYPE_JAVA:
-      if(value > 127)
+      if (value > 127)
         value -= 256;
 
-      if(fprintf(outp, "%d", value) < 0)
+      if (fprintf(outp, "%d", value) < 0)
          return -1;
       break;
     default:
@@ -255,16 +255,16 @@ int ExportData::writeByte(FILE *outp, int ext_value, uint8_t value)
 
 int ExportData::newLine(FILE *outp, int ext_value)
 {
-  switch(ext_value)
+  switch (ext_value)
   {
     case TYPE_BIN:
       break;
     case TYPE_ASM:
-      if(fprintf(outp, "  db ") < 0)
+      if (fprintf(outp, "  db ") < 0)
         return -1;
       break;
     case TYPE_JAVA:
-      if(fprintf(outp, "    ") < 0)
+      if (fprintf(outp, "    ") < 0)
         return -1;
       break;
     default:
@@ -276,16 +276,16 @@ int ExportData::newLine(FILE *outp, int ext_value)
 
 int ExportData::endTile(FILE *outp, int ext_value)
 {
-  switch(ext_value)
+  switch (ext_value)
   {
     case TYPE_BIN:
       break;
     case TYPE_ASM:
-      if(fprintf(outp, "\n") < 0)
+      if (fprintf(outp, "\n") < 0)
         return -1;
       break;
     case TYPE_JAVA:
-      if(fprintf(outp, "  };\n\n") < 0)
+      if (fprintf(outp, "  };\n\n") < 0)
         return -1;
       break;
     default:
@@ -302,7 +302,7 @@ int ExportData::saveText(const char *fn, int ext_value)
   FileSP out(fn, mode_str[ext_value == TYPE_BIN ? 0 : 1]);
 
   FILE *outp = out.get();
-  if(!outp)
+  if (!outp)
     return -1;
 
   Bitmap *bmp = Project::bmp;
@@ -325,55 +325,55 @@ int ExportData::saveText(const char *fn, int ext_value)
   printf("tile_bytes = %d\n", tile_bytes);
 */
 
-  for(int y = 0; y < bmp->h; y += tiley)
+  for (int y = 0; y < bmp->h; y += tiley)
   {
-    for(int x = 0; x < bmp->w; x += tilex)
+    for (int x = 0; x < bmp->w; x += tilex)
     {
-      if(beginTile(outp, ext_value, tile_count++) < 0)
+      if (beginTile(outp, ext_value, tile_count++) < 0)
         return -1;
 
       int tile_byte_count = 0;
 
-      for(int j = 0; j < tiley; j++)
+      for (int j = 0; j < tiley; j++)
       {
-        for(int i = 0; i < tilex; i += pixels)
+        for (int i = 0; i < tilex; i += pixels)
         {
           int value = 0;
 
-          for(int z = 0; z < pixels; z++)
+          for (int z = 0; z < pixels; z++)
           {
             int c = pal->lookup(bmp->getpixel(x + i + z, y + j));
 
-            if(c >= (1 << shift))
+            if (c >= (1 << shift))
               c = 0;
 
             value |= c;
 
-            if(z < pixels - 1)
+            if (z < pixels - 1)
               value <<= shift;
           }
 
-          if(writeByte(outp, ext_value, value) < 0)
+          if (writeByte(outp, ext_value, value) < 0)
             return -1;
 
           count++;
 
-          if(count > 7)
+          if (count > 7)
           {
             count = 0;
 
-            if(ext_value != TYPE_BIN)
-              if(fprintf(outp, "\n") < 0)
+            if (ext_value != TYPE_BIN)
+              if (fprintf(outp, "\n") < 0)
                 return -1;
 
-            if(tile_byte_count < tile_bytes - 1)
-              if(newLine(outp, ext_value) < 0)
+            if (tile_byte_count < tile_bytes - 1)
+              if (newLine(outp, ext_value) < 0)
                 return -1;
           }
-          else
+            else
           {
-            if(ext_value != TYPE_BIN)
-              if(fprintf(outp, ", ") < 0)
+            if (ext_value != TYPE_BIN)
+              if (fprintf(outp, ", ") < 0)
                 return -1;
           }
 
@@ -381,7 +381,7 @@ int ExportData::saveText(const char *fn, int ext_value)
         }
       }
 
-      if(endTile(outp, ext_value) < 0)
+      if (endTile(outp, ext_value) < 0)
         return -1;
     }
   }

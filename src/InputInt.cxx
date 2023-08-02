@@ -37,21 +37,21 @@ namespace
   {
     int val = std::atoi(i->input.value());
 
-    if(w == &i->dec)
+    if (w == &i->dec)
       val--;
-    else if(w == &i->inc)
+    else if (w == &i->inc)
       val++;
 
-    if(val < i->min)
+    if (val < i->min)
       val = i->min;
 
-    if(val > i->max)
+    if (val > i->max)
       val = i->max;
 
     snprintf(str, sizeof(str), "%d", val);
     i->input.value(str);
 
-    if(i->cb)
+    if (i->cb)
       i->cb(w, i);
   }
 }

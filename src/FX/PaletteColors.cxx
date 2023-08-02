@@ -27,14 +27,14 @@ void PaletteColors::apply(Bitmap *bmp, Palette *pal)
   const float inc = 1.0 / (bmp->cw * bmp->ch);
   float freq[256];
 
-  for(int i = 0; i < pal->max; i++)
+  for (int i = 0; i < pal->max; i++)
     freq[i] = 0;
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       rgba_type rgba = getRgba(*p);
 
@@ -53,41 +53,41 @@ void PaletteColors::apply(Bitmap *bmp, Palette *pal)
     }
   }
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       int lowest = 999999;
       int use1 = 0;
       int use2 = 0;
 
-      for(int i = 0; i < pal->max; i++)
+      for (int i = 0; i < pal->max; i++)
       {
-	int d = diff24(*p, pal->data[i]);
+        int d = diff24(*p, pal->data[i]);
 
-	if(d < lowest)
-	{
-	  lowest = d;
-	  use1 = i;
-	}
+        if (d < lowest)
+        {
+          lowest = d;
+          use1 = i;
+        }
       }
 
       lowest = 999999;
 
-      for(int i = 0; i < pal->max; i++)
+      for (int i = 0; i < pal->max; i++)
       {
-	if(i == use1)
-	  continue;
+        if (i == use1)
+          continue;
 
-	int d = diff24(*p, pal->data[i]);
+        int d = diff24(*p, pal->data[i]);
 
-	if(d < lowest)
-	{
-	  lowest = d;
-	  use2 = i;
-	}
+        if (d < lowest)
+        {
+          lowest = d;
+          use2 = i;
+        }
       }
 
       int c1 = pal->data[use1];
@@ -108,7 +108,7 @@ void PaletteColors::apply(Bitmap *bmp, Palette *pal)
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 

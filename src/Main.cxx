@@ -67,7 +67,7 @@ void setDarkTheme()
   int s = 0;
 
   // 32 - 55
-  for(int i = 0; i < 24; i++)
+  for (int i = 0; i < 24; i++)
   {
     int v = i * 6;
     Fl::set_color(32 + i, fl_rgb_color(v, v, v));
@@ -122,17 +122,17 @@ int main(int argc, char *argv[])
   bool exit = false;
   bool custom_settings = false;
 
-  while(true)
+  while (true)
   {
     const int c = getopt_long(argc, argv, "", long_options, &option_index);
-    if(c < 0)
+    if (c < 0)
       break;
 
-    switch(c)
+    switch (c)
     {
       case 0:
       {
-        switch(option_index)
+        switch (option_index)
         {
           case OPTION_HELP:
             printHelp();
@@ -146,18 +146,18 @@ int main(int argc, char *argv[])
             break;
 
           case OPTION_MEM:
-            if(optarg)
+            if (optarg)
             {
               memory_max = atoi(optarg);
 
-              if(memory_max < 16)
+              if (memory_max < 16)
                 memory_max = 16;
 
               printf("Image memory limit set to: %d MB\n", memory_max);
               custom_settings = true;
               exit = false;
             }
-            else
+              else
             {
               printHelp();
               exit = true;
@@ -166,21 +166,21 @@ int main(int argc, char *argv[])
             break;
 
           case OPTION_UNDOS:
-            if(optarg)
+            if (optarg)
             {
               undo_max = atoi(optarg);
 
-              if(undo_max < 1)
+              if (undo_max < 1)
                 undo_max = 1;
 
-              if(undo_max > 100)
+              if (undo_max > 100)
                 undo_max = 100;
 
               printf("Undo levels set to: %d\n", undo_max);
               custom_settings = true;
               exit = false;
             }
-            else
+              else
             {
               printHelp();
               exit = true;
@@ -207,7 +207,7 @@ int main(int argc, char *argv[])
     }
   }
 
-  if(exit == true)
+  if (exit == true)
   {
     #ifndef WIN32
       return 0;
@@ -237,9 +237,9 @@ int main(int argc, char *argv[])
   //Fl_Shared_Image::add_handler(File::previewGimpPalette);
 
   // try to load image from command line
-  if(optind < argc)
+  if (optind < argc)
   {
-    if(File::loadFile(argv[optind]) < 0)
+    if (File::loadFile(argv[optind]) < 0)
     {
       printf("Could not load image: %s\n", argv[optind]);
       return 0;
@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
   Gui::show();
   Gui::imagesAddFile("new");
 
-    if(custom_settings == true)
+    if (custom_settings == true)
     {
       #ifdef WIN32
       char s[256];
@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
 /*
   // view FLTK theme palette (for testing)
   Project::palette->max = 256;
-  for(int i = 20; i < 256; i++)
+  for (int i = 20; i < 256; i++)
   {
     int c = getFltkColor(i);
     Project::palette->data[i] = c;

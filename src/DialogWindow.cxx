@@ -63,7 +63,7 @@ void DialogWindow::addOkCancelButtons(Fl_Button **ok, Fl_Button **cancel, int *y
 
 int DialogWindow::handle(int event)
 {
-  switch(event)
+  switch (event)
   {
     case FL_PUSH:
       xpos = x();
@@ -76,7 +76,7 @@ int DialogWindow::handle(int event)
 
 void DialogWindow::show()
 {
-  if(first_show == true)
+  if (first_show == true)
   {
     xpos = Gui::getWindow()->x() + (Gui::getWindow()->w() - w()) / 2;
     ypos = Gui::getWindow()->y() + (Gui::getWindow()->h() - h()) / 2;

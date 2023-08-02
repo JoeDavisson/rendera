@@ -51,11 +51,11 @@ void Restore::apply()
   const bool keep_lum = Items::preserve_lum->value();
 
   // determine overall color cast
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       const rgba_type rgba = getRgba(*p);
 
@@ -80,11 +80,11 @@ void Restore::apply()
   // begin restore
   Gui::progressShow(bmp->h);
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       const rgba_type rgba = getRgba(*p);
       int r = rgba.r;
@@ -101,15 +101,15 @@ void Restore::apply()
       g = clamp(g, 255);
       b = clamp(b, 255);
 
-      if(keep_lum)
-	*p = Blend::keepLum(makeRgba(r, g, b, rgba.a), l);
+      if (keep_lum)
+        *p = Blend::keepLum(makeRgba(r, g, b, rgba.a), l);
       else
-	*p = makeRgba(r, g, b, rgba.a);
+        *p = makeRgba(r, g, b, rgba.a);
 
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 
@@ -121,14 +121,14 @@ void Restore::close()
   Items::dialog->hide();
   Project::undo->push();
 
-  if(Items::normalize->value())
+  if (Items::normalize->value())
     Normalize::apply(Project::bmp);
-  if(Items::invert->value())
+  if (Items::invert->value())
     Invert::apply(Project::bmp);
 
   apply();
 
-  if(Items::invert->value())
+  if (Items::invert->value())
     Invert::apply(Project::bmp);
 }
 

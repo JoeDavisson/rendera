@@ -30,7 +30,7 @@ Quadtree::Quadtree()
   root->ry = 0;
   root->value = 0;
 
-  for(int i = 0; i < 4; i++)
+  for (int i = 0; i < 4; i++)
     root->child[i] = 0;
 }
 
@@ -41,8 +41,8 @@ Quadtree::~Quadtree()
 
 void Quadtree::clear(node_type *node)
 {
-  for(int i = 0; i < 4; i++)
-    if(node->child[i])
+  for (int i = 0; i < 4; i++)
+    if (node->child[i])
       clear(node->child[i]);
 
   delete node;
@@ -52,12 +52,12 @@ void Quadtree::write(const int x, const int y, const float value)
 {
   node_type *node = root;
 
-  for(int i = 15; i >= 0; i--)
+  for (int i = 15; i >= 0; i--)
   {
     const int index = ((x >> i) & 1) << 0 |
                       ((y >> i) & 1) << 1;
 
-    if(node->child[index])
+    if (node->child[index])
     {
       node = node->child[index];
       continue;
@@ -69,7 +69,7 @@ void Quadtree::write(const int x, const int y, const float value)
     node->ry = 0;
     node->value = 0;
 
-    for(int j = 0; j < 4; j++)
+    for (int j = 0; j < 4; j++)
       node->child[j] = 0;
   }
 
@@ -82,12 +82,12 @@ void Quadtree::writePath(const int x, const int y, const float value)
 {
   node_type *node = root;
 
-  for(int i = 15; i >= 0; i--)
+  for (int i = 15; i >= 0; i--)
   {
     const int index = ((x >> i) & 1) << 0 |
                       ((y >> i) & 1) << 1;
 
-    if(node->child[index])
+    if (node->child[index])
     {
       node = node->child[index];
       continue;
@@ -100,7 +100,7 @@ void Quadtree::writePath(const int x, const int y, const float value)
     node->ry = y;
     node->value = value;
 
-    for(int j = 0; j < 4; j++)
+    for (int j = 0; j < 4; j++)
       node->child[j] = 0;
   }
 }
@@ -109,12 +109,12 @@ float Quadtree::read(const int x, const int y, int *rx, int *ry)
 {
   node_type *node = root;
 
-  for(int i = 15; i >= 0; i--)
+  for (int i = 15; i >= 0; i--)
   {
     const int index = ((x >> i) & 1) << 0 |
                       ((y >> i) & 1) << 1;
 
-    if(node->child[index])
+    if (node->child[index])
       node = node->child[index];
     else
       break;

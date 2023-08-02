@@ -39,12 +39,12 @@ GetColor::~GetColor()
 
 bool GetColor::inbox(int x, int y, int x1, int y1, int x2, int y2)
 {
-  if(x1 > x2)
+  if (x1 > x2)
     std::swap(x1, x2);
-  if(y1 > y2)
+  if (y1 > y2)
     std::swap(y1, y2);
 
-  if(x >= x1 && x <= x2 && y >= y1 && y <= y2)
+  if (x >= x1 && x <= x2 && y >= y1 && y <= y2)
     return 1;
   else
     return 0;
@@ -54,7 +54,7 @@ void GetColor::push(View *view)
 {
   Bitmap *bmp = Project::bmp;
 
-  if(inbox(view->imgx, view->imgy, bmp->cl, bmp->ct,
+  if (inbox(view->imgx, view->imgy, bmp->cl, bmp->ct,
                                    bmp->cr, bmp->cb))
   {
     const int c = bmp->getpixel(view->imgx, view->imgy);

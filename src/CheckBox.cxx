@@ -32,7 +32,7 @@ CheckBox::CheckBox(Fl_Group *g, int x, int y, int w, int h,
   group = g;
   clear_visible_focus();
 
-  if(cb)
+  if (cb)
     callback(cb, &var);
 
   char s[32];

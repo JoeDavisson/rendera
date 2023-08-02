@@ -29,7 +29,7 @@ FileSP::FileSP(const char *fn, const char *mode)
 
 FileSP::~FileSP()
 {
-  if(f)
+  if (f)
     fclose(f);
 }
 

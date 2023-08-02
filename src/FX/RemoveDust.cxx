@@ -37,11 +37,11 @@ void RemoveDust::apply(Bitmap *bmp, int amount)
 {
   Gui::progressShow(bmp->h);
 
-  for(int y = bmp->ct + 1; y <= bmp->cb - 1; y++)
+  for (int y = bmp->ct + 1; y <= bmp->cb - 1; y++)
   {
     int *p = bmp->row[y] + bmp->cl + 1;
 
-    for(int x = bmp->cl + 1; x <= bmp->cr - 1; x++)
+    for (int x = bmp->cl + 1; x <= bmp->cr - 1; x++)
     {
       const int test = *p;
       int c[8];
@@ -59,23 +59,23 @@ void RemoveDust::apply(Bitmap *bmp, int amount)
       int g = 0;
       int b = 0;
 
-      for(int i = 0; i < 8; i++)
+      for (int i = 0; i < 8; i++)
       {
-	rgba_type rgba = getRgba(c[i]);
-	r += rgba.r;
-	g += rgba.g;
-	b += rgba.b;
+        rgba_type rgba = getRgba(c[i]);
+        r += rgba.r;
+        g += rgba.g;
+        b += rgba.b;
       }
 
       const int avg = makeRgba(r / 8, g / 8, b / 8, geta(test));
 
-      if((getl(avg) - getl(test)) > amount)
-	*p = avg;
+      if ((getl(avg) - getl(test)) > amount)
+        *p = avg;
 
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 
@@ -87,12 +87,12 @@ void RemoveDust::close()
   Items::dialog->hide();
   Project::undo->push();
 
-  if(Items::invert->value())
+  if (Items::invert->value())
     Invert::apply(Project::bmp);
 
   apply(Project::bmp, atoi(Items::amount->value()));
 
-  if(Items::invert->value())
+  if (Items::invert->value())
     Invert::apply(Project::bmp);
 }
 

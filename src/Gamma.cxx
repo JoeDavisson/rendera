@@ -33,12 +33,12 @@ void Gamma::init()
   table_fix = new int[256];
   table_unfix = new int[65536];
 
-  for(int i = 0; i < 256; i++)
+  for (int i = 0; i < 256; i++)
   {
     table_fix[i] = std::round(std::pow((double)i / 255, 2.2) * 65535);
   }
 
-  for(int i = 0; i < 65536; i++)
+  for (int i = 0; i < 65536; i++)
   {
     table_unfix[i] = std::round(std::pow((double)i / 65535, (1.0 / 2.2)) * 255);
   }

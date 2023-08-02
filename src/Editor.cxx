@@ -112,7 +112,7 @@ void Editor::storeUndo()
 
 void Editor::getUndo()
 {
-  if(begin_undo)
+  if (begin_undo)
   {
     begin_undo = false;
     undo_palette->copy(Project::palette);
@@ -142,11 +142,11 @@ void Editor::setHsv(bool redraw)
 
   Items::hue->bitmap->clear(makeRgb(0, 0, 0));
 
-  for(int y = 0; y < 256; y++)
+  for (int y = 0; y < 256; y++)
   {
     int *p = Items::sat_val->bitmap->row[y];
 
-    for(int x = 0; x < 256; x++)
+    for (int x = 0; x < 256; x++)
     {
       Blend::hsvToRgb(h, x, y, &r, &g, &b);
       *p++ = makeRgb(r, g, b);
@@ -232,7 +232,7 @@ void Editor::checkHexColor()
   
   sscanf(Items::hexcolor->value(), "%06x", &c);
   
-  if(c > 0xffffff)
+  if (c > 0xffffff)
     c = 0xffffff;
   
   c |= 0xff000000;
@@ -249,7 +249,7 @@ void Editor::checkHexColorWeb()
   
   sscanf(Items::hexcolor_web->value(), "%03x", &c);
   
-  if(c > 0xfff)
+  if (c > 0xfff)
     c = 0xfff;
 
   int r = (c & 0xfff) >> 8;
@@ -285,7 +285,7 @@ void Editor::removeColor()
   Project::palette->draw(Items::palette);
   Gui::paletteDraw();
 
-  if(Items::palette->var > Project::palette->max - 1)
+  if (Items::palette->var > Project::palette->max - 1)
     Items::palette->var = Project::palette->max - 1;
 
   Items::palette->do_callback();
@@ -306,7 +306,7 @@ void Editor::checkReplaceColor(int pos)
 
 void Editor::replaceColor()
 {
-  if(ramp_state == 0)
+  if (ramp_state == 0)
   {
     Items::replace->value(1);
     Items::replace->redraw();
@@ -334,7 +334,7 @@ void Editor::checkRampRgb(int end)
   Palette *pal = Project::palette;
   int begin = ramp_begin;
 
-  if(begin > end)
+  if (begin > end)
     std::swap(begin, end);
 
   int num = end - begin;
@@ -347,7 +347,7 @@ void Editor::checkRampRgb(int end)
   double g = getg(c1);
   double b = getb(c1);
 
-  for(int i = begin; i < end; i++)
+  for (int i = begin; i < end; i++)
   {
     pal->data[i] = makeRgb(r, g, b);
     r += stepr;
@@ -370,7 +370,7 @@ void Editor::checkRampHsv(int end)
   Palette *pal = Project::palette;
   int begin = ramp_begin;
 
-  if(begin > end)
+  if (begin > end)
     std::swap(begin, end);
 
   int num = end - begin;
@@ -390,7 +390,7 @@ void Editor::checkRampHsv(int end)
   const double steps = (double)(s2 - s1) / num;
   const double stepv = (double)(v2 - v1) / num;
 
-  for(int i = begin; i < end; i++)
+  for (int i = begin; i < end; i++)
   {
     Blend::hsvToRgb(h, s, v, &r, &g, &b);
     pal->data[i] = makeRgb(r, g, b);
@@ -412,21 +412,21 @@ void Editor::checkPalette()
   Palette *pal = Project::palette;
   int pos = Items::palette->var;
 
-  if(pos > pal->max - 1)
+  if (pos > pal->max - 1)
   {
     pos = pal->max - 1;
     Items::palette->var = pos;
   }
 
-  if(Fl::event_button1() && button_down == false)
+  if (Fl::event_button1() && button_down == false)
   {
     button_down = true;
 
-    if(ramp_state)
+    if (ramp_state)
     {
       ramp_begin = last_index;
 
-      switch(ramp_state)
+      switch (ramp_state)
       {
         case 1:
           checkRampRgb(pos);
@@ -436,11 +436,11 @@ void Editor::checkPalette()
           break;
       }
     }
-    else if(replace_state)
+    else if (replace_state)
     {
       checkReplaceColor(pos);
     }
-    else if(Fl::event_ctrl())
+    else if (Fl::event_ctrl())
     {
       copyColor(last_index, pos);
       Project::brush->color = pal->data[pos];
@@ -450,7 +450,7 @@ void Editor::checkPalette()
       setHsv(true);
       Project::palette->draw(Items::palette);
     }
-    else if(Fl::event_shift())
+    else if (Fl::event_shift())
     {
       swapColor(last_index, pos);
       Project::brush->color = pal->data[pos];
@@ -460,7 +460,7 @@ void Editor::checkPalette()
       setHsv(true);
       Project::palette->draw(Items::palette);
     }
-    else
+      else
     {
       Project::brush->color = pal->data[pos];
       updateHexColor();
@@ -496,7 +496,7 @@ void Editor::getTrans()
 {
   Items::trans->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR)); 
 
-  for(int i = 0; i < 256; i++)
+  for (int i = 0; i < 256; i++)
     Items::trans->bitmap->vline(0, i, 23, makeRgb(255, 255, 255), i);
 
   int tx = Items::trans->var & 255;
@@ -525,7 +525,7 @@ void Editor::getSatVal()
 
 void Editor::rgbRamp()
 {
-  if(ramp_state == 0)
+  if (ramp_state == 0)
   {
     Items::rgb_ramp->value(1);
     Items::rgb_ramp->redraw();
@@ -536,7 +536,7 @@ void Editor::rgbRamp()
 
 void Editor::hsvRamp()
 {
-  if(ramp_state == 0)
+  if (ramp_state == 0)
   {
     Items::hsv_ramp->value(1);
     Items::hsv_ramp->redraw();
@@ -562,9 +562,9 @@ void Editor::begin()
   updateInfo((char *)"  Shift to swap, Ctrl to copy, Right-click to move cursor.");
   updateIndex(Items::palette->var);
 
-  while(Items::dialog->shown())
+  while (Items::dialog->shown())
   {
-    if(Fl::event_button1() == 0)
+    if (Fl::event_button1() == 0)
       button_down = false;
 
     Fl::wait();

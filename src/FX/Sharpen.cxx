@@ -37,21 +37,21 @@ void Sharpen::apply(Bitmap *bmp, int amount)
 
   Gui::progressShow(bmp->h);
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = temp.row[y - bmp->cl];
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       int lum = 0;
 
-      for(int j = 0; j < 3; j++) 
+      for (int j = 0; j < 3; j++) 
       {
-	for(int i = 0; i < 3; i++) 
-	{
-	  lum += getl(bmp->getpixel(x + i - 1, y + j - 1))
-		   * FilterMatrix::sharpen[i][j];
-	}
+        for (int i = 0; i < 3; i++) 
+        {
+          lum += getl(bmp->getpixel(x + i - 1, y + j - 1))
+                   * FilterMatrix::sharpen[i][j];
+        }
       }
 
       const int c = bmp->getpixel(x, y);
@@ -61,7 +61,7 @@ void Sharpen::apply(Bitmap *bmp, int amount)
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 

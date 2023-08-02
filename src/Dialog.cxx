@@ -120,15 +120,15 @@ namespace JpegQuality
   {
     Items::dialog->show();
 
-    while(true)
+    while (true)
     {
       Fl_Widget *action = Fl::readqueue();
 
-      if(!action)
+      if (!action)
       {
         Fl::wait();
       }
-      else if(action == Items::ok)
+      else if (action == Items::ok)
       {
         Items::dialog->hide();
         break;
@@ -170,15 +170,15 @@ namespace JavaExport
   {
     Items::dialog->show();
 
-    while(true)
+    while (true)
     {
       Fl_Widget *action = Fl::readqueue();
 
-      if(!action)
+      if (!action)
       {
         Fl::wait();
       }
-      else if(action == Items::ok)
+      else if (action == Items::ok)
       {
         Items::dialog->hide();
         break;
@@ -224,15 +224,15 @@ namespace PngOptions
   {
     Items::dialog->show();
 
-    while(true)
+    while (true)
     {
       Fl_Widget *action = Fl::readqueue();
 
-      if(!action)
+      if (!action)
       {
         Fl::wait();
       }
-      else if(action == Items::ok)
+      else if (action == Items::ok)
       {
         Items::dialog->hide();
         break;
@@ -283,20 +283,20 @@ namespace TextOptions
   {
     Items::dialog->show();
 
-    while(true)
+    while (true)
     {
       Fl_Widget *action = Fl::readqueue();
 
-      if(!action)
+      if (!action)
       {
         Fl::wait();
       }
-      else if(action == Items::ok)
+      else if (action == Items::ok)
       {
         Items::dialog->hide();
         break;
       }
-      else if(action == Items::cancel)
+      else if (action == Items::cancel)
       {
         Items::dialog->hide();
         break;
@@ -358,7 +358,7 @@ namespace NewImage
 
   void checkWidth()
   {
-    if(Items::keep_aspect->value())
+    if (Items::keep_aspect->value())
     {
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
@@ -373,7 +373,7 @@ namespace NewImage
 
   void checkHeight()
   {
-    if(Items::keep_aspect->value())
+    if (Items::keep_aspect->value())
     {
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
@@ -390,7 +390,7 @@ namespace NewImage
   {
     Items::dialog->hide();
 
-    if(Project::newImage(atoi(Items::width->value()),
+    if (Project::newImage(atoi(Items::width->value()),
                          atoi(Items::height->value())) == -1)
     {
       return;
@@ -659,7 +659,7 @@ void Dialog::message(const char *title, const char *message)
 bool Dialog::choice(const char *title, const char *message)
 {
   Choice::begin(title, message);
-  while(Choice::Items::dialog->shown())
+  while (Choice::Items::dialog->shown())
     Fl::wait();
   return Choice::yes;
 }

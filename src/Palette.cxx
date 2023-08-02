@@ -54,7 +54,7 @@ Palette::~Palette()
 // draw palette swatches to a widget, and try to fill the space optimally
 void Palette::draw(Widget *widget)
 {
-  if(max > 256)
+  if (max > 256)
     return;
 
   int w = widget->w();
@@ -62,16 +62,16 @@ void Palette::draw(Widget *widget)
 
   int step = std::sqrt((w * h) / max);
 
-  while((w % step) != 0)
+  while ((w % step) != 0)
     step--;
 
   widget->stepx = step;
   widget->stepy = step;
   widget->bitmap->clear(makeRgb(0, 0, 0));
 
-  for(int y = 0; y < h; y += step)
+  for (int y = 0; y < h; y += step)
   {
-    for(int x = 0; x < w; x += step)
+    for (int x = 0; x < w; x += step)
     {
       widget->bitmap->rect(x, y, x + step, y + step,
                            makeRgb(255, 255, 255), 160);
@@ -84,11 +84,11 @@ void Palette::draw(Widget *widget)
 
   int i = 0;
 
-  for(int y = 0; y < h / step; y++)
+  for (int y = 0; y < h / step; y++)
   {
-    for(int x = 0; x < w / step; x++)
+    for (int x = 0; x < w / step; x++)
     {
-      if(i >= max)
+      if (i >= max)
         break;
       int x1 = x * step;
       int y1 = y * step;
@@ -99,9 +99,9 @@ void Palette::draw(Widget *widget)
     }
   }
 
-  for(int y = 0; y < h; y += step)
+  for (int y = 0; y < h; y += step)
   {
-    for(int x = 0; x < w; x += step)
+    for (int x = 0; x < w; x += step)
     {
       widget->bitmap->hline(x, y, x + step - 1, makeRgb(0, 0, 0), 128);
       widget->bitmap->vline(y, x, y + step - 1, makeRgb(0, 0, 0), 128);
@@ -130,7 +130,7 @@ void Palette::draw(Widget *widget)
 // functions to modify palette (be sure to call fillTable afterwards)
 void Palette::copy(Palette *dest)
 {
-  for(int i = 0; i < 256; i++)
+  for (int i = 0; i < 256; i++)
     dest->data[i] = data[i];
 
   dest->max = max;
@@ -138,12 +138,12 @@ void Palette::copy(Palette *dest)
 
 void Palette::insertColor(int color, int index)
 {
-  if(max >= 256)
+  if (max >= 256)
     return;
 
   max++;
 
-  for(int i = max - 1; i > index; i--)
+  for (int i = max - 1; i > index; i--)
     data[i] = data[i - 1];
 
   data[index] = color;
@@ -151,10 +151,10 @@ void Palette::insertColor(int color, int index)
 
 void Palette::deleteColor(int index)
 {
-  if(max <= 1)
+  if (max <= 1)
     return;
 
-  for(int i = index; i < max - 1; i++)
+  for (int i = index; i < max - 1; i++)
     data[i] = data[i + 1];
 
   max--;
@@ -186,7 +186,7 @@ void Palette::fillTable()
   int best_dist;
   const int step = 4;
 
-  for(int i = 0; i < max; i++)
+  for (int i = 0; i < max; i++)
   {
     const int c = data[i];
     colors[i].x[0] = getr(c);
@@ -197,11 +197,11 @@ void Palette::fillTable()
 
   root = KDtree::build(colors, max, 0, 3);
 
-  for(int b = 0; b <= 256 - step; b += step)
+  for (int b = 0; b <= 256 - step; b += step)
   {
-    for(int g = 0; g <= 256 - step; g += step)
+    for (int g = 0; g <= 256 - step; g += step)
     {
-      for(int r = 0; r <= 256 - step; r += step)
+      for (int r = 0; r <= 256 - step; r += step)
       {
         test_node.x[0] = r + step / 2;
         test_node.x[1] = g + step / 2;
@@ -210,15 +210,15 @@ void Palette::fillTable()
         found = 0;
         KDtree::nearest(root, &test_node, 0, 3, &found, &best_dist);
 
-        for(int k = 0; k < step; k++)
+        for (int k = 0; k < step; k++)
         {
           const int bk = b + k;
 
-          for(int j = 0; j < step; j++)
+          for (int j = 0; j < step; j++)
           {
             const int gj = g + j;
 
-            for(int i = 0; i < step; i++)
+            for (int i = 0; i < step; i++)
             {
               const int ri = r + i;
 
@@ -230,7 +230,7 @@ void Palette::fillTable()
     }
   }
 
-  for(int i = 0; i < max; i++)
+  for (int i = 0; i < max; i++)
     table[data[i] & 0xffffff] = i;
 
   delete[] colors;
@@ -261,32 +261,32 @@ int Palette::load(const char *fn)
   int ch;
   int len = 0;
 
-  while(true)
+  while (true)
   {
-    for(int i = 0; i < 255; i++)
+    for (int i = 0; i < 255; i++)
     {
       line[i] = '\0';
       ch = fgetc(in.get());
-      if(ch == '\n' || ch == EOF)
+      if (ch == '\n' || ch == EOF)
         break;
       line[i] = ch;
     }
 
-    if(ch == EOF)
+    if (ch == EOF)
       break;
 
     // replace tabs with spaces
-    for(int i = 0; i < len; i++)
-      if(line[i] == '\t')
+    for (int i = 0; i < len; i++)
+      if (line[i] == '\t')
         line[i] = ' ';
 
     // get first three strings
-    if(sscanf(line, "%d %d %d", &r, &g, &b) != 3)
+    if (sscanf(line, "%d %d %d", &r, &g, &b) != 3)
       continue;
 
     // add to palette
     data[index++] = makeRgb(r, g, b);
-    if(index > 256)
+    if (index > 256)
       break;
   }
 
@@ -300,17 +300,17 @@ int Palette::save(const char *fn)
 {
   FileSP out(fn, "w");
 
-  if(fprintf(out.get(), "GIMP Palette\n") < 0)
+  if (fprintf(out.get(), "GIMP Palette\n") < 0)
     return -1;
 
-  if(fprintf(out.get(), "#\n") < 0)
+  if (fprintf(out.get(), "#\n") < 0)
     return -1;
 
-  for(int i = 0; i < max; i++)
+  for (int i = 0; i < max; i++)
   {
     int c = data[i];
 
-    if(fprintf(out.get(), "%d %d %d\n", getr(c), getg(c), getb(c)) < 0)
+    if (fprintf(out.get(), "%d %d %d\n", getr(c), getg(c), getb(c)) < 0)
       return -1;
   }
 
@@ -337,9 +337,9 @@ void Palette::setDefault()
   data[index++] = makeRgb(0, 0, 0);
 
   //colors
-  for(int h = 0; h < 15; h++)
+  for (int h = 0; h < 15; h++)
   {
-    for(int v = 3; v >= 0; v--)
+    for (int v = 3; v >= 0; v--)
     {
       int r, g, b;
 
@@ -363,7 +363,7 @@ void Palette::setBlackAndWhite()
 
 void Palette::setGrays()
 {
-  for(int i = 0; i < 16; i++)
+  for (int i = 0; i < 16; i++)
   {
     data[i] = makeRgb(i * 17, i * 17, i * 17);
   }
@@ -411,11 +411,11 @@ void Palette::setWebSafe()
 {
   int index = 0;
 
-  for(int b = 0; b < 6; b++)
+  for (int b = 0; b < 6; b++)
   {
-    for(int g = 0; g < 6; g++)
+    for (int g = 0; g < 6; g++)
     {
-      for(int r = 0; r < 6; r++)
+      for (int r = 0; r < 6; r++)
       {
         data[index++] = makeRgb(r * 51, g * 51, b * 51);
       }
@@ -430,11 +430,11 @@ void Palette::set3LevelRGB()
 {
   int index = 0;
 
-  for(int r = 0; r < 3; r++)
+  for (int r = 0; r < 3; r++)
   {
-    for(int g = 0; g < 3; g++)
+    for (int g = 0; g < 3; g++)
     {
-      for(int b = 0; b < 3; b++)
+      for (int b = 0; b < 3; b++)
       {
         data[index++] = makeRgb(std::min(r * 128, 255),
                                 std::min(g * 128, 255),
@@ -451,11 +451,11 @@ void Palette::set4LevelRGB()
 {
   int index = 0;
 
-  for(int r = 0; r < 4; r++)
+  for (int r = 0; r < 4; r++)
   {
-    for(int g = 0; g < 4; g++)
+    for (int g = 0; g < 4; g++)
     {
-      for(int b = 0; b < 4; b++)
+      for (int b = 0; b < 4; b++)
       {
         data[index++] = makeRgb(r * 85, g * 85, b * 85);
       }

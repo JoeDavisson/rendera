@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 void FX::drawPreview(Bitmap *src, Bitmap *dest)
 {
-  if(src->w >= src->h)
+  if (src->w >= src->h)
   {
     float aspect = (float)src->h / src->w;
     int height = (float)dest->w * aspect;
@@ -40,7 +40,7 @@ void FX::drawPreview(Bitmap *src, Bitmap *dest)
     dest->rect(0, (dest->h - height) / 2, dest->w,
               ((dest->h - height) / 2) + height, makeRgb(0, 0, 0), 0);
   }
-  else
+    else
   {
     float aspect = (float)src->w / src->h;
     int width = (float)dest->h * aspect;

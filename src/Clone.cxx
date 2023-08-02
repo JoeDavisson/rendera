@@ -42,7 +42,7 @@ Bitmap *Clone::buffer_bmp = 0;
 // change the clone target
 void Clone::move(int xx, int yy)
 {
-  if(moved)
+  if (moved)
   {
     dx = xx - x; 
     dy = yy - y; 

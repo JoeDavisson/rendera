@@ -25,7 +25,7 @@ Octree::Octree()
   root = new node_type;
   root->value = 0;
 
-  for(int i = 0; i < 8; i++)
+  for (int i = 0; i < 8; i++)
     root->child[i] = 0;
 }
 
@@ -36,8 +36,8 @@ Octree::~Octree()
 
 void Octree::clear(node_type *node)
 {
-  for(int i = 0; i < 8; i++)
-    if(node->child[i])
+  for (int i = 0; i < 8; i++)
+    if (node->child[i])
       clear(node->child[i]);
 
   delete node;
@@ -47,13 +47,13 @@ void Octree::write(const int r, const int g, const int b, const float value)
 {
   node_type *node = root;
 
-  for(int i = 7; i >= 0; i--)
+  for (int i = 7; i >= 0; i--)
   {
     const int index = ((r >> i) & 1) << 0 |
                       ((g >> i) & 1) << 1 |
                       ((b >> i) & 1) << 2;
 
-    if(node->child[index])
+    if (node->child[index])
     {
       node = node->child[index];
       continue;
@@ -63,7 +63,7 @@ void Octree::write(const int r, const int g, const int b, const float value)
     node = node->child[index];
     node->value = 0;
 
-    for(int j = 0; j < 8; j++)
+    for (int j = 0; j < 8; j++)
       node->child[j] = 0;
   }
 
@@ -74,13 +74,13 @@ void Octree::writePath(const int r, const int g, const int b, const float value)
 {
   node_type *node = root;
 
-  for(int i = 7; i >= 0; i--)
+  for (int i = 7; i >= 0; i--)
   {
     const int index = ((r >> i) & 1) << 0 |
                       ((g >> i) & 1) << 1 |
                       ((b >> i) & 1) << 2;
 
-    if(node->child[index])
+    if (node->child[index])
     {
         node = node->child[index];
         continue;
@@ -90,7 +90,7 @@ void Octree::writePath(const int r, const int g, const int b, const float value)
     node = node->child[index];
     node->value = value;
 
-    for(int j = 0; j < 8; j++)
+    for (int j = 0; j < 8; j++)
         node->child[j] = 0;
   }
 }
@@ -99,13 +99,13 @@ float Octree::read(const int r, const int g, const int b)
 {
   node_type *node = root;
 
-  for(int i = 7; i >= 0; i--)
+  for (int i = 7; i >= 0; i--)
   {
     const int index = ((r >> i) & 1) << 0 |
                       ((g >> i) & 1) << 1 |
                       ((b >> i) & 1) << 2;
 
-    if(node->child[index])
+    if (node->child[index])
       node = node->child[index];
     else
       break;
@@ -118,13 +118,13 @@ int Octree::read(const int c)
 {
   node_type *node = root;
 
-  for(int i = 7; i >= 0; i--)
+  for (int i = 7; i >= 0; i--)
   {
     const int index = (((c & 255) >> i) & 1) << 0 |
                       ((((c >> 8) & 255) >> i) & 1) << 1 |
                       ((((c >> 16) & 255) >> i) & 1) << 2;
 
-    if(node->child[index])
+    if (node->child[index])
       node = node->child[index];
     else
       break;

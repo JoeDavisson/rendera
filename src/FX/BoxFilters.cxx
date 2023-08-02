@@ -43,11 +43,11 @@ namespace
 
   void copyMatrix(const int src[3][3], int dest[3][3])
   {
-    for(int j = 0; j < 3; j++) 
+    for (int j = 0; j < 3; j++) 
     {
-      for(int i = 0; i < 3; i++) 
+      for (int i = 0; i < 3; i++) 
       {
-	dest[i][j] = src[i][j];
+        dest[i][j] = src[i][j];
       }
     }
   }
@@ -58,7 +58,7 @@ void BoxFilters::apply(Bitmap *bmp, int amount, int mode)
   int div = 1;
   int matrix[3][3];
 
-  switch(mode)
+  switch (mode)
   {
     case BOX_BLUR:
       copyMatrix(FilterMatrix::blur, matrix);
@@ -89,26 +89,26 @@ void BoxFilters::apply(Bitmap *bmp, int amount, int mode)
   Bitmap temp(bmp->cw, bmp->ch);
   Gui::progressShow(bmp->h);
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = temp.row[y - bmp->cl];
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       int r = 0;
       int g = 0;
       int b = 0;
 
-      for(int j = 0; j < 3; j++) 
+      for (int j = 0; j < 3; j++) 
       {
-	for(int i = 0; i < 3; i++) 
-	{
-	  const rgba_type rgba = getRgba(bmp->getpixel(x + i - 1, y + j - 1));
+        for (int i = 0; i < 3; i++) 
+        {
+          const rgba_type rgba = getRgba(bmp->getpixel(x + i - 1, y + j - 1));
 
-	  r += rgba.r * matrix[i][j];
-	  g += rgba.g * matrix[i][j];
-	  b += rgba.b * matrix[i][j];
-	}
+          r += rgba.r * matrix[i][j];
+          g += rgba.g * matrix[i][j];
+          b += rgba.b * matrix[i][j];
+        }
       }
 
       r /= div;
@@ -125,7 +125,7 @@ void BoxFilters::apply(Bitmap *bmp, int amount, int mode)
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 

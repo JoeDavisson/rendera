@@ -37,12 +37,12 @@ Button::Button(Fl_Group *g, int x, int y, int w, int h,
 {
   var = 0;
 
-  if(cb)
+  if (cb)
     callback(cb, &var);
 
   group = g;
 
-  if(!(bitmap = File::loadPngFromArray(array)))
+  if (!(bitmap = File::loadPngFromArray(array)))
   {
     fl_message_title("Error");
     fl_message("Could not load image.");
@@ -69,7 +69,7 @@ void Button::draw()
 
   fl_push_clip(x(), y(), w(), h());
 
-  if(value())
+  if (value())
     image->draw(x() + 1, y() + 1);
   else
     image->draw(x(), y());
@@ -88,7 +88,7 @@ void Button::draw()
   fl_xyline(x1, y1, x2);
   fl_yxline(x1, y1, y2);
 
-  if(value())
+  if (value())
   {
     fl_xyline(x1 + 1, y1 + 1, x2 - 1);
     fl_yxline(x1 + 1, y1 + 1, y2 - 1);

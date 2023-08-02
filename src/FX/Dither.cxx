@@ -121,7 +121,7 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
   int w = 5, h = 3;
   int div = 1;
 
-  switch(mode)
+  switch (mode)
   {
     case THRESHOLD:
       matrix = Threshold::matrix;
@@ -155,177 +155,177 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
 
   Gui::progressShow(bmp->h);
 
-  if(lum_only)
+  if (lum_only)
   {
-    for(int y = bmp->ct; y <= bmp->cb; y++)
+    for (int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for (int x = bmp->cl; x <= bmp->cr; x++)
       {
-	const int alpha = geta(*p);
-	const int old_l = getl(*p);
-	const int pal_index = Project::palette->lookup(Blend::keepLum(*p, old_l));
-	const int cp = Project::palette->data[pal_index];
+        const int alpha = geta(*p);
+        const int old_l = getl(*p);
+        const int pal_index = Project::palette->lookup(Blend::keepLum(*p, old_l));
+        const int cp = Project::palette->data[pal_index];
 
-	rgba_type rgba = getRgba(cp);
-	*p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
+        rgba_type rgba = getRgba(cp);
+        *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
 
-	const int new_l = getl(*p);
-	int el;
+        const int new_l = getl(*p);
+        int el;
 
-	if(fix_gamma)
-	{
-	  el = Gamma::fix(old_l) - Gamma::fix(new_l);
+        if (fix_gamma)
+        {
+          el = Gamma::fix(old_l) - Gamma::fix(new_l);
 
-          if(el < -32767) el = -32767;
-          if(el > 32767) el = 32767;
-	}
-	else
-	{
-	  el = old_l - new_l;
+          if (el < -32767) el = -32767;
+          if (el > 32767) el = 32767;
+        }
+          else
+        {
+          el = old_l - new_l;
 
-          if(el < -127) el = -127;
-          if(el > 127) el = 127;
-	}
+          if (el < -127) el = -127;
+          if (el > 127) el = 127;
+        }
 
-	for(int j = 0; j < h; j++)
-	{
-	  for(int i = 0; i < w; i++)
-	  {
-	    if(matrix[j][i] > 0)
-	    {
-	      int c = bmp->getpixel(x - w / 2 + i, y + j);
-	      int l = getl(c);
+        for (int j = 0; j < h; j++)
+        {
+          for (int i = 0; i < w; i++)
+          {
+            if (matrix[j][i] > 0)
+            {
+              int c = bmp->getpixel(x - w / 2 + i, y + j);
+              int l = getl(c);
 
-	      if(fix_gamma)
-		l = Gamma::fix(l); 
+              if (fix_gamma)
+                l = Gamma::fix(l); 
 
-	      l += (el * matrix[j][i]) / div;
+              l += (el * matrix[j][i]) / div;
 
-	      if(fix_gamma)
-		l = Gamma::unfix(clamp(l, 65535));
-	      else
-		l = clamp(l, 255);
+              if (fix_gamma)
+                l = Gamma::unfix(clamp(l, 65535));
+              else
+                l = clamp(l, 255);
 
-	      rgba = getRgba(Blend::keepLum(c, l));
+              rgba = getRgba(Blend::keepLum(c, l));
 
-	      bmp->setpixelSolid(x - w / 2 + i, y + j,
-			       makeRgba(rgba.r, rgba.g, rgba.b, rgba.a), 0);
-	    }  
-	  }
-	}
+              bmp->setpixelSolid(x - w / 2 + i, y + j,
+                               makeRgba(rgba.r, rgba.g, rgba.b, rgba.a), 0);
+            }  
+          }
+        }
 
-	p++;
+        p++;
       }
 
-      if(Gui::progressUpdate(y) < 0)
-	return;
+      if (Gui::progressUpdate(y) < 0)
+        return;
     }
   }
-  else
+    else
   {
-    for(int y = bmp->ct; y <= bmp->cb; y++)
+    for (int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for (int x = bmp->cl; x <= bmp->cr; x++)
       {
-	rgba_type rgba = getRgba(*p);
-	const int alpha = rgba.a;
-	const int old_r = rgba.r;
-	const int old_g = rgba.g;
-	const int old_b = rgba.b;
+        rgba_type rgba = getRgba(*p);
+        const int alpha = rgba.a;
+        const int old_r = rgba.r;
+        const int old_g = rgba.g;
+        const int old_b = rgba.b;
 
-	const int pal_index = Project::palette->lookup(*p);
-	const int c = Project::palette->data[pal_index];
+        const int pal_index = Project::palette->lookup(*p);
+        const int c = Project::palette->data[pal_index];
 
-	rgba = getRgba(c);
-	*p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
+        rgba = getRgba(c);
+        *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
 
-	const int new_r = rgba.r;
-	const int new_g = rgba.g;
-	const int new_b = rgba.b;
-	int er, eg, eb;
+        const int new_r = rgba.r;
+        const int new_g = rgba.g;
+        const int new_b = rgba.b;
+        int er, eg, eb;
 
-	if(fix_gamma)
-	{
-	  er = Gamma::fix(old_r) - Gamma::fix(new_r);
-	  eg = Gamma::fix(old_g) - Gamma::fix(new_g);
-	  eb = Gamma::fix(old_b) - Gamma::fix(new_b);
+        if (fix_gamma)
+        {
+          er = Gamma::fix(old_r) - Gamma::fix(new_r);
+          eg = Gamma::fix(old_g) - Gamma::fix(new_g);
+          eb = Gamma::fix(old_b) - Gamma::fix(new_b);
 
-          if(er < -32767) er = -32767;
-          if(er > 32767) er = 32767;
-          if(eg < -32767) eg = -32767;
-          if(eg > 32767) eg = 32767;
-          if(eb < -32767) eb = -32767;
-          if(eb > 32767) eb = 32767;
-	}
-	else
-	{
-	  er = old_r - new_r;
-	  eg = old_g - new_g;
-	  eb = old_b - new_b;
+          if (er < -32767) er = -32767;
+          if (er > 32767) er = 32767;
+          if (eg < -32767) eg = -32767;
+          if (eg > 32767) eg = 32767;
+          if (eb < -32767) eb = -32767;
+          if (eb > 32767) eb = 32767;
+        }
+          else
+        {
+          er = old_r - new_r;
+          eg = old_g - new_g;
+          eb = old_b - new_b;
 
-          if(er < -127) er = -127;
-          if(er > 127) er = 127;
-          if(eg < -127) eg = -127;
-          if(eg > 127) eg = 127;
-          if(eb < -127) eb = -127;
-          if(eb > 127) eb = 127;
-	}
+          if (er < -127) er = -127;
+          if (er > 127) er = 127;
+          if (eg < -127) eg = -127;
+          if (eg > 127) eg = 127;
+          if (eb < -127) eb = -127;
+          if (eb > 127) eb = 127;
+        }
 
-	for(int j = 0; j < h; j++)
-	{
-	  for(int i = 0; i < w; i++)
-	  {
-	    if(matrix[j][i] > 0)
-	    {
-	      rgba = getRgba(bmp->getpixel(x - w / 2 + i, y + j));
-	      int r, g, b;
+        for (int j = 0; j < h; j++)
+        {
+          for (int i = 0; i < w; i++)
+          {
+            if (matrix[j][i] > 0)
+            {
+              rgba = getRgba(bmp->getpixel(x - w / 2 + i, y + j));
+              int r, g, b;
 
-	      if(fix_gamma)
-	      {
-		r = Gamma::fix(rgba.r); 
-		g = Gamma::fix(rgba.g); 
-		b = Gamma::fix(rgba.b);
-	      }
-	      else
-	      {
-		r = rgba.r; 
-		g = rgba.g; 
-		b = rgba.b; 
-	      }
+              if (fix_gamma)
+              {
+                r = Gamma::fix(rgba.r); 
+                g = Gamma::fix(rgba.g); 
+                b = Gamma::fix(rgba.b);
+              }
+                else
+              {
+                r = rgba.r; 
+                g = rgba.g; 
+                b = rgba.b; 
+              }
 
-	      r += (er * matrix[j][i]) / div;
-	      g += (eg * matrix[j][i]) / div;
-	      b += (eb * matrix[j][i]) / div;
+              r += (er * matrix[j][i]) / div;
+              g += (eg * matrix[j][i]) / div;
+              b += (eb * matrix[j][i]) / div;
 
-	      if(fix_gamma)
-	      {
-		r = Gamma::unfix(clamp(r, 65535));
-		g = Gamma::unfix(clamp(g, 65535));
-		b = Gamma::unfix(clamp(b, 65535));
-	      }
-	      else
-	      {
-		r = clamp(r, 255);
-		g = clamp(g, 255);
-		b = clamp(b, 255);
-	      }
+              if (fix_gamma)
+              {
+                r = Gamma::unfix(clamp(r, 65535));
+                g = Gamma::unfix(clamp(g, 65535));
+                b = Gamma::unfix(clamp(b, 65535));
+              }
+                else
+              {
+                r = clamp(r, 255);
+                g = clamp(g, 255);
+                b = clamp(b, 255);
+              }
 
-	      bmp->setpixelSolid(x - w / 2 + i, y + j,
-			       makeRgba(r, g, b, rgba.a), 0);
-	    }  
-	  }
+              bmp->setpixelSolid(x - w / 2 + i, y + j,
+                               makeRgba(r, g, b, rgba.a), 0);
+            }  
+          }
 
-	}
+        }
 
-	p++;
+        p++;
       }
 
-      if(Gui::progressUpdate(y) < 0)
-	return;
+      if (Gui::progressUpdate(y) < 0)
+        return;
     }
   }
 

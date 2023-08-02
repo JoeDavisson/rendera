@@ -68,7 +68,7 @@ void Marble::apply(Bitmap *dest)
   int threshold = Items::threshold->var * 10.96;
   int (*current_blend)(const int, const int, const int) = &Blend::trans;
 
-  switch(Items::mode->value())
+  switch (Items::mode->value())
   {
     case 1:
       current_blend = &Blend::lighten;
@@ -81,21 +81,21 @@ void Marble::apply(Bitmap *dest)
       break;
   }
   
-  for(int y = 0; y < h; y++)
+  for (int y = 0; y < h; y++)
   {
     int *p = dest->row[y + dest->ct] + dest->cl;
 
-    for(int x = 0; x < w; x++)
+    for (int x = 0; x < w; x++)
     {
       int mix = marble.getpixel(x, y) - threshold;
 
-      if(mix < 0)
-	mix = 0;
+      if (mix < 0)
+        mix = 0;
 
-      if(Items::type->value() == 1)
-	*p = current_blend(*p, color, (scaleVal(trans, 255 - mix) & 63) * 4);
+      if (Items::type->value() == 1)
+        *p = current_blend(*p, color, (scaleVal(trans, 255 - mix) & 63) * 4);
       else
-	*p = current_blend(*p, color, scaleVal(trans, 255 - mix));
+        *p = current_blend(*p, color, scaleVal(trans, 255 - mix));
 
       p++;
     }
@@ -214,7 +214,7 @@ void Marble::update()
 
 void Marble::setMarb()
 {
-  if(Items::marb->var == Items::old_marb_var)
+  if (Items::marb->var == Items::old_marb_var)
     return;
 
   update();
@@ -223,7 +223,7 @@ void Marble::setMarb()
 
 void Marble::setTurb()
 {
-  if(Items::turb->var == Items::old_turb_var)
+  if (Items::turb->var == Items::old_turb_var)
     return;
 
   update();
@@ -232,7 +232,7 @@ void Marble::setTurb()
 
 void Marble::setBlend()
 {
-  if(Items::blend->var == Items::old_blend_var)
+  if (Items::blend->var == Items::old_blend_var)
     return;
 
   update();
@@ -241,7 +241,7 @@ void Marble::setBlend()
 
 void Marble::setThreshold()
 {
-  if(Items::threshold->var == Items::old_threshold_var)
+  if (Items::threshold->var == Items::old_threshold_var)
     return;
 
   update();

@@ -41,19 +41,19 @@ namespace
     const int h = bmp->h;
 
     // left
-    for(int y = ct; y <= cb; y++)
+    for (int y = ct; y <= cb; y++)
       bmp->hline(0, y, cl - 1, bmp->getpixel(cl, y));
 
     // right
-    for(int y = ct; y <= cb; y++)
+    for (int y = ct; y <= cb; y++)
       bmp->hline(cr + 1, y, w - 1, bmp->getpixel(cr, y));
 
     // top
-    for(int x = cl; x <= cr; x++)
+    for (int x = cl; x <= cr; x++)
       bmp->vline(0, x, ct - 1, bmp->getpixel(x, ct));
 
     // bottom
-    for(int x = cl; x <= cr; x++)
+    for (int x = cl; x <= cr; x++)
       bmp->vline(cb + 1, x, h - 1, bmp->getpixel(x, cb));
 
     // upper-left
@@ -85,7 +85,7 @@ namespace
 
 void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
 {
-  if(size < 1)
+  if (size < 1)
   {
     float f = size - (int)size;
     blend = 255 - f * 255;
@@ -104,22 +104,22 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
   src.blit(&temp, 0, 0, 0, 0, src.w, src.h);
 
   // use alternative blur for sizes 1 & 2
-  if(size < 3)
+  if (size < 3)
   {
     Gui::progressShow(bmp->h);
 
-    for(int pass = 0; pass < size; pass++)
+    for (int pass = 0; pass < size; pass++)
     {
-      for(int y = bmp->ct; y <= bmp->cb; y++)
+      for (int y = bmp->ct; y <= bmp->cb; y++)
       {
-        for(int x = bmp->cl; x <= bmp->cr; x++)
+        for (int x = bmp->cl; x <= bmp->cr; x++)
         {
           int r = 0;
           int g = 0;
           int b = 0;
           int a = 0;
 
-          for(int i = 0; i < 9; i++)
+          for (int i = 0; i < 9; i++)
           {
             const rgba_type rgba = getRgba(bmp->getpixel(x + i % 3 - 1,
                                                          y + i / 3 - 1));
@@ -142,7 +142,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
           const int c1 = src.getpixel(x, y);
           const int c2 = makeRgba(r, g, b, a);
 
-          switch(mode)
+          switch (mode)
           {
             case 0:
               temp.setpixel(x + border, y + border,
@@ -159,14 +159,14 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
           }
         }
 
-        if(Gui::progressUpdate(y) < 0)
+        if (Gui::progressUpdate(y) < 0)
           break;
       }
     }
 
-    for(int y = 0; y < bmp->h; y++)
+    for (int y = 0; y < bmp->h; y++)
     {
-      for(int x = 0; x < bmp->w; x++)
+      for (int x = 0; x < bmp->w; x++)
       {
         bmp->setpixelSolid(x, y, temp.getpixel(border + x, border + y), blend);
       }
@@ -176,11 +176,11 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
     return;
   }
 
-  if(size > border / 2 - 2)
+  if (size > border / 2 - 2)
     size = border / 2 - 2;
 
   // force odd value to prevent image shift
-  if(((int)size & 1) == 0)
+  if (((int)size & 1) == 0)
     size += 1;
 
   int larger = src.w > src.h ? src.w : src.h;
@@ -194,15 +194,15 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
 
   int pass_count = 0;
 
-  for(int pass = 0; pass < 3; pass++)
+  for (int pass = 0; pass < 3; pass++)
   {
     // x direction
-    if(Gui::progressUpdate(pass_count++))
+    if (Gui::progressUpdate(pass_count++))
       break;
 
-    for(int y = src.ct; y <= src.cb; y++)
+    for (int y = src.ct; y <= src.cb; y++)
     {
-      for(int x = 0; x < src.w; x++)
+      for (int x = 0; x < src.w; x++)
       {
         rgba_type rgba = getRgba(src.getpixel(x, y));
         buf_r[x] = Gamma::fix(rgba.r);
@@ -217,11 +217,11 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
       int accum_a = 0;
       int div = 1;
 
-      for(int x = src.cl; x <= src.cr; x++)
+      for (int x = src.cl; x <= src.cr; x++)
       {
         const int mx = x - div;
 
-        if(mx >= 0)
+        if (mx >= 0)
         {
           accum_r -= buf_r[mx];
           accum_g -= buf_g[mx];
@@ -236,7 +236,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
 
         div++;
 
-        if(div > size)
+        if (div > size)
           div = size;
 
         const int c = makeRgba(Gamma::unfix(accum_r / div),
@@ -249,12 +249,12 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
     }
 
     // y direction
-    if(Gui::progressUpdate(pass_count++))
+    if (Gui::progressUpdate(pass_count++))
       break;
 
-    for(int x = src.cl; x <= src.cr; x++)
+    for (int x = src.cl; x <= src.cr; x++)
     {
-      for(int y = 0; y < src.h; y++)
+      for (int y = 0; y < src.h; y++)
       {
         rgba_type rgba = getRgba(temp.getpixel(x, y));
         buf_r[y] = Gamma::fix(rgba.r);
@@ -269,11 +269,11 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
       int accum_a = 0;
       int div = 1;
 
-      for(int y = src.ct; y <= src.cb; y++)
+      for (int y = src.ct; y <= src.cb; y++)
       {
         const int my = y - div;
 
-        if(my >= 0)
+        if (my >= 0)
         {
           accum_r -= buf_r[my];
           accum_g -= buf_g[my];
@@ -288,7 +288,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
 
         div++;
 
-        if(div > size)
+        if (div > size)
           div = size;
 
         int c1 = src.getpixel(x, y);
@@ -298,7 +298,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
                                 Gamma::unfix(accum_b / div),
                                 accum_a / div);
 
-        switch(mode)
+        switch (mode)
         {
           case 0:
             src.setpixel(x, y, Blend::trans(c1, c2, blend));

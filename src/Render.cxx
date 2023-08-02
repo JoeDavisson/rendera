@@ -49,10 +49,10 @@ int Render::trans;
 // returns true if pixel is on a boundary
 bool Render::isEdge(Map *map, const int x, const int y)
 {
-  if(x < 1 || x >= map->w - 2 || y < 1 || y >= map->h - 2)
+  if (x < 1 || x >= map->w - 2 || y < 1 || y >= map->h - 2)
     return 0;
 
-  if( *(map->row[y - 1] + x) &&
+  if ( *(map->row[y - 1] + x) &&
       *(map->row[y] + x - 1) &&
       *(map->row[y] + x + 1) &&
       *(map->row[y + 1] + x) )
@@ -81,7 +81,7 @@ void Render::shrinkBlock(unsigned char *s0, unsigned char *s1,
 {
   const int z = (*s0 << 0) | (*s1 << 1) | (*s2 << 2) | (*s3 << 3);
 
-  switch(z)
+  switch (z)
   {
     case 0:
     case 15:
@@ -107,7 +107,7 @@ void Render::growBlock(unsigned char *s0, unsigned char *s1,
 {
   const int z = (*s0 << 0) | (*s1 << 1) | (*s2 << 2) | (*s3 << 3);
 
-  switch(z)
+  switch (z)
   {
     case 0:
     case 15:
@@ -131,13 +131,13 @@ void Render::growBlock(unsigned char *s0, unsigned char *s1,
 int Render::update(int pos)
 {
   // user cancelled operation
-  if(Fl::get_key(FL_Escape))
+  if (Fl::get_key(FL_Escape))
   {
     Gui::getView()->drawMain(true);
     return -1;
   }
 
-  if((pos & 63) == 63)
+  if ((pos & 63) == 63)
   {
     view->drawMain(true);
     Fl::check();
@@ -149,13 +149,13 @@ int Render::update(int pos)
 // solid
 void Render::solid()
 {
-  for(int y = stroke->y1; y <= stroke->y2; y++)
+  for (int y = stroke->y1; y <= stroke->y2; y++)
   {
     unsigned char *p = map->row[y] + stroke->x1;
 
-    for(int x = stroke->x1; x <= stroke->x2; x++)
+    for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if(*p++)
+      if (*p++)
         bmp->setpixel(x, y, color, trans);
     }
   }
@@ -164,13 +164,13 @@ void Render::solid()
 // antialiased
 void Render::antialiased()
 {
-  for(int y = stroke->y1; y <= stroke->y2; y++)
+  for (int y = stroke->y1; y <= stroke->y2; y++)
   {
     unsigned char *p = map->row[y] + stroke->x1;
 
-    for(int x = stroke->x1; x <= stroke->x2; x++)
+    for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if(*p > 0)
+      if (*p > 0)
         bmp->setpixel(x, y, color, scaleVal((255 - *p), trans));
 
       p++;
@@ -186,11 +186,11 @@ void Render::coarse()
   float soft_step = (float)(255 - trans) / ((j >> 1) + 1);
   bool found = false;
 
-  for(int i = 0; i < j; i++)
+  for (int i = 0; i < j; i++)
   {
-    for(int y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
+    for (int y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
     {
-      for(int x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
+      for (int x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
       {
         unsigned char *s0 = map->row[y] + x;
         unsigned char *s1 = map->row[y] + x + 1;
@@ -202,7 +202,7 @@ void Render::coarse()
         *s2 &= 1;
         *s3 &= 1;
 
-        if(*s0 | *s1 | *s2 | *s3)
+        if (*s0 | *s1 | *s2 | *s3)
           found = true;
 
         const unsigned char d0 = *s0;
@@ -212,31 +212,31 @@ void Render::coarse()
 
         shrinkBlock(s0, s1, s2, s3);
 
-        if(!*s0 && d0)
+        if (!*s0 && d0)
           bmp->setpixel(x, y, color, soft_trans);
-        if(!*s1 && d1)
+        if (!*s1 && d1)
           bmp->setpixel(x + 1, y, color, soft_trans);
-        if(!*s2 && d2)
+        if (!*s2 && d2)
           bmp->setpixel(x, y + 1, color, soft_trans);
-        if(!*s3 && d3)
+        if (!*s3 && d3)
           bmp->setpixel(x + 1, y + 1, color, soft_trans);
       }
     }
 
-    if(!found)
+    if (!found)
       break;
 
     soft_trans -= soft_step;
 
-    if(soft_trans < trans)
+    if (soft_trans < trans)
     {
       soft_trans = trans;
 
-      for(int y = stroke->y1; y <= stroke->y2; y++)
+      for (int y = stroke->y1; y <= stroke->y2; y++)
       {
-        for(int x = stroke->x1; x <= stroke->x2; x++)
+        for (int x = stroke->x1; x <= stroke->x2; x++)
         {
-          if(map->getpixel(x, y))
+          if (map->getpixel(x, y))
             bmp->setpixel(x, y, color, soft_trans);
         }
       }
@@ -244,7 +244,7 @@ void Render::coarse()
       return;
     }
 
-    if(update(i) < 0)
+    if (update(i) < 0)
       break;
   }
 }
@@ -254,22 +254,22 @@ void Render::fine()
 {
   int count = 0;
 
-  for(int y = stroke->y1; y <= stroke->y2; y++)
+  for (int y = stroke->y1; y <= stroke->y2; y++)
   {
-    for(int x = stroke->x1; x <= stroke->x2; x++)
+    for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if(map->getpixel(x, y) && isEdge(map, x, y))
+      if (map->getpixel(x, y) && isEdge(map, x, y))
       {
         stroke->edge_x[count] = x;
         stroke->edge_y[count] = y;
         count++;
-        if(count > 0xfffff)
+        if (count > 0xfffff)
           break;
       }
     }
   }
 
-  if(count == 0)
+  if (count == 0)
     return;
 
   KDtree::node_type test_node;
@@ -278,7 +278,7 @@ void Render::fine()
 
   int best_dist;
 
-  for(int i = 0; i < count; i++)
+  for (int i = 0; i < count; i++)
   {
     points[i].x[0] = stroke->edge_x[i];
     points[i].x[1] = stroke->edge_y[i];
@@ -286,13 +286,13 @@ void Render::fine()
 
   root = KDtree::build(points, count, 0, 2);
 
-  for(int y = stroke->y1; y <= stroke->y2; y++)
+  for (int y = stroke->y1; y <= stroke->y2; y++)
   {
     unsigned char *p = map->row[y] + stroke->x1;
 
-    for(int x = stroke->x1; x <= stroke->x2; x++)
+    for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if(*p++ == 0)
+      if (*p++ == 0)
         continue;
 
       test_node.x[0] = x;
@@ -307,7 +307,7 @@ void Render::fine()
       bmp->setpixel(x, y, color, t);
     }
 
-    if(update(y) < 0)
+    if (update(y) < 0)
       break;
   }
 
@@ -328,7 +328,7 @@ void Render::blur()
   std::vector<int> kernel(amount);
   const int b = amount / 2;
 
-  for(int x = 0; x < amount; x++)
+  for (int x = 0; x < amount; x++)
   {
     const int xb = x - b;
 
@@ -336,19 +336,19 @@ void Render::blur()
   }
 
   // x direction
-  for(int y = 0; y < h; y++)
+  for (int y = 0; y < h; y++)
   {
     const int y1 = y + stroke->y1;
 
-    for(int x = -b; x < w + b; x++)
+    for (int x = -b; x < w + b; x++)
     {
       int xx = stroke->x1 + x - b;
       int val = 0;
       int div = 0;
 
-      for(int i = 0; i < amount; i++)
+      for (int i = 0; i < amount; i++)
       {
-        if(xx >= 0 && xx < map->w)
+        if (xx >= 0 && xx < map->w)
         {
           val += *(map->row[y1] + xx) * kernel[i];
           div += kernel[i];
@@ -357,7 +357,7 @@ void Render::blur()
         xx++;
       }
 
-      if(div > 0)
+      if (div > 0)
         val /= div;
 
       temp.setpixel(x, y, val);
@@ -365,17 +365,17 @@ void Render::blur()
   }
 
   // y direction
-  for(int y = -b; y < h + b; y++)
+  for (int y = -b; y < h + b; y++)
   {
-    for(int x = 0; x < w; x++)
+    for (int x = 0; x < w; x++)
     {
       int yy = y - b;
       int val = 0;
       int div = 0;
 
-      for(int i = 0; i < amount; i++)
+      for (int i = 0; i < amount; i++)
       {
-        if(yy >= 0 && yy < h)
+        if (yy >= 0 && yy < h)
         {
           val += *(temp.row[yy] + x) * kernel[i];
           div += kernel[i];
@@ -384,7 +384,7 @@ void Render::blur()
         yy++;
       }
 
-      if(div > 0)
+      if (div > 0)
         val /= div;
 
       const int x1 = x + stroke->x1;
@@ -395,19 +395,19 @@ void Render::blur()
   }
 
   // render
-  for(int y = stroke->y1; y <= stroke->y2; y++)
+  for (int y = stroke->y1; y <= stroke->y2; y++)
   {
     unsigned char *p = map->row[y] + stroke->x1;
 
-    for(int x = stroke->x1; x <= stroke->x2; x++)
+    for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if(*p > 0)
+      if (*p > 0)
         bmp->setpixel(x, y, color, scaleVal((255 - *p), trans));
 
       p++;
     }
 
-    if(update(y) < 0)
+    if (update(y) < 0)
       break;
   }
 }
@@ -421,22 +421,22 @@ void Render::watercolor()
   bool found = false;
   int inc = 0;
 
-  for(int y = stroke->y1; y <= stroke->y2; y++)
+  for (int y = stroke->y1; y <= stroke->y2; y++)
   {
-    for(int x = stroke->x1; x <= stroke->x2; x++)
+    for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if(map->getpixel(x, y))
+      if (map->getpixel(x, y))
         bmp->setpixel(x, y, color, trans);
     }
   }
 
-  for(int i = 0; i < j; i++)
+  for (int i = 0; i < j; i++)
   {
     inc++;
 
-    for(int y = stroke->y1 + (inc & 1); y < stroke->y2 - 1; y += 2)
+    for (int y = stroke->y1 + (inc & 1); y < stroke->y2 - 1; y += 2)
     {
-      for(int x = stroke->x1 + (inc & 1); x < stroke->x2 - 1; x += 2)
+      for (int x = stroke->x1 + (inc & 1); x < stroke->x2 - 1; x += 2)
       {
         int yy = y + !(rnd() & 3);
 
@@ -450,7 +450,7 @@ void Render::watercolor()
         *s2 &= 1;
         *s3 &= 1;
 
-        if(*s0 | *s1 | *s2 | *s3)
+        if (*s0 | *s1 | *s2 | *s3)
           found = true;
 
         const unsigned char d0 = *s0;
@@ -460,7 +460,7 @@ void Render::watercolor()
 
         growBlock(s0, s1, s2, s3);
 
-        if(*s0 & (!(rnd() & 15)))
+        if (*s0 & (!(rnd() & 15)))
         {
           *s0 = 1;
           *s1 = 1;
@@ -470,26 +470,26 @@ void Render::watercolor()
           inc--;
         }
 
-        if(*s0 && !d0)
+        if (*s0 && !d0)
           bmp->setpixel(x, yy, color, soft_trans);
-        if(*s1 && !d1)
+        if (*s1 && !d1)
           bmp->setpixel(x + 1, yy, color, soft_trans);
-        if(*s2 && !d2)
+        if (*s2 && !d2)
           bmp->setpixel(x, yy + 1, color, soft_trans);
-        if(*s3 && !d3)
+        if (*s3 && !d3)
           bmp->setpixel(x + 1, yy + 1, color, soft_trans);
       }
     }
 
-    if(!found)
+    if (!found)
       break;
 
     soft_trans += soft_step;
 
-    if(soft_trans > 255)
+    if (soft_trans > 255)
       break;
 
-    if(update(i) < 0)
+    if (update(i) < 0)
       break;
   }
 }
@@ -502,17 +502,17 @@ void Render::chalk()
   float soft_step = (float)(255 - trans) / ((j >> 1) + 1);
   bool found = false;
 
-  if(brush->chalk_edge == 0)
+  if (brush->chalk_edge == 0)
   {
     j = 1;
     soft_trans = trans;
   }
 
-  for(int i = 0; i < j; i++)
+  for (int i = 0; i < j; i++)
   {
-    for(int y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
+    for (int y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
     {
-      for(int x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
+      for (int x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
       {
         unsigned char *s0 = map->row[y] + x;
         unsigned char *s1 = map->row[y] + x + 1;
@@ -524,7 +524,7 @@ void Render::chalk()
         *s2 &= 1;
         *s3 &= 1;
 
-        if(*s0 | *s1 | *s2 | *s3)
+        if (*s0 | *s1 | *s2 | *s3)
           found = true;
 
         unsigned char d0 = *s0;
@@ -536,66 +536,66 @@ void Render::chalk()
 
         int t = 0;
 
-        if(!*s0 && d0)
+        if (!*s0 && d0)
         {
           t = (int)soft_trans + (rnd() & 63) - 32;
-          if(t < 0)
+          if (t < 0)
             t = 0;
-          if(t > 255)
+          if (t > 255)
             t = 255;
           bmp->setpixel(x, y, color, t);
         }
 
-        if(!*s1 && d1)
+        if (!*s1 && d1)
         {
           t = (int)soft_trans + (rnd() & 63) - 32;
-          if(t < 0)
+          if (t < 0)
             t = 0;
-          if(t > 255)
+          if (t > 255)
             t = 255;
           bmp->setpixel(x + 1, y, color, t);
         }
 
-        if(!*s2 && d2)
+        if (!*s2 && d2)
         {
           t = (int)soft_trans + (rnd() & 63) - 32;
-          if(t < 0)
+          if (t < 0)
             t = 0;
-          if(t > 255)
+          if (t > 255)
             t = 255;
           bmp->setpixel(x, y + 1, color, t);
         }
 
-        if(!*s3 && d3)
+        if (!*s3 && d3)
         {
           t = (int)soft_trans + (rnd() & 63) - 32;
-          if(t < 0)
+          if (t < 0)
             t = 0;
-          if(t > 255)
+          if (t > 255)
             t = 255;
           bmp->setpixel(x + 1, y + 1, color, t);
         }
       }
     }
 
-    if(!found)
+    if (!found)
       break;
 
     soft_trans -= soft_step;
 
-    if(soft_trans < trans)
+    if (soft_trans < trans)
     {
       soft_trans = trans;
-      for(int y = stroke->y1; y <= stroke->y2; y++)
+      for (int y = stroke->y1; y <= stroke->y2; y++)
       {
-        for(int x = stroke->x1; x <= stroke->x2; x++)
+        for (int x = stroke->x1; x <= stroke->x2; x++)
         {
-          if(map->getpixel(x, y))
+          if (map->getpixel(x, y))
           {
             int t = (int)soft_trans + (rnd() & 63) - 32;
-            if(t < 0)
+            if (t < 0)
               t = 0;
-            if(t > 255)
+            if (t > 255)
               t = 255;
             bmp->setpixel(x, y, color, t);
           }
@@ -605,7 +605,7 @@ void Render::chalk()
       return;
     }
 
-    if(update(i) < 0)
+    if (update(i) < 0)
       break;
   }
 }
@@ -632,17 +632,17 @@ void Render::texture()
 
   Map *src = &marble;
 
-  if(brush->texture_edge == 0)
+  if (brush->texture_edge == 0)
   {
     j = 1;
     soft_trans = trans;
   }
 
-  for(int i = 0; i < j; i++)
+  for (int i = 0; i < j; i++)
   {
     soft_trans -= soft_step;
 
-    if(soft_trans < trans)
+    if (soft_trans < trans)
     {
       soft_trans = trans;
       break;
@@ -650,9 +650,9 @@ void Render::texture()
 
     bool found = false;
 
-    for(int y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
+    for (int y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
     {
-      for(int x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
+      for (int x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
       {
         unsigned char *s0 = map->row[y] + x;
         unsigned char *s1 = map->row[y] + x + 1;
@@ -669,7 +669,7 @@ void Render::texture()
         s2 = (map->row[y + 1] + x);
         s3 = (map->row[y + 1] + x + 1);
 
-        if(*s0 | *s1 | *s2 | *s3)
+        if (*s0 | *s1 | *s2 | *s3)
           found = true;
 
         unsigned char d0 = *s0;
@@ -679,36 +679,36 @@ void Render::texture()
 
         shrinkBlock(s0, s1, s2, s3);
 
-        if(!*s0 && d0)
+        if (!*s0 && d0)
           bmp->setpixel(x, y, color,
                    scaleVal(src->getpixel(x % w, y % h), soft_trans));
 
-        if(!*s1 && d1)
+        if (!*s1 && d1)
           bmp->setpixel(x + 1, y, color,
                    scaleVal(src->getpixel((x + 1) % w, y % h), soft_trans));
 
-        if(!*s2 && d2)
+        if (!*s2 && d2)
           bmp->setpixel(x, y + 1, color,
                    scaleVal(src->getpixel(x % w, (y + 1) % h), soft_trans));
 
-        if(!*s3 && d3)
+        if (!*s3 && d3)
           bmp->setpixel(x + 1, y + 1, color,
                    scaleVal(src->getpixel((x + 1) % w, (y + 1) % h), soft_trans));
       }
     }
 
-    if(!found)
+    if (!found)
       return;
 
-    if(update(i) < 0)
+    if (update(i) < 0)
       break;
   }
 
-  for(int y = stroke->y1; y <= stroke->y2; y++)
+  for (int y = stroke->y1; y <= stroke->y2; y++)
   {
-    for(int x = stroke->x1; x <= stroke->x2; x++)
+    for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if(map->getpixel(x, y))
+      if (map->getpixel(x, y))
       {
         bmp->setpixel(x, y, color,
                  scaleVal(src->getpixel(x % w, y % h), trans));
@@ -725,13 +725,13 @@ void Render::average()
   int b = 0;
   int count = 0;
 
-  for(int y = stroke->y1; y <= stroke->y2; y++)
+  for (int y = stroke->y1; y <= stroke->y2; y++)
   {
     unsigned char *p = map->row[y] + stroke->x1;
 
-    for(int x = stroke->x1; x <= stroke->x2; x++)
+    for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if(*p++)
+      if (*p++)
       {
         const int c = bmp->getpixel(x, y);
         rgba_type rgba = getRgba(c);
@@ -743,7 +743,7 @@ void Render::average()
     }
   }
 
-  if(count == 0)
+  if (count == 0)
     return;
 
   r /= count;
@@ -757,17 +757,17 @@ void Render::average()
   float soft_step = (float)(255 - trans) / ((j >> 1) + 1);
   bool found = false;
 
-  if(brush->average_edge == 0)
+  if (brush->average_edge == 0)
   {
     j = 1;
     soft_trans = trans;
   }
 
-  for(int i = 0; i < j; i++)
+  for (int i = 0; i < j; i++)
   {
-    for(int y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
+    for (int y = stroke->y1 + (i & 1); y < stroke->y2; y += 2)
     {
-      for(int x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
+      for (int x = stroke->x1 + (i & 1); x < stroke->x2; x += 2)
       {
         unsigned char *s0 = map->row[y] + x;
         unsigned char *s1 = map->row[y] + x + 1;
@@ -779,7 +779,7 @@ void Render::average()
         *s2 &= 1;
         *s3 &= 1;
 
-        if(*s0 | *s1 | *s2 | *s3)
+        if (*s0 | *s1 | *s2 | *s3)
           found = true;
 
         const unsigned char d0 = *s0;
@@ -789,31 +789,31 @@ void Render::average()
 
         shrinkBlock(s0, s1, s2, s3);
 
-        if(!*s0 && d0)
+        if (!*s0 && d0)
           bmp->setpixel(x, y, average, soft_trans);
-        if(!*s1 && d1)
+        if (!*s1 && d1)
           bmp->setpixel(x + 1, y, average, soft_trans);
-        if(!*s2 && d2)
+        if (!*s2 && d2)
           bmp->setpixel(x, y + 1, average, soft_trans);
-        if(!*s3 && d3)
+        if (!*s3 && d3)
           bmp->setpixel(x + 1, y + 1, average, soft_trans);
       }
     }
 
-    if(!found)
+    if (!found)
       break;
 
     soft_trans -= soft_step;
 
-    if(soft_trans < trans)
+    if (soft_trans < trans)
     {
       soft_trans = trans;
 
-      for(int y = stroke->y1; y <= stroke->y2; y++)
+      for (int y = stroke->y1; y <= stroke->y2; y++)
       {
-        for(int x = stroke->x1; x <= stroke->x2; x++)
+        for (int x = stroke->x1; x <= stroke->x2; x++)
         {
-          if(map->getpixel(x, y))
+          if (map->getpixel(x, y))
             bmp->setpixel(x, y, average, soft_trans);
         }
       }
@@ -821,7 +821,7 @@ void Render::average()
       return;
     }
 
-    if(update(i) < 0)
+    if (update(i) < 0)
       break;
   }
 }
@@ -840,7 +840,7 @@ void Render::begin()
   int size = 1;
 
   // for tools that grow outward
-  switch(Gui::getPaintMode())
+  switch (Gui::getPaintMode())
   {
     case BLURRY:
       size = (3 << brush->blurry_edge);
@@ -864,7 +864,7 @@ void Render::begin()
 
   view->rendering = true;
 
-  switch(Gui::getPaintMode())
+  switch (Gui::getPaintMode())
   {
     case SOLID:
       solid();

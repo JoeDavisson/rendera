@@ -209,22 +209,22 @@ namespace
   // quit program
   void quit()
   {
-    if(Dialog::choice("Exit", "Exit Program?"))
+    if (Dialog::choice("Exit", "Exit Program?"))
       exit(0);
   }
 
   // prevent escape from closing main window
   void closeCallback(Fl_Widget *widget, void *)
   {
-    if((Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT)
+    if ((Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT)
        && Fl::event_key() == FL_Escape)
     {
       return;
     }
-    else
+      else
     {
       // hide any open windows so FLTK ends the program
-      if(Dialog::choice("Exit", "Are You Sure?"))
+      if (Dialog::choice("Exit", "Are You Sure?"))
       {
         widget->hide();
       }
@@ -250,7 +250,7 @@ public:
     View *view = Gui::getView();
     bool shift, ctrl;
 
-    switch(event)
+    switch (event)
     {
       case FL_FOCUS:
         return 1;
@@ -258,7 +258,7 @@ public:
         return 1;
       case FL_KEYBOARD:
         // give focus to the main menu
-        if(Fl::event_alt() > 0)
+        if (Fl::event_alt() > 0)
         {
           Gui::getMenuBar()->take_focus();
           return 0;
@@ -268,7 +268,7 @@ public:
         ctrl = Fl::event_ctrl() ? true : false;
 
         // cancel current rendering operation
-        if(Fl::event_key() == FL_Escape)
+        if (Fl::event_key() == FL_Escape)
         {
           Project::tool->reset();
           view->drawMain(true);
@@ -276,7 +276,7 @@ public:
         }
 
         // misc keys
-        switch(/*key =*/ Fl::event_key())
+        switch (/*key =*/ Fl::event_key())
         {
           case FL_Right:
             view->scroll(0, 64);
@@ -304,17 +304,17 @@ public:
             view->zoomOut(view->w() / 2, view->h() / 2);
             break;
           case 'z':
-            if(ctrl && shift)
+            if (ctrl && shift)
               Project::undo->popRedo();
-            else if(ctrl)
+            else if (ctrl)
               Project::undo->pop();
             break;
           case 'c':
-            if(ctrl)
+            if (ctrl)
               Gui::selectCopy();
             break;
           case 'v':
-            if(ctrl)
+            if (ctrl)
               Gui::selectPaste();
             break;
           case 'e':
@@ -847,7 +847,7 @@ void Gui::init()
   font_browse->textsize(9);
   font_browse->resize(text->x() + 8, text->y() + pos, 96, 192);
 
-  for(int i = 0; i < Fl::set_fonts(0); i++)
+  for (int i = 0; i < Fl::set_fonts(0); i++)
   {
     int t = 0;
     const char *name = Fl::get_font_name((Fl_Font)i, &t);
@@ -1068,7 +1068,7 @@ void Gui::init()
 
 /*
   // fix certain icons if using a light theme
-  if(Project::theme == Project::THEME_LIGHT)
+  if (Project::theme == Project::THEME_LIGHT)
   {
     paint_size->bitmap->invert();
     paint_size->bitmap2->invert();
@@ -1092,7 +1092,7 @@ void Gui::menuCheckItem(const char *s)
   Fl_Menu_Item *m;
   m = (Fl_Menu_Item *)menubar->find_item(s);
 
-  if(m)
+  if (m)
     m->set();
 }
 
@@ -1102,7 +1102,7 @@ void Gui::menuClearItem(const char *s)
   Fl_Menu_Item *m;
   m = (Fl_Menu_Item *)menubar->find_item(s);
 
-  if(m)
+  if (m)
     m->clear();
 }
 
@@ -1113,7 +1113,7 @@ void Gui::colorHexInput()
 
   sscanf(hexcolor->value(), "%06x", &c);
 
-  if(c > 0xffffff)
+  if (c > 0xffffff)
     c = 0xffffff;
 
   c |= 0xff000000;
@@ -1169,10 +1169,10 @@ void Gui::colorSwatch()
 {
   swatch->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
-  for(int y = 1; y < swatch->bitmap->h - 1; y++)
+  for (int y = 1; y < swatch->bitmap->h - 1; y++)
   {
     int *p = swatch->bitmap->row[y] - 1;
-    for(int x = 0; x < swatch->bitmap->w; x++)
+    for (int x = 0; x < swatch->bitmap->w; x++)
     {
       const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1)
                             ? 0xA0A0A0 : 0x606060;
@@ -1199,7 +1199,7 @@ void Gui::paletteSwatches(Widget *widget, void *var)
   Palette *pal = Project::palette;
   int pos = *(int *)var;
 
-  if(pos > pal->max - 1)
+  if (pos > pal->max - 1)
   {
     pos = pal->max - 1;
     widget->var = pos;
@@ -1211,7 +1211,7 @@ void Gui::paletteSwatches(Widget *widget, void *var)
   int x = pos % div;
   int y = pos / div;
 
-  if(y > (pal->max - 1) / div)
+  if (y > (pal->max - 1) / div)
   {
     y = (pal->max - 1) / div;
     pos = x + div * y;
@@ -1220,7 +1220,7 @@ void Gui::paletteSwatches(Widget *widget, void *var)
     widget->var = pos;
   }
 
-  if(pos > pal->max - 1)
+  if (pos > pal->max - 1)
   {
     pos = pal->max - 1;
     x = pos % div;
@@ -1273,7 +1273,7 @@ void Gui::zoomLevel()
 {
   char s[256];
 
-  if(view->zoom < 1)
+  if (view->zoom < 1)
     snprintf(s, sizeof(s), "%0.3fx", view->zoom);
   else
     snprintf(s, sizeof(s), "%2.1fx", view->zoom);
@@ -1288,7 +1288,7 @@ void Gui::gridEnable(ToggleButton *, void *var)
   view->drawMain(true);
   view->redraw();
 
-  if(Project::tool->isActive())
+  if (Project::tool->isActive())
   {
     Project::tool->redraw(view);
   }
@@ -1329,7 +1329,7 @@ void Gui::paintChangeSize(int size)
                      paint_brush_preview->bitmap->h - 1,
                      getFltkColor(Project::fltk_theme_bevel_down), 0);
 
-  for(int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->solid_count; i++)
   {
     paint_brush_preview->bitmap->setpixelSolid(48 + brush->solidx[i],
                                        48 + brush->solidy[i],
@@ -1417,23 +1417,23 @@ void Gui::toolChange(Widget *, void *var)
 {
   int tool = *(int *)var;
 
-  if(tool != Tool::PAINT)
+  if (tool != Tool::PAINT)
     paint->hide();
-  if(tool != Tool::GETCOLOR)
+  if (tool != Tool::GETCOLOR)
     getcolor->hide();
-  if(tool != Tool::SELECT)
+  if (tool != Tool::SELECT)
     selection->hide();
-  if(tool != Tool::OFFSET)
+  if (tool != Tool::OFFSET)
     offset->hide();
-  if(tool != Tool::TEXT)
+  if (tool != Tool::TEXT)
     text->hide();
-  if(tool != Tool::FILL)
+  if (tool != Tool::FILL)
     fill->hide();
 
   Project::map->clear(0);
   view->drawMain(true);
 
-  switch(tool)
+  switch (tool)
   {
     case Tool::PAINT:
       Project::setTool(Tool::PAINT);
@@ -1484,9 +1484,9 @@ void Gui::colorChange(Widget *widget, void *)
   int mx = pos % 128;
   int my = pos / 128;
 
-  if(widget == hue)
+  if (widget == hue)
   {
-    if(((mx - 64) * (mx - 64) + (my - 64) * (my - 64)) < (30 * 30))
+    if (((mx - 64) * (mx - 64) + (my - 64) * (my - 64)) < (30 * 30))
     {
       satval->redraw();
       return;
@@ -1509,7 +1509,7 @@ void Gui::colorChange(Widget *widget, void *)
   // hue circle
   hue->bitmap->clear(blendFast(convertFormat(getFltkColor(FL_BACKGROUND_COLOR), true), makeRgb(0, 0, 0), 192));
 
-  for(int i = 1; i < 1536; i++)
+  for (int i = 1; i < 1536; i++)
   {
     //joe
     Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
@@ -1525,7 +1525,7 @@ void Gui::colorChange(Widget *widget, void *)
     hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makeRgb(0, 0, 0), 252);
   }
 
-  for(int i = 1; i < 1536; i++)
+  for (int i = 1; i < 1536; i++)
   {
     //joe
     Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
@@ -1541,7 +1541,7 @@ void Gui::colorChange(Widget *widget, void *)
     hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makeRgb(0, 0, 0), 252);
   }
 
-  for(int i = 1; i < 1536; i++)
+  for (int i = 1; i < 1536; i++)
   {
     //joe
     Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
@@ -1573,9 +1573,9 @@ void Gui::colorChange(Widget *widget, void *)
   hue->bitmap->rect(32 - 1, 32 - 1, 95 + 1, 95 + 1, makeRgb(0, 0, 0), 96);
   hue->bitmap->rect(0, 0, 127, 127, makeRgb(0, 0, 0), 0);
 
-  for(int y = 0; y < 64; y++)
+  for (int y = 0; y < 64; y++)
   {
-    for(int x = 0; x < 64; x++)
+    for (int x = 0; x < 64; x++)
     {
       Blend::hsvToRgb(h, x * 4.05, y * 4.05, &r, &g, &b);
       //Blend::wheelToRgb(h, x * 4.05, y * 4.05, &r, &g, &b);
@@ -1586,13 +1586,13 @@ void Gui::colorChange(Widget *widget, void *)
   int x = (satval->var % 64);
   int y = (satval->var / 64);
 
-  if(x < 4)
+  if (x < 4)
     x = 4;
-  if(y < 4)
+  if (y < 4)
     y = 4;
-  if(x > 59)
+  if (x > 59)
     x = 59;
-  if(y > 59)
+  if (y > 59)
     y = 59;
 
   satval->bitmap->rect(x - 6, y - 6, x + 6, y + 6, makeRgb(0, 0, 0), 192);
@@ -1663,7 +1663,7 @@ void Gui::selectCopy()
 
 void Gui::selectCopyEnable(bool enable)
 {
-  if(enable == true)
+  if (enable == true)
     selection_copy->activate();
   else
     selection_copy->deactivate();
@@ -1678,7 +1678,7 @@ void Gui::selectPaste()
 
 void Gui::selectPasteEnable(bool enable)
 {
-  if(enable == true)
+  if (enable == true)
     selection_paste->activate();
   else
     selection_paste->deactivate();
@@ -1693,7 +1693,7 @@ void Gui::selectCrop()
 
 void Gui::selectCropEnable(bool enable)
 {
-  if(enable == true)
+  if (enable == true)
     selection_crop->activate();
   else
     selection_crop->deactivate();
@@ -1731,9 +1731,9 @@ void Gui::selectRotate90()
 
   int *p = &temp.data[0];
 
-  for(int y = 0; y < h; y++)
+  for (int y = 0; y < h; y++)
   {
-    for(int x = 0; x < w; x++)
+    for (int x = 0; x < w; x++)
     {
        *(Project::select_bmp->row[x] + h - 1 - y) = *p++;
     }
@@ -1795,7 +1795,7 @@ void Gui::selectToImage()
   
   select_bmp->blit(temp, 0, 0, 0, 0, temp->w, temp->h);
 
-  if(Project::newImageFromBitmap(temp) != -1)
+  if (Project::newImageFromBitmap(temp) != -1)
     imagesAddFile("new_from_selection");
 }
 
@@ -1856,7 +1856,7 @@ int Gui::getTextFontFace()
 {
   int index = font_browse->value();
 
-  if(index < 1)
+  if (index < 1)
     index = 1;
 
   return index - 1;
@@ -1974,8 +1974,8 @@ void Gui::clearToGray()
 
   Bitmap *bmp = Project::bmp;
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
       *(bmp->row[y] + x) = 0xff808080;
 
   view->drawMain(true);
@@ -1987,8 +1987,8 @@ void Gui::clearToTrans()
 
   Bitmap *bmp = Project::bmp;
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
       *(bmp->row[y] + x) = 0x00808080;
 
   view->drawMain(true);
@@ -2008,7 +2008,7 @@ void Gui::imagesBrowse()
 {
   const int line = file_browse->value();
 
-  if(line > 0)
+  if (line > 0)
   {
     Project::switchImage(line - 1);
 
@@ -2026,7 +2026,7 @@ void Gui::imagesRename()
 {
   const int line = file_browse->value();
 
-  if(line > 0)
+  if (line > 0)
   {
     file_browse->text(line, file_rename->value());
     file_browse->redraw();
@@ -2042,24 +2042,24 @@ void Gui::imagesAddFile(const char *name)
 
 void Gui::imagesCloseFile()
 {
-  if(Project::removeImage() == false)
+  if (Project::removeImage() == false)
     return;
 
   file_browse->remove(Project::current + 1);
 
-  if(Project::current > 0)
+  if (Project::current > 0)
     file_browse->select(Project::current, 1);
   else
     file_browse->select(Project::current + 1, 1);
 
-  if(Project::current > 0)
+  if (Project::current > 0)
     Project::switchImage(Project::current - 1);
   else
     Project::switchImage(Project::current);
 
   file_rename->value(file_browse->text(file_browse->value()));
 
-  if(Project::last == 0)
+  if (Project::last == 0)
   {
     imagesAddFile("new");
     Project::last = 1;
@@ -2070,7 +2070,7 @@ void Gui::imagesCloseFile()
 
 void Gui::imagesUpdateMemInfo()
 {
-  if(Project::last < 1)
+  if (Project::last < 1)
     return;
 
   char s[256];
@@ -2081,13 +2081,13 @@ void Gui::imagesUpdateMemInfo()
   bool mem_gb = false;
   bool max_gb = false;
 
-  if(mem >= 1000)
+  if (mem >= 1000)
   {
     mem /= 1000;
     mem_gb = true;
   }
 
-  if(max >= 1000)
+  if (max >= 1000)
   {
     max /= 1000;
     max_gb = true;
@@ -2140,7 +2140,7 @@ void Gui::paintMode()
   paint_texture_turb->hide();
   paint_average_edge->hide();
 
-  switch(paint_mode->value())
+  switch (paint_mode->value())
   {
     case Render::SOLID:
       break;
@@ -2206,7 +2206,7 @@ void Gui::imagesDuplicate()
   Bitmap **bmp_list = Project::bmp_list;
   Bitmap *bmp = Project::bmp_list[current];
 
-  if(Project::enoughMemory(bmp->w, bmp->h) == false)
+  if (Project::enoughMemory(bmp->w, bmp->h) == false)
     return;
 
   Project::newImage(bmp->cw, bmp->ch);
@@ -2218,10 +2218,10 @@ void Gui::imagesDuplicate()
 // use default interval
 void Gui::progressShow(float step)
 {
-  if(progress_enable == false)
+  if (progress_enable == false)
     return;
 
-  if(step == 0)
+  if (step == 0)
     step = .001;
 
   view->rendering = true;
@@ -2237,13 +2237,13 @@ void Gui::progressShow(float step)
 // custom interval
 void Gui::progressShow(float step, int interval)
 {
-  if(progress_enable == false)
+  if (progress_enable == false)
     return;
 
-  if(step == 0)
+  if (step == 0)
     step = .001;
 
-  if(interval < 1)
+  if (interval < 1)
      interval = 1;
 
   view->rendering = true;
@@ -2258,18 +2258,18 @@ void Gui::progressShow(float step, int interval)
 
 int Gui::progressUpdate(int y)
 {
-  if(progress_enable == false)
+  if (progress_enable == false)
     return 0;
 
   // user cancelled operation
-  if(Fl::get_key(FL_Escape))
+  if (Fl::get_key(FL_Escape))
   {
     progressHide();
     Gui::getView()->drawMain(true);
     return -1;
   }
 
-  if(!(y % progress_interval))
+  if (!(y % progress_interval))
   {
     progress->value(progress_value);
     char percent[16];
@@ -2285,7 +2285,7 @@ int Gui::progressUpdate(int y)
 
 void Gui::progressHide()
 {
-  if(progress_enable == false)
+  if (progress_enable == false)
     return;
 
   view->drawMain(true);

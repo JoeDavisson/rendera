@@ -40,11 +40,11 @@ void Sobel::apply(Bitmap *bmp, int amount)
   Bitmap temp(bmp->cw, bmp->ch);
   Gui::progressShow(bmp->h);
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = temp.row[y - bmp->cl];
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       int r1 = 0;
       int g1 = 0;
@@ -53,19 +53,19 @@ void Sobel::apply(Bitmap *bmp, int amount)
       int g2 = 0;
       int b2 = 0;
 
-      for(int j = 0; j < 3; j++) 
+      for (int j = 0; j < 3; j++) 
       {
-	for(int i = 0; i < 3; i++) 
-	{
-	  const rgba_type rgba = getRgba(bmp->getpixel(x + i - 1, y + j - 1));
+        for (int i = 0; i < 3; i++) 
+        {
+          const rgba_type rgba = getRgba(bmp->getpixel(x + i - 1, y + j - 1));
 
-	  r1 += rgba.r * FilterMatrix::sobel1[i][j];
-	  r2 += rgba.r * FilterMatrix::sobel2[i][j];
-	  g1 += rgba.g * FilterMatrix::sobel1[i][j];
-	  g2 += rgba.g * FilterMatrix::sobel2[i][j];
-	  b1 += rgba.b * FilterMatrix::sobel1[i][j];
-	  b2 += rgba.b * FilterMatrix::sobel2[i][j];
-	}
+          r1 += rgba.r * FilterMatrix::sobel1[i][j];
+          r2 += rgba.r * FilterMatrix::sobel2[i][j];
+          g1 += rgba.g * FilterMatrix::sobel1[i][j];
+          g2 += rgba.g * FilterMatrix::sobel2[i][j];
+          b1 += rgba.b * FilterMatrix::sobel1[i][j];
+          b2 += rgba.b * FilterMatrix::sobel2[i][j];
+        }
       }
 
       int r = std::sqrt(r1 * r1 + r2 * r2);
@@ -86,7 +86,7 @@ void Sobel::apply(Bitmap *bmp, int amount)
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 

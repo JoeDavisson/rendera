@@ -24,18 +24,18 @@ void AlphaInvert::apply(Bitmap *bmp)
 {
   Gui::progressShow(bmp->h);
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       const rgba_type rgba = getRgba(*p);
       *p = makeRgba(rgba.r, rgba.g, rgba.b, 255 - rgba.a);
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 

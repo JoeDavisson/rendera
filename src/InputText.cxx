@@ -32,7 +32,7 @@ InputText::InputText(Fl_Group *g, int x, int y, int w, int h,
 {
   group = g;
   var = 0;
-  if(cb)
+  if (cb)
     callback(cb, &var);
   maximum_size(256);
   labelsize(12);

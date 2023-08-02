@@ -41,7 +41,7 @@ namespace
     const int c2 = getl(b->getpixel(x, y + 1)) / div;
     const int c3 = getl(b->getpixel(x + 1, y + 1)) / div;
 
-    if((c0 == c1) && (c0 == c2) && (c0 == c3))
+    if ((c0 == c1) && (c0 == c2) && (c0 == c3))
       return 0;
     else
       return 1;
@@ -54,7 +54,7 @@ namespace
     const int c2 = b->getpixel(x, y + 1);
     const int c3 = b->getpixel(x + 1, y + 1);
 
-    if((c0 == c1) && (c0 == c2) && (c0 == c3))
+    if ((c0 == c1) && (c0 == c2) && (c0 == c3))
       return 0;
     else
       return 1;
@@ -71,14 +71,14 @@ void StainedGlass::apply()
   std::vector<int> seedy(size);
   std::vector<int> color(size);
 
-  for(int i = 0; i < size; i++)
+  for (int i = 0; i < size; i++)
   {
-    if(Items::uniform->value())
+    if (Items::uniform->value())
     {
       seedx[i] = rnd() % bmp->w; 
       seedy[i] = rnd() % bmp->h; 
     }
-    else
+      else
     {
       seedx[i] = rnd() % bmp->w; 
       seedy[i] = rnd() % bmp->h; 
@@ -87,11 +87,11 @@ void StainedGlass::apply()
 
       do
       {
-	seedx[i] = rnd() % bmp->w; 
-	seedy[i] = rnd() % bmp->h; 
-	count++;
+        seedx[i] = rnd() % bmp->w; 
+        seedy[i] = rnd() % bmp->h; 
+        count++;
       }
-      while(!isEdge(bmp, seedx[i], seedy[i], div) && count < 10000);
+      while (!isEdge(bmp, seedx[i], seedy[i], div) && count < 10000);
     }
 
     color[i] = bmp->getpixel(seedx[i], seedy[i]);
@@ -100,86 +100,86 @@ void StainedGlass::apply()
   Gui::progressShow(bmp->h);
 
   // draw segments
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       // find nearest color
       int nearest = 999999999;
       int use = -1;
 
-      for(int i = 0; i < size; i++)
+      for (int i = 0; i < size; i++)
       {
-	const int dx = x - seedx[i];
-	const int dy = y - seedy[i];
-	const int distance = dx * dx + dy * dy;
+        const int dx = x - seedx[i];
+        const int dy = y - seedy[i];
+        const int distance = dx * dx + dy * dy;
 
-	if(distance < nearest)
-	{
-	  nearest = distance;
-	  use = i;
-	}
+        if (distance < nearest)
+        {
+          nearest = distance;
+          use = i;
+        }
       }
 
-      if(use != -1)
+      if (use != -1)
       {
-	if(Items::sat_alpha->value())
-	{
-	  rgba_type rgba = getRgba(color[use]);
+        if (Items::sat_alpha->value())
+        {
+          rgba_type rgba = getRgba(color[use]);
 
-	  int h, s, v;
+          int h, s, v;
 
-	  Blend::rgbToHsv(rgba.r, rgba.g, rgba.b, &h, &s, &v);
-	  *p = makeRgba(rgba.r, rgba.g, rgba.b, std::min(192, s / 2 + 128));
-	}
-	else
-	{
-	  *p = color[use];
-	}
+          Blend::rgbToHsv(rgba.r, rgba.g, rgba.b, &h, &s, &v);
+          *p = makeRgba(rgba.r, rgba.g, rgba.b, std::min(192, s / 2 + 128));
+        }
+          else
+        {
+          *p = color[use];
+        }
       }
 
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 
   // draw edges
-  if(Items::draw_edges->value())
+  if (Items::draw_edges->value())
   {
     Map *map = Project::map;
     map->clear(0);
-//      for(int y = bmp->ct * 4; y <= bmp->cb * 4; y++)
+//      for (int y = bmp->ct * 4; y <= bmp->cb * 4; y++)
 //      {
-//        for(int x = bmp->cl * 4; x <= bmp->cr * 4; x++)
+//        for (int x = bmp->cl * 4; x <= bmp->cr * 4; x++)
 //        {
-    for(int y = bmp->ct; y <= bmp->cb; y++)
+    for (int y = bmp->ct; y <= bmp->cb; y++)
     {
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for (int x = bmp->cl; x <= bmp->cr; x++)
       {
-	if(isSegmentEdge(bmp, x, y))
-	  map->setpixel(x, y, 1);
+        if (isSegmentEdge(bmp, x, y))
+          map->setpixel(x, y, 1);
 //            map->setpixelAA(x, y, 255);
       }
     }
 
-    for(int y = bmp->ct; y <= bmp->cb; y++)
+    for (int y = bmp->ct; y <= bmp->cb; y++)
     {
       int *p = bmp->row[y] + bmp->cl;
 
-      for(int x = bmp->cl; x <= bmp->cr; x++)
+      for (int x = bmp->cl; x <= bmp->cr; x++)
       {
-	const int c = map->getpixel(x, y);
+        const int c = map->getpixel(x, y);
 
 //          *p = Blend::trans(*p, makeRgb(0, 0, 0), 255 - c);
-	if(c)
+        if (c)
           *p = makeRgb(0, 0, 0);
-//	  *p = Blend::trans(*p, makeRgb(0, 0, 0), 160);
+//        *p = Blend::trans(*p, makeRgb(0, 0, 0), 160);
 
-	p++;
+        p++;
       }
     }
   }

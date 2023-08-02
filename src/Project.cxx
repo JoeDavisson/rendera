@@ -103,7 +103,7 @@ void Project::init(int memory_limit, int undo_limit)
   bmp_list = new Bitmap *[max_images];
   undo_list = new Undo *[max_images];
 
-  for(int i = 0; i < max_images; i++)
+  for (int i = 0; i < max_images; i++)
   {
     bmp_list[i] = 0;
     undo_list[i] = 0;
@@ -118,7 +118,7 @@ void Project::init(int memory_limit, int undo_limit)
 
 void Project::setTool(int num)
 {
-  switch(num)
+  switch (num)
   {
     case Tool::PAINT:
       tool = paint; 
@@ -149,12 +149,12 @@ bool Project::enoughMemory(int w, int h)
   uint64_t data = w * h * sizeof(int);
   uint64_t row = h * sizeof(int *);
 
-  if((getImageMemory() + data + row) / 1000000 > mem_max)
+  if ((getImageMemory() + data + row) / 1000000 > mem_max)
   {
     Dialog::message("Error", "Memory limit reached: Close images or\nstart program with --mem option\nto increase limit.");
     return false;
   }
-  else
+    else
   {
     return true;
   }
@@ -162,10 +162,10 @@ bool Project::enoughMemory(int w, int h)
 
 int Project::newImage(int w, int h)
 {
-  if(enoughMemory(w, h) == false)
+  if (enoughMemory(w, h) == false)
     return -1;
 
-  if(last > max_images - 2)
+  if (last > max_images - 2)
   {
     Dialog::message("Error", "Maximum number of images has been reached.");
     return -1;
@@ -190,10 +190,10 @@ int Project::newImage(int w, int h)
 
 int Project::newImageFromBitmap(Bitmap *temp)
 {
-  if(enoughMemory(temp->w, temp->h) == false)
+  if (enoughMemory(temp->w, temp->h) == false)
     return -1;
 
-  if(last > max_images - 2)
+  if (last > max_images - 2)
   {
     Dialog::message("Error", "Maximum number of images has been reached.");
     return -1;
@@ -221,7 +221,7 @@ int Project::newImageFromBitmap(Bitmap *temp)
 
 void Project::replaceImage(int w, int h)
 {
-  if(enoughMemory(w, h) == false)
+  if (enoughMemory(w, h) == false)
     return;
 
   delete bmp_list[current];
@@ -235,7 +235,7 @@ void Project::replaceImage(int w, int h)
 
 void Project::replaceImageFromBitmap(Bitmap *temp)
 {
-  if(enoughMemory(temp->w, temp->h) == false)
+  if (enoughMemory(temp->w, temp->h) == false)
     return;
 
   delete bmp_list[current];
@@ -249,7 +249,7 @@ void Project::replaceImageFromBitmap(Bitmap *temp)
 
 void Project::resizeImage(int w, int h)
 {
-  if(enoughMemory(w, h) == false)
+  if (enoughMemory(w, h) == false)
     return;
 
   Bitmap temp(w, h);
@@ -282,10 +282,10 @@ void Project::switchImage(int index)
 
 bool Project::removeImage()
 {
-  if(Dialog::choice("Close Image", "Are you sure?") == false)
+  if (Dialog::choice("Close Image", "Are you sure?") == false)
     return false;
 
-  if(last == 1)
+  if (last == 1)
   {
     delete bmp_list[0];
     delete undo_list[0];
@@ -301,12 +301,12 @@ bool Project::removeImage()
     map = new Map(bmp->w, bmp->h);
     map->clear(0);
   }
-  else
+    else
   {
     delete bmp_list[current];
     delete undo_list[current];
 
-    for(int i = current; i < last; i++)
+    for (int i = current; i < last; i++)
     {
       bmp_list[i] = bmp_list[i + 1];
       undo_list[i] = undo_list[i + 1];
@@ -325,14 +325,14 @@ double Project::getImageMemory()
 {
   double bytes = 0;
 
-  for(int j = 0; j < last; j++)
+  for (int j = 0; j < last; j++)
   {
     Bitmap *temp = bmp_list[j];
 
     bytes += temp->w * temp->h * sizeof(int);
     bytes += temp->h * sizeof(int *);
 
-    for(int i = 0; i < undo_list[j]->levels; i++)
+    for (int i = 0; i < undo_list[j]->levels; i++)
     {
       temp = undo_list[j]->undo_stack[i];
 
@@ -340,7 +340,7 @@ double Project::getImageMemory()
       bytes += temp->h * sizeof(int *);
     }
 
-    for(int i = 0; i < undo_list[j]->levels; i++)
+    for (int i = 0; i < undo_list[j]->levels; i++)
     {
       temp = undo_list[j]->redo_stack[i];
 

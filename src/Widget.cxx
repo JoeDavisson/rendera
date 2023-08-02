@@ -37,14 +37,14 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
 {
   var = 0;
 
-  if(cb)
+  if (cb)
     callback(cb, &var);
 
   stepx = sx;
   stepy = sy;
   group = g;
 
-  if(!(bitmap = File::loadPngFromArray(array)))
+  if (!(bitmap = File::loadPngFromArray(array)))
   {
     fl_message_title("Error");
     fl_message("Could not load image.");
@@ -58,11 +58,11 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
                     Project::theme_highlight_color, 192);
   Blend::set(Blend::TRANS);
 
-  if((stepx > 1) && (stepy > 1))
+  if ((stepx > 1) && (stepy > 1))
   {
-    for(int y1 = 0; y1 < bitmap2->h; y1 += stepy)
+    for (int y1 = 0; y1 < bitmap2->h; y1 += stepy)
     {
-      for(int x1 = 0; x1 < bitmap2->w; x1 += stepx)
+      for (int x1 = 0; x1 < bitmap2->w; x1 += stepx)
       {
         bitmap2->xorRect(x1 + 1, y1 + 1, x1 + stepx - 2, y1 + stepy - 2);
         bitmap2->rect(x1, y1, x1 + stepx - 1, y1 + stepy - 1, makeRgb(0, 0, 0), 0);
@@ -88,7 +88,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   stepy = 0;
   group = g;
 
-  if(!(bitmap = File::loadPngFromArray(array)))
+  if (!(bitmap = File::loadPngFromArray(array)))
   {
     fl_message_title("Error");
     fl_message("Could not load image.");
@@ -108,7 +108,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
 {
   var = 0;
 
-  if(cb)
+  if (cb)
     callback(cb, &var);
 
   stepx = sx;
@@ -134,25 +134,25 @@ int Widget::handle(int event)
 {
   int x1, y1;
 
-  switch(event)
+  switch (event)
   {
     case FL_ENTER:
       return 1;
     case FL_PUSH:
     case FL_DRAG:
-      if(stepx <= 0 || stepy <= 0)
+      if (stepx <= 0 || stepy <= 0)
         return 0;
 
       x1 = (Fl::event_x() - x()) / stepx;
-      if(x1 > w() / stepx - 1)
+      if (x1 > w() / stepx - 1)
         x1 = w() / stepx - 1;
-      if(x1 < 0)
+      if (x1 < 0)
         x1 = 0;
 
       y1 = (Fl::event_y() - y()) / stepy;
-      if(y1 > h() / stepy - 1)
+      if (y1 > h() / stepy - 1)
         y1 = h() / stepy - 1;
-      if(y1 < 0)
+      if (y1 < 0)
         y1 = 0;
 
       var = x1 + (w() / stepx) * y1;
@@ -171,36 +171,36 @@ int Widget::handle(int event)
 
 void Widget::draw()
 {
-//  if(stepx > 0 && stepy > 0)
+//  if (stepx > 0 && stepy > 0)
 //    fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
-  if(stepx > 0 && stepy > 0)
+  if (stepx > 0 && stepy > 0)
     fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), 42);
 
   image->draw(x(), y());
   image->uncache();
 
-  if(stepx >= 0 && stepx <= 1 && stepy >= 0 && stepy <= 1)
+  if (stepx >= 0 && stepx <= 1 && stepy >= 0 && stepy <= 1)
     return;
 
   int offsety = (var / (w() / stepx)) * stepy;
   int offsetx = var;
 
-  while(offsetx >= (w() / stepx))
+  while (offsetx >= (w() / stepx))
     offsetx -= (w() / stepx);
 
   offsetx *= stepx;
 
   fl_push_clip(x() + offsetx, y() + offsety, stepx, stepy);
 
-  if(stepx >= 0 && stepy >= 0)
+  if (stepx >= 0 && stepy >= 0)
     fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND2_COLOR);
 
-  if(use_highlight)
+  if (use_highlight)
   {
     image2->draw(x() + offsetx, y() + offsety, stepx, stepy, offsetx, offsety);
     image2->uncache();
   }
-  else
+    else
   {
     image->draw(x() + offsetx, y() + offsety, stepx, stepy, offsetx, offsety);
     image->uncache();

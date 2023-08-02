@@ -77,7 +77,7 @@ namespace Resize
 
   void checkWidth()
   {
-    if(Items::keep_aspect->value())
+    if (Items::keep_aspect->value())
     {
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
@@ -92,7 +92,7 @@ namespace Resize
 
   void checkHeight()
   {
-    if(Items::keep_aspect->value())
+    if (Items::keep_aspect->value())
     {
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
@@ -110,7 +110,7 @@ namespace Resize
     const int w = atoi(Items::width->value());
     const int h = atoi(Items::height->value());
 
-    if(Project::enoughMemory(w, h) == false)
+    if (Project::enoughMemory(w, h) == false)
       return;
 
     Items::dialog->hide();
@@ -124,7 +124,7 @@ namespace Resize
     const int xx = (temp->w - bmp->w) / 2;
     const int yy = (temp->h - bmp->h) / 2;
 
-    if(Items::center->value() == 1)
+    if (Items::center->value() == 1)
       bmp->blit(temp, 0, 0, xx, yy, bmp->w, bmp->h);
     else
       bmp->blit(temp, 0, 0, 0, 0, bmp->w, bmp->h);
@@ -220,10 +220,10 @@ namespace Scale
     const int dx = 0;
     const int dy = 0;
 
-    if(sw < 1 || sh < 1)
+    if (sw < 1 || sh < 1)
       return;
 
-    if(dw < 1 || dh < 1)
+    if (dw < 1 || dh < 1)
       return;
 
     Bitmap *temp = new Bitmap(dw, dh);
@@ -235,26 +235,26 @@ namespace Scale
     bool blur = false;
     float blur_size = 0;
 
-    if(sw > dw)
+    if (sw > dw)
       mipx = (sw / dw);
-    if(sh > dh)
+    if (sh > dh)
       mipy = (sh / dh);
 
-    if(mipx > .5 || mipy > .5)
+    if (mipx > .5 || mipy > .5)
     {
       blur_size = mipx > mipy ? mipx : mipy;
       blur = true;
     }
 
-   if(Items::mode->value() == 0)
+   if (Items::mode->value() == 0)
     {
       // nearest
-      for(int y = 0; y < dh; y++) 
+      for (int y = 0; y < dh; y++) 
       {
         int *d = temp->row[dy + y] + dx;
         const int yy = y * ay;
 
-        for(int x = 0; x < dw; x++) 
+        for (int x = 0; x < dw; x++) 
         {
           const int xx = x * ax;
 
@@ -262,29 +262,29 @@ namespace Scale
         }
       }
     }
-    else if(Items::mode->value() == 1)
+    else if (Items::mode->value() == 1)
     {
       // bilinear
-      if(blur)
+      if (blur)
         do_blur(bmp, blur_size);
 
       Gui::progressShow(dh);
 
-      for(int y = 0; y < dh; y++) 
+      for (int y = 0; y < dh; y++) 
       {
         int *d = temp->row[dy + y] + dx;
         const float vv = (y * ay);
         const int v1 = vv;
         const float v = vv - v1;
 
-        if(sy + v1 >= bmp->h - 1)
+        if (sy + v1 >= bmp->h - 1)
           break;
 
         int v2 = v1 + 1;
 
-        if(v2 >= sh)
+        if (v2 >= sh)
         {
-          if(wrap_edges)
+          if (wrap_edges)
             v2 -= sh;
           else
             v2--;
@@ -294,20 +294,20 @@ namespace Scale
         c[0] = c[1] = bmp->row[sy + v1] + sx;
         c[2] = c[3] = bmp->row[sy + v2] + sx;
 
-        for(int x = 0; x < dw; x++) 
+        for (int x = 0; x < dw; x++) 
         {
           const float uu = (x * ax);
           const int u1 = uu;
           const float u = uu - u1;
 
-          if(sx + u1 >= bmp->w - 1)
+          if (sx + u1 >= bmp->w - 1)
             break;
 
           int u2 = u1 + 1;
 
-          if(u2 >= sw)
+          if (u2 >= sw)
           {
-            if(wrap_edges)
+            if (wrap_edges)
               u2 -= sw;
             else
               u2--;
@@ -327,7 +327,7 @@ namespace Scale
 
           float r = 0, g = 0, b = 0, a = 0;
 
-          for(int i = 0; i < 4; i++)
+          for (int i = 0; i < 4; i++)
           {
             rgba_type rgba = getRgba(*c[i]);
             r += (float)Gamma::fix(rgba.r) * f[i];
@@ -348,13 +348,13 @@ namespace Scale
           c[3] -= u2;
         }
 
-        if(Gui::progressUpdate(y) < 0)
+        if (Gui::progressUpdate(y) < 0)
           break;
       }
     }
-    else if(Items::mode->value() == 2)
+    else if (Items::mode->value() == 2)
     {
-      if(blur)
+      if (blur)
         do_blur(bmp, blur_size);
 
       // bicubic
@@ -365,7 +365,7 @@ namespace Scale
 
       Gui::progressShow(dh);
 
-      for(int y = 0; y < dh; y++) 
+      for (int y = 0; y < dh; y++) 
       {
         int *d = temp->row[dy + y] + dx;
 
@@ -373,36 +373,36 @@ namespace Scale
         const int v1 = vv;
         const float v = vv - v1;
 
-        for(int x = 0; x < dw; x++) 
+        for (int x = 0; x < dw; x++) 
         {
           const float uu = (x * ax);
           const int u1 = uu;
           const float u = uu - u1;
 
-          for(int j = 0; j < 4; j++)
+          for (int j = 0; j < 4; j++)
           {
             int yy = v1 + j - 1;
 
-            if(wrap_edges)
+            if (wrap_edges)
             {
-              if(yy >= sh)
+              if (yy >= sh)
                 yy -= sh;
             }
 
-            if(yy > sh - 1)
+            if (yy > sh - 1)
               yy = sh - 1;
 
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
               int xx = u1 + i - 1;
 
-              if(wrap_edges)
+              if (wrap_edges)
               {
-                if(xx >= sw)
+                if (xx >= sw)
                   xx -= sw;
               }
 
-              if(xx > sw - 1)
+              if (xx > sw - 1)
                 xx = sw - 1;
 
               rgba_type rgba = getRgba(bmp->getpixel(sx + xx, sy + yy));
@@ -422,7 +422,7 @@ namespace Scale
           *d++ = makeRgba(rr, gg, bb, aa);
         }
 
-        if(Gui::progressUpdate(y) < 0)
+        if (Gui::progressUpdate(y) < 0)
           break;
       }
     }
@@ -448,7 +448,7 @@ namespace Scale
 
   void checkWidth()
   {
-    if(Items::keep_aspect->value())
+    if (Items::keep_aspect->value())
     {
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
@@ -463,7 +463,7 @@ namespace Scale
 
   void checkHeight()
   {
-    if(Items::keep_aspect->value())
+    if (Items::keep_aspect->value())
     {
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
@@ -485,16 +485,16 @@ namespace Scale
     w = (float)w * ((float)atoi(Items::percent->value()) / 100) + 0.5;
     h = (float)h * ((float)atoi(Items::percent->value()) / 100) + 0.5;
 
-    if(w < 1)
+    if (w < 1)
       w = 1;
 
-    if(h < 1)
+    if (h < 1)
       h = 1;
 
-    if(snprintf(s, sizeof(s), "%d", w) > 0)
+    if (snprintf(s, sizeof(s), "%d", w) > 0)
       Items::width->value(s);
 
-    if(snprintf(s, sizeof(s), "%d", h) > 0)
+    if (snprintf(s, sizeof(s), "%d", h) > 0)
       Items::height->value(s);
   }
 
@@ -503,7 +503,7 @@ namespace Scale
     int w = atoi(Items::width->value());
     int h = atoi(Items::height->value());
 
-    if(Project::enoughMemory(w, h) == false)
+    if (Project::enoughMemory(w, h) == false)
       return;
 
     Items::dialog->hide();
@@ -597,7 +597,7 @@ namespace RotateArbitrary
     // origin
     const int ox = xx + ww;
     const int oy = yy + hh;
-	
+        
     // project new corners
     int x0 = xx - ox;
     int y0 = yy - oy;
@@ -658,7 +658,7 @@ namespace RotateArbitrary
     Gui::progressShow(by2 - by1);
 
     // draw image
-    for(int y = by1; y <= by2; y++)
+    for (int y = by1; y <= by2; y++)
     {
       int u = row_u;
       int v = row_v;
@@ -668,10 +668,10 @@ namespace RotateArbitrary
 
       const int ty = ((temp->ch) / 2) + y;
 
-      if(ty < temp->ct || ty > temp->cb)
+      if (ty < temp->ct || ty > temp->cb)
         continue;
 
-      for(int x = bx1; x <= bx2; x++)
+      for (int x = bx1; x <= bx2; x++)
       {
         int uu = u >> 16;
         int vv = v >> 16;
@@ -679,11 +679,11 @@ namespace RotateArbitrary
         u += du_col;
         v += dv_col;
 
-        if(uu < bmp->cl || uu > bmp->cr || vv < bmp->ct || vv > bmp->cb)
+        if (uu < bmp->cl || uu > bmp->cr || vv < bmp->ct || vv > bmp->cb)
           continue;
 
         const int tx = ((temp->cw) / 2) + x;
-        if(tx < temp->cl || tx > temp->cr)
+        if (tx < temp->cl || tx > temp->cr)
           continue;
 
         const int c = *(bmp->row[vv] + uu);
@@ -794,9 +794,9 @@ void Transform::rotate90()
 
   int *p = &temp.data[0];
 
-  for(int y = 0; y < h; y++)
+  for (int y = 0; y < h; y++)
   {
-    for(int x = 0; x < w; x++)
+    for (int x = 0; x < w; x++)
     {
        *(Project::bmp->row[x] + h - 1 - y) = *p++;   
     } 

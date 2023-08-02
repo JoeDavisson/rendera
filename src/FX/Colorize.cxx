@@ -26,11 +26,11 @@ void Colorize::apply(Bitmap *bmp, int color)
 
   Gui::progressShow(bmp->h);
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       rgba_type rgba = getRgba(*p);
 
@@ -43,8 +43,8 @@ void Colorize::apply(Bitmap *bmp, int color)
 
       int sat = s;
 
-      if(sat < 64)
-	sat = 64;
+      if (sat < 64)
+        sat = 64;
 
       r = rgba_color.r;
       g = rgba_color.g;
@@ -56,7 +56,7 @@ void Colorize::apply(Bitmap *bmp, int color)
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 

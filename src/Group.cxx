@@ -48,7 +48,7 @@ void Group::draw()
 
   fl_draw_box(FL_UP_FRAME, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
 
-  if(strlen(label()) > 0)
+  if (strlen(label()) > 0)
   {
     fl_draw_box(FL_UP_BOX, x(), y(), w(), 20, FL_INACTIVE_COLOR);
     measure_label(lw, lh);

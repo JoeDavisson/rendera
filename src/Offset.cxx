@@ -63,19 +63,19 @@ void Offset::drag(View *view)
   int x = dx;
   int y = dy;
 
-  if(view->gridsnap)
+  if (view->gridsnap)
   {
     x -= x % view->gridx;
     y -= y % view->gridy;
   }
 
-  while(x < 0)
+  while (x < 0)
     x += w;
-  while(y < 0)
+  while (y < 0)
     y += h;
-  while(x >= w)
+  while (x >= w)
     x -= w;
-  while(y >= h)
+  while (y >= h)
     y -= h;
 
   offset_buffer->blit(Project::bmp, w - x, h - y, 0, 0, x, y);

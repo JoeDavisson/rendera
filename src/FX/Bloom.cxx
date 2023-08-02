@@ -43,10 +43,10 @@ void Bloom::apply(Bitmap *bmp, int radius, int threshold, int blend)
   // bell curve
   const int b = radius / 2;
 
-  for(int x = 0; x < radius; x++)
+  for (int x = 0; x < radius; x++)
   {
     kernel[x] = 255 * std::exp(-((double)((x - b) * (x - b)) /
-					 ((b * b) / 2)));
+                                         ((b * b) / 2)));
     div += kernel[x];
   }
 
@@ -54,29 +54,29 @@ void Bloom::apply(Bitmap *bmp, int radius, int threshold, int blend)
   Gui::progressShow(bmp->h);
 
   // x direction
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = temp.row[y - bmp->ct];
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       int rr = 0;
       int gg = 0;
       int bb = 0;
       int aa = 0;
 
-      for(int i = 0; i < radius; i++) 
+      for (int i = 0; i < radius; i++) 
       {
-	const int mul = kernel[i];
-	rgba_type rgba = getRgba(bmp->getpixel(x - radius / 2 + i, y));
+        const int mul = kernel[i];
+        rgba_type rgba = getRgba(bmp->getpixel(x - radius / 2 + i, y));
 
-	if(getlUnpacked(rgba.r, rgba.g, rgba.b) > threshold)
-	{
-	  rr += Gamma::fix(rgba.r) * mul;
-	  gg += Gamma::fix(rgba.g) * mul;
-	  bb += Gamma::fix(rgba.b) * mul;
-	  aa += rgba.a * mul;
-	}
+        if (getlUnpacked(rgba.r, rgba.g, rgba.b) > threshold)
+        {
+          rr += Gamma::fix(rgba.r) * mul;
+          gg += Gamma::fix(rgba.g) * mul;
+          bb += Gamma::fix(rgba.b) * mul;
+          aa += rgba.a * mul;
+        }
       }
 
       rr = Gamma::unfix(rr / div);
@@ -88,34 +88,34 @@ void Bloom::apply(Bitmap *bmp, int radius, int threshold, int blend)
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 
   Gui::progressShow(bmp->h);
 
   // y direction
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       int rr = 0;
       int gg = 0;
       int bb = 0;
       int aa = 0;
 
-      for(int i = 0; i < radius; i++) 
+      for (int i = 0; i < radius; i++) 
       {
-	const int mul = kernel[i];
-	rgba_type rgba = getRgba(temp.getpixel(x - bmp->cl,
-					       y - radius / 2 + i - bmp->ct));
+        const int mul = kernel[i];
+        rgba_type rgba = getRgba(temp.getpixel(x - bmp->cl,
+                                               y - radius / 2 + i - bmp->ct));
 
-	rr += Gamma::fix(rgba.r) * mul;
-	gg += Gamma::fix(rgba.g) * mul;
-	bb += Gamma::fix(rgba.b) * mul;
-	aa += rgba.a * mul;
+        rr += Gamma::fix(rgba.r) * mul;
+        gg += Gamma::fix(rgba.g) * mul;
+        bb += Gamma::fix(rgba.b) * mul;
+        aa += rgba.a * mul;
       }
 
       rr = Gamma::unfix(rr / div);
@@ -129,7 +129,7 @@ void Bloom::apply(Bitmap *bmp, int radius, int threshold, int blend)
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 

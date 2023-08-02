@@ -45,9 +45,9 @@ void Paint::push(View *view)
 {
   Stroke *stroke = Project::stroke;
 
-  if(active && stroke->type == 3)
+  if (active && stroke->type == 3)
   {
-    if(view->dclick || view->button3)
+    if (view->dclick || view->button3)
     {
       stroke->end(view->imgx, view->imgy);
       Blend::set(Project::brush->blend);
@@ -57,12 +57,12 @@ void Paint::push(View *view)
       view->drawMain(true);
       return;
     }
-    else if(view->button1)
+    else if (view->button1)
     {
       stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
     }
   }
-  else if(view->button1)
+  else if (view->button1)
   {
     stroke->begin(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
     Clone::state = Clone::STARTED;
@@ -75,7 +75,7 @@ void Paint::drag(View *view)
 {
   Stroke *stroke = Project::stroke;
 
-  if(stroke->type != 3)
+  if (stroke->type != 3)
   {
     stroke->draw(view->imgx, view->imgy, view->ox, view->oy, view->zoom);
     view->drawMain(false);
@@ -89,7 +89,7 @@ void Paint::release(View *view)
 {
   Stroke *stroke = Project::stroke;
 
-  if(active && stroke->type != 3)
+  if (active && stroke->type != 3)
   {
     stroke->end(view->imgx, view->imgy);
     Blend::set(Project::brush->blend);
@@ -108,10 +108,10 @@ void Paint::move(View *view)
 
   view->drawMain(false);
 
-  switch(stroke->type)
+  switch (stroke->type)
   {
     case 3:
-      if(active)
+      if (active)
       {
         stroke->polyLine(view->imgx, view->imgy,
                          view->ox, view->oy, view->zoom);
@@ -152,7 +152,7 @@ void Paint::redraw(View *view)
 {
   Stroke *stroke = Project::stroke;
 
-  if(active)
+  if (active)
   {
     active = false;
     view->drawMain(false);

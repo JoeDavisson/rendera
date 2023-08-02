@@ -32,9 +32,9 @@ void ValueStretch::apply(Bitmap *bmp)
   int count = 0;
 
   // determine overall color cast
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
@@ -52,11 +52,11 @@ void ValueStretch::apply(Bitmap *bmp)
 
   const int size = bmp->cw * bmp->ch;
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       rgba_type rgba = getRgba(*p);
 
@@ -72,9 +72,9 @@ void ValueStretch::apply(Bitmap *bmp)
     }
   }
 
-  for(int j = 255; j >= 0; j--)
+  for (int j = 255; j >= 0; j--)
   {
-    for(int i = 0; i < j; i++)
+    for (int i = 0; i < j; i++)
     {
       list_r[j] += list_r[i];
       list_g[j] += list_g[i];
@@ -86,11 +86,11 @@ void ValueStretch::apply(Bitmap *bmp)
 
   Gui::progressShow(bmp->h);
 
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       rgba_type rgba = getRgba(*p);
 
@@ -114,7 +114,7 @@ void ValueStretch::apply(Bitmap *bmp)
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 

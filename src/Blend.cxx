@@ -35,7 +35,7 @@ int Blend::ypos;
 // sets the blending mode for future operations
 void Blend::set(const int mode)
 {
-  switch(mode)
+  switch (mode)
   {
     case TRANS:
       current_blend = trans;
@@ -145,7 +145,7 @@ int Blend::darken(const int c1, const int c2, const int t)
   rgbToHsv(rgba2.r, rgba2.g, rgba2.b, &h, &s, &v);
   h += 768;
 
-  if(h >= 1536)
+  if (h >= 1536)
         h -= 1536;
 
   hsvToRgb(h, s, v, &r, &g, &b);
@@ -193,16 +193,16 @@ int Blend::keepLum(const int c, const int lum)
   int src = getlUnpacked(n[1], n[0], n[2]);
   int count = 0;
 
-  while(src < lum && count < 1000)
+  while (src < lum && count < 1000)
   {
-    for(int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
-      if(n[i] < 255)
+      if (n[i] < 255)
       {
         n[i]++;
         src = getlUnpacked(n[1], n[0], n[2]);
 
-        if(src >= lum)
+        if (src >= lum)
           break;
       }
     }
@@ -212,16 +212,16 @@ int Blend::keepLum(const int c, const int lum)
 
   count = 0;
 
-  while(src > lum && count < 1000)
+  while (src > lum && count < 1000)
   {
-    for(int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
-      if(n[i] > 0)
+      if (n[i] > 0)
       {
         n[i]--;
         src = getlUnpacked(n[1], n[0], n[2]);
 
-        if(src <= lum)
+        if (src <= lum)
           break;
       }
     }
@@ -249,9 +249,9 @@ int Blend::smooth(const int c1, const int, const int t)
     {  1,  2,  1 }
   };
 
-  for(int j = 0; j < 3; j++)
+  for (int j = 0; j < 3; j++)
   {
-    for(int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
       const rgba_type rgba = getRgba(bmp->getpixel(xpos + i - 1, ypos + j - 1));
 
@@ -296,25 +296,25 @@ void Blend::rgbToHsv(const int r, const int g, const int b, int *h, int *s, int 
 
   *v = max;
 
-  if(max)
+  if (max)
     *s = (delta * 255) / max;
   else
     *s = 0;
 
-  if(*s == 0)
+  if (*s == 0)
   {
     *h = 0;
   }
-  else
+    else
   {
-    if(r == max)
+    if (r == max)
       *h = ((g - b) * 255) / delta;
-    else if(g == max)
+    else if (g == max)
       *h = 512 + ((b - r) * 255) / delta;
-    else if(b == max)
+    else if (b == max)
       *h = 1024 + ((r - g) * 255) / delta;
 
-    if(*h < 0)
+    if (*h < 0)
       *h += 1536;
   }
 }
@@ -325,7 +325,7 @@ void Blend::rgbToHsv(const int r, const int g, const int b, int *h, int *s, int 
 // val 0-255
 void Blend::hsvToRgb(const int h, const int s, const int v, int *r, int *g, int *b)
 {
-  if(s == 0)
+  if (s == 0)
   {
     *r = *g = *b = v;
     return;
@@ -338,7 +338,7 @@ void Blend::hsvToRgb(const int h, const int s, const int v, int *r, int *g, int 
   int y = (v * ((65025 - s * f) / 255)) / 255;
   int z = (v * ((65025 - s * (255 - f)) / 255)) / 255;
 
-  switch(i)
+  switch (i)
   {
     case 6:
     case 0:
@@ -399,7 +399,7 @@ void Blend::yccToRgb(const float y, const float cb, const float cr, int *r, int 
 // val 0-255
 void Blend::wheelToRgb(int h, int s, int v, int *r, int *g, int *b)
 {
-  switch(h / 256)
+  switch (h / 256)
   {
     case 0:
       h /= 2;

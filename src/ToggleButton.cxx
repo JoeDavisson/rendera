@@ -36,12 +36,12 @@ ToggleButton::ToggleButton(Fl_Group *g, int x, int y, int w, int h,
 {
   var = 0;
 
-  if(cb)
+  if (cb)
     callback(cb, &var);
 
   group = g;
 
-  if(!(bitmap = File::loadPngFromArray(array)))
+  if (!(bitmap = File::loadPngFromArray(array)))
   {
     fl_message_title("Error");
 //    fl_message("Could not load %s, exiting.", filename);
@@ -61,12 +61,12 @@ ToggleButton::~ToggleButton()
 
 int ToggleButton::handle(int event)
 {
-  switch(event)
+  switch (event)
   {
     case FL_ENTER:
       return 1;
     case FL_PUSH:
-      switch(Fl::event_button())
+      switch (Fl::event_button())
       {
         case 1:
           var = 1 - var;
@@ -88,7 +88,7 @@ void ToggleButton::draw()
 
   fl_push_clip(x(), y(), w(), h());
 
-  if(var)
+  if (var)
     image->draw(x() + 1, y() + 1);
   else
     image->draw(x(), y());
@@ -107,7 +107,7 @@ void ToggleButton::draw()
   fl_xyline(x1, y1, x2);
   fl_yxline(x1, y1, y2);
 
-  if(var)
+  if (var)
   {
     fl_xyline(x1 + 1, y1 + 1, x2 - 1);
     fl_yxline(x1 + 1, y1 + 1, y2 - 1);

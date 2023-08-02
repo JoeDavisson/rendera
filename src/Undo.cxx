@@ -35,7 +35,7 @@ Undo::Undo()
   undo_stack = new Bitmap *[levels];
   redo_stack = new Bitmap *[levels];
 
-  for(int i = 0; i < levels; i++)
+  for (int i = 0; i < levels; i++)
   {
     undo_stack[i] = 0;
     redo_stack[i] = 0;
@@ -46,7 +46,7 @@ Undo::Undo()
 
 Undo::~Undo()
 {
-  for(int i = 0; i < levels; i++)
+  for (int i = 0; i < levels; i++)
   {
     delete undo_stack[i];
     delete redo_stack[i];
@@ -55,7 +55,7 @@ Undo::~Undo()
 
 void Undo::reset()
 {
-  for(int i = 0; i < levels; i++)
+  for (int i = 0; i < levels; i++)
   {
     delete undo_stack[i];
     delete redo_stack[i];
@@ -70,19 +70,19 @@ void Undo::reset()
 
 void Undo::doPush()
 {
-  if(undo_current < 1)
+  if (undo_current < 1)
   {
     undo_current = 1;
 
     Bitmap *temp_bmp = undo_stack[levels - 1];
 
-    for(int i = levels - 1; i > 0; i--)
+    for (int i = levels - 1; i > 0; i--)
       undo_stack[i] = undo_stack[i - 1];
 
     undo_stack[0] = temp_bmp;
   }
 
-  if(Project::enoughMemory(Project::bmp->w, Project::bmp->h) == false)
+  if (Project::enoughMemory(Project::bmp->w, Project::bmp->h) == false)
     return;
 
   delete undo_stack[undo_current];
@@ -99,7 +99,7 @@ void Undo::push()
   doPush();
 
   // reset redo list since user performed some action
-  for(int i = 0; i < levels; i++)
+  for (int i = 0; i < levels; i++)
   {
     delete redo_stack[i];
     redo_stack[i] = new Bitmap(8, 8);
@@ -110,12 +110,12 @@ void Undo::push()
 
 void Undo::pop()
 {
-  if(undo_current >= levels - 1)
+  if (undo_current >= levels - 1)
     return;
 
   pushRedo();
 
-  if(undo_current >= 0)
+  if (undo_current >= 0)
   {
     delete undo_stack[undo_current];
     undo_stack[undo_current] = new Bitmap(8, 8);
@@ -133,19 +133,19 @@ void Undo::pop()
 
 void Undo::pushRedo()
 {
-  if(redo_current < 0)
+  if (redo_current < 0)
   {
     redo_current = 0;
 
     Bitmap *temp_bmp = redo_stack[levels - 1];
 
-    for(int i = levels - 1; i > 0; i--)
+    for (int i = levels - 1; i > 0; i--)
       redo_stack[i] = redo_stack[i - 1];
 
     redo_stack[0] = temp_bmp;
   }
 
-  if(Project::enoughMemory(Project::bmp->w, Project::bmp->h) == false)
+  if (Project::enoughMemory(Project::bmp->w, Project::bmp->h) == false)
     return;
 
   delete redo_stack[redo_current];
@@ -156,18 +156,18 @@ void Undo::pushRedo()
 
   redo_current--;
 
-  if(redo_current < 0)
+  if (redo_current < 0)
     redo_current = 0;
 }
 
 void Undo::popRedo()
 {
-  if(redo_current >= levels - 1)
+  if (redo_current >= levels - 1)
     return;
 
   doPush();
 
-  if(redo_current >= 0)
+  if (redo_current >= 0)
   {
     delete redo_stack[redo_current];
     redo_stack[redo_current] = new Bitmap(8, 8);

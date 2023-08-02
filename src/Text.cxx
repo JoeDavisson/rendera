@@ -57,16 +57,16 @@ void Text::push(View *view)
   // render text to image
   Blend::set(Project::brush->blend);
 
-  if(Gui::getTextSmooth() > 0)
+  if (Gui::getTextSmooth() > 0)
   {
-    for(int y = 0; y < temp->h; y++)
+    for (int y = 0; y < temp->h; y++)
     {
-      for(int x = 0; x < temp->w; x++)
+      for (int x = 0; x < temp->w; x++)
       {
         int c = temp->getpixel(x, y);
         int t = getv(c);
 
-        if(t < 255)
+        if (t < 255)
         {
           Project::bmp->setpixel(view->imgx - temp->w / 2 + x,
                                  view->imgy - temp->h / 2 + y,
@@ -76,16 +76,16 @@ void Text::push(View *view)
       }
     }
   }
-  else
+    else
   {
-    for(int y = 0; y < temp->h; y++)
+    for (int y = 0; y < temp->h; y++)
     {
-      for(int x = 0; x < temp->w; x++)
+      for (int x = 0; x < temp->w; x++)
       {
         int c = temp->getpixel(x, y);
         int t = getv(c);
 
-        if(t < 192)
+        if (t < 192)
         {
           Project::bmp->setpixel(view->imgx - temp->w / 2 + x,
                                  view->imgy - temp->h / 2 + y,
@@ -121,12 +121,12 @@ void Text::move(View *view)
   int size = Gui::getTextFontSize();
   const char *s = Gui::textInput();
 
-  if(size > 256)
+  if (size > 256)
     size = 256;
-  if(size < 4)
+  if (size < 4)
     size = 4;
 
-  if(strlen(s) > 250)
+  if (strlen(s) > 250)
     return;
 
   // add a space before and after string, or some
@@ -136,7 +136,7 @@ void Text::move(View *view)
 
   unsigned int i = 0;
 
-  for( ; i <= strlen(s); i++)
+  for ( ; i <= strlen(s); i++)
     string[i + 1] = s[i];
 
   string[i++] = ' ';
@@ -173,14 +173,14 @@ void Text::move(View *view)
   Map *map = Project::map;
   map->clear(0);
 
-  for(int y = 0; y < temp->h; y++)
+  for (int y = 0; y < temp->h; y++)
   {
-    for(int x = 0; x < temp->w; x++)
+    for (int x = 0; x < temp->w; x++)
     {
       int c = temp->getpixel(x, y);
       int t = getv(c);
 
-      if(t < 192)
+      if (t < 192)
         map->setpixel(imgx - temp->w / 2 + x, imgy - temp->h / 2 + y, 255);
     }
   }

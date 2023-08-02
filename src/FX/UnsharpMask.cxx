@@ -42,10 +42,10 @@ void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
   // bell curve
   const int rb = radius / 2;
 
-  for(int x = 0; x < radius; x++)
+  for (int x = 0; x < radius; x++)
   {
     kernel[x] = 255 * std::exp(-((double)((x - rb) * (x - rb)) /
-					 ((rb * rb) / 2)));
+                                         ((rb * rb) / 2)));
     div += kernel[x];
   }
 
@@ -53,24 +53,24 @@ void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
   Gui::progressShow(bmp->h);
 
   // x direction
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = temp.row[y - bmp->ct];
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       int rr = 0;
       int gg = 0;
       int bb = 0;
       int aa = 0;
 
-      for(int i = 0; i < radius; i++) 
+      for (int i = 0; i < radius; i++) 
       {
-	rgba_type rgba = getRgba(bmp->getpixel(x - radius / 2 + i, y));
-	rr += Gamma::fix(rgba.r) * kernel[i];
-	gg += Gamma::fix(rgba.g) * kernel[i];
-	bb += Gamma::fix(rgba.b) * kernel[i];
-	aa += rgba.a * kernel[i];
+        rgba_type rgba = getRgba(bmp->getpixel(x - radius / 2 + i, y));
+        rr += Gamma::fix(rgba.r) * kernel[i];
+        gg += Gamma::fix(rgba.g) * kernel[i];
+        bb += Gamma::fix(rgba.b) * kernel[i];
+        aa += rgba.a * kernel[i];
       }
 
       rr /= div;
@@ -86,7 +86,7 @@ void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 
@@ -96,25 +96,25 @@ void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
   Gui::progressShow(bmp->h);
 
   // y direction
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = temp2.row[y - bmp->ct];
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       int rr = 0;
       int gg = 0;
       int bb = 0;
       int aa = 0;
 
-      for(int i = 0; i < radius; i++) 
+      for (int i = 0; i < radius; i++) 
       {
-	rgba_type rgba = getRgba(temp.getpixel(x - bmp->cl,
-					       y - radius / 2 + i - bmp->ct));
-	rr += Gamma::fix(rgba.r) * kernel[i];
-	gg += Gamma::fix(rgba.g) * kernel[i];
-	bb += Gamma::fix(rgba.b) * kernel[i];
-	aa += rgba.a * kernel[i];
+        rgba_type rgba = getRgba(temp.getpixel(x - bmp->cl,
+                                               y - radius / 2 + i - bmp->ct));
+        rr += Gamma::fix(rgba.r) * kernel[i];
+        gg += Gamma::fix(rgba.g) * kernel[i];
+        bb += Gamma::fix(rgba.b) * kernel[i];
+        aa += rgba.a * kernel[i];
       }
 
       rr /= div;
@@ -130,27 +130,27 @@ void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
       p++;
     }
 
-    if(Gui::progressUpdate(y) < 0)
+    if (Gui::progressUpdate(y) < 0)
       return;
   }
 
   // blend
-  for(int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *d = bmp->row[y] + bmp->cl;
     int *p = temp2.row[y - bmp->ct];
 
-    for(int x = bmp->cl; x <= bmp->cr; x++)
+    for (int x = bmp->cl; x <= bmp->cr; x++)
     {
 
       int a = getl(*p);
       int b = getl(*d);
 
-      if(abs(a - b) >= threshold)
+      if (abs(a - b) >= threshold)
       {
-	int lum = a - (amount * (a - b)); 
-	lum = clamp(lum, 255);
-	*d = Blend::keepLum(*p, lum);
+        int lum = a - (amount * (a - b)); 
+        lum = clamp(lum, 255);
+        *d = Blend::keepLum(*p, lum);
       }
 
       d++;
