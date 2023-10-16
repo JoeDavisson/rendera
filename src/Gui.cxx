@@ -1274,7 +1274,7 @@ void Gui::zoomLevel()
   char s[256];
 
   if (view->zoom < 1)
-    snprintf(s, sizeof(s), "%0.3fx", view->zoom);
+    snprintf(s, sizeof(s), "1/%1.0f", 1.0 / view->zoom);
   else
     snprintf(s, sizeof(s), "%2.1fx", view->zoom);
     

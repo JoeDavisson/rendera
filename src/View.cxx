@@ -38,6 +38,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
+#include "FX/GaussianBlur.H"
+
 #if defined WIN32
   #include <windows.h>
 #endif
@@ -527,20 +529,19 @@ void View::drawMain(bool refresh)
   int sw = w() / zoom;
   int sh = h() / zoom;
 
-  sw += 2;
-  sh += 2;
-
   int dw = sw * zoom;
   int dh = sh * zoom;
 
+/*
   int overx = dw - w();
   int overy = dh - h();
 
-  if (zoom < 2)
+  if (zoom <= 1)
   {
     overx = 0;
     overy = 0;
   }
+*/
 
   backbuf->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
@@ -549,6 +550,7 @@ void View::drawMain(bool refresh)
 
   if (ox < 0)
     offx = -ox;
+
   if (oy < 0)
     offy = -oy;
 
@@ -556,19 +558,33 @@ void View::drawMain(bool refresh)
 
   if (view_mode == VIEW_MODE_NORMAL)
   {
-    bmp->pointStretch(backbuf,
-                    ox, oy, sw - offx, sh - offy,
-                    offx * zoom, offy * zoom,
-                    dw - offx * zoom, dh - offy * zoom,
-                    overx, overy, ox, oy, bgr_order);
+    if (zoom < 1.0 && aspect == ASPECT_NORMAL)
+    {
+      bmp->pointStretchSS(backbuf,
+                          ox, oy,
+                          sw - offx, sh - offy,
+                          offx * zoom, offy * zoom,
+                          dw - offx * zoom, dh - offy * zoom,
+                          bgr_order);
+    }
+      else
+    {
+      bmp->pointStretch(backbuf,
+                        ox, oy,
+                        sw - offx, sh - offy,
+                        offx * zoom, offy * zoom,
+                        dw - offx * zoom, dh - offy * zoom,
+                        bgr_order);
+    }
   }
   else if (view_mode == VIEW_MODE_INDEXED)
   {
     bmp->pointStretchIndexed(backbuf, Project::palette,
-                    ox, oy, sw - offx, sh - offy,
-                    offx * zoom, offy * zoom,
-                    dw - offx * zoom, dh - offy * zoom,
-                    overx, overy, ox, oy, bgr_order);
+                             ox, oy,
+                             sw - offx, sh - offy,
+                             offx * zoom, offy * zoom,
+                             dw - offx * zoom, dh - offy * zoom,
+                             bgr_order);
   }
 
   if (grid)
@@ -737,9 +753,9 @@ void View::zoomOut(int x, int y)
   float oldzoom = zoom;
   zoom /= 2;
 
-  if (zoom < .125)
+  if (zoom < .0625)
   {
-    zoom = .125;
+    zoom = .0625;
   }
     else
   {
@@ -866,8 +882,10 @@ void View::draw()
       break;
   }
 
+//  backbuf->pointStretch(backbuf2, 0, 0, backbuf->w / ax, backbuf->h / ay,
+//                        0, 0, backbuf2->w, backbuf2->h, 0, 0, 0, 0, false);
   backbuf->pointStretch(backbuf2, 0, 0, backbuf->w / ax, backbuf->h / ay,
-                        0, 0, backbuf2->w, backbuf2->h, 0, 0, 0, 0, false);
+                        0, 0, backbuf2->w, backbuf2->h, false);
 
   if (Project::tool->isActive())
   {
