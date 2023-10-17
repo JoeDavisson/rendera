@@ -829,7 +829,7 @@ void Bitmap::pointStretchSS(Bitmap *dest,
 
   for (int y = 0; y < dh; y++)
   {
-    float y1 = sy + y * by;
+    float y1 = (float)((int)(sy + y * by)) + 0.5f;
 
     if (y1 < 0 || y1 >= h)
       continue;
@@ -839,7 +839,7 @@ void Bitmap::pointStretchSS(Bitmap *dest,
 
     for (int x = 0; x < dw; x++)
     {
-      float x1 = sx + x * bx;
+      float x1 = (float)((int)(sx + x * bx)) + 0.5f;
 
       if (x1 < 0 || x1 >= w)
         continue;
@@ -848,24 +848,19 @@ void Bitmap::pointStretchSS(Bitmap *dest,
         continue;
 
       int c_orig = *(row[(int)y1] + (int)x1);
-      int c[8];
+      int c[4];
 
       c[0] = getpixel(x1 + rx1, y1 - ry3);
       c[1] = getpixel(x1 - rx3, y1 - ry1);
       c[2] = getpixel(x1 + rx3, y1 + ry1);
       c[3] = getpixel(x1 - rx1, y1 + ry3);
 
-      c[4] = getpixel(x1 + rx1 + 0.5f, y1 - ry3 + 0.5f);
-      c[5] = getpixel(x1 - rx3 + 0.5f, y1 - ry1 + 0.5f);
-      c[6] = getpixel(x1 + rx3 + 0.5f, y1 + ry1 + 0.5f);
-      c[7] = getpixel(x1 - rx1 + 0.5f, y1 + ry3 + 0.5f);
-
       int r = 0;
       int g = 0;
       int b = 0;
       int a = 0;
 
-      for (int i = 0; i < 8; i++)
+      for (int i = 0; i < 4; i++)
       {
         r += Gamma::fix(getr(c[i]));
         g += Gamma::fix(getg(c[i]));
@@ -873,10 +868,10 @@ void Bitmap::pointStretchSS(Bitmap *dest,
         a += geta(c[i]);
       }
 
-      r /= 8;
-      g /= 8;
-      b /= 8;
-      a /= 8;
+      r /= 4;
+      g /= 4;
+      b /= 4;
+      a /= 4;
 
       r = Gamma::unfix(r);
       g = Gamma::unfix(g);
