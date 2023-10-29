@@ -562,11 +562,12 @@ int Bitmap::getpixel(int x, int y)
 {
   if (x < cl)
     x = cl;
-  if (x > cr)
+  else if (x > cr)
     x = cr;
+
   if (y < ct)
     y = ct;
-  if (y > cb)
+  else if (y > cb)
     y = cb;
 
   return *(row[y] + x);
@@ -576,11 +577,12 @@ int Bitmap::getpixelNoClip(int x, int y)
 {
   if (x < 0)
     x = 0;
-  if (x > w - 1)
+  else if (x >= w)
     x = w - 1;
+
   if (y < 0)
     y = 0;
-  if (y > h - 1)
+  else if (y >= h)
     y = h - 1;
 
   return *(row[y] + x);
@@ -761,7 +763,7 @@ void Bitmap::transBlit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int
   }
 }
 
-// use supersampling when viewport is zoomed out
+// render viewport with supersampling when zoomed out
 void Bitmap::pointStretchSS(Bitmap *dest,
                             int sx, int sy, int sw, int sh,
                             int dx, int dy, int dw, int dh,
@@ -818,8 +820,8 @@ void Bitmap::pointStretchSS(Bitmap *dest,
     sh -= d * ay;
   }
 
-//  dw = sw * ax;
-//  dh = sh * ay;
+  dw = sw * ax;
+  dh = sh * ay;
 
   if (sw < 1 || sh < 1)
     return;
@@ -829,7 +831,8 @@ void Bitmap::pointStretchSS(Bitmap *dest,
 
   for (int y = 0; y < dh; y++)
   {
-    float y1 = (float)((int)(sy + y * by)) + 0.5f;
+    const float y1 = (float)((int)(sy + y * by));
+    const float y2 = y1 + 0.5f;
 
     if (y1 < 0 || y1 >= h)
       continue;
@@ -839,7 +842,8 @@ void Bitmap::pointStretchSS(Bitmap *dest,
 
     for (int x = 0; x < dw; x++)
     {
-      float x1 = (float)((int)(sx + x * bx)) + 0.5f;
+      const float x1 = (float)((int)(sx + x * bx));
+      const float x2 = x1 + 0.5f;
 
       if (x1 < 0 || x1 >= w)
         continue;
@@ -847,20 +851,25 @@ void Bitmap::pointStretchSS(Bitmap *dest,
       if (dx + x < 0 || dx + x >= dest->w)
         continue;
 
-      int c_orig = *(row[(int)y1] + (int)x1);
-      int c[4];
+      const int c_orig = *(row[(int)y1] + (int)x1);
+      int c[8];
 
       c[0] = getpixel(x1 + rx1, y1 - ry3);
       c[1] = getpixel(x1 - rx3, y1 - ry1);
       c[2] = getpixel(x1 + rx3, y1 + ry1);
       c[3] = getpixel(x1 - rx1, y1 + ry3);
 
+      c[4] = getpixel(x2 - rx1, y2 + ry3);
+      c[5] = getpixel(x2 + rx3, y2 + ry1);
+      c[6] = getpixel(x2 - rx3, y2 - ry1);
+      c[7] = getpixel(x2 + rx1, y2 - ry3);
+
       int r = 0;
       int g = 0;
       int b = 0;
       int a = 0;
 
-      for (int i = 0; i < 4; i++)
+      for (int i = 0; i < 8; i++)
       {
         r += Gamma::fix(getr(c[i]));
         g += Gamma::fix(getg(c[i]));
@@ -868,10 +877,10 @@ void Bitmap::pointStretchSS(Bitmap *dest,
         a += geta(c[i]);
       }
 
-      r /= 4;
-      g /= 4;
-      b /= 4;
-      a /= 4;
+      r >>= 3;
+      g >>= 3;
+      b >>= 3;
+      a >>= 3;
 
       r = Gamma::unfix(r);
       g = Gamma::unfix(g);
@@ -887,6 +896,7 @@ void Bitmap::pointStretchSS(Bitmap *dest,
   }
 }
 
+// render viewport
 void Bitmap::pointStretch(Bitmap *dest,
                           int sx, int sy, int sw, int sh,
                           int dx, int dy, int dw, int dh,
@@ -976,6 +986,7 @@ void Bitmap::pointStretch(Bitmap *dest,
   }
 }
 
+// render viewport using palette colors
 void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
                           int sx, int sy, int sw, int sh,
                           int dx, int dy, int dw, int dh,
@@ -1109,68 +1120,6 @@ void Bitmap::rotate180()
 
     if (count >= size)
       break; 
-  }
-}
-
-// bresenham stretching
-void Bitmap::fastStretch(Bitmap *dest,
-                         int xs1, int ys1, int xs2, int ys2,
-                         int xd1, int yd1, int xd2, int yd2, bool bgr_order)
-{
-  xs2 += xs1;
-  xs2--;
-  ys2 += ys1;
-  ys2--;
-  xd2 += xd1;
-  xd2--;
-  yd2 += yd1;
-  yd2--;
-
-  const int dx = std::abs(yd2 - yd1);
-  const int dy = std::abs(ys2 - ys1) << 1;
-  const int sx = std::signbit(yd2 - yd1) ? -1 : 1;
-  const int sy = std::signbit(ys2 - ys1) ? -1 : 1;
-  const int dx2 = dx << 1;
-
-  int e = dy - dx;
-
-  for (int d = 0; d <= dx; d++)
-  {
-    const int dx_1 = std::abs(xd2 - xd1);
-    const int dy_1 = std::abs(xs2 - xs1) << 1;
-    const int sx_1 = std::signbit(xd2 - xd1) ? -1 : 1;
-    const int sy_1 = std::signbit(xs2 - xs1) ? -1 : 1;
-    const int dx2_1 = dx_1 << 1;
-
-    int e_1 = dy_1 - dx_1;
-    int *p = dest->row[yd1] + xd1;
-    int *q = row[ys1] + xs1;
-
-    for (int d_1 = 0; d_1 <= dx_1; d_1++)
-    {
-      // generate checkboard pattern for transparent areas
-      const int checker = ((d_1 >> 4) ^ (yd1 >> 4)) & 1 ? 0xa0a0a0 : 0x606060;
-
-      *p = convertFormat(blendFast(checker, *q, 255 - geta(*q)), bgr_order);
-
-      while (e_1 >= 0)
-      {
-        q += sy_1;
-        e_1 -= dx2_1;
-      }
-
-      p += sx_1;
-      e_1 += dy_1;
-    }
-
-    while (e >= 0)
-    {
-      ys1 += sy;
-      e -= dx2;
-    }
-
-    yd1 += sx;
-    e += dy;
   }
 }
 
