@@ -827,27 +827,28 @@ void Bitmap::pointStretch(Bitmap *dest,
   {
     const int y1 = sy + ((y * by) >> 16);
 
-    if (y1 < 0 || y1 >= h)
+    if (y1 >= h)
       continue;
+
+    int *p = dest->row[dy + y] + dx;
 
     for (int x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 16);
 
-      if (x1 < 0 || x1 >= w)
+      if (x1 >= w)
         continue;
 
       const int c = *(row[y1] + x1);
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
                           ? 0x989898 : 0x686868;
 
-      *(dest->row[dy + y] + dx + x) =
-           convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
+      *p++ = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
     }
   }
 }
 
-// render viewport using palette colors
+// render viewport using current palette
 void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
                           int sx, int sy, int sw, int sh,
                           int dx, int dy, int dw, int dh,
@@ -911,14 +912,16 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
   {
     const int y1 = sy + ((y * by) >> 16);
 
-    if (y1 < 0 || y1 >= h)
+    if (y1 >= h)
       continue;
+
+    int *p = dest->row[dy + y] + dx;
 
     for (int x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 16);
 
-      if (x1 < 0 || x1 >= w)
+      if (x1 >= w)
         continue;
 
       const int c = *(row[y1] + x1);
@@ -926,8 +929,8 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
                           ? 0x989898 : 0x686868;
 
-      *(dest->row[dy + y] + dx + x) =
-           convertFormat(blendFast(checker, cpal, 255 - geta(cpal)), bgr_order);
+      *p++ = convertFormat(blendFast(checker, cpal, 255 - geta(cpal)),
+                           bgr_order);
     }
   }
 }
