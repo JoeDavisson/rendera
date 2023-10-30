@@ -547,24 +547,12 @@ void View::drawMain(bool refresh)
 
   if (view_mode == VIEW_MODE_NORMAL)
   {
-    if (zoom < 1.0 && aspect == ASPECT_NORMAL)
-    {
-      bmp->pointStretchSS(backbuf,
-                          ox, oy,
-                          sw - offx, sh - offy,
-                          offx * zoom, offy * zoom,
-                          dw - offx * zoom, dh - offy * zoom,
-                          bgr_order);
-    }
-      else
-    {
-      bmp->pointStretch(backbuf,
-                        ox, oy,
-                        sw - offx, sh - offy,
-                        offx * zoom, offy * zoom,
-                        dw - offx * zoom, dh - offy * zoom,
-                        bgr_order);
-    }
+    bmp->pointStretch(backbuf,
+                      ox, oy,
+                      sw - offx, sh - offy,
+                      offx * zoom, offy * zoom,
+                      dw - offx * zoom, dh - offy * zoom,
+                      bgr_order);
   }
   else if (view_mode == VIEW_MODE_INDEXED)
   {

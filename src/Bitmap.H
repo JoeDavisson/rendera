@@ -61,7 +61,6 @@ public:
   void swapRedBlue();
   void blit(Bitmap *, int, int, int, int, int, int);
   void transBlit(Bitmap *, int, int, int, int, int, int);
-  void pointStretchSS(Bitmap *, int, int, int, int, int, int, int, int, bool);
   void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);
   void pointStretchIndexed(Bitmap *, Palette *, int, int, int, int, int, int, int, int, bool);
   void flipHorizontal();

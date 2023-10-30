@@ -763,139 +763,6 @@ void Bitmap::transBlit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int
   }
 }
 
-// render viewport with supersampling when zoomed out
-void Bitmap::pointStretchSS(Bitmap *dest,
-                            int sx, int sy, int sw, int sh,
-                            int dx, int dy, int dw, int dh,
-                            bool bgr_order)
-{
-  const float ax = (float)dw / sw;
-  const float ay = (float)dh / sh;
-  const float bx = (float)sw / dw;
-  const float by = (float)sh / dh;
-  const int zx = sx * ax;
-  const int zy = sy * ay;
-  const float rx = bx / 8;
-  const float ry = by / 8;
-  const float rx1 = rx * 1;
-  const float rx3 = rx * 3;
-  const float ry1 = ry * 1;
-  const float ry3 = ry * 3;
-
-  if (sx < 0)
-    sx = 0;
-
-  if (sy < 0)
-    sy = 0;
-
-  if (dx < dest->cl)
-  {
-    const int d = dest->cl - dx;
-    dx = dest->cl;
-    dw -= d;
-    sx += d * ax;
-    sw -= d * ax;
-  }
-
-  if (dx + dw > dest->cr)
-  {
-    const int d = dx + dw - dest->cr;
-    dw -= d;
-    sw -= d * ax;
-  }
-
-  if (dy < dest->ct)
-  {
-    const int d = dest->ct - dy;
-    dy = dest->ct;
-    dh -= d;
-    sy += d * ay;
-    sh -= d * ay;
-  }
-
-  if (dy + dh > dest->cb)
-  {
-    const int d = dy + dh - dest->cb;
-    dh -= d;
-    sh -= d * ay;
-  }
-
-  dw = sw * ax;
-  dh = sh * ay;
-
-  if (sw < 1 || sh < 1)
-    return;
-
-  if (dw < 1 || dh < 1)
-    return;
-
-  for (int y = 0; y < dh; y++)
-  {
-    const float y1 = (float)((int)(sy + y * by));
-    const float y2 = y1 + 0.5f;
-
-    if (y1 < 0 || y1 >= h)
-      continue;
-
-    if (dy + y < 0 || dy + y >= dest->h)
-      continue;
-
-    for (int x = 0; x < dw; x++)
-    {
-      const float x1 = (float)((int)(sx + x * bx));
-      const float x2 = x1 + 0.5f;
-
-      if (x1 < 0 || x1 >= w)
-        continue;
-
-      if (dx + x < 0 || dx + x >= dest->w)
-        continue;
-
-      const int c_orig = *(row[(int)y1] + (int)x1);
-      int c[8];
-
-      c[0] = getpixel(x1 + rx1, y1 - ry3);
-      c[1] = getpixel(x1 - rx3, y1 - ry1);
-      c[2] = getpixel(x1 + rx3, y1 + ry1);
-      c[3] = getpixel(x1 - rx1, y1 + ry3);
-
-      c[4] = getpixel(x2 - rx1, y2 + ry3);
-      c[5] = getpixel(x2 + rx3, y2 + ry1);
-      c[6] = getpixel(x2 - rx3, y2 - ry1);
-      c[7] = getpixel(x2 + rx1, y2 - ry3);
-
-      int r = 0;
-      int g = 0;
-      int b = 0;
-      int a = 0;
-
-      for (int i = 0; i < 8; i++)
-      {
-        r += Gamma::fix(getr(c[i]));
-        g += Gamma::fix(getg(c[i]));
-        b += Gamma::fix(getb(c[i]));
-        a += geta(c[i]);
-      }
-
-      r >>= 3;
-      g >>= 3;
-      b >>= 3;
-      a >>= 3;
-
-      r = Gamma::unfix(r);
-      g = Gamma::unfix(g);
-      b = Gamma::unfix(b);
-
-      int c_avg = makeRgb(r, g, b);
-      int checker = (((dx + x + zx) >> 3) ^ ((dy + y + zy) >> 3)) & 1
-                          ? 0x989898 : 0x686868;
-
-      *(dest->row[dy + y] + dx + x) =
-        convertFormat(blendFast(checker, c_avg, 255 - geta(c_orig)), bgr_order);
-    }
-  }
-}
-
 // render viewport
 void Bitmap::pointStretch(Bitmap *dest,
                           int sx, int sy, int sw, int sh,
@@ -963,17 +830,11 @@ void Bitmap::pointStretch(Bitmap *dest,
     if (y1 < 0 || y1 >= h)
       continue;
 
-    if (dy + y < 0 || dy + y >= dest->h)
-      continue;
-
     for (int x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 16);
 
       if (x1 < 0 || x1 >= w)
-        continue;
-
-      if (dx + x < 0 || dx + x >= dest->w)
         continue;
 
       const int c = *(row[y1] + x1);
@@ -1052,16 +913,12 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
 
     if (y1 < 0 || y1 >= h)
       continue;
-    if (dy + y < 0 || dy + y >= dest->h)
-      continue;
 
     for (int x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 16);
 
       if (x1 < 0 || x1 >= w)
-        continue;
-      if (dx + x < 0 || dx + x >= dest->w)
         continue;
 
       const int c = *(row[y1] + x1);
