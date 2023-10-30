@@ -532,17 +532,6 @@ void View::drawMain(bool refresh)
   int dw = sw * zoom;
   int dh = sh * zoom;
 
-/*
-  int overx = dw - w();
-  int overy = dh - h();
-
-  if (zoom <= 1)
-  {
-    overx = 0;
-    overy = 0;
-  }
-*/
-
   backbuf->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
   int offx = 0;
