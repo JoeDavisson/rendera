@@ -231,7 +231,7 @@ namespace Scale
     const float ax = ((float)sw / dw);
     const float ay = ((float)sh / dh);
 
-    float mipx = 1, mipy = 1;
+    float mipx = 0, mipy = 0;
     bool blur = false;
     float blur_size = 0;
 
