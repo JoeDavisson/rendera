@@ -562,12 +562,14 @@ int Bitmap::getpixel(int x, int y)
 {
   if (x < cl)
     x = cl;
-  else if (x > cr)
+
+  if (x > cr)
     x = cr;
 
   if (y < ct)
     y = ct;
-  else if (y > cb)
+
+  if (y > cb)
     y = cb;
 
   return *(row[y] + x);
@@ -577,12 +579,14 @@ int Bitmap::getpixelNoClip(int x, int y)
 {
   if (x < 0)
     x = 0;
-  else if (x >= w)
+
+  if (x >= w)
     x = w - 1;
 
   if (y < 0)
     y = 0;
-  else if (y >= h)
+
+  if (y >= h)
     y = h - 1;
 
   return *(row[y] + x);

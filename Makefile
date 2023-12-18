@@ -20,7 +20,7 @@ LIBS=$(shell ./fltk/fltk-config --use-images --ldstaticflags)
 ifeq ($(PLATFORM),linux)
   HOST=
   CXX=g++
-  CXXFLAGS= -O3 -Wall -ffast-math -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -g -O3 -Wall -ffast-math -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   EXE=rendera
 endif
 
@@ -118,7 +118,7 @@ default: $(OBJ)
 	$(CXX) -o ./$(EXE) $(SRC_DIR)/Main.cxx $(OBJ) $(CXXFLAGS) $(LIBS)
 
 # rebuld fltk library
-fltklibs:
+fltklib:
 	cd ./fltk; \
 	make clean; \
 	./configure --host=$(HOST) --enable-xft --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \

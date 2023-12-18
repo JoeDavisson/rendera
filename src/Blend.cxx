@@ -52,6 +52,9 @@ void Blend::set(const int mode)
     case LUMINOSITY:
       current_blend = luminosity;
       break;
+    case ALPHA_ADD:
+      current_blend = alphaAdd;
+      break;
     case ALPHA_SUB:
       current_blend = alphaSub;
       break;
@@ -230,6 +233,12 @@ int Blend::keepLum(const int c, const int lum)
   }
 
   return makeRgba(n[1], n[0], n[2], rgba.a);
+}
+
+int Blend::alphaAdd(const int c1, const int, const int t)
+{
+  const rgba_type rgba = getRgba(c1);
+  return makeRgba(rgba.r, rgba.g, rgba.b, 255 - ((255 - rgba.a) * t) / 255);
 }
 
 int Blend::alphaSub(const int c1, const int, const int t)
