@@ -40,7 +40,6 @@ void Quantize::makeColor(color_type *c,
   c->g = g;
   c->b = b;
   c->freq = freq;
-  c->active = true;
 }
 
 // compute quantization error
@@ -159,7 +158,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   std::vector<color_type> colors(colors_max);
 
   for (int i = 0; i < colors_max; i++)
-    colors[i].active = false;
+    colors[i].freq = 0;
 
   // quantization error matrix
   std::vector<float> err_data(((colors_max + 1) * colors_max) / 2);
@@ -201,25 +200,25 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   Gui::progressShow(count - rep);
 
   // measure offset between array elements
-  const int step = &(colors[1].active) - &(colors[0].active);
+  const int step = &(colors[1].freq) - &(colors[0].freq);
 
   while (count > rep)
   {
     int ii = 0, jj = 0;
     float least_err = 999999;
-    bool *a = &(colors[0].active);
+    float *a = &(colors[0].freq);
 
     // find lowest value in error matrix
     for (int j = 0; j < max; j++, a += step)
     {
-      if (*a)
+      if (*a > 0)
       {
         float *e = &err_data[(j + 1) * j / 2];
-        bool *b = &(colors[0].active);
+        float *b = &(colors[0].freq);
 
         for (int i = 0; i < j; i++, e++, b += step)
         {
-          if (*b && (*e < least_err))
+          if (*b > 0 && (*e < least_err))
           {
             least_err = *e;
             ii = i;
@@ -231,13 +230,13 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 
     // compute quantization level and place in i, delete j
     merge(&colors[ii], &colors[jj]);
-    colors[jj].active = false;
+    colors[jj].freq = false;
     count--;
 
     // recompute error matrix for new row
     for (int j = ii; j < max; j++)
     {
-      if (colors[j].active)
+      if (colors[j].freq > 0)
         err_data[ii + (j + 1) * j / 2] = error(&colors[ii], &colors[j]);
     }
 
@@ -255,7 +254,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 
   for (int i = 0; i < max; i++)
   {
-    if (colors[i].active)
+    if (colors[i].freq > 0)
     {
       pal->data[index] =
         makeRgb((int)colors[i].r, (int)colors[i].g, (int)colors[i].b);
