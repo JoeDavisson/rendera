@@ -209,14 +209,14 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     float *a = &(colors[0].freq);
 
     // find lowest value in error matrix
-    for (int j = 0; j < max; j++, a += step)
+    for (int j = 0; j < max; j++)
     {
       if (*a > 0)
       {
         float *e = &err_data[(j + 1) * j / 2];
         float *b = &(colors[0].freq);
 
-        for (int i = 0; i < j; i++, e++, b += step)
+        for (int i = 0; i < j; i++)
         {
           if (*b > 0 && (*e < least_err))
           {
@@ -224,8 +224,13 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
             ii = i;
             jj = j;
           }
+
+          e++;
+          b += step;
         }
       }
+
+      a += step;
     }
 
     // compute quantization level and place in i, delete j
