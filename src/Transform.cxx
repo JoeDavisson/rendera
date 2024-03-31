@@ -226,6 +226,10 @@ namespace Scale
     if (dw < 1 || dh < 1)
       return;
 
+    // check memory
+    if (Project::enoughMemory(dw, dh) == false)
+      return;
+
     Bitmap *temp = new Bitmap(dw, dh);
 
     const float ax = ((float)sw / dw);
@@ -634,6 +638,10 @@ namespace RotateArbitrary
     const int by2 = std::max(y0, std::max(y1, std::max(y2, y3))) + scale * 2;
     int bw = (bx2 - bx1) + 1;
     int bh = (by2 - by1) + 1;
+
+    // check memory
+    if (Project::enoughMemory(bw, bh) == false)
+      return;
 
     // create image with new size
     Bitmap *temp = new Bitmap(bw, bh);
