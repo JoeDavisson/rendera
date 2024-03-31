@@ -725,11 +725,11 @@ namespace RotateArbitrary
     int y1 = 8;
 
     Items::dialog = new DialogWindow(256, 0, "Arbitrary Rotation");
-    Items::angle = new InputFloat(Items::dialog, 0, y1, 96, 24, "Angle", 0, -359.99, 359.99);
+    Items::angle = new InputFloat(Items::dialog, 0, y1, 128, 24, "Angle", 0, -359.99, 359.99);
     Items::angle->center();
     y1 += 24 + 8;
     Items::angle->value("0");
-    Items::scale = new InputFloat(Items::dialog, 0, y1, 96, 24, "Scale (1-4)", 0, 1, 4);
+    Items::scale = new InputFloat(Items::dialog, 0, y1, 96, 24, "Scale (1-10)", 0, 1, 10);
     Items::scale->center();
     Items::scale->value("1.000");
     y1 += 24 + 8;
