@@ -67,12 +67,11 @@ InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
   resizable(input);
   end();
   align(FL_ALIGN_LEFT);
-  when(FL_WHEN_NOT_CHANGED);
   group = g;
   var = 0;
   cb = input_cb;
   input.callback((Fl_Callback *)change, this);
-  input.when(FL_WHEN_CHANGED);
+  input.when(FL_WHEN_RELEASE);
   dec.callback((Fl_Callback *)change, this);
   inc.callback((Fl_Callback *)change, this);
   input.maximum_size(5);

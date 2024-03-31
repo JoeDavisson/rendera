@@ -74,7 +74,7 @@ InputFloat::InputFloat(Fl_Group *g, int x, int y, int w, int h,
   inc.callback((Fl_Callback *)change, this);
   input.maximum_size(16);
   input.textsize(12);
-  input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
+  input.when(FL_WHEN_RELEASE);
   labelsize(12);
   copy_label(text);
   resize(group->x() + x, group->y() + y, w, h);
