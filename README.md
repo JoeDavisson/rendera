@@ -2,6 +2,7 @@ Rendera
 =======
 
 ![Screenshot](https://raw.githubusercontent.com/JoeDavisson/rendera/master/screenshots/screenshot.png)
+
 *Screenshot showing the Palette Editor.*
 
 ## Overview
