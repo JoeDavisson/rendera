@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Joe Davisson.
+Copyright (c) 2024 Joe Davisson.
 
 This file is part of Rendera.
 
@@ -20,38 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Test.H"
 
-void Test::apply(Bitmap *bmp)
+void Test::apply(Bitmap *src)
 {
-  Gui::progressShow(bmp->h);
-
-  for (int y = bmp->ct; y <= bmp->cb - 8; y += 1)
-  {
-    for (int x = bmp->cl; x <= bmp->cr - 8; x += 1)
-    {
-      if (x & y)
-        bmp->setpixel(x, y, makeRgb(255, 255, 255));
-      else
-        bmp->setpixel(x, y, makeRgb(0, 0, 0));
-/*
-      for (int j = 0; j < 8; j++)
-      {
-        for (int i = 0; i < 8; i++)
-        {
-          if ((z + (i & j)) > (i + j) & 7)
-            bmp->setpixel(x + i, y + j, makeRgb(255, 255, 255));
-          else
-            bmp->setpixel(x + i, y + j, makeRgb(0, 0, 0));
-        }
-      }
-*/
-    }
-
-    if (Gui::progressUpdate(y) < 0)
-      return;
-
-  }
-
-  Gui::progressHide();
 }
 
 void Test::begin()

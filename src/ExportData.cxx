@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2023 Joe Davisson.
+Copyright (c) 2024 Joe Davisson.
 
 This file is part of Rendera.
 
@@ -279,6 +279,8 @@ int ExportData::endTile(FILE *outp, int ext_value)
   switch (ext_value)
   {
     case TYPE_BIN:
+//      if (fputc(0, outp) != 0)
+//         return -1;
       break;
     case TYPE_ASM:
       if (fprintf(outp, "\n") < 0)
