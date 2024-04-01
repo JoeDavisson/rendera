@@ -68,34 +68,6 @@ void Undo::reset()
   redo_current = levels - 1;
 }
 
-/*
-void Undo::doPush(const int x, const int y, const int w, const int h)
-{
-  if (undo_current < 1)
-  {
-    undo_current = 1;
-
-    Bitmap *temp_bmp = undo_stack[levels - 1];
-
-    for (int i = levels - 1; i > 0; i--)
-      undo_stack[i] = undo_stack[i - 1];
-
-    undo_stack[0] = temp_bmp;
-  }
-
-  if (Project::enoughMemory(Project::bmp->w, Project::bmp->h) == false)
-    return;
-
-  delete undo_stack[undo_current];
-  undo_stack[undo_current] = new Bitmap(Project::bmp->w, Project::bmp->h);
-
-  Project::bmp->blit(undo_stack[undo_current], 0, 0, 0, 0,
-                     Project::bmp->w, Project::bmp->h);
-
-  undo_current--;
-}
-*/
-
 void Undo::doPush()
 {
   const int x = 0;
@@ -186,8 +158,6 @@ void Undo::pop()
     Project::replaceImage(w, h);
 
   undo_stack[undo_current]->blit(Project::bmp, 0, 0, x, y, w, h);
-  Project::bmp->x = x;
-  Project::bmp->y = x;
   Gui::getView()->drawMain(true);
 }
 
@@ -251,8 +221,6 @@ void Undo::popRedo()
     Project::replaceImage(w, h);
 
   redo_stack[redo_current]->blit(Project::bmp, 0, 0, x, y, w, h);
-  Project::bmp->x = x;
-  Project::bmp->y = y;
   Gui::getView()->drawMain(true);
 }
 
