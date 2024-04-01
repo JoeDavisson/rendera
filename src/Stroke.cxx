@@ -801,6 +801,7 @@ void Stroke::previewPaint(View *view)
   const float zoom = view->zoom;
   const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
+  const int zoom_mask = (int)zoom - 1;
 
   int color, trans;
 
@@ -870,13 +871,13 @@ void Stroke::previewPaint(View *view)
                xm > 0 && ym > 0 && xm < map->w - 1 && ym < map->h - 1)
       {
         // shade edges for contrast
-        int xmod = x & ((int)zoom - 1);
-        int ymod = y & ((int)zoom - 1);
+        int xmod = x & zoom_mask;
+        int ymod = y & zoom_mask;
 
         int tx1 = xmod;
-        int tx2 = ((int)zoom - 1 - xmod);
+        int tx2 = (zoom_mask - xmod);
         int ty1 = ymod;
-        int ty2 = ((int)zoom - 1 - ymod);
+        int ty2 = (zoom_mask - ymod);
 
         tx1 = tx1 == 0 ? 0 : 256;
         tx2 = tx2 == 0 ? 0 : 256;
