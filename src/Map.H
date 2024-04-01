@@ -34,6 +34,9 @@ public:
   // make single-pixel antialised lines appear thicker
   int thick_aa;
 
+  // used by brushstroke preview
+  bool isEdge(const int, const int);
+
   // drawing functions
   void clear(int);
   void invert();

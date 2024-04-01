@@ -801,9 +801,20 @@ void Stroke::previewPaint(View *view)
   const float zoom = view->zoom;
   const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
-  const int color = convertFormat(Project::brush->color, bgr_order);
-  const int trans = Project::brush->trans;
-  
+
+  int color, trans;
+
+  if (Clone::active)
+  {
+    color = convertFormat(makeRgb(255, 0, 192), bgr_order);
+    trans = 128;
+  }
+    else
+  {
+    color = convertFormat(Project::brush->color, bgr_order);
+    trans = Project::brush->trans;
+  }
+
   int ox = view->ox;
   int oy = view->oy;
 
@@ -853,21 +864,14 @@ void Stroke::previewPaint(View *view)
 
       if (map->getpixel(xm, ym))
       {
-        if (Clone::active == false)
-        {
-          *p = blendFast(*p, color, trans);
-        }
-          else
-        {
-          *p = blendFast(*p, convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
-        }
+        *p = blendFast(*p, color, trans);
       }
-      else if (zoom >= 1 &&
+      else if (map->isEdge(xm, ym) && zoom >= 1 &&
                xm > 0 && ym > 0 && xm < map->w - 1 && ym < map->h - 1)
       {
         // shade edges for contrast
-        int xmod = x % (int)zoom;
-        int ymod = y % (int)zoom;
+        int xmod = x & ((int)zoom - 1);
+        int ymod = y & ((int)zoom - 1);
 
         int tx1 = xmod;
         int tx2 = ((int)zoom - 1 - xmod);
