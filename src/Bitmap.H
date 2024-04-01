@@ -55,7 +55,6 @@ public:
   void setpixelSolid(const int, const int, const int, const int);
   void setpixelClone(const int, const int, const int, const int);
   int getpixel(int, int);
-  int getpixelNoClip(int, int);
   void clip(int *, int *, int *, int *);
   void setClip(int, int, int, int);
   void swapRedBlue();
