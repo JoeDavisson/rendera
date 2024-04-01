@@ -860,7 +860,12 @@ void Render::begin()
                        stroke->x2, stroke->y2,
                        view->ox, view->oy, 1, view->zoom);
 
-  Project::undo->push();
+  const int x = stroke->x1;
+  const int y = stroke->y1;
+  const int w = (stroke->x2 - stroke->x1) + 1;
+  const int h = (stroke->y2 - stroke->y1) + 1;
+
+  Project::undo->push(x, y, w, h);
 
   view->rendering = true;
 

@@ -33,9 +33,11 @@ public:
 
   void reset();
   void doPush();
+  void doPush(const int x, const int y, const int w, const int h);
   void push();
+  void push(const int x, const int y, const int w, const int h);
   void pop();
-  void pushRedo();
+  void pushRedo(const int x, const int y, const int w, const int h);
   void popRedo();
 
   int levels = 16;
