@@ -862,50 +862,48 @@ void Stroke::previewPaint(View *view)
           *p = blendFast(*p, convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
         }
       }
-        else
+      else if (zoom >= 1 &&
+               xm > 0 && ym > 0 && xm < map->w - 1 && ym < map->h - 1)
       {
-        if (zoom >= 1)
-        {
-          // shade edges for contrast
-          int xmod = x % (int)zoom;
-          int ymod = y % (int)zoom;
+        // shade edges for contrast
+        int xmod = x % (int)zoom;
+        int ymod = y % (int)zoom;
 
-          int tx1 = xmod;
-          int tx2 = ((int)zoom - 1 - xmod);
-          int ty1 = ymod;
-          int ty2 = ((int)zoom - 1 - ymod);
+        int tx1 = xmod;
+        int tx2 = ((int)zoom - 1 - xmod);
+        int ty1 = ymod;
+        int ty2 = ((int)zoom - 1 - ymod);
 
-          tx1 = tx1 == 0 ? 0 : 256;
-          tx2 = tx2 == 0 ? 0 : 256;
-          ty1 = ty1 == 0 ? 0 : 256;
-          ty2 = ty2 == 0 ? 0 : 256;
+        tx1 = tx1 == 0 ? 0 : 256;
+        tx2 = tx2 == 0 ? 0 : 256;
+        ty1 = ty1 == 0 ? 0 : 256;
+        ty2 = ty2 == 0 ? 0 : 256;
 
-          const int checker = visibleColor(x, y);
+        const int checker = visibleColor(x, y);
 
-          if (map->getpixel(xm - 1, ym - 1))
-            *p = blendFast(*p, checker, tx1 | ty1);
+        if (map->getpixelNoClip(xm - 1, ym - 1))
+          *p = blendFast(*p, checker, tx1 | ty1);
 
-          if (map->getpixel(xm, ym - 1))
-            *p = blendFast(*p, checker, ty1);
+        if (map->getpixelNoClip(xm, ym - 1))
+          *p = blendFast(*p, checker, ty1);
 
-          if (map->getpixel(xm + 1, ym - 1))
-            *p = blendFast(*p, checker, tx2 | ty1);
+        if (map->getpixelNoClip(xm + 1, ym - 1))
+          *p = blendFast(*p, checker, tx2 | ty1);
 
-          if (map->getpixel(xm - 1, ym))
-            *p = blendFast(*p, checker, tx1);
+        if (map->getpixelNoClip(xm - 1, ym))
+          *p = blendFast(*p, checker, tx1);
 
-          if (map->getpixel(xm + 1, ym))
-            *p = blendFast(*p, checker, tx2);
+        if (map->getpixelNoClip(xm + 1, ym))
+          *p = blendFast(*p, checker, tx2);
 
-          if (map->getpixel(xm - 1, ym + 1))
-            *p = blendFast(*p, checker, tx1 | ty2);
+        if (map->getpixelNoClip(xm - 1, ym + 1))
+          *p = blendFast(*p, checker, tx1 | ty2);
 
-          if (map->getpixel(xm, ym + 1))
-            *p = blendFast(*p, checker, ty2);
+        if (map->getpixelNoClip(xm, ym + 1))
+          *p = blendFast(*p, checker, ty2);
 
-          if (map->getpixel(xm + 1, ym + 1))
-            *p = blendFast(*p, checker, tx2 | ty2);
-        }
+        if (map->getpixelNoClip(xm + 1, ym + 1))
+          *p = blendFast(*p, checker, tx2 | ty2);
       }
 
       p++;
