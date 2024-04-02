@@ -55,3 +55,8 @@ Makefile.in
 
 # emacs temp files
 *~
+
+# Ignoring CMake and build files
+build/
+makeheader
+src/Images.H
