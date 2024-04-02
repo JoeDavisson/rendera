@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(APP_TARGET "Rendera")
+if(APPLE OR WIN32)
+  set(APP_TARGET "Rendera")
+else()
+  set(APP_TARGET "rendera")
+endif()
+
 set(APP_VERSION "0.2.7")
 
 set(CMAKE_CXX_STANDARD 20)

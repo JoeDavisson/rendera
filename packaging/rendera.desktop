@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Rendera
+Comment=A painting program suitable for photo-retouching and making seamless textures.
+Comment[fr]=Un logiciel de dessin adapté pour la retouche de photos et pour réaliser des motifs.
+Icon=rendera
+Exec=rendera
+Terminal=false
+Categories=Graphics;
