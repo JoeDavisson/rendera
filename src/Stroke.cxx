@@ -115,19 +115,6 @@ void Stroke::keepSquare(int x1, int y1, int *x2, int *y2)
   }
 }
 
-bool Stroke::isEdge(Map *map, const int x, const int y)
-{
-  if (!map->getpixel(x, y - 1) ||
-     !map->getpixel(x - 1, y) ||
-     !map->getpixel(x + 1, y) ||
-     !map->getpixel(x, y + 1))
-  {
-    return true;
-  }
-
-  return false;
-}
-
 void Stroke::clip()
 {
   if (x1 < 0)
@@ -223,6 +210,8 @@ void Stroke::drawBrush(int x, int y, int c)
 
   for (int i = 0; i < brush->solid_count; i++)
     map->setpixel(x + brush->solidx[i], y + brush->solidy[i], c);
+//  for (int i = 0; i < brush->hollow_count; i++)
+//    map->setpixel(x + brush->hollowx[i], y + brush->hollowy[i], c);
 }
 
 void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
@@ -233,10 +222,10 @@ void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
   drawBrush(x1, y1, c);
   drawBrush(x2, y2, c);
 
-  for (int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->hollow_count; i++)
   {
-    map->line(x1 + brush->solidx[i], y1 + brush->solidy[i],
-              x2 + brush->solidx[i], y2 + brush->solidy[i], c);
+    map->line(x1 + brush->hollowx[i], y1 + brush->hollowy[i],
+              x2 + brush->hollowx[i], y2 + brush->hollowy[i], c);
   }
 }
 
@@ -245,10 +234,10 @@ void Stroke::drawBrushRect(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  for (int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->hollow_count; i++)
   {
-    map->rect(x1 + brush->solidx[i], y1 + brush->solidy[i],
-              x2 + brush->solidx[i], y2 + brush->solidy[i], c);
+    map->rect(x1 + brush->hollowx[i], y1 + brush->hollowy[i],
+              x2 + brush->hollowx[i], y2 + brush->hollowy[i], c);
   }
 }
 
@@ -257,10 +246,10 @@ void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  for (int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->hollow_count; i++)
   {
-    map->oval(x1 + brush->solidx[i], y1 + brush->solidy[i],
-              x2 + brush->solidx[i], y2 + brush->solidy[i], c);
+    map->oval(x1 + brush->hollowx[i], y1 + brush->hollowy[i],
+              x2 + brush->hollowx[i], y2 + brush->hollowy[i], c);
   }
 }
 

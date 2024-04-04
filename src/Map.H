@@ -62,6 +62,12 @@ public:
   void rectAA(int, int, int, int, int);
   void rectfillAA(int, int, int, int, int);
   void polyfillAA(int *, int *, int, int, int, int);
+  void shrinkBlock(unsigned char *, unsigned char *,
+                   unsigned char *, unsigned char *);
+  void growBlock(unsigned char *, unsigned char *,
+                   unsigned char *, unsigned char *);
+  void shrink(int);
+  void grow(int);
   void blur(int);
 };
 
