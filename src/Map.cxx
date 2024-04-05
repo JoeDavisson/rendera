@@ -81,7 +81,8 @@ bool Map::isEdge(const int x, const int y)
 
 void Map::clear(const unsigned char c)
 {
-  std::fill(data, data + w * h, c);
+//  std::fill(data, data + w * h, c);
+  std::fill_n(data, w * h, c);
 }
 
 void Map::invert()

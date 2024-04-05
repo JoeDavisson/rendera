@@ -125,7 +125,8 @@ bool Bitmap::isEdge(int x, int y)
 
 void Bitmap::clear(const int c)
 {
-  std::fill(data, data + w * h, c);
+//  std::fill(data, data + w * h, c);
+  std::fill_n(data, w * h, c);
 }
 
 void Bitmap::hline(int x1, int y, int x2, int c, int t)
