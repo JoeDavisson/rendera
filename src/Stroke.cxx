@@ -853,52 +853,7 @@ void Stroke::previewPaint(View *view)
       const int xm = ((x + ox) * zr) >> 16;
 
       if (map->getpixel(xm, ym))
-      {
         *p = blendFast(*p, color, trans);
-      }
-      else if (!map->isEdge(xm, ym) && zoom >= 1 &&
-               xm > 0 && ym > 0 && xm < map->w - 1 && ym < map->h - 1)
-      {
-        // shade edges for contrast
-        int xmod = x & zoom_mask;
-        int ymod = y & zoom_mask;
-
-        int tx1 = xmod;
-        int tx2 = (zoom_mask - xmod);
-        int ty1 = ymod;
-        int ty2 = (zoom_mask - ymod);
-
-        tx1 = tx1 == 0 ? 0 : 256;
-        tx2 = tx2 == 0 ? 0 : 256;
-        ty1 = ty1 == 0 ? 0 : 256;
-        ty2 = ty2 == 0 ? 0 : 256;
-
-        const int checker = visibleColor(x, y);
-
-        if (map->getpixelNoClip(xm - 1, ym - 1))
-          *p = blendFast(*p, checker, tx1 | ty1);
-
-        if (map->getpixelNoClip(xm, ym - 1))
-          *p = blendFast(*p, checker, ty1);
-
-        if (map->getpixelNoClip(xm + 1, ym - 1))
-          *p = blendFast(*p, checker, tx2 | ty1);
-
-        if (map->getpixelNoClip(xm - 1, ym))
-          *p = blendFast(*p, checker, tx1);
-
-        if (map->getpixelNoClip(xm + 1, ym))
-          *p = blendFast(*p, checker, tx2);
-
-        if (map->getpixelNoClip(xm - 1, ym + 1))
-          *p = blendFast(*p, checker, tx1 | ty2);
-
-        if (map->getpixelNoClip(xm, ym + 1))
-          *p = blendFast(*p, checker, ty2);
-
-        if (map->getpixelNoClip(xm + 1, ym + 1))
-          *p = blendFast(*p, checker, tx2 | ty2);
-      }
 
       p++;
     }
