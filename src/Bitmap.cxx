@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 #include <vector>
 
 #include "Bitmap.H"
@@ -122,10 +123,9 @@ bool Bitmap::isEdge(int x, int y)
     return false;
 }
 
-void Bitmap::clear(int c)
+void Bitmap::clear(const int c)
 {
-  for (int i = 0; i < w * h; i++)
-    data[i] = c;
+  std::fill(data, data + w * h, c);
 }
 
 void Bitmap::hline(int x1, int y, int x2, int c, int t)
@@ -822,7 +822,7 @@ void Bitmap::pointStretch(Bitmap *dest,
     const int y1 = sy + ((y * by) >> 16);
 
     if (y1 >= h)
-      continue;
+      break;
 
     int *p = dest->row[dy + y] + dx;
 
@@ -831,7 +831,7 @@ void Bitmap::pointStretch(Bitmap *dest,
       const int x1 = sx + mul_bx[x];
 
       if (x1 >= w)
-        continue;
+        break;
 
       const int c = *(row[y1] + x1);
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
@@ -917,7 +917,7 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
     const int y1 = sy + ((y * by) >> 16);
 
     if (y1 >= h)
-      continue;
+      break;
 
     int *p = dest->row[dy + y] + dx;
 
@@ -926,7 +926,7 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
       const int x1 = sx + mul_bx[x];
 
       if (x1 >= w)
-        continue;
+        break;
 
       const int c = *(row[y1] + x1);
       const int cpal = (c & 0xff000000) | pal->data[pal->lookup(c)];

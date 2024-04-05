@@ -19,8 +19,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include <algorithm>
-#include <cstdlib>
 #include <cmath>
+#include <cstdlib>
+#include <cstring>
 #include <vector>
 #include <stdint.h>
 
@@ -78,10 +79,9 @@ bool Map::isEdge(const int x, const int y)
   return false;
 }
 
-void Map::clear(int c)
+void Map::clear(const unsigned char c)
 {
-  for (int i = 0; i < w * h; i++)
-    data[i] = c & 0xff;
+  std::fill(data, data + w * h, c);
 }
 
 void Map::invert()
