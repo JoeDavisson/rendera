@@ -856,7 +856,7 @@ void Stroke::previewPaint(View *view)
       {
         *p = blendFast(*p, color, trans);
       }
-      else if (map->isEdge(xm, ym) && zoom >= 1 &&
+      else if (!map->isEdge(xm, ym) && zoom >= 1 &&
                xm > 0 && ym > 0 && xm < map->w - 1 && ym < map->h - 1)
       {
         // shade edges for contrast
