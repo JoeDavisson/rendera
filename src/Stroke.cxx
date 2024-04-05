@@ -790,7 +790,6 @@ void Stroke::previewPaint(View *view)
   const float zoom = view->zoom;
   const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
-  const int zoom_mask = (int)zoom - 1;
 
   int color, trans;
 
@@ -816,9 +815,9 @@ void Stroke::previewPaint(View *view)
   int xx2 = x2 * zoom - ox + zoom - 1;
   int yy2 = y2 * zoom - oy + zoom - 1;
 
+  // clipping
   clip();
 
-  // draw brushstroke preview
   if (xx1 < 0)
     xx1 = 0;
 
@@ -843,6 +842,13 @@ void Stroke::previewPaint(View *view)
   if (yy2 >= backbuf->h - 1)
     yy2 = backbuf->h - 1;
 
+  // multiplication table
+  int *mul_zr = new int[backbuf->w];
+
+  for (int x = 0; x < backbuf->w; x++)
+    mul_zr[x] = ((x + ox) * zr) >> 16;
+
+  // draw brushstroke preview
   for (int y = yy1; y <= yy2; y++)
   {
     const int ym = ((y + oy) * zr) >> 16;
@@ -850,7 +856,7 @@ void Stroke::previewPaint(View *view)
 
     for (int x = xx1; x <= xx2; x++)
     {
-      const int xm = ((x + ox) * zr) >> 16;
+      const int xm = mul_zr[x];
 
       if (map->getpixel(xm, ym))
         *p = blendFast(*p, color, trans);
@@ -858,6 +864,8 @@ void Stroke::previewPaint(View *view)
       p++;
     }
   }
+
+  delete[] mul_zr;
 }
 
 void Stroke::previewSelection(View *view)
