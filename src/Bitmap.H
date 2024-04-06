@@ -36,7 +36,7 @@ public:
   int **row;
 
   bool isEdge(int, int);
-  void clear(int);
+  void clear(const int);
   void hline(int, int, int, int, int);
   void vline(int, int, int, int, int);
   void hline(int, int, int, int);

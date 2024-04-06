@@ -22,17 +22,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Inline.H"
 #include "Map.H"
 
-static bool isEdge(Map *map, const int x, const int y)
+namespace
 {
-  if (!map->getpixel(x, y - 1) ||
-     !map->getpixel(x - 1, y) ||
-     !map->getpixel(x + 1, y) ||
-     !map->getpixel(x, y + 1))
+/*
+  bool isEdge(Map *map, const int x, const int y)
   {
-    return true;
-  }
+    if ((map->getpixel(x, y) == 255) &&
+         ((map->getpixel(x, y - 1) != 255) ||
+          (map->getpixel(x - 1, y) != 255) ||
+          (map->getpixel(x + 1, y) != 255) ||
+          (map->getpixel(x, y + 1) != 255)))
+    {
+      return true;
+    }
 
-  return false;
+    return false;
+  }
+*/
 }
 
 Brush::Brush()
@@ -85,42 +91,43 @@ void Brush::make(int s, float round)
   solid_count = 0;
   hollow_count = 0;
 
-  Map *map = new Map(96, 96);
-  map->clear(0);
+  Map map(96, 96);
+  Map map2(96, 96);
+  map.clear(0);
 
   if (s == 1)
   {
-    map->setpixel(x1, y1, 255);
+    map.setpixel(x1, y1, 1);
   }
     else if (s == 2)
   {
-    map->rectfill(x1, y1, x2, y2, 255);
+    map.rectfill(x1, y1, x2, y2, 1);
   }
     else if (s == 3)
   {
     if (round > .5)
-      map->ovalfill(x1, y1, x2, y2, 255);
+      map.ovalfill(x1, y1, x2, y2, 1);
     else
-      map->rectfill(x1, y1, x2, y2, 255);
+      map.rectfill(x1, y1, x2, y2, 1);
   }
     else
   {
     int rr = (s - 1) * round;
 
-    map->rectfill(x1, y1 + rr / 2 + 1, x2, y2 - rr / 2 - 1, 255);
-    map->rectfill(x1 + rr / 2 + 1, y1, x2 - rr / 2 - 1, y2, 255);
-    map->ovalfill(x1, y1, x1 + rr, y1 + rr, 255);
-    map->ovalfill(x2, y1, x2 - rr, y1 + rr, 255);
-    map->ovalfill(x1, y2, x1 + rr, y2 - rr, 255);
-    map->ovalfill(x2, y2, x2 - rr, y2 - rr, 255);
+    map.rectfill(x1, y1 + rr / 2 + 1, x2, y2 - rr / 2 - 1, 1);
+    map.rectfill(x1 + rr / 2 + 1, y1, x2 - rr / 2 - 1, y2, 1);
+    map.ovalfill(x1, y1, x1 + rr, y1 + rr, 1);
+    map.ovalfill(x2, y1, x2 - rr, y1 + rr, 1);
+    map.ovalfill(x1, y2, x1 + rr, y2 - rr, 1);
+    map.ovalfill(x2, y2, x2 - rr, y2 - rr, 1);
   }
 
-
+  // solid
   for (int y = 0; y < 96; y++)
   {
     for (int x = 0; x < 96; x++)
     {
-      if (map->getpixel(x, y))
+      if (map.getpixel(x, y))
       {
         solidx[solid_count] = x - 48;
         solidy[solid_count] = y - 48;
@@ -129,22 +136,30 @@ void Brush::make(int s, float round)
     }
   }
 
+  // hollow
   for (int y = 0; y < 96; y++)
   {
     for (int x = 0; x < 96; x++)
     {
-      if (map->getpixel(x, y))
-      {
-        if (isEdge(map, x, y))
-        {
-          hollowx[hollow_count] = x - 48;
-          hollowy[hollow_count] = y - 48;
-          hollow_count++;
-        }
-      }
+      map2.setpixel(x, y, map.getpixel(x, y));
     }
   }
 
-  delete map;
+  map2.shrink(0);
+  map2.shrink(1);
+  map2.shrink(0);
+
+  for (int y = 0; y < 96; y++)
+  {
+    for (int x = 0; x < 96; x++)
+    {
+      if (map.getpixel(x, y) && !map2.getpixel(x, y))
+      {
+        hollowx[hollow_count] = x - 48;
+        hollowy[hollow_count] = y - 48;
+        hollow_count++;
+      }
+    }
+  }
 }
 

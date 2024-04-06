@@ -38,7 +38,7 @@ public:
   bool isEdge(const int, const int);
 
   // drawing functions
-  void clear(int);
+  void clear(const unsigned char);
   void invert();
   void setpixel(const int, const int, const int);
   int getpixel(const int, const int);
@@ -62,6 +62,12 @@ public:
   void rectAA(int, int, int, int, int);
   void rectfillAA(int, int, int, int, int);
   void polyfillAA(int *, int *, int, int, int, int);
+  void shrinkBlock(unsigned char *, unsigned char *,
+                   unsigned char *, unsigned char *);
+  void growBlock(unsigned char *, unsigned char *,
+                   unsigned char *, unsigned char *);
+  void shrink(int);
+  void grow(int);
   void blur(int);
 };
 

@@ -19,8 +19,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include <algorithm>
-#include <cstdlib>
 #include <cmath>
+#include <cstdlib>
+#include <cstring>
 #include <vector>
 #include <stdint.h>
 
@@ -66,11 +67,11 @@ Map::~Map()
 
 bool Map::isEdge(const int x, const int y)
 {
-  if (!getpixel(x, y) &&
-      (getpixel(x, y - 1) ||
-      getpixel(x - 1, y) ||
-      getpixel(x + 1, y) ||
-      getpixel(x, y + 1)))
+  if (getpixel(x, y) &&
+       (!getpixel(x, y - 1) ||
+        !getpixel(x - 1, y) ||
+        !getpixel(x + 1, y) ||
+        !getpixel(x, y + 1)))
   {
     return true;
   }
@@ -78,10 +79,9 @@ bool Map::isEdge(const int x, const int y)
   return false;
 }
 
-void Map::clear(int c)
+void Map::clear(const unsigned char c)
 {
-  for (int i = 0; i < w * h; i++)
-    data[i] = c & 0xff;
+  std::fill_n(data, w * h, c);
 }
 
 void Map::invert()
@@ -808,6 +808,95 @@ void Map::polyfillAA(int *px, int *py, int count, int y1, int y2, int c)
         setpixelAA(x, y, c);
     }
   }
+} 
+
+void Map::shrinkBlock(unsigned char *s0, unsigned char *s1,
+                      unsigned char *s2, unsigned char *s3)
+{
+  const int z = (*s0 << 0) | (*s1 << 1) | (*s2 << 2) | (*s3 << 3);
+
+  switch (z)
+  {
+    case 0:
+    case 15:
+      return;
+    case 7:
+    case 14:
+      *s1 = 0;
+      *s2 = 0;
+      return;
+    case 11:
+    case 13:
+      *s0 = 0;
+      *s3 = 0;
+      return;
+  }
+
+  *s0 = *s1 = *s2 = *s3 = 0;
+}
+
+void Map::growBlock(unsigned char *s0, unsigned char *s1,
+                    unsigned char *s2, unsigned char *s3)
+{
+  const int z = (*s0 << 0) | (*s1 << 1) | (*s2 << 2) | (*s3 << 3);
+
+  switch (z)
+  {
+    case 0:
+    case 15:
+      return;
+    case 1:
+    case 8:
+      *s1 = 1;
+      *s2 = 1;
+      return;
+    case 2:
+    case 4:
+      *s0 = 1;
+      *s3 = 1;
+      return;
+  }
+
+  *s0 = *s1 = *s2 = *s3 = 1;
+}
+
+void Map::shrink(int offset)
+{
+  int x, y;
+  unsigned char *s0, *s1, *s2, *s3;
+
+  for(y = offset; y < h - 1; y += 2)
+  {
+    for(x = offset; x < w - 1; x += 2)
+    {
+
+      s0 = row[y] + x;
+      s1 = row[y] + x + 1;
+      s2 = row[y + 1] + x;
+      s3 = row[y + 1] + x + 1;
+
+      shrinkBlock(s0, s1, s2, s3);
+    }
+  }
+}
+
+void Map::grow(int offset)
+{
+  int x, y;
+  unsigned char *s0, *s1, *s2, *s3;
+
+  for(y = offset; y < h - 1; y += 2)
+  {
+    for(x = offset; x < w - 1; x += 2)
+    {
+      s0 = row[y] + x;
+      s1 = row[y] + x + 1;
+      s2 = row[y + 1] + x;
+      s3 = row[y + 1] + x + 1;
+
+      growBlock(s0, s1, s2, s3);
+    }
+  }
 }
 
 void Map::blur(int radius)
@@ -872,99 +961,3 @@ void Map::blur(int radius)
   }
 }
 
-/*
-// scale with bilinear filtering
-void Map::scale(Map *dest)
-{
-  const int sx = cl;
-  const int sy = ct;
-  const int sw = cw;
-  const int sh = ch;
-  const int dx = dest->cl;
-  const int dy = dest->ct;
-  const int dw = dest->cw;
-  const int dh = dest->ch;
-
-  const float ax = ((float)sw / dw);
-  const float ay = ((float)sh / dh);
-
-  if (sw < 1 || sh < 1)
-    return;
-
-  if (dw < 1 || dh < 1)
-    return;
-
-  for (int y = 0; y < dh; y++) 
-  {
-    int *d = dest->row[dy + y] + dx;
-    const float vv = (y * ay);
-    const int v1 = vv;
-    const float v = vv - v1;
-
-    if (sy + v1 >= h)
-      break;
-
-    int v2 = v1 + 1;
-
-    if (v2 >= sh)
-    {
-      v2--;
-    }
-
-    int *c[4];
-    c[0] = c[1] = row[sy + v1] + sx;
-    c[2] = c[3] = row[sy + v2] + sx;
-
-    for (int x = 0; x < dw; x++) 
-    {
-      const float uu = (x * ax);
-      const int u1 = uu;
-      const float u = uu - u1;
-
-      if (sx + u1 >= w)
-        break;
-
-      int u2 = u1 + 1;
-
-      if (u2 >= sw)
-      {
-        u2--;
-      }
-
-      c[0] += u1;
-      c[1] += u2;
-      c[2] += u1;
-      c[3] += u2;
-
-      float f[4];
-
-      f[0] = (1.0f - u) * (1.0f - v);
-      f[1] = u * (1.0f - v);
-      f[2] = (1.0f - u) * v;
-      f[3] = u * v;
-
-      float r = 0.0f, g = 0.0f, b = 0.0f, a = 0.0f;
-
-      for (int i = 0; i < 4; i++)
-      {
-        rgba_type rgba = getRgba(*c[i]);
-        r += (float)Gamma::fix(rgba.r) * f[i];
-        g += (float)Gamma::fix(rgba.g) * f[i];
-        b += (float)Gamma::fix(rgba.b) * f[i];
-        a += rgba.a * f[i];
-      }
-
-      r = Gamma::unfix((int)r);
-      g = Gamma::unfix((int)g);
-      b = Gamma::unfix((int)b);
-
-      *d++ = makeRgba((int)r, (int)g, (int)b, (int)a);
-
-      c[0] -= u1;
-      c[1] -= u2;
-      c[2] -= u1;
-      c[3] -= u2;
-    }
-  }
-}
-*/

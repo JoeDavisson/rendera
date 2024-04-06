@@ -115,19 +115,6 @@ void Stroke::keepSquare(int x1, int y1, int *x2, int *y2)
   }
 }
 
-bool Stroke::isEdge(Map *map, const int x, const int y)
-{
-  if (!map->getpixel(x, y - 1) ||
-     !map->getpixel(x - 1, y) ||
-     !map->getpixel(x + 1, y) ||
-     !map->getpixel(x, y + 1))
-  {
-    return true;
-  }
-
-  return false;
-}
-
 void Stroke::clip()
 {
   if (x1 < 0)
@@ -223,6 +210,8 @@ void Stroke::drawBrush(int x, int y, int c)
 
   for (int i = 0; i < brush->solid_count; i++)
     map->setpixel(x + brush->solidx[i], y + brush->solidy[i], c);
+//  for (int i = 0; i < brush->hollow_count; i++)
+//    map->setpixel(x + brush->hollowx[i], y + brush->hollowy[i], c);
 }
 
 void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
@@ -233,10 +222,10 @@ void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
   drawBrush(x1, y1, c);
   drawBrush(x2, y2, c);
 
-  for (int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->hollow_count; i++)
   {
-    map->line(x1 + brush->solidx[i], y1 + brush->solidy[i],
-              x2 + brush->solidx[i], y2 + brush->solidy[i], c);
+    map->line(x1 + brush->hollowx[i], y1 + brush->hollowy[i],
+              x2 + brush->hollowx[i], y2 + brush->hollowy[i], c);
   }
 }
 
@@ -245,10 +234,10 @@ void Stroke::drawBrushRect(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  for (int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->hollow_count; i++)
   {
-    map->rect(x1 + brush->solidx[i], y1 + brush->solidy[i],
-              x2 + brush->solidx[i], y2 + brush->solidy[i], c);
+    map->rect(x1 + brush->hollowx[i], y1 + brush->hollowy[i],
+              x2 + brush->hollowx[i], y2 + brush->hollowy[i], c);
   }
 }
 
@@ -257,10 +246,10 @@ void Stroke::drawBrushOval(int x1, int y1, int x2, int y2, int c)
   Brush *brush = Project::brush;
   Map *map = Project::map;
 
-  for (int i = 0; i < brush->solid_count; i++)
+  for (int i = 0; i < brush->hollow_count; i++)
   {
-    map->oval(x1 + brush->solidx[i], y1 + brush->solidy[i],
-              x2 + brush->solidx[i], y2 + brush->solidy[i], c);
+    map->oval(x1 + brush->hollowx[i], y1 + brush->hollowy[i],
+              x2 + brush->hollowx[i], y2 + brush->hollowy[i], c);
   }
 }
 
@@ -801,7 +790,6 @@ void Stroke::previewPaint(View *view)
   const float zoom = view->zoom;
   const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
-  const int zoom_mask = (int)zoom - 1;
 
   int color, trans;
 
@@ -827,9 +815,9 @@ void Stroke::previewPaint(View *view)
   int xx2 = x2 * zoom - ox + zoom - 1;
   int yy2 = y2 * zoom - oy + zoom - 1;
 
+  // clipping
   clip();
 
-  // draw brushstroke preview
   if (xx1 < 0)
     xx1 = 0;
 
@@ -854,6 +842,13 @@ void Stroke::previewPaint(View *view)
   if (yy2 >= backbuf->h - 1)
     yy2 = backbuf->h - 1;
 
+  // multiplication table
+  int *mul_zr = new int[backbuf->w];
+
+  for (int x = 0; x < backbuf->w; x++)
+    mul_zr[x] = ((x + ox) * zr) >> 16;
+
+  // draw brushstroke preview
   for (int y = yy1; y <= yy2; y++)
   {
     const int ym = ((y + oy) * zr) >> 16;
@@ -861,59 +856,16 @@ void Stroke::previewPaint(View *view)
 
     for (int x = xx1; x <= xx2; x++)
     {
-      const int xm = ((x + ox) * zr) >> 16;
+      const int xm = mul_zr[x];
 
       if (map->getpixel(xm, ym))
-      {
         *p = blendFast(*p, color, trans);
-      }
-      else if (map->isEdge(xm, ym) && zoom >= 1 &&
-               xm > 0 && ym > 0 && xm < map->w - 1 && ym < map->h - 1)
-      {
-        // shade edges for contrast
-        int xmod = x & zoom_mask;
-        int ymod = y & zoom_mask;
-
-        int tx1 = xmod;
-        int tx2 = (zoom_mask - xmod);
-        int ty1 = ymod;
-        int ty2 = (zoom_mask - ymod);
-
-        tx1 = tx1 == 0 ? 0 : 256;
-        tx2 = tx2 == 0 ? 0 : 256;
-        ty1 = ty1 == 0 ? 0 : 256;
-        ty2 = ty2 == 0 ? 0 : 256;
-
-        const int checker = visibleColor(x, y);
-
-        if (map->getpixelNoClip(xm - 1, ym - 1))
-          *p = blendFast(*p, checker, tx1 | ty1);
-
-        if (map->getpixelNoClip(xm, ym - 1))
-          *p = blendFast(*p, checker, ty1);
-
-        if (map->getpixelNoClip(xm + 1, ym - 1))
-          *p = blendFast(*p, checker, tx2 | ty1);
-
-        if (map->getpixelNoClip(xm - 1, ym))
-          *p = blendFast(*p, checker, tx1);
-
-        if (map->getpixelNoClip(xm + 1, ym))
-          *p = blendFast(*p, checker, tx2);
-
-        if (map->getpixelNoClip(xm - 1, ym + 1))
-          *p = blendFast(*p, checker, tx1 | ty2);
-
-        if (map->getpixelNoClip(xm, ym + 1))
-          *p = blendFast(*p, checker, ty2);
-
-        if (map->getpixelNoClip(xm + 1, ym + 1))
-          *p = blendFast(*p, checker, tx2 | ty2);
-      }
 
       p++;
     }
   }
+
+  delete[] mul_zr;
 }
 
 void Stroke::previewSelection(View *view)

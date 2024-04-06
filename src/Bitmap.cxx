@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
+#include <cstring>
 #include <vector>
 
 #include "Bitmap.H"
@@ -122,10 +123,9 @@ bool Bitmap::isEdge(int x, int y)
     return false;
 }
 
-void Bitmap::clear(int c)
+void Bitmap::clear(const int c)
 {
-  for (int i = 0; i < w * h; i++)
-    data[i] = c;
+  std::fill_n(data, w * h, c);
 }
 
 void Bitmap::hline(int x1, int y, int x2, int c, int t)
@@ -762,6 +762,7 @@ void Bitmap::pointStretch(Bitmap *dest,
   const int ox = (sx * ax) >> 16;
   const int oy = (sy * ay) >> 16;
 
+  // clipping
   if (sx < 0)
     sx = 0;
 
@@ -809,21 +810,28 @@ void Bitmap::pointStretch(Bitmap *dest,
   if (dw < 1 || dh < 1)
     return;
 
+  // multiplication table
+  int *mul_bx = new int[dw];
+
+  for (int x = 0; x < dw; x++)
+    mul_bx[x] = (x * bx) >> 16;
+
+  // scale image
   for (int y = 0; y < dh; y++)
   {
     const int y1 = sy + ((y * by) >> 16);
 
     if (y1 >= h)
-      continue;
+      break;
 
     int *p = dest->row[dy + y] + dx;
 
     for (int x = 0; x < dw; x++)
     {
-      const int x1 = sx + ((x * bx) >> 16);
+      const int x1 = sx + mul_bx[x];
 
       if (x1 >= w)
-        continue;
+        break;
 
       const int c = *(row[y1] + x1);
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
@@ -832,6 +840,8 @@ void Bitmap::pointStretch(Bitmap *dest,
       *p++ = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
     }
   }
+
+  delete[] mul_bx;
 }
 
 // render viewport using current palette
@@ -847,6 +857,7 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
   const int ox = (sx * ax) >> 16;
   const int oy = (sy * ay) >> 16;
 
+  // clipping
   if (sx < 0)
     sx = 0;
 
@@ -894,21 +905,28 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
   if (dw < 1 || dh < 1)
     return;
 
+  // multiplication table
+  int *mul_bx = new int[dw];
+
+  for (int x = 0; x < dw; x++)
+    mul_bx[x] = (x * bx) >> 16;
+
+  // scale image
   for (int y = 0; y < dh; y++)
   {
     const int y1 = sy + ((y * by) >> 16);
 
     if (y1 >= h)
-      continue;
+      break;
 
     int *p = dest->row[dy + y] + dx;
 
     for (int x = 0; x < dw; x++)
     {
-      const int x1 = sx + ((x * bx) >> 16);
+      const int x1 = sx + mul_bx[x];
 
       if (x1 >= w)
-        continue;
+        break;
 
       const int c = *(row[y1] + x1);
       const int cpal = (c & 0xff000000) | pal->data[pal->lookup(c)];
@@ -919,6 +937,8 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
                            bgr_order);
     }
   }
+
+  delete[] mul_bx;
 }
 
 void Bitmap::flipHorizontal()

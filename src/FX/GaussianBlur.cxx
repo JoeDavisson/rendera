@@ -139,7 +139,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
           g = Gamma::unfix(g);
           b = Gamma::unfix(b);
 
-          const int c1 = src.getpixel(x, y);
+          const int c1 = src.getpixel(x + border, y + border);
           const int c2 = makeRgba(r, g, b, a);
 
           switch (mode)
