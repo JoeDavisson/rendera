@@ -71,7 +71,7 @@ InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
   var = 0;
   cb = input_cb;
   input.callback((Fl_Callback *)change, this);
-  input.when(FL_WHEN_RELEASE);
+  input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
   dec.callback((Fl_Callback *)change, this);
   inc.callback((Fl_Callback *)change, this);
   input.maximum_size(5);
