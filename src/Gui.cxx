@@ -599,9 +599,6 @@ void Gui::init()
   bottom = new Group(160, window->h() - status->h() - 40, window->w() - 304 - 80, 40, "");
   pos = 8;
 
-  new Separator(bottom, pos, 4, 2, 34, "");
-  pos += 8;
-
   clone = new ToggleButton(bottom, pos, 8, 24, 24,
                            "Clone (Ctrl+Click to set target)",
                            images_clone_png,
