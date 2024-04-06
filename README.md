@@ -1,7 +1,7 @@
 Rendera
 =======
 
-![Screenshot](https://raw.githubusercontent.com/JoeDavisson/rendera/master/screenshots/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/JoeDavisson/rendera/master/packaging/screenshot.png)
 
 ## Overview
 Rendera is a painting program for Linux and Windows. It's a little unusual in that brushstrokes are "rendered" in after being created by the user. There are no layers, but transparency information may be edited with relative ease, making it a useful companion to programs like Gimp or Inkscape.
