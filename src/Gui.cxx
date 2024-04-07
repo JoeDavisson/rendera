@@ -1336,6 +1336,11 @@ void Gui::paintChangeSize(int size)
   }
 
   paint_brush_preview->redraw();
+
+  char s[32];
+  snprintf(s, sizeof(s), "%d", (int)size);
+
+  paint_size_value->value(s);
   paint_size_value->redraw();
 }
 

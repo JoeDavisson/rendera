@@ -66,6 +66,7 @@ public:
   Fl_Group *group;
   Bitmap *backbuf, *backbuf2;
   int mousex, mousey;
+  int last_mousex, last_mousey;
   int imgx, imgy;
   int oldimgx, oldimgy;
   int last_ox, last_oy;
@@ -74,6 +75,7 @@ public:
   int aspect;
   int view_mode;
   bool panning;
+  bool resizing;
   bool grid, gridsnap;
   int gridx, gridy;
   int px, py, pw, ph;

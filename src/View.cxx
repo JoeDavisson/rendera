@@ -119,8 +119,11 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   aspect = ASPECT_NORMAL;
   view_mode = VIEW_MODE_NORMAL;
   panning = false;
+  resizing = false;
   last_ox = 0;
   last_oy = 0;
+  last_mousex = 0;
+  last_mousey = 0;
   grid = false;
   gridsnap = false;
   gridx = 8;
@@ -319,7 +322,9 @@ int View::handle(int event)
           last_oy = (h() - 1 - (mousey / ay)) / zoom - oy;
          break;
         case 4:
-          Project::tool->push(this);
+          // brush resize
+          last_mousex = mousex;
+          last_mousey = mousey;
           break;
         default:
           break;
@@ -355,6 +360,29 @@ int View::handle(int event)
 
           saveCoords();
           break;
+        case 4:
+          resizing = true;
+          int dx = std::abs((mousex / ax) / zoom - (last_mousex / ax) / zoom);
+          int dy = std::abs((mousey / ay) / zoom - (last_mousey / ay) / zoom);
+          int size = std::sqrt(dx * dx + dy * dy);
+          if (size < 1)
+            size = 1;
+          if (size > 72)
+            size = 72;
+
+          Gui::paintChangeSize(size);
+          Project::map->clear(0);
+          Project::stroke->drawBrush(ox + (last_mousex / ax) / zoom,
+                                     oy + (last_mousey / ay) / zoom,
+                                     255);
+          Project::stroke->makeBlitRect(imgx - 40, imgy - 40,
+                                        imgx + 40, imgy + 40,
+                                        ox, oy, size, zoom);
+          drawMain(false);
+          Project::stroke->previewPaint(this);
+          redraw();
+          
+          break;
       } 
 
       oldimgx = imgx;
@@ -367,8 +395,8 @@ int View::handle(int event)
     {
       Project::tool->release(this);
 
-      if (panning)
-        panning = false;
+      panning = false;
+      resizing = false;
 
       if (Project::tool->isActive())
         Project::tool->redraw(this);
@@ -397,8 +425,8 @@ int View::handle(int event)
 
     case FL_MOUSEWHEEL:
     {
-      // ignore wheel during image navigation
-      if (panning)
+      // ignore wheel during image navigation or resizing brush
+      if (panning || resizing)
         break;
 
       if (Fl::event_dy() >= 0)
