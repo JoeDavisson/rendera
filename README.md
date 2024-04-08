@@ -32,7 +32,7 @@ Package includes binaries for 32 and 64-bit Windows:
  * image filters
 
 ## Build it from source
-**Get the source:*8
+**Get the source:**
 
 ```$ git clone https://github.com/JoeDavisson/rendera.git```
 
