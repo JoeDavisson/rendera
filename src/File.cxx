@@ -647,10 +647,10 @@ Bitmap *File::loadPng(const char *fn)
     png_set_gray_to_rgb(png_ptr);
 
   // perform gamma correction if the file requires it
-  // gonna ignore this for now
-//  double gamma = 0;
-//  if (png_get_gAMA(png_ptr, info_ptr, &gamma))
-//    png_set_gamma(png_ptr, 2.2, gamma);
+  double gamma = 0;
+
+  if (png_get_gAMA(png_ptr, info_ptr, &gamma))
+    png_set_gamma(png_ptr, 2.2, gamma);
 
   png_read_update_info(png_ptr, info_ptr);
 
@@ -812,10 +812,10 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
     png_set_gray_to_rgb(png_ptr);
 
   // perform gamma correction if the file requires it
-  // gonna ignore this for now
-//  double gamma = 0;
-//  if (png_get_gAMA(png_ptr, info_ptr, &gamma))
-//    png_set_gamma(png_ptr, 2.2, gamma);
+  double gamma = 0;
+
+  if (png_get_gAMA(png_ptr, info_ptr, &gamma))
+    png_set_gamma(png_ptr, 2.2, gamma);
 
   png_read_update_info(png_ptr, info_ptr);
 
