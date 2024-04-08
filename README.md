@@ -32,9 +32,21 @@ Package includes binaries for 32 and 64-bit Windows:
  * image filters
 
 ## Build it from source
+Get the source:
+
 ```$ git clone https://github.com/JoeDavisson/rendera.git```
 
-```$ cd rendera```
+Build with CMake:
+
+```cmake --build <path-to-rendera>```
+
+(add *-j* to the end of that to compile with threads, much faster!)
+
+*CMake support is currently under development, but works for Linux/X86_64.* 
+
+Build with GNU Make:
+
+```$ cd <path-to-rendera>```
 
 Get FLTK 1.3.7:
 
@@ -70,5 +82,5 @@ Then:
 Everything is statically linked resulting in a standalone executable.
 
 ### Toolchain
-Rendera is built with ```gcc-11.2```.
+Rendera is built with ```gcc-11.4```.
 
