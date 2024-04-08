@@ -32,11 +32,11 @@ Package includes binaries for 32 and 64-bit Windows:
  * image filters
 
 ## Build it from source
-Get the source:
+**Get the source:*8
 
 ```$ git clone https://github.com/JoeDavisson/rendera.git```
 
-Build with CMake:
+**Build with CMake:**
 
 ```cmake --build <path-to-rendera>```
 
@@ -44,7 +44,7 @@ Build with CMake:
 
 *CMake support is currently under development, but works for Linux/X86_64.* 
 
-Build with GNU Make:
+**Or build with GNU Make:**
 
 ```$ cd <path-to-rendera>```
 
