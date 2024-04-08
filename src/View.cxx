@@ -362,11 +362,17 @@ int View::handle(int event)
           break;
         case 4:
           resizing = true;
-          int dx = std::abs((mousex / ax) / zoom - (last_mousex / ax) / zoom);
-          int dy = std::abs((mousey / ay) / zoom - (last_mousey / ay) / zoom);
+          const int mx = (mousex / ax) / zoom - Project::brush->size / 2;
+          const int my = (mousey / ay) / zoom - Project::brush->size / 2;
+          const int lx = (last_mousex / ax) / zoom - Project::brush->size / 2;
+          const int ly = (last_mousey / ay) / zoom - Project::brush->size / 2;
+          const int dx = std::abs(mx - lx);
+          const int dy = std::abs(my - ly);
           int size = std::sqrt(dx * dx + dy * dy);
+
           if (size < 1)
             size = 1;
+
           if (size > 72)
             size = 72;
 
@@ -381,7 +387,6 @@ int View::handle(int event)
           drawMain(false);
           Project::stroke->previewPaint(this);
           redraw();
-          
           break;
       } 
 
