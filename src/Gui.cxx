@@ -191,8 +191,9 @@ namespace
   // view
   View *view;
 
-  // height of leftmost panels
-  const int left_height = 400;
+  // height of rightmost panels
+  int left_height = 0;
+  int right_height = 0;
 
   // progress indicator related
   float progress_value = 0;
@@ -622,6 +623,8 @@ void Gui::init()
   bottom->resizable(0);
   bottom->end();
 
+  left_height = window->h() - top->h() - menubar->h() - status->h();
+
   // tools
   tools = new Group(0, top->h() + menubar->h(),
                     48, left_height,
@@ -975,10 +978,13 @@ void Gui::init()
 
   colors->resizable(0);
   colors->end();
+  right_height = pos;
 
   // files
-  files = new Group(0, top->h() + menubar->h() + left_height,
-                   160, window->h() - top->h() - menubar->h() - status->h() - left_height, "Images");
+  files = new Group(window->w() - colors->w() - palette->w(),
+                    top->h() + menubar->h() + pos,
+                    colors->w() + palette->w(),
+                    window->h() - top->h() - menubar->h() - status->h() - right_height, "Images");
   pos = 28;
 
   file_browse = new Fl_Hold_Browser(8, pos, 144, files->h() - 16 - 20 - 32);
@@ -1027,10 +1033,17 @@ void Gui::init()
   left->end();
 
   // container for right panels
-  right = new Fl_Group(window->w() - 144 - 80, top->h() + menubar->h(),
-                            144 + 80, window->h() - (menubar->h() + top->h() + bottom->h()));
+  right = new Fl_Group(window->w() - 144 - 80,
+                       top->h() + menubar->h(),
+                       144 + 80,
+                       right_height);
+//                       window->h() - top->h() - menubar->h());
   right->add(palette);
   right->add(colors);
+
+  // resize these panels
+  colors->resize(colors->x(), colors->y(), colors->w(), right_height);
+  palette->resize(palette->x(), palette->y(), palette->w(), right_height);
 
   window->size_range(1024, 768, 0, 0, 0, 0, 0);
   window->resizable(view);
