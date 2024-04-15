@@ -42,6 +42,12 @@ Package includes binaries for 32 and 64-bit Windows:
 
 (add *-j* to the end of that to compile with threads, much faster!)
 
+Rebuild the Images.H header if changed:
+```cmake --build <path-to-render> --target header```
+
+Clean:
+```cmake --build <path-to-render> --target header```
+
 *CMake support is currently under development, but works for Linux/X86_64.* 
 
 **Or build with GNU Make:**
