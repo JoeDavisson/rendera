@@ -89,6 +89,8 @@ public:
   static void imagesCloseFile();
   static void imagesUpdateMemInfo();
   static void imagesDuplicate();
+  static void imagesMoveUp();
+  static void imagesMoveDown();
 
   static void menuCheckItem(const char *);
   static void menuClearItem(const char *);

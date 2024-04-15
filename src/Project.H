@@ -93,6 +93,7 @@ public:
   static void switchImage(int);
   static bool removeImage();
   static double getImageMemory();
+  static bool swapImage(const int, const int);
   static void pop();
   static void popRedo();
 

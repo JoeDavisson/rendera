@@ -181,7 +181,11 @@ namespace
   Fl_Hold_Browser *file_browse;
   Fl_Input *file_rename;
   Button *file_close;
+  Button *file_move_up;
+  Button *file_move_down;
+  Fl_Choice *file_layer_mode;
   Fl_Box *file_mem;
+  Fl_Group *file_button_group;
 
   // bottom
   ToggleButton *clone;
@@ -597,7 +601,8 @@ void Gui::init()
   top->end();
 
   // bottom
-  bottom = new Group(160, window->h() - status->h() - 40, window->w() - 304 - 80, 40, "");
+  bottom = new Group(160, window->h() - status->h() - 40,
+                     window->w() - 304 - 80, 40, "");
   pos = 8;
 
   clone = new ToggleButton(bottom, pos, 8, 24, 24,
@@ -987,23 +992,69 @@ void Gui::init()
                     window->h() - top->h() - menubar->h() - status->h() - right_height, "Images");
   pos = 28;
 
-  file_browse = new Fl_Hold_Browser(8, pos, 144, files->h() - 16 - 20 - 32);
+  file_browse = new Fl_Hold_Browser(8, pos, 168, 64);
   file_browse->textsize(12);
-  file_browse->resize(files->x() + 8, files->y() + pos, files->w() - 16, files->h() - 108);
+  file_browse->resize(files->x() + 8, files->y() + pos, 168, 160);
   file_browse->callback((Fl_Callback *)imagesBrowse);
+
+  file_button_group = new Fl_Group(files->x() + 184, files->y() + 28,
+                                48, 112, "");
+
+  file_close = new Button(file_button_group, 0, 0, 32, 32,
+                          "Close File (Delete)", images_close_png,
+                          (Fl_Callback *)imagesCloseFile);
+
+  file_move_up = new Button(file_button_group, 0, 40, 32, 32,
+                            "Move Up", images_up_large_png,
+                            (Fl_Callback *)imagesMoveUp);
+
+  file_move_down = new Button(file_button_group, 0, 80, 32, 32,
+                              "Move down", images_down_large_png,
+                              (Fl_Callback *)imagesMoveDown);
+
+  file_button_group->box(FL_NO_BOX);
+  file_button_group->resizable(0);
+  file_button_group->end();
+/*
+  file_close = new Button(file_button_group, 184, pos, 32, 32,
+                          "Close File (Delete)", images_close_png,
+                          (Fl_Callback *)imagesCloseFile);
+
+  file_move_up = new Button(file_button_group, 184, pos + 40, 32, 32,
+                            "Move Up", images_close_png,
+                            (Fl_Callback *)0);
+
+  file_move_down = new Button(file_button_group, 184, pos + 80, 32, 32,
+                              "Move down", images_close_png,
+                              (Fl_Callback *)0);
+*/
+
   pos += file_browse->h() + 8;
 
-  file_rename = new Fl_Input(8, pos, 112, 24, "");
+  file_rename = new Fl_Input(8, pos, 168, 24, "");
   file_rename->textsize(12);
   file_rename->value("");
   file_rename->when(FL_WHEN_ENTER_KEY);
-  file_rename->resize(files->x() + 8, files->y() + pos, 112, 24);
+  file_rename->resize(files->x() + 8, files->y() + pos, 168, 24);
   file_rename->callback((Fl_Callback *)imagesRename);
-
-  file_close = new Button(files, 128, pos, 24, 24,
-                          "Close File (Delete)", images_close_png,
-                          (Fl_Callback *)imagesCloseFile);
   pos += 24 + 8;
+
+  new Separator(files, 4, pos, 216, 2, "");
+  pos += 8;
+
+  file_layer_mode = new Fl_Choice(8, pos, 128, 24, "");
+  file_layer_mode->tooltip("Layer Blending Mode");
+  file_layer_mode->textsize(10);
+  file_layer_mode->resize(files->x() + 8, files->y() + pos, 128, 24);
+  file_layer_mode->add("Normal");
+  file_layer_mode->add("Lighten");
+  file_layer_mode->add("Darken");
+  file_layer_mode->value(0);
+  file_layer_mode->callback((Fl_Callback *)0);
+  pos += 24 + 8;
+
+  new Separator(files, 4, pos, 216, 2, "");
+  pos += 8;
 
   file_mem = new Fl_Box(FL_FLAT_BOX, files->x() + 8, files->y() + pos, 144, 32, "");
 
@@ -2123,6 +2174,48 @@ void Gui::imagesUpdateMemInfo()
   Fl::repeat_timeout(1.0, (Fl_Timeout_Handler)Gui::imagesUpdateMemInfo);
 }
 
+void Gui::imagesDuplicate()
+{
+  const int current = Project::current;
+  const int last = Project::last;
+  Bitmap **bmp_list = Project::bmp_list;
+  Bitmap *bmp = Project::bmp_list[current];
+
+  if (Project::enoughMemory(bmp->w, bmp->h) == false)
+    return;
+
+  Project::newImage(bmp->cw, bmp->ch);
+  bmp_list[current]->blit(bmp_list[last], 0, 0, 0, 0, bmp->w, bmp->h);
+
+  imagesAddFile("new");
+}
+
+void Gui::imagesMoveUp()
+{
+  const int temp = Project::current;
+  const int ret = Project::swapImage(temp, temp - 1);
+
+  if (ret == 0)
+  {
+    file_browse->swap(temp + 1, temp); 
+    file_browse->select(temp);
+    imagesBrowse();
+  }
+}
+
+void Gui::imagesMoveDown()
+{
+  const int temp = Project::current;
+  const int ret = Project::swapImage(temp, temp + 1);
+
+  if (ret == 0)
+  {
+    file_browse->swap(temp + 1, temp + 2); 
+    file_browse->select(temp + 2);
+    imagesBrowse();
+  }
+}
+
 Fl_Double_Window *Gui::getWindow()
 {
   return window;
@@ -2213,22 +2306,6 @@ void Gui::fillReset()
 {
   fill_range->value("0");
   fill_feather->value("0");
-}
-
-void Gui::imagesDuplicate()
-{
-  const int current = Project::current;
-  const int last = Project::last;
-  Bitmap **bmp_list = Project::bmp_list;
-  Bitmap *bmp = Project::bmp_list[current];
-
-  if (Project::enoughMemory(bmp->w, bmp->h) == false)
-    return;
-
-  Project::newImage(bmp->cw, bmp->ch);
-  bmp_list[current]->blit(bmp_list[last], 0, 0, 0, 0, bmp->w, bmp->h);
-
-  imagesAddFile("new");
 }
 
 // use default interval

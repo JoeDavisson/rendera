@@ -321,6 +321,36 @@ bool Project::removeImage()
   return true;
 }
 
+bool Project::swapImage(const int a, const int b)
+{
+  if (a < 0 || a >= last || b < 0 || b >= last)
+    return -1;
+
+  Bitmap *temp_bmp = Project::bmp_list[a];
+  Project::bmp_list[a] = Project::bmp_list[b];
+  Project::bmp_list[b] = temp_bmp;
+
+  Undo *temp_undo = Project::undo_list[a];
+  Project::undo_list[a] = Project::undo_list[b];
+  Project::undo_list[b] = temp_undo;
+
+  const int temp_x = ox_list[a];
+  ox_list[a] = ox_list[b];
+  ox_list[b] = temp_x;
+
+  const int temp_y = oy_list[a];
+  oy_list[a] = oy_list[b];
+  oy_list[b] = temp_y;
+
+  float temp_zoom = zoom_list[a];
+  zoom_list[a] = zoom_list[b];
+  zoom_list[b] = temp_zoom;
+
+  current = b;
+
+  return 0;
+}
+
 double Project::getImageMemory()
 {
   double bytes = 0;
