@@ -183,7 +183,6 @@ namespace
   Button *file_close;
   Button *file_move_up;
   Button *file_move_down;
-  Fl_Choice *file_layer_mode;
   Fl_Box *file_mem;
   Fl_Group *file_button_group;
 
@@ -992,9 +991,9 @@ void Gui::init()
                     window->h() - top->h() - menubar->h() - status->h() - right_height, "Images");
   pos = 28;
 
-  file_browse = new Fl_Hold_Browser(8, pos, 168, 64);
+  file_browse = new Fl_Hold_Browser(8, pos, 168, 200);
   file_browse->textsize(12);
-  file_browse->resize(files->x() + 8, files->y() + pos, 168, 160);
+  file_browse->resize(files->x() + 8, files->y() + pos, 168, 200);
   file_browse->callback((Fl_Callback *)imagesBrowse);
 
   file_button_group = new Fl_Group(files->x() + 184, files->y() + 28,
@@ -1015,19 +1014,6 @@ void Gui::init()
   file_button_group->box(FL_NO_BOX);
   file_button_group->resizable(0);
   file_button_group->end();
-/*
-  file_close = new Button(file_button_group, 184, pos, 32, 32,
-                          "Close File (Delete)", images_close_png,
-                          (Fl_Callback *)imagesCloseFile);
-
-  file_move_up = new Button(file_button_group, 184, pos + 40, 32, 32,
-                            "Move Up", images_close_png,
-                            (Fl_Callback *)0);
-
-  file_move_down = new Button(file_button_group, 184, pos + 80, 32, 32,
-                              "Move down", images_close_png,
-                              (Fl_Callback *)0);
-*/
 
   pos += file_browse->h() + 8;
 
@@ -1037,20 +1023,6 @@ void Gui::init()
   file_rename->when(FL_WHEN_ENTER_KEY);
   file_rename->resize(files->x() + 8, files->y() + pos, 168, 24);
   file_rename->callback((Fl_Callback *)imagesRename);
-  pos += 24 + 8;
-
-  new Separator(files, 4, pos, 216, 2, "");
-  pos += 8;
-
-  file_layer_mode = new Fl_Choice(8, pos, 128, 24, "");
-  file_layer_mode->tooltip("Layer Blending Mode");
-  file_layer_mode->textsize(10);
-  file_layer_mode->resize(files->x() + 8, files->y() + pos, 128, 24);
-  file_layer_mode->add("Normal");
-  file_layer_mode->add("Lighten");
-  file_layer_mode->add("Darken");
-  file_layer_mode->value(0);
-  file_layer_mode->callback((Fl_Callback *)0);
   pos += 24 + 8;
 
   new Separator(files, 4, pos, 216, 2, "");
