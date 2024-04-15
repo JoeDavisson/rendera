@@ -2132,6 +2132,10 @@ void Gui::imagesCloseFile()
     Project::last = 1;
   }
 
+  // restore coords/zoom saved during navigation
+  view->ox = Project::ox_list[Project::current];
+  view->oy = Project::oy_list[Project::current];
+  view->zoom = Project::zoom_list[Project::current];
   view->drawMain(true);
 }
 
@@ -2192,10 +2196,9 @@ void Gui::imagesDuplicate()
 
 void Gui::imagesMoveUp()
 {
-  const int temp = Project::current;
-  const int ret = Project::swapImage(temp, temp - 1);
+  int temp = Project::current;
 
-  if (ret == 0)
+  if (Project::swapImage(temp, temp - 1) == true)
   {
     file_browse->swap(temp + 1, temp); 
     file_browse->select(temp);
@@ -2205,10 +2208,9 @@ void Gui::imagesMoveUp()
 
 void Gui::imagesMoveDown()
 {
-  const int temp = Project::current;
-  const int ret = Project::swapImage(temp, temp + 1);
+  int temp = Project::current;
 
-  if (ret == 0)
+  if (Project::swapImage(temp, temp + 1) == true)
   {
     file_browse->swap(temp + 1, temp + 2); 
     file_browse->select(temp + 2);

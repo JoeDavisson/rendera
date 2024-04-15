@@ -310,6 +310,9 @@ bool Project::removeImage()
     {
       bmp_list[i] = bmp_list[i + 1];
       undo_list[i] = undo_list[i + 1];
+      ox_list[i] = ox_list[i + 1];
+      oy_list[i] = oy_list[i + 1];
+      zoom_list[i] = zoom_list[i + 1];
     }
 
     delete bmp_list[last];
@@ -324,7 +327,7 @@ bool Project::removeImage()
 bool Project::swapImage(const int a, const int b)
 {
   if (a < 0 || a >= last || b < 0 || b >= last)
-    return -1;
+    return false;
 
   Bitmap *temp_bmp = Project::bmp_list[a];
   Project::bmp_list[a] = Project::bmp_list[b];
@@ -334,13 +337,13 @@ bool Project::swapImage(const int a, const int b)
   Project::undo_list[a] = Project::undo_list[b];
   Project::undo_list[b] = temp_undo;
 
-  const int temp_x = ox_list[a];
+  const int temp_ox = ox_list[a];
   ox_list[a] = ox_list[b];
-  ox_list[b] = temp_x;
+  ox_list[b] = temp_ox;
 
-  const int temp_y = oy_list[a];
+  const int temp_oy = oy_list[a];
   oy_list[a] = oy_list[b];
-  oy_list[b] = temp_y;
+  oy_list[b] = temp_oy;
 
   float temp_zoom = zoom_list[a];
   zoom_list[a] = zoom_list[b];
@@ -348,7 +351,7 @@ bool Project::swapImage(const int a, const int b)
 
   current = b;
 
-  return 0;
+  return true;
 }
 
 double Project::getImageMemory()
