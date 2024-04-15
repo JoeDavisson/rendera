@@ -44,11 +44,11 @@ Package includes binaries for 32 and 64-bit Windows:
 
 Rebuild the Images.H header if changed:
 
-```cmake --build <path-to-render> --target header```
+```cmake --build <path-to-rendera> --target header```
 
 Clean:
 
-```cmake --build <path-to-render> --target header```
+```cmake --build <path-to-rendera> --target clean```
 
 *CMake support is currently under development, but works for Linux/X86_64.* 
 
