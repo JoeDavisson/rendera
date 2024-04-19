@@ -85,8 +85,9 @@ void GetColor::done(View *, int)
 {
 }
 
-void GetColor::redraw(View *)
+void GetColor::redraw(View *view)
 {
+  view->drawMain(true);
 }
 
 bool GetColor::isActive()

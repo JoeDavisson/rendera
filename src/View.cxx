@@ -354,9 +354,7 @@ int View::handle(int event)
           oy = (h() - 1 - (mousey / ay)) / zoom - last_oy; 
 
           clipOrigin();
-          drawMain(false);
           Project::tool->redraw(this);
-          redraw();
 
           saveCoords();
           break;
@@ -532,7 +530,6 @@ int View::handle(int event)
 void View::resize(int x, int y, int w, int h)
 {
   Fl_Widget::resize(x, y, w, h);
-
   drawMain(true);
 }
 
@@ -751,10 +748,7 @@ void View::zoomIn(int x, int y)
     clipOrigin();
   }
 
-  drawMain(false);
   Project::tool->redraw(this);
-  redraw();
-
   Gui::zoomLevel();
 }
 
@@ -775,10 +769,7 @@ void View::zoomOut(int x, int y)
     clipOrigin();
   }
 
-  drawMain(false);
   Project::tool->redraw(this);
-  redraw();
-
   Gui::zoomLevel();
 }
 
@@ -892,8 +883,6 @@ void View::draw()
       break;
   }
 
-//  backbuf->pointStretch(backbuf2, 0, 0, backbuf->w / ax, backbuf->h / ay,
-//                        0, 0, backbuf2->w, backbuf2->h, 0, 0, 0, 0, false);
   backbuf->pointStretch(backbuf2, 0, 0, backbuf->w / ax, backbuf->h / ay,
                         0, 0, backbuf2->w, backbuf2->h, false);
 

@@ -160,6 +160,12 @@ void Paint::redraw(View *view)
     view->redraw();
     active = true;
   }
+    else
+  {
+    view->drawMain(false);
+    view->redraw();
+  }
+
 }
 
 bool Paint::isActive()

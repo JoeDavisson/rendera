@@ -107,8 +107,9 @@ void Offset::done(View *, int)
 {
 }
 
-void Offset::redraw(View *)
+void Offset::redraw(View *view)
 {
+  view->drawMain(true);
 }
 
 bool Offset::isActive()

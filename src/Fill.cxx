@@ -385,8 +385,9 @@ void Fill::done(View *, int)
 {
 }
 
-void Fill::redraw(View *)
+void Fill::redraw(View *view)
 {
+  view->drawMain(true);
 }
 
 bool Fill::isActive()
