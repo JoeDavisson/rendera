@@ -928,8 +928,8 @@ void Map::blur(int radius)
 
       for (int i = 0; i < radius; i++)
       {
-        if (xx >= 0 && xx < this->w)
-          val += *(this->row[y1] + xx) * kernel[i];
+        if (xx >= 0 && xx < w)
+          val += *(row[y1] + xx) * kernel[i];
 
         xx++;
       }
@@ -956,7 +956,7 @@ void Map::blur(int radius)
       }
 
       val /= div;
-      this->setpixel(x, y, val);
+      setpixel(x, y, val);
     }
   }
 }
