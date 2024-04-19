@@ -810,12 +810,6 @@ void Bitmap::pointStretch(Bitmap *dest,
   if (dw < 1 || dh < 1)
     return;
 
-  // multiplication table
-  int *mul_bx = new int[dw];
-
-  for (int x = 0; x < dw; x++)
-    mul_bx[x] = (x * bx) >> 16;
-
   // scale image
   for (int y = 0; y < dh; y++)
   {
@@ -828,7 +822,7 @@ void Bitmap::pointStretch(Bitmap *dest,
 
     for (int x = 0; x < dw; x++)
     {
-      const int x1 = sx + mul_bx[x];
+      const int x1 = sx + ((x * bx) >> 16);
 
       if (x1 >= w)
         break;
@@ -840,8 +834,6 @@ void Bitmap::pointStretch(Bitmap *dest,
       *p++ = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
     }
   }
-
-  delete[] mul_bx;
 }
 
 // render viewport using current palette
@@ -905,12 +897,6 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
   if (dw < 1 || dh < 1)
     return;
 
-  // multiplication table
-  int *mul_bx = new int[dw];
-
-  for (int x = 0; x < dw; x++)
-    mul_bx[x] = (x * bx) >> 16;
-
   // scale image
   for (int y = 0; y < dh; y++)
   {
@@ -923,7 +909,7 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
 
     for (int x = 0; x < dw; x++)
     {
-      const int x1 = sx + mul_bx[x];
+      const int x1 = sx + ((x * bx) >> 16);
 
       if (x1 >= w)
         break;
@@ -937,8 +923,6 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
                            bgr_order);
     }
   }
-
-  delete[] mul_bx;
 }
 
 void Bitmap::flipHorizontal()
