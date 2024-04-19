@@ -22,25 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Inline.H"
 #include "Map.H"
 
-namespace
-{
-/*
-  bool isEdge(Map *map, const int x, const int y)
-  {
-    if ((map->getpixel(x, y) == 255) &&
-         ((map->getpixel(x, y - 1) != 255) ||
-          (map->getpixel(x - 1, y) != 255) ||
-          (map->getpixel(x + 1, y) != 255) ||
-          (map->getpixel(x, y + 1) != 255)))
-    {
-      return true;
-    }
-
-    return false;
-  }
-*/
-}
-
 Brush::Brush()
 {
   solidx = new int[96 * 96];
