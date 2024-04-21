@@ -154,7 +154,7 @@ void Restore::init()
   y1 += 32;
   Items::normalize = new CheckBox(Items::dialog, 0, y1, 16, 16, "Normalize First", 0);
   y1 += 16 + 8;
-  Items::normalize->value(0);
+  Items::normalize->value(1);
   Items::normalize->center();
   Items::invert = new CheckBox(Items::dialog, 0, y1, 16, 16, "Invert First", 0);
   Items::invert->center();
