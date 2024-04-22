@@ -430,8 +430,8 @@ void Gui::init()
   menubar->add("&Palette/&Editor... (E)", 0,
     (Fl_Callback *)Editor::begin, 0, 0);
 
-//  menubar->add("F&X/Color/Test", 0,
-//    (Fl_Callback *)Test::begin, 0, 0);
+  menubar->add("F&X/Color/Test", 0,
+    (Fl_Callback *)Test::begin, 0, 0);
   menubar->add("F&X/Color/Normalize", 0,
     (Fl_Callback *)Normalize::begin, 0, 0);
   menubar->add("F&X/Color/Equalize", 0,
@@ -1643,6 +1643,7 @@ void Gui::colorChange(Widget *widget, void *)
 
   colorSwatch();
   colorHexUpdate();
+  Project::tool->redraw(view);
 }
 
 void Gui::colorHue(Widget *, void *)
@@ -1661,6 +1662,7 @@ void Gui::colorTransInput(Widget *, void *)
   trans->var = Project::brush->trans / 8.22;
   trans->redraw();
   colorSwatch();
+  Project::tool->redraw(view);
 }
 
 void Gui::colorTrans(Widget *, void *)
@@ -1672,6 +1674,7 @@ void Gui::colorTrans(Widget *, void *)
   trans_input->value(s);
   trans_input->redraw();
   colorSwatch();
+  Project::tool->redraw(view);
 //  colorChange(0, 0);
 }
 

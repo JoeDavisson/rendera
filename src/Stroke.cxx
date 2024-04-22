@@ -920,6 +920,11 @@ void Stroke::previewSelection(View *view)
   if (yy2 >= backbuf->h - 1)
     yy2 = backbuf->h - 1;
 
+  if (Project::brush->blend != Blend::SMOOTH)
+    Blend::set(Project::brush->blend);
+  else
+    Blend::set(Blend::TRANS);
+
   for (int y = yy1; y <= yy2; y++)
   {
     int ym = ((y - yy3) * zr) >> 16;
@@ -932,12 +937,14 @@ void Stroke::previewSelection(View *view)
       const int c = convertFormat(select_bmp->getpixel(xm, ym), bgr_order);
 
       if (use_alpha)
-        *p = blendFast(*p, c, scaleVal(255 - geta(c), trans));
+        *p = Blend::current(*p, c, scaleVal(255 - geta(c), trans));
       else
-        *p = blendFast(*p, c, trans);
+        *p = Blend::current(*p, c, trans);
 
       p++;
     }
   }
+
+  Blend::set(Blend::TRANS);
 }
 
