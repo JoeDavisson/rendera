@@ -19,13 +19,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include "Bitmap.H"
-#include "Clone.H"
-#include "Dialog.H"
 #include "Gui.H"
-#include "Inline.H"
-#include "Map.H"
 #include "Project.H"
-#include "Tool.H"
 #include "Undo.H"
 #include "View.H"
 
@@ -226,7 +221,6 @@ void Undo::pushRedo(const int x, const int y, const int w, const int h,
 
   delete redo_stack[redo_current];
   redo_stack[redo_current] = new Bitmap(w, h);
-redo_stack[redo_current]->clear(makeRgb(255, 0, 255));
   redo_stack[redo_current]->x = x;
   redo_stack[redo_current]->y = y;
   redo_stack[redo_current]->undo_mode = undo_mode;
