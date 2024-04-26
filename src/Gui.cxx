@@ -2146,7 +2146,7 @@ void Gui::imagesUpdateMemInfo()
 
   snprintf(s, sizeof(s), "%.1lf %s / %.1lf %s used\n%d/%d undos, %d redos",
           mem, mem_gb ? "GB" : "MB", max, max_gb ? "GB" : "MB",
-          undos, Project::undo_max - 1, redos);
+          undos, Project::undo_max, redos);
 
   file_mem->copy_label(s);
 
