@@ -216,7 +216,7 @@ void Selection::paste(View *view)
   int x1 = beginx;
   int y1 = beginy;
 
-  Project::undo->push(x1, y1, w, h, 0);
+  Project::undo->push(x1, y1, w, h, Undo::PARTIAL);
 
   if (view->gridsnap)
   {
