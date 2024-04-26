@@ -98,7 +98,7 @@ void Project::init(int memory_limit, int undo_limit)
 
   max_images = 256;
   mem_max = memory_limit;
-  undo_max = undo_limit + 1;
+  undo_max = undo_limit;
 
   bmp_list = new Bitmap *[max_images];
   undo_list = new Undo *[max_images];

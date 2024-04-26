@@ -32,6 +32,7 @@ public:
 
   int x, y, w, h;
   int cl, cr, ct, cb, cw, ch;
+  int undo_mode;
   int *data;
   int **row;
 

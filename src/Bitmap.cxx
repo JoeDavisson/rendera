@@ -63,6 +63,7 @@ Bitmap::Bitmap(int width, int height)
   y = 0;
   w = width;
   h = height;
+  undo_mode = 0;
 
   setClip(0, 0, w - 1, h - 1);
 
@@ -90,6 +91,7 @@ Bitmap::Bitmap(int width, int height, int *image_data)
   y = 0;
   w = width;
   h = height;
+  undo_mode = 0;
 
   for (int i = 0; i < height; i++)
     row[i] = &data[width * i];

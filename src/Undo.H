@@ -28,16 +28,24 @@ class Bitmap;
 class Undo
 {
 public:
+  enum
+  {
+    PARTIAL,
+    FULL,
+    OFFSET
+  };
+
   Undo();
   ~Undo();
 
+  void printStacks();
   void reset();
-  void doPush();
-  void doPush(const int x, const int y, const int w, const int h);
+//  void doPush();
+  void doPush(const int, const int, const int, const int, const int);
   void push();
-  void push(const int x, const int y, const int w, const int h);
+  void push(const int, const int, const int, const int, const int);
   void pop();
-  void pushRedo(const int x, const int y, const int w, const int h);
+  void pushRedo(const int, const int, const int, const int, const int);
   void popRedo();
 
   int levels = 16;

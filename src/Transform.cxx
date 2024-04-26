@@ -43,11 +43,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  Bitmap *bmp;
+//  Bitmap *bmp;
 
   void pushUndo()
   {
-    bmp = Project::bmp;
+//    bmp = Project::bmp;
     Project::undo->push();
   }
 }

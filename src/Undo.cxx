@@ -22,11 +22,53 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Clone.H"
 #include "Dialog.H"
 #include "Gui.H"
+#include "Inline.H"
 #include "Map.H"
 #include "Project.H"
 #include "Tool.H"
 #include "Undo.H"
 #include "View.H"
+
+// for debugging
+void Undo::printStacks()
+{
+  printf("Undo Stack:\n");
+
+  for (int i = 0; i < levels; i++)
+  {
+    int x2 = undo_stack[i]->x;
+    int y2 = undo_stack[i]->y;
+    int w2 = undo_stack[i]->w;
+    int h2 = undo_stack[i]->h;
+
+    printf("%d: x2 = %d, y2 = %d, w2 = %d, h2 = %d ", i, x2, y2, w2, h2);
+
+    if (i == undo_current)
+      printf("<");
+
+    printf("\n");
+  }
+
+  printf("\n");
+  printf("Redo Stack:\n");
+
+  for (int i = 0; i < levels; i++)
+  {
+    int x2 = redo_stack[i]->x;
+    int y2 = redo_stack[i]->y;
+    int w2 = redo_stack[i]->w;
+    int h2 = redo_stack[i]->h;
+
+    printf("%d: x2 = %d, y2 = %d, w2 = %d, h2 = %d ", i, x2, y2, w2, h2);
+
+    if (i == redo_current)
+      printf("<");
+
+    printf("\n");
+  }
+
+  printf("--------------------------------------\n\n");
+}
 
 Undo::Undo()
 {
@@ -68,21 +110,12 @@ void Undo::reset()
   redo_current = levels - 1;
 }
 
-void Undo::doPush()
+void Undo::doPush(const int x, const int y, const int w, const int h,
+                  const int undo_mode)
 {
-  const int x = 0;
-  const int y = 0;
-  const int w = Project::bmp->w;
-  const int h = Project::bmp->h;
-
-  doPush(x, y, w, h);
-}
-
-void Undo::doPush(const int x, const int y, const int w, const int h)
-{
-  if (undo_current < 1)
+  if (undo_current < 0)
   {
-    undo_current = 1;
+    undo_current = 0;
 
     Bitmap *temp_bmp = undo_stack[levels - 1];
 
@@ -99,6 +132,7 @@ void Undo::doPush(const int x, const int y, const int w, const int h)
   undo_stack[undo_current] = new Bitmap(w, h);
   undo_stack[undo_current]->x = x;
   undo_stack[undo_current]->y = y;
+  undo_stack[undo_current]->undo_mode = undo_mode;
 
   Project::bmp->blit(undo_stack[undo_current], x, y, 0, 0, w, h);
 
@@ -111,13 +145,15 @@ void Undo::push()
   const int y = 0;
   const int w = Project::bmp->w;
   const int h = Project::bmp->h;
+  const int undo_mode = Undo::FULL;
 
-  push(x, y, w, h);
+  push(x, y, w, h, undo_mode);
 }
 
-void Undo::push(const int x, const int y, const int w, const int h)
+void Undo::push(const int x, const int y, const int w, const int h,
+                const int undo_mode)
 {
-  doPush(x, y, w, h);
+  doPush(x, y, w, h, undo_mode);
 
   // reset redo list since user performed some action
   for (int i = 0; i < levels; i++)
@@ -127,6 +163,8 @@ void Undo::push(const int x, const int y, const int w, const int h)
   }
 
   redo_current = levels - 1;
+
+  // printStacks();
 }
 
 void Undo::pop()
@@ -134,12 +172,16 @@ void Undo::pop()
   if (undo_current >= levels - 1)
     return;
 
-  int x = undo_stack[(undo_current + 1)]->x;
-  int y = undo_stack[(undo_current + 1)]->y;
-  int w = undo_stack[(undo_current + 1)]->w;
-  int h = undo_stack[(undo_current + 1)]->h;
+  int x = undo_stack[undo_current + 1]->x;
+  int y = undo_stack[undo_current + 1]->y;
+  int w = undo_stack[undo_current + 1]->w;
+  int h = undo_stack[undo_current + 1]->h;
+  int undo_mode = undo_stack[undo_current + 1]->undo_mode;
 
-  pushRedo(x, y, w, h);
+  if (undo_mode == Undo::FULL)
+    pushRedo(0, 0, Project::bmp->w, Project::bmp->h, undo_mode);
+  else
+    pushRedo(x, y, w, h, undo_mode);
 
   if (undo_current >= 0)
   {
@@ -153,15 +195,19 @@ void Undo::pop()
   y = undo_stack[undo_current]->y;
   w = undo_stack[undo_current]->w;
   h = undo_stack[undo_current]->h;
+  undo_mode = undo_stack[undo_current]->undo_mode;
 
-  if (x == 0 && y == 0)
+  if(undo_mode == Undo::FULL)
     Project::replaceImage(w, h);
 
   undo_stack[undo_current]->blit(Project::bmp, 0, 0, x, y, w, h);
   Gui::getView()->drawMain(true);
+
+  // printStacks();
 }
 
-void Undo::pushRedo(const int x, const int y, const int w, const int h)
+void Undo::pushRedo(const int x, const int y, const int w, const int h,
+                    const int undo_mode)
 {
   if (redo_current < 0)
   {
@@ -180,8 +226,10 @@ void Undo::pushRedo(const int x, const int y, const int w, const int h)
 
   delete redo_stack[redo_current];
   redo_stack[redo_current] = new Bitmap(w, h);
+redo_stack[redo_current]->clear(makeRgb(255, 0, 255));
   redo_stack[redo_current]->x = x;
   redo_stack[redo_current]->y = y;
+  redo_stack[redo_current]->undo_mode = undo_mode;
 
   Project::bmp->blit(redo_stack[redo_current], x, y, 0, 0, w, h);
 
@@ -196,13 +244,16 @@ void Undo::popRedo()
   if (redo_current >= levels - 1)
     return;
 
-  int max = Project::undo_max;
-  int x = redo_stack[(redo_current + 1) % max]->x;
-  int y = redo_stack[(redo_current + 1) % max]->y;
-  int w = redo_stack[(redo_current + 1) % max]->w;
-  int h = redo_stack[(redo_current + 1) % max]->h;
+  int x = redo_stack[redo_current + 1]->x;
+  int y = redo_stack[redo_current + 1]->y;
+  int w = redo_stack[redo_current + 1]->w;
+  int h = redo_stack[redo_current + 1]->h;
+  int undo_mode = redo_stack[redo_current + 1]->undo_mode;
 
-  doPush(x, y, w, h);
+  if (undo_mode == Undo::FULL)
+    doPush(0, 0, Project::bmp->w, Project::bmp->h, 1);
+  else
+    doPush(x, y, w, h, 0);
 
   if (redo_current >= 0)
   {
@@ -216,11 +267,15 @@ void Undo::popRedo()
   y = redo_stack[redo_current]->y;
   w = redo_stack[redo_current]->w;
   h = redo_stack[redo_current]->h;
+  undo_mode = redo_stack[redo_current]->undo_mode;
 
-  if (x == 0 && y == 0)
+  if (undo_mode == Undo::FULL)
     Project::replaceImage(w, h);
 
   redo_stack[redo_current]->blit(Project::bmp, 0, 0, x, y, w, h);
+
   Gui::getView()->drawMain(true);
+
+  // printStacks();
 }
 

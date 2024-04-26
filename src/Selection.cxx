@@ -210,12 +210,13 @@ void Selection::crop(View *view)
 
 void Selection::paste(View *view)
 {
-  Project::undo->push();
   const int w = Project::select_bmp->w;
   const int h = Project::select_bmp->h;
 
   int x1 = beginx;
   int y1 = beginy;
+
+  Project::undo->push(x1, y1, w, h, 0);
 
   if (view->gridsnap)
   {
