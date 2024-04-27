@@ -39,7 +39,6 @@ public:
 
   void printStacks();
   void reset();
-//  void doPush();
   void doPush(const int, const int, const int, const int, const int);
   void push();
   void push(const int, const int, const int, const int, const int);
