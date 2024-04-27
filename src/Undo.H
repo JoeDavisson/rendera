@@ -31,8 +31,7 @@ public:
   enum
   {
     PARTIAL,
-    FULL,
-    OFFSET
+    FULL
   };
 
   Undo();
