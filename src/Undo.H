@@ -37,7 +37,6 @@ public:
   Undo();
   ~Undo();
 
-  void printStacks();
   void reset();
   void doPush(const int, const int, const int, const int, const int);
   void push();
@@ -52,6 +51,9 @@ public:
 
   Bitmap **undo_stack;
   Bitmap **redo_stack;
+
+private:
+  void printStacks();
 };
 
 #endif
