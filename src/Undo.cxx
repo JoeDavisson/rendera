@@ -18,6 +18,27 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+/*
+Notes:
+
+The undo/redo feature tries not to waste more memory than required by using
+three different modes (see enum in Undo.H):
+
+Undo::PARTIAL - for smaller changes (brushstrokes, pasting selections)
+Undo::FULL - for operations that effect the entire image (scaling, filters)
+Undo::OFFSET - special case for Offset (no image storage, just the x/y position)
+
+These are also possible but not yet implemented:
+
+Undo::FLIP_HORIZONTAL - flip image horizontally
+Undo::FLIP_VERTICAL - flip image vertically
+Undo::ROTATE_90 - rotate 90 degrees
+Undo::ROTATE_180 - rotate 180 degrees
+
+8x8 pixel dummy images are used as placeholders in the undo/redo stacks. Modes
+are stored in the stack images themselves (undo_mode in class Bitmap).
+*/
+
 #include "Bitmap.H"
 #include "Gui.H"
 #include "Project.H"
@@ -65,7 +86,7 @@ void Undo::printStacks()
   printf("--------------------------------------\n\n");
 }
 
-// restore offset
+// restore offset, values are flipped for undo, left alone for redo
 void Undo::offset(int x, int y, bool flip)
 {
   int w = Project::bmp->w;
@@ -156,9 +177,6 @@ void Undo::doPush(const int x, const int y, const int w, const int h,
   {
     delete undo_stack[undo_current];
     undo_stack[undo_current] = new Bitmap(8, 8);
-    undo_stack[undo_current]->x = x;
-    undo_stack[undo_current]->y = y;
-    undo_stack[undo_current]->undo_mode = undo_mode;
   }
    else
   {
@@ -167,13 +185,13 @@ void Undo::doPush(const int x, const int y, const int w, const int h,
 
     delete undo_stack[undo_current];
     undo_stack[undo_current] = new Bitmap(w, h);
-    undo_stack[undo_current]->x = x;
-    undo_stack[undo_current]->y = y;
-    undo_stack[undo_current]->undo_mode = undo_mode;
 
     Project::bmp->blit(undo_stack[undo_current], x, y, 0, 0, w, h);
   }
 
+  undo_stack[undo_current]->x = x;
+  undo_stack[undo_current]->y = y;
+  undo_stack[undo_current]->undo_mode = undo_mode;
   undo_current--;
 }
 
@@ -275,9 +293,6 @@ void Undo::pushRedo(const int x, const int y, const int w, const int h,
   {
     delete redo_stack[redo_current];
     redo_stack[redo_current] = new Bitmap(8, 8);
-    redo_stack[redo_current]->x = x;
-    redo_stack[redo_current]->y = y;
-    redo_stack[redo_current]->undo_mode = undo_mode;
   }
    else
   {
@@ -286,13 +301,13 @@ void Undo::pushRedo(const int x, const int y, const int w, const int h,
 
     delete redo_stack[redo_current];
     redo_stack[redo_current] = new Bitmap(w, h);
-    redo_stack[redo_current]->x = x;
-    redo_stack[redo_current]->y = y;
-    redo_stack[redo_current]->undo_mode = undo_mode;
 
     Project::bmp->blit(redo_stack[redo_current], x, y, 0, 0, w, h);
   }
 
+  redo_stack[redo_current]->x = x;
+  redo_stack[redo_current]->y = y;
+  redo_stack[redo_current]->undo_mode = undo_mode;
   redo_current--;
 
   if (redo_current < 0)
