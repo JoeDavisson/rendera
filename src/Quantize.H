@@ -28,7 +28,7 @@ class Palette;
 class Quantize
 {
 public:
-  static void pca(Bitmap *, Palette *, int);
+  static void pca(Bitmap *, Palette *, const int);
 
 private:
   Quantize() { }
@@ -43,7 +43,7 @@ private:
                         const float, const float, const float, const float);
   static float error(color_type *, color_type *);
   static void merge(color_type *, color_type *);
-  static int limitColors(Octree *, color_type *, int);
+  static int limitColors(Octree *, color_type *, const int);
 };
 
 #endif

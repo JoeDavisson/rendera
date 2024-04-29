@@ -34,7 +34,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Widget.H"
 
 void Quantize::makeColor(color_type *c,
-                 const float r, const float g, const float b, const float freq)
+                         const float r, const float g, const float b,
+                         const float freq)
 {
   c->r = r;
   c->g = g;
@@ -65,7 +66,7 @@ void Quantize::merge(color_type *c1, color_type *c2)
 }
 
 // reduces color count by averaging sections of the color cube
-int Quantize::limitColors(Octree *histogram, color_type *colors, int step)
+int Quantize::limitColors(Octree *histogram, color_type *colors, const int step)
 {
   int count = 0;
 
@@ -125,7 +126,7 @@ int Quantize::limitColors(Octree *histogram, color_type *colors, int step)
 // http://www.visgraf.impa.br/Projects/quantization/quant.html
 // http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 //
-void Quantize::pca(Bitmap *src, Palette *pal, int size)
+void Quantize::pca(Bitmap *src, Palette *pal, const int size)
 {
   // popularity histogram
   Octree histogram;
