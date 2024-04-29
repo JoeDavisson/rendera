@@ -40,13 +40,15 @@ Offset::~Offset()
 
 void Offset::push(View *view)
 {
-  Project::undo->push();
+//  Project::undo->push();
 
   int w = Project::bmp->cw;
   int h = Project::bmp->ch;
 
   beginx = view->imgx;
   beginy = view->imgy;
+  temp_x = 0;
+  temp_y = 0;
 
   delete offset_buffer;
 
@@ -83,6 +85,9 @@ void Offset::drag(View *view)
   offset_buffer->blit(Project::bmp, w - x, 0, 0, y, x, h - y);
   offset_buffer->blit(Project::bmp, 0, 0, x, y, w - x, h - y);
 
+  temp_x = x;
+  temp_y = y;
+
   view->drawMain(true);
   Gui::offsetValues(dx, dy);
 }
@@ -92,6 +97,10 @@ void Offset::release(View *)
   delete offset_buffer;
 
   offset_buffer = 0;
+
+  Project::undo->push(temp_x, temp_y, Project::bmp->w, Project::bmp->h,
+                      Undo::OFFSET);
+  
   Gui::offsetValues(0, 0);
 }
 

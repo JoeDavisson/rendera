@@ -65,6 +65,38 @@ void Undo::printStacks()
   printf("--------------------------------------\n\n");
 }
 
+// restore offset
+void Undo::offset(int x, int y, bool flip)
+{
+  int w = Project::bmp->w;
+  int h = Project::bmp->h;
+  Bitmap *offset_buffer = new Bitmap(w, h);
+
+  Project::bmp->blit(offset_buffer, 0, 0, 0, 0, w, h);
+
+  if (flip == true)
+  {
+    x = w - x;
+    y = h - y;
+  }
+
+  while (x < 0)
+    x += w;
+  while (y < 0)
+    y += h;
+  while (x >= w)
+    x -= w;
+  while (y >= h)
+    y -= h;
+
+  offset_buffer->blit(Project::bmp, w - x, h - y, 0, 0, x, y);
+  offset_buffer->blit(Project::bmp, 0, h - y, x, 0, w - x, y);
+  offset_buffer->blit(Project::bmp, w - x, 0, 0, y, x, h - y);
+  offset_buffer->blit(Project::bmp, 0, 0, x, y, w - x, h - y);
+
+  delete offset_buffer;
+}
+
 Undo::Undo()
 {
   levels = Project::undo_max;
@@ -120,16 +152,27 @@ void Undo::doPush(const int x, const int y, const int w, const int h,
     undo_stack[0] = temp_bmp;
   }
 
-  if (Project::enoughMemory(w, h) == false)
-    return;
+  if (undo_mode == Undo::OFFSET)
+  {
+    delete undo_stack[undo_current];
+    undo_stack[undo_current] = new Bitmap(8, 8);
+    undo_stack[undo_current]->x = x;
+    undo_stack[undo_current]->y = y;
+    undo_stack[undo_current]->undo_mode = undo_mode;
+  }
+   else
+  {
+    if (Project::enoughMemory(w, h) == false)
+      return;
 
-  delete undo_stack[undo_current];
-  undo_stack[undo_current] = new Bitmap(w, h);
-  undo_stack[undo_current]->x = x;
-  undo_stack[undo_current]->y = y;
-  undo_stack[undo_current]->undo_mode = undo_mode;
+    delete undo_stack[undo_current];
+    undo_stack[undo_current] = new Bitmap(w, h);
+    undo_stack[undo_current]->x = x;
+    undo_stack[undo_current]->y = y;
+    undo_stack[undo_current]->undo_mode = undo_mode;
 
-  Project::bmp->blit(undo_stack[undo_current], x, y, 0, 0, w, h);
+    Project::bmp->blit(undo_stack[undo_current], x, y, 0, 0, w, h);
+  }
 
   undo_current--;
 }
@@ -173,10 +216,22 @@ void Undo::pop()
   int h = undo_stack[undo_current + 1]->h;
   int undo_mode = undo_stack[undo_current + 1]->undo_mode;
 
-  if (undo_mode == Undo::FULL)
-    pushRedo(0, 0, Project::bmp->w, Project::bmp->h, undo_mode);
-  else
+  if (undo_mode == Undo::OFFSET)
+  {
+    offset(x, y, true);
+    undo_current++;
+    Gui::getView()->drawMain(true);
     pushRedo(x, y, w, h, undo_mode);
+    return;
+  }
+  else if (undo_mode == Undo::FULL)
+  {
+    pushRedo(0, 0, Project::bmp->w, Project::bmp->h, undo_mode);
+  }
+    else
+  {
+    pushRedo(x, y, w, h, undo_mode);
+  }
 
   if (undo_current >= 0)
   {
@@ -216,16 +271,27 @@ void Undo::pushRedo(const int x, const int y, const int w, const int h,
     redo_stack[0] = temp_bmp;
   }
 
-  if (Project::enoughMemory(w, h) == false)
-    return;
+  if (undo_mode == Undo::OFFSET)
+  {
+    delete redo_stack[redo_current];
+    redo_stack[redo_current] = new Bitmap(8, 8);
+    redo_stack[redo_current]->x = x;
+    redo_stack[redo_current]->y = y;
+    redo_stack[redo_current]->undo_mode = undo_mode;
+  }
+   else
+  {
+    if (Project::enoughMemory(w, h) == false)
+      return;
 
-  delete redo_stack[redo_current];
-  redo_stack[redo_current] = new Bitmap(w, h);
-  redo_stack[redo_current]->x = x;
-  redo_stack[redo_current]->y = y;
-  redo_stack[redo_current]->undo_mode = undo_mode;
+    delete redo_stack[redo_current];
+    redo_stack[redo_current] = new Bitmap(w, h);
+    redo_stack[redo_current]->x = x;
+    redo_stack[redo_current]->y = y;
+    redo_stack[redo_current]->undo_mode = undo_mode;
 
-  Project::bmp->blit(redo_stack[redo_current], x, y, 0, 0, w, h);
+    Project::bmp->blit(redo_stack[redo_current], x, y, 0, 0, w, h);
+  }
 
   redo_current--;
 
@@ -244,10 +310,22 @@ void Undo::popRedo()
   int h = redo_stack[redo_current + 1]->h;
   int undo_mode = redo_stack[redo_current + 1]->undo_mode;
 
-  if (undo_mode == Undo::FULL)
+  if (undo_mode == Undo::OFFSET)
+  {
+    offset(x, y, false);
+    redo_current++;
+    Gui::getView()->drawMain(true);
+    doPush(x, y, w, h, undo_mode);
+    return;
+  }
+  else if (undo_mode == Undo::FULL)
+  {
     doPush(0, 0, Project::bmp->w, Project::bmp->h, 1);
-  else
-    doPush(x, y, w, h, 0);
+  }
+   else
+  {
+    doPush(x, y, w, h, undo_mode);
+  }
 
   if (redo_current >= 0)
   {

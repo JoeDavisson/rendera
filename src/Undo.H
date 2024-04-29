@@ -31,7 +31,8 @@ public:
   enum
   {
     PARTIAL,
-    FULL
+    FULL,
+    OFFSET
   };
 
   Undo();
@@ -54,6 +55,7 @@ public:
 
 private:
   void printStacks();
+  void offset(int, int, bool);
 };
 
 #endif

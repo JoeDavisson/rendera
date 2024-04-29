@@ -45,6 +45,8 @@ public:
 private:
   int beginx;
   int beginy;
+  int temp_x;
+  int temp_y;
   Bitmap *offset_buffer;
 };
 
