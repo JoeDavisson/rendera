@@ -25,17 +25,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Blend.H"
-#include "Brush.H"
 #include "Clone.H"
-#include "Gamma.H"
 #include "Inline.H"
-#include "Map.H"
-#include "Octree.H"
 #include "Palette.H"
 #include "Project.H"
 #include "Stroke.H"
-#include "Tool.H"
-#include "View.H"
 
 static inline int xorValue(const int x, const int y)
 {
@@ -512,9 +506,6 @@ void Bitmap::setpixel(const int x, const int y, const int c)
 void Bitmap::setpixel(const int x, const int y, const int c2, const int t)
 {
   Blend::target(this, x, y);
-
-//  if (Project::brush->alpha_mask)
-//    t = scaleVal(t, 255 - geta(getpixel(x, y)));
 
   if (Clone::active)
     setpixelClone(x, y, c2, t);
