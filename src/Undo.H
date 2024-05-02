@@ -55,7 +55,6 @@ public:
 
 private:
   void printStacks();
-//  void offset(int, int, bool);
 };
 
 #endif
