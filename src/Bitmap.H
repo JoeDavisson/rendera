@@ -66,6 +66,7 @@ public:
   void flipHorizontal();
   void flipVertical();
   void rotate180();
+  void offset(int, int, bool);
   void invert();
 };
 

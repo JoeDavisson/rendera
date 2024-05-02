@@ -965,6 +965,37 @@ void Bitmap::rotate180()
   }
 }
 
+void Bitmap::offset(int x, int y, bool reverse)
+{
+  Bitmap *offset_buffer = new Bitmap(w, h);
+
+  this->blit(offset_buffer, 0, 0, 0, 0, w, h);
+
+  if (reverse == true)
+  {
+    x = w - x;
+    y = h - y;
+  }
+
+  while (x < 0)
+    x += w;
+  while (y < 0)
+    y += h;
+  while (x >= w)
+    x -= w;
+  while (y >= h)
+    y -= h;
+
+  offset_buffer->blit(this, w - x, h - y, 0, 0, x, y);
+  offset_buffer->blit(this, 0, h - y, x, 0, w - x, y);
+  offset_buffer->blit(this, w - x, 0, 0, y, x, h - y);
+  offset_buffer->blit(this, 0, 0, x, y, w - x, h - y);
+
+  delete offset_buffer;
+}
+
+
+
 void Bitmap::invert()
 {
   for (int i = 0; i < w * h; i++)

@@ -86,38 +86,6 @@ void Undo::printStacks()
   printf("--------------------------------------\n\n");
 }
 
-// restore offset, values are flipped for undo, left alone for redo
-void Undo::offset(int x, int y, bool flip)
-{
-  int w = Project::bmp->w;
-  int h = Project::bmp->h;
-  Bitmap *offset_buffer = new Bitmap(w, h);
-
-  Project::bmp->blit(offset_buffer, 0, 0, 0, 0, w, h);
-
-  if (flip == true)
-  {
-    x = w - x;
-    y = h - y;
-  }
-
-  while (x < 0)
-    x += w;
-  while (y < 0)
-    y += h;
-  while (x >= w)
-    x -= w;
-  while (y >= h)
-    y -= h;
-
-  offset_buffer->blit(Project::bmp, w - x, h - y, 0, 0, x, y);
-  offset_buffer->blit(Project::bmp, 0, h - y, x, 0, w - x, y);
-  offset_buffer->blit(Project::bmp, w - x, 0, 0, y, x, h - y);
-  offset_buffer->blit(Project::bmp, 0, 0, x, y, w - x, h - y);
-
-  delete offset_buffer;
-}
-
 Undo::Undo()
 {
   levels = Project::undo_max;
@@ -236,7 +204,7 @@ void Undo::pop()
 
   if (undo_mode == Undo::OFFSET)
   {
-    offset(x, y, true);
+    Project::bmp->offset(x, y, true);
     undo_current++;
     Gui::getView()->drawMain(true);
     pushRedo(x, y, w, h, undo_mode);
@@ -327,7 +295,7 @@ void Undo::popRedo()
 
   if (undo_mode == Undo::OFFSET)
   {
-    offset(x, y, false);
+    Project::bmp->offset(x, y, false);
     redo_current++;
     Gui::getView()->drawMain(true);
     doPush(x, y, w, h, undo_mode);
