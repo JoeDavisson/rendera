@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 Notes:
 
 The undo/redo feature tries not to waste more memory than required by using
-three different modes (see enum in Undo.H):
+different modes (see enum in Undo.H):
 
 8x8 pixel dummy images are used as placeholders in the undo/redo stacks. Modes
 are stored in the stack images themselves (undo_mode in class Bitmap).
