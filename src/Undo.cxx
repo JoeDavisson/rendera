@@ -18,16 +18,6 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-/*
-Notes:
-
-The undo/redo feature tries not to waste more memory than required by using
-different modes (see enum in Undo.H):
-
-8x8 pixel dummy images are used as placeholders in the undo/redo stacks. Modes
-are stored in the stack images themselves (undo_mode in class Bitmap).
-*/
-
 #include "Bitmap.H"
 #include "Gui.H"
 #include "Project.H"
@@ -205,7 +195,7 @@ void Undo::pop()
 
   if (undo_mode == Undo::OFFSET)
   {
-    Project::bmp->offset(x, y, false);
+    Project::bmp->offset(x, y, true);
     undo_current++;
     Gui::getView()->drawMain(true);
     pushRedo(x, y, w, h, undo_mode);
@@ -229,7 +219,7 @@ void Undo::pop()
   }
   else if (undo_mode == Undo::ROTATE_90)
   {
-    Project::bmp->rotate90(false);
+    Project::bmp->rotate90(true);
     undo_current++;
     Gui::getView()->drawMain(true);
     pushRedo(x, y, w, h, undo_mode);
@@ -330,7 +320,7 @@ void Undo::popRedo()
 
   if (undo_mode == Undo::OFFSET)
   {
-    Project::bmp->offset(x, y, true);
+    Project::bmp->offset(x, y, false);
     redo_current++;
     Gui::getView()->drawMain(true);
     doPush(x, y, w, h, undo_mode);
@@ -354,7 +344,7 @@ void Undo::popRedo()
   }
   else if (undo_mode == Undo::ROTATE_90)
   {
-    Project::bmp->rotate90(true);
+    Project::bmp->rotate90(false);
     redo_current++;
     Gui::getView()->drawMain(true);
     doPush(x, y, w, h, undo_mode);

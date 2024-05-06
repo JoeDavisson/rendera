@@ -114,18 +114,13 @@ void Bitmap::resize(int width, int height)
   memset(data, 0, sizeof(int) * width * height);
   memset(row, 0, sizeof(int *) * height);
 
-  x = 0;
-  y = 0;
   w = width;
   h = height;
-  undo_mode = 0;
 
   setClip(0, 0, w - 1, h - 1);
 
   for (int i = 0; i < height; i++)
     row[i] = &data[width * i];
-
-  rectfill(0, 0, w - 1, h - 1, makeRgb(0, 0, 0), 0);
 }
 
 void Bitmap::clear(const int c)
@@ -967,13 +962,13 @@ void Bitmap::rotate90(bool reverse)
 
   int *p = &temp.data[0];
 
-  if (reverse == false)
+  if (reverse == true)
   {
     for (int y = 0; y < old_h; y++)
     {
       for (int x = 0; x < old_w; x++)
       {
-         *(row[x] + old_h - 1 - y) = *p++;
+         *(row[old_w - 1 - x] + y) = *p++;
       }
     }
   }
@@ -983,7 +978,7 @@ void Bitmap::rotate90(bool reverse)
     {
       for (int x = 0; x < old_w; x++)
       {
-         *(row[old_w - 1 - x] + y) = *p++;
+         *(row[x] + old_h - 1 - y) = *p++;
       }
     }
   }
@@ -1013,11 +1008,12 @@ void Bitmap::rotate180()
 
 void Bitmap::offset(int x, int y, const bool reverse)
 {
-  Bitmap *offset_buffer = new Bitmap(w, h);
+  Bitmap temp(w, h);
+  Bitmap offset_buffer(w, h);
 
-  this->blit(offset_buffer, 0, 0, 0, 0, w, h);
+  this->blit(&offset_buffer, 0, 0, 0, 0, w, h);
 
-  if (reverse == false)
+  if (reverse == true)
   {
     x = w - x;
     y = h - y;
@@ -1032,12 +1028,10 @@ void Bitmap::offset(int x, int y, const bool reverse)
   while (y >= h)
     y -= h;
 
-  offset_buffer->blit(this, w - x, h - y, 0, 0, x, y);
-  offset_buffer->blit(this, 0, h - y, x, 0, w - x, y);
-  offset_buffer->blit(this, w - x, 0, 0, y, x, h - y);
-  offset_buffer->blit(this, 0, 0, x, y, w - x, h - y);
-
-  delete offset_buffer;
+  offset_buffer.blit(this, w - x, h - y, 0, 0, x, y);
+  offset_buffer.blit(this, 0, h - y, x, 0, w - x, y);
+  offset_buffer.blit(this, w - x, 0, 0, y, x, h - y);
+  offset_buffer.blit(this, 0, 0, x, y, w - x, h - y);
 }
 
 void Bitmap::invert()
