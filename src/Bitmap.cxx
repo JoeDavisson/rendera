@@ -965,7 +965,7 @@ void Bitmap::rotate180()
   }
 }
 
-void Bitmap::offset(int x, int y, bool reverse)
+void Bitmap::offset(int x, int y, const bool reverse)
 {
   Bitmap *offset_buffer = new Bitmap(w, h);
 

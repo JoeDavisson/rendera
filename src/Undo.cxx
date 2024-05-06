@@ -24,17 +24,6 @@ Notes:
 The undo/redo feature tries not to waste more memory than required by using
 three different modes (see enum in Undo.H):
 
-Undo::PARTIAL - for smaller changes (brushstrokes, pasting selections)
-Undo::FULL - for operations that effect the entire image (scaling, filters)
-Undo::OFFSET - special case for Offset (no image storage, just the x/y position)
-
-These are also possible but not yet implemented:
-
-Undo::FLIP_HORIZONTAL - flip image horizontally
-Undo::FLIP_VERTICAL - flip image vertically
-Undo::ROTATE_90 - rotate 90 degrees
-Undo::ROTATE_180 - rotate 180 degrees
-
 8x8 pixel dummy images are used as placeholders in the undo/redo stacks. Modes
 are stored in the stack images themselves (undo_mode in class Bitmap).
 */
@@ -141,7 +130,9 @@ void Undo::doPush(const int x, const int y, const int w, const int h,
     undo_stack[0] = temp_bmp;
   }
 
-  if (undo_mode == Undo::OFFSET)
+  if (undo_mode == Undo::OFFSET || undo_mode == Undo::FLIP_HORIZONTAL ||
+      undo_mode == Undo::FLIP_VERTICAL || undo_mode == Undo::FLIP_VERTICAL ||
+      undo_mode == Undo::ROTATE_180)
   {
     delete undo_stack[undo_current];
     undo_stack[undo_current] = new Bitmap(8, 8);
@@ -170,6 +161,16 @@ void Undo::push()
   const int w = Project::bmp->w;
   const int h = Project::bmp->h;
   const int undo_mode = Undo::FULL;
+
+  push(x, y, w, h, undo_mode);
+}
+
+void Undo::push(const int undo_mode)
+{
+  const int x = 0;
+  const int y = 0;
+  const int w = Project::bmp->w;
+  const int h = Project::bmp->h;
 
   push(x, y, w, h, undo_mode);
 }
@@ -205,6 +206,30 @@ void Undo::pop()
   if (undo_mode == Undo::OFFSET)
   {
     Project::bmp->offset(x, y, true);
+    undo_current++;
+    Gui::getView()->drawMain(true);
+    pushRedo(x, y, w, h, undo_mode);
+    return;
+  }
+  else if (undo_mode == Undo::FLIP_HORIZONTAL)
+  {
+    Project::bmp->flipHorizontal();
+    undo_current++;
+    Gui::getView()->drawMain(true);
+    pushRedo(x, y, w, h, undo_mode);
+    return;
+  }
+  else if (undo_mode == Undo::FLIP_VERTICAL)
+  {
+    Project::bmp->flipVertical();
+    undo_current++;
+    Gui::getView()->drawMain(true);
+    pushRedo(x, y, w, h, undo_mode);
+    return;
+  }
+  else if (undo_mode == Undo::ROTATE_180)
+  {
+    Project::bmp->rotate180();
     undo_current++;
     Gui::getView()->drawMain(true);
     pushRedo(x, y, w, h, undo_mode);
@@ -257,7 +282,9 @@ void Undo::pushRedo(const int x, const int y, const int w, const int h,
     redo_stack[0] = temp_bmp;
   }
 
-  if (undo_mode == Undo::OFFSET)
+  if (undo_mode == Undo::OFFSET || undo_mode == Undo::FLIP_HORIZONTAL ||
+      undo_mode == Undo::FLIP_VERTICAL || undo_mode == Undo::FLIP_VERTICAL ||
+      undo_mode == Undo::ROTATE_180)
   {
     delete redo_stack[redo_current];
     redo_stack[redo_current] = new Bitmap(8, 8);
@@ -296,6 +323,30 @@ void Undo::popRedo()
   if (undo_mode == Undo::OFFSET)
   {
     Project::bmp->offset(x, y, false);
+    redo_current++;
+    Gui::getView()->drawMain(true);
+    doPush(x, y, w, h, undo_mode);
+    return;
+  }
+  else if (undo_mode == Undo::FLIP_HORIZONTAL)
+  {
+    Project::bmp->flipHorizontal();
+    redo_current++;
+    Gui::getView()->drawMain(true);
+    doPush(x, y, w, h, undo_mode);
+    return;
+  }
+  else if (undo_mode == Undo::FLIP_VERTICAL)
+  {
+    Project::bmp->flipVertical();
+    redo_current++;
+    Gui::getView()->drawMain(true);
+    doPush(x, y, w, h, undo_mode);
+    return;
+  }
+  else if (undo_mode == Undo::ROTATE_180)
+  {
+    Project::bmp->rotate180();
     redo_current++;
     Gui::getView()->drawMain(true);
     doPush(x, y, w, h, undo_mode);

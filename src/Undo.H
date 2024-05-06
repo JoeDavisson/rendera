@@ -32,7 +32,10 @@ public:
   {
     PARTIAL,
     FULL,
-    OFFSET
+    OFFSET,
+    FLIP_HORIZONTAL,
+    FLIP_VERTICAL,
+    ROTATE_180
   };
 
   Undo();
@@ -41,6 +44,7 @@ public:
   void reset();
   void doPush(const int, const int, const int, const int, const int);
   void push();
+  void push(const int);
   void push(const int, const int, const int, const int, const int);
   void pop();
   void pushRedo(const int, const int, const int, const int, const int);

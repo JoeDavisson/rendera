@@ -41,17 +41,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX/GaussianBlur.H"
 
-namespace
-{
-//  Bitmap *bmp;
-
-  void pushUndo()
-  {
-//    bmp = Project::bmp;
-    Project::undo->push();
-  }
-}
-
 namespace Resize
 {
   namespace Items
@@ -114,7 +103,7 @@ namespace Resize
       return;
 
     Items::dialog->hide();
-    pushUndo();
+    Project::undo->push();
 
     Bitmap *bmp = Project::bmp;
     Bitmap *temp = new Bitmap(w, h);
@@ -511,7 +500,7 @@ namespace Scale
       return;
 
     Items::dialog->hide();
-    pushUndo();
+    Project::undo->push();
 
     apply(w, h, Items::wrap->value());
   }
@@ -718,7 +707,7 @@ namespace RotateArbitrary
   void close()
   {
     Items::dialog->hide();
-    pushUndo();
+    Project::undo->push();
 
     apply(atof(Items::angle->value()), atof(Items::scale->value()));
   }
@@ -758,14 +747,14 @@ void Transform::init()
 
 void Transform::flipHorizontal()
 {
-  pushUndo();
+  Project::undo->push(Undo::FLIP_HORIZONTAL);
   Project::bmp->flipHorizontal();
   Gui::getView()->drawMain(true);
 }
 
 void Transform::flipVertical()
 {
-  pushUndo();
+  Project::undo->push(Undo::FLIP_VERTICAL);
   Project::bmp->flipVertical();
   Gui::getView()->drawMain(true);
 }
@@ -787,7 +776,7 @@ void Transform::rotateArbitrary()
 
 void Transform::rotate90()
 {
-  pushUndo();
+  Project::undo->push();
 
   int w = Project::bmp->w;
   int h = Project::bmp->h;
@@ -815,7 +804,7 @@ void Transform::rotate90()
 
 void Transform::rotate180()
 {
-  pushUndo();
+  Project::undo->push(Undo::ROTATE_180);
   Project::bmp->rotate180();
   Gui::getView()->drawMain(true);
 }
