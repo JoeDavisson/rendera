@@ -776,29 +776,8 @@ void Transform::rotateArbitrary()
 
 void Transform::rotate90()
 {
-  Project::undo->push();
-
-  int w = Project::bmp->w;
-  int h = Project::bmp->h;
-
-  // make copy
-  Bitmap temp(w, h);
-  Project::bmp->blit(&temp, 0, 0, 0, 0, w, h);
-
-  // create rotated image
-  delete Project::bmp;
-  Project::bmp = new Bitmap(h, w);
-
-  int *p = &temp.data[0];
-
-  for (int y = 0; y < h; y++)
-  {
-    for (int x = 0; x < w; x++)
-    {
-       *(Project::bmp->row[x] + h - 1 - y) = *p++;   
-    } 
-  } 
-
+  Project::undo->push(Undo::ROTATE_90);
+  Project::bmp->rotate90(false);
   Gui::getView()->drawMain(true);
 }
 

@@ -132,7 +132,7 @@ void Undo::doPush(const int x, const int y, const int w, const int h,
 
   if (undo_mode == Undo::OFFSET || undo_mode == Undo::FLIP_HORIZONTAL ||
       undo_mode == Undo::FLIP_VERTICAL || undo_mode == Undo::FLIP_VERTICAL ||
-      undo_mode == Undo::ROTATE_180)
+      undo_mode == Undo::ROTATE_90 || undo_mode == Undo::ROTATE_180)
   {
     delete undo_stack[undo_current];
     undo_stack[undo_current] = new Bitmap(8, 8);
@@ -205,7 +205,7 @@ void Undo::pop()
 
   if (undo_mode == Undo::OFFSET)
   {
-    Project::bmp->offset(x, y, true);
+    Project::bmp->offset(x, y, false);
     undo_current++;
     Gui::getView()->drawMain(true);
     pushRedo(x, y, w, h, undo_mode);
@@ -222,6 +222,14 @@ void Undo::pop()
   else if (undo_mode == Undo::FLIP_VERTICAL)
   {
     Project::bmp->flipVertical();
+    undo_current++;
+    Gui::getView()->drawMain(true);
+    pushRedo(x, y, w, h, undo_mode);
+    return;
+  }
+  else if (undo_mode == Undo::ROTATE_90)
+  {
+    Project::bmp->rotate90(false);
     undo_current++;
     Gui::getView()->drawMain(true);
     pushRedo(x, y, w, h, undo_mode);
@@ -284,7 +292,7 @@ void Undo::pushRedo(const int x, const int y, const int w, const int h,
 
   if (undo_mode == Undo::OFFSET || undo_mode == Undo::FLIP_HORIZONTAL ||
       undo_mode == Undo::FLIP_VERTICAL || undo_mode == Undo::FLIP_VERTICAL ||
-      undo_mode == Undo::ROTATE_180)
+      undo_mode == Undo::ROTATE_90 || undo_mode == Undo::ROTATE_180)
   {
     delete redo_stack[redo_current];
     redo_stack[redo_current] = new Bitmap(8, 8);
@@ -322,7 +330,7 @@ void Undo::popRedo()
 
   if (undo_mode == Undo::OFFSET)
   {
-    Project::bmp->offset(x, y, false);
+    Project::bmp->offset(x, y, true);
     redo_current++;
     Gui::getView()->drawMain(true);
     doPush(x, y, w, h, undo_mode);
@@ -339,6 +347,14 @@ void Undo::popRedo()
   else if (undo_mode == Undo::FLIP_VERTICAL)
   {
     Project::bmp->flipVertical();
+    redo_current++;
+    Gui::getView()->drawMain(true);
+    doPush(x, y, w, h, undo_mode);
+    return;
+  }
+  else if (undo_mode == Undo::ROTATE_90)
+  {
+    Project::bmp->rotate90(true);
     redo_current++;
     Gui::getView()->drawMain(true);
     doPush(x, y, w, h, undo_mode);

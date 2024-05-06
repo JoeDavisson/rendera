@@ -35,6 +35,7 @@ public:
     OFFSET,
     FLIP_HORIZONTAL,
     FLIP_VERTICAL,
+    ROTATE_90,
     ROTATE_180
   };
 

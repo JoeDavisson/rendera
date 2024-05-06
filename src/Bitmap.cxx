@@ -98,24 +98,34 @@ Bitmap::~Bitmap()
   delete[] data;
 }
 
-bool getm(int c)
+void Bitmap::resize(int width, int height)
 {
-  return (geta(c) > 0) ? true : false;
-}
+  if (width < 1)
+    width = 1;
+  if (height < 1)
+    height = 1;
 
-bool Bitmap::isEdge(int x, int y)
-{
-  if (x < cl || x > cr || y < ct || y > cb)
-    return false;
+  delete[] row;
+  delete[] data;
 
-  if ((getm(getpixel(x, y)) &&
-    (!getm(getpixel(x - 1, y)) ||
-    !getm(getpixel(x + 1, y)) ||
-    !getm(getpixel(x, y - 1)) ||
-    !getm(getpixel(x, y + 1)))))
-    return true;
-  else
-    return false;
+  data = new int [width * height];
+  row = new int *[height];
+
+  memset(data, 0, sizeof(int) * width * height);
+  memset(row, 0, sizeof(int *) * height);
+
+  x = 0;
+  y = 0;
+  w = width;
+  h = height;
+  undo_mode = 0;
+
+  setClip(0, 0, w - 1, h - 1);
+
+  for (int i = 0; i < height; i++)
+    row[i] = &data[width * i];
+
+  rectfill(0, 0, w - 1, h - 1, makeRgb(0, 0, 0), 0);
 }
 
 void Bitmap::clear(const int c)
@@ -943,6 +953,42 @@ void Bitmap::flipVertical()
   }
 }
 
+void Bitmap::rotate90(bool reverse)
+{
+  const int old_w = w;
+  const int old_h = h;
+
+  // make copy
+  Bitmap temp(w, h);
+  this->blit(&temp, 0, 0, 0, 0, w, h);
+
+  // create rotated image
+  this->resize(h, w);
+
+  int *p = &temp.data[0];
+
+  if (reverse == false)
+  {
+    for (int y = 0; y < old_h; y++)
+    {
+      for (int x = 0; x < old_w; x++)
+      {
+         *(row[x] + old_h - 1 - y) = *p++;
+      }
+    }
+  }
+    else
+  {
+    for (int y = 0; y < old_h; y++)
+    {
+      for (int x = 0; x < old_w; x++)
+      {
+         *(row[old_w - 1 - x] + y) = *p++;
+      }
+    }
+  }
+}
+
 void Bitmap::rotate180()
 {
   const int size = (w * h) / 2;
@@ -971,7 +1017,7 @@ void Bitmap::offset(int x, int y, const bool reverse)
 
   this->blit(offset_buffer, 0, 0, 0, 0, w, h);
 
-  if (reverse == true)
+  if (reverse == false)
   {
     x = w - x;
     y = h - y;
@@ -993,8 +1039,6 @@ void Bitmap::offset(int x, int y, const bool reverse)
 
   delete offset_buffer;
 }
-
-
 
 void Bitmap::invert()
 {

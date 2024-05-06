@@ -36,7 +36,7 @@ public:
   int *data;
   int **row;
 
-  bool isEdge(int, int);
+  void resize(int, int);
   void clear(const int);
   void hline(int, int, int, int, int);
   void vline(int, int, int, int, int);
@@ -65,6 +65,7 @@ public:
   void pointStretchIndexed(Bitmap *, Palette *, int, int, int, int, int, int, int, int, bool);
   void flipHorizontal();
   void flipVertical();
+  void rotate90(bool);
   void rotate180();
   void offset(int, int, bool);
   void invert();
