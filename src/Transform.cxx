@@ -778,6 +778,7 @@ void Transform::rotate90()
 {
   Project::undo->push(Undo::ROTATE_90);
   Project::bmp->rotate90(false);
+  Project::map->resize(Project::bmp->w, Project::bmp->h);
   Gui::getView()->drawMain(true);
 }
 

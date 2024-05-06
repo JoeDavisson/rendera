@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Gui.H"
+#include "Map.H"
 #include "Project.H"
 #include "Undo.H"
 #include "View.H"
@@ -220,6 +221,7 @@ void Undo::pop()
   else if (undo_mode == Undo::ROTATE_90)
   {
     Project::bmp->rotate90(true);
+    Project::map->resize(Project::bmp->w, Project::bmp->h);
     undo_current++;
     Gui::getView()->drawMain(true);
     pushRedo(x, y, w, h, undo_mode);
@@ -345,6 +347,7 @@ void Undo::popRedo()
   else if (undo_mode == Undo::ROTATE_90)
   {
     Project::bmp->rotate90(false);
+    Project::map->resize(Project::bmp->w, Project::bmp->h);
     redo_current++;
     Gui::getView()->drawMain(true);
     doPush(x, y, w, h, undo_mode);

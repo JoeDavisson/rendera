@@ -79,6 +79,28 @@ bool Map::isEdge(const int x, const int y)
   return false;
 }
 
+void Map::resize(int width, int height)
+{
+  if (width < 1)
+    width = 1;
+  if (height < 1)
+    height = 1;
+
+  delete[] row;
+  delete[] data;
+
+  data = new unsigned char [width * height];
+  row = new unsigned char *[height];
+
+  w = width;
+  h = height;
+
+  for (int i = 0; i < height; i++)
+    row[i] = &data[width * i];
+
+  clear(0);
+}
+
 void Map::clear(const unsigned char c)
 {
   std::fill_n(data, w * h, c);

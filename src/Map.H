@@ -38,6 +38,7 @@ public:
   bool isEdge(const int, const int);
 
   // drawing functions
+  void resize(int, int);
   void clear(const unsigned char);
   void invert();
   void setpixel(const int, const int, const int);
