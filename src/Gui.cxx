@@ -1643,7 +1643,6 @@ void Gui::colorChange(Widget *widget, void *)
 
   colorSwatch();
   colorHexUpdate();
-  Project::tool->redraw(view);
 }
 
 void Gui::colorHue(Widget *, void *)
