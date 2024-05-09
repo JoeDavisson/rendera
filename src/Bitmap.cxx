@@ -125,7 +125,8 @@ void Bitmap::resize(int width, int height)
 
 void Bitmap::clear(const int c)
 {
-  std::fill_n(data, w * h, c);
+  for (int i = 0; i < w * h; i++)
+    data[i] = c;
 }
 
 void Bitmap::hline(int x1, int y, int x2, int c, int t)

@@ -103,7 +103,8 @@ void Map::resize(int width, int height)
 
 void Map::clear(const unsigned char c)
 {
-  std::fill_n(data, w * h, c);
+  for (int i = 0; i < w * h; i++)
+    data[i] = 0;
 }
 
 void Map::invert()
