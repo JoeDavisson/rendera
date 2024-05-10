@@ -243,7 +243,7 @@ inline int rnd()
 }
 
 // file access functions
-inline uint8_t parseUint8(unsigned char *buffer)
+inline uint8_t parseUint8(unsigned char *&buffer)
 {
   uint8_t num = buffer[0];
 
@@ -251,7 +251,7 @@ inline uint8_t parseUint8(unsigned char *buffer)
   return num;
 }
 
-inline uint16_t parseUint16(unsigned char *buffer)
+inline uint16_t parseUint16(unsigned char *&buffer)
 {
   uint16_t num;
 
@@ -267,7 +267,7 @@ inline uint16_t parseUint16(unsigned char *buffer)
   return num;
 }
 
-inline uint32_t parseUint32(unsigned char *buffer)
+inline uint32_t parseUint32(unsigned char *&buffer)
 {
   uint32_t num;
 
