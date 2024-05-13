@@ -802,6 +802,12 @@ void Bitmap::pointStretch(Bitmap *dest,
   dw = (sw * ax) >> 16;
   dh = (sh * ay) >> 16;
 
+  if (ax > 1)
+    dw += ax;
+
+  if (ay > 1)
+    dh += ay;
+
   if (sw < 1 || sh < 1)
     return;
 
@@ -811,6 +817,9 @@ void Bitmap::pointStretch(Bitmap *dest,
   // scale image
   for (int y = 0; y < dh; y++)
   {
+    if (dy + y >= dest->h)
+      break;
+
     const int y1 = sy + ((y * by) >> 16);
 
     if (y1 >= h)
@@ -820,6 +829,9 @@ void Bitmap::pointStretch(Bitmap *dest,
 
     for (int x = 0; x < dw; x++)
     {
+      if (dx + x >= dest->w)
+        break;
+
       const int x1 = sx + ((x * bx) >> 16);
 
       if (x1 >= w)
@@ -889,6 +901,12 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
   dw = (sw * ax) >> 16;
   dh = (sh * ay) >> 16;
 
+  if (ax > 1)
+    dw += ax;
+
+  if (ay > 1)
+    dh += ay;
+
   if (sw < 1 || sh < 1)
     return;
 
@@ -898,6 +916,9 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
   // scale image
   for (int y = 0; y < dh; y++)
   {
+    if (dy + y >= dest->h)
+      break;
+
     const int y1 = sy + ((y * by) >> 16);
 
     if (y1 >= h)
@@ -907,6 +928,9 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
 
     for (int x = 0; x < dw; x++)
     {
+      if (dx + x >= dest->w)
+        break;
+
       const int x1 = sx + ((x * bx) >> 16);
 
       if (x1 >= w)
