@@ -789,6 +789,10 @@ void Stroke::previewPaint(View *view)
   const float zoom = view->zoom;
   const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
+  int step = (int)zoom;
+
+  if (step < 1)
+    step = 1;
 
   int color, trans;
 
@@ -842,12 +846,12 @@ void Stroke::previewPaint(View *view)
     yy2 = backbuf->h - 1;
 
   // draw brushstroke preview
-  for (int y = yy1; y <= yy2; y++)
+  for (int y = yy1; y <= yy2; y += step)
   {
     const int ym = ((y + oy) * zr) >> 16;
     int *p = backbuf->row[y] + xx1;
 
-    for (int x = xx1; x <= xx2; x++)
+    for (int x = xx1; x <= xx2; x += step)
     {
       const int xm = ((x + ox) * zr) >> 16;
 
@@ -855,59 +859,23 @@ void Stroke::previewPaint(View *view)
       {
         if (Clone::active == false)
         {
-          *p = blendFast(*p, color, trans);
+          if (step > 1)
+            backbuf->rectfill(x, y, x + step - 1, y + step - 1, color, trans);
+          else
+            *p = blendFast(*p, color, trans);
         }
           else
         {
-          *p = blendFast(*p,
-                         convertFormat(makeRgb(255, 0, 192), bgr_order),
-                         128);
+          const int c = convertFormat(makeRgb(255, 0, 192), bgr_order);
+
+          if (step > 1)
+            backbuf->rectfill(x, y, x + step - 1, y + step - 1, c, 128);
+          else
+            *p = blendFast(*p, c, 128);
         }
       }
-      else if (map->isEdge(xm, ym) == false)
-      {
-        // shade edges for contrast
-        int xmod = x % (int)(zoom >= 1 ? zoom : 1);
-        int ymod = y % (int)(zoom >= 1 ? zoom : 1);
 
-        int tx1 = xmod;
-        int tx2 = ((int)zoom - 1 - xmod);
-        int ty1 = ymod;
-        int ty2 = ((int)zoom - 1 - ymod);
-
-        tx1 = tx1 == 0 ? 0 : 256;
-        tx2 = tx2 == 0 ? 0 : 256;
-        ty1 = ty1 == 0 ? 0 : 256;
-        ty2 = ty2 == 0 ? 0 : 256;
-
-        const int checker = ((x >> 2) ^ (y >> 2)) & 1 ? 0xa0a0a0 : 0x606060;
-
-        if(map->getpixel(xm - 1, ym - 1))
-          *p = blendFast(*p, checker, tx1 | ty1);
-
-        if(map->getpixel(xm, ym - 1))
-          *p = blendFast(*p, checker, ty1);
-
-        if(map->getpixel(xm + 1, ym - 1))
-          *p = blendFast(*p, checker, tx2 | ty1);
-
-        if(map->getpixel(xm - 1, ym))
-          *p = blendFast(*p, checker, tx1);
-
-        if(map->getpixel(xm + 1, ym))
-          *p = blendFast(*p, checker, tx2);
-
-        if(map->getpixel(xm - 1, ym + 1))
-          *p = blendFast(*p, checker, tx1 | ty2);
-
-        if(map->getpixel(xm, ym + 1))
-          *p = blendFast(*p, checker, ty2);
-
-        if(map->getpixel(xm + 1, ym + 1))
-          *p = blendFast(*p, checker, tx2 | ty2);
-      }
-
-      p++;
+      p += step;
     }
   }
 }

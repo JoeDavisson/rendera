@@ -759,6 +759,14 @@ void Bitmap::pointStretch(Bitmap *dest,
   const int by = ((float)sh / dh) * 65536;
   const int ox = (sx * ax) >> 16;
   const int oy = (sy * ay) >> 16;
+  int stepx = ((float)dw / sw);
+  int stepy = ((float)dh / sh);
+
+  if (stepx < 1)
+    stepx = 1;
+
+  if (stepy < 1)
+    stepy = 1;
 
   // clipping
   if (sx < 0)
@@ -815,7 +823,7 @@ void Bitmap::pointStretch(Bitmap *dest,
     return;
 
   // scale image
-  for (int y = 0; y < dh; y++)
+  for (int y = 0; y < dh; y += stepy)
   {
     if (dy + y >= dest->h)
       break;
@@ -827,7 +835,7 @@ void Bitmap::pointStretch(Bitmap *dest,
 
     int *p = dest->row[dy + y] + dx;
 
-    for (int x = 0; x < dw; x++)
+    for (int x = 0; x < dw; x += stepx)
     {
       if (dx + x >= dest->w)
         break;
@@ -840,8 +848,20 @@ void Bitmap::pointStretch(Bitmap *dest,
       const int c = *(row[y1] + x1);
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
                           ? 0x989898 : 0x686868;
+      const int c2 = convertFormat(blendFast(checker, c, 255 - geta(c)),
+                                   bgr_order);
 
-      *p++ = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
+      if (stepx > 1 || stepy > 1)
+      {
+        dest->rectfill(dx + x, dy + y,
+                       dx + x + stepx - 1, dy + y + stepy - 1, c2);
+      }
+        else
+      {
+        *p = c2;
+      }
+
+      p += stepx;
     }
   }
 }
@@ -858,6 +878,14 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
   const int by = ((float)sh / dh) * 65536;
   const int ox = (sx * ax) >> 16;
   const int oy = (sy * ay) >> 16;
+  int stepx = ((float)dw / sw);
+  int stepy = ((float)dh / sh);
+
+  if (stepx < 1)
+    stepx = 1;
+
+  if (stepy < 1)
+    stepy = 1;
 
   // clipping
   if (sx < 0)
@@ -914,7 +942,7 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
     return;
 
   // scale image
-  for (int y = 0; y < dh; y++)
+  for (int y = 0; y < dh; y += stepy)
   {
     if (dy + y >= dest->h)
       break;
@@ -926,7 +954,7 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
 
     int *p = dest->row[dy + y] + dx;
 
-    for (int x = 0; x < dw; x++)
+    for (int x = 0; x < dw; x += stepx)
     {
       if (dx + x >= dest->w)
         break;
@@ -940,9 +968,20 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
       const int cpal = (c & 0xff000000) | pal->data[pal->lookup(c)];
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
                           ? 0x989898 : 0x686868;
+      const int c2 = convertFormat(blendFast(checker, cpal, 255 - geta(cpal)),
+                                   bgr_order);
 
-      *p++ = convertFormat(blendFast(checker, cpal, 255 - geta(cpal)),
-                           bgr_order);
+      if (stepx > 1 || stepy > 1)
+      {
+        dest->rectfill(dx + x, dy + y,
+                       dx + x + stepx - 1, dy + y + stepy - 1, c2);
+      }
+        else
+      {
+        *p = c2;
+      }
+
+      p += stepx;
     }
   }
 }
