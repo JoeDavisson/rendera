@@ -781,7 +781,6 @@ void Stroke::polyLine(int x, int y, int ox, int oy, float zoom)
   lasty = y;
 }
 
-// use paint color for preview
 void Stroke::previewPaint(View *view)
 {
   Bitmap *backbuf = view->backbuf;
@@ -842,12 +841,6 @@ void Stroke::previewPaint(View *view)
   if (yy2 >= backbuf->h - 1)
     yy2 = backbuf->h - 1;
 
-  // multiplication table
-  int *mul_zr = new int[backbuf->w];
-
-  for (int x = 0; x < backbuf->w; x++)
-    mul_zr[x] = ((x + ox) * zr) >> 16;
-
   // draw brushstroke preview
   for (int y = yy1; y <= yy2; y++)
   {
@@ -856,16 +849,67 @@ void Stroke::previewPaint(View *view)
 
     for (int x = xx1; x <= xx2; x++)
     {
-      const int xm = mul_zr[x];
+      const int xm = ((x + ox) * zr) >> 16;
 
       if (map->getpixel(xm, ym))
-        *p = blendFast(*p, color, trans);
+      {
+        if (Clone::active == false)
+        {
+          *p = blendFast(*p, color, trans);
+        }
+          else
+        {
+          *p = blendFast(*p,
+                         convertFormat(makeRgb(255, 0, 192), bgr_order),
+                         128);
+        }
+      }
+      else if (map->isEdge(xm, ym) == false)
+      {
+        // shade edges for contrast
+        int xmod = x % (int)(zoom >= 1 ? zoom : 1);
+        int ymod = y % (int)(zoom >= 1 ? zoom : 1);
+
+        int tx1 = xmod;
+        int tx2 = ((int)zoom - 1 - xmod);
+        int ty1 = ymod;
+        int ty2 = ((int)zoom - 1 - ymod);
+
+        tx1 = tx1 == 0 ? 0 : 256;
+        tx2 = tx2 == 0 ? 0 : 256;
+        ty1 = ty1 == 0 ? 0 : 256;
+        ty2 = ty2 == 0 ? 0 : 256;
+
+        const int checker = ((x >> 2) ^ (y >> 2)) & 1 ? 0xa0a0a0 : 0x606060;
+
+        if(map->getpixel(xm - 1, ym - 1))
+          *p = blendFast(*p, checker, tx1 | ty1);
+
+        if(map->getpixel(xm, ym - 1))
+          *p = blendFast(*p, checker, ty1);
+
+        if(map->getpixel(xm + 1, ym - 1))
+          *p = blendFast(*p, checker, tx2 | ty1);
+
+        if(map->getpixel(xm - 1, ym))
+          *p = blendFast(*p, checker, tx1);
+
+        if(map->getpixel(xm + 1, ym))
+          *p = blendFast(*p, checker, tx2);
+
+        if(map->getpixel(xm - 1, ym + 1))
+          *p = blendFast(*p, checker, tx1 | ty2);
+
+        if(map->getpixel(xm, ym + 1))
+          *p = blendFast(*p, checker, ty2);
+
+        if(map->getpixel(xm + 1, ym + 1))
+          *p = blendFast(*p, checker, tx2 | ty2);
+      }
 
       p++;
     }
   }
-
-  delete[] mul_zr;
 }
 
 void Stroke::previewSelection(View *view)
