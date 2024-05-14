@@ -1008,7 +1008,7 @@ void Gui::init()
                             (Fl_Callback *)imagesMoveUp);
 
   file_move_down = new Button(file_button_group, 0, 80, 32, 32,
-                              "Move down", images_down_large_png,
+                              "Move Down", images_down_large_png,
                               (Fl_Callback *)imagesMoveDown);
 
   file_button_group->box(FL_NO_BOX);
