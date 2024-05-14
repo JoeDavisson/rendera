@@ -969,6 +969,7 @@ void Gui::init()
   blend->textsize(10);
   blend->resize(colors->x() + 8, colors->y() + pos, 128, 24);
   blend->add("Normal");
+  blend->add("Non-Linear");
   blend->add("Lighten");
   blend->add("Darken");
   blend->add("Colorize");

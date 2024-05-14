@@ -40,6 +40,9 @@ void Blend::set(const int mode)
     case TRANS:
       current_blend = trans;
       break;
+    case NON_LINEAR:
+      current_blend = nonLinear;
+      break;
     case LIGHTEN:
       current_blend = lighten;
       break;
@@ -119,6 +122,27 @@ int Blend::trans(const int c1, const int c2, const int t)
                   rgba2.g + (t * (rgba1.g - rgba2.g)) / 255,
                   rgba2.b + (t * (rgba1.b - rgba2.b)) / 255,
                   rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
+}
+
+int Blend::nonLinear(const int c1, const int c2, const int t)
+{
+  const rgba_type rgba1 = getRgba(c1);
+  const rgba_type rgba2 = getRgba(c2);
+
+  const int r1 = Gamma::fix(rgba1.r);
+  const int g1 = Gamma::fix(rgba1.g);
+  const int b1 = Gamma::fix(rgba1.b);
+  const int a1 = rgba1.a;
+
+  const int r2 = Gamma::fix(rgba2.r);
+  const int g2 = Gamma::fix(rgba2.g);
+  const int b2 = Gamma::fix(rgba2.b);
+  const int a2 = rgba2.a;
+
+  return makeRgba(Gamma::unfix(r2 + (t * (r1 - r2)) / 255),
+                  Gamma::unfix(g2 + (t * (g1 - g2)) / 255),
+                  Gamma::unfix(b2 + (t * (b1 - b2)) / 255),
+                  a2 + (t * (a1 - a2)) / 255);
 }
 
 int Blend::lighten(const int c1, const int c2, const int t)

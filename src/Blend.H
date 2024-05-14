@@ -30,6 +30,7 @@ public:
   enum
   {
     TRANS,
+    NON_LINEAR,
     LIGHTEN,
     DARKEN,
     COLORIZE,
@@ -48,6 +49,7 @@ public:
   static int transAlpha(const int, const int, const int);
   static int transNoAlpha(const int, const int, const int);
   static int trans(const int, const int, const int);
+  static int nonLinear(const int, const int, const int);
   static int lighten(const int, const int, const int);
   static int darken(const int, const int, const int);
   static int colorize(const int, const int, const int);
