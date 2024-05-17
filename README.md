@@ -9,7 +9,7 @@ Rendera is a painting program for Linux and Windows. It's a little unusual in th
 ## Windows Release
 Package includes binaries for 32 and 64-bit Windows:
 
-[rendera-0.2.7.zip](https://github.com/JoeDavisson/rendera/releases/tag/v0.2.7)
+[rendera-0.2.9.zip](https://github.com/JoeDavisson/rendera/releases/tag/v0.2.9)
 
 ## Features
  * variety of painting and blending options
