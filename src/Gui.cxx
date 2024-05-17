@@ -253,6 +253,10 @@ public:
   int handle(int event)
   {
     View *view = Gui::getView();
+
+    if (view->rendering)
+      return 0;
+
     bool shift, ctrl;
 
     switch (event)
