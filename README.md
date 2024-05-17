@@ -31,7 +31,7 @@ Package includes binaries for 32 and 64-bit Windows:
  * drag and drop image loading
  * image filters
 
-## Build it from source
+## Build with GNU Make
 **Get the source:**
 
 ```$ git clone https://github.com/JoeDavisson/rendera.git```
