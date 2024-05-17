@@ -225,9 +225,12 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
       {
         for (int x = 0; x < temp.w; x++)
         {
-          const int c1 = bmp->getpixel(x, y);
-          const int c = Blend::trans(c1, temp.getpixel(x, y), 255 - geta(c1));
-          bmp->setpixel(x, y, Blend::keepLum(c, getl(c1)));
+          if (temp.getpixel(x, y) == new_color)
+          {
+            const int c1 = bmp->getpixel(x, y);
+            const int c = Blend::trans(c1, temp.getpixel(x, y), 255 - geta(c1));
+            bmp->setpixel(x, y, Blend::keepLum(c, getl(c1)));
+          }
         }
       }
     }
@@ -235,6 +238,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
     {
       temp.blit(bmp, 0, 0, 0, 0, temp.w, temp.h);
     }
+
     return;
   }
 
