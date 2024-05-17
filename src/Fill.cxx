@@ -147,7 +147,7 @@ bool Fill::inRange(const int c1, const int c2, const int range)
     return false;
 }
 
-void Fill::fill(int x, int y, int new_color, int old_color, int range, int feather)
+void Fill::fill(int x, int y, int new_color, int old_color, int range, int feather, int color_only)
 {
   if (old_color == new_color)
     return;
@@ -219,7 +219,22 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
 
   if (feather == 0)
   {
-    temp.blit(bmp, 0, 0, 0, 0, temp.w, temp.h);
+    if (color_only)
+    {
+      for (int y = 0; y < temp.h; y++)
+      {
+        for (int x = 0; x < temp.w; x++)
+        {
+          const int c1 = bmp->getpixel(x, y);
+          const int c = Blend::trans(c1, temp.getpixel(x, y), 255 - geta(c1));
+          bmp->setpixel(x, y, Blend::keepLum(c, getl(c1)));
+        }
+      }
+    }
+      else
+    {
+      temp.blit(bmp, 0, 0, 0, 0, temp.w, temp.h);
+    }
     return;
   }
 
@@ -335,7 +350,15 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
       const int c1 = bmp->getpixel(x, y);
       const int t = fineEdge(x, y, zx, zy, feather, 0);
 
-       bmp->setpixel(x, y, Blend::trans(c1, new_color, t));
+      if (color_only)
+      {
+        const int c = Blend::trans(c1, new_color, t);
+        bmp->setpixel(x, y, Blend::keepLum(c, getl(c1)));
+      }
+        else
+      {
+        bmp->setpixel(x, y, Blend::trans(c1, new_color, t));
+      }
     }
 
     if (Gui::progressUpdate(y) < 0)
@@ -359,7 +382,7 @@ void Fill::push(View *view)
     int target = Project::bmp->getpixel(view->imgx, view->imgy);
 
     fill(view->imgx, view->imgy, color, target,
-         Gui::getFillRange(), Gui::getFillFeather());
+         Gui::getFillRange(), Gui::getFillFeather(), Gui::getFillColorOnly());
 
     view->drawMain(true);
   }

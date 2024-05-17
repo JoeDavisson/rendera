@@ -57,7 +57,7 @@ private:
   bool push(int, int);
   void clear();
   bool inRange(const int, const int, const int);
-  void fill(int, int, int, int, int, int);
+  void fill(int, int, int, int, int, int, int);
 };
 
 #endif

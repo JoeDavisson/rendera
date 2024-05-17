@@ -33,6 +33,7 @@ class Gui
 {
 public:
   static int getClone();
+  static int getFillColorOnly();
   static int getFillFeather();
   static int getFillRange();
   static int getPaintMode();

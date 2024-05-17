@@ -137,6 +137,7 @@ namespace
 
   InputInt *fill_range;
   InputInt *fill_feather;
+  CheckBox *fill_color_only;
   Fl_Button *fill_reset;
 
   StaticText *selection_x;
@@ -898,6 +899,12 @@ void Gui::init()
   fill_feather->align(FL_ALIGN_BOTTOM);
   fill_feather->value("0");
   pos += 24 + 24;
+
+  fill_color_only = new CheckBox(fill, 8, pos, 16, 16, "Color Only", 0);
+  fill_color_only->labelsize(13);
+  fill_color_only->center();
+  fill_color_only->value(0);
+  pos += 24;
 
   new Separator(fill, 4, pos, 106, 2, "");
   pos += 8;
@@ -2269,14 +2276,19 @@ int Gui::getTextSmooth()
   return text_smooth->value();
 }
 
-int Gui::getFillRange()
+int Gui::getFillColorOnly()
 {
-  return atoi(fill_range->value());
+  return fill_color_only->value();
 }
 
 int Gui::getFillFeather()
 {
   return atoi(fill_feather->value());
+}
+
+int Gui::getFillRange()
+{
+  return atoi(fill_range->value());
 }
 
 void Gui::fillReset()
