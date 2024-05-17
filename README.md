@@ -51,7 +51,7 @@ Or uncompress the FLTK-1.3.7 source package here under `fltk`.
 The Makefile supports ```linux``` and ```mingw``` cross-compiler targets (edit to choose).
 
 Build fltk libraries (ignore errors about ```fluid.exe``` when using the mingw cross compiler):
-```$ make fltklibs```
+```$ make fltklib```
 
 Run to create images header:
 ```$ make header```
