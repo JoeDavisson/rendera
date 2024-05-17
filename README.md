@@ -36,15 +36,7 @@ Package includes binaries for 32 and 64-bit Windows:
 
 ```$ git clone https://github.com/JoeDavisson/rendera.git```
 
-**Build with CMake:**
-
-```cmake --build <path-to-rendera>```
-
-(add *-j* to the end of that to compile with threads, much faster!)
-
-*CMake support is currently under development.* 
-
-**Or build with GNU Make:**
+**Build from Source:**
 
 ```$ cd <path-to-rendera>```
 
