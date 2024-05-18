@@ -281,7 +281,7 @@ public:
           break;
         }
 
-        // inhibit use of most keys while rendering
+        // inhibit use of keys while rendering
         if (view->rendering)
           return 0;
 
