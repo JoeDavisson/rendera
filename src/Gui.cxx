@@ -254,9 +254,6 @@ public:
   {
     View *view = Gui::getView();
 
-    if (view->rendering)
-      return 0;
-
     bool shift, ctrl;
 
     switch (event)
@@ -283,6 +280,10 @@ public:
           view->drawMain(true);
           break;
         }
+
+        // inhibit use of most keys while rendering
+        if (view->rendering)
+          return 0;
 
         // misc keys
         switch (/*key =*/ Fl::event_key())
