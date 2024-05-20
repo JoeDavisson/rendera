@@ -349,6 +349,18 @@ void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c)
     hline(x1, y1, x2, c);
 }
 
+// non-clipping, non-blending version
+void Bitmap::rectfillNoClip(int x1, int y1, int x2, int y2, int c)
+{
+  if (x1 > x2)
+    std::swap(x1, x2);
+  if (y1 > y2)
+    std::swap(y1, y2);
+
+  for (; y1 <= y2; y1++)
+    hline(x1, y1, x2, c);
+}
+
 void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 {
   int dx = x2 - x1;
@@ -853,8 +865,8 @@ void Bitmap::pointStretch(Bitmap *dest,
 
       if (stepx > 1 || stepy > 1)
       {
-        dest->rectfill(dx + x, dy + y,
-                       dx + x + stepx - 1, dy + y + stepy - 1, c2);
+        dest->rectfillNoClip(dx + x, dy + y,
+                             dx + x + stepx - 1, dy + y + stepy - 1, c2);
       }
         else
       {

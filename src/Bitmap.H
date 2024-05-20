@@ -46,6 +46,7 @@ public:
   void rect(int, int, int, int, int, int);
   void rectfill(int, int, int, int, int, int);
   void rectfill(int, int, int, int, int);
+  void rectfillNoClip(int, int, int, int, int);
   void xorLine(int, int, int, int);
   void xorHline(int, int, int);
   void xorVline(int, int, int);
