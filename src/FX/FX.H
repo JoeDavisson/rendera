@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef FX_H
 #define FX_H
 
+#include <cmath>
 #include <vector>
 
 #include <FL/fl_draw.H>
@@ -40,7 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Editor.H"
 #include "Gamma.H"
 #include "Gui.H"
-#include "Inline.H"
+#include "Common.H"
 #include "InputFloat.H"
 #include "InputInt.H"
 #include "Map.H"
