@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Fractal.H"
 #include "Gamma.H"
 #include "Gui.H"
-#include "Inline.H"
+#include "Common.H"
 #include "KDtree.H"
 #include "Map.H"
 #include "Project.H"
@@ -902,6 +902,7 @@ void Render::begin()
       break;
   }
 
+  Project::map->clear(0);
   view->drawMain(true);
   view->rendering = false;
 }

@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "File.H"
 #include "Gui.H"
 #include "Images.H"
-#include "Inline.H"
+#include "Common.H"
 #include "Map.H"
 #include "Palette.H"
 #include "Project.H"
@@ -67,7 +67,7 @@ namespace
       return;
 
     int *p = bmp->row[y] + x;
-    *p = blendFast(*p, c, t);
+    *p = Blend::fast(*p, c, t);
   }
 
   inline void gridHline(Bitmap *bmp, int x1, const int y, int x2,
@@ -89,7 +89,7 @@ namespace
 
     for (int x = x1; x <= x2; x++)
     {
-      *p = blendFast(*p, c, t);
+      *p = Blend::fast(*p, c, t);
       p++;
     }
   }

@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "Gui.H"
 #include "Map.H"
-#include "Inline.H"
+#include "Common.H"
 #include "Project.H"
 #include "Selection.H"
 #include "Stroke.H"

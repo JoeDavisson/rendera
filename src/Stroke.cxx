@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "Clone.H"
 #include "Gui.H"
-#include "Inline.H"
+#include "Common.H"
 #include "Map.H"
 #include "Project.H"
 #include "Render.H"
@@ -862,7 +862,7 @@ void Stroke::previewPaint(View *view)
           if (step > 1)
             backbuf->rectfill(x, y, x + step - 1, y + step - 1, color, trans);
           else
-            *p = blendFast(*p, color, trans);
+            *p = Blend::fast(*p, color, trans);
         }
           else
         {
@@ -871,7 +871,7 @@ void Stroke::previewPaint(View *view)
           if (step > 1)
             backbuf->rectfill(x, y, x + step - 1, y + step - 1, c, 128);
           else
-            *p = blendFast(*p, c, 128);
+            *p = Blend::fast(*p, c, 128);
         }
       }
 

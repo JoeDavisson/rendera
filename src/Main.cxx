@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "FX/FX.H"
 #include "Gamma.H"
 #include "Gui.H"
-#include "Inline.H"
+#include "Common.H"
 #include "Project.H"
 #include "Transform.H"
 #include "Undo.H"

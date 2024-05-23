@@ -19,12 +19,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include <algorithm>
+#include <cmath>
 
 #include "Bitmap.H"
 #include "Blend.H"
 #include "FileSP.H"
 #include "KDtree.H"
-#include "Inline.H"
+#include "Common.H"
 #include "Palette.H"
 #include "Widget.H"
 

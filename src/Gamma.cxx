@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <vector>
 
 #include "Gamma.H"
-#include "Inline.H"
+#include "Common.H"
 
 int *Gamma::table_fix;
 int *Gamma::table_unfix;

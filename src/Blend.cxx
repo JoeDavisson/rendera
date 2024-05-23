@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Gamma.H"
-#include "Inline.H"
+#include "Common.H"
 #include "Palette.H"
 
 int (*Blend::current_blend)(const int, const int, const int) = &Blend::trans;

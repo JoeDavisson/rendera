@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Group.H>
 
 #include "Blend.H"
-#include "Inline.H"
+#include "Common.H"
 #include "Separator.H"
 
 Separator::Separator(Fl_Group *g, int x, int y, int w, int h, const char *label)

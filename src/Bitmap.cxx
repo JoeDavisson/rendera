@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Clone.H"
-#include "Inline.H"
+#include "Common.H"
 #include "Palette.H"
 #include "Project.H"
 #include "Stroke.H"
@@ -751,7 +751,7 @@ void Bitmap::transBlit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int
     {
       const int c = *dx1;
 
-      *dx1 = blendFast(c, *sx1, 255 - geta(*sx1));
+      *dx1 = Blend::fast(c, *sx1, 255 - geta(*sx1));
     }
 
     sy1++;
@@ -860,8 +860,8 @@ void Bitmap::pointStretch(Bitmap *dest,
       const int c = *(row[y1] + x1);
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
                           ? 0x989898 : 0x686868;
-      const int c2 = convertFormat(blendFast(checker, c, 255 - geta(c)),
-                                   bgr_order);
+      const int c2 = convertFormat(Blend::fast(checker, c, 255 - geta(c)),
+                                               bgr_order);
 
       if (stepx > 1 || stepy > 1)
       {
@@ -980,8 +980,8 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
       const int cpal = (c & 0xff000000) | pal->data[pal->lookup(c)];
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
                           ? 0x989898 : 0x686868;
-      const int c2 = convertFormat(blendFast(checker, cpal, 255 - geta(cpal)),
-                                   bgr_order);
+      const int c2 = convertFormat(Blend::fast(checker, cpal, 255 - geta(cpal)),
+                                               bgr_order);
 
       if (stepx > 1 || stepy > 1)
       {
