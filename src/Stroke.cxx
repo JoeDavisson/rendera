@@ -862,7 +862,7 @@ void Stroke::previewPaint(View *view)
           if (step > 1)
             backbuf->rectfill(x, y, x + step - 1, y + step - 1, color, trans);
           else
-            *p = Blend::fast(*p, color, trans);
+            *p = blendFast(*p, color, trans);
         }
           else
         {
@@ -871,7 +871,7 @@ void Stroke::previewPaint(View *view)
           if (step > 1)
             backbuf->rectfill(x, y, x + step - 1, y + step - 1, c, 128);
           else
-            *p = Blend::fast(*p, c, 128);
+            *p = blendFast(*p, c, 128);
         }
       }
 

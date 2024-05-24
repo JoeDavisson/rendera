@@ -1224,7 +1224,7 @@ void Gui::colorSwatch()
       const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1)
                             ? 0xA0A0A0 : 0x606060;
 
-      *p++ = Blend::fast(checker, Project::brush->color, Project::brush->trans);
+      *p++ = blendFast(checker, Project::brush->color, Project::brush->trans);
     }
   }
 
@@ -1559,7 +1559,7 @@ void Gui::colorChange(Widget *widget, void *)
   Project::brush->blend = blend->value();
 
   // hue circle
-  hue->bitmap->clear(Blend::fast(convertFormat(getFltkColor(FL_BACKGROUND_COLOR), true), makeRgb(0, 0, 0), 192));
+  hue->bitmap->clear(blendFast(convertFormat(getFltkColor(FL_BACKGROUND_COLOR), true), makeRgb(0, 0, 0), 192));
 
   for (int i = 1; i < 1536; i++)
   {
