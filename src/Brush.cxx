@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include "Brush.H"
-#include "Common.H"
+#include "Inline.H"
 #include "Map.H"
 
 Brush::Brush()

@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "File.H"
 #include "FileSP.H"
 #include "Gui.H"
-#include "Common.H"
+#include "Inline.H"
 #include "Map.H"
 #include "Palette.H"
 #include "Project.H"

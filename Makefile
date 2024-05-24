@@ -41,7 +41,6 @@ ifeq ($(PLATFORM),mingw64)
 endif
 
 OBJ= \
-  $(SRC_DIR)/Common.o \
   $(SRC_DIR)/FX/FX.o \
   $(SRC_DIR)/FX/Normalize.o \
   $(SRC_DIR)/FX/Equalize.o \
