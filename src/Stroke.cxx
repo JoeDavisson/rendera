@@ -789,11 +789,6 @@ void Stroke::previewPaint(View *view)
   const float zoom = view->zoom;
   const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
-  int step = (int)zoom;
-
-  if (step < 1)
-    step = 1;
-
   int color, trans;
 
   if (Clone::active)
@@ -845,37 +840,37 @@ void Stroke::previewPaint(View *view)
   if (yy2 >= backbuf->h - 1)
     yy2 = backbuf->h - 1;
 
+  // save some calculations in loop
+  std::vector<int> xm_table(backbuf->w);
+
+  for (int x = 0; x < backbuf->w; x++)
+    xm_table[x] = ((x + ox) * zr) >> 16;
+
   // draw brushstroke preview
-  for (int y = yy1; y <= yy2; y += step)
+  for (int y = yy1; y <= yy2; y++)
   {
     const int ym = ((y + oy) * zr) >> 16;
     int *p = backbuf->row[y] + xx1;
 
-    for (int x = xx1; x <= xx2; x += step)
+    for (int x = xx1; x <= xx2; x++)
     {
-      const int xm = ((x + ox) * zr) >> 16;
+      const int xm = xm_table[x];
 
       if (map->getpixel(xm, ym))
       {
         if (Clone::active == false)
         {
-          if (step > 1)
-            backbuf->rectfill(x, y, x + step - 1, y + step - 1, color, trans);
-          else
-            *p = blendFast(*p, color, trans);
+          *p = blendFast(*p, color, trans);
         }
           else
         {
           const int c = convertFormat(makeRgb(255, 0, 192), bgr_order);
 
-          if (step > 1)
-            backbuf->rectfill(x, y, x + step - 1, y + step - 1, c, 128);
-          else
-            *p = blendFast(*p, c, 128);
+          *p = blendFast(*p, c, 128);
         }
       }
 
-      p += step;
+      p++;
     }
   }
 }
@@ -936,7 +931,7 @@ void Stroke::previewSelection(View *view)
     Blend::set(Project::brush->blend);
   else
     Blend::set(Blend::TRANS);
-
+ 
   for (int y = yy1; y <= yy2; y++)
   {
     int ym = ((y - yy3) * zr) >> 16;
