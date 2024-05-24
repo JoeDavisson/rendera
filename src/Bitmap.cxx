@@ -833,7 +833,7 @@ void Bitmap::pointStretch(Bitmap *dest,
   {
     x1_table[x] = sx + ((x * bx) >> 16);
 
-    if (x1_table[x] >= w)
+    if (x1_table[x] >= w || dx + x >= dest->w)
     {
       dw = x;
       break;
@@ -855,9 +855,6 @@ void Bitmap::pointStretch(Bitmap *dest,
 
     for (int x = 0; x < dw; x++)
     {
-      if (dx + x >= dest->w)
-        break;
-
       const int x1 = x1_table[x];
       const int c = *(row[y1] + x1);
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
@@ -943,7 +940,7 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
   {
     x1_table[x] = sx + ((x * bx) >> 16);
 
-    if (x1_table[x] >= w)
+    if (x1_table[x] >= w || dx + x >= dest->w)
     {
       dw = x;
       break;
@@ -965,12 +962,9 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
 
     for (int x = 0; x < dw; x++)
     {
-      if (dx + x >= dest->w)
-        break;
-
       const int x1 = x1_table[x];
       const int c = *(row[y1] + x1);
-      const int cpal = (c & 0xff000000) | pal->data[pal->lookup(c)];
+      const int cpal = (c & 0xff000000) | (pal->data[pal->lookup(c)] & 0xffffff);
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
                           ? 0x989898 : 0x686868;
 
