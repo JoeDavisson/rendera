@@ -840,12 +840,6 @@ void Stroke::previewPaint(View *view)
   if (yy2 >= backbuf->h - 1)
     yy2 = backbuf->h - 1;
 
-  // save some calculations in loop
-  std::vector<int> xm_table(backbuf->w);
-
-  for (int x = 0; x < backbuf->w; x++)
-    xm_table[x] = ((x + ox) * zr) >> 16;
-
   // draw brushstroke preview
   for (int y = yy1; y <= yy2; y++)
   {
@@ -854,7 +848,7 @@ void Stroke::previewPaint(View *view)
 
     for (int x = xx1; x <= xx2; x++)
     {
-      const int xm = xm_table[x];
+      const int xm = ((x + ox) * zr) >> 16;
 
       if (map->getpixel(xm, ym))
       {

@@ -826,14 +826,9 @@ void Bitmap::pointStretch(Bitmap *dest,
   if (dw < 1 || dh < 1)
     return;
 
-  // save some calculations in loop
-  std::vector<int> x1_table(dw);
-
   for (int x = 0; x < dw; x++)
   {
-    x1_table[x] = sx + ((x * bx) >> 16);
-
-    if (x1_table[x] >= w || dx + x >= dest->w)
+    if ((sx + ((x * bx) >> 16) >= w) || (dx + x >= dest->w))
     {
       dw = x;
       break;
@@ -855,7 +850,7 @@ void Bitmap::pointStretch(Bitmap *dest,
 
     for (int x = 0; x < dw; x++)
     {
-      const int x1 = x1_table[x];
+      const int x1 = sx + ((x * bx) >> 16);
       const int c = *(row[y1] + x1);
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
                           ? 0x989898 : 0x686868;
@@ -933,14 +928,9 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
   if (dw < 1 || dh < 1)
     return;
 
-  // save some calculations in loop
-  std::vector<int> x1_table(dw);
-
   for (int x = 0; x < dw; x++)
   {
-    x1_table[x] = sx + ((x * bx) >> 16);
-
-    if (x1_table[x] >= w || dx + x >= dest->w)
+    if ((sx + ((x * bx) >> 16) >= w) || (dx + x >= dest->w))
     {
       dw = x;
       break;
@@ -962,7 +952,7 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
 
     for (int x = 0; x < dw; x++)
     {
-      const int x1 = x1_table[x];
+      const int x1 = sx + ((x * bx) >> 16);
       const int c = *(row[y1] + x1);
       const int cpal = (c & 0xff000000) | (pal->data[pal->lookup(c)] & 0xffffff);
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
