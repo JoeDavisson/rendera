@@ -759,11 +759,11 @@ void Bitmap::transBlit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int
   }
 }
 
-// render viewport
-void Bitmap::pointStretch(Bitmap *dest,
-                          int sx, int sy, int sw, int sh,
-                          int dx, int dy, int dw, int dh,
-                          bool bgr_order)
+// non-blending version
+void Bitmap::pointStretchNoTrans(Bitmap *dest,
+                                int sx, int sy, int sw, int sh,
+                                int dx, int dy, int dw, int dh,
+                                bool bgr_order)
 {
   const int ax = ((float)dw / sw) * 65536;
   const int ay = ((float)dh / sh) * 65536;
@@ -852,10 +852,126 @@ void Bitmap::pointStretch(Bitmap *dest,
     {
       const int x1 = sx + ((x * bx) >> 16);
       const int c = *(row[y1] + x1);
-      const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
-                          ? 0x989898 : 0x686868;
 
-      *p = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
+      *p = convertFormat(c, bgr_order);
+      p++;
+    }
+  }
+}
+
+// render viewport
+void Bitmap::pointStretch(Bitmap *dest,
+                          int sx, int sy, int sw, int sh,
+                          int dx, int dy, int dw, int dh,
+                          bool bgr_order, bool checker)
+{
+  const int ax = ((float)dw / sw) * 65536;
+  const int ay = ((float)dh / sh) * 65536;
+  const int bx = ((float)sw / dw) * 65536;
+  const int by = ((float)sh / dh) * 65536;
+//  const int ox = (sx * ax) >> 16;
+//  const int oy = (sy * ay) >> 16;
+
+  // clipping
+  if (sx < 0)
+    sx = 0;
+
+  if (sy < 0)
+    sy = 0;
+
+  if (dx < dest->cl)
+  {
+    const int d = dest->cl - dx;
+    dx = dest->cl;
+    dw -= d;
+    sx += (d * ax) >> 16;
+    sw -= (d * ax) >> 16;
+  }
+
+  if (dx + dw > dest->cr)
+  {
+    const int d = dx + dw - dest->cr;
+    dw -= d;
+    sw -= (d * ax) >> 16;
+  }
+
+  if (dy < dest->ct)
+  {
+    const int d = dest->ct - dy;
+    dy = dest->ct;
+    dh -= d;
+    sy += (d * ay) >> 16;
+    sh -= (d * ay) >> 16;
+  }
+
+  if (dy + dh > dest->cb)
+  {
+    const int d = dy + dh - dest->cb;
+    dh -= d;
+    sh -= (d * ay) >> 16;
+  }
+
+  dw = (sw * ax) >> 16;
+  dh = (sh * ay) >> 16;
+
+  if (ax > 1)
+    dw += ax;
+
+  if (ay > 1)
+    dh += ay;
+
+  if (sw < 1 || sh < 1)
+    return;
+
+  if (dw < 1 || dh < 1)
+    return;
+
+  for (int x = 0; x < dw; x++)
+  {
+    if ((sx + ((x * bx) >> 16) >= w) || (dx + x >= dest->w))
+    {
+      dw = x;
+      break;
+    }
+  }
+
+  // include checkerboard pattern for alpha transparency
+  if (checker == true)
+  {
+    for (int y = 0; y < dest->h; y++)
+    {
+      int *p = dest->row[y];
+
+      for (int x = 0; x < dest->w; x++)
+      {
+        *p = ((x >> 3) ^ (y >> 3)) & 1 ? 0x989898 : 0x686868;
+        p++;
+      }
+    }
+  }
+
+  // scale image
+  for (int y = 0; y < dh; y++)
+  {
+    if (dy + y >= dest->h)
+      break;
+
+    const int y1 = sy + ((y * by) >> 16);
+
+    if (y1 >= h)
+      break;
+
+    int *p = dest->row[dy + y] + dx;
+
+    for (int x = 0; x < dw; x++)
+    {
+      const int x1 = sx + ((x * bx) >> 16);
+      const int c = *(row[y1] + x1);
+//      const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
+//                          ? 0x989898 : 0x686868;
+
+//      *p = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
+      *p = convertFormat(blendFast(*p, c, 255 - geta(c)), bgr_order);
       p++;
     }
   }

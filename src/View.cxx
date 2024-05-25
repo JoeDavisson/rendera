@@ -562,7 +562,7 @@ void View::drawMain(bool refresh)
   int dw = sw * zoom;
   int dh = sh * zoom;
 
-  backbuf->clear(getFltkColor(FL_BACKGROUND2_COLOR));
+//  backbuf->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
   int offx = 0;
   int offy = 0;
@@ -582,7 +582,7 @@ void View::drawMain(bool refresh)
                       sw - offx, sh - offy,
                       offx * zoom, offy * zoom,
                       dw - offx * zoom, dh - offy * zoom,
-                      bgr_order);
+                      bgr_order, true);
   }
   else if (view_mode == VIEW_MODE_INDEXED)
   {
@@ -883,8 +883,8 @@ void View::draw()
       break;
   }
 
-  backbuf->pointStretch(backbuf2, 0, 0, backbuf->w / ax, backbuf->h / ay,
-                        0, 0, backbuf2->w, backbuf2->h, false);
+  backbuf->pointStretchNoTrans(backbuf2, 0, 0, backbuf->w / ax, backbuf->h / ay,
+                               0, 0, backbuf2->w, backbuf2->h, false);
 
   if (Project::tool->isActive())
   {

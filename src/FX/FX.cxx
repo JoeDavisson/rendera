@@ -34,9 +34,9 @@ void FX::drawPreview(Bitmap *src, Bitmap *dest)
     float aspect = (float)src->h / src->w;
     int height = (float)dest->w * aspect;
 
-    dest->clear(getFltkColor(FL_BACKGROUND2_COLOR));
+//    dest->clear(getFltkColor(FL_BACKGROUND2_COLOR));
     src->pointStretch(dest, 0, 0, src->w, src->h,
-                     0, (dest->h - height) / 2, dest->w, height, false);
+                     0, (dest->h - height) / 2, dest->w, height, false, true);
     dest->rect(0, (dest->h - height) / 2, dest->w,
               ((dest->h - height) / 2) + height, makeRgb(0, 0, 0), 0);
   }
@@ -45,9 +45,9 @@ void FX::drawPreview(Bitmap *src, Bitmap *dest)
     float aspect = (float)src->w / src->h;
     int width = (float)dest->h * aspect;
 
-    dest->clear(getFltkColor(FL_BACKGROUND2_COLOR));
+//    dest->clear(getFltkColor(FL_BACKGROUND2_COLOR));
     src->pointStretch(dest, 0, 0, src->w, src->h,
-                     (dest->w - width) / 2, 0, width, dest->w, false);
+                     (dest->w - width) / 2, 0, width, dest->w, false, true);
     dest->rect((dest->w - width) / 2, 0,
               ((dest->w - width) / 2) + width, dest->w, makeRgb(0, 0, 0), 0);
   }
