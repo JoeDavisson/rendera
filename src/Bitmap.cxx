@@ -684,6 +684,9 @@ void Bitmap::doubleHorizontal()
 
     for (int x = w / 2 - 1; x >= 0; x--)
     {
+      if (x > w - 2)
+        break;
+
       *(row[y] + x * 2) = *p;
       *(row[y] + x * 2 + 1) = *p;
       p--;
@@ -696,6 +699,9 @@ void Bitmap::doubleVertical()
 {
   for (int y = h / 2 - 1; y >= 0; y--)
   {
+    if (y > h - 2)
+       break;
+
     int *p = row[y];
 
     for (int x = 0; x < w; x++)
