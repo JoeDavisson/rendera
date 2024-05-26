@@ -52,7 +52,6 @@ namespace
     BITMAPINFO *bi;
     HDC buffer_dc;
     HBITMAP hbuffer;
-    int *backbuf2_data;
   #else
     Fl_RGB_Image *wimage;
   #endif
@@ -136,14 +135,13 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   //FIXME this should handle desktop resolution changes
   #if defined linux
     backbuf = new Bitmap(Fl::w(), Fl::h());
-    backbuf2 = new Bitmap(Fl::w(), Fl::h());
 
     // try to detect pixelformat (almost always RGB or BGR)
     if (fl_visual->visual->blue_mask == 0xff)
       bgr_order = true;
 
     ximage = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
-                          (char *)backbuf2->data, backbuf2->w, backbuf2->h, 32, 0);
+                          (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
   #elif defined WIN32
     bgr_order = true;
     buffer_dc = CreateCompatibleDC(fl_gc);
@@ -162,16 +160,14 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
     bi->bmiHeader.biHeight = -Fl::h();
 
     hbuffer = CreateDIBSection(buffer_dc, bi, DIB_RGB_COLORS,
-                               (void **)&backbuf2_data, 0, 0);
+                               (void **)&backbuf_data, 0, 0);
 
     backbuf = new Bitmap(Fl::w(), Fl::h());
-    backbuf2 = new Bitmap(Fl::w(), Fl::h(), backbuf2_data);
 
     SelectObject(buffer_dc, hbuffer);
   #else
     backbuf = new Bitmap(Fl::w(), Fl::h());
-    backbuf2 = new Bitmap(Fl::w(), Fl::h());
-    wimage = new Fl_RGB_Image((unsigned char *)backbuf2->data,
+    wimage = new Fl_RGB_Image((unsigned char *)backbuf->data,
                                 Fl::w(), Fl::h(), 4, 0);
   #endif
 
@@ -529,8 +525,8 @@ int View::handle(int event)
 
 void View::resize(int x, int y, int w, int h)
 {
+  drawMain(false);
   Fl_Widget::resize(x, y, w, h);
-  drawMain(true);
 }
 
 // call if the entire view should be updated 
@@ -562,7 +558,7 @@ void View::drawMain(bool refresh)
   int dw = sw * zoom;
   int dh = sh * zoom;
 
-//  backbuf->clear(getFltkColor(FL_BACKGROUND2_COLOR));
+  backbuf->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
   int offx = 0;
   int offy = 0;
@@ -582,7 +578,7 @@ void View::drawMain(bool refresh)
                       sw - offx, sh - offy,
                       offx * zoom, offy * zoom,
                       dw - offx * zoom, dh - offy * zoom,
-                      bgr_order, true);
+                      bgr_order);
   }
   else if (view_mode == VIEW_MODE_INDEXED)
   {
@@ -714,13 +710,13 @@ void View::drawCloneCursor()
       break;
   }
 
-  backbuf2->rect(x1 - 8, y1 - 1, x1 + 8, y1 + 1, makeRgb(0, 0, 0), 0);
-  backbuf2->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 0);
-  backbuf2->xorRectfill(x1 - 7, y1, x1 + 7, y1);
-  backbuf2->xorRectfill(x1, y1 - 7, x1, y1 + 7);
-  backbuf2->rectfill(x1 - 7, y1, x1 + 7, y1,
+  backbuf->rect(x1 - 8, y1 - 1, x1 + 8, y1 + 1, makeRgb(0, 0, 0), 0);
+  backbuf->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 0);
+  backbuf->xorRectfill(x1 - 7, y1, x1 + 7, y1);
+  backbuf->xorRectfill(x1, y1 - 7, x1, y1 + 7);
+  backbuf->rectfill(x1 - 7, y1, x1 + 7, y1,
                     convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
-  backbuf2->rectfill(x1, y1 - 7, x1, y1 + 7,
+  backbuf->rectfill(x1, y1 - 7, x1, y1 + 7,
                     convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
 
   updateView(oldx1 - 12, oldy1 - 12,
@@ -877,21 +873,12 @@ void View::draw()
       break;
     case ASPECT_WIDE:
       ax = 2;
+      backbuf->doubleHorizontal();
       break;
     case ASPECT_TALL:
       ay = 2;
+      backbuf->doubleVertical();
       break;
-  }
-
-  if (ax == 1 && ay == 1)
-  {
-    backbuf->blit(backbuf2, 0, 0, 0, 0, backbuf->w, backbuf->w);
-  }
-    else
-  {
-    backbuf->pointStretchNoTrans(backbuf2,
-                                 0, 0, backbuf->w / ax, backbuf->h / ay,
-                                 0, 0, backbuf2->w, backbuf2->h);
   }
 
   if (Project::tool->isActive())

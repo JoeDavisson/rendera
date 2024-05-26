@@ -36,7 +36,7 @@ void FX::drawPreview(Bitmap *src, Bitmap *dest)
 
 //    dest->clear(getFltkColor(FL_BACKGROUND2_COLOR));
     src->pointStretch(dest, 0, 0, src->w, src->h,
-                     0, (dest->h - height) / 2, dest->w, height, false, true);
+                     0, (dest->h - height) / 2, dest->w, height, false);
     dest->rect(0, (dest->h - height) / 2, dest->w,
               ((dest->h - height) / 2) + height, makeRgb(0, 0, 0), 0);
   }
@@ -47,7 +47,7 @@ void FX::drawPreview(Bitmap *src, Bitmap *dest)
 
 //    dest->clear(getFltkColor(FL_BACKGROUND2_COLOR));
     src->pointStretch(dest, 0, 0, src->w, src->h,
-                     (dest->w - width) / 2, 0, width, dest->w, false, true);
+                     (dest->w - width) / 2, 0, width, dest->w, false);
     dest->rect((dest->w - width) / 2, 0,
               ((dest->w - width) / 2) + width, dest->w, makeRgb(0, 0, 0), 0);
   }

@@ -60,8 +60,9 @@ public:
   void clip(int *, int *, int *, int *);
   void setClip(int, int, int, int);
   void blit(Bitmap *, int, int, int, int, int, int);
-  void pointStretchNoTrans(Bitmap *, int, int, int, int, int, int, int, int);
-  void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, bool, bool);
+  void doubleHorizontal();
+  void doubleVertical();
+  void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);
   void pointStretchIndexed(Bitmap *, Palette *, int, int, int, int, int, int, int, int, bool);
   void flipHorizontal();
   void flipVertical();

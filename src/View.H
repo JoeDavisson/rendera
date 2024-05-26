@@ -64,7 +64,7 @@ public:
   void saveCoords();
 
   Fl_Group *group;
-  Bitmap *backbuf, *backbuf2;
+  Bitmap *backbuf;
   int mousex, mousey;
   int last_mousex, last_mousey;
   int imgx, imgy;
