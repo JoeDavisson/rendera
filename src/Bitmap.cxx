@@ -678,15 +678,14 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 // for wide aspect view
 void Bitmap::doubleHorizontal()
 {
+  const int is_even = 1 - (w & 1);
+
   for (int y = 0; y < h; y++)
   {
-    int *p = row[y] + w / 2 - 1;
+    int *p = row[y] + w / 2 - 1 - is_even;
 
-    for (int x = w / 2 - 1; x >= 0; x--)
+    for (int x = w / 2 - 1 - is_even; x >= 0; x--)
     {
-      if (x > w - 2)
-        break;
-
       *(row[y] + x * 2) = *p;
       *(row[y] + x * 2 + 1) = *p;
       p--;
@@ -697,11 +696,10 @@ void Bitmap::doubleHorizontal()
 // for tall aspect view
 void Bitmap::doubleVertical()
 {
-  for (int y = h / 2 - 1; y >= 0; y--)
-  {
-    if (y > h - 2)
-       break;
+  const int is_even = 1 - (h & 1);
 
+  for (int y = h / 2 - 1 - is_even; y >= 0; y--)
+  {
     int *p = row[y];
 
     for (int x = 0; x < w; x++)
