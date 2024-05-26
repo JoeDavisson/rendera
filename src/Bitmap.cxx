@@ -762,15 +762,12 @@ void Bitmap::transBlit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int
 // non-blending version
 void Bitmap::pointStretchNoTrans(Bitmap *dest,
                                 int sx, int sy, int sw, int sh,
-                                int dx, int dy, int dw, int dh,
-                                bool bgr_order)
+                                int dx, int dy, int dw, int dh)
 {
   const int ax = ((float)dw / sw) * 65536;
   const int ay = ((float)dh / sh) * 65536;
   const int bx = ((float)sw / dw) * 65536;
   const int by = ((float)sh / dh) * 65536;
-  const int ox = (sx * ax) >> 16;
-  const int oy = (sy * ay) >> 16;
 
   // clipping
   if (sx < 0)
@@ -851,9 +848,8 @@ void Bitmap::pointStretchNoTrans(Bitmap *dest,
     for (int x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 16);
-      const int c = *(row[y1] + x1);
 
-      *p = convertFormat(c, bgr_order);
+      *p = *(row[y1] + x1);
       p++;
     }
   }

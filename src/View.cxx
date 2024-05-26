@@ -883,8 +883,16 @@ void View::draw()
       break;
   }
 
-  backbuf->pointStretchNoTrans(backbuf2, 0, 0, backbuf->w / ax, backbuf->h / ay,
-                               0, 0, backbuf2->w, backbuf2->h, false);
+  if (ax == 1 && ay == 1)
+  {
+    backbuf->blit(backbuf2, 0, 0, 0, 0, backbuf->w, backbuf->w);
+  }
+    else
+  {
+    backbuf->pointStretchNoTrans(backbuf2,
+                                 0, 0, backbuf->w / ax, backbuf->h / ay,
+                                 0, 0, backbuf2->w, backbuf2->h);
+  }
 
   if (Project::tool->isActive())
   {
@@ -907,7 +915,6 @@ void View::draw()
 
     if (blitw < 1 || blith < 1)
       return;
-
 
     updateView(blitx * ax, blity * ay, x() + blitx * ax, y() + blity * ay,
                blitw * ax, blith * ay);
