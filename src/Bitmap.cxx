@@ -680,12 +680,13 @@ void Bitmap::doubleHorizontal()
 {
   for (int y = 0; y < h; y++)
   {
+    int *p = row[y] + w / 2 - 1;
+
     for (int x = w / 2 - 1; x >= 0; x--)
     {
-      const int c = getpixel(x, y);
-
-      setpixel(x * 2, y, c);
-      setpixel(x * 2 + 1, y, c);
+      *(row[y] + x * 2) = *p;
+      *(row[y] + x * 2 + 1) = *p;
+      p--;
     }
   }
 }
@@ -695,12 +696,14 @@ void Bitmap::doubleVertical()
 {
   for (int y = h / 2 - 1; y >= 0; y--)
   {
+    int *p = row[y];
+
     for (int x = 0; x < w; x++)
     {
-      const int c = getpixel(x, y);
+      *(row[y * 2] + x) = *p;
+      *(row[y * 2 + 1] + x) = *p;
+     p++;
 
-      setpixel(x, y * 2, c);
-      setpixel(x, y * 2 + 1, c);
     }
   }
 }
