@@ -64,7 +64,7 @@ void Quantize::merge(color_type *c1, color_type *c2)
   c1->r = (c1->freq * c1->r + c2->freq * c2->r) / div;
   c1->g = (c1->freq * c1->g + c2->freq * c2->g) / div;
   c1->b = (c1->freq * c1->b + c2->freq * c2->b) / div;
-  c1->freq += c2->freq;  
+  c1->freq = div;
 }
 
 // reduces color count by averaging sections of the color cube
@@ -208,7 +208,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
   while (count > rep)
   {
     int ii = 0, jj = 0;
-    float least_err = 999999;
+    float least_err = 999999999;
     float *a = &(colors[0].freq);
 
     // find lowest value in error matrix
@@ -238,7 +238,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
 
     // compute quantization level and place in i, delete j
     merge(&colors[ii], &colors[jj]);
-    colors[jj].freq = false;
+    colors[jj].freq = 0;
     count--;
 
     // recompute error matrix for new row
