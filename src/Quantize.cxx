@@ -50,8 +50,10 @@ float Quantize::error(color_type *c1, color_type *c2)
   const float g = c1->g - c2->g;
   const float b = c1->b - c2->b;
 
-  return ((c1->freq * c2->freq) / (c1->freq + c2->freq)) *
-          (r * r + g * g + b * b);
+  return (((c1->freq * (c2->freq * c2->freq))
+         + (c2->freq * (c1->freq * c1->freq)))
+         / ((c1->freq + c2->freq) * (c1->freq + c2->freq)))
+         * (r * r + g * g + b * b);
 }
 
 // merge two colors
