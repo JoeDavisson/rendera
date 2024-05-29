@@ -39,11 +39,17 @@ private:
     float r, g, b, freq;
   };
 
+  struct gamut_type
+  {
+    float low_r, low_g, low_b;
+    float high_r, high_g, high_b;
+  };
+
   static void makeColor(color_type *,
                         const float, const float, const float, const float);
   static float error(color_type *, color_type *);
   static void merge(color_type *, color_type *);
-  static int limitColors(Octree *, color_type *, const int);
+  static int limitColors(Octree *, color_type *, gamut_type *);
 };
 
 #endif

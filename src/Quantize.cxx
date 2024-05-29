@@ -68,7 +68,72 @@ void Quantize::merge(color_type *c1, color_type *c2)
 }
 
 // reduces color count by averaging sections of the color cube
-int Quantize::limitColors(Octree *histogram, color_type *colors, const int step)
+int Quantize::limitColors(Octree *histogram, color_type *colors,
+                          gamut_type *gamut)
+{
+  int count = 0;
+
+  float step_r = ((gamut->high_r) - gamut->low_r) / 15.9375;
+  float step_g = ((gamut->high_g) - gamut->low_g) / 15.9375;
+  float step_b = ((gamut->high_b) - gamut->low_b) / 15.9375;
+
+  for (float b = gamut->low_b; b <= (gamut->high_b + 1) - step_b; b += step_b)
+  {
+    for (float g = gamut->low_g; g <= (gamut->high_g + 1) - step_g; g += step_g)
+    {
+      for (float r = gamut->low_r; r <= (gamut->high_r + 1) - step_r; r += step_r)
+      {
+        float rr = 0;
+        float gg = 0;
+        float bb = 0;
+        float div = 0;
+
+        for (int k = 0; k < step_r; k++)
+        {
+          const int bk = b + k;
+
+          for (int j = 0; j < step_g; j++)
+          {
+            const int gj = g + j;
+
+            for (int i = 0; i < step_b; i++)
+            {
+              const int ri = r + i;
+              const float d = histogram->read(ri, gj, bk);
+
+              if (d > 0)
+                histogram->write(ri, gj, bk, 0);
+
+              rr += d * ri;
+              gg += d * gj;
+              bb += d * bk;
+              div += d;
+            }
+          }
+        }
+
+        if (div > 0)
+        {
+          rr /= div;
+          gg /= div;
+          bb /= div;
+
+          rr = clamp(rr, 255);
+          gg = clamp(gg, 255);
+          bb = clamp(bb, 255);
+
+          makeColor(&colors[count], rr, gg, bb, div);
+          count++;
+        }
+      }
+    }
+  }
+
+  return count;
+}
+/*
+int Quantize::limitColors(Octree *histogram, color_type *colors,
+                          gamut_type *gamut)
 {
   int count = 0;
 
@@ -122,6 +187,7 @@ int Quantize::limitColors(Octree *histogram, color_type *colors, const int step)
 
   return count;
 }
+*/
 
 // Pairwise clustering quantization, adapted from the algorithm described here:
 //
@@ -133,12 +199,22 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
   // popularity histogram
   Octree histogram;
 
+  // rgb ranges
+  gamut_type gamut;
+
   int max;
   int rep = size;
 
   // build histogram, inc is the weight of 1 pixel in the image
   float inc = 1.0 / (src->cw * src->ch);
   int count = 0;
+
+  gamut.low_r = 255;
+  gamut.low_g = 255;
+  gamut.low_b = 255;
+  gamut.high_r = 0;
+  gamut.high_g = 0;
+  gamut.high_b = 0;
 
   for (int j = src->ct; j <= src->cb; j++)
   {
@@ -153,6 +229,24 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
         count++;
 
       histogram.write(rgba.r, rgba.g, rgba.b, freq + inc);
+
+      if (rgba.r < gamut.low_r)
+        gamut.low_r = rgba.r;
+
+      if (rgba.g < gamut.low_g)
+        gamut.low_g = rgba.g;
+
+      if (rgba.b < gamut.low_b)
+        gamut.low_b = rgba.b;
+
+      if (rgba.r > gamut.high_r)
+        gamut.high_r = rgba.r; 
+
+      if (rgba.g > gamut.high_g)
+        gamut.high_g = rgba.g; 
+
+      if (rgba.b > gamut.high_b)
+        gamut.high_b = rgba.b; 
     }
   }
 
@@ -185,7 +279,8 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
   }
     else
   {
-    count = limitColors(&histogram, &colors[0], 16);
+//    count = limitColors(&histogram, &colors[0], 16);
+    count = limitColors(&histogram, &colors[0], &gamut);
   }
 
   // set max
