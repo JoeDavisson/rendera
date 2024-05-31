@@ -67,7 +67,8 @@ void Quantize::merge(color_type *c1, color_type *c2)
   c1->freq = div;
 }
 
-// reduces color count by averaging sections of the color cube
+// reduces input color count by averaging sections of the color cube and
+// adding their popularities together
 int Quantize::limitColors(Octree *histogram, color_type *colors,
                           gamut_type *gamut)
 {
@@ -77,11 +78,13 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
   float step_g = ((gamut->high_g) - gamut->low_g) / 15.9375;
   float step_b = ((gamut->high_b) - gamut->low_b) / 15.9375;
 
-  for (float b = gamut->low_b; b <= (gamut->high_b + 1) - step_b; b += step_b)
+  float r, g, b;
+
+  for (b = gamut->low_b; b <= (gamut->high_b + 1) - step_b; b += step_b)
   {
-    for (float g = gamut->low_g; g <= (gamut->high_g + 1) - step_g; g += step_g)
+    for (g = gamut->low_g; g <= (gamut->high_g + 1) - step_g; g += step_g)
     {
-      for (float r = gamut->low_r; r <= (gamut->high_r + 1) - step_r; r += step_r)
+      for (r = gamut->low_r; r <= (gamut->high_r + 1) - step_r; r += step_r)
       {
         float rr = 0;
         float gg = 0;
@@ -131,75 +134,21 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
 
   return count;
 }
-/*
-int Quantize::limitColors(Octree *histogram, color_type *colors,
-                          gamut_type *gamut)
-{
-  int count = 0;
-
-  for (int b = 0; b <= 256 - step; b += step)
-  {
-    for (int g = 0; g <= 256 - step; g += step)
-    {
-      for (int r = 0; r <= 256 - step; r += step)
-      {
-        float rr = 0;
-        float gg = 0;
-        float bb = 0;
-        float div = 0;
-
-        for (int k = 0; k < step; k++)
-        {
-          const int bk = b + k;
-
-          for (int j = 0; j < step; j++)
-          {
-            const int gj = g + j;
-
-            for (int i = 0; i < step; i++)
-            {
-              const int ri = r + i;
-              const float d = histogram->read(ri, gj, bk);
-
-              if (d > 0)
-                histogram->write(ri, gj, bk, 0);
-
-              rr += d * ri;
-              gg += d * gj;
-              bb += d * bk;
-              div += d;
-            }
-          }
-        }
-
-        if (div > 0)
-        {
-          rr /= div;
-          gg /= div;
-          bb /= div;
-
-          makeColor(&colors[count], rr, gg, bb, div);
-          count++;
-        }
-      }
-    }
-  }
-
-  return count;
-}
-*/
 
 // Pairwise clustering quantization, adapted from the algorithm described here:
 //
 // http://www.visgraf.impa.br/Projects/quantization/quant.html
 // http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 //
+// To make this more practical, input colors are reduced to
+// a maximum of 4096 by the limitColors() function above. 
+
 void Quantize::pca(Bitmap *src, Palette *pal, const int size)
 {
   // popularity histogram
   Octree histogram;
 
-  // rgb ranges
+  // contains range of RGB values in image
   gamut_type gamut;
 
   int max;
@@ -279,7 +228,6 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
   }
     else
   {
-//    count = limitColors(&histogram, &colors[0], 16);
     count = limitColors(&histogram, &colors[0], &gamut);
   }
 
