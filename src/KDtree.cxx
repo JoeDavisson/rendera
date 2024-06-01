@@ -18,6 +18,7 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <algorithm>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
@@ -49,9 +50,9 @@ void KDtree::swap(node_type *x, node_type *y)
   x->index = y->index;
   y->index = temp_index;
 
-  std::memcpy(temp, x->x, sizeof(temp));
-  std::memcpy(x->x, y->x, sizeof(temp));
-  std::memcpy(y->x, temp, sizeof(temp));
+  std::copy(x->x, x->x + max_dim, temp);
+  std::copy(y->x, y->x + max_dim, x->x);
+  std::copy(temp, temp + max_dim, y->x);
 }
 
 KDtree::node_type *KDtree::median(node_type *begin, node_type *end, int index)
