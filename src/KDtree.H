@@ -28,7 +28,7 @@ public:
 
   struct node_type
   {
-    int x[max_dim];
+    int x[3];
     int index;
     node_type *left, *right;
   };

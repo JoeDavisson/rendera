@@ -43,16 +43,12 @@ int KDtree::dist(node_type *a, node_type *b, int dim)
 
 void KDtree::swap(node_type *x, node_type *y)
 {
-  int temp[max_dim];
-  int temp_index;
+  int temp[3];
 
-  temp_index = x->index;
-  x->index = y->index;
-  y->index = temp_index;
-
-  std::copy(x->x, x->x + max_dim, temp);
-  std::copy(y->x, y->x + max_dim, x->x);
-  std::copy(temp, temp + max_dim, y->x);
+  std::swap(x->index, y->index);
+  std::copy(x->x, x->x + 3, temp);
+  std::copy(y->x, y->x + 3, x->x);
+  std::copy(temp, temp + 3, y->x);
 }
 
 KDtree::node_type *KDtree::median(node_type *begin, node_type *end, int index)
@@ -101,7 +97,7 @@ KDtree::node_type *KDtree::build(node_type *t,
 {
   node_type *n;
 
-  if (!len)
+  if (len == 0)
     return 0;
 
   if ((n = median(t, t + len, i)))
@@ -132,7 +128,9 @@ void KDtree::nearest(node_type *r, node_type *nd,
   if (!*best_dist)
     return;
 
-  if (++i >= dim)
+  i++;
+
+  if (i >= dim)
      i = 0;
 
   nearest(dx > 0 ? r->left : r->right, nd, i, dim, best, best_dist);
