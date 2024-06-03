@@ -865,6 +865,9 @@ void Render::begin()
   const int w = (stroke->x2 - stroke->x1) + 1;
   const int h = (stroke->y2 - stroke->y1) + 1;
 
+  if (w <= 0 || h <= 0)
+    return; 
+
   Project::undo->push(x, y, w, h, 0);
 
   view->rendering = true;
