@@ -74,9 +74,18 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
 {
   int count = 0;
 
-  float step_r = ((gamut->high_r) - gamut->low_r) / 15.9375;
-  float step_g = ((gamut->high_g) - gamut->low_g) / 15.9375;
-  float step_b = ((gamut->high_b) - gamut->low_b) / 15.9375;
+  float step_r = (gamut->high_r - gamut->low_r) / 15.9375;
+  float step_g = (gamut->high_g - gamut->low_g) / 15.9375;
+  float step_b = (gamut->high_b - gamut->low_b) / 15.9375;
+
+  if (step_r < 1)
+    step_r = 1;
+
+  if (step_g < 1)
+    step_g = 1;
+
+  if (step_b < 1)
+    step_b = 1;
 
   float r, g, b;
 
@@ -91,26 +100,28 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
         float bb = 0;
         float div = 0;
 
-        for (int k = 0; k < step_r; k++)
+        for (float k = 0; k < step_b; k += 1)
         {
-          const int bk = b + k;
+          const float bk = b + k;
 
-          for (int j = 0; j < step_g; j++)
+          for (float j = 0; j < step_g; j += 1)
           {
-            const int gj = g + j;
+            const float gj = g + j;
 
-            for (int i = 0; i < step_b; i++)
+            for (float i = 0; i < step_r; i += 1)
             {
-              const int ri = r + i;
+              const float ri = r + i;
               const float d = histogram->read(ri, gj, bk);
 
               if (d > 0)
+              {
                 histogram->write(ri, gj, bk, 0);
 
-              rr += d * ri;
-              gg += d * gj;
-              bb += d * bk;
-              div += d;
+                rr += d * ri;
+                gg += d * gj;
+                bb += d * bk;
+                div += d;
+              }
             }
           }
         }
