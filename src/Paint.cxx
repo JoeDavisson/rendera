@@ -68,7 +68,6 @@ void Paint::push(View *view)
     Clone::state = Clone::STARTED;
     active = true;
   }
-
 }
 
 void Paint::drag(View *view)
