@@ -38,6 +38,7 @@ public:
   void fillTable();
   int lookup(const int);
   void sort();
+  void normalize();
   int load(const char *);
   int save(const char *);
 

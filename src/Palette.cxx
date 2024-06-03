@@ -248,6 +248,64 @@ void Palette::sort()
   std::sort(data, data + max, sortByLum);
 }
 
+void Palette::normalize()
+{
+  // search for highest & lowest RGB values
+  int r_high = 0;
+  int g_high = 0;
+  int b_high = 0;
+  int r_low = 0xffffff;
+  int g_low = 0xffffff;
+  int b_low = 0xffffff;
+
+  for (int i = 0; i < max; i++)
+  {
+    rgba_type rgba = getRgba(data[i]);
+
+    const int r = rgba.r;
+    const int g = rgba.g;
+    const int b = rgba.b;
+
+    if (r < r_low)
+      r_low = r;
+    if (r > r_high)
+      r_high = r;
+    if (g < g_low)
+      g_low = g;
+    if (g > g_high)
+      g_high = g;
+    if (b < b_low)
+      b_low = b;
+    if (b > b_high)
+      b_high = b;
+  }
+
+  if (!(r_high - r_low))
+    r_high++;
+  if (!(g_high - g_low))
+    g_high++;
+  if (!(b_high - b_low))
+    b_high++;
+
+  // scale palette
+  double r_scale = 255.0 / (r_high - r_low);
+  double g_scale = 255.0 / (g_high - g_low);
+  double b_scale = 255.0 / (b_high - b_low);
+
+  for (int i = 0; i < max; i++)
+  {
+    rgba_type rgba = getRgba(data[i]);
+
+    const int r = (rgba.r - r_low) * r_scale;
+    const int g = (rgba.g - g_low) * g_scale;
+    const int b = (rgba.b - b_low) * b_scale;
+
+    data[i] = makeRgb(r, g, b);
+  }
+
+  fillTable();
+}
+
 int Palette::load(const char *fn)
 {
   max = 0;

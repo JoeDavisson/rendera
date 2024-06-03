@@ -416,7 +416,9 @@ void Gui::init()
   menubar->add("&Palette/&Create...", 0,
     (Fl_Callback *)Dialog::makePalette, 0, 0);
   menubar->add("&Palette/&Apply...", 0,
-    (Fl_Callback *)Dither::begin, 0, FL_MENU_DIVIDER);
+    (Fl_Callback *)Dither::begin, 0, 0);
+//  menubar->add("&Palette/&Normalize", 0,
+//    (Fl_Callback *)paletteNormalize, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/Presets/Default", 0,
     (Fl_Callback *)paletteDefault, 0, 0);
   menubar->add("Palette/Presets/Black and White", 0,
@@ -1283,6 +1285,12 @@ void Gui::paletteSwatches(Widget *widget, void *var)
 void Gui::paletteIndex(int var)
 {
   palette_swatches->var = var;
+  Project::palette->draw(palette_swatches);
+}
+
+void Gui::paletteNormalize()
+{
+  Project::palette->normalize();
   Project::palette->draw(palette_swatches);
 }
 

@@ -129,6 +129,7 @@ public:
   static void paletteDefault();
   static void paletteDraw();
   static void paletteIndex(int);
+  static void paletteNormalize();
   static void paletteSort();
   static void paletteSwatches(Widget *, void *);
   static void paletteWebSafe();
