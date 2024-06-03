@@ -27,13 +27,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 // based on example at https://rosettacode.org/wiki/K-d_tree
 
-int KDtree::dist(node_type *a, node_type *b, int dim)
+int KDtree::distance(const node_type *a, const node_type *b, int dim)
 {
   int t;
   int d = 0;
 
-  while (dim--)
+  while (dim > 0)
   {
+    dim--;
     t = a->x[dim] - b->x[dim];
     d += t * t;
   }
@@ -41,91 +42,92 @@ int KDtree::dist(node_type *a, node_type *b, int dim)
   return d;
 }
 
-void KDtree::swap(node_type *x, node_type *y)
+void KDtree::swapNodes(node_type *a, node_type *b)
 {
   int temp[3];
 
-  std::swap(x->index, y->index);
-  std::copy(x->x, x->x + 3, temp);
-  std::copy(y->x, y->x + 3, x->x);
-  std::copy(temp, temp + 3, y->x);
+  std::swap(a->index, b->index);
+  std::copy(a->x, a->x + 3, temp);
+  std::copy(b->x, b->x + 3, a->x);
+  std::copy(temp, temp + 3, b->x);
 }
 
-KDtree::node_type *KDtree::median(node_type *begin, node_type *end, int index)
+KDtree::node_type *KDtree::median(node_type *first, node_type *last,
+                                  const int index)
 {
-  if (end <= begin)
+  if (last <= first)
     return 0;
 
   node_type *p; 
   node_type *temp; 
-  node_type *mid = begin + (end - begin) / 2; 
+  node_type *mid = first + (last - first) / 2; 
 
   while (true)
   {
     const int pivot = mid->x[index];
 
-    swap(mid, end - 1);
-    temp = begin;
+    swapNodes(mid, last - 1);
+    temp = first;
 
-    for (p = begin; p < end; p++)
+    for (p = first; p < last; p++)
     {
-      if (end == begin + 1)
-        return begin;
+      if (last == first + 1)
+        return first;
 
       if (p->x[index] < pivot)
       {
         if (p != temp)
-          swap(p, temp);
+          swapNodes(p, temp);
 
         temp++;
       }
     }
 
-    swap(temp, end - 1);
+    swapNodes(temp, last - 1);
 
     if (temp == mid)
       return mid;
     else if (temp->x[index] > mid->x[index])
-      end = temp;
+      last = temp;
     else
-      begin = temp + 1;
+      first = temp + 1;
   }
 }
 
-KDtree::node_type *KDtree::build(node_type *t,
-                                 const int len, int i, const int dim)
+KDtree::node_type *KDtree::build(node_type *tree,
+                                 const int length, int i, const int dim)
 {
-  node_type *n;
+  node_type *node;
 
-  if (len == 0)
+  if (length == 0)
     return 0;
 
-  if ((n = median(t, t + len, i)))
+  if ((node = median(tree, tree + length, i)))
   {
     i = (i + 1) % dim;
-    n->left = build(t, n - t, i, dim);
-    n->right = build(n + 1, t + len - (n + 1), i, dim);
+    node->left = build(tree, node - tree, i, dim);
+    node->right = build(node + 1, tree + length - (node + 1), i, dim);
   }
 
-  return n;
+  return node;
 }
 
-void KDtree::nearest(node_type *r, node_type *nd,
+void KDtree::nearest(node_type *r, node_type *node,
                      int i, const int dim, node_type **best, int *best_dist)
 {
   if (r == 0)
     return;
 
-  const int d = dist(r, nd, dim);
-  const int dx = r->x[i] - nd->x[i];
+  const int d = distance(r, node, dim);
+  const int dx = r->x[i] - node->x[i];
 
-  if (!*best || d < *best_dist)
+  if ((*best == 0) || d < *best_dist)
   {
     *best_dist = d;
     *best = r;
   }
 
-  if (!*best_dist)
+  if (*best_dist == 0)
     return;
 
   i++;
@@ -133,9 +135,9 @@ void KDtree::nearest(node_type *r, node_type *nd,
   if (i >= dim)
      i = 0;
 
-  nearest(dx > 0 ? r->left : r->right, nd, i, dim, best, best_dist);
+  nearest(dx > 0 ? r->left : r->right, node, i, dim, best, best_dist);
 
   if (dx * dx < *best_dist)
-    nearest(dx > 0 ? r->right : r->left, nd, i, dim, best, best_dist);
+    nearest(dx > 0 ? r->right : r->left, node, i, dim, best, best_dist);
 }
 

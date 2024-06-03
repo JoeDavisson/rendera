@@ -24,8 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class KDtree
 {
 public:
-  static const int max_dim = 3;
-
   struct node_type
   {
     int x[3];
@@ -33,11 +31,12 @@ public:
     node_type *left, *right;
   };
 
-  static int dist(node_type *, node_type *, int);
-  static void swap(node_type *, node_type *);
-  static node_type *median(node_type *, node_type *, int);
+  static int distance(const node_type *, const node_type *, int);
+  static void swapNodes(node_type *, node_type *);
+  static node_type *median(node_type *, node_type *, const int);
   static node_type *build(node_type *, const int, int, const int);
-  static void nearest(node_type *, node_type *, int, const int, node_type **, int *);
+  static void nearest(node_type *, node_type *,
+                      int, const int, node_type **, int *);
 
 private:
   KDtree() { }
