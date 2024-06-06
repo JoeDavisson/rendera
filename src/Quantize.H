@@ -28,7 +28,7 @@ class Palette;
 class Quantize
 {
 public:
-  static void pca(Bitmap *, Palette *, const int);
+  static void pca(Bitmap *, Palette *, int);
 
 private:
   Quantize() { }

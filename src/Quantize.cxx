@@ -50,9 +50,7 @@ float Quantize::error(color_type *c1, color_type *c2)
   const float g = c1->g - c2->g;
   const float b = c1->b - c2->b;
 
-  return (((c1->freq * (c2->freq * c2->freq))
-         + (c2->freq * (c1->freq * c1->freq)))
-         / ((c1->freq + c2->freq) * (c1->freq + c2->freq)))
+  return ((c1->freq * c2->freq) / (c1->freq + c2->freq))
          * (r * r + g * g + b * b);
 }
 
@@ -100,15 +98,15 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
         float bb = 0;
         float div = 0;
 
-        for (float k = 0; k < step_b; k += 1)
+        for (float k = 0; k < step_b; k++)
         {
           const float bk = b + k;
 
-          for (float j = 0; j < step_g; j += 1)
+          for (float j = 0; j < step_g; j++)
           {
             const float gj = g + j;
 
-            for (float i = 0; i < step_r; i += 1)
+            for (float i = 0; i < step_r; i++)
             {
               const float ri = r + i;
               const float d = histogram->read(ri, gj, bk);
@@ -146,28 +144,22 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
   return count;
 }
 
-// Pairwise clustering quantization, adapted from the algorithm described here:
+// An approximation of pairwise clustering quantization, adapted from the
+// algorithm described here:
 //
 // http://www.visgraf.impa.br/Projects/quantization/quant.html
 // http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 //
-// To make this more practical, input colors are reduced to
-// a maximum of 4096 by the limitColors() function above. 
+// To make this more practical, input colors are reduced to a maximum of
+// 4096 by the limitColors() function above.
 
-void Quantize::pca(Bitmap *src, Palette *pal, const int size)
+void Quantize::pca(Bitmap *src, Palette *pal, int size)
 {
   // popularity histogram
   Octree histogram;
 
-  // contains range of RGB values in image
+  // range of RGB values in image
   gamut_type gamut;
-
-  int max;
-  int rep = size;
-
-  // build histogram, inc is the weight of 1 pixel in the image
-  float inc = 1.0 / (src->cw * src->ch);
-  int count = 0;
 
   gamut.low_r = 255;
   gamut.low_g = 255;
@@ -175,6 +167,10 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
   gamut.high_r = 0;
   gamut.high_g = 0;
   gamut.high_b = 0;
+
+  // build histogram
+  float weight = 1.0 / (src->cw * src->ch);
+  int count = 0;
 
   for (int j = src->ct; j <= src->cb; j++)
   {
@@ -185,10 +181,10 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
       rgba_type rgba = getRgba(*p++);
       float freq = histogram.read(rgba.r, rgba.g, rgba.b);
 
-      if (freq < inc)
+      if (freq < weight)
         count++;
 
-      histogram.write(rgba.r, rgba.g, rgba.b, freq + inc);
+      histogram.write(rgba.r, rgba.g, rgba.b, freq + weight);
 
       if (rgba.r < gamut.low_r)
         gamut.low_r = rgba.r;
@@ -214,14 +210,11 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
   const int colors_max = 4096;
   std::vector<color_type> colors(colors_max);
 
-  for (int i = 0; i < colors_max; i++)
-    colors[i].freq = 0;
-
   // quantization error matrix
   std::vector<float> err_data(((colors_max + 1) * colors_max) / 2);
 
   // skip if already enough colors
-  if (count <= rep)
+  if (count <= size)
   {
     count = 0;
 
@@ -243,9 +236,10 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
   }
 
   // set max
-  max = count;
-  if (max < rep)
-    rep = max;
+  int max = count;
+
+  if (max < size)
+    size = max;
 
   // init error matrix
   for (int j = 0; j < max; j++)
@@ -254,12 +248,14 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
       err_data[i + (j + 1) * j / 2] = error(&colors[i], &colors[j]);
   }
 
-  Gui::progressShow(count - rep);
+  // show progress bar
+  Gui::progressShow(count - size);
 
   // measure offset between array elements
   const int step = &(colors[1].freq) - &(colors[0].freq);
 
-  while (count > rep)
+  // find minimum quantization error in matrix
+  while (count > size)
   {
     int ii = 0, jj = 0;
     float least_err = 999999999;
@@ -290,7 +286,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
       a += step;
     }
 
-    // compute quantization level and place in i, delete j
+    // compute quantization level and replace i, delete j
     merge(&colors[ii], &colors[jj]);
     colors[jj].freq = 0;
     count--;
@@ -306,9 +302,11 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
     if (Fl::get_key(FL_Escape))
       return;
 
+    // update progress bar
     Gui::progressUpdate(count);
   }
 
+  // hide progress bar
   Gui::progressHide();
 
   // build palette
@@ -318,9 +316,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, const int size)
   {
     if (colors[i].freq > 0)
     {
-      pal->data[index] =
-        makeRgb((int)colors[i].r, (int)colors[i].g, (int)colors[i].b);
-
+      pal->data[index] = makeRgb(colors[i].r, colors[i].g, colors[i].b);
       index++;
     }
   }
