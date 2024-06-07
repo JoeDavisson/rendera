@@ -289,6 +289,7 @@ namespace Scale
         }
 
         int *c[4];
+
         c[0] = c[1] = bmp->row[sy + v1] + sx;
         c[2] = c[3] = bmp->row[sy + v2] + sx;
 
