@@ -139,9 +139,11 @@ int Blend::nonLinear(const int c1, const int c2, const int t)
   const int b2 = Gamma::fix(rgba2.b);
   const int a2 = rgba2.a;
 
-  return makeRgba(Gamma::unfix(r2 + (t * (r1 - r2)) / 255),
-                  Gamma::unfix(g2 + (t * (g1 - g2)) / 255),
-                  Gamma::unfix(b2 + (t * (b1 - b2)) / 255),
+  const double tt = 255.0 - (((255.0 - t) * (255.0 - t)) / 255.0);
+
+  return makeRgba(Gamma::unfix(r2 + (tt * (r1 - r2)) / 255),
+                  Gamma::unfix(g2 + (tt * (g1 - g2)) / 255),
+                  Gamma::unfix(b2 + (tt * (b1 - b2)) / 255),
                   a2 + (t * (a1 - a2)) / 255);
 }
 

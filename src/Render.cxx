@@ -69,7 +69,7 @@ int Render::fineEdge(int x1, int y1, const int x2, const int y2,
   y1 -= y2;
 
   const float d = __builtin_sqrtf(x1 * x1 + y1 * y1);
-  const int s = (255 - trans) / (((3 << edge) >> 1) + 1);
+  const int s = (float)(255 - trans) / (((3 << edge) >> 1) + 1);
   const int temp = 255 - s * d;
 
   return temp < trans ? trans : temp;
