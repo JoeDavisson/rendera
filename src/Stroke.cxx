@@ -210,8 +210,6 @@ void Stroke::drawBrush(int x, int y, int c)
 
   for (int i = 0; i < brush->solid_count; i++)
     map->setpixel(x + brush->solidx[i], y + brush->solidy[i], c);
-//  for (int i = 0; i < brush->hollow_count; i++)
-//    map->setpixel(x + brush->hollowx[i], y + brush->hollowy[i], c);
 }
 
 void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
