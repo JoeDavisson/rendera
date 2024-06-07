@@ -181,7 +181,7 @@ namespace Scale
     GaussianBlur::apply(bmp, size / 2, 0, 0);
   }
 
-  inline float cubic(const float f[4], const float t)
+  float cubic(const float f[4], const float t)
   {
     const int a = f[0];
     const int b = f[1];
