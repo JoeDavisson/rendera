@@ -20,14 +20,14 @@ LIBS=$(shell ./fltk/fltk-config --use-images --ldstaticflags)
 ifeq ($(PLATFORM),linux)
   HOST=
   CXX=g++
-  CXXFLAGS= -O3 -Wall -ffast-math -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -O3 -Wall -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   EXE=rendera
 endif
 
 ifeq ($(PLATFORM),mingw32)
   HOST=i686-w64-mingw32
   CXX=$(HOST)-g++
-  CXXFLAGS= -O3 -Wall -ffast-math -static-libgcc -static-libstdc++ -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -O3 -Wall -static-libgcc -static-libstdc++ -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   LIBS+=-lgdi32 -lcomctl32 -static -lpthread
   EXE=rendera.exe
 endif
@@ -35,7 +35,7 @@ endif
 ifeq ($(PLATFORM),mingw64)
   HOST=x86_64-w64-mingw32
   CXX=$(HOST)-g++
-  CXXFLAGS= -O3 -Wall -ffast-math -static-libgcc -static-libstdc++ -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -O3 -Wall -static-libgcc -static-libstdc++ -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   LIBS+=-lgdi32 -lcomctl32 -static -lpthread
   EXE=rendera.exe
 endif
