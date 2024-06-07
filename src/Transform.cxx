@@ -192,16 +192,16 @@ namespace Scale
                       + 2 * a + 4 * c - d - 5 * b) + c - a)) / 2 + b;
   }
 
-  float bicubic(const float f[4][4], const float x, const float y)
+  float bicubic(const float f[4][4], const float u, const float v)
   {
     float temp[4];
 
-    temp[0] = cubic(f[0], y);
-    temp[1] = cubic(f[1], y);
-    temp[2] = cubic(f[2], y);
-    temp[3] = cubic(f[3], y);
+    temp[0] = cubic(f[0], v);
+    temp[1] = cubic(f[1], v);
+    temp[2] = cubic(f[2], v);
+    temp[3] = cubic(f[3], v);
 
-    return cubic(temp, x);
+    return cubic(temp, u);
   }
 
   void apply(const int dw, const int dh, const bool wrap_edges)
