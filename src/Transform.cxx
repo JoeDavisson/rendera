@@ -181,20 +181,25 @@ namespace Scale
     GaussianBlur::apply(bmp, size / 2, 0, 0);
   }
 
-  float cubic(const float p[4], const float x)
+  inline float cubic(const float f[4], const float t)
   {
-    return p[1] + 0.5f * x * (p[2] - p[0] + x * (2.0f * p[0] - 5.0f * p[1]
-           + 4.0f * p[2] - p[3] + x * (3.0f * (p[1] - p[2]) + p[3] - p[0])));
+    const int a = f[0];
+    const int b = f[1];
+    const int c = f[2];
+    const int d = f[3];
+
+    return (t * (t * (t * (d + 3 * b - a - 3 * c)
+                      + 2 * a + 4 * c - d - 5 * b) + c - a)) / 2 + b;
   }
 
-  float bicubic(const float p[4][4], const float x, const float y)
+  float bicubic(const float f[4][4], const float x, const float y)
   {
     float temp[4];
 
-    temp[0] = cubic(p[0], y);
-    temp[1] = cubic(p[1], y);
-    temp[2] = cubic(p[2], y);
-    temp[3] = cubic(p[3], y);
+    temp[0] = cubic(f[0], y);
+    temp[1] = cubic(f[1], y);
+    temp[2] = cubic(f[2], y);
+    temp[3] = cubic(f[3], y);
 
     return cubic(temp, x);
   }
