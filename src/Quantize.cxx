@@ -21,17 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <vector>
 #include <algorithm>
 
-#include "Blend.H"
 #include "Bitmap.H"
-#include "Dialog.H"
 #include "Gui.H"
 #include "Inline.H"
 #include "Octree.H"
 #include "Palette.H"
-#include "Project.H"
 #include "Quantize.H"
-#include "View.H"
-#include "Widget.H"
 
 void Quantize::makeColor(color_type *c,
                          const float r, const float g, const float b,
