@@ -300,6 +300,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
 
     points[i].x[0] = ex;
     points[i].x[1] = ey;
+    points[i].x[2] = 0;
   }
 
   tl -= feather;
@@ -325,7 +326,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
   if (tt > tb)
     std::swap(tt, tb);
 
-  root = KDtree::build(points, count, 0, 2);
+  root = KDtree::build(points, count, 0);
   Gui::progressShow((cb - ct) + 1);
 
   for (y = ct; y <= cb; y++)
@@ -347,8 +348,9 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
 
       test_node.x[0] = x;
       test_node.x[1] = y;
+      test_node.x[2] = 0;
       found = 0;
-      KDtree::nearest(root, &test_node, 0, 2, &found, &best_dist);
+      KDtree::nearest(root, &test_node, 0, &found, &best_dist);
 
       const int zx = found->x[0];
       const int zy = found->x[1];

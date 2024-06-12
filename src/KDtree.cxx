@@ -27,10 +27,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 // based on example at https://rosettacode.org/wiki/K-d_tree
 
-int KDtree::distance(const node_type *a, const node_type *b, int dim)
+int KDtree::distance(const node_type *a, const node_type *b)
 {
   int t;
   int d = 0;
+  int dim = 3;
 
   while (dim > 0)
   {
@@ -92,10 +93,11 @@ KDtree::node_type *KDtree::median(node_type *first, node_type *last,
     else
       first = temp + 1;
   }
+
+  return 0;
 }
 
-KDtree::node_type *KDtree::build(node_type *tree,
-                                 const int length, int i, const int dim)
+KDtree::node_type *KDtree::build(node_type *tree, const int length, int i)
 {
   node_type *node;
 
@@ -104,21 +106,21 @@ KDtree::node_type *KDtree::build(node_type *tree,
 
   if ((node = median(tree, tree + length, i)))
   {
-    i = (i + 1) % dim;
-    node->left = build(tree, node - tree, i, dim);
-    node->right = build(node + 1, tree + length - (node + 1), i, dim);
+    i = (i + 1) % 3;
+    node->left = build(tree, node - tree, i);
+    node->right = build(node + 1, tree + length - (node + 1), i);
   }
 
   return node;
 }
 
 void KDtree::nearest(node_type *r, node_type *node,
-                     int i, const int dim, node_type **best, int *best_dist)
+                     int i, node_type **best, int *best_dist)
 {
   if (r == 0)
     return;
 
-  const int d = distance(r, node, dim);
+  const int d = distance(r, node);
   const int dx = r->x[i] - node->x[i];
 
   if ((*best == 0) || d < *best_dist)
@@ -132,12 +134,20 @@ void KDtree::nearest(node_type *r, node_type *node,
 
   i++;
 
-  if (i >= dim)
+  if (i >= 3)
      i = 0;
 
-  nearest(dx > 0 ? r->left : r->right, node, i, dim, best, best_dist);
+  if (dx > 0)
+    nearest(r->left, node, i, best, best_dist);
+  else
+    nearest(r->right, node, i, best, best_dist);
 
-  if (dx * dx < *best_dist)
-    nearest(dx > 0 ? r->right : r->left, node, i, dim, best, best_dist);
+  if (*best_dist > dx * dx)
+  {
+    if(dx > 0)
+      nearest(r->right, node, i, best, best_dist);
+    else
+      nearest(r->left, node, i, best, best_dist);
+  }
 }
 

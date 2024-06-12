@@ -196,7 +196,7 @@ void Palette::fillTable()
     colors[i].index = i;
   }
 
-  root = KDtree::build(colors, max, 0, 3);
+  root = KDtree::build(colors, max, 0);
 
   for (int b = 0; b <= 256 - step; b += step)
   {
@@ -209,7 +209,7 @@ void Palette::fillTable()
         test_node.x[2] = b + step / 2;
 
         found = 0;
-        KDtree::nearest(root, &test_node, 0, 3, &found, &best_dist);
+        KDtree::nearest(root, &test_node, 0, &found, &best_dist);
 
         for (int k = 0; k < step; k++)
         {
