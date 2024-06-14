@@ -82,8 +82,7 @@ KDtree::node_type *KDtree::median(node_type *left, node_type *right,
 
     swapNodes(temp, right - 1);
 
-//    if (temp->x[axis] == midpoint->x[axis])
-    if (temp == midpoint)
+    if (temp->x[axis] == midpoint->x[axis])
       return temp;
     else if (temp->x[axis] > midpoint->x[axis])
       right = temp;
