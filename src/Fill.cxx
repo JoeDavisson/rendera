@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Fill::Fill()
 {
-  stack_size = 4096;
+  stack_size = 16384;
   stack_x = new int [stack_size];
   stack_y = new int [stack_size];
   sp = 0;
@@ -57,9 +57,9 @@ bool Fill::inbox(int x, int y, int x1, int y1, int x2, int y2)
     std::swap(y1, y2);
 
   if (x >= x1 && x <= x2 && y >= y1 && y <= y2)
-    return 1;
+    return true;
   else
-    return 0;
+    return false;
 }
 
 // finds edges
