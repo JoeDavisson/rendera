@@ -57,15 +57,14 @@ KDtree::node_type *KDtree::median(node_type *left, node_type *right,
     return 0;
 
   node_type *p; 
-  node_type *temp; 
   node_type *midpoint = left + (right - left) / 2; 
 
   while (true)
   {
     const int pivot = midpoint->x[axis];
+    node_type *temp = left;
 
     swapNodes(midpoint, right - 1);
-    temp = left;
 
     for (p = left; p < right; p++)
     {
