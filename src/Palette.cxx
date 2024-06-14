@@ -209,7 +209,7 @@ void Palette::fillTable()
         test_node.x[2] = b + step / 2;
 
         found = 0;
-        KDtree::nearest(root, &test_node, 0, &found, &best_dist);
+        KDtree::nearest(root, &test_node, &found, &best_dist, 0);
 
         for (int k = 0; k < step; k++)
         {

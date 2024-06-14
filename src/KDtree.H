@@ -34,8 +34,8 @@ public:
   static int distance(const node_type *, const node_type *);
   static void swapNodes(node_type *, node_type *);
   static node_type *median(node_type *, node_type *, const int);
-  static node_type *build(node_type *, const int, int);
-  static void nearest(node_type *, node_type *, int, node_type **, int *);
+  static node_type *build(node_type *, const int, const int);
+  static void nearest(node_type *, node_type *, node_type **, int *, const int);
 
 private:
   KDtree() { }

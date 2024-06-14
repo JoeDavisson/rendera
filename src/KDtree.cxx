@@ -25,19 +25,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "KDtree.H"
 
-// based on example at https://rosettacode.org/wiki/K-d_tree
+// based on example at https://rosettacode.org/wiki/K-d_tree#C
+// also see https://en.wikipedia.org/wiki/Quickselect
 
 int KDtree::distance(const node_type *a, const node_type *b)
 {
-  int t;
   int d = 0;
-  int dim = 3;
 
-  while (dim > 0)
+  for (int dim = 0; dim < 3; dim++)
   {
-    dim--;
-    t = a->x[dim] - b->x[dim];
-    d += t * t;
+    const int temp = a->x[dim] - b->x[dim];
+    d += temp * temp;
   }
 
   return d;
@@ -45,37 +43,36 @@ int KDtree::distance(const node_type *a, const node_type *b)
 
 void KDtree::swapNodes(node_type *a, node_type *b)
 {
-  int temp[3];
+  node_type temp;
 
-  std::swap(a->index, b->index);
-  std::copy(a->x, a->x + 3, temp);
-  std::copy(b->x, b->x + 3, a->x);
-  std::copy(temp, temp + 3, b->x);
+  temp = *a;
+  *a = *b;
+  *b = temp;
 }
 
-KDtree::node_type *KDtree::median(node_type *first, node_type *last,
-                                  const int index)
+KDtree::node_type *KDtree::median(node_type *left, node_type *right,
+                                  const int axis)
 {
-  if (last <= first)
+  if (right <= left)
     return 0;
 
   node_type *p; 
   node_type *temp; 
-  node_type *mid = first + (last - first) / 2; 
+  node_type *midpoint = left + (right - left) / 2; 
 
   while (true)
   {
-    const int pivot = mid->x[index];
+    const int pivot = midpoint->x[axis];
 
-    swapNodes(mid, last - 1);
-    temp = first;
+    swapNodes(midpoint, right - 1);
+    temp = left;
 
-    for (p = first; p < last; p++)
+    for (p = left; p < right; p++)
     {
-      if (last == first + 1)
-        return first;
+      if (right == left + 1)
+        return left;
 
-      if (p->x[index] < pivot)
+      if (p->x[axis] < pivot)
       {
         if (p != temp)
           swapNodes(p, temp);
@@ -84,70 +81,60 @@ KDtree::node_type *KDtree::median(node_type *first, node_type *last,
       }
     }
 
-    swapNodes(temp, last - 1);
+    swapNodes(temp, right - 1);
 
-    if (temp == mid)
-      return mid;
-    else if (temp->x[index] > mid->x[index])
-      last = temp;
+//    if (temp->x[axis] == midpoint->x[axis])
+    if (temp == midpoint)
+      return temp;
+    else if (temp->x[axis] > midpoint->x[axis])
+      right = temp;
     else
-      first = temp + 1;
+      left = temp + 1;
   }
-
-  return 0;
 }
 
-KDtree::node_type *KDtree::build(node_type *tree, const int length, int i)
+KDtree::node_type *KDtree::build(node_type *root,
+                           const int length, const int axis)
 {
   node_type *node;
 
   if (length == 0)
     return 0;
 
-  if ((node = median(tree, tree + length, i)))
+  if ((node = median(root, root + length, axis)))
   {
-    i = (i + 1) % 3;
-    node->left = build(tree, node - tree, i);
-    node->right = build(node + 1, tree + length - (node + 1), i);
+    node->left = build(root, node - root, (axis + 1) % 3);
+    node->right = build(node + 1, root + length - (node + 1), (axis + 1) % 3);
   }
 
   return node;
 }
 
-void KDtree::nearest(node_type *r, node_type *node,
-                     int i, node_type **best, int *best_dist)
+void KDtree::nearest(node_type *root, node_type *test_node,
+                     node_type **best_node, int *best_distance, const int axis)
 {
-  if (r == 0)
+  if (root == 0)
     return;
 
-  const int d = distance(r, node);
-  const int dx = r->x[i] - node->x[i];
+  const int d = distance(root, test_node);
+  const int dx = root->x[axis] - test_node->x[axis];
 
-  if ((*best == 0) || d < *best_dist)
+  if ((*best_node == 0) || d < *best_distance)
   {
-    *best_dist = d;
-    *best = r;
+    *best_distance = d;
+    *best_node = root;
   }
 
-  if (*best_dist == 0)
+  if (*best_distance == 0)
     return;
 
-  i++;
+  nearest(dx > 0 ? root->left : root->right,
+          test_node, best_node, best_distance, (axis + 1) % 3);
 
-  if (i >= 3)
-     i = 0;
-
-  if (dx > 0)
-    nearest(r->left, node, i, best, best_dist);
-  else
-    nearest(r->right, node, i, best, best_dist);
-
-  if (*best_dist > dx * dx)
+  if (*best_distance > dx * dx)
   {
-    if(dx > 0)
-      nearest(r->right, node, i, best, best_dist);
-    else
-      nearest(r->left, node, i, best, best_dist);
+    nearest(dx <= 0 ? root->left : root->right,
+            test_node, best_node, best_distance, (axis + 1) % 3);
   }
 }
 

@@ -350,7 +350,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
       test_node.x[1] = y;
       test_node.x[2] = 0;
       found = 0;
-      KDtree::nearest(root, &test_node, 0, &found, &best_dist);
+      KDtree::nearest(root, &test_node, &found, &best_dist, 0);
 
       const int zx = found->x[0];
       const int zy = found->x[1];

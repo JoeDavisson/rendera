@@ -276,7 +276,7 @@ void Render::fine()
   KDtree::node_type *root, *found;
   KDtree::node_type *points = new KDtree::node_type[count];
 
-  int best_dist;
+  int best_distance;
 
   for (int i = 0; i < count; i++)
   {
@@ -298,8 +298,9 @@ void Render::fine()
 
       test_node.x[0] = x;
       test_node.x[1] = y;
+      test_node.x[2] = 0;
       found = 0;
-      KDtree::nearest(root, &test_node, 0, &found, &best_dist);
+      KDtree::nearest(root, &test_node, &found, &best_distance, 0);
 
       const int zx = found->x[0];
       const int zy = found->x[1];
