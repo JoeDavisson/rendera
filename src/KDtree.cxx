@@ -26,7 +26,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "KDtree.H"
 
 // based on example at https://rosettacode.org/wiki/K-d_tree#C
-// also see https://en.wikipedia.org/wiki/Quickselect
+// see also https://en.wikipedia.org/wiki/Quickselect
+//
+// currently used for the "fine" airbrush mode, fill edge feathering, and
+// reverse color lookup table
 
 int KDtree::distance(const node_type *a, const node_type *b)
 {
@@ -53,7 +56,7 @@ void KDtree::swapNodes(node_type *a, node_type *b)
 KDtree::node_type *KDtree::median(node_type *left, node_type *right,
                                   const int axis)
 {
-  if (right <= left)
+  if (right < left)
     return 0;
 
   node_type *p; 
@@ -64,11 +67,11 @@ KDtree::node_type *KDtree::median(node_type *left, node_type *right,
     const int pivot = midpoint->x[axis];
     node_type *temp = left;
 
-    swapNodes(midpoint, right - 1);
+    swapNodes(midpoint, right);
 
-    for (p = left; p < right; p++)
+    for (p = left; p <= right; p++)
     {
-      if (right == left + 1)
+      if (right == left)
         return left;
 
       if (p->x[axis] < pivot)
@@ -80,12 +83,12 @@ KDtree::node_type *KDtree::median(node_type *left, node_type *right,
       }
     }
 
-    swapNodes(temp, right - 1);
+    swapNodes(temp, right);
 
-    if (temp->x[axis] == midpoint->x[axis])
+    if (midpoint->x[axis] == temp->x[axis])
       return temp;
-    else if (temp->x[axis] > midpoint->x[axis])
-      right = temp;
+    else if (midpoint->x[axis] < temp->x[axis])
+      right = temp - 1;
     else
       left = temp + 1;
   }
@@ -99,7 +102,7 @@ KDtree::node_type *KDtree::build(node_type *root,
   if (length == 0)
     return 0;
 
-  if ((node = median(root, root + length, axis)))
+  if ((node = median(root, root + length - 1, axis)))
   {
     node->left = build(root, node - root, (axis + 1) % 3);
     node->right = build(node + 1, root + length - (node + 1), (axis + 1) % 3);
