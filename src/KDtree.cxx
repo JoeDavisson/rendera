@@ -97,12 +97,12 @@ KDtree::node_type *KDtree::median(node_type *left, node_type *right,
 KDtree::node_type *KDtree::build(node_type *root,
                            const int length, const int axis)
 {
-  node_type *node;
-
   if (length == 0)
     return 0;
 
-  if ((node = median(root, root + length - 1, axis)))
+  node_type *node = median(root, root + length - 1, axis);
+
+  if (node != 0)
   {
     node->left = build(root, node - root, (axis + 1) % 3);
     node->right = build(node + 1, root + length - (node + 1), (axis + 1) % 3);
