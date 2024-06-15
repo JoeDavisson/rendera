@@ -26,9 +26,10 @@ class KDtree
 public:
   struct node_type
   {
-    int x[3];
-    int index;
-    node_type *left, *right;
+    int x[3] { 0, 0, 0 };
+    int index { 0 };
+    node_type *left { 0 };
+    node_type *right { 0 };
   };
 
   static int distance(const node_type *, const node_type *);
