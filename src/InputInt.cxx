@@ -89,6 +89,51 @@ InputInt::~InputInt()
 {
 }
 
+int InputInt::handle(int event)
+{
+  char str[256];
+  bool shift = Fl::event_shift() ? true : false;
+
+  switch (event)
+  {
+    case FL_MOUSEWHEEL:
+    {
+      if (Fl::focus() != &input &&
+          Fl::focus() != &inc &&
+          Fl::focus() != &dec)
+        return 1;
+ 
+      int val = std::atoi(input.value());
+      int x = shift == true ? 10 : 1;
+
+      if (Fl::event_dy() >= 0)
+      {
+        val += x;
+
+        if (val > max)
+          val = max;
+      }
+        else
+      {
+        val -= x;
+
+        if (val < min)
+          val = min;
+      }
+
+      snprintf(str, sizeof(str), "%d", val);
+      input.value(str);
+
+      if (cb)
+        cb(&input, this);
+
+      return 1;
+    }
+  }
+
+  return (Fl_Group::handle(event));
+}
+
 const char *InputInt::value()
 {
   return input.value();

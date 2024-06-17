@@ -34,6 +34,7 @@ public:
            Fl_Callback *, int, int);
   ~InputInt();
   const char *value();
+  int handle(int);
   void value(const char *);
   void maximum_size(int);
   void center();
