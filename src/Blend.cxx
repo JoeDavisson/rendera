@@ -40,8 +40,8 @@ void Blend::set(const int mode)
     case TRANS:
       current_blend = trans;
       break;
-    case NON_LINEAR:
-      current_blend = nonLinear;
+    case GAMMA_CORRECT:
+      current_blend = gammaCorrect;
       break;
     case LIGHTEN:
       current_blend = lighten;
@@ -124,7 +124,7 @@ int Blend::trans(const int c1, const int c2, const int t)
                   rgba2.a + (t * (rgba1.a - rgba2.a)) / 255);
 }
 
-int Blend::nonLinear(const int c1, const int c2, const int t)
+int Blend::gammaCorrect(const int c1, const int c2, const int t)
 {
   const rgba_type rgba1 = getRgba(c1);
   const rgba_type rgba2 = getRgba(c2);
