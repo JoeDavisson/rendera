@@ -137,10 +137,11 @@ int Widget::handle(int event)
   switch (event)
   {
     case FL_ENTER:
-      Fl::focus(0);
       return 1;
     case FL_PUSH:
     case FL_DRAG:
+      Fl::focus(0);
+
       if (stepx <= 0 || stepy <= 0)
         return 0;
 
