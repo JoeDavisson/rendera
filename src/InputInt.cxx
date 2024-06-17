@@ -108,17 +108,17 @@ int InputInt::handle(int event)
 
       if (Fl::event_dy() >= 0)
       {
-        val += x;
-
-        if (val > max)
-          val = max;
-      }
-        else
-      {
         val -= x;
 
         if (val < min)
           val = min;
+      }
+        else
+      {
+        val += x;
+
+        if (val > max)
+          val = max;
       }
 
       snprintf(str, sizeof(str), "%d", val);
