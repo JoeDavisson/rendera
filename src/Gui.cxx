@@ -855,9 +855,9 @@ void Gui::init()
   pos = 28;
 
   // add font names
-  font_browse = new Fl_Hold_Browser(8, pos, 96, 192);
+  font_browse = new Fl_Hold_Browser(8, pos, 96, 384);
   font_browse->textsize(9);
-  font_browse->resize(text->x() + 8, text->y() + pos, 96, 192);
+  font_browse->resize(text->x() + 8, text->y() + pos, 96, 384);
 
   for (int i = 0; i < Fl::set_fonts(0); i++)
   {
@@ -868,7 +868,7 @@ void Gui::init()
 
   font_browse->value(0);
   font_browse->callback((Fl_Callback *)textChangedSize);
-  pos += 192 + 8;
+  pos += 384 + 8;
 
   // font size
   font_size = new InputInt(text, 40, pos, 64, 24, "Size:",
@@ -1932,6 +1932,11 @@ int Gui::getTextFontSize()
 void Gui::textChangedSize(InputInt *input, void *var)
 {
   input->redraw();
+
+  view->imgx = Project::bmp->w / 2;
+  view->imgy = Project::bmp->h / 2;
+
+  Project::tool->move(view);
 }
 
 const char *Gui::textInput()
