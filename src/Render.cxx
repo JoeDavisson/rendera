@@ -274,7 +274,7 @@ void Render::fine()
 
   KDtree::node_type test_node;
   KDtree::node_type *root, *found;
-  KDtree::node_type *points = new KDtree::node_type[count];
+  std::vector<KDtree::node_type> points(count);
 
   int best_distance;
 
@@ -285,7 +285,7 @@ void Render::fine()
     points[i].x[2] = 0;
   }
 
-  root = KDtree::build(points, count, 0);
+  root = KDtree::build(&points[0], count, 0);
 
   for (int y = stroke->y1; y <= stroke->y2; y++)
   {
@@ -312,8 +312,6 @@ void Render::fine()
     if (update(y) < 0)
       break;
   }
-
-  delete[] points;
 }
 
 // gaussian blur

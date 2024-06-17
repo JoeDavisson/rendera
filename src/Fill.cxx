@@ -272,7 +272,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
 
   KDtree::node_type test_node;
   KDtree::node_type *root, *found;
-  KDtree::node_type *points = new KDtree::node_type[count];
+  std::vector<KDtree::node_type> points(count);
 
   int best_dist;
 
@@ -326,7 +326,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
   if (tt > tb)
     std::swap(tt, tb);
 
-  root = KDtree::build(points, count, 0);
+  root = KDtree::build(&points[0], count, 0);
   Gui::progressShow((cb - ct) + 1);
 
   for (y = ct; y <= cb; y++)
@@ -373,7 +373,6 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
   }
 
   Gui::progressHide();
-  delete[] points;
 }
 
 void Fill::push(View *view)

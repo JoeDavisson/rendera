@@ -194,12 +194,11 @@ void Selection::crop(View *view)
   if (h < 1)
     h = 1;
 
-  Bitmap *temp = new Bitmap(w, h);
-  Project::bmp->blit(temp, beginx, beginy, 0, 0, w, h);
+  Bitmap temp(w, h);
+  Project::bmp->blit(&temp, beginx, beginy, 0, 0, w, h);
 
   Project::replaceImage(w, h);
-  temp->blit(Project::bmp, 0, 0, 0, 0, w, h);
-  delete temp;
+  temp.blit(Project::bmp, 0, 0, 0, 0, w, h);
 
   view->zoom = 1;
   view->ox = 0;
