@@ -1358,14 +1358,12 @@ void Gui::gridX()
 {
   view->gridx = atoi(gridx->value());
   view->drawMain(true);
-  view->redraw();
 }
 
 void Gui::gridY()
 {
   view->gridy = atoi(gridy->value());
   view->drawMain(true);
-  view->redraw();
 }
 
 void Gui::paintChangeSize(int size)
