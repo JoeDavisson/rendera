@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Native_File_Chooser.H>
 
 #include "Bitmap.H"
+#include "CheckBox.H"
 #include "Dialog.H"
 #include "DialogWindow.H"
 #include "ExportData.H"
@@ -52,6 +53,7 @@ namespace ExportOptions
     InputInt *tilex;
     InputInt *tiley;
     Fl_Choice *bpp;
+    CheckBox *aligned;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -121,6 +123,11 @@ namespace ExportOptions
     Items::bpp->resize(Items::dialog->x() + Items::dialog->w() / 2
                         - (Items::bpp->w() + ww) / 2 + ww,
                         Items::bpp->y(), Items::bpp->w(), Items::bpp->h());
+    y1 += 24 + 8;
+
+    Items::aligned = new CheckBox(Items::dialog, 0, y1, 16, 16, "Aligned (Binary)", 0);
+    Items::aligned->tooltip("Keeps binary output aligned\nto even values");
+    Items::aligned->center();
     y1 += 24 + 8;
 
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
@@ -279,8 +286,11 @@ int ExportData::endTile(FILE *outp, int ext_value)
   switch (ext_value)
   {
     case TYPE_BIN:
-//      if (fputc(0, outp) != 0)
-//         return -1;
+      if (ExportOptions::Items::aligned->value())
+      {
+        if (fputc(0, outp) != 0)
+           return -1;
+      }
       break;
     case TYPE_ASM:
       if (fprintf(outp, "\n") < 0)
