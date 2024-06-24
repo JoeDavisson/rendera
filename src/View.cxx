@@ -431,10 +431,12 @@ int View::handle(int event)
       if (Fl::event_dy() >= 0)
       {
         zoomOut(mousex / ax, mousey / ay);
+        Gui::zoomLevel();
       }
         else
       {
         zoomIn(mousex / ax, mousey / ay);
+        Gui::zoomLevel();
       }
 
       Project::tool->redraw(this);
@@ -744,8 +746,8 @@ void View::zoomIn(int x, int y)
     clipOrigin();
   }
 
+  saveCoords();
   Project::tool->redraw(this);
-  Gui::zoomLevel();
 }
 
 void View::zoomOut(int x, int y)
@@ -765,8 +767,8 @@ void View::zoomOut(int x, int y)
     clipOrigin();
   }
 
+  saveCoords();
   Project::tool->redraw(this);
-  Gui::zoomLevel();
 }
 
 void View::zoomOne()
@@ -776,9 +778,7 @@ void View::zoomOne()
   oy = 0;
 
   saveCoords();
-
-  drawMain(true);
-  Gui::zoomLevel();
+  Project::tool->redraw(this);
 }
 
 void View::scroll(int dir, int amount)
@@ -834,6 +834,8 @@ void View::scroll(int dir, int amount)
       break;
     }
   }
+
+  saveCoords();
 
   if (Project::tool->isActive())
     Project::tool->redraw(this);
