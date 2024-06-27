@@ -825,8 +825,8 @@ void Bitmap::filteredStretch(Bitmap *dest,
   const int ay = ((float)dh / sh) * 65536;
   const int bx = ((float)sw / dw) * 65536;
   const int by = ((float)sh / dh) * 65536;
-  const float bx2 = ((float)sw / dw) / 2;
-  const float by2 = ((float)sh / dh) / 2;
+  const int bx2 = ((float)sw / dw) / 2;
+  const int by2 = ((float)sh / dh) / 2;
   const int ox = (sx * ax) >> 16;
   const int oy = (sy * ay) >> 16;
 
@@ -894,6 +894,24 @@ void Bitmap::filteredStretch(Bitmap *dest,
   }
 
   // scale image
+  int div = 0;
+  int shift = 0;
+
+  // figure out a shift amount to avoid divisions
+  for (int j = -by2; j < by2; j++)
+  {
+    for (int i = -bx2; i < bx2; i++)
+    {
+      div++;
+    }
+  }
+
+  while (div > 1)
+  {
+    div /= 2;
+    shift++;
+  }
+
   for (int y = 0; y < dh; y++)
   {
     if (dy + y >= dest->h)
@@ -914,7 +932,6 @@ void Bitmap::filteredStretch(Bitmap *dest,
       int g = 0;
       int b = 0;
       int a = 0;
-      int div = 0;
 
       for (int j = -by2; j < by2; j++)
       {
@@ -926,14 +943,13 @@ void Bitmap::filteredStretch(Bitmap *dest,
           g += Gamma::fix(rgba.g);
           b += Gamma::fix(rgba.b);
           a += rgba.a;
-          div++;
         }
       }
 
-      r = Gamma::unfix(r / div);
-      g = Gamma::unfix(g / div);
-      b = Gamma::unfix(b / div);
-      a /= div;
+      r = Gamma::unfix(r >> shift);
+      g = Gamma::unfix(g >> shift);
+      b = Gamma::unfix(b >> shift);
+      a >>= shift;
 
       const int c1 = makeRgba(r, g, b, a);
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
