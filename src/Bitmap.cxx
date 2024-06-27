@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Clone.H"
+#include "Gamma.H"
 #include "Inline.H"
 #include "Palette.H"
 #include "Project.H"
@@ -712,7 +713,7 @@ void Bitmap::doubleVertical()
   }
 }
 
-// render viewport
+// render viewport with point sampling (zoom >= 1.0)
 void Bitmap::pointStretch(Bitmap *dest,
                           int sx, int sy, int sw, int sh,
                           int dx, int dy, int dw, int dh,
@@ -814,16 +815,18 @@ void Bitmap::pointStretch(Bitmap *dest,
   }
 }
 
-// render viewport using current palette
-void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
-                          int sx, int sy, int sw, int sh,
-                          int dx, int dy, int dw, int dh,
-                          bool bgr_order)
+// render viewport with filtering (zoom < 1.0)
+void Bitmap::filteredStretch(Bitmap *dest,
+                                 int sx, int sy, int sw, int sh,
+                                 int dx, int dy, int dw, int dh,
+                                 bool bgr_order)
 {
   const int ax = ((float)dw / sw) * 65536;
   const int ay = ((float)dh / sh) * 65536;
   const int bx = ((float)sw / dw) * 65536;
   const int by = ((float)sh / dh) * 65536;
+  const float bx2 = ((float)sw / dw) / 2;
+  const float by2 = ((float)sh / dh) / 2;
   const int ox = (sx * ax) >> 16;
   const int oy = (sy * ay) >> 16;
 
@@ -906,13 +909,37 @@ void Bitmap::pointStretchIndexed(Bitmap *dest, Palette *pal,
     for (int x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 16);
-      const int c = *(row[y1] + x1);
-      const int cpal = (c & 0xff000000) | (pal->data[pal->lookup(c)] & 0xffffff);
+
+      int r = 0;
+      int g = 0;
+      int b = 0;
+      int a = 0;
+      int div = 0;
+
+      for (int j = -by2; j < by2; j++)
+      {
+        for (int i = -bx2; i < bx2; i++)
+        {
+          rgba_type rgba = getRgba(getpixel(x1 + i, y1 + j));
+
+          r += Gamma::fix(rgba.r);
+          g += Gamma::fix(rgba.g);
+          b += Gamma::fix(rgba.b);
+          a += rgba.a;
+          div++;
+        }
+      }
+
+      r = Gamma::unfix(r / div);
+      g = Gamma::unfix(g / div);
+      b = Gamma::unfix(b / div);
+      a /= div;
+
+      const int c1 = makeRgba(r, g, b, a);
       const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
                           ? 0x989898 : 0x686868;
 
-      *p = convertFormat(blendFast(checker, cpal, 255 - geta(cpal)),
-                                   bgr_order);
+      *p = convertFormat(blendFast(checker, c1, 255 - a), bgr_order);
       p++;
     }
   }

@@ -36,12 +36,6 @@ public:
     ASPECT_TALL
   };
 
-  enum
-  {
-    VIEW_MODE_NORMAL,
-    VIEW_MODE_INDEXED
-  };
-
   View(Fl_Group *, int, int, int, int, const char *);
   ~View();
 
@@ -50,7 +44,6 @@ public:
   void redraw();
 
   void changeAspect(int);
-  void changeViewMode(int);
   void drawMain(bool);
   void drawGrid();
   void changeCursor();
@@ -73,7 +66,6 @@ public:
   int ox, oy;
   float zoom;
   int aspect;
-  int view_mode;
   bool panning;
   bool resizing;
   bool grid, gridsnap;

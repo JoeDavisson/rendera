@@ -116,7 +116,6 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   oy = 0;
   zoom = 1;
   aspect = ASPECT_NORMAL;
-  view_mode = VIEW_MODE_NORMAL;
   panning = false;
   resizing = false;
   last_ox = 0;
@@ -547,12 +546,6 @@ void View::changeAspect(int new_aspect)
   drawMain(true);
 }
 
-void View::changeViewMode(int new_view_mode)
-{
-  view_mode = new_view_mode;
-  drawMain(true);
-}
-
 void View::drawMain(bool refresh)
 {
   int sw = w() / zoom;
@@ -574,7 +567,7 @@ void View::drawMain(bool refresh)
 
   Bitmap *bmp = Project::bmp;
 
-  if (view_mode == VIEW_MODE_NORMAL)
+  if (zoom >= 1.0)
   {
     bmp->pointStretch(backbuf,
                       ox, oy,
@@ -583,14 +576,14 @@ void View::drawMain(bool refresh)
                       dw - offx * zoom, dh - offy * zoom,
                       bgr_order);
   }
-  else if (view_mode == VIEW_MODE_INDEXED)
+    else
   {
-    bmp->pointStretchIndexed(backbuf, Project::palette,
-                             ox, oy,
-                             sw - offx, sh - offy,
-                             offx * zoom, offy * zoom,
-                             dw - offx * zoom, dh - offy * zoom,
-                             bgr_order);
+    bmp->filteredStretch(backbuf,
+                          ox, oy,
+                          sw - offx, sh - offy,
+                          offx * zoom, offy * zoom,
+                          dw - offx * zoom, dh - offy * zoom,
+                          bgr_order);
   }
 
   if (grid)
