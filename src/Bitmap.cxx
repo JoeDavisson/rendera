@@ -825,8 +825,8 @@ void Bitmap::filteredStretch(Bitmap *dest,
   const int ay = ((float)dh / sh) * 65536;
   const int bx = ((float)sw / dw) * 65536;
   const int by = ((float)sh / dh) * 65536;
-  const int bx2 = ((float)sw / dw);
-  const int by2 = ((float)sh / dh);
+  const int bx2 = ((float)sw / dw) / 2;
+  const int by2 = ((float)sh / dh) / 2;
   const int ox = (sx * ax) >> 16;
   const int oy = (sy * ay) >> 16;
 
@@ -898,9 +898,9 @@ void Bitmap::filteredStretch(Bitmap *dest,
   int shift = 0;
 
   // figure out a shift amount to avoid divisions
-  for (int j = 0; j < by2; j++)
+  for (int j = -by2; j < by2; j++)
   {
-    for (int i = 0; i < bx2; i++)
+    for (int i = -bx2; i < bx2; i++)
     {
       div++;
     }
@@ -919,10 +919,10 @@ void Bitmap::filteredStretch(Bitmap *dest,
 
     const int y1 = sy + ((y * by) >> 16);
 
-    if (y1 - 1 < 0)
+    if ((y1 - by2) < 0)
       continue;
 
-    if(y1 + by2 - 1 >= h)
+    if ((y1 + by2) >= h)
       break;
 
     int *p = dest->row[dy + y] + dx;
@@ -931,10 +931,10 @@ void Bitmap::filteredStretch(Bitmap *dest,
     {
       const int x1 = sx + ((x * bx) >> 16);
 
-      if (x1 - 1 < 0)
+      if ((x1 - bx2) < 0)
         continue;
 
-      if (x1 + bx2 - 1 >= w)
+      if ((x1 + bx2) >= h)
         break;
 
       int r = 0;
@@ -942,11 +942,11 @@ void Bitmap::filteredStretch(Bitmap *dest,
       int b = 0;
       int a = 0;
 
-      for (int j = 0; j < by2; j++)
+      for (int j = -by2; j < by2; j++)
       {
-        for (int i = 0; i < bx2; i++)
+        for (int i = -bx2; i < bx2; i++)
         {
-          rgba_type rgba = getRgba(*(row[y1 + j - 1] + x1 + i - 1));
+          rgba_type rgba = getRgba(getpixel(x1 + i, y1 + j));
 
           r += Gamma::fix(rgba.r);
           g += Gamma::fix(rgba.g);
