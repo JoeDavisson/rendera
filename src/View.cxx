@@ -467,6 +467,8 @@ int View::handle(int event)
 
     case FL_PASTE:
     {
+      changeCursor();
+
       #ifndef WIN32
         if (strncasecmp(Fl::event_text(), "file://", 7) != 0)
           return 1;
@@ -517,8 +519,6 @@ int View::handle(int event)
       return 1;
     }
 
-    changeCursor();
-
     return 1;
   }
 
@@ -567,12 +567,24 @@ void View::drawMain(bool refresh)
 
   Bitmap *bmp = Project::bmp;
 
-  bmp->pointStretch(backbuf,
-                    ox, oy,
-                    sw - offx, sh - offy,
-                    offx * zoom, offy * zoom,
-                    dw - offx * zoom, dh - offy * zoom,
-                    bgr_order);
+  if (zoom >= 1.0)
+  {
+    bmp->pointStretch(backbuf,
+                      ox, oy,
+                      sw - offx, sh - offy,
+                      offx * zoom, offy * zoom,
+                      dw - offx * zoom, dh - offy * zoom,
+                      bgr_order);
+  }
+    else
+  {
+    bmp->filteredStretch(backbuf,
+                         ox, oy,
+                         sw - offx, sh - offy,
+                         offx * zoom, offy * zoom,
+                         dw - offx * zoom, dh - offy * zoom,
+                         bgr_order);
+  }
 
   if (grid)
     drawGrid();

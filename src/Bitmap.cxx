@@ -713,7 +713,7 @@ void Bitmap::doubleVertical()
   }
 }
 
-// render viewport
+// render viewport (zoom >= 1.0)
 void Bitmap::pointStretch(Bitmap *dest,
                           int sx, int sy, int sw, int sh,
                           int dx, int dy, int dw, int dh,
@@ -789,17 +789,19 @@ void Bitmap::pointStretch(Bitmap *dest,
     }
   }
 
+  for (int y = 0; y < dh; y++)
+  {
+    if ((sy + ((y * by) >> 16) >= h) || (dy + y >= dest->h))
+    {
+      dh = y;
+      break;
+    }
+  }
+
   // scale image
   for (int y = 0; y < dh; y++)
   {
-    if (dy + y >= dest->h)
-      break;
-
     const int y1 = sy + ((y * by) >> 16);
-
-    if (y1 >= h)
-      break;
-
     int *p = dest->row[dy + y] + dx;
 
     for (int x = 0; x < dw; x++)
@@ -810,6 +812,154 @@ void Bitmap::pointStretch(Bitmap *dest,
                           ? 0x989898 : 0x686868;
 
       *p = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
+      p++;
+    }
+  }
+}
+
+// render viewport with filtering (zoom < 1.0)
+void Bitmap::filteredStretch(Bitmap *dest,
+                             int sx, int sy, int sw, int sh,
+                             int dx, int dy, int dw, int dh,
+                             bool bgr_order)
+{
+  const int ax = ((float)dw / sw) * 65536;
+  const int ay = ((float)dh / sh) * 65536;
+  const int bx = ((float)sw / dw) * 65536;
+  const int by = ((float)sh / dh) * 65536;
+  const int bx2 = ((float)sw / dw) / 2;
+  const int by2 = ((float)sh / dh) / 2;
+  const int checker_offset_x = (sx * ax) >> 16;
+  const int checker_offset_y = (sy * ay) >> 16;
+
+  // clipping
+  if (sx < 0)
+    sx = 0;
+
+  if (sy < 0)
+    sy = 0;
+
+  if (dx < dest->cl)
+  {
+    const int d = dest->cl - dx;
+    dx = dest->cl;
+    dw -= d;
+    sx += (d * ax) >> 16;
+    sw -= (d * ax) >> 16;
+  }
+
+  if (dx + dw > dest->cr)
+  {
+    const int d = dx + dw - dest->cr;
+    dw -= d;
+    sw -= (d * ax) >> 16;
+  }
+
+  if (dy < dest->ct)
+  {
+    const int d = dest->ct - dy;
+    dy = dest->ct;
+    dh -= d;
+    sy += (d * ay) >> 16;
+    sh -= (d * ay) >> 16;
+  }
+
+  if (dy + dh > dest->cb)
+  {
+    const int d = dy + dh - dest->cb;
+    dh -= d;
+    sh -= (d * ay) >> 16;
+  }
+
+  dw = (sw * ax) >> 16;
+  dh = (sh * ay) >> 16;
+
+  if (ax > 1)
+    dw += ax;
+
+  if (ay > 1)
+    dh += ay;
+
+  if (sw < 1 || sh < 1)
+    return;
+
+  if (dw < 1 || dh < 1)
+    return;
+
+  for (int x = 0; x < dw; x++)
+  {
+    if ((sx + ((x * bx) >> 16) >= w) || (dx + x >= dest->w))
+    {
+      dw = x;
+      break;
+    }
+  }
+
+  for (int y = 0; y < dh; y++)
+  {
+    if ((sy + ((y * by) >> 16) >= h) || (dy + y >= dest->h))
+    {
+      dh = y;
+      break;
+    }
+  }
+
+  // scale image
+  int div = 0;
+  int shift = 0;
+
+  // figure out a shift amount to avoid division
+  for (int j = -by2; j < by2; j++)
+  {
+    for (int i = -bx2; i < bx2; i++)
+    {
+      div++;
+    }
+  }
+
+  while (div > 1)
+  {
+    div /= 2;
+    shift++;
+  }
+
+  for (int y = 1; y < dh - 1; y++)
+  {
+    const int y1 = sy + ((y * by) >> 16);
+    const int checker_y = ((dy + y + checker_offset_y) >> 3);
+    int *p = dest->row[dy + y] + dx;
+
+    for (int x = 1; x < dw - 1; x++)
+    {
+      const int x1 = sx + ((x * bx) >> 16);
+      int r = 0;
+      int g = 0;
+      int b = 0;
+      int a = 0;
+
+      for (int j = y1 - by2; j < y1 + by2; j++)
+      {
+        for (int i = x1 - bx2; i < x1 + bx2; i++)
+        {
+          const int c = *(row[j] + i);
+
+          r += Gamma::fix(c & 0xff);
+          g += Gamma::fix((c >> 8) & 0xff);
+          b += Gamma::fix((c >> 16) & 0xff);
+          a += (c >> 24) & 0xff;
+        }
+      }
+
+      r = Gamma::unfix(r >> shift);
+      g = Gamma::unfix(g >> shift);
+      b = Gamma::unfix(b >> shift);
+      a >>= shift;
+
+      const int c1 = makeRgba(r, g, b, a);
+      const int checker_x = ((dx + x + checker_offset_x) >> 3);
+      const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
+
+      *p = convertFormat(blendFast(checker, c1, 255 - a), bgr_order);
       p++;
     }
   }
