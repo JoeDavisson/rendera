@@ -723,8 +723,8 @@ void Bitmap::pointStretch(Bitmap *dest,
   const int ay = ((float)dh / sh) * 65536;
   const int bx = ((float)sw / dw) * 65536;
   const int by = ((float)sh / dh) * 65536;
-  const int ox = (sx * ax) >> 16;
-  const int oy = (sy * ay) >> 16;
+  const int checker_offset_x = (sx * ax) >> 16;
+  const int checker_offset_y = (sy * ay) >> 16;
 
   // clipping
   if (sx < 0)
@@ -802,14 +802,15 @@ void Bitmap::pointStretch(Bitmap *dest,
   for (int y = 0; y < dh; y++)
   {
     const int y1 = sy + ((y * by) >> 16);
+    const int checker_y = ((dy + y + checker_offset_y) >> 3);
     int *p = dest->row[dy + y] + dx;
 
     for (int x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 16);
       const int c = *(row[y1] + x1);
-      const int checker = (((dx + x + ox) >> 3) ^ ((dy + y + oy) >> 3)) & 1
-                          ? 0x989898 : 0x686868;
+      const int checker_x = ((dx + x + checker_offset_x) >> 3);
+      const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
 
       *p = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
       p++;
@@ -827,8 +828,12 @@ void Bitmap::filteredStretch(Bitmap *dest,
   const int ay = ((float)dh / sh) * 65536;
   const int bx = ((float)sw / dw) * 65536;
   const int by = ((float)sh / dh) * 65536;
+//  const int bx1 = ((float)sw / dw);
+//  const int by1 = ((float)sh / dh);
   const int bx2 = ((float)sw / dw) / 2;
   const int by2 = ((float)sh / dh) / 2;
+  const int bx1 = bx2 * 2;
+  const int by1 = by2 * 2;
   const int checker_offset_x = (sx * ax) >> 16;
   const int checker_offset_y = (sy * ay) >> 16;
 
@@ -917,6 +922,9 @@ void Bitmap::filteredStretch(Bitmap *dest,
     }
   }
 
+  if (div < 1)
+    div = 1;
+
   while (div > 1)
   {
     div /= 2;
@@ -932,22 +940,27 @@ void Bitmap::filteredStretch(Bitmap *dest,
     for (int x = 1; x < dw - 1; x++)
     {
       const int x1 = sx + ((x * bx) >> 16);
+
       int r = 0;
       int g = 0;
       int b = 0;
       int a = 0;
 
+      int *q = row[y1 - by2] + x1 - bx2;
+
       for (int j = y1 - by2; j < y1 + by2; j++)
       {
         for (int i = x1 - bx2; i < x1 + bx2; i++)
         {
-          const int c = *(row[j] + i);
+          r += Gamma::fix(*q & 0xff);
+          g += Gamma::fix((*q >> 8) & 0xff);
+          b += Gamma::fix((*q >> 16) & 0xff);
+          a += (*q >> 24) & 0xff;
 
-          r += Gamma::fix(c & 0xff);
-          g += Gamma::fix((c >> 8) & 0xff);
-          b += Gamma::fix((c >> 16) & 0xff);
-          a += (c >> 24) & 0xff;
+          q++;
         }
+
+        q += w - bx1;
       }
 
       r = Gamma::unfix(r >> shift);
