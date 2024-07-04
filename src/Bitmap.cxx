@@ -828,8 +828,6 @@ void Bitmap::filteredStretch(Bitmap *dest,
   const int ay = ((float)dh / sh) * 65536;
   const int bx = ((float)sw / dw) * 65536;
   const int by = ((float)sh / dh) * 65536;
-//  const int bx1 = ((float)sw / dw);
-//  const int by1 = ((float)sh / dh);
   const int bx2 = ((float)sw / dw) / 2;
   const int by2 = ((float)sh / dh) / 2;
   const int bx1 = bx2 * 2;
@@ -914,9 +912,9 @@ void Bitmap::filteredStretch(Bitmap *dest,
   int shift = 0;
 
   // figure out a shift amount to avoid division
-  for (int j = -by2; j < by2; j++)
+  for (int j = 0; j < by1; j++)
   {
-    for (int i = -bx2; i < bx2; i++)
+    for (int i = 0; i < bx1; i++)
     {
       div++;
     }
@@ -948,9 +946,9 @@ void Bitmap::filteredStretch(Bitmap *dest,
 
       int *q = row[y1 - by2] + x1 - bx2;
 
-      for (int j = y1 - by2; j < y1 + by2; j++)
+      for (int j = 0; j < by1; j++)
       {
-        for (int i = x1 - bx2; i < x1 + bx2; i++)
+        for (int i = 0; i < bx1; i++)
         {
           r += Gamma::fix(*q & 0xff);
           g += Gamma::fix((*q >> 8) & 0xff);
