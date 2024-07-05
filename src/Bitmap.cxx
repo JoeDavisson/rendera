@@ -789,19 +789,14 @@ void Bitmap::pointStretch(Bitmap *dest,
     }
   }
 
-  for (int y = 0; y < dh; y++)
-  {
-    if ((sy + ((y * by) >> 16) >= h) || (dy + y >= dest->h))
-    {
-      dh = y;
-      break;
-    }
-  }
-
   // scale image
   for (int y = 0; y < dh; y++)
   {
     const int y1 = sy + ((y * by) >> 16);
+
+    if ((sy + ((y * by) >> 16) >= h) || (dy + y >= dest->h))
+      break;
+
     const int checker_y = ((dy + y + checker_offset_y) >> 3);
     int *p = dest->row[dy + y] + dx;
 
@@ -898,15 +893,6 @@ void Bitmap::filteredStretch(Bitmap *dest,
     }
   }
 
-  for (int y = 0; y < dh; y++)
-  {
-    if ((sy + ((y * by) >> 16) >= h) || (dy + y >= dest->h))
-    {
-      dh = y;
-      break;
-    }
-  }
-
   // scale image
   int div = 0;
   int shift = 0;
@@ -932,6 +918,10 @@ void Bitmap::filteredStretch(Bitmap *dest,
   for (int y = 1; y < dh - 1; y++)
   {
     const int y1 = sy + ((y * by) >> 16);
+
+    if ((sy + ((y * by) >> 16) >= h) || (dy + y >= dest->h))
+      break;
+
     const int checker_y = ((dy + y + checker_offset_y) >> 3);
     int *p = dest->row[dy + y] + dx;
 
