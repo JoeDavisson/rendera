@@ -719,60 +719,26 @@ void Bitmap::pointStretch(Bitmap *dest,
                           int dx, int dy, int dw, int dh,
                           bool bgr_order)
 {
-  const int ax = ((float)dw / sw) * 65536;
-  const int ay = ((float)dh / sh) * 65536;
-  const int bx = ((float)sw / dw) * 65536;
-  const int by = ((float)sh / dh) * 65536;
+  // scaling ratios
+  const int ax = (dw << 16) / sw;
+  const int ay = (dh << 16) / sh;
+  const int bx = (sw << 16) / dw;
+  const int by = (sh << 16) / dh;
+
+  // alpha checkerboard placement
   const int checker_offset_x = (sx * ax) >> 16;
   const int checker_offset_y = (sy * ay) >> 16;
 
-  // clipping
+  // clip negative
   if (sx < 0)
     sx = 0;
 
   if (sy < 0)
     sy = 0;
 
-  if (dx < dest->cl)
-  {
-    const int d = dest->cl - dx;
-    dx = dest->cl;
-    dw -= d;
-    sx += (d * ax) >> 16;
-    sw -= (d * ax) >> 16;
-  }
-
-  if (dx + dw > dest->cr)
-  {
-    const int d = dx + dw - dest->cr;
-    dw -= d;
-    sw -= (d * ax) >> 16;
-  }
-
-  if (dy < dest->ct)
-  {
-    const int d = dest->ct - dy;
-    dy = dest->ct;
-    dh -= d;
-    sy += (d * ay) >> 16;
-    sh -= (d * ay) >> 16;
-  }
-
-  if (dy + dh > dest->cb)
-  {
-    const int d = dy + dh - dest->cb;
-    dh -= d;
-    sh -= (d * ay) >> 16;
-  }
-
+  // recalculate size
   dw = (sw * ax) >> 16;
   dh = (sh * ay) >> 16;
-
-  if (ax > 1)
-    dw += ax;
-
-  if (ay > 1)
-    dh += ay;
 
   if (sw < 1 || sh < 1)
     return;
@@ -780,6 +746,14 @@ void Bitmap::pointStretch(Bitmap *dest,
   if (dw < 1 || dh < 1)
     return;
 
+  // add in extra so the right/bottom edge gets filled
+  if (ax > 1)
+    dw += ax;
+
+  if (ay > 1)
+    dh += ay;
+
+  // clip destination width (avoids inner loop test)
   for (int x = 0; x < dw; x++)
   {
     if ((sx + ((x * bx) >> 16) >= w) || (dx + x >= dest->w))
