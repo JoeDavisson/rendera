@@ -63,6 +63,7 @@ public:
   void doubleHorizontal();
   void doubleVertical();
   void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);
+  void filteredStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);
   void flipHorizontal();
   void flipVertical();
   void rotate90(bool);

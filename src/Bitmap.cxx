@@ -19,6 +19,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include <algorithm>
+#include <thread>
+#include <vector>
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -126,8 +128,9 @@ void Bitmap::resize(int width, int height)
 
 void Bitmap::clear(const int c)
 {
-  for (int i = 0; i < w * h; i++)
-    data[i] = c;
+//  for (int i = 0; i < w * h; i++)
+//    data[i] = c;
+  std::fill_n(data, w * h, c);
 }
 
 void Bitmap::hline(int x1, int y, int x2, int c, int t)
@@ -713,17 +716,17 @@ void Bitmap::doubleVertical()
   }
 }
 
-// render viewport
+// render viewport (zoom >= 1.0)
 void Bitmap::pointStretch(Bitmap *dest,
                           int sx, int sy, int sw, int sh,
                           int dx, int dy, int dw, int dh,
                           bool bgr_order)
 {
   // scaling ratios
-  const int ax = (dw << 16) / sw;
-  const int ay = (dh << 16) / sh;
-  const int bx = (sw << 16) / dw;
-  const int by = (sh << 16) / dh;
+  const int ax = ((float)dw / sw) * 65536;
+  const int ay = ((float)dh / sh) * 65536;
+  const int bx = ((float)sw / dw) * 65536;
+  const int by = ((float)sh / dh) * 65536;
 
   // alpha checkerboard placement
   const int checker_offset_x = (sx * ax) >> 16;
@@ -782,6 +785,172 @@ void Bitmap::pointStretch(Bitmap *dest,
       const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
 
       *p = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
+      p++;
+    }
+  }
+}
+
+// render viewport (zoom < 1.0)
+void Bitmap::filteredStretch(Bitmap *dest,
+                             int sx, int sy, int sw, int sh,
+                             int dx, int dy, int dw, int dh,
+                             bool bgr_order)
+{
+  // scaling ratios
+  const int ax = ((float)dw / sw) * 65536;
+  const int ay = ((float)dh / sh) * 65536;
+  const int bx = ((float)sw / dw) * 65536;
+  const int by = ((float)sh / dh) * 65536;
+  const int bx2 = ((float)sw / dw) / 2;
+  const int by2 = ((float)sh / dh) / 2;
+  const int bx1 = bx2 * 2;
+  const int by1 = by2 * 2;
+
+  // alpha checkerboard placement
+  const int checker_offset_x = (sx * ax) >> 16;
+  const int checker_offset_y = (sy * ay) >> 16;
+
+  // clip negative
+  if (sx < 0)
+    sx = 0;
+
+  if (sy < 0)
+    sy = 0;
+
+  // recalculate size
+  dw = (sw * ax) >> 16;
+  dh = (sh * ay) >> 16;
+
+  if (sw < 1 || sh < 1)
+    return;
+
+  if (dw < 1 || dh < 1)
+    return;
+
+  // add in extra so the right/bottom edge gets filled
+  if (ax > 1)
+    dw += ax;
+
+  if (ay > 1)
+    dh += ay;
+
+  // clip destination width (avoids inner loop test)
+  for (int x = 0; x < dw; x++)
+  {
+    if ((sx + ((x * bx) >> 16) >= w) || (dx + x >= dest->w))
+    {
+      dw = x;
+      break;
+    }
+  }
+ 
+  // figure out a shift amount to avoid division
+  int div = 0;
+  int shift = 0;
+
+  for (int j = 0; j < by1; j++)
+  {
+    for (int i = 0; i < bx1; i++)
+    {
+      div++;
+    }
+  }
+
+  if (div < 1)
+    div = 1;
+
+  while (div > 1)
+  {
+    div /= 2;
+    shift++;
+  }
+
+  // scale image
+  for (int y = 0; y < dh; y++)
+  {
+    const int y1 = sy + ((y * by) >> 16);
+
+    if (y1 - by2 < 0)
+      continue;
+
+    if (y1 + by2 - 1 >= h)
+      break;
+
+    if ((sy + ((y * by) >> 16) >= h) || (dy + y >= dest->h))
+      break;
+
+    const int checker_y = ((dy + y + checker_offset_y) >> 3);
+    int *p = dest->row[dy + y] + dx;
+
+    for (int x = 0; x < dw; x++)
+    {
+      const int x1 = sx + ((x * bx) >> 16);
+
+      if (x1 - bx2 < 0)
+        continue;
+
+      if (x1 + bx2 - 1 >= w)
+        break;
+
+      int r = 0;
+      int g = 0;
+      int b = 0;
+      int a = 0;
+
+      int *q = row[y1 - by2] + x1 - bx2;
+
+      for (int j = 0; j < by1; j++)
+      {
+        for (int i = 0; i < bx1; i++)
+        {
+          const int r_temp = *q & 0xff;
+          const int g_temp = (*q >> 8) & 0xff;
+          const int b_temp = (*q >> 16) & 0xff;
+          const int a_temp = (*q >> 24) & 0xff;
+
+          r += r_temp * r_temp;
+          g += g_temp * g_temp;
+          b += b_temp * b_temp;
+          a += a_temp;
+
+          q++;
+        }
+
+        q += w - bx1;
+      }
+
+      r = __builtin_sqrt(r >> shift);
+      g = __builtin_sqrt(g >> shift);
+      b = __builtin_sqrt(b >> shift);
+      a >>= shift;
+
+/*
+      for (int j = 0; j < by1; j++)
+      {
+        for (int i = 0; i < bx1; i++)
+        {
+          r += Gamma::fix(*q & 0xff);
+          g += Gamma::fix((*q >> 8) & 0xff);
+          b += Gamma::fix((*q >> 16) & 0xff);
+          a += (*q >> 24) & 0xff;
+
+          q++;
+        }
+
+        q += w - bx1;
+      }
+
+      r = Gamma::unfix(r >> shift);
+      g = Gamma::unfix(g >> shift);
+      b = Gamma::unfix(b >> shift);
+      a >>= shift;
+*/
+
+      const int c = makeRgba(r, g, b, a);
+      const int checker_x = ((dx + x + checker_offset_x) >> 3);
+      const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
+
+      *p = convertFormat(blendFast(checker, c, 255 - a), bgr_order);
       p++;
     }
   }
