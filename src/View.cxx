@@ -130,6 +130,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   oldimgy = 0;
   rendering = false;
   bgr_order = false;
+  filter = false;
 
   //FIXME this should handle desktop resolution changes
   #if defined linux
@@ -567,7 +568,7 @@ void View::drawMain(bool refresh)
 
   Bitmap *bmp = Project::bmp;
 
-  if (zoom >= 1.0)
+  if (zoom >= 1.0 || filter == false)
   {
     bmp->pointStretch(backbuf,
                       ox, oy,
@@ -584,14 +585,6 @@ void View::drawMain(bool refresh)
                          offx * zoom, offy * zoom,
                          dw - offx * zoom, dh - offy * zoom,
                          bgr_order);
-/*
-    bmp->filteredStretch(backbuf,
-                         ox, oy,
-                         sw - offx, sh - offy,
-                         offx * zoom, offy * zoom,
-                         dw - offx * zoom, dh - offy * zoom,
-                         bgr_order);
-*/
   }
 
   if (grid)

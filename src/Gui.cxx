@@ -111,6 +111,7 @@ namespace
   InputInt *gridx;
   InputInt *gridy;
   Fl_Choice *aspect;
+  ToggleButton *filter;
 
   // tools
   Widget *tool;
@@ -575,7 +576,6 @@ void Gui::init()
   pos += 64 + 8;
 
   new Separator(top, pos, 4, 2, 34, "");
-
   pos += 8;
 
   aspect = new Fl_Choice(pos, 8, 96, 24, "");
@@ -587,12 +587,16 @@ void Gui::init()
   aspect->add("Tall (1:2)");
   aspect->value(0);
   aspect->callback((Fl_Callback *)aspectMode);
-
   pos += 96 + 8;
 
   new Separator(top, pos, 4, 2, 34, "");
-
   pos += 8;
+
+  filter = new ToggleButton(top, pos, 8, 24, 24,
+                            "Smooth Display\nWhen Zoomed Out",
+                            images_filter_png,
+                            (Fl_Callback *)filterToggle);
+  pos += 24 + 8;
 
   top->resizable(0);
   top->end();
@@ -2296,6 +2300,12 @@ void Gui::fillReset()
 {
   fill_range->value("0");
   fill_feather->value("0");
+}
+
+void Gui::filterToggle()
+{
+  view->filter = filter->var ? true : false;
+  view->drawMain(true);
 }
 
 // use default interval

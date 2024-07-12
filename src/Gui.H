@@ -75,6 +75,7 @@ public:
   static void transUpdate(int);
 
   static void fillReset();
+  static void filterToggle();
 
   static void getcolorUpdate(int);
 

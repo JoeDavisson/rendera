@@ -74,6 +74,7 @@ public:
   int bx, by, bw, bh;
   bool rendering;
   bool bgr_order;
+  bool filter;
   int button;
   int button1, button2, button3;
   bool dclick;
