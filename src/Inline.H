@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 static int rnd_seed = 12345;
 
-// stuff for extracting all RGBA values quickly
 struct rgba_type
 {
 #if (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
@@ -117,33 +116,15 @@ inline int getv(const int c)
 inline int getl(const int c)
 {
   return ((76 * getr(c)) + (150 * getg(c)) + (29 * getb(c))) / 255;
-
-/*
-  const rgba_type rgba = getRgba(c);
-
-  return ((((rgba.r << 6) + (rgba.r << 3) + (rgba.r << 2)) +
-           ((rgba.g << 7) + (rgba.g << 4) + (rgba.g << 2) + (rgba.g >> 1)) +
-           ((rgba.b << 4) + (rgba.b << 3) + (rgba.b << 2) + (rgba.b)))) >> 8;
-*/
 }
 
 // get rec 601 luminance from unpacked RGB values
 inline int getlUnpacked(const int r, const int g, const int b)
 {
   return (76 * r + 150 * g + 29 * b) / 255;
-/*
-  return ((((r << 6) + (r << 3) + (r << 2)) +
-           ((g << 7) + (g << 4) + (g << 2) + (g >> 1)) +
-           ((b << 4) + (b << 3) + (b << 2) + (b)))) >> 8;
-*/
 }
 
-// 76 (r << 6) + (r << 3) + (r << 2) // 76
-// 150 (g << 7) + (g << 4) + (g << 2) + (g >> 1)
-// 29  (b << 4) + (b << 3) + (b << 2) + (b)
-
-
-// scales a gray value to a particular level
+// scales value to a particular level
 inline int scaleVal(const int a, const int b)
 {
   return (a * (255 - b) / 255) + b;
@@ -185,8 +166,7 @@ inline int blendFast(const int c1, const int c2, const int t)
 }
 
 // convert internal RGB format to whatever the graphics card needs
-// currently only supporting RGB/BGR as I don't think anything
-// else really exists
+// currently only supporting RGB/BGR
 inline int convertFormat(const int c, const bool bgr_order)
 {
   if (bgr_order)

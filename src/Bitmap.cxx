@@ -791,6 +791,7 @@ void Bitmap::pointStretch(Bitmap *dest,
 }
 
 // render viewport (zoom < 1.0)
+// this uses a gamma of 2.0, not 2.2 in order to avoid using tables
 void Bitmap::filteredStretch(Bitmap *dest,
                              int sx, int sy, int sw, int sh,
                              int dx, int dy, int dw, int dh,
@@ -897,21 +898,16 @@ void Bitmap::filteredStretch(Bitmap *dest,
       int b = 0;
       int a = 0;
 
-      int *q = row[y1 - by2] + x1 - bx2;
+      rgba_type *q = (rgba_type *)row[y1 - by2] + x1 - bx2;
 
       for (int j = 0; j < by1; j++)
       {
         for (int i = 0; i < bx1; i++)
         {
-          const int r_temp = *q & 0xff;
-          const int g_temp = (*q >> 8) & 0xff;
-          const int b_temp = (*q >> 16) & 0xff;
-          const int a_temp = (*q >> 24) & 0xff;
-
-          r += r_temp * r_temp;
-          g += g_temp * g_temp;
-          b += b_temp * b_temp;
-          a += a_temp;
+          r += q->r * q->r;
+          g += q->g * q->g;
+          b += q->b * q->b;
+          a += q->a;
 
           q++;
         }
@@ -923,28 +919,6 @@ void Bitmap::filteredStretch(Bitmap *dest,
       g = __builtin_sqrt(g >> shift);
       b = __builtin_sqrt(b >> shift);
       a >>= shift;
-
-/*
-      for (int j = 0; j < by1; j++)
-      {
-        for (int i = 0; i < bx1; i++)
-        {
-          r += Gamma::fix(*q & 0xff);
-          g += Gamma::fix((*q >> 8) & 0xff);
-          b += Gamma::fix((*q >> 16) & 0xff);
-          a += (*q >> 24) & 0xff;
-
-          q++;
-        }
-
-        q += w - bx1;
-      }
-
-      r = Gamma::unfix(r >> shift);
-      g = Gamma::unfix(g >> shift);
-      b = Gamma::unfix(b >> shift);
-      a >>= shift;
-*/
 
       const int c = makeRgba(r, g, b, a);
       const int checker_x = ((dx + x + checker_offset_x) >> 3);
