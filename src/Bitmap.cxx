@@ -851,16 +851,12 @@ void Bitmap::filteredStretch(Bitmap *dest,
   }
 
   // scale image
-  int last_y1 = 0;
-
   for (int y = 0; y < dh; y++)
   {
     const int y1 = sy + ((y * by) >> 16);
 
-    if (y1 == last_y1 || y1 - by2 < 0)
+    if (y1 - by2 < 0)
       continue;
-
-    last_y1 = y1;
 
     if (y1 + by2 - 1 >= h || dy + y >= dest->h)
       break;
@@ -868,13 +864,11 @@ void Bitmap::filteredStretch(Bitmap *dest,
     const int checker_y = ((dy + y + checker_offset_y) >> 3);
     int *p = dest->row[dy + y] + dx;
 
-    int last_x1 = 0;
-
     for (int x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 16);
 
-      if (x1 == last_x1 || x1 - bx2 < 0)
+      if (x1 - bx2 < 0)
         continue;
 
       if (x1 + bx2 - 1 >= w || dx + x >= dest->w)
