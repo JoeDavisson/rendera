@@ -896,9 +896,9 @@ void Bitmap::filteredStretch(Bitmap *dest,
         q += w - bx1;
       }
 
-      r = std::sqrt(r >> shift);
-      g = std::sqrt(g >> shift);
-      b = std::sqrt(b >> shift);
+      r = std::sqrt((float)(r >> shift));
+      g = std::sqrt((float)(g >> shift));
+      b = std::sqrt((float)(b >> shift));
       a >>= shift;
 
       const int c = makeRgba(r, g, b, a);
