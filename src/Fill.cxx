@@ -94,7 +94,7 @@ int Fill::fineEdge(int x1, int y1, const int x2, const int y2,
   x1 -= x2;
   y1 -= y2;
 
-  const float d = __builtin_sqrtf(x1 * x1 + y1 * y1);
+  const float d = std::sqrt(x1 * x1 + y1 * y1);
   const int s = (255 - trans) / (feather + 1);
   int temp = s * d;
 

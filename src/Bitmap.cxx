@@ -756,22 +756,12 @@ void Bitmap::pointStretch(Bitmap *dest,
   if (ay > 1)
     dh += ay;
 
-  // clip destination width (avoids inner loop test)
-  for (int x = 0; x < dw; x++)
-  {
-    if ((sx + ((x * bx) >> 16) >= w) || (dx + x >= dest->w))
-    {
-      dw = x;
-      break;
-    }
-  }
-
   // scale image
   for (int y = 0; y < dh; y++)
   {
     const int y1 = sy + ((y * by) >> 16);
 
-    if ((sy + ((y * by) >> 16) >= h) || (dy + y >= dest->h))
+    if (y1 >= h || dy + y >= dest->h)
       break;
 
     const int checker_y = ((dy + y + checker_offset_y) >> 3);
@@ -780,6 +770,10 @@ void Bitmap::pointStretch(Bitmap *dest,
     for (int x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 16);
+
+      if (x1 >= w || dx + x >= dest->w)
+        break;
+
       const int c = *(row[y1] + x1);
       const int checker_x = ((dx + x + checker_offset_x) >> 3);
       const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
@@ -835,16 +829,6 @@ void Bitmap::filteredStretch(Bitmap *dest,
   if (ay > 1)
     dh += ay;
 
-  // clip destination width (avoids inner loop test)
-  for (int x = 0; x < dw; x++)
-  {
-    if ((sx + ((x * bx) >> 16) >= w) || (dx + x >= dest->w))
-    {
-      dw = x;
-      break;
-    }
-  }
- 
   // figure out a shift amount to avoid division
   int div = 0;
   int shift = 0;
@@ -867,30 +851,33 @@ void Bitmap::filteredStretch(Bitmap *dest,
   }
 
   // scale image
+  int last_y1 = 0;
+
   for (int y = 0; y < dh; y++)
   {
     const int y1 = sy + ((y * by) >> 16);
 
-    if (y1 - by2 < 0)
+    if (y1 == last_y1 || y1 - by2 < 0)
       continue;
 
-    if (y1 + by2 - 1 >= h)
-      break;
+    last_y1 = y1;
 
-    if ((sy + ((y * by) >> 16) >= h) || (dy + y >= dest->h))
+    if (y1 + by2 - 1 >= h || dy + y >= dest->h)
       break;
 
     const int checker_y = ((dy + y + checker_offset_y) >> 3);
     int *p = dest->row[dy + y] + dx;
 
+    int last_x1 = 0;
+
     for (int x = 0; x < dw; x++)
     {
       const int x1 = sx + ((x * bx) >> 16);
 
-      if (x1 - bx2 < 0)
+      if (x1 == last_x1 || x1 - bx2 < 0)
         continue;
 
-      if (x1 + bx2 - 1 >= w)
+      if (x1 + bx2 - 1 >= w || dx + x >= dest->w)
         break;
 
       int r = 0;
@@ -915,9 +902,9 @@ void Bitmap::filteredStretch(Bitmap *dest,
         q += w - bx1;
       }
 
-      r = __builtin_sqrt(r >> shift);
-      g = __builtin_sqrt(g >> shift);
-      b = __builtin_sqrt(b >> shift);
+      r = std::sqrt(r >> shift);
+      g = std::sqrt(g >> shift);
+      b = std::sqrt(b >> shift);
       a >>= shift;
 
       const int c = makeRgba(r, g, b, a);
