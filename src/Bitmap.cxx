@@ -785,7 +785,6 @@ void Bitmap::pointStretch(Bitmap *dest,
 }
 
 // render viewport (zoom < 1.0)
-// this uses a gamma of 2.0, not 2.2 in order to avoid using tables
 void Bitmap::filteredStretch(Bitmap *dest,
                              int sx, int sy, int sw, int sh,
                              int dx, int dy, int dw, int dh,
@@ -885,9 +884,9 @@ void Bitmap::filteredStretch(Bitmap *dest,
       {
         for (int i = 0; i < bx1; i++)
         {
-          r += q->r * q->r;
-          g += q->g * q->g;
-          b += q->b * q->b;
+          r += Gamma::fix(q->r);
+          g += Gamma::fix(q->g);
+          b += Gamma::fix(q->b);
           a += q->a;
 
           q++;
@@ -896,9 +895,9 @@ void Bitmap::filteredStretch(Bitmap *dest,
         q += w - bx1;
       }
 
-      r = std::sqrt((float)(r >> shift));
-      g = std::sqrt((float)(g >> shift));
-      b = std::sqrt((float)(b >> shift));
+      r = Gamma::unfix(r >> shift);
+      g = Gamma::unfix(g >> shift);
+      b = Gamma::unfix(b >> shift);
       a >>= shift;
 
       const int c = makeRgba(r, g, b, a);
