@@ -292,6 +292,9 @@ bool Project::removeImage()
 
     bmp_list[0] = new Bitmap(512, 512);
     undo_list[0] = new Undo();
+    ox_list[0] = 0;
+    oy_list[0] = 0;
+    zoom_list[0] = 1.0;
     bmp = bmp_list[0];
     undo = undo_list[0];
     current = 0;
