@@ -568,7 +568,7 @@ void View::drawMain(bool refresh)
 
   Bitmap *bmp = Project::bmp;
 
-  if (zoom >= 1.0 || filter == false || panning == true || rendering == true)
+  if (zoom >= 1.0 || filter == false || panning == true || rendering == true || Project::tool->isActive())
   {
     bmp->pointStretch(backbuf,
                       ox, oy,

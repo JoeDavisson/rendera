@@ -840,17 +840,6 @@ void Bitmap::filteredStretch(Bitmap *dest,
   int div = bx1 * by1;
   int shift = 0;
 
-/*
-  for (int j = 0; j < by1; j++)
-  {
-    for (int i = 0; i < bx1; i++)
-    {
-      div++;
-    }
-  }
-*/
-  
-
   if (div < 1)
     div = 1;
 
