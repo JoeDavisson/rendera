@@ -837,9 +837,10 @@ void Bitmap::filteredStretch(Bitmap *dest,
     dh += ay;
 
   // figure out a shift amount to avoid division
-  int div = 0;
+  int div = bx1 * by1;
   int shift = 0;
 
+/*
   for (int j = 0; j < by1; j++)
   {
     for (int i = 0; i < bx1; i++)
@@ -847,6 +848,8 @@ void Bitmap::filteredStretch(Bitmap *dest,
       div++;
     }
   }
+*/
+  
 
   if (div < 1)
     div = 1;
@@ -855,6 +858,22 @@ void Bitmap::filteredStretch(Bitmap *dest,
   {
     div /= 2;
     shift++;
+  }
+
+  // avoid clipping in inner X loop
+  int xinc = bx2;
+
+  for (int x = bx2; x < dw; x++)
+  {
+    const int x1 = sx + (xinc >> 16);
+
+    if (x1 + bx2 - 1 >= w || dx + x >= dest->w)
+    {
+      dw = x;
+      break;
+    }
+
+    xinc += bx;
   }
 
   // scale image
@@ -876,28 +895,15 @@ void Bitmap::filteredStretch(Bitmap *dest,
     const int checker_y = ((dy + y + checker_offset_y) >> 3);
     int *p = dest->row[dy + y] + dx;
 
-    int xinc = 0;
+    int xinc = bx2;
 
-    for (int x = 0; x < dw; x++)
+    for (int x = bx2; x < dw; x++)
     {
       const int x1 = sx + (xinc >> 16);
-
-      if (x1 - bx2 < 0)
-      {
-        p++;
-        xinc += bx;
-        continue;
-      }
-
-      if (x1 + bx2 - 1 >= w || dx + x >= dest->w)
-        break;
-
-      int r = 0;
-      int g = 0;
-      int b = 0;
-      int a = 0;
-
       rgba_type *q = (rgba_type *)row[y1 - by2] + x1 - bx2;
+      int r, g, b, a;
+
+      r = g = b = a = 0;
 
       for (int j = 0; j < by1; j++)
       {
