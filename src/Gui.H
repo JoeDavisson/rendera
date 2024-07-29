@@ -140,6 +140,7 @@ public:
   static void progressShow(float);
   static void progressShow(float, int);
 
+  static void selectAlpha();
   static void selectCopy();
   static void selectCopyEnable(bool);
   static void selectPaste();

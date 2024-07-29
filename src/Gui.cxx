@@ -759,7 +759,8 @@ void Gui::init()
   new Separator(selection, 4, pos, 106, 2, "");
   pos += 8;
 
-  selection_alpha = new CheckBox(selection, 8, pos, 16, 16, "Alpha Mask", 0);
+  selection_alpha = new CheckBox(selection, 8, pos, 16, 16, "Alpha Mask",
+                                 (Fl_Callback *)selectAlpha);
   selection_alpha->labelsize(13);
   selection_alpha->center();
   selection_alpha->value(1);
@@ -774,13 +775,13 @@ void Gui::init()
   pos += 8;
 
   selection_copy = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Copy");
-  selection_copy->tooltip("Control-C");
+  selection_copy->tooltip("Ctrl-C");
   selection_copy->callback((Fl_Callback *)selectCopy);
   selection_copy->deactivate();
   pos += 32 + 8;
 
   selection_paste = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Paste");
-  selection_paste->tooltip("Control-V");
+  selection_paste->tooltip("Ctrl-V");
   selection_paste->callback((Fl_Callback *)selectPaste);
   selection_paste->deactivate();
   pos += 32 + 8;
@@ -1740,6 +1741,11 @@ void Gui::selectPasteEnable(bool enable)
   selection_paste->redraw();
 }
 
+void Gui::selectAlpha()
+{
+  Project::selection->redraw(view);
+}
+
 void Gui::selectCrop()
 {
   Project::tool->done(view, 1);
@@ -1763,11 +1769,13 @@ int Gui::getSelectAlpha()
 void Gui::selectFlipX()
 {
   Project::select_bmp->flipHorizontal();
+  Project::selection->redraw(view);
 }
 
 void Gui::selectFlipY()
 {
   Project::select_bmp->flipVertical();
+  Project::selection->redraw(view);
 }
 
 void Gui::selectRotate90()
@@ -1794,16 +1802,19 @@ void Gui::selectRotate90()
   }
 
   Project::selection->reload();
+  Project::selection->redraw(view);
 }
 
 void Gui::selectRotate180()
 {
   Project::select_bmp->rotate180();
+  Project::selection->redraw(view);
 }
 
 void Gui::selectReset()
 {
   Project::tool->reset();
+  Project::selection->redraw(view);
 }
 
 void Gui::selectValues(int x, int y, int w, int h)
@@ -1837,6 +1848,7 @@ void Gui::selectFromImage()
   bmp->blit(temp, 0, 0, 0, 0, temp->w, temp->h);
   Project::select_bmp = temp;
   Project::selection->reload();
+  Project::selection->redraw(view);
 
   tool->var = Tool::SELECT;
   toolChange(tool, (void *)&tool->var);
