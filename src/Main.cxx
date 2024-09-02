@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <getopt.h>
 
 //#include <FL/Fl_Shared_Image.H>
+#include "FL/Fl_File_Icon.H"
 
 #include "Blend.H"
 #include "Dialog.H"
@@ -113,6 +114,7 @@ void printHelp()
 
 int main(int argc, char *argv[])
 {
+  Fl_File_Icon::load_system_icons();
   setDarkTheme();
 
   // parse command line
