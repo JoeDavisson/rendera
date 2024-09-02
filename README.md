@@ -68,10 +68,10 @@ Then:
 
 ### Libraries
  * FLTK-1.3.7
- * libxft-dev (required for font rendering)
- * PNG and JPEG libraries are included in the FLTK source package.
+ * libxft-dev (for font rendering)
+ * libcanberra-gtk-module (if you want to get rid of the warning about it)
 
-Everything is statically linked resulting in a standalone executable.
+Rendera uses the PNG and JPEG libraries included with FLTK. Everything is statically linked resulting in a standalone executable.
 
 ### Toolchain
 Rendera is built with ```gcc-11.4```.
