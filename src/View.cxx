@@ -367,8 +367,8 @@ int View::handle(int event)
           if (size < 1)
             size = 1;
 
-          if (size > 72)
-            size = 72;
+          if (size > 512)
+            size = 512;
 
           Gui::paintChangeSize(size);
           Project::map->clear(0);

@@ -107,6 +107,8 @@ void Paint::move(View *view)
 
   view->drawMain(false);
 
+  const int center = Brush::max / 2;
+
   switch (stroke->type)
   {
     case 3:
@@ -122,16 +124,16 @@ void Paint::move(View *view)
     case 2:
     case 4:
     case 6:
-      Project::map->rectfill(view->oldimgx - 48, view->oldimgy - 48,
-                          view->oldimgx + 48, view->oldimgy + 48, 0);
-      Project::map->rectfill(view->imgx - 48, view->imgy - 48,
-                          view->imgx + 48, view->imgy + 48, 0);
+      Project::map->rectfill(view->oldimgx - center, view->oldimgy - center,
+                          view->oldimgx + center, view->oldimgy + center, 0);
+      Project::map->rectfill(view->imgx - center, view->imgy - center,
+                          view->imgx + center, view->imgy + center, 0);
       stroke->drawBrush(view->imgx, view->imgy, 255);
-      stroke->size(view->imgx - 48, view->imgy - 48,
-                   view->imgx + 48, view->imgy + 48);
+      stroke->size(view->imgx - center, view->imgy - center,
+                   view->imgx + center, view->imgy + center);
       stroke->makeBlitRect(stroke->x1, stroke->y1,
                            stroke->x2, stroke->y2,
-                           view->ox, view->oy, 96, view->zoom);
+                           view->ox, view->oy, Brush::max, view->zoom);
       stroke->previewPaint(view);
       break;
   }

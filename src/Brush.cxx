@@ -24,10 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Brush::Brush()
 {
-  solidx = new int[96 * 96];
-  solidy = new int[96 * 96];
-  hollowx = new int[96 * 96];
-  hollowy = new int[96 * 96];
+  solidx = new int[max * max];
+  solidy = new int[max * max];
+  hollowx = new int[max * max];
+  hollowy = new int[max * max];
   solid_count = 0;
   hollow_count = 0;
   size = 1;
@@ -64,16 +64,16 @@ void Brush::make(int s, float round)
   int r = s / 2;
   int inc = s & 1;
 
-  int x1 = 48 - r;
-  int y1 = 48 - r;
-  int x2 = 48 + r - 1 + inc;
-  int y2 = 48 + r - 1 + inc;
+  int x1 = max / 2 - r;
+  int y1 = max / 2 - r;
+  int x2 = max / 2 + r - 1 + inc;
+  int y2 = max / 2 + r - 1 + inc;
 
   solid_count = 0;
   hollow_count = 0;
 
-  Map map(96, 96);
-  Map map2(96, 96);
+  Map map(max, max);
+  Map map2(max, max);
   map.clear(0);
 
   if (s == 1)
@@ -104,23 +104,23 @@ void Brush::make(int s, float round)
   }
 
   // solid
-  for (int y = 0; y < 96; y++)
+  for (int y = 0; y < max; y++)
   {
-    for (int x = 0; x < 96; x++)
+    for (int x = 0; x < max; x++)
     {
       if (map.getpixel(x, y))
       {
-        solidx[solid_count] = x - 48;
-        solidy[solid_count] = y - 48;
+        solidx[solid_count] = x - max / 2;
+        solidy[solid_count] = y - max / 2;
         solid_count++;
       }
     }
   }
 
   // hollow
-  for (int y = 0; y < 96; y++)
+  for (int y = 0; y < max; y++)
   {
-    for (int x = 0; x < 96; x++)
+    for (int x = 0; x < max; x++)
     {
       map2.setpixel(x, y, map.getpixel(x, y));
     }
@@ -130,14 +130,14 @@ void Brush::make(int s, float round)
   map2.shrink(1);
   map2.shrink(0);
 
-  for (int y = 0; y < 96; y++)
+  for (int y = 0; y < max; y++)
   {
-    for (int x = 0; x < 96; x++)
+    for (int x = 0; x < max; x++)
     {
       if (map.getpixel(x, y) && !map2.getpixel(x, y))
       {
-        hollowx[hollow_count] = x - 48;
-        hollowy[hollow_count] = y - 48;
+        hollowx[hollow_count] = x - max / 2;
+        hollowy[hollow_count] = y - max / 2;
         hollow_count++;
       }
     }

@@ -206,9 +206,10 @@ namespace
   bool progress_enable = true;
 
   // tables
-  const int brush_sizes[16] =
+  const int brush_sizes[32] =
   {
-    1, 2, 3, 4, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72
+    1, 2, 3, 4, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72,
+    80, 88, 100, 112, 125, 150, 175, 200, 225, 250, 275, 300, 350, 400, 450, 500
   };
 
   // quit program
@@ -657,11 +658,11 @@ void Gui::init()
   pos += 96;
 
   paint_size_value = new InputInt(paint, 8, pos, 96, 24,
-                       "", (Fl_Callback *)paintSizeValue, 1, 72);
+                       "", (Fl_Callback *)paintSizeValue, 1, 512);
   pos += 24 + 8;
 
   paint_size = new Widget(paint, 8, pos, 96, 24,
-                          "Size", images_size_png, 6, 24,
+                          "Size", images_size_png, 3, 24,
                           (Fl_Callback *)paintSize);
   pos += 24 + 8;
 
@@ -1377,12 +1378,36 @@ void Gui::paintChangeSize(int size)
                      paint_brush_preview->bitmap->h - 1,
                      getFltkColor(Project::fltk_theme_bevel_down), 0);
 
-  for (int i = 0; i < brush->solid_count; i++)
+  if (size <= 72)
   {
-    paint_brush_preview->bitmap->setpixelSolid(48 + brush->solidx[i],
-                                       48 + brush->solidy[i],
-                                       convertFormat(getFltkColor(FL_FOREGROUND_COLOR), true),
-                                       0);
+    for (int i = 0; i < brush->solid_count; i++)
+    {
+      const int temp_x = 48 + brush->solidx[i];
+      const int temp_y = 48 + brush->solidy[i];
+
+      paint_brush_preview->bitmap->setpixelSolid(temp_x, temp_y,
+                       convertFormat(getFltkColor(FL_FOREGROUND_COLOR), true),
+                       0);
+    }
+  }
+    else
+  {
+    const double aspect = 72.0 / size;
+
+    for (int i = 0; i < brush->solid_count; i++)
+    {
+      const int temp_x = 48 + brush->solidx[i] * aspect;
+      const int temp_y = 48 + brush->solidy[i] * aspect;
+
+      paint_brush_preview->bitmap->setpixelSolid(temp_x, temp_y,
+                    convertFormat(getFltkColor(FL_FOREGROUND_COLOR), true), 0);
+    }
+
+    paint_brush_preview->bitmap->rectfill(80 - 4, 80, 80 + 4, 80,
+                    convertFormat(getFltkColor(FL_FOREGROUND_COLOR), true), 0);
+
+    paint_brush_preview->bitmap->rectfill(80, 80 - 4, 80, 80 + 4,
+                    convertFormat(getFltkColor(FL_FOREGROUND_COLOR), true), 0);
   }
 
   paint_brush_preview->redraw();

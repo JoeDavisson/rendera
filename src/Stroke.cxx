@@ -129,26 +129,28 @@ void Stroke::clip()
 
 void Stroke::sizeLinear(int bx, int by, int x, int y)
 {
+  const int center = Brush::max / 2;
+
   if (bx > x)
   {
-    x1 = x - 48;
-    x2 = bx + 48;
+    x1 = x - center;
+    x2 = bx + center;
   }
     else
   {
-    x1 = bx - 48;
-    x2 = x + 48;
+    x1 = bx - center;
+    x2 = x + center;
   }
 
   if (by > y)
   {
-    y1 = y - 48;
-    y2 = by + 48;
+    y1 = y - center;
+    y2 = by + center;
   }
     else
   {
-    y1 = by - 48;
-    y2 = y + 48;
+    y1 = by - center;
+    y2 = y + center;
   }
 }
 
