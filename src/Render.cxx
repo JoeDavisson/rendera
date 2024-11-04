@@ -151,11 +151,9 @@ void Render::solid()
 {
   for (int y = stroke->y1; y <= stroke->y2; y++)
   {
-    unsigned char *p = map->row[y] + stroke->x1;
-
     for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if (*p++)
+      if (map->getpixel(x, y) > 0)
         bmp->setpixel(x, y, color, trans);
     }
   }
@@ -166,14 +164,11 @@ void Render::antialiased()
 {
   for (int y = stroke->y1; y <= stroke->y2; y++)
   {
-    unsigned char *p = map->row[y] + stroke->x1;
-
     for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if (*p > 0)
-        bmp->setpixel(x, y, color, scaleVal((255 - *p), trans));
-
-      p++;
+      const int c = map->getpixel(x, y);
+      if (c > 0)
+        bmp->setpixel(x, y, color, scaleVal((255 - c), trans));
     }
   }
 }
@@ -289,11 +284,9 @@ void Render::fine()
 
   for (int y = stroke->y1; y <= stroke->y2; y++)
   {
-    unsigned char *p = map->row[y] + stroke->x1;
-
     for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if (*p++ == 0)
+      if (map->getpixel(x, y) == 0)
         continue;
 
       test_node.x[0] = x;
@@ -397,14 +390,12 @@ void Render::blur()
   // render
   for (int y = stroke->y1; y <= stroke->y2; y++)
   {
-    unsigned char *p = map->row[y] + stroke->x1;
-
     for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if (*p > 0)
-        bmp->setpixel(x, y, color, scaleVal((255 - *p), trans));
+      const int c = map->getpixel(x, y);
 
-      p++;
+      if (c > 0)
+        bmp->setpixel(x, y, color, scaleVal((255 - c), trans));
     }
 
     if (update(y) < 0)
@@ -681,19 +672,19 @@ void Render::texture()
 
         if (!*s0 && d0)
           bmp->setpixel(x, y, color,
-                   scaleVal(src->getpixel(x % w, y % h), soft_trans));
+                 scaleVal(src->getpixel(x % w, y % h), soft_trans));
 
         if (!*s1 && d1)
           bmp->setpixel(x + 1, y, color,
-                   scaleVal(src->getpixel((x + 1) % w, y % h), soft_trans));
+                 scaleVal(src->getpixel((x + 1) % w, y % h), soft_trans));
 
         if (!*s2 && d2)
           bmp->setpixel(x, y + 1, color,
-                   scaleVal(src->getpixel(x % w, (y + 1) % h), soft_trans));
+                 scaleVal(src->getpixel(x % w, (y + 1) % h), soft_trans));
 
         if (!*s3 && d3)
           bmp->setpixel(x + 1, y + 1, color,
-                   scaleVal(src->getpixel((x + 1) % w, (y + 1) % h), soft_trans));
+                 scaleVal(src->getpixel((x + 1) % w, (y + 1) % h), soft_trans));
       }
     }
 
@@ -727,11 +718,9 @@ void Render::average()
 
   for (int y = stroke->y1; y <= stroke->y2; y++)
   {
-    unsigned char *p = map->row[y] + stroke->x1;
-
     for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if (*p++)
+      if (map->getpixel(x, y) > 0)
       {
         const int c = bmp->getpixel(x, y);
         rgba_type rgba = getRgba(c);
