@@ -367,8 +367,8 @@ int View::handle(int event)
           if (size < 1)
             size = 1;
 
-          if (size > 512)
-            size = 512;
+          if (size > Brush::max)
+            size = Brush::max;
 
           Gui::paintChangeSize(size);
           Project::map->clear(0);
@@ -835,11 +835,7 @@ void View::scroll(int dir, int amount)
   }
 
   saveCoords();
-
-  if (Project::tool->isActive())
-    Project::tool->redraw(this);
-  else
-    drawMain(true);
+  Project::tool->redraw(this);
 }
 
 void View::clipOrigin()
