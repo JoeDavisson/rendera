@@ -167,6 +167,7 @@ void Render::antialiased()
     for (int x = stroke->x1; x <= stroke->x2; x++)
     {
       const int c = map->getpixel(x, y);
+
       if (c > 0)
         bmp->setpixel(x, y, color, scaleVal((255 - c), trans));
     }
@@ -258,6 +259,7 @@ void Render::fine()
         stroke->edge_x[count] = x;
         stroke->edge_y[count] = y;
         count++;
+
         if (count > 0xfffff)
           break;
       }
@@ -463,10 +465,13 @@ void Render::watercolor()
 
         if (*s0 && !d0)
           bmp->setpixel(x, yy, color, soft_trans);
+
         if (*s1 && !d1)
           bmp->setpixel(x + 1, yy, color, soft_trans);
+
         if (*s2 && !d2)
           bmp->setpixel(x, yy + 1, color, soft_trans);
+
         if (*s3 && !d3)
           bmp->setpixel(x + 1, yy + 1, color, soft_trans);
       }
@@ -530,40 +535,52 @@ void Render::chalk()
         if (!*s0 && d0)
         {
           t = (int)soft_trans + (rnd() & 63) - 32;
+
           if (t < 0)
             t = 0;
+
           if (t > 255)
             t = 255;
+
           bmp->setpixel(x, y, color, t);
         }
 
         if (!*s1 && d1)
         {
           t = (int)soft_trans + (rnd() & 63) - 32;
+
           if (t < 0)
             t = 0;
+
           if (t > 255)
             t = 255;
+
           bmp->setpixel(x + 1, y, color, t);
         }
 
         if (!*s2 && d2)
         {
           t = (int)soft_trans + (rnd() & 63) - 32;
+
           if (t < 0)
             t = 0;
+
           if (t > 255)
             t = 255;
+
           bmp->setpixel(x, y + 1, color, t);
         }
 
         if (!*s3 && d3)
         {
           t = (int)soft_trans + (rnd() & 63) - 32;
+
           if (t < 0)
             t = 0;
+
           if (t > 255)
             t = 255;
+
           bmp->setpixel(x + 1, y + 1, color, t);
         }
       }
@@ -577,6 +594,7 @@ void Render::chalk()
     if (soft_trans < trans)
     {
       soft_trans = trans;
+
       for (int y = stroke->y1; y <= stroke->y2; y++)
       {
         for (int x = stroke->x1; x <= stroke->x2; x++)
@@ -584,10 +602,13 @@ void Render::chalk()
           if (map->getpixel(x, y))
           {
             int t = (int)soft_trans + (rnd() & 63) - 32;
+
             if (t < 0)
               t = 0;
+
             if (t > 255)
               t = 255;
+
             bmp->setpixel(x, y, color, t);
           }
         }
@@ -671,20 +692,28 @@ void Render::texture()
         shrinkBlock(s0, s1, s2, s3);
 
         if (!*s0 && d0)
+        {
           bmp->setpixel(x, y, color,
                  scaleVal(src->getpixel(x % w, y % h), soft_trans));
+        }
 
         if (!*s1 && d1)
+        {
           bmp->setpixel(x + 1, y, color,
                  scaleVal(src->getpixel((x + 1) % w, y % h), soft_trans));
+        }
 
         if (!*s2 && d2)
+        {
           bmp->setpixel(x, y + 1, color,
                  scaleVal(src->getpixel(x % w, (y + 1) % h), soft_trans));
+        }
 
         if (!*s3 && d3)
+        {
           bmp->setpixel(x + 1, y + 1, color,
                  scaleVal(src->getpixel((x + 1) % w, (y + 1) % h), soft_trans));
+        }
       }
     }
 
@@ -702,7 +731,7 @@ void Render::texture()
       if (map->getpixel(x, y))
       {
         bmp->setpixel(x, y, color,
-                 scaleVal(src->getpixel(x % w, y % h), trans));
+                      scaleVal(src->getpixel(x % w, y % h), trans));
       }
     }
   }
@@ -724,6 +753,7 @@ void Render::average()
       {
         const int c = bmp->getpixel(x, y);
         rgba_type rgba = getRgba(c);
+
         r += rgba.r;
         g += rgba.g;
         b += rgba.b;
@@ -780,10 +810,13 @@ void Render::average()
 
         if (!*s0 && d0)
           bmp->setpixel(x, y, average, soft_trans);
+
         if (!*s1 && d1)
           bmp->setpixel(x + 1, y, average, soft_trans);
+
         if (!*s2 && d2)
           bmp->setpixel(x, y + 1, average, soft_trans);
+
         if (!*s3 && d3)
           bmp->setpixel(x + 1, y + 1, average, soft_trans);
       }
