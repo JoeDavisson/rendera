@@ -133,7 +133,7 @@ void Paint::move(View *view)
                    view->imgx + center, view->imgy + center);
       stroke->makeBlitRect(stroke->x1, stroke->y1,
                            stroke->x2, stroke->y2,
-                           view->ox, view->oy, Brush::max, view->zoom);
+                           view->ox, view->oy, Brush::max_size, view->zoom);
       stroke->previewPaint(view);
       break;
   }

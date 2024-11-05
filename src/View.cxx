@@ -355,6 +355,10 @@ int View::handle(int event)
           saveCoords();
           break;
         case 4:
+          // restrict brush resize to painting mode
+          if (Gui::getTool() != Tool::PAINT)
+            break;
+
           resizing = true;
           const int mx = (mousex / ax) / zoom - Project::brush->size / 2;
           const int my = (mousey / ay) / zoom - Project::brush->size / 2;
@@ -367,8 +371,8 @@ int View::handle(int event)
           if (size < 1)
             size = 1;
 
-          if (size > Brush::max)
-            size = Brush::max;
+          if (size > Brush::max_size)
+            size = Brush::max_size;
 
           Gui::paintChangeSize(size);
           Project::map->clear(0);

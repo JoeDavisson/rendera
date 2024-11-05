@@ -657,7 +657,7 @@ void Gui::init()
   pos += 96;
 
   paint_size_value = new InputInt(paint, 8, pos, 96, 24,
-                       "", (Fl_Callback *)paintSizeValue, 1, 500);
+                       "", (Fl_Callback *)paintSizeValue, 1, Brush::max_size);
   pos += 24 + 8;
 
   paint_size = new Widget(paint, 8, pos, 96, 24,

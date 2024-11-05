@@ -27,7 +27,9 @@ public:
   Brush();
   ~Brush();
 
-  static const int max = 500;
+  static const int max_size = 500;
+  static const int max = max_size + 16;
+
   void make(int, float);
 
   int *solidx, *solidy;
