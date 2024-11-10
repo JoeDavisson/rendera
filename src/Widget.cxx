@@ -173,15 +173,13 @@ int Widget::handle(int event)
 
 void Widget::draw()
 {
-//  if (stepx > 0 && stepy > 0)
-//    fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
   if (stepx > 0 && stepy > 0)
     fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), 42);
 
   image->draw(x(), y());
   image->uncache();
 
-  if (stepx >= 0 && stepx <= 1 && stepy >= 0 && stepy <= 1)
+  if (stepx < 1 || stepy < 1)
     return;
 
   int offsety = (var / (w() / stepx)) * stepy;

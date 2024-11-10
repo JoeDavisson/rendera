@@ -171,10 +171,10 @@ inline int convertFormat(const int c, const bool bgr_order)
 {
   if (bgr_order)
   {
-    const int rb = c & 0x00ff00ff;
-    const int ga = c & 0xff00ff00;
+    const unsigned int rb = c & 0x00ff00ff;
+    const unsigned int ga = c & 0xff00ff00;
 
-    return ((rb << 16) | (rb >> (32 - 16))) | ga;
+    return (int)(((rb << 16) | (rb >> (32 - 16))) | ga);
   }
 
   return c;
