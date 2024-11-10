@@ -929,7 +929,6 @@ void Stroke::previewSelection(View *view)
   for (int y = yy1; y <= yy2; y++)
   {
     int ym = ((y - yy3) * zr) >> 16;
-    
     int *p = backbuf->row[y] + xx1;
 
     for (int x = xx1; x <= xx2; x++)
