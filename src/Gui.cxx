@@ -1213,19 +1213,17 @@ void Gui::colorSwatch()
 {
   swatch->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
 
-  for (int y = 1; y < swatch->bitmap->h - 1; y++)
+  for (int y = 0; y < swatch->bitmap->h; y++)
   {
-    int *p = swatch->bitmap->row[y] - 1;
     for (int x = 0; x < swatch->bitmap->w; x++)
     {
-      const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1)
-                            ? 0xA0A0A0 : 0x606060;
+      const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
+      const int c = blendFast(checker, Project::brush->color, Project::brush->trans);
 
-      *p++ = blendFast(checker, Project::brush->color, Project::brush->trans);
+      swatch->bitmap->setpixel(x, y, c);
     }
   }
 
-//  swatch->bitmap->rectfill(0, 0, swatch->bitmap->w / 2 - 1, swatch->bitmap->h - 1, Project::brush->color, 0);
   swatch->bitmap->rect(0, 0, swatch->bitmap->w - 1, swatch->bitmap->h - 1,
                        makeRgb(0, 0, 0), 0);
   swatch->redraw();
