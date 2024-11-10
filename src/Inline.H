@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
 #endif
 
-static int rnd_seed = 12345;
+static unsigned int rnd_seed = 12345;
 
 struct rgba_type
 {
@@ -158,11 +158,11 @@ inline int diff32(const int c1, const int c2)
 // blend approximation
 inline int blendFast(const int c1, const int c2, const int t)
 {
-  const int rb =
-    (((((c1 & 0xff00ff) - (c2 & 0xff00ff)) * t) >> 8) + c2) & 0xff00ff;
-  const int g = (((((c1 & 0xff00) - (c2 & 0xff00)) * t) >> 8) + c2) & 0xff00;
+  const unsigned int rb =
+    (((((c1 & 0xff00ff) - (c2 & 0xff00ff)) * (unsigned int)t) >> 8) + c2) & 0xff00ff;
+  const unsigned int g = (((((c1 & 0xff00) - (c2 & 0xff00)) * (unsigned int)t) >> 8) + c2) & 0xff00;
 
-  return rb | g | 0xff000000;
+  return (int)(rb | g | 0xff000000);
 }
 
 // convert internal RGB format to whatever the graphics card needs
@@ -213,7 +213,7 @@ inline int rnd()
   rnd_seed ^= rnd_seed >> 13;
   rnd_seed ^= rnd_seed <<  5;
 
-  return rnd_seed;
+  return (int)rnd_seed;
 }
 
 // file access functions
