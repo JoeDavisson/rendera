@@ -854,13 +854,13 @@ void Stroke::previewPaint(View *view)
       {
         if (Clone::active == false)
         {
-          *p = blendFast(*p, color, trans);
+          *p = Blend::trans(*p, color, trans);
         }
           else
         {
           const int c = convertFormat(makeRgb(255, 0, 192), bgr_order);
 
-          *p = blendFast(*p, c, 128);
+          *p = Blend::trans(*p, c, 128);
         }
       }
 

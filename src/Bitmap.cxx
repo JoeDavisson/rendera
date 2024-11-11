@@ -782,7 +782,7 @@ void Bitmap::pointStretch(Bitmap *dest,
       const int checker_x = ((dx + x + checker_offset_x) >> 3);
       const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
 
-      *p = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
+      *p = convertFormat(Blend::trans(checker, c, 255 - geta(c)), bgr_order);
       p++;
 
       xinc += bx;
@@ -918,7 +918,7 @@ void Bitmap::filteredStretch(Bitmap *dest,
       const int checker_x = ((dx + x + checker_offset_x) >> 3);
       const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
 
-      *p = convertFormat(blendFast(checker, c, 255 - a), bgr_order);
+      *p = convertFormat(Blend::trans(checker, c, 255 - a), bgr_order);
       p++;
 
       xinc += bx;

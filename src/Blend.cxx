@@ -64,9 +64,6 @@ void Blend::set(const int mode)
     case SMOOTH:
       current_blend = smooth;
       break;
-    case FAST:
-      current_blend = fast;
-      break;
     case TRANS_ALPHA:
       current_blend = transAlpha;
       break;
@@ -303,15 +300,6 @@ int Blend::smooth(const int c1, const int, const int t)
   a /= 16;
 
   return Blend::trans(c1, makeRgba(r, g, b, a), t);
-}
-
-int Blend::fast(const int c1, const int c2, const int t)
-{
-  const int rb =
-    (((((c1 & 0xff00ff) - (c2 & 0xff00ff)) * t) >> 8) + c2) & 0xff00ff;
-  const int g = (((((c1 & 0xff00) - (c2 & 0xff00)) * t) >> 8) + c2) & 0xff00;
-
-  return rb | g | 0xff000000;
 }
 
 int Blend::invert(const int c1, const int, const int)

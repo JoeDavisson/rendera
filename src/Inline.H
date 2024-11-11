@@ -155,16 +155,6 @@ inline int diff32(const int c1, const int c2)
   return r * r + g * g + b * b + a * a;
 }
 
-// blend approximation
-inline int blendFast(const int c1, const int c2, const int t)
-{
-  const unsigned int rb =
-    (((((c1 & 0xff00ff) - (c2 & 0xff00ff)) * (unsigned int)t) >> 8) + c2) & 0xff00ff;
-  const unsigned int g = (((((c1 & 0xff00) - (c2 & 0xff00)) * (unsigned int)t) >> 8) + c2) & 0xff00;
-
-  return (int)(rb | g | 0xff000000);
-}
-
 // convert internal RGB format to whatever the graphics card needs
 // currently only supporting RGB/BGR
 inline int convertFormat(const int c, const bool bgr_order)
@@ -174,7 +164,7 @@ inline int convertFormat(const int c, const bool bgr_order)
     const unsigned int rb = c & 0x00ff00ff;
     const unsigned int ga = c & 0xff00ff00;
 
-    return (int)(((rb << 16) | (rb >> (32 - 16))) | ga);
+    return (int)(((rb << 16) | (rb >> 16)) | ga);
   }
 
   return c;

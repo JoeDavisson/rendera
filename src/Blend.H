@@ -38,7 +38,6 @@ public:
     ALPHA_ADD,
     ALPHA_SUB,
     SMOOTH,
-    FAST,
     TRANS_ALPHA,
     TRANS_NO_ALPHA,
   };
@@ -58,7 +57,6 @@ public:
   static int alphaAdd(const int, const int, const int);
   static int alphaSub(const int, const int, const int);
   static int smooth(const int, const int, const int);
-  static int fast(const int, const int, const int);
   static int invert(const int, const int, const int);
   static void rgbToHsv(const int, const int, const int, int *, int *, int *);
   static void hsvToRgb(const int, const int, const int, int *, int *, int *);

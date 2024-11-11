@@ -1218,7 +1218,9 @@ void Gui::colorSwatch()
     for (int x = 0; x < swatch->bitmap->w; x++)
     {
       const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
-      const int c = blendFast(checker, Project::brush->color, Project::brush->trans);
+      const int c = Blend::trans(checker,
+                                 Project::brush->color,
+                                 Project::brush->trans);
 
       swatch->bitmap->setpixel(x, y, c);
     }
@@ -1570,7 +1572,7 @@ void Gui::colorChange(Widget *widget, void *)
   Project::brush->blend = blend->value();
 
   // hue circle
-  hue->bitmap->clear(blendFast(convertFormat(getFltkColor(FL_BACKGROUND_COLOR), true), makeRgb(0, 0, 0), 192));
+  hue->bitmap->clear(Blend::trans(convertFormat(getFltkColor(FL_BACKGROUND_COLOR), true), makeRgb(0, 0, 0), 192));
 
   for (int i = 1; i < 1536; i++)
   {

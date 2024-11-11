@@ -66,7 +66,7 @@ namespace
       return;
 
     int *p = bmp->row[y] + x;
-    *p = blendFast(*p, c, t);
+    *p = Blend::trans(*p, c, t);
   }
 
   inline void gridHline(Bitmap *bmp, int x1, const int y, int x2,
@@ -88,7 +88,7 @@ namespace
 
     for (int x = x1; x <= x2; x++)
     {
-      *p = blendFast(*p, c, t);
+      *p = Blend::trans(*p, c, t);
       p++;
     }
   }
