@@ -1244,17 +1244,16 @@ int File::savePng(Bitmap *bmp, const char *fn)
 int File::saveJpeg(Bitmap *bmp, const char *fn)
 {
   struct jpeg_compress_struct cinfo;
-  struct my_error_mgr my_err;
-  struct jpeg_error_mgr jerr;
+  struct my_error_mgr jerr;
 
   FileSP out(fn, "wb");
   if (!out.get())
     return -1;
 
-  cinfo.err = jpeg_std_error(&my_err.pub);
-  my_err.pub.error_exit = jpg_exit;
+  cinfo.err = jpeg_std_error(&jerr.pub);
+  jerr.pub.error_exit = jpg_exit;
 
-  if (setjmp(my_err.setjmp_buffer))
+  if (setjmp(jerr.setjmp_buffer))
   {
     // jpeglib does a goto here if there is an error
     jpeg_destroy_compress(&cinfo);
@@ -1269,7 +1268,6 @@ int File::saveJpeg(Bitmap *bmp, const char *fn)
   int h = bmp->ch;
 
   std::vector<JSAMPLE> linebuf(w * 3);
-  cinfo.err = jpeg_std_error(&jerr);
   jpeg_create_compress(&cinfo);
   jpeg_stdio_dest(&cinfo, out.get());
 
