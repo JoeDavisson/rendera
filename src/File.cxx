@@ -1243,17 +1243,28 @@ int File::savePng(Bitmap *bmp, const char *fn)
 
 int File::saveJpeg(Bitmap *bmp, const char *fn)
 {
+  struct jpeg_compress_struct cinfo;
+  struct my_error_mgr my_err;
+  struct jpeg_error_mgr jerr;
+
   FileSP out(fn, "wb");
   if (!out.get())
     return -1;
 
+  cinfo.err = jpeg_std_error(&my_err.pub);
+  my_err.pub.error_exit = jpg_exit;
+
+  if (setjmp(my_err.setjmp_buffer))
+  {
+    // jpeglib does a goto here if there is an error
+    jpeg_destroy_compress(&cinfo);
+    return 0;
+  }
+
   // show quality dialog
   Dialog::jpegQuality();
+
   int quality = Dialog::jpegQualityValue();
-
-  struct jpeg_compress_struct cinfo;
-  struct jpeg_error_mgr jerr;
-
   int w = bmp->cw;
   int h = bmp->ch;
 

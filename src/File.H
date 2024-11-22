@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef FILE_H
 #define FILE_H
 
-#include "../fltk/png/png.h"
+#include <png.h>
 
 #ifdef __WIN32
 #define HAVE_BOOLEAN
@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #endif
 #endif
 
-#include "../fltk/jpeg/jpeglib.h"
+#include <jpeglib.h>
 
 // this must be included after pnglib
 #include <setjmp.h>
