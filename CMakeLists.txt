@@ -6,7 +6,7 @@ else()
   set(APP_TARGET "rendera")
 endif()
 
-set(APP_VERSION "0.2.7")
+set(APP_VERSION "0.2.9")
 
 set(CMAKE_CXX_STANDARD 20)
 
