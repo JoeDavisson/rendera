@@ -21,17 +21,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef FILE_H
 #define FILE_H
 
-#include <png.h>
+#ifdef RENDERA_STATIC_LINK
+  #include "../fltk/png/png.h"
+#else
+  #include <png.h>
+#endif
 
 #ifdef __WIN32
-#define HAVE_BOOLEAN
-// prevent jmorecfg.h from defining INT32
-#ifndef XMD_H
-#define XMD_H
-#endif
+  #define HAVE_BOOLEAN
+  // prevent jmorecfg.h from defining INT32
+  #ifndef XMD_H
+    #define XMD_H
+  #endif
 #endif
 
-#include <jpeglib.h>
+#ifdef RENDERA_STATIC_LINK
+  #include "../fltk/jpeg/jpeglib.h"
+#else
+  #include <jpeglib.h>
+#endif
 
 // this must be included after pnglib
 #include <setjmp.h>
