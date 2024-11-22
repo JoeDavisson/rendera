@@ -31,12 +31,20 @@ Package includes binaries for 32 and 64-bit Windows:
  * drag and drop image loading
  * image filters
 
-## Build with GNU Make
-**Get the source:**
-
+## Get the Source
 ```$ git clone https://github.com/JoeDavisson/rendera.git```
 
-**Build from Source:**
+## Build with CMake
+```cmake .```  
+```cmake --build .```
+
+### Dependencies
+ * libfltk13-dev
+ * libpng-dev
+ * libjpeg-dev
+
+## Build with GNU Make
+The GNU-Makefile may be used to create statically-linked executables for Linux and Windows.
 
 ```$ cd <path-to-rendera>```
 
@@ -50,7 +58,7 @@ Or uncompress the FLTK-1.3.7 source package here under `fltk`.
 
 The Makefile supports ```linux``` and ```mingw``` cross-compiler targets (edit to choose).
 
-Build fltk libraries (ignore errors about ```fluid.exe``` when using the mingw cross compiler):
+Copy GNU-Makefile to Makefile (or use make -f). Build fltk libraries (ignore errors about ```fluid.exe``` when using the mingw cross compiler):
 ```$ make fltklib```
 
 Run to create images header:
@@ -64,15 +72,13 @@ Then:
 
 *Note: Compilation can be sped up by including ```-j <threads>``` after ```make```.*
 
-## Dependencies
-
-### Libraries
- * FLTK-1.3.7
+### Dependencies
+ * fltk source (see above)
  * libxft-dev (for font rendering)
  * libcanberra-gtk-module (if you want to get rid of the warning about it)
 
-Rendera uses the PNG and JPEG libraries included with FLTK. Everything is statically linked resulting in a standalone executable.
+Static builds use the PNG and JPEG libraries included with FLTK. Everything is statically linked resulting in a standalone executable.
 
-### Toolchain
+## Toolchain
 Rendera is built with ```gcc-11.4```.
 
