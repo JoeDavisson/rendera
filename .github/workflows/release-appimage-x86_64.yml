@@ -44,7 +44,7 @@ jobs:
 
       - name: Prepare artifact names
         run: |
-          APP_VERSION="0.2.7"
+          APP_VERSION="0.2.9"
           ARTIFACT_NAME="${{env.APP_SHORTNAME}}-$APP_VERSION-linux-x86_64.AppImage"
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
