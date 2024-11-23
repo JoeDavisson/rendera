@@ -85,6 +85,7 @@ target_include_directories(${APP_TARGET} PRIVATE
 
 if(NOT MSVC)
   target_compile_options(${APP_TARGET} PRIVATE
+    -O3
     -Wall
     -Wextra
     -Wpedantic
