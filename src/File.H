@@ -100,7 +100,7 @@ private:
   static bool isBmp(const unsigned char *);
   static bool isTarga(const char *);
   static bool isGimpPalette(const unsigned char *);
-  static void pngReadFromArray(png_structp, png_bytep, png_uint_32);
+  static void pngReadFromArray(png_structp, png_bytep, png_size_t);
 };
 
 #endif

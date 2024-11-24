@@ -480,18 +480,16 @@ int View::handle(int event)
       #endif
 
       const int length = Fl::event_length();
-      char fn[length];
-
-      memset(fn, 0, sizeof(char) * length);
-
+      std::vector<char> fn(length, 0);
+      
       #ifdef WIN32
-        strcpy(fn, Fl::event_text());
+        strcpy(fn.data(), Fl::event_text());
       #else
-        strcpy(fn, Fl::event_text() + 7);
+        strcpy(fn.data(), Fl::event_text() + 7);
       #endif
 
       // convert to utf-8 (e.g. %20 becomes space)
-      File::decodeURI(fn);
+      File::decodeURI(fn.data());
 
       int index = 0;
 
@@ -505,7 +503,7 @@ int View::handle(int event)
       {
         if (i == length - 1 || fn[i] == '\0')
         {
-          File::loadFile(fn + index);
+          File::loadFile(fn.data() + index);
 
           #ifdef WIN32
             i += 1;

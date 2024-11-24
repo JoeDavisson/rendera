@@ -1416,7 +1416,7 @@ void Gui::paintSize(Widget *, void *var)
   paint_size_value->redraw();
 }
 
-void Gui::paintSizeValue(Widget *, void *var)
+void Gui::paintSizeValue(Widget *, void *)
 {
   int size;
   sscanf(paint_size_value->value(), "%d", &size);
@@ -1945,7 +1945,7 @@ int Gui::getTextFontSize()
   return atoi(font_size->value());
 }
 
-void Gui::textChangedSize(InputInt *input, void *var)
+void Gui::textChangedSize(InputInt *input, void *)
 {
   input->redraw();
   Project::tool->move(view);

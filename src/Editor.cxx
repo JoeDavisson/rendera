@@ -134,7 +134,7 @@ void Editor::setHsvSliders()
   Items::sat_val->redraw();
 }
 
-void Editor::setHsv(bool redraw)
+void Editor::setHsv()
 {
   int r = 0, g = 0, b = 0;
   int c = Project::brush->color;
@@ -239,7 +239,7 @@ void Editor::checkHexColor()
   
   Gui::colorUpdate(convertFormat((int)c, true));
   setHsvSliders();
-  setHsv(true);
+  setHsv();
   updateHexColor();
 }
 
@@ -264,7 +264,7 @@ void Editor::checkHexColorWeb()
   Project::brush->color = c;
   
   setHsvSliders();
-  setHsv(true);
+  setHsv();
   updateHexColor();
   Gui::colorUpdate(c);
 }
@@ -447,7 +447,7 @@ void Editor::checkPalette()
       updateHexColor();
       setHsvSliders();
       Gui::colorUpdate(Project::brush->color);
-      setHsv(true);
+      setHsv();
       Project::palette->draw(Items::palette);
     }
     else if (Fl::event_shift())
@@ -457,7 +457,7 @@ void Editor::checkPalette()
       updateHexColor();
       setHsvSliders();
       Gui::colorUpdate(Project::brush->color);
-      setHsv(true);
+      setHsv();
       Project::palette->draw(Items::palette);
     }
       else
@@ -466,7 +466,7 @@ void Editor::checkPalette()
       updateHexColor();
       setHsvSliders();
       Gui::colorUpdate(Project::brush->color);
-      setHsv(true);
+      setHsv();
     }
   }
 
@@ -489,7 +489,7 @@ void Editor::getHue()
 
   Gui::colorUpdate(Project::brush->color);
   updateHexColor();
-  setHsv(true);
+  setHsv();
 }
 
 void Editor::getTrans()
@@ -520,7 +520,7 @@ void Editor::getSatVal()
 
   Gui::colorUpdate(Project::brush->color);
   updateHexColor();
-  setHsv(false);
+  setHsv();
 }
 
 void Editor::rgbRamp()
@@ -552,7 +552,7 @@ void Editor::begin()
   Project::palette->draw(Items::palette);
   updateHexColor();
   setHsvSliders();
-  setHsv(1);
+  setHsv();
   Items::trans->var = Project::brush->trans;
   getTrans();
   Items::dialog->show();

@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Test
 {
 public:
-  static void apply(Bitmap *);
+  static void apply();
   static void begin();
 
 private:

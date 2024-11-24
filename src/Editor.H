@@ -33,7 +33,7 @@ private:
   static void storeUndo();
   static void getUndo();
   static void setHsvSliders();
-  static void setHsv(bool);
+  static void setHsv();
   static void updateHexColor();
   static void checkHexColor();
   static void checkHexColorWeb();

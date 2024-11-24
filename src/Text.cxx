@@ -190,7 +190,7 @@ void Text::move(View *view)
   redraw(view);
 }
 
-void Text::key(View *view)
+void Text::key(View *)
 {
 }
 

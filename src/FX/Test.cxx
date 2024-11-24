@@ -20,13 +20,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Test.H"
 
-void Test::apply(Bitmap *src)
+void Test::apply()
 {
 }
 
 void Test::begin()
 {
   Project::undo->push();
-  apply(Project::bmp);
+  apply();
 }
 

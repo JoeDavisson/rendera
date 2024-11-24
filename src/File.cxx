@@ -167,6 +167,7 @@ bool File::isPng(const unsigned char *header)
 bool File::isJpeg(const unsigned char *header)
 {
   const unsigned char id[2] = { 0xff, 0xd8 };
+
   return (memcmp(header, id, 2) == 0);
 }
 
@@ -179,6 +180,7 @@ bool File::isTarga(const char *fn)
 {
   // targa has no real header, will have to trust the file extension
   const char *ext;
+
   ext = fl_filename_ext(fn);
   return (strcmp(ext, ".tga") == 0);
 }
@@ -190,9 +192,10 @@ bool File::isGimpPalette(const unsigned char *header)
 
 // callback for reading PNG from byte array
 void File::pngReadFromArray(png_structp png_ptr,
-                             png_bytep dest, png_uint_32 length)
+                            png_bytep dest, png_size_t length)
 {
   struct png_state *src = (struct png_state *)png_get_io_ptr(png_ptr);
+
   memcpy(dest, src->array + src->pos, length);
   src->pos += length;
 }
@@ -245,10 +248,12 @@ void File::load(Fl_Widget *, void *)
 int File::loadFile(const char *fn)
 {
   FileSP in(fn, "rb");
+
   if (!in.get())
     return -1;
 
   unsigned char header[8];
+
   if (fread(&header, 1, 8, in.get()) != 8)
     return -1;
 
@@ -278,6 +283,7 @@ int File::loadFile(const char *fn)
     else
   {
     char s[256];
+
     getFilename(s, fn);
     Gui::imagesAddFile(s);
   }
@@ -295,6 +301,7 @@ Bitmap *File::loadJpeg(const char *fn)
   struct my_error_mgr jerr;
 
   FileSP in(fn, "rb");
+
   if (!in.get())
     return 0;
 
@@ -303,7 +310,6 @@ Bitmap *File::loadJpeg(const char *fn)
 
   if (setjmp(jerr.setjmp_buffer))
   {
-    // jpeglib does a goto here if there is an error
     jpeg_destroy_decompress(&cinfo);
     return 0;
   }
@@ -373,6 +379,7 @@ Bitmap *File::loadJpeg(const char *fn)
 Bitmap *File::loadBmp(const char *fn)
 {
   FileSP in(fn, "rb");
+
   if (!in.get())
     return 0;
 
@@ -432,6 +439,7 @@ Bitmap *File::loadBmp(const char *fn)
 
   if (w < 0)
     negx = true;
+
   if (h >= 0)
     negy = true;
 
@@ -453,9 +461,11 @@ Bitmap *File::loadBmp(const char *fn)
       else
     {
       int xx = 0;
+
       for (int x = 0; x < w; x++)
       {
         int x1 = negx ? w - 1 - x : x;
+
         *(temp->row[y1] + x1) = makeRgb(linebuf[xx + 2] & 0xff,
                                         linebuf[xx + 1] & 0xff,
                                         linebuf[xx + 0] & 0xff);
@@ -470,6 +480,7 @@ Bitmap *File::loadBmp(const char *fn)
 Bitmap *File::loadTarga(const char *fn)
 {
   FileSP in(fn, "rb");
+
   if (!in.get())
     return 0;
 
@@ -509,6 +520,7 @@ Bitmap *File::loadTarga(const char *fn)
   // skip additional header info if it exists
   if (header.id_length > 0)
     fseek(in.get(), header.id_length, SEEK_CUR);
+
   if (header.color_map_type > 0)
     fseek(in.get(), header.color_map_length, SEEK_CUR);
 
@@ -523,6 +535,7 @@ Bitmap *File::loadTarga(const char *fn)
 
   if (header.descriptor & (1 << 4))
     negx = false;
+
   if (header.descriptor & (1 << 5))
     negy = false;
 
@@ -572,6 +585,7 @@ Bitmap *File::loadTarga(const char *fn)
 Bitmap *File::loadPng(const char *fn)
 {
   FileSP in(fn, "rb");
+
   if (!in.get())
     return 0;
 
@@ -587,10 +601,12 @@ Bitmap *File::loadPng(const char *fn)
   png_infop info_ptr;
 
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+
   if (!png_ptr)
     return 0;
 
   info_ptr = png_create_info_struct(png_ptr);
+
   if (!info_ptr)
   {
     png_destroy_read_struct(&png_ptr, 0, 0);
@@ -599,7 +615,6 @@ Bitmap *File::loadPng(const char *fn)
 
   if (setjmp(png_jmpbuf(png_ptr)))
   {
-    // pnglib does a goto here if there is an error
     png_destroy_read_struct(&png_ptr, &info_ptr, 0);
     return 0;
   }
@@ -746,10 +761,12 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
   png_infop info_ptr;
 
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+
   if (!png_ptr)
     return 0;
 
   info_ptr = png_create_info_struct(png_ptr);
+
   if (!info_ptr)
   {
     png_destroy_read_struct(&png_ptr, 0, 0);
@@ -758,7 +775,6 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
 
   if (setjmp(png_jmpbuf(png_ptr)))
   {
-    // pnglib does a goto here if there is an error
     png_destroy_read_struct(&png_ptr, &info_ptr, 0);
     return 0;
   }
@@ -775,7 +791,8 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
   int compression_type = 0;
   int filter_method = 0;
 
-  png_set_read_fn(png_ptr, &state, (png_rw_ptr)pngReadFromArray);
+//  png_set_read_fn(png_ptr, &state, (png_rw_ptr)pngReadFromArray);
+  png_set_read_fn(png_ptr, &state, pngReadFromArray);
 
 //  png_init_io(png_ptr, in.get());
 //  png_set_sig_bytes(png_ptr, 8);
@@ -971,6 +988,7 @@ int File::saveBmp(Bitmap *bmp, const char *fn)
 {
   FileSP out(fn, "wb");
   FILE *outp = out.get();
+
   if (!outp)
     return -1;
 
@@ -1029,6 +1047,7 @@ int File::saveBmp(Bitmap *bmp, const char *fn)
   for (int y = 0; y < h; y++)
   {
     int xx = 0;
+
     for (int x = 0; x < w; x++)
     {
       linebuf[xx + 0] = (*p >> 16) & 0xff;
@@ -1052,6 +1071,7 @@ int File::saveTarga(Bitmap *bmp, const char *fn)
 {
   FileSP out(fn, "wb");
   FILE *outp = out.get();
+
   if (!outp)
     return -1;
 
@@ -1116,6 +1136,7 @@ int File::savePng(Bitmap *bmp, const char *fn)
   std::vector<png_byte> trans(256);
 
   FileSP out(fn, "wb");
+
   if (!out.get())
     return -1;
 
@@ -1123,10 +1144,12 @@ int File::savePng(Bitmap *bmp, const char *fn)
   png_infop info_ptr;
 
   png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
+
   if (!png_ptr)
     return -1;
 
   info_ptr = png_create_info_struct(png_ptr);
+
   if (!info_ptr)
   {
     png_destroy_write_struct(&png_ptr, 0);
@@ -1199,8 +1222,10 @@ int File::savePng(Bitmap *bmp, const char *fn)
   png_write_info(png_ptr, info_ptr);
 
   int bytes = 3;
+
   if (use_alpha)
     bytes = 4;
+
   if (use_palette)
     bytes = 1;
 
@@ -1225,6 +1250,7 @@ int File::savePng(Bitmap *bmp, const char *fn)
         linebuf[x + 0] = getr(*p); 
         linebuf[x + 1] = getg(*p); 
         linebuf[x + 2] = getb(*p); 
+
         if (use_alpha)
           linebuf[x + 3] = geta(*p); 
       }
@@ -1247,6 +1273,7 @@ int File::saveJpeg(Bitmap *bmp, const char *fn)
   struct my_error_mgr jerr;
 
   FileSP out(fn, "wb");
+
   if (!out.get())
     return -1;
 
@@ -1302,106 +1329,6 @@ int File::saveJpeg(Bitmap *bmp, const char *fn)
   return 0;
 }
 
-// callbacks for FLTK's file preview
-/*
-Fl_Image *File::previewPng(const char *fn, unsigned char *header, int)
-{
-  if (!isPng(header))
-    return 0;
-
-  Bitmap *temp = 0;
-  temp = loadPng(fn, 0);
-
-  if (!temp)
-    return 0;
-
-  if (preview_bmp)
-    delete preview_bmp;
-
-  preview_bmp = temp;
-
-  return new Fl_RGB_Image((unsigned char *)preview_bmp->data,
-                          preview_bmp->w, preview_bmp->h, 4, 0);
-}
-
-Fl_Image *File::previewJpeg(const char *fn, unsigned char *header, int)
-{
-  if (!isJpeg(header))
-    return 0;
-
-  Bitmap *temp = 0;
-  temp = loadJpeg(fn, 0);
-
-  if (!temp)
-    return 0;
-
-  if (preview_bmp)
-    delete preview_bmp;
-
-  preview_bmp = temp;
-
-  return new Fl_RGB_Image((unsigned char *)preview_bmp->data,
-                          preview_bmp->w, preview_bmp->h, 4, 0);
-}
-
-Fl_Image *File::previewBmp(const char *fn, unsigned char *header, int)
-{
-  if (!isBmp(header))
-    return 0;
-
-  Bitmap *temp = 0;
-  temp = loadBmp(fn, 0);
-
-  if (!temp)
-    return 0;
-
-  if (preview_bmp)
-    delete preview_bmp;
-
-  preview_bmp = temp;
-
-  return new Fl_RGB_Image((unsigned char *)preview_bmp->data,
-                          preview_bmp->w, preview_bmp->h, 4, 0);
-}
-
-Fl_Image *File::previewTarga(const char *fn, unsigned char *, int)
-{
-  if (!isTarga(fn))
-    return 0;
-
-  Bitmap *temp = 0;
-  temp = loadTarga(fn, 0);
-
-  if (!temp)
-    return 0;
-
-  if (preview_bmp)
-    delete preview_bmp;
-
-  preview_bmp = temp;
-
-  return new Fl_RGB_Image((unsigned char *)preview_bmp->data,
-                          preview_bmp->w, preview_bmp->h, 4, 0);
-}
-
-Fl_Image *File::previewGimpPalette(const char *fn, unsigned char *header, int)
-{
-  if (!isGimpPalette(header))
-    return 0;
-
-  Palette *temp_pal = new Palette();
-
-  temp_pal->load(fn);
-  if (temp_pal->max == 0)
-    return 0;
-
-  temp_pal->draw(pal_preview);
-
-  return new Fl_RGB_Image((unsigned char *)pal_preview->bitmap->data,
-                          96, 96, 4, 0);
-}
-*/
-
 // load a palette using the file chooser
 void File::loadPalette()
 {
@@ -1426,10 +1353,12 @@ void File::loadPalette()
   strcpy(fn, fc.filename());
 
   FileSP in(fn, "r");
+
   if (!in.get())
     return;
 
   unsigned char header[12];
+
   if (fread(&header, 1, 12, in.get()) != 12)
   {
     errorMessage();
@@ -1468,6 +1397,7 @@ void File::savePalette()
   }
 
   char fn[256];
+
   strcpy(fn, fc.filename());
   fl_filename_setext(fn, sizeof(fn), ".gpl");
 
@@ -1507,10 +1437,12 @@ void File::loadSelection()
   }
 
   FileSP in(fc.filename(), "rb");
+
   if (!in.get())
     return;
 
   unsigned char header[8];
+
   if (fread(&header, 1, 8, in.get()) != 8)
     return;
 
@@ -1602,6 +1534,7 @@ void File::getDirectory(char *dest, const char *src)
   strcpy(dest, src);
 
   int len = strlen(dest);
+
   if (len < 2)
     return;
 
@@ -1619,6 +1552,7 @@ void File::getDirectory(char *dest, const char *src)
 void File::getFilename(char *dest, const char *src)
 {
   int len = strlen(src);
+
   if (len < 2)
     return;
 

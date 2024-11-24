@@ -509,7 +509,7 @@ void Selection::move(View *view)
   }
 }
 
-void Selection::key(View *view)
+void Selection::key(View *)
 {
 }
 
