@@ -29,6 +29,21 @@ class View;
 class Selection : public Tool
 {
 public:
+  enum
+  {
+    STATE_INACTIVE,
+    STATE_DRAG,
+    STATE_RESIZE,
+    STATE_COPY
+  };
+
+  enum
+  {
+    MODE_COPY,
+    MODE_CROP,
+    MODE_PASTE
+  };
+
   Selection();
   ~Selection();
 

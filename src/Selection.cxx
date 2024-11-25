@@ -53,6 +53,7 @@ void Selection::absrect(View *view, int *x1, int *y1, int *x2, int *y2)
 {
   if (*x1 > *x2)
     std::swap(*x1, *x2);
+
   if (*y1 > *y2)
     std::swap(*y1, *y2);
 
@@ -75,7 +76,7 @@ void Selection::absrect(View *view, int *x1, int *y1, int *x2, int *y2)
     *y2 -= 1;
   }
 
-  if (state == 3)
+  if (state == STATE_COPY)
   {
     *x2 = *x1 + w;
     *y2 = *y1 + h;
@@ -137,10 +138,10 @@ void Selection::drawHandles(View *view, Stroke *stroke, int x1, int y1, int x2, 
 
 void Selection::copy(View *view)
 {
-  if (state == 3)
+  if (state == STATE_COPY)
     return;
 
-  state = 3;
+  state = STATE_COPY;
   Gui::selectCopyEnable(false);
   Gui::selectPasteEnable(true);
   Gui::selectCropEnable(false);
@@ -179,10 +180,13 @@ void Selection::crop(View *view)
 
   if (beginx < Project::bmp->cl)
     beginx = Project::bmp->cl;
+
   if (beginy < Project::bmp->ct)
     beginy = Project::bmp->ct;
+
   if (lastx > Project::bmp->cr)
     lastx = Project::bmp->cr;
+
   if (lasty > Project::bmp->cb)
     lasty = Project::bmp->cb;
 
@@ -254,7 +258,7 @@ Selection::Selection()
   beginy = 0;
   lastx = 0;
   lasty = 0;
-  state = 0;
+  state = STATE_INACTIVE;
   drag_started = false;
   resize_started = false;
   side = 0;
@@ -271,7 +275,7 @@ void Selection::push(View *view)
   if (!view->button1)
     return;
 
-  if (state == 0)
+  if (state == STATE_INACTIVE)
   {
     Project::map->clear(0);
     beginx = view->imgx;
@@ -279,9 +283,9 @@ void Selection::push(View *view)
     lastx = view->imgx;
     lasty = view->imgy;
 
-    state = 1;
+    state = STATE_DRAG;
   }
-  else if (state == 2 || state == 3)
+  else if (state == STATE_RESIZE || state == STATE_COPY)
   {
     if (!drag_started && !resize_started)
     {
@@ -346,7 +350,7 @@ void Selection::drag(View *view)
 {
   Stroke *stroke = Project::stroke;
 
-  if (state == 1)
+  if (state == STATE_DRAG)
   {
     view->drawMain(false);
     drawHandles(view, stroke, beginx, beginy, lastx, lasty);
@@ -355,7 +359,7 @@ void Selection::drag(View *view)
     lastx = view->imgx;
     lasty = view->imgy;
   }
-  else if (state == 2 || state == 3)
+  else if (state == STATE_RESIZE || state == STATE_COPY)
   {
     if (drag_started)
     {
@@ -367,7 +371,7 @@ void Selection::drag(View *view)
       lastx += dx;
       lasty += dy;
     }
-    else if (state == 2 && resize_started)
+    else if (state == STATE_RESIZE && resize_started)
     {
       switch (side)
       {
@@ -406,7 +410,7 @@ void Selection::drag(View *view)
     }
   }
 
-  if (state == 3)
+  if (state == STATE_COPY)
   {
     view->window()->cursor(FL_CURSOR_HAND);
 
@@ -449,9 +453,9 @@ void Selection::drag(View *view)
 
 void Selection::release(View *view)
 {
-  if (state == 1)
+  if (state == STATE_DRAG)
   {
-    state = 2;
+    state = STATE_RESIZE;
     Gui::selectCopyEnable(true);
     Gui::selectCropEnable(true);
   }
@@ -467,7 +471,7 @@ void Selection::release(View *view)
   const int w = abs(lastx - beginx) + 1;
   const int h = abs(lasty - beginy) + 1;
 
-  if (state != 3)
+  if (state != STATE_COPY)
     Gui::selectValues(x, y, w, h);
 }
 
@@ -475,7 +479,7 @@ void Selection::move(View *view)
 {
   Stroke *stroke = Project::stroke;
 
-  if (state == 2)
+  if (state == STATE_RESIZE)
   {
     if (view->imgx < stroke->x1 && view->imgy < stroke->y1)
       view->window()->cursor(FL_CURSOR_NW);
@@ -496,7 +500,7 @@ void Selection::move(View *view)
     else
       view->window()->cursor(FL_CURSOR_HAND);
   }
-  else if (state == 3)
+  else if (state == STATE_COPY)
   {
     if (inbox(view->imgx, view->imgy, beginx, beginy, lastx, lasty))
       view->window()->cursor(FL_CURSOR_HAND);
@@ -515,20 +519,21 @@ void Selection::key(View *)
 
 void Selection::done(View *view, int mode)
 {
-  if (state == 0)
+  if (state == STATE_INACTIVE)
     return;
 
-  if (mode == 2 && state == 3)
+  if (mode == MODE_PASTE && state == STATE_COPY)
   {
     paste(view);
   }
-  else if (mode == 1)
+  else if (mode == MODE_CROP)
   {
     crop(view);
     reset();
   }
     else
   {
+    // MODE_COPY
     copy(view);
   }
 }
@@ -539,11 +544,11 @@ void Selection::redraw(View *view)
 
   view->drawMain(false);
 
-  if (state == 1 || state == 2)
+  if (state == STATE_DRAG || state == STATE_RESIZE)
   {
     drawHandles(view, stroke, beginx, beginy, lastx, lasty);
   }
-  else if (state == 3)
+  else if (state == STATE_COPY)
   {
     stroke->previewSelection(view);
     drawHandles(view, stroke, beginx, beginy, lastx, lasty);
@@ -559,7 +564,7 @@ bool Selection::isActive()
 
 void Selection::reset()
 {
-  state = 0;
+  state = STATE_INACTIVE;
   Gui::selectValues(0, 0, 0, 0);
   Gui::selectCopyEnable(false);
   Gui::selectPasteEnable(false);
@@ -572,13 +577,9 @@ void Selection::reload()
   const int w = Project::select_bmp->w;
   const int h = Project::select_bmp->h;
 
-//  beginx = 0;
-//  beginy = 0;
-//  lastx = w - 1;
-//  lasty = h - 1;
   lastx = beginx + w - 1;
   lasty = beginy + h - 1;
-  state = 3;
+  state = STATE_COPY;
 
   Project::stroke->size(beginx, beginy, lastx, lasty);
   Gui::selectValues(0, 0, w, h);
