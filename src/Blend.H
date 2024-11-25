@@ -39,7 +39,7 @@ public:
     ALPHA_SUB,
     SMOOTH,
     TRANS_ALPHA,
-    TRANS_NO_ALPHA,
+    TRANS_NO_ALPHA
   };
  
   static void set(const int);
