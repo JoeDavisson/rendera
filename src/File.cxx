@@ -791,7 +791,6 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
   int compression_type = 0;
   int filter_method = 0;
 
-//  png_set_read_fn(png_ptr, &state, (png_rw_ptr)pngReadFromArray);
   png_set_read_fn(png_ptr, &state, pngReadFromArray);
 
 //  png_init_io(png_ptr, in.get());
