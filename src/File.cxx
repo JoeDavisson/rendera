@@ -125,7 +125,7 @@ enum
   TYPE_JPG,
   TYPE_BMP,
   TYPE_TGA,
-  TYPE_TXT,
+  TYPE_TXT
 };
  
 int File::last_type = 0;

@@ -119,10 +119,13 @@ void Stroke::clip()
 {
   if (x1 < 0)
     x1 = 0;
+
   if (y1 < 0)
     y1 = 0;
+
   if (x2 > Project::bmp->w - 1)
     x2 = Project::bmp->w - 1;
+
   if (y2 > Project::bmp->h - 1)
     y2 = Project::bmp->h - 1;
 }
@@ -173,6 +176,7 @@ void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
 
   if (x2 < x1)
     std::swap(x1, x2);
+
   if (y2 < y1)
     std::swap(y1, y2);
 
@@ -188,6 +192,7 @@ void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
 
   if (blitw < 1)
     blitw = 1;
+
   if (blith < 1)
     blith = 1;
 }
@@ -196,6 +201,7 @@ void Stroke::size(int x1, int y1, int x2, int y2)
 {
   if (x1 > x2)
     std::swap(x1, x2);
+
   if (y1 > y2)
     std::swap(y1, y2);
 
@@ -262,10 +268,13 @@ void Stroke::drawBrushAA(int x, int y, int c)
   {
     map->setpixelAA(((x + brush->solidx[i]) << 2) - 1,
                     ((y + brush->solidy[i]) << 2) - 1, c);
+
     map->setpixelAA(((x + brush->solidx[i]) << 2) + 1,
                     ((y + brush->solidy[i]) << 2) - 1, c);
+
     map->setpixelAA(((x + brush->solidx[i]) << 2) - 1,
                     ((y + brush->solidy[i]) << 2) + 1, c);
+
     map->setpixelAA(((x + brush->solidx[i]) << 2) + 1,
                     ((y + brush->solidy[i]) << 2) + 1, c);
   }
@@ -350,10 +359,13 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
   if (x - r - 1 < x1)
     x1 = x - r - 1;
+
   if (y - r - 1 < y1)
     y1 = y - r - 1;
+
   if (x + r + 1 > x2)
     x2 = x + r + 1;
+
   if (y + r + 1 > y2)
     y2 = y + r + 1;
 
@@ -401,10 +413,14 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
+
         drawBrushLine(beginx - w, beginy - h, beginx + w, beginy + h, 0);
+
         w = (x - beginx);
         h = (y - beginy);
+
         drawBrushLine(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+
         sizeLinear(beginx - w, beginy - h, x + w, y + h);
       }
         else
@@ -441,16 +457,21 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
+
         drawBrushRect(beginx - w, beginy - h, beginx + w, beginy + h, 0);
+
         w = (x - beginx);
         h = (y - beginy);
+
         drawBrushRect(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+
         sizeLinear(beginx - w, beginy - h, x + w, y + h);
       }
         else
       {
         drawBrushRect(lastx, lasty, beginx, beginy, 0);
         drawBrushRect(x, y, beginx, beginy, 255);
+
         sizeLinear(beginx, beginy, x, y);
       }
 
@@ -468,16 +489,21 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
+
         map->rectfill(beginx - w, beginy - h, beginx + w, beginy + h, 0);
+
         w = (x - beginx);
         h = (y - beginy);
+
         map->rectfill(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+
         sizeLinear(beginx - w, beginy - h, x + w, y + h);
       }
         else
       {
         map->rectfill(lastx, lasty, beginx, beginy, 0);
         map->rectfill(x, y, beginx, beginy, 255);
+
         sizeLinear(beginx, beginy, x, y);
       }
 
@@ -495,16 +521,21 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
+
         drawBrushOval(beginx - w, beginy - h, beginx + w, beginy + h, 0);
+
         w = (x - beginx);
         h = (y - beginy);
+
         drawBrushOval(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+
         sizeLinear(beginx - w, beginy - h, x + w, y + h);
       }
         else
       {
         drawBrushOval(lastx, lasty, beginx, beginy, 0);
         drawBrushOval(x, y, beginx, beginy, 255);
+
         sizeLinear(beginx, beginy, x, y);
       }
 
@@ -522,16 +553,21 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
+
         map->ovalfill(beginx - w, beginy - h, beginx + w, beginy + h, 0);
+
         w = (x - beginx);
         h = (y - beginy);
+
         map->ovalfill(beginx - w, beginy - h, beginx + w, beginy + h, 255);
+
         sizeLinear(beginx - w, beginy - h, x + w, y + h);
       }
         else
       {
         map->ovalfill(lastx, lasty, beginx, beginy, 0);
         map->ovalfill(x, y, beginx, beginy, 255);
+
         sizeLinear(beginx, beginy, x, y);
       }
 
@@ -611,6 +647,7 @@ void Stroke::end(int x, int y)
         {
           w = (x - beginx);
           h = (y - beginy);
+
           drawBrushLineAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         }
           else
@@ -628,6 +665,7 @@ void Stroke::end(int x, int y)
         poly_y[poly_count] = beginy;
         poly_count++;
         poly_count &= 0xffff;
+
         if (poly_count > 3)
           map->polyfillAA(poly_x, poly_y, poly_count, y1, y2, 255);
 
@@ -646,6 +684,7 @@ void Stroke::end(int x, int y)
         {
           w = (x - beginx);
           h = (y - beginy);
+
           drawBrushRectAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         }
           else
@@ -665,6 +704,7 @@ void Stroke::end(int x, int y)
         {
           w = (x - beginx);
           h = (y - beginy);
+
           map->rectfillAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         }
           else
@@ -687,6 +727,7 @@ void Stroke::end(int x, int y)
         {
           w = (x - beginx);
           h = (y - beginy);
+
           drawBrushOvalAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         }
           else
@@ -706,6 +747,7 @@ void Stroke::end(int x, int y)
         {
           w = (x - beginx);
           h = (y - beginy);
+
           map->ovalfillAA(beginx - w, beginy - h, beginx + w, beginy + h, 255);
         }
           else
@@ -734,6 +776,7 @@ void Stroke::end(int x, int y)
         poly_y[poly_count] = beginy;
         poly_count++;
         poly_count &= 0xffff;
+
         if (poly_count > 3)
         {
           map->polyfill(poly_x, poly_y, poly_count, y1, y2, 255);
@@ -744,6 +787,7 @@ void Stroke::end(int x, int y)
                 poly_x[i + 1], poly_y[i + 1], 255);
           }
         }
+
         break;
       }
 
@@ -759,10 +803,13 @@ void Stroke::polyLine(int x, int y, int ox, int oy, float zoom)
 
   if (x - 1 < x1)
     x1 = x - 1;
+
   if (y - 1 < y1)
     y1 = y - 1;
+
   if (x + 1 > x2)
     x2 = x + 1;
+
   if (y + 1 > y2)
     y2 = y + 1;
 
