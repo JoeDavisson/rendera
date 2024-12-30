@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 
 #include <FL/fl_draw.H>
+#include <FL/x.H>
 
 #include "Bitmap.H"
 #include "Blend.H"
@@ -441,12 +442,6 @@ int View::handle(int event)
         zoomIn(mousex / ax, mousey / ay);
       }
 
-/*
-      Gui::zoomLevel();
-      Project::tool->redraw(this);
-      saveCoords();
-*/
-
       return 1;
     }
 
@@ -474,19 +469,10 @@ int View::handle(int event)
     {
       changeCursor();
 
-      #ifndef WIN32
-        if (strncasecmp(Fl::event_text(), "file://", 7) != 0)
-          return 1;
-      #endif
-
       const int length = Fl::event_length();
       std::vector<char> fn(length, 0);
       
-      #ifdef WIN32
-        strcpy(fn.data(), Fl::event_text());
-      #else
-        strcpy(fn.data(), Fl::event_text() + 7);
-      #endif
+      strcpy(fn.data(), Fl::event_text());
 
       // convert to utf-8 (e.g. %20 becomes space)
       File::decodeURI(fn.data());
@@ -503,19 +489,18 @@ int View::handle(int event)
       {
         if (i == length - 1 || fn[i] == '\0')
         {
+          // some systems use the "file://" resource identifier
+          if (strncasecmp(fn.data() + index, "file://", 7) == 0)
+            index += 7;
+        
           File::loadFile(fn.data() + index);
 
-          #ifdef WIN32
-            i += 1;
-          #else
-            i += 8;
-          #endif
-
+          i++;
           index = i;
         }
           else
         {
-          i += 1;
+          i++;
         }
       }
 

@@ -18,6 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <cstdlib>
+
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>
@@ -44,7 +46,6 @@ RepeatButton::RepeatButton(Fl_Group *g, int x, int y, int w, int h,
   if (!(bitmap = File::loadPngFromArray(array)))
   {
     fl_message_title("Error");
-//    fl_message("Could not load %s, exiting.", filename);
     fl_message("Could not load image.");
     exit(1);
   }
@@ -63,8 +64,6 @@ void RepeatButton::draw()
 {
   fl_draw_box(FL_FLAT_BOX, x(), y(), w(), h(),
               value() ? Project::fltk_theme_highlight_color : 42);
-  //fl_draw_box(FL_FLAT_BOX, x(), y(), w(), h(),
-  //            value() ? Project::fltk_theme_highlight_color : FL_BACKGROUND_COLOR);
 
   fl_push_clip(x(), y(), w(), h());
 
@@ -98,11 +97,5 @@ void RepeatButton::draw()
   fl_yxline(x2, y1 + 1, y2);
 
   fl_color(old);
-
-/*
-  fl_draw_box(value() ? FL_DOWN_FRAME : FL_UP_FRAME,
-              x(), y(), w(), h(),
-              FL_BLACK);
-*/
 }
 

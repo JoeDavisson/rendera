@@ -791,11 +791,7 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
   int compression_type = 0;
   int filter_method = 0;
 
-//  png_set_read_fn(png_ptr, &state, (png_rw_ptr)pngReadFromArray);
   png_set_read_fn(png_ptr, &state, pngReadFromArray);
-
-//  png_init_io(png_ptr, in.get());
-//  png_set_sig_bytes(png_ptr, 8);
   png_read_info(png_ptr, info_ptr);
   png_get_IHDR(png_ptr, info_ptr, &temp_w, &temp_h,
                &bits_per_channel, &color_type,
