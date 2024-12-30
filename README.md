@@ -43,42 +43,6 @@ Package includes binaries for 32 and 64-bit Windows:
  * libpng-dev
  * libjpeg-dev
 
-## Build with GNU Make
-The GNU-Makefile may be used to create statically-linked executables for Linux and Windows.
-
-```$ cd <path-to-rendera>```
-
-Get FLTK 1.3.7:
-
-```$ git submodule init```
-
-```$ git submodule update```
-
-Or uncompress the FLTK-1.3.7 source package here under `fltk`.
-
-The Makefile supports ```linux``` and ```mingw``` cross-compiler targets (edit to choose).
-
-Copy GNU-Makefile to Makefile (or use make -f). Build fltk libraries (ignore errors about ```fluid.exe``` when using the mingw cross compiler):
-```$ make fltklib```
-
-Run to create images header:
-```$ make header```
-
-Run whenever a header file is changed:
-```$ make clean```
-
-Then:
-```$ make```
-
-*Note: Compilation can be sped up by including ```-j <threads>``` after ```make```.*
-
-### Dependencies
- * fltk source (see above)
- * libxft-dev (for font rendering)
- * libcanberra-gtk-module (if you want to get rid of the warning about it)
-
-Static builds use the PNG and JPEG libraries included with FLTK. Everything is statically linked resulting in a standalone executable.
-
 ## Toolchain
-Rendera is built with ```gcc-11.4```.
+Rendera is built with ```gcc-13.3```.
 
