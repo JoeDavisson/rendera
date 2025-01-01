@@ -349,6 +349,7 @@ void Gui::init()
   // main window
   window = new MainWin(1024, 768, "Rendera");
   window->callback(closeCallback);
+  window->xclass("Rendera");
 
   // generate menu
   menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
