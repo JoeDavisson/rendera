@@ -470,8 +470,8 @@ int View::handle(int event)
       changeCursor();
 
       const int length = Fl::event_length();
-      std::vector<char> fn(length, 0);
-      
+
+      std::vector<char> fn(length + 1, 0);
       strcpy(fn.data(), Fl::event_text());
 
       // convert to utf-8 (e.g. %20 becomes space)
