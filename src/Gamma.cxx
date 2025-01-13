@@ -24,14 +24,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gamma.H"
 #include "Inline.H"
 
-int *Gamma::table_fix;
-int *Gamma::table_unfix;
+unsigned short *Gamma::table_fix;
+unsigned char *Gamma::table_unfix;
 
 void Gamma::init()
 {
   // OS frees these
-  table_fix = new int[256];
-  table_unfix = new int[65536];
+  table_fix = new unsigned short[256];
+  table_unfix = new unsigned char[65536];
 
   for (int i = 0; i < 256; i++)
   {

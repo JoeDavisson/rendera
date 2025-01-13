@@ -26,18 +26,18 @@ class Gamma
 public:
   static void init();
 
-  static inline int fix(const int val)
+  static inline unsigned short fix(const int val)
   {
     return table_fix[val];
   }
 
-  static inline int unfix(const int val)
+  static inline unsigned char unfix(const int val)
   {
     return table_unfix[val];
   }
 
-  static int *table_fix;
-  static int *table_unfix;
+  static unsigned short *table_fix;
+  static unsigned char *table_unfix;
 
 private:
   Gamma() { }
