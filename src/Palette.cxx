@@ -524,3 +524,21 @@ void Palette::set4LevelRGB()
   fillTable();
 }
 
+void Palette::set332()
+{
+  int index = 0;
+
+  for (int r = 0; r < 8; r++)
+  {
+    for (int g = 0; g < 8; g++)
+    {
+      for (int b = 0; b < 4; b++)
+      {
+        data[index++] = makeRgb(r * 36.43, g * 36.43, b * 85);
+      }
+    }
+  }
+
+  max = index;
+  fillTable();
+}

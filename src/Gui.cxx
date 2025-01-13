@@ -436,6 +436,8 @@ void Gui::init()
     (Fl_Callback *)palette3LevelRGB, 0, 0);
   menubar->add("&Palette/Presets/4-level RGB", 0,
     (Fl_Callback *)palette4LevelRGB, 0, 0);
+  menubar->add("&Palette/Presets/332", 0,
+    (Fl_Callback *)palette332, 0, 0);
   menubar->add("&Palette/&Editor... (E)", 0,
     (Fl_Callback *)Editor::begin, 0, 0);
 
@@ -2014,6 +2016,13 @@ void Gui::palette3LevelRGB()
 void Gui::palette4LevelRGB()
 {
   Project::palette->set4LevelRGB();
+  palette_swatches->var = 0;
+  Project::palette->draw(palette_swatches);
+}
+
+void Gui::palette332()
+{
+  Project::palette->set332();
   palette_swatches->var = 0;
   Project::palette->draw(palette_swatches);
 }

@@ -122,6 +122,7 @@ public:
 
   static void palette3LevelRGB();
   static void palette4LevelRGB();
+  static void palette332();
   static void paletteBlackAndWhite();
   static void paletteGrays();
   static void paletteTwoBits();

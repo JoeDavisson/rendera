@@ -50,6 +50,7 @@ public:
   void setWebSafe();
   void set3LevelRGB();
   void set4LevelRGB();
+  void set332();
 
   int *data;
   unsigned char *table;
