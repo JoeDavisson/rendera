@@ -18,7 +18,9 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include <string.h>
+#include <cstdio>
+#include <cstring>
+#include <vector>
 
 #include <FL/Fl_Check_Button.H>
 #include <FL/Fl_Group.H>
@@ -31,14 +33,15 @@ CheckBox::CheckBox(Fl_Group *g, int x, int y, int w, int h,
 {
   group = g;
   clear_visible_focus();
+  labelsize(18);
 
   if (cb)
     callback(cb, &var);
 
-  char s[32];
+  std::vector<char> label_text(strlen(label) + 1, 0);
 
-  strcpy(s, label);
-  copy_label(s);
+  snprintf(label_text.data(), sizeof(label_text), "%s", label);
+  copy_label(label_text.data());
   resize(group->x() + x, group->y() + y, w, h);
 }
 

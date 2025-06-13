@@ -73,6 +73,8 @@ public:
   int px, py, pw, ph;
   int bx, by, bw, bh;
   bool rendering;
+  bool mouse_timer_ready;
+  bool mouse_in_viewport;
   bool bgr_order;
   bool filter;
   int button;
@@ -83,7 +85,7 @@ public:
   bool alt;
 
 protected:
-  virtual void draw();
+  void draw();
 };
 
 #endif

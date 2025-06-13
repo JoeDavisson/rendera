@@ -47,7 +47,6 @@ private:
   static void checkRampHsv(int);
   static void checkPalette();
   static void getHue();
-  static void getTrans();
   static void getSatVal();
   static void rgbRamp();
   static void hsvRamp();

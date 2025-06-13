@@ -159,13 +159,15 @@ void BoxFilters::begin()
 
 void BoxFilters::init()
 {
-  int y1 = 8;
+  int y1 = 16;
   int ww = 0;
   int hh = 0;
 
-  Items::dialog = new DialogWindow(256, 0, "Box Filters");
-  Items::mode = new Fl_Choice(0, y1, 128, 24, "Filter:");
-  Items::mode->textsize(10);
+  Items::dialog = new DialogWindow(400, 0, "Box Filters");
+
+  Items::mode = new Fl_Choice(0, y1, 128, 32, "Filter:");
+  Items::mode->textsize(16);
+  Items::mode->labelsize(16);
   Items::mode->add("Box Blur");
   Items::mode->add("Gaussian Blur");
   Items::mode->add("Sharpen");
@@ -175,14 +177,17 @@ void BoxFilters::init()
   Items::mode->value(0);
   Items::mode->measure_label(ww, hh);
   Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
-  y1 += 24 + 8;
-  Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount %", 0, 0, 100);
+  y1 += 32 + 16;
+
+  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32, "Amount %", 0, 0, 100);
   Items::amount->value("50");
   Items::amount->center();
-  y1 += 24 + 8;
+  y1 += 32 + 16;
+
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
   Items::cancel->callback((Fl_Callback *)quit);
+
   Items::dialog->set_modal();
   Items::dialog->end();
 }

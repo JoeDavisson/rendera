@@ -54,6 +54,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
+#define STATUS_HEIGHT 32
+
 namespace
 {
   namespace Items
@@ -61,7 +63,6 @@ namespace
     DialogWindow *dialog;
     Widget *hue;
     Widget *sat_val;
-    Widget *trans;
     Fl_Repeat_Button *insert;
     Fl_Repeat_Button *remove;
     Fl_Button *replace;
@@ -77,13 +78,13 @@ namespace
     Fl_Box *info_text;
     Group *index;
     Fl_Box *index_text;
+    Fl_Box *color_text;
   }
 
   int last_index = 0;
   int replace_state = 0;
   int ramp_begin = 0;
   int ramp_state = 0;
-  bool button_down = false;
   bool begin_undo;
   int oldsvx, oldsvy, oldhy;
   Palette *undo_palette;
@@ -128,7 +129,7 @@ void Editor::setHsvSliders()
   int c = Project::brush->color;
 
   Blend::rgbToHsv(getr(c), getg(c), getb(c), &h, &s, &v);
-  Items::hue->var = h / 6 * 24;
+  Items::hue->var = h / 6 * Items::hue->w();
   Items::sat_val->var = s + 256 * v;
   Items::hue->redraw();
   Items::sat_val->redraw();
@@ -138,7 +139,8 @@ void Editor::setHsv()
 {
   int r = 0, g = 0, b = 0;
   int c = Project::brush->color;
-  int h = (Items::hue->var / 24) * 6;
+  int w = Items::hue->w();
+  int h = Items::hue->var / w * 6;
 
   Items::hue->bitmap->clear(makeRgb(0, 0, 0));
 
@@ -153,32 +155,28 @@ void Editor::setHsv()
     }
 
     Blend::hsvToRgb(y * 6, 255, 255, &r, &g, &b);
-    Items::hue->bitmap->hline(0, y, 23, makeRgb(r, g, b), 0);
+    Items::hue->bitmap->hline(0, y, Items::hue->w() - 1, makeRgb(r, g, b), 0);
   }
 
   int svx = Items::sat_val->var & 255;
   int svy = Items::sat_val->var / 256;
-  int hy = Items::hue->var / 24;
+  int hy = Items::hue->var / w;
 
-  Items::sat_val->bitmap->rect(0, svy - 1, 255, svy + 1, makeRgb(0, 0, 0), 128);
-  Items::sat_val->bitmap->rect(svx - 1, 0, svx + 1, 255, makeRgb(0, 0, 0), 128);
-  Items::sat_val->bitmap->rect(0, svy - 2, 255, svy + 2, makeRgb(0, 0, 0), 192);
-  Items::sat_val->bitmap->rect(svx - 2, 0, svx + 2, 255, makeRgb(0, 0, 0), 192);
+  Items::sat_val->bitmap->rect(0, svy - 1, 255, svy + 1, makeRgb(0, 0, 0), 0);
+  Items::sat_val->bitmap->rect(svx - 1, 0, svx + 1, 255, makeRgb(0, 0, 0), 0);
   Items::sat_val->bitmap->xorHline(0, svy, 255);
   Items::sat_val->bitmap->xorVline(0, svx, 255);
-  Items::sat_val->bitmap->rect(svx - 10, svy - 10, svx + 10, svy + 10, makeRgb(0, 0, 0), 192);
-  Items::sat_val->bitmap->rect(svx - 9, svy - 9, svx + 9, svy + 9, makeRgb(0, 0, 0), 128);
+  Items::sat_val->bitmap->rect(svx - 9, svy - 9, svx + 9, svy + 9, makeRgb(0, 0, 0), 0);
   Items::sat_val->bitmap->xorRect(svx - 8, svy - 8, svx + 8, svy + 8);
   Items::sat_val->bitmap->rectfill(svx - 7, svy - 7, svx + 7, svy + 7, c, 0);
   Items::sat_val->bitmap->rect(0, 0, 255, 255, makeRgb(0, 0, 0), 0);
 
-  c = Items::hue->bitmap->getpixel(12, hy);
+  c = Items::hue->bitmap->getpixel(16, hy);
 
-  Items::hue->bitmap->rect(0, hy - 6, 23, hy + 6, makeRgb(0, 0, 0), 192);
-  Items::hue->bitmap->rect(0, hy - 5, 23, hy + 5, makeRgb(0, 0, 0), 128);
-  Items::hue->bitmap->xorRect(0, hy - 4, 23, hy + 4);
-  Items::hue->bitmap->rectfill(0, hy - 3 , 23, hy + 3, c, 0);
-  Items::hue->bitmap->rect(0, 0, 23, 255, makeRgb(0, 0, 0), 0);
+  Items::hue->bitmap->rect(0, hy - 5, w - 1, hy + 5, makeRgb(0, 0, 0), 0);
+  Items::hue->bitmap->xorRect(1, hy - 4, w - 2, hy + 4);
+  Items::hue->bitmap->rectfill(2, hy - 3 , w - 3, hy + 3, c, 0);
+  Items::hue->bitmap->rect(0, 0, w - 1, 255, makeRgb(0, 0, 0), 0);
 
   oldsvx = svx;
   oldsvy = svy;
@@ -418,10 +416,8 @@ void Editor::checkPalette()
     Items::palette->var = pos;
   }
 
-  if (Fl::event_button1() && button_down == false)
+  if (Fl::event_button1())
   {
-    button_down = true;
-
     if (ramp_state)
     {
       ramp_begin = last_index;
@@ -479,7 +475,7 @@ void Editor::checkPalette()
 
 void Editor::getHue()
 {
-  int h = (Items::hue->var / 24) * 6;
+  int h = (Items::hue->var / Items::hue->w()) * 6;
   int s = Items::sat_val->var & 255;
   int v = Items::sat_val->var / 256;
   int r, g, b;
@@ -492,25 +488,9 @@ void Editor::getHue()
   setHsv();
 }
 
-void Editor::getTrans()
-{
-  Items::trans->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR)); 
-
-  for (int i = 0; i < 256; i++)
-    Items::trans->bitmap->vline(0, i, 23, makeRgb(255, 255, 255), i);
-
-  int tx = Items::trans->var & 255;
-
-  Items::trans->bitmap->rect(tx - 6, 0, tx + 6, 23, makeRgb(0, 0, 0), 192);
-  Items::trans->bitmap->rect(tx - 5, 0, tx + 5, 23, makeRgb(0, 0, 0), 128);
-  Items::trans->bitmap->xorRect(tx - 4, 0, tx + 4, 23);
-  Items::trans->bitmap->rect(0, 0, 255, 23, makeRgb(0, 0, 0), 0);
-  Gui::transUpdate(tx);
-}
-
 void Editor::getSatVal()
 {
-  int h = (Items::hue->var / 24) * 6;
+  int h = (Items::hue->var / Items::hue->w()) * 6;
   int s = Items::sat_val->var & 255;
   int v = Items::sat_val->var / 256;
   int r, g, b;
@@ -553,8 +533,6 @@ void Editor::begin()
   updateHexColor();
   setHsvSliders();
   setHsv();
-  Items::trans->var = Project::brush->trans;
-  getTrans();
   Items::dialog->show();
   begin_undo = false;
   ramp_begin = 0;
@@ -564,8 +542,8 @@ void Editor::begin()
 
   while (Items::dialog->shown())
   {
-    if (Fl::event_button1() == 0)
-      button_down = false;
+//    if (Fl::event_button1() == 0)
+//      button_down = false;
 
     Fl::wait();
   }
@@ -587,104 +565,103 @@ void Editor::init()
 {
   int x1, y1;
 
-  Items::dialog = new DialogWindow(480, 346 + 32, "Palette Editor");
+  Items::dialog = new DialogWindow(712, 372, "Palette Editor");
 
-  Items::hue = new Widget(Items::dialog, 8, 8, 24, 256,
+  Items::hue = new Widget(Items::dialog, 8, 8, 32, 256,
                           0, 1, 1, (Fl_Callback *)getHue);
 
-  Items::sat_val = new Widget(Items::dialog, 40, 8, 256, 256,
+  Items::sat_val = new Widget(Items::dialog, 48, 8, 256, 256,
                               0, 1, 1, (Fl_Callback *)getSatVal);
-
-  Items::trans = new Widget(Items::dialog, 40, 256 + 16, 256, 24,
-                            0, 1, 1, (Fl_Callback *)getTrans);
-
+  x1 = 8 + Items::hue->w() + 8 + Items::sat_val->w() + 8;
   y1 = 8;
-  Items::insert = new Fl_Repeat_Button(304, y1, 44, 32, "+");
+  Items::insert = new Fl_Repeat_Button(x1, y1, 60, 60, "+");
   Items::insert->callback((Fl_Callback *)insertColor);
-  Items::insert->labelsize(22);
+  Items::insert->labelsize(32);
   Items::insert->tooltip("Insert");
 
-  Items::remove = new Fl_Repeat_Button(358, y1, 44, 32, "-");
-  Items::remove->callback((Fl_Callback *)removeColor);
-  Items::remove->labelsize(22);
-  Items::remove->tooltip("Remove");
-  y1 += 32 + 8;
+  x1 += 60 + 8;
 
-  Items::replace = new Fl_Button(304, y1, 96, 32, "Replace");
+  Items::remove = new Fl_Repeat_Button(x1, y1, 60, 60, "-");
+  Items::remove->callback((Fl_Callback *)removeColor);
+  Items::remove->labelsize(32);
+  Items::remove->tooltip("Delete");
+
+  x1 = 8 + Items::hue->w() + 8 + Items::sat_val->w() + 8;
+  y1 += 60 + 8;
+
+  Items::replace = new Fl_Button(x1, y1, 128, 42, "Replace");
   Items::replace->callback((Fl_Callback *)replaceColor);
   Items::insert->labelsize(18);
-  y1 += 32 + 8;
+  y1 += 42 + 8;
 
-  new Separator(Items::dialog, 298, y1, 108, 2, "");
-  y1 += 8;
-
-  Items::undo = new Fl_Button(304, y1, 96, 32, "Undo");
+  Items::undo = new Fl_Button(x1, y1, 128, 42, "Undo");
   Items::undo->callback((Fl_Callback *)getUndo);
-  y1 += 32 + 8;
+  y1 += 42 + 8;
     
-  new Separator(Items::dialog, 298, y1, 108, 2, "");
-  y1 += 8;
-
-  Items::rgb_ramp = new Fl_Button(304, y1, 96, 24, "RGB Ramp");
+  Items::rgb_ramp = new Fl_Button(x1, y1, 128, 40, "RGB Ramp");
   Items::rgb_ramp->callback((Fl_Callback *)rgbRamp);
-  y1 += 24 + 8;
+  y1 += 40 + 8;
 
-  Items::hsv_ramp = new Fl_Button(304, y1, 96, 24, "HSV Ramp");
+  Items::hsv_ramp = new Fl_Button(x1, y1, 128, 40, "HSV Ramp");
   Items::hsv_ramp->callback((Fl_Callback *)hsvRamp);
-  y1 += 24 + 8;
 
-  new Separator(Items::dialog, 298, y1, 108, 2, "");
-  y1 += 8;
+  x1 += 128 + 8;
+  y1 = 8;
 
-  Items::color = new Widget(Items::dialog, 304, y1, 96, 48,
-                            "Paint Color", 0, 0, 0);
+  Items::palette = new Widget(Items::dialog, x1, y1, 256, 256,
+                                "", 16, 16, (Fl_Callback *)checkPalette);
 
-  Items::palette = new Widget(Items::dialog, 408, 8, 64, 256,
-                                "", 24, 24, (Fl_Callback *)checkPalette);
+  y1 += 256 + 8;
 
-  new Separator(Items::dialog, 2, 272 + 32, Items::dialog->w() - 4, 2, "");
+  new Separator(Items::dialog, 0, y1, Items::dialog->w(), Separator::HORIZONTAL, "");
 
   x1 = 8;
-  y1 = 272 + 40;
+  y1 += 12;
 
-  Items::hexcolor = new InputText(Items::dialog, x1, y1, 80, 24,
+  Items::hexcolor = new InputText(Items::dialog, x1, y1, 128, 32,
                                   "Hexadecimal", (Fl_Callback *)checkHexColor);
   Items::hexcolor->maximum_size(6);
-  Items::hexcolor->labelsize(12);
-  Items::hexcolor->textsize(14);
+  Items::hexcolor->labelsize(16);
+  Items::hexcolor->textsize(24);
   Items::hexcolor->textfont(FL_COURIER);
   Items::hexcolor->when(FL_WHEN_ENTER_KEY | FL_WHEN_NOT_CHANGED);
   Items::hexcolor->align(FL_ALIGN_LEFT | FL_ALIGN_BOTTOM);
-  x1 += 80 + 8;
+  x1 += 128 + 8;
 
-  Items::hexcolor_web = new InputText(Items::dialog, x1, y1, 64, 24,
+  Items::hexcolor_web = new InputText(Items::dialog, x1, y1, 96, 32,
                                       "Shorthand",
                                       (Fl_Callback *)checkHexColorWeb);
   Items::hexcolor_web->maximum_size(3);
-  Items::hexcolor_web->labelsize(12);
-  Items::hexcolor_web->textsize(14);
+  Items::hexcolor_web->labelsize(16);
+  Items::hexcolor_web->textsize(24);
   Items::hexcolor_web->textfont(FL_COURIER);
   Items::hexcolor_web->when(FL_WHEN_ENTER_KEY | FL_WHEN_NOT_CHANGED);
   Items::hexcolor_web->align(FL_ALIGN_LEFT | FL_ALIGN_BOTTOM);
-  x1 += 64 + 8;
+  x1 += 96 + 8;
 
-  new Separator(Items::dialog, x1, y1 - 5, 2, 46, "");
-  x1 += 8;
+  Items::color = new Widget(Items::dialog, x1, y1, 128, 32,
+                            "", 0, 0, 0);
+
+  Items::color_text = new Fl_Box(FL_NO_BOX, x1, y1, 128, 32, "Preview");
+  Items::color_text->align(FL_ALIGN_LEFT | FL_ALIGN_BOTTOM);
+  Items::color_text->labelsize(16);
+
+  x1 += 128 + 8;
 
   Items::done = new Fl_Button(Items::dialog->w() - 96 - 8, y1,
-                              96, 36, "Done (E)");
+                              96, 40, "Done (E)");
   Items::done->shortcut('e');
   Items::done->callback((Fl_Callback *)close);
 
-  y1 += 32 + 10;
-  Items::info = new Group(0, y1, 352, 24, "");
-  Items::info_text = new Fl_Box(FL_NO_BOX, Items::info->x(), Items::info->y(), Items::info->w(), Items::info->h(), "");
-  Items::info_text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-  Items::info_text->labelsize(12);
-
-  Items::index = new Group(352, y1, 128, 24, "");
+  x1 = 0;
+  y1 += 40 + 16;
+  Items::index = new Group(Items::dialog->w() - 128, y1, 128, STATUS_HEIGHT, "");
   Items::index_text = new Fl_Box(FL_NO_BOX, Items::index->x(), Items::index->y(), Items::index->w(), Items::index->h(), "");
   Items::index_text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
+  Items::info = new Group(x1, y1, Items::dialog->w() - Items::index->w(), STATUS_HEIGHT, "");
+  Items::info_text = new Fl_Box(FL_NO_BOX, Items::info->x(), Items::info->y(), Items::info->w(), Items::info->h(), "");
+  Items::info_text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
   Items::dialog->set_modal();
   Items::dialog->end(); 

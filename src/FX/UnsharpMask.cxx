@@ -186,24 +186,29 @@ void UnsharpMask::begin()
 
 void UnsharpMask::init()
 {
-  int y1 = 8;
+  int y1 = 16;
 
-  Items::dialog = new DialogWindow(256, 0, "Unsharp Mask");
-  Items::radius = new InputInt(Items::dialog, 0, y1, 96, 24, "Radius (1-100)", 0, 1, 100);
-  y1 += 24 + 8;
+  Items::dialog = new DialogWindow(400, 0, "Unsharp Mask");
+
+  Items::radius = new InputInt(Items::dialog, 0, y1, 128, 32, "Radius (1-100)", 0, 1, 100);
+  y1 += 32 + 16;
   Items::radius->value("1");
   Items::radius->center();
-  Items::amount = new InputFloat(Items::dialog, 0, y1, 96, 24, "Amount (0-10)", 0, 0, 10);
-  y1 += 24 + 8;
+
+  Items::amount = new InputFloat(Items::dialog, 0, y1, 128, 32, "Amount (0-10)", 0, 0, 10);
+  y1 += 32 + 16;
   Items::amount->value("1.5");
   Items::amount->center();
-  Items::threshold = new InputInt(Items::dialog, 0, y1, 72, 24, "Threshold (0-255)", 0, 0, 255);
-  y1 += 24 + 8;
+
+  Items::threshold = new InputInt(Items::dialog, 0, y1, 128, 32, "Threshold (0-255)", 0, 0, 255);
+  y1 += 32 + 16;
   Items::threshold->value("0");
   Items::threshold->center();
+
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
   Items::cancel->callback((Fl_Callback *)quit);
+
   Items::dialog->set_modal();
   Items::dialog->end();
 }

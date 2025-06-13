@@ -19,11 +19,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdlib>
+#include <cstdint>
 #include <cstring>
 #include <vector>
-#include <stdint.h>
 
 #include "Gamma.H"
 #include "Inline.H"
@@ -452,7 +453,7 @@ void Map::vline(int y1, int x, int y2, int c)
 
 void Map::polyfill(int *px, int *py, int count, int y1, int y2, int c)
 {
-  std::vector<int> nodex(65536);
+  std::array<int, 65536> nodex = {};
 
   for (int y = y1; y <= y2; y++)
   {
@@ -463,8 +464,13 @@ void Map::polyfill(int *px, int *py, int count, int y1, int y2, int c)
     {
       if ((py[i] < y && py[j] >= y) || (py[j] < y && py[i] >= y))
       {
-        nodex[nodes++] =
+        nodex[nodes] =
           (px[i] + (float)(y - py[i]) / (py[j] - py[i]) * (px[j] - px[i]));
+
+        nodes++;
+
+        if (nodes >= (signed)nodex.size())
+          break;
       }
 
       j = i;
@@ -806,7 +812,7 @@ void Map::polyfillAA(int *px, int *py, int count, int y1, int y2, int c)
     py[i] <<= 2;
   }
 
-  std::vector<int> nodex(65536);
+  std::array<int, 65536> nodex = {};
 
   for (int y = (y1 << 2); y <= (y2 << 2); y++)
   {
@@ -817,8 +823,13 @@ void Map::polyfillAA(int *px, int *py, int count, int y1, int y2, int c)
     {
       if ((py[i] < y && py[j] >= y) || (py[j] < y && py[i] >= y))
       {
-        nodex[nodes++] =
+        nodex[nodes] =
           (px[i] + (double)(y - py[i]) / (py[j] - py[i]) * (px[j] - px[i]));
+
+        nodes++;
+
+        if (nodes >= (signed)nodex.size())
+          break;
       }
 
       j = i;

@@ -92,16 +92,18 @@ void Sharpen::begin()
  
 void Sharpen::init()
 {
-  int y1 = 8;
+  int y1 = 16;
 
-  Items::dialog = new DialogWindow(256, 0, "Sharpen");
-  Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount %", 0, 0, 100);
-  y1 += 24 + 8;
+  Items::dialog = new DialogWindow(400, 0, "Sharpen");
+  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32, "Amount %", 0, 0, 100);
+  y1 += 32 + 16;
   Items::amount->value("10");
   Items::amount->center();
+
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
   Items::cancel->callback((Fl_Callback *)quit);
+
   Items::dialog->set_modal();
   Items::dialog->end();
 }

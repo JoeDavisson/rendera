@@ -35,12 +35,23 @@ namespace
 
   void change(Fl_Widget *w, InputInt *i)
   {
+    bool shift = Fl::event_shift() ? true : false;
     int val = std::atoi(i->input.value());
 
-    if (w == &i->dec)
-      val--;
-    else if (w == &i->inc)
-      val++;
+    if (shift == true)
+    {
+      if (w == &i->dec)
+        val -= 10;
+      else if (w == &i->inc)
+        val += 10;
+    }
+      else
+    {
+      if (w == &i->dec)
+        val -= 1;
+      else if (w == &i->inc)
+        val += 1;
+    }
 
     if (val < i->min)
       val = i->min;
@@ -75,9 +86,9 @@ InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
   dec.callback((Fl_Callback *)change, this);
   inc.callback((Fl_Callback *)change, this);
   input.maximum_size(5);
-  input.textsize(12);
+  input.textsize(16);
   input.cursor_color(FL_FOREGROUND_COLOR);
-  labelsize(12);
+  labelsize(16);
   copy_label(text);
   resize(group->x() + x, group->y() + y, w, h);
 
@@ -87,51 +98,6 @@ InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
 
 InputInt::~InputInt()
 {
-}
-
-int InputInt::handle(int event)
-{
-  char str[256];
-  bool shift = Fl::event_shift() ? true : false;
-
-  switch (event)
-  {
-    case FL_MOUSEWHEEL:
-    {
-      if (Fl::focus() != &input &&
-          Fl::focus() != &inc &&
-          Fl::focus() != &dec)
-        return 1;
- 
-      int val = std::atoi(input.value());
-      int x = shift == true ? 10 : 1;
-
-      if (Fl::event_dy() >= 0)
-      {
-        val -= x;
-
-        if (val < min)
-          val = min;
-      }
-        else
-      {
-        val += x;
-
-        if (val > max)
-          val = max;
-      }
-
-      snprintf(str, sizeof(str), "%d", val);
-      input.value(str);
-
-      if (cb)
-        cb(&input, this);
-
-      return 1;
-    }
-  }
-
-  return (Fl_Group::handle(event));
 }
 
 const char *InputInt::value()
@@ -144,7 +110,7 @@ void InputInt::value(const char *s)
   input.value(s);
 }
 
-void InputInt::maximum_size(int size)
+void InputInt::maximum_size(const int size)
 {
   input.maximum_size(size);
 }
@@ -155,5 +121,10 @@ void InputInt::center()
 
   measure_label(ww, hh);
   resize(group->x() + group->w() / 2 - (w() + ww) / 2 + ww, y(), w(), h());
+}
+
+void InputInt::textsize(const int size)
+{
+  input.textsize(size);
 }
 

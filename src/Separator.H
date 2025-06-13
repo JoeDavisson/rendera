@@ -28,10 +28,19 @@ class Fl_Group;
 class Separator : public Fl_Widget
 {
 public:
+  enum
+  {
+    HORIZONTAL,
+    VERTICAL
+  };
+
   Separator(Fl_Group *, int, int, int, int, const char *);
   ~Separator();
 
   Fl_Group *group;
+
+private:
+  int dir;
 
 protected:
   void draw();

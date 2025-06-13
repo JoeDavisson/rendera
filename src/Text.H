@@ -43,7 +43,7 @@ public:
   void reset();
 
 private:
-  Bitmap *temp;
+  Bitmap *textbmp;
 };
 
 #endif

@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 
 #include <FL/fl_draw.H>
-#include <FL/x.H>
 
 #include "Bitmap.H"
 #include "Blend.H"
@@ -41,21 +40,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FX/GaussianBlur.H"
 
-#if defined WIN32
-  #include <windows.h>
-#endif
-
 namespace
 {
-  #if defined linux
-    XImage *ximage;
-  #elif defined WIN32
-    BITMAPINFO *bi;
-    HDC buffer_dc;
-    HBITMAP hbuffer;
-  #else
-    Fl_RGB_Image *wimage;
-  #endif
+  Fl_RGB_Image *wimage;
 
   int oldx1 = 0;
   int oldy1 = 0;
@@ -96,16 +83,15 @@ namespace
 
   void updateView(int sx, int sy, int dx, int dy, int w, int h)
   {
-    #if defined linux
-      XPutImage(fl_display, fl_window, fl_gc, ximage, sx, sy, dx, dy, w, h);
-    #elif defined WIN32
-      BitBlt(fl_gc, dx, dy, w, h, buffer_dc, sx, sy, SRCCOPY);
-    #else
-      fl_push_clip(dx, dy, w, h);
-      wimage->draw(dx, dy, w, h, sx, sy);
-      wimage->uncache();
-      fl_pop_clip();
-    #endif
+    fl_push_clip(dx, dy, w, h);
+    wimage->draw(dx, dy, w, h, sx, sy);
+    wimage->uncache();
+    fl_pop_clip();
+  }
+
+  float getScale()
+  {
+    return Fl::screen_scale(Gui::getWindow()->screen_num());
   }
 }
 
@@ -130,47 +116,12 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   oldimgx = 0;
   oldimgy = 0;
   rendering = false;
+  mouse_timer_ready = false;
+  mouse_in_viewport = false;
   bgr_order = false;
   filter = false;
-
-  //FIXME this should handle desktop resolution changes
-  #if defined linux
-    backbuf = new Bitmap(Fl::w(), Fl::h());
-
-    // try to detect pixelformat (almost always RGB or BGR)
-    if (fl_visual->visual->blue_mask == 0xff)
-      bgr_order = true;
-
-    ximage = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
-                          (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
-  #elif defined WIN32
-    bgr_order = true;
-    buffer_dc = CreateCompatibleDC(fl_gc);
-    
-    bi = new BITMAPINFO;
-
-    ZeroMemory(&bi->bmiHeader, sizeof(BITMAPINFOHEADER));
-
-    bi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bi->bmiHeader.biBitCount = 32;
-
-    bi->bmiHeader.biPlanes = 1;
-    bi->bmiHeader.biClrUsed = 0;
-
-    bi->bmiHeader.biWidth = Fl::w();
-    bi->bmiHeader.biHeight = -Fl::h();
-
-    hbuffer = CreateDIBSection(buffer_dc, bi, DIB_RGB_COLORS,
-                               (void **)&backbuf_data, 0, 0);
-
-    backbuf = new Bitmap(Fl::w(), Fl::h());
-
-    SelectObject(buffer_dc, hbuffer);
-  #else
-    backbuf = new Bitmap(Fl::w(), Fl::h());
-    wimage = new Fl_RGB_Image((unsigned char *)backbuf->data,
-                                Fl::w(), Fl::h(), 4, 0);
-  #endif
+  backbuf = 0;
+  wimage = 0;
 
   resize(group->x() + x, group->y() + y, w, h);
 }
@@ -178,15 +129,18 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
 View::~View()
 {
   delete backbuf;
+  delete wimage;
 }
 
 int View::handle(int event)
 {
-  if (rendering)
+  if (rendering == true)
     return 0;
 
-  mousex = Fl::event_x() - x();
-  mousey = Fl::event_y() - y();
+  float scale = getScale();
+
+  mousex = (Fl::event_x() - x()) * scale;
+  mousey = (Fl::event_y() - y()) * scale;
 
   int ax = 1;
   int ay = 1;
@@ -272,12 +226,14 @@ int View::handle(int event)
     {
       window()->cursor(FL_CURSOR_CROSS);
       changeCursor();
+      mouse_in_viewport = true;
       return 1;
     }
 
     case FL_LEAVE:
     {
       window()->cursor(FL_CURSOR_DEFAULT);
+      mouse_in_viewport = false;
       return 1;
     }
 
@@ -305,7 +261,7 @@ int View::handle(int event)
             Clone::dy = 0;
             Clone::moved = true;
             Clone::state = Clone::PLACED;
-            redraw();
+            drawMain(true);
           }
             else
           {
@@ -330,6 +286,9 @@ int View::handle(int event)
       oldimgx = imgx;
       oldimgy = imgy;
 
+      last_mousex = mousex;
+      last_mousey = mousey;
+
       return 1;
     }
 
@@ -338,6 +297,11 @@ int View::handle(int event)
       // gives viewport focus when clicked on
       if (Fl::focus() != this)
         Fl::focus(this);
+
+      if (mouse_timer_ready == false)
+        return 1;
+
+      mouse_timer_ready = false;
 
       switch (button)
       {
@@ -386,11 +350,15 @@ int View::handle(int event)
           drawMain(false);
           Project::stroke->previewPaint(this);
           redraw();
+
           break;
       } 
 
       oldimgx = imgx;
       oldimgy = imgy;
+
+      last_mousex = mousex;
+      last_mousey = mousey;
 
       return 1;
     }
@@ -410,6 +378,11 @@ int View::handle(int event)
 
     case FL_MOVE:
     {
+      if (mouse_timer_ready == false)
+        return 1;
+
+      mouse_timer_ready = false;
+
       Project::tool->move(this);
 
       // update coordinates display
@@ -424,11 +397,17 @@ int View::handle(int event)
       oldimgx = imgx;
       oldimgy = imgy;
 
+      last_mousex = mousex;
+      last_mousey = mousey;
+
       return 1;
     }
 
     case FL_MOUSEWHEEL:
     {
+      if (mouse_in_viewport == false)
+        return 1;
+
       // ignore wheel during image navigation or resizing brush
       if (panning || resizing)
         break;
@@ -471,8 +450,11 @@ int View::handle(int event)
 
       const int length = Fl::event_length();
 
+      // length includes '\0' character
       std::vector<char> fn(length + 1, 0);
-      strcpy(fn.data(), Fl::event_text());
+
+      for (int i = 0; i < length + 1; i++)
+        fn.data()[i] = Fl::event_text()[i];
 
       // convert to utf-8 (e.g. %20 becomes space)
       File::decodeURI(fn.data());
@@ -515,6 +497,14 @@ int View::handle(int event)
 
 void View::resize(int x, int y, int w, int h)
 {
+  float scale = getScale();
+
+  delete backbuf;
+  delete wimage;
+  backbuf = new Bitmap(w * scale, h * scale);
+  wimage = new Fl_RGB_Image((unsigned char *)backbuf->data,
+                            w * scale, h * scale, 4, 0);
+  wimage->scale(w, h, 0, 1);
   drawMain(false);
   Fl_Widget::resize(x, y, w, h);
 }
@@ -663,6 +653,8 @@ void View::drawCloneCursor()
   if (Gui::getTool() != Tool::PAINT && Gui::getTool() != Tool::TEXT)
     return;
 
+  float scale = getScale();
+
   int x = Clone::x;
   int y = Clone::y;
   int dx = Clone::dx;
@@ -704,10 +696,16 @@ void View::drawCloneCursor()
   backbuf->rectfill(x1, y1 - 7, x1, y1 + 7,
                     convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
 
+  updateView(oldx1 / scale - 12, oldy1 / scale - 12,
+             this->x() + oldx1 / scale - 12, this->y() + oldy1 / scale - 12, 26, 26);
+  updateView(x1 / scale - 12, y1 / scale - 12,
+             this->x() + x1 / scale - 12, this->y() + y1 / scale - 12, 26, 26);
+/*
   updateView(oldx1 - 12, oldy1 - 12,
              this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
   updateView(x1 - 12, y1 - 12,
              this->x() + x1 - 12, this->y() + y1 - 12, 26, 26);
+*/
 
   oldx1 = x1;
   oldy1 = y1;
@@ -867,10 +865,11 @@ void View::draw()
 
   if (Project::tool->isActive())
   {
-    int blitx = Project::stroke->blitx;
-    int blity = Project::stroke->blity;
-    int blitw = Project::stroke->blitw;
-    int blith = Project::stroke->blith;
+    float scale = getScale();
+    int blitx = Project::stroke->blitx / scale;
+    int blity = Project::stroke->blity / scale;
+    int blitw = Project::stroke->blitw / scale;
+    int blith = Project::stroke->blith / scale;
 
     if (blitx < 0)
       blitx = 0;
@@ -886,6 +885,11 @@ void View::draw()
 
     if (blitw < 1 || blith < 1)
       return;
+
+    // for testing
+    //fl_color(FL_WHITE);
+    //fl_rect(x() + blitx * ax, y() + blity * ay,
+    //           blitw * ax, blith * ay);
 
     updateView(blitx * ax, blity * ay, x() + blitx * ax, y() + blity * ay,
                blitw * ax, blith * ay);

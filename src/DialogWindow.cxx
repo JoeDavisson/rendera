@@ -28,6 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gui.H"
 #include "Separator.H"
 
+#define BUTTON_WIDTH 96
+#define BUTTON_HEIGHT 40
+
 DialogWindow::DialogWindow(int w, int h, const char *l)
 : Fl_Double_Window(w, h, l)
 {
@@ -40,23 +43,29 @@ DialogWindow::~DialogWindow()
 
 void DialogWindow::addOkButton(Fl_Button **ok, int *y1)
 {
-  new Separator(this, 4, *y1, w() - 8, 2, "");
-  *y1 += 8;
-  *ok = new Fl_Button(w() - 64 - 8, *y1, 64, 24, "OK");
+  new Separator(this, 0, *y1, w(), Separator::HORIZONTAL, "");
+  *y1 += 12;
+  *ok = new Fl_Button(w() - BUTTON_WIDTH - 8, *y1,
+                      BUTTON_WIDTH, BUTTON_HEIGHT, "OK");
+  (*ok)->labelsize(18);
   add(*ok);
-  *y1 += 24 + 8;
+  *y1 += BUTTON_HEIGHT + 8;
 
   resize(x(), y(), w(), *y1);
 }
 
 void DialogWindow::addOkCancelButtons(Fl_Button **ok, Fl_Button **cancel, int *y1)
 {
-  new Separator(this, 4, *y1, w() - 8, 2, "");
-  *y1 += 8;
-  *cancel = new Fl_Button(w() - 64 - 8, *y1, 64, 24, "Cancel");
+  new Separator(this, 0, *y1, w(), Separator::HORIZONTAL, "");
+  *y1 += 12;
+  *cancel = new Fl_Button(w() - BUTTON_WIDTH - 8, *y1,
+                          BUTTON_WIDTH, BUTTON_HEIGHT, "Cancel");
   add(*cancel);
-  *ok = new Fl_Button((*cancel)->x() - 64 - 8, *y1, 64, 24, "Ok");
-  *y1 += 24 + 8;
+  *ok = new Fl_Button((*cancel)->x() - BUTTON_WIDTH - 8, *y1,
+                      BUTTON_WIDTH, BUTTON_HEIGHT, "Ok");
+  *y1 += BUTTON_HEIGHT + 8;
+  (*cancel)->labelsize(18);
+  (*ok)->labelsize(18);
   add(*ok);
   resize(x(), y(), w(), *y1);
 }

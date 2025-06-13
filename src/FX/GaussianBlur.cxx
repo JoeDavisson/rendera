@@ -344,25 +344,25 @@ void GaussianBlur::begin()
 
 void GaussianBlur::init()
 {
-  int y1 = 8;
+  int y1 = 16;
   int ww = 0;
   int hh = 0;
 
-  Items::dialog = new DialogWindow(256, 0, "Gaussian Blur");
+  Items::dialog = new DialogWindow(400, 0, "Gaussian Blur");
 
-  Items::size = new InputInt(Items::dialog, 0, y1, 96, 24, "Size (1-60)", 0, 1, 60);
-  y1 += 24 + 8;
+  Items::size = new InputInt(Items::dialog, 0, y1, 128, 32, "Size (1-60)", 0, 1, 60);
+  y1 += 32 + 16;
   Items::size->value("1");
   Items::size->center();
 
-  Items::blend = new InputInt(Items::dialog, 0, y1, 96, 24, "Blend %", 0, 0, 100);
+  Items::blend = new InputInt(Items::dialog, 0, y1, 128, 32, "Blend %", 0, 0, 100);
   Items::blend->value("100");
   Items::blend->center();
-  y1 += 24 + 8;
+  y1 += 32 + 16;
 
-  Items::mode = new Fl_Choice(0, y1, 96, 24, "Mode:");
-  Items::mode->labelsize(12);
-  Items::mode->textsize(12);
+  Items::mode = new Fl_Choice(0, y1, 128, 32, "Mode:");
+  Items::mode->labelsize(16);
+  Items::mode->textsize(16);
   Items::mode->add("Normal");
   Items::mode->add("Color Only");
   Items::mode->add("Alpha Only");
@@ -372,11 +372,12 @@ void GaussianBlur::init()
   Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2
                       - (Items::mode->w() + ww) / 2 + ww,
                       Items::mode->y(), Items::mode->w(), Items::mode->h());
-  y1 += 24 + 8;
+  y1 += 32 + 16;
 
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
   Items::cancel->callback((Fl_Callback *)quit);
+
   Items::dialog->set_modal();
   Items::dialog->end();
 }

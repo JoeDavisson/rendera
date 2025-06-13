@@ -36,6 +36,7 @@ private:
   Marble() { }
   ~Marble() { }
 
+  static void updateMain();
   static void update();
   static void setMarb();
   static void setTurb();

@@ -161,24 +161,29 @@ void Bloom::begin()
 
 void Bloom::init()
 {
-  int y1 = 8;
+  int y1 = 16;
 
-  Items::dialog = new DialogWindow(256, 0, "Bloom");
-  Items::radius = new InputInt(Items::dialog, 0, y1, 96, 24, "Radius (0-100)", 0, 1, 100);
+  Items::dialog = new DialogWindow(400, 0, "Bloom");
+
+  Items::radius = new InputInt(Items::dialog, 0, y1, 128, 32, "Radius (0-100)", 0, 1, 100);
   Items::radius->value("16");
   Items::radius->center();
-  y1 += 24 + 8;
-  Items::threshold = new InputInt(Items::dialog, 0, y1, 96, 24, "Threshold (0-255)", 0, 0, 255);
+  y1 += 32 + 16;
+
+  Items::threshold = new InputInt(Items::dialog, 0, y1, 128, 32, "Threshold (0-255)", 0, 0, 255);
   Items::threshold->value("128");
   Items::threshold->center();
-  y1 += 24 + 8;
-  Items::blend = new InputInt(Items::dialog, 0, y1, 96, 24, "Blend %", 0, 0, 100);
+  y1 += 32 + 16;
+
+  Items::blend = new InputInt(Items::dialog, 0, y1, 128, 32, "Blend %", 0, 0, 100);
   Items::blend->value("25");
   Items::blend->center();
-  y1 += 24 + 8;
+  y1 += 32 + 16;
+
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
   Items::cancel->callback((Fl_Callback *)quit);
+
   Items::dialog->set_modal();
   Items::dialog->end();
 }

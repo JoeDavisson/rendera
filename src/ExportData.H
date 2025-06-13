@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define EXPORT_DATA_H
 
 #include <cstdio>
-#include <stdint.h>
+#include <cstdint>
 
 class Fl_Widget;
 class Fl_Image;

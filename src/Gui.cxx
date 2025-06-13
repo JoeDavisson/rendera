@@ -66,6 +66,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
+#define TOP_HEIGHT 48
+#define TOOLS_WIDTH 64
+#define OPTIONS_WIDTH 176
+#define COLORS_WIDTH 208
+#define FILES_WIDTH 176
+#define IMAGES_WIDTH 256
+#define IMAGES_HEIGHT 384
+#define STATUS_HEIGHT 32
+#define TOTAL_WIDTH (TOOLS_WIDTH + OPTIONS_WIDTH + COLORS_WIDTH + FILES_WIDTH)
+
 class MainWin;
 
 namespace
@@ -89,10 +99,8 @@ namespace
   Group *offset;
   Group *text;
   Group *fill;
-  Group *palette;
   Group *colors;
   Group *files;
-  Group *bottom;
   Group *status;
   Fl_Group *middle;
 
@@ -115,6 +123,9 @@ namespace
 
   // tools
   Widget *tool;
+  ToggleButton *clone;
+  ToggleButton *origin;
+  ToggleButton *constrain;
 
   // options
   Widget *paint_brush_preview;
@@ -162,21 +173,18 @@ namespace
 
   Fl_Hold_Browser *font_browse;
   InputInt *font_size;
+  InputInt *font_angle;
   Fl_Input *text_input;
   CheckBox *text_smooth;
 
-  // palette
-  Widget *palette_swatches;
-  Fl_Button *palette_editor;
-
   // colors
-  Widget *swatch;
   Widget *hue;
   Widget *satval;
   InputText *hexcolor;
   InputInt *trans_input;
   Widget *trans;
   Fl_Choice *blend;
+  Widget *palette_swatches;
 
   // files
   Fl_Hold_Browser *file_browse;
@@ -185,12 +193,6 @@ namespace
   Button *file_move_up;
   Button *file_move_down;
   Fl_Box *file_mem;
-  Fl_Group *file_button_group;
-
-  // bottom
-  ToggleButton *clone;
-  ToggleButton *origin;
-  ToggleButton *constrain;
 
   // view
   View *view;
@@ -208,8 +210,11 @@ namespace
   // tables
   const int brush_sizes[16] =
   {
-    1, 2, 3, 4, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72
+    1, 2, 3, 4, 6, 12, 18, 24, 30, 40, 50, 60, 70, 80, 90, 100
   };
+
+  // space between widgets
+  const int gap = 15;
 
   // quit program
   void quit()
@@ -286,55 +291,65 @@ public:
           return 0;
 
         // misc keys
-        switch (/*key =*/ Fl::event_key())
+        switch (Fl::event_key())
         {
           case FL_Right:
             view->scroll(0, 64);
-            break;
+            return 1;
           case FL_Left:
             view->scroll(1, 64);
-            break;
+            return 1;
           case FL_Down:
             view->scroll(2, 64);
-            break;
+            return 1;
           case FL_Up:
             view->scroll(3, 64);
-            break;
+            return 1;
           case FL_Delete:
             Gui::imagesCloseFile();
-            break;
+            return 1;
           case '1':
             view->zoomOne();
-            break;
+            return 1;
           case '+':
           case '=':
-            view->zoomIn(view->w() / 2, view->h() / 2);
-            break;
+            if (ctrl == false)
+            {
+              view->zoomIn(view->w() / 2, view->h() / 2);
+              return 1;
+            }
+              else
+            {
+              return Fl_Double_Window::handle(event);
+            }
           case '-':
-            view->zoomOut(view->w() / 2, view->h() / 2);
-            break;
+            if (ctrl == false)
+            {
+              view->zoomOut(view->w() / 2, view->h() / 2);
+              return 1;
+            }
+              else
+            {
+              return Fl_Double_Window::handle(event);
+            }
           case 'z':
             if (ctrl && shift)
               Project::undo->popRedo();
             else if (ctrl)
               Project::undo->pop();
-            break;
+            return 1;
           case 'c':
             if (ctrl)
               Gui::selectCopy();
-            break;
+            return 1;
           case 'v':
             if (ctrl)
               Gui::selectPaste();
-            break;
+            return 1;
           case 'e':
             Editor::begin();
-            break;
-          default:
-            break;
+            return 1;
         }
-
-        return 1;
     }
 
     return Fl_Double_Window::handle(event);
@@ -347,12 +362,13 @@ void Gui::init()
   int pos;
 
   // main window
-  window = new MainWin(1024, 768, "Rendera");
+  FL_NORMAL_SIZE = 18;
+  window = new MainWin(1280, 812 + gap, "Rendera");
   window->callback(closeCallback);
   window->xclass("Rendera");
 
   // generate menu
-  menubar = new Fl_Menu_Bar(0, 0, window->w(), 24);
+  menubar = new Fl_Menu_Bar(0, 0, window->w(), 36);
   menubar->box(FL_THIN_UP_BOX);
   menubar->color(FL_INACTIVE_COLOR);
 
@@ -502,25 +518,25 @@ void Gui::init()
     (Fl_Callback *)Dialog::about, 0, 0);
 
   // status
-  status = new Group(0, window->h() - 24, window->w(), 24, "");
+  status = new Group(0, window->h() - STATUS_HEIGHT, window->w(), STATUS_HEIGHT, "");
   pos = 8;
 
-  coords = new Fl_Box(FL_FLAT_BOX, pos, 4, 96, 16, "");
-  coords->resize(status->x() + pos, status->y() + 4, 96, 16);
+  coords = new Fl_Box(FL_FLAT_BOX, pos, 4, 96, 24, "");
+  coords->resize(status->x() + pos, status->y() + 4, 96, 24);
   coords->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
   coords->copy_label("(0, 0)");
   pos += 96 + 6;
 
-  new Separator(status, pos, 4, 2, 18, "");
+  new Separator(status, pos, 0, STATUS_HEIGHT, Separator::VERTICAL, "");
   pos += 8;
 
-  info = new Fl_Box(FL_FLAT_BOX, pos, 4, window->w() - pos, 16, "");
-  info->resize(status->x() + pos, status->y() + 4, window->w() - pos, 16);
+  info = new Fl_Box(FL_FLAT_BOX, pos, 4, window->w() - pos, 24, "");
+  info->resize(status->x() + pos, status->y() + 4, window->w() - pos, 24);
   info->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
   info->copy_label("Welcome to Rendera!");
 
-  progress = new Fl_Progress(pos, window->w() - 256 - 8, 256, 16);
-  progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4, 256, 16);
+  progress = new Fl_Progress(pos, window->w() - 256 - 8, 256, 24);
+  progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4, 256, 24);
   progress->minimum(0);
   progress->maximum(100);
   progress->color(0x44444400);
@@ -532,159 +548,160 @@ void Gui::init()
   status->end();
 
   // top
-  top = new Group(0, menubar->h(), window->w(), 40, "");
-  pos = 8;
+  top = new Group(0, menubar->h(), window->w(), TOP_HEIGHT, "");
+  pos = gap;
 
-  zoom_one = new Button(top, pos, 8, 24, 24,
+  zoom_one = new Button(top, pos, 8, 32, 32,
                         "Actual Size (1)", images_zoom_one_png,
                         (Fl_Callback *)zoomOne);
-  pos += 24 + 8;
+  pos += 32 + gap;
 
-  zoom_in = new Button(top, pos, 8, 24, 24,
+  zoom_in = new Button(top, pos, 8, 32, 32,
                        "Zoom In (+)", images_zoom_in_png,
                        (Fl_Callback *)zoomIn);
-  pos += 24 + 8;
+  pos += 32 + gap;
 
-  zoom_out = new Button(top, pos, 8, 24, 24,
+  zoom_out = new Button(top, pos, 8, 32, 32,
                         "Zoom Out (-)", images_zoom_out_png,
                         (Fl_Callback *)zoomOut);
-  pos += 24 + 8;
+  pos += 32 + gap;
 
-  zoom = new StaticText(top, pos, 8, 56, 24, "");
-  pos += 56 + 6;
+  zoom = new StaticText(top, pos, 8, 56, 32, "");
+  pos += 56 + gap;
 
-  new Separator(top, pos, 4, 2, 34, "");
-  pos += 8;
+  new Separator(top, pos, 0, TOP_HEIGHT, Separator::VERTICAL, "");
+  pos += 4 + gap;
 
-  grid = new ToggleButton(top, pos, 8, 24, 24,
+  grid = new ToggleButton(top, pos, 8, 32, 32,
                           "Show Grid", images_grid_png,
                           (Fl_Callback *)gridEnable);
-  pos += 24 + 8;
+  pos += 32 + gap;
 
-  gridsnap = new ToggleButton(top, pos, 8, 24, 24,
+  gridsnap = new ToggleButton(top, pos, 8, 32, 32,
                           "Snap to Grid", images_gridsnap_png,
                           (Fl_Callback *)gridSnap);
-  pos += 50;
+  pos += 64;
 
-  gridx = new InputInt(top, pos, 8, 64, 24,
+  gridx = new InputInt(top, pos, 8, 72, 32,
                        "X:",
                        (Fl_Callback *)gridX, 1, 256);
   gridx->value("8");
-  pos += 92;
+  pos += 72 + 32;
 
-  gridy = new InputInt(top, pos, 8, 64, 24,
+  gridy = new InputInt(top, pos, 8, 72, 32,
                        "Y:",
                        (Fl_Callback *)gridY, 1, 256);
   gridy->value("8");
-  pos += 64 + 8;
+  pos += 72 + gap;
 
-  new Separator(top, pos, 4, 2, 34, "");
-  pos += 8;
+  new Separator(top, pos, 0, TOP_HEIGHT, Separator::VERTICAL, "");
+  pos += 4 + gap;
 
-  aspect = new Fl_Choice(pos, 8, 96, 24, "");
+  aspect = new Fl_Choice(pos, 8, 128, 32, "");
   aspect->tooltip("Aspect Ratio");
   aspect->textsize(10);
-  aspect->resize(top->x() + pos, top->y() + 8, 96, 24);
+  aspect->resize(top->x() + pos, top->y() + 8, 128, 32);
   aspect->add("Normal (1:1)");
   aspect->add("Wide (2:1)");
   aspect->add("Tall (1:2)");
   aspect->value(0);
   aspect->callback((Fl_Callback *)aspectMode);
-  pos += 96 + 8;
+  aspect->textsize(16);
+  pos += 128 + gap;
 
-  new Separator(top, pos, 4, 2, 34, "");
-  pos += 8;
+  new Separator(top, pos, 0, TOP_HEIGHT, Separator::VERTICAL, "");
+  pos += 4 + gap;
 
-  filter = new ToggleButton(top, pos, 8, 24, 24,
+  filter = new ToggleButton(top, pos, 8, 32, 32,
                             "Smooth Display\nWhen Zoomed Out",
                             images_filter_png,
                             (Fl_Callback *)filterToggle);
-  pos += 24 + 8;
+  pos += 32 + gap;
 
   top->resizable(0);
   top->end();
-
-  // bottom
-  bottom = new Group(160, window->h() - status->h() - 40,
-                     window->w() - 304 - 80, 40, "");
-  pos = 8;
-
-  clone = new ToggleButton(bottom, pos, 8, 24, 24,
-                           "Clone (Ctrl+Click to set target)",
-                           images_clone_png,
-                           (Fl_Callback *)cloneEnable);
-  pos += 24 + 8;
-
-  new Separator(bottom, pos, 4, 2, 34, "");
-  pos += 8;
-
-  origin = new ToggleButton(bottom, pos, 8, 24, 24,
-                            "Start From Center", images_origin_png,
-                            (Fl_Callback *)originEnable);
-  pos += 24 + 8;
-
-  constrain = new ToggleButton(bottom, pos, 8, 24, 24,
-                              "Lock Proportions",
-                              images_constrain_png,
-                              (Fl_Callback *)constrainEnable);
-  pos += 24 + 8;
-
-  bottom->resizable(0);
-  bottom->end();
 
   left_height = window->h() - top->h() - menubar->h() - status->h();
 
   // tools
   tools = new Group(0, top->h() + menubar->h(),
-                    48, left_height,
+                    64, left_height,
                     "Tools");
-  pos = 28;
 
-  tool = new Widget(tools, 8, pos, 32, 6 * 32,
-                    "Tools", images_tools_png, 32, 32,
+  pos = Group::title_height + gap;
+
+  tool = new Widget(tools, 8, pos, 48, 6 * 48,
+                    "Tools", images_tools_png, 48, 48,
                     (Fl_Callback *)toolChange);
-  pos += 96 + 8;
+
+  pos += 6 * 48 + gap;
+
+  new Separator(tools, 0, pos, TOOLS_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
+
+  clone = new ToggleButton(tools, 8, pos, 48, 48,
+                           "Clone (Ctrl+Click to set target)",
+                           images_clone_png,
+                           (Fl_Callback *)cloneEnable);
+
+  pos += 48 + 8;
+
+  origin = new ToggleButton(tools, 8, pos, 48, 48,
+                            "Start From Center", images_origin_png,
+                            (Fl_Callback *)originEnable);
+
+  pos += 48 + 8;
+
+  constrain = new ToggleButton(tools, 8, pos, 48, 48,
+                              "Lock Proportions",
+                              images_constrain_png,
+                              (Fl_Callback *)constrainEnable);
 
   tools->resizable(0);
   tools->end();
 
   // paint
-  paint = new Group(48, top->h() + menubar->h(),
-                    112, left_height,
+  paint = new Group(TOOLS_WIDTH, top->h() + menubar->h(),
+                    OPTIONS_WIDTH, left_height,
                     "Paint");
-  pos = 28;
+  pos = Group::title_height + gap;
 
-  paint_brush_preview = new Widget(paint, 8, pos, 96, 96 + 20,
+  paint_brush_preview = new Widget(paint, 8, pos, 160, 160,
                            "Brush Preview", 0, 0, 0);
   paint_brush_preview->bitmap->clear(convertFormat(getFltkColor(FL_BACKGROUND2_COLOR), true));
-  pos += 96;
+  pos += 160 + 8;
 
-  paint_size_value = new InputInt(paint, 8, pos, 96, 24,
+  paint_size_value = new InputInt(paint, 8, pos, 160, 32,
                        "", (Fl_Callback *)paintSizeValue, 1, Brush::max_size);
-  pos += 24 + 8;
+  paint_size_value->textsize(16);
+  pos += 32 + 8;
 
-  paint_size = new Widget(paint, 8, pos, 96, 24,
-                          "Size", images_size_png, 6, 24,
+  paint_size = new Widget(paint, 8, pos, 160, 32,
+                          "Brush Size", images_size_png, 10, 32,
                           (Fl_Callback *)paintSize);
-  pos += 24 + 8;
+  pos += 32 + 8;
 
-  paint_stroke = new Widget(paint, 8, pos, 96, 48,
-                            "Stroke", images_stroke_png, 24, 24,
-                            (Fl_Callback *)paintStroke);
-  pos += 48 + 8;
-
-  paint_shape = new Widget(paint, 8, pos, 96, 24,
-                           "Shape", images_shape_png, 6, 24,
+  paint_shape = new Widget(paint, 8, pos, 160, 40,
+                           "Shape Adjust", images_shape_png, 10, 40,
                            (Fl_Callback *)paintShape);
-  pos += 24 + 8;
+  pos += 40 + gap;
 
-  new Separator(paint, 4, pos, 106, 2, "");
-  pos += 8;
+  new Separator(paint, 0, pos, OPTIONS_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
 
-  paint_mode = new Fl_Choice(8, pos, 96, 24, "");
-  paint_mode->tooltip("Mode");
+  paint_stroke = new Widget(paint, 8, pos, 160, 80,
+                            "Brushstroke Type", images_stroke_png, 40, 40,
+                            (Fl_Callback *)paintStroke);
+
+  pos += 80 + gap;
+
+  new Separator(paint, 0, pos, OPTIONS_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
+
+  paint_mode = new Fl_Choice(8, pos, 160, 32, "");
+  paint_mode->tooltip("Rendering Mode");
   paint_mode->textsize(10);
-  paint_mode->resize(paint->x() + 8, paint->y() + pos, 96, 24);
+  paint_mode->resize(paint->x() + 8, paint->y() + pos, 160, 32);
   paint_mode->add("Solid");
   paint_mode->add("Antialiased");
   paint_mode->add("Coarse");
@@ -695,194 +712,198 @@ void Gui::init()
   paint_mode->add("Texture");
   paint_mode->add("Average");
   paint_mode->value(0);
+  paint_mode->textsize(16);
   paint_mode->callback((Fl_Callback *)paintMode);
-  pos += 24 + 8;
+  pos += 32 + 8;
 
-  paint_coarse_edge = new Widget(paint, 8, pos, 96, 24,
-                          "Edge", images_edge_png, 12, 24,
+  paint_coarse_edge = new Widget(paint, 8, pos, 160, 32,
+                          "Edge", images_edge_png, 20, 32,
                           (Fl_Callback *)paintCoarseEdge);
-  paint_fine_edge = new Widget(paint, 8, pos, 96, 24,
-                          "Edge", images_edge_png, 12, 24,
+  paint_fine_edge = new Widget(paint, 8, pos, 160, 32,
+                          "Edge", images_edge_png, 20, 32,
                           (Fl_Callback *)paintFineEdge);
-  paint_blurry_edge = new Widget(paint, 8, pos, 96, 24,
-                          "Edge", images_edge_png, 12, 24,
+  paint_blurry_edge = new Widget(paint, 8, pos, 160, 32,
+                          "Edge", images_edge_png, 20, 32,
                           (Fl_Callback *)paintBlurryEdge);
-  paint_watercolor_edge = new Widget(paint, 8, pos, 96, 24,
-                          "Edge", images_watercolor_edge_png, 12, 24,
+  paint_watercolor_edge = new Widget(paint, 8, pos, 160, 32,
+                          "Edge", images_watercolor_edge_png, 20, 32,
                           (Fl_Callback *)paintWatercolorEdge);
-  paint_chalk_edge = new Widget(paint, 8, pos, 96, 24,
-                          "Edge", images_chalk_edge_png, 12, 24,
+  paint_chalk_edge = new Widget(paint, 8, pos, 160, 32,
+                          "Edge", images_chalk_edge_png, 20, 32,
                           (Fl_Callback *)paintChalkEdge);
-  paint_texture_edge = new Widget(paint, 8, pos, 96, 24,
-                          "Edge", images_edge_png, 12, 24,
+  paint_texture_edge = new Widget(paint, 8, pos, 160, 32,
+                          "Edge", images_edge_png, 20, 32,
                           (Fl_Callback *)paintTextureEdge);
-  paint_texture_marb = new Widget(paint, 8, pos + 32, 96, 16,
-                          "Marbleize", images_marbleize_png, 12, 16,
+  paint_texture_marb = new Widget(paint, 8, pos + 40, 160, 32,
+                          "Marbleize", images_marbleize_png, 20, 32,
                           (Fl_Callback *)paintTextureMarb);
-  paint_texture_turb = new Widget(paint, 8, pos + 56, 96, 16,
-                          "Turbulence", images_turbulence_png, 12, 16,
+  paint_texture_turb = new Widget(paint, 8, pos + 80, 160, 32,
+                          "Turbulence", images_turbulence_png, 20, 32,
                           (Fl_Callback *)paintTextureTurb);
-  paint_average_edge = new Widget(paint, 8, pos, 96, 24,
-                          "Edge", images_edge_png, 12, 24,
+  paint_average_edge = new Widget(paint, 8, pos, 160, 32,
+                          "Edge", images_edge_png, 20, 32,
                           (Fl_Callback *)paintAverageEdge);
-  pos += 24 + 8;
+
+  pos += 32 * 4;
 
   paint->resizable(0);
   paint->end();
 
   // selection
-  selection = new Group(48, top->h() + menubar->h(),
-                   112, left_height,
+  selection = new Group(TOOLS_WIDTH, top->h() + menubar->h(),
+                   OPTIONS_WIDTH, left_height,
                    "Selection");
-  pos = 28;
+  pos = Group::title_height + 8;
 
-  new StaticText(selection, 8, pos, 32, 24, "x:");
-  selection_x = new StaticText(selection, 24, pos, 72, 24, 0);
+  new StaticText(selection, 8, pos, 32, 32, "x:");
+  selection_x = new StaticText(selection, 32, pos, 96, 32, 0);
   pos += 24;
 
-  new StaticText(selection, 8, pos, 32, 24, "y:");
-  selection_y = new StaticText(selection, 24, pos, 72, 24, 0);
+  new StaticText(selection, 8, pos, 32, 32, "y:");
+  selection_y = new StaticText(selection, 32, pos, 96, 32, 0);
   pos += 24;
 
-  new StaticText(selection, 8, pos, 32, 24, "w:");
-  selection_w = new StaticText(selection, 24, pos, 72, 24, 0);
+  new StaticText(selection, 8, pos, 32, 32, "w:");
+  selection_w = new StaticText(selection, 32, pos, 96, 32, 0);
   pos += 24;
 
-  new StaticText(selection, 8, pos, 32, 24, "h:");
-  selection_h = new StaticText(selection, 24, pos, 72, 24, 0);
-  pos += 24;
+  new StaticText(selection, 8, pos, 32, 32, "h:");
+  selection_h = new StaticText(selection, 32, pos, 96, 32, 0);
+  pos += 24 + gap;
 
-  new Separator(selection, 4, pos, 106, 2, "");
-  pos += 8;
+  new Separator(selection, 0, pos, OPTIONS_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
 
-  selection_reset = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Reset");
+  selection_reset = new Fl_Button(selection->x() + 8, selection->y() + pos, 160, 48, "Reset");
   selection_reset->callback((Fl_Callback *)selectReset);
-  pos += 32 + 8;
+  pos += 48 + gap;
 
-  new Separator(selection, 4, pos, 106, 2, "");
-  pos += 8;
+  new Separator(selection, 0, pos, OPTIONS_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
 
   selection_alpha = new CheckBox(selection, 8, pos, 16, 16, "Alpha Mask",
                                  (Fl_Callback *)selectAlpha);
-  selection_alpha->labelsize(13);
   selection_alpha->center();
   selection_alpha->value(1);
-  pos += 16 + 8;
+  pos += 24 + gap;
 
-  selection_mirror = new Button(selection, 8, pos, 30, 30, "Mirror", images_select_mirror_png, (Fl_Callback *)selectFlipX);
-  selection_flip = new Button(selection, 8 + 33, pos, 30, 30, "Flip", images_select_flip_png, (Fl_Callback *)selectFlipY);
-  selection_rotate = new Button(selection, 8 + 66, pos, 30, 30, "Rotate", images_select_rotate_png, (Fl_Callback *)selectRotate90);
-  pos += 30 + 8;
+  selection_mirror = new Button(selection, 8, pos, 48, 48, "Mirror", images_select_mirror_png, (Fl_Callback *)selectFlipX);
+  selection_flip = new Button(selection, 8 + 48 + 8, pos, 48, 48, "Flip", images_select_flip_png, (Fl_Callback *)selectFlipY);
+  selection_rotate = new Button(selection, 8 + 48 + 8 + 48 + 8, pos, 48, 48, "Rotate", images_select_rotate_png, (Fl_Callback *)selectRotate90);
+  pos += 48 + gap;
 
-  new Separator(selection, 4, pos, 106, 2, "");
-  pos += 8;
+  new Separator(selection, 0, pos, OPTIONS_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
 
-  selection_copy = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Copy");
+  selection_copy = new Fl_Button(selection->x() + 8, selection->y() + pos, 160, 40, "Copy");
   selection_copy->tooltip("Ctrl-C");
   selection_copy->callback((Fl_Callback *)selectCopy);
   selection_copy->deactivate();
-  pos += 32 + 8;
+  pos += 40 + gap;
 
-  selection_paste = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Paste");
+  selection_paste = new Fl_Button(selection->x() + 8, selection->y() + pos, 160, 40, "Paste");
   selection_paste->tooltip("Ctrl-V");
   selection_paste->callback((Fl_Callback *)selectPaste);
   selection_paste->deactivate();
-  pos += 32 + 8;
+  pos += 40 + gap;
 
-  new Separator(selection, 4, pos, 106, 2, "");
-  pos += 8;
+  new Separator(selection, 0, pos, OPTIONS_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
 
-  selection_crop = new Fl_Button(selection->x() + 8, selection->y() + pos, 96, 32, "Crop");
+  selection_crop = new Fl_Button(selection->x() + 8, selection->y() + pos, 160, 48, "Crop");
   selection_crop->callback((Fl_Callback *)selectCrop);
-  pos += 32 + 8;
+  pos += 48 + gap;
 
   selection->resizable(0);
   selection_crop->deactivate();
   selection->end();
 
   // getcolor
-  getcolor = new Group(48, top->h() + menubar->h(),
-                       112, left_height,
+  getcolor = new Group(TOOLS_WIDTH, top->h() + menubar->h(),
+                       OPTIONS_WIDTH, left_height,
                        "Get Color");
-  pos = 28;
+  pos = Group::title_height + gap;
 
-  getcolor_color = new Widget(getcolor, 8, pos, 96, 96, "Selected Color", 0, 0, 0);
+  getcolor_color = new Widget(getcolor, 8, pos, 160, 160, "Selected Color", 0, 0, 0);
   getcolor_color->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
-  getcolor_color->labelsize(12);
-  pos += 96 + 24;
+  pos += 160 + gap;
 
   getcolor->resizable(0);
   getcolor->end();
 
   // offset
-  offset = new Group(48, top->h() + menubar->h(),
-                     112, left_height,
+  offset = new Group(TOOLS_WIDTH, top->h() + menubar->h(),
+                     OPTIONS_WIDTH, left_height,
                      "Offset");
-  pos = 28;
+  pos = Group::title_height + gap;
 
-  new StaticText(offset, 8, pos, 32, 24, "x:");
-  offset_x = new StaticText(offset, 24, pos, 72, 24, 0);
+  new StaticText(offset, 32 + 8, pos, 32, 24, "x:");
+  offset_x = new StaticText(offset, 32 + 24, pos, 72, 24, 0);
   pos += 24;
 
-  new StaticText(offset, 8, pos, 32, 24, "y:");
-  offset_y = new StaticText(offset, 24, pos, 72, 24, 0);
-  pos += 24;
+  new StaticText(offset, 32 + 8, pos, 32, 24, "y:");
+  offset_y = new StaticText(offset, 32 + 24, pos, 72, 24, 0);
+  pos += 24 + gap;
 
-  new Separator(offset, 4, pos, 106, 2, "");
-  pos += 8;
+  new Separator(offset, 0, pos, OPTIONS_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
 
-  offset_up = new RepeatButton(offset, 44, pos, 24, 24, "", images_up_png, (Fl_Callback *)offsetUp);
-  pos += 12;
+  offset_up = new RepeatButton(offset, 64, pos, 48, 48, "", images_up_png, (Fl_Callback *)offsetUp);
+  pos += 28;
 
-  offset_left = new RepeatButton(offset, 16, pos, 24, 24, "", images_left_png, (Fl_Callback *)offsetLeft);
-  offset_right = new RepeatButton(offset, 72, pos, 24, 24, "", images_right_png, (Fl_Callback *)offsetRight);
-  pos += 16;
+  offset_left = new RepeatButton(offset, 8, pos, 48, 48, "", images_left_png, (Fl_Callback *)offsetLeft);
+  offset_right = new RepeatButton(offset, 120, pos, 48, 48, "", images_right_png, (Fl_Callback *)offsetRight);
+  pos += 28;
 
-  offset_down = new RepeatButton(offset, 44, pos, 24, 24, "", images_down_png, (Fl_Callback *)offsetDown);
-  pos += 24;
+  offset_down = new RepeatButton(offset, 64, pos, 48, 48, "", images_down_png, (Fl_Callback *)offsetDown);
+  pos += 48;
 
-  new StaticText(offset, 8, pos, 96, 24, "Nudge");
+  new StaticText(offset, 8, pos, 160, 32, "Nudge");
 
   offset->resizable(0);
   offset->end();
 
   // text
-  text = new Group(48, top->h() + menubar->h(),
-                   112, left_height,
+  text = new Group(TOOLS_WIDTH, top->h() + menubar->h(),
+                   OPTIONS_WIDTH, left_height,
                    "Text");
-  pos = 28;
+  pos = Group::title_height + gap;
 
   // add font names
-  font_browse = new Fl_Hold_Browser(8, pos, 96, 384);
-  font_browse->textsize(9);
-  font_browse->resize(text->x() + 8, text->y() + pos, 96, 384);
+  font_browse = new Fl_Hold_Browser(8, pos, 160, 384);
+  font_browse->labelsize(16);
+  font_browse->textsize(16);
+  font_browse->resize(text->x() + 8, text->y() + pos, 160, 384);
 
-  for (int i = 0; i < Fl::set_fonts(0); i++)
+  for (int i = 0; i < Fl::set_fonts("*"); i++)
   {
-    int t = 0;
-    const char *name = Fl::get_font_name((Fl_Font)i, &t);
+    const char *name = Fl::get_font_name((Fl_Font)i, 0);
     font_browse->add(name);
   }
 
-  font_browse->value(0);
+  font_browse->value(1);
   font_browse->callback((Fl_Callback *)textChangedSize);
-  pos += 384 + 8;
+  pos += 384 + gap;
 
   // font size
-  font_size = new InputInt(text, 40, pos, 64, 24, "Size:",
-                           (Fl_Callback *)textChangedSize, 1, 256);
-  font_size->value("24");
-  pos += 24 + 8;
+  font_size = new InputInt(text, 64, pos, 96, 32, "Size:",
+                           (Fl_Callback *)textChangedSize, 4, 500);
+  font_size->value("48");
+  pos += 32 + gap;
 
-  text_input = new Fl_Input(8, pos, 96, 24, "");
-  text_input->textsize(10);
+  font_angle = new InputInt(text, 64, pos, 96, 32, "Angle:",
+                           (Fl_Callback *)textChangedSize, -359, 359);
+  font_angle->value("0");
+  pos += 32 + gap;
+
+  text_input = new Fl_Input(8, pos, 160, 32, "");
+  text_input->textsize(16);
   text_input->value("Text");
-  text_input->resize(text->x() + 8, text->y() + pos, 96, 24);
+  text_input->resize(text->x() + 8, text->y() + pos, 160, 32);
   text_input->callback((Fl_Callback *)textChangedSize);
-  pos += 24 + 8;
+  pos += 32 + gap;
 
   text_smooth = new CheckBox(text, 8, pos, 16, 16, "Antialiased", 0);
-  text_smooth->labelsize(13);
   text_smooth->center();
   text_smooth->value(1);
 
@@ -890,96 +911,78 @@ void Gui::init()
   text->end();
 
   // fill
-  fill = new Group(48, top->h() + menubar->h(),
-                   112, left_height,
+  fill = new Group(TOOLS_WIDTH, top->h() + menubar->h(),
+                   OPTIONS_WIDTH, left_height,
                    "Fill");
-  pos = 28 + 8;
+  pos = Group::title_height + gap;
 
-  fill_range = new InputInt(fill, 8, pos, 96, 24, "Range (0-31)", 0, 0, 31);
+  fill_range = new InputInt(fill, 8, pos, 160, 32, "Range (0-31)", 0, 0, 31);
   fill_range->align(FL_ALIGN_BOTTOM);
   fill_range->value("0");
-  pos += 24 + 24;
+  pos += 32 + 32;
 
-  fill_feather = new InputInt(fill, 8, pos, 96, 24, "Feather (0-255)", 0, 0, 255);
+  fill_feather = new InputInt(fill, 8, pos, 160, 32, "Feather (0-255)", 0, 0, 255);
   fill_feather->align(FL_ALIGN_BOTTOM);
   fill_feather->value("0");
-  pos += 24 + 24;
+  pos += 32 + 32;
 
   fill_color_only = new CheckBox(fill, 8, pos, 16, 16, "Color Only", 0);
-  fill_color_only->labelsize(13);
   fill_color_only->center();
   fill_color_only->value(0);
-  pos += 24;
+  pos += 32;
 
-  new Separator(fill, 4, pos, 106, 2, "");
-  pos += 8;
+  new Separator(fill, 0, pos, OPTIONS_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
 
-  fill_reset = new Fl_Button(fill->x() + 8, fill->y() + pos, 96, 32, "Reset");
+  fill_reset = new Fl_Button(fill->x() + 8, fill->y() + pos, 160, 48, "Reset");
   fill_reset->callback((Fl_Callback *)fillReset);
-  pos += 32 + 8;
+  pos += 48 + gap;
 
   fill->resizable(0);
   fill->end();
 
-  // palette
-  palette = new Group(window->w() - 80, top->h() + menubar->h(),
-                    80, window->h() - top->h() - menubar->h() - status->h(),
-                    "Palette");
-  pos = 28;
-
-  palette_swatches = new Widget(palette, 8, pos, 64, 256,
-                       0, 8, 8,
-                       (Fl_Callback *)paletteSwatches);
-  pos += 256 + 8;
-
-  palette_editor = new Fl_Button(palette->x() + 8, palette->y() + pos, 64, 24, "Editor...");
-  palette_editor->callback((Fl_Callback *)Editor::begin);
-  palette_editor->labelsize(12);
-
-  palette->resizable(0);
-  palette->end();
-
   // colors
-  colors = new Group(window->w() - 144 - 80, top->h() + menubar->h(),
-                    144, window->h() - top->h() - menubar->h() - status->h(),
-                    "Colors");
-  pos = 28;
+  colors = new Group(window->w() - COLORS_WIDTH - FILES_WIDTH,
+                     top->h() + menubar->h(),
+                     COLORS_WIDTH,
+                     window->h() - top->h() - menubar->h() - status->h(),
+                     "Colors");
 
-  swatch = new Widget(colors, 8, pos, 128, 48, "Paint Color", 0, 0, 0);
-  pos += 48 + 8;
+  pos = Group::title_height + gap;
 
-  hexcolor = new InputText(colors, 40, pos, 96, 24, "Hex:",
+  // satval overlaps the hue color wheel
+  hue = new Widget(colors, 8, pos, 192, 192, 0, 1, 1, (Fl_Callback *)colorChange);
+  satval = new Widget(colors, 8 + 48, pos + 48, 96, 96, 0, 1, 1, (Fl_Callback *)colorChange);
+
+  pos += 192 + 8;
+
+  hexcolor = new InputText(colors, 56, pos, 136, 32, "Hex:",
                            (Fl_Callback *)colorHexInput);
   hexcolor->maximum_size(6);
   hexcolor->textfont(FL_COURIER);
-  hexcolor->textsize(14);
-  pos += 24 + 8;
 
-  // satval overlaps the hue color wheel
-  hue = new Widget(colors, 8, pos, 128, 128, 0, 1, 1, (Fl_Callback *)colorChange);
-  satval = new Widget(colors, 40, pos + 32, 64, 64, 0, 1, 1, (Fl_Callback *)colorChange);
-  pos += 128 + 8;
+  pos += 32 + gap;
 
-  new Separator(colors, 4, pos, 138, 2, "");
-  pos += 8;
+  new Separator(colors, 0, pos, COLORS_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
 
-  trans_input = new InputInt(colors, 8, pos, 128, 24,
-                       "", (Fl_Callback *)colorTransInput, 0, 255);
+  trans_input = new InputInt(colors, 8, pos, 192, 32,
+                             "", (Fl_Callback *)colorTransInput, 0, 255);
   trans_input->value("0");
-  pos += 24 + 8;
+  pos += 32 + 8;
 
-  trans = new Widget(colors, 8, pos, 128, 24,
-                     "Transparency", images_transparency_png, 4, 24,
+  trans = new Widget(colors, 8, pos, 192, 48, "Transparency", 6, 48,
                      (Fl_Callback *)colorTrans);
-  pos += 24 + 8;
 
-  new Separator(colors, 4, pos, 138, 2, "");
-  pos += 8;
+  pos += 48 + gap;
 
-  blend = new Fl_Choice(8, pos, 128, 24, "");
+  new Separator(colors, 0, pos, COLORS_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
+
+  blend = new Fl_Choice(8, pos, 192, 32, "");
   blend->tooltip("Blending Mode");
   blend->textsize(10);
-  blend->resize(colors->x() + 8, colors->y() + pos, 128, 24);
+  blend->resize(colors->x() + 8, colors->y() + pos, 192, 32);
   blend->add("Normal");
   blend->add("Gamma Correct");
   blend->add("Lighten");
@@ -991,67 +994,75 @@ void Gui::init()
   blend->add("Smooth");
   blend->value(0);
   blend->callback((Fl_Callback *)colorChange);
-  pos += 24 + 8;
+  blend->textsize(16);
+  pos += 32 + gap;
+
+  new Separator(colors, 0, pos, COLORS_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
+
+  palette_swatches = new Widget(colors, 8, pos, 192, 192,
+                       0, 12, 12,
+                       (Fl_Callback *)paletteSwatches);
+  pos += 192 + gap;
 
   colors->resizable(0);
   colors->end();
-  right_height = pos;
+  right_height = left_height;
 
   // files
-  files = new Group(window->w() - colors->w() - palette->w(),
-                    top->h() + menubar->h() + pos,
-                    colors->w() + palette->w(),
-                    window->h() - top->h() - menubar->h() - status->h() - right_height, "Images");
-  pos = 28;
+  files = new Group(window->w() - FILES_WIDTH,
+                    top->h() + menubar->h(),
+                    FILES_WIDTH,
+                    window->h() - top->h() - menubar->h() - status->h(),
+                    "Images");
+  pos = Group::title_height + gap;
 
-  file_browse = new Fl_Hold_Browser(8, pos, 168, 200);
-  file_browse->textsize(12);
-  file_browse->resize(files->x() + 8, files->y() + pos, 168, 200);
+  file_browse = new Fl_Hold_Browser(8, pos, 160, 256);
+  file_browse->textsize(14);
+  file_browse->resize(files->x() + 8, files->y() + pos, 160, 384);
   file_browse->callback((Fl_Callback *)imagesBrowse);
 
-  file_button_group = new Fl_Group(files->x() + 184, files->y() + 28,
-                                48, 112, "");
+  pos += file_browse->h() + gap;
 
-  file_close = new Button(file_button_group, 0, 0, 32, 32,
+  file_close = new Button(files, 8, pos, 48, 48,
                           "Close File (Delete)", images_close_png,
                           (Fl_Callback *)imagesCloseFile);
 
-  file_move_up = new Button(file_button_group, 0, 40, 32, 32,
+  file_move_up = new Button(files, 8 + 48 + 8, pos, 48, 48,
                             "Move Up", images_up_large_png,
                             (Fl_Callback *)imagesMoveUp);
 
-  file_move_down = new Button(file_button_group, 0, 80, 32, 32,
+  file_move_down = new Button(files, 8 + 48 + 8 + 48 + 8, pos,
+                              48, 48,
                               "Move Down", images_down_large_png,
                               (Fl_Callback *)imagesMoveDown);
 
-  file_button_group->box(FL_NO_BOX);
-  file_button_group->resizable(0);
-  file_button_group->end();
+  pos += 48 + gap;
 
-  pos += file_browse->h() + 8;
-
-  file_rename = new Fl_Input(8, pos, 168, 24, "");
-  file_rename->textsize(12);
+  file_rename = new Fl_Input(8, pos, 160, 32, "");
   file_rename->value("");
   file_rename->when(FL_WHEN_ENTER_KEY);
-  file_rename->resize(files->x() + 8, files->y() + pos, 168, 24);
+  file_rename->resize(files->x() + 8, files->y() + pos, 160, 32);
   file_rename->callback((Fl_Callback *)imagesRename);
-  pos += 24 + 8;
+  pos += 32 + gap;
 
-  new Separator(files, 4, pos, 216, 2, "");
-  pos += 8;
+  new Separator(files, 0, pos, FILES_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
 
-  file_mem = new Fl_Box(FL_FLAT_BOX, files->x() + 8, files->y() + pos, 144, 32, "");
+  file_mem = new Fl_Box(FL_FLAT_BOX,
+                        files->x() + 8, files->y() + pos, 160, 64, "");
 
-  file_mem->labelsize(10);
+  file_mem->labelsize(14);
   file_mem->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP | FL_ALIGN_LEFT);
 
   files->resizable(file_browse);
   files->end();
 
   // middle
-  middle = new Fl_Group(160, top->h() + menubar->h(),
-                        window->w() - 304 - 80, window->h() - (menubar->h() + top->h() + bottom->h() + status->h()));
+  middle = new Fl_Group(TOOLS_WIDTH + OPTIONS_WIDTH,
+                        top->h() + menubar->h(),
+                        window->w() - TOTAL_WIDTH,
+                        window->h() - (menubar->h() + top->h() + status->h()));
   middle->box(FL_FLAT_BOX);
   view = new View(middle, 0, 0, middle->w(), middle->h(), "View");
   middle->resizable(view);
@@ -1059,7 +1070,7 @@ void Gui::init()
 
   // container for left panels
   left = new Fl_Group(0, top->h() + menubar->h(),
-                            64 + 96, left_height);
+                            TOOLS_WIDTH + OPTIONS_WIDTH, left_height);
   left->add(tools);
   left->add(paint);
   left->add(getcolor);
@@ -1069,19 +1080,19 @@ void Gui::init()
   left->end();
 
   // container for right panels
-  right = new Fl_Group(window->w() - 144 - 80,
+  right = new Fl_Group(window->w() - COLORS_WIDTH - FILES_WIDTH,
                        top->h() + menubar->h(),
-                       144 + 80,
+                       COLORS_WIDTH + FILES_WIDTH,
                        right_height);
-//                       window->h() - top->h() - menubar->h());
-  right->add(palette);
+
+  right->add(files);
   right->add(colors);
 
   // resize these panels
   colors->resize(colors->x(), colors->y(), colors->w(), right_height);
-  palette->resize(palette->x(), palette->y(), palette->w(), right_height);
+  files->resize(files->x(), files->y(), files->w(), right_height);
 
-  window->size_range(1024, 768, 0, 0, 0, 0, 0);
+  window->size_range(1024, 812 + gap, 0, 0, 0, 0, 0);
   window->resizable(view);
   window->end();
 
@@ -1188,16 +1199,17 @@ void Gui::colorUpdate(int c)
   Blend::rgbToHsv(r, g, b, &h, &s, &v);
 
   float angle = ((M_PI * 2) / 1536) * h;
-  int mx = 64 + 56 * std::cos(angle);
-  int my = 64 + 56 * std::sin(angle);
-  hue->var = mx + 128 * my;
-  satval->var = (int)(s / 4.05) + 64 * (int)(v / 4.05);
+  int mx = 96 + 88 * std::cos(angle);
+  int my = 96 + 88 * std::sin(angle);
+  hue->var = mx + 192 * my;
+  satval->var = (int)(s / 2.68) + 96 * (int)(v / 2.68);
 
   hue->do_callback();
 
   Project::brush->color = c;
   colorHexUpdate();
-  colorSwatch();
+//  colorSwatch();
+  colorTrans();
 }
 
 void Gui::transUpdate(int t)
@@ -1209,29 +1221,7 @@ void Gui::transUpdate(int t)
   snprintf(s, sizeof(s), "%d", Project::brush->trans);
   trans_input->value(s);
   trans_input->redraw();
-  colorSwatch();
-}
-
-void Gui::colorSwatch()
-{
-  swatch->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
-
-  for (int y = 0; y < swatch->bitmap->h; y++)
-  {
-    for (int x = 0; x < swatch->bitmap->w; x++)
-    {
-      const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xA0A0A0 : 0x606060;
-      const int c = Blend::trans(checker,
-                                 Project::brush->color,
-                                 Project::brush->trans);
-
-      swatch->bitmap->setpixel(x, y, c);
-    }
-  }
-
-  swatch->bitmap->rect(0, 0, swatch->bitmap->w - 1, swatch->bitmap->h - 1,
-                       makeRgb(0, 0, 0), 0);
-  swatch->redraw();
+  colorTrans();
 }
 
 void Gui::getcolorUpdate(int c)
@@ -1327,7 +1317,7 @@ void Gui::zoomLevel()
   char s[256];
 
   if (view->zoom < 1)
-    snprintf(s, sizeof(s), "1/%1.0f", 1.0 / view->zoom);
+    snprintf(s, sizeof(s), "1/%1.0fx", 1.0 / view->zoom);
   else
     snprintf(s, sizeof(s), "%2.1fx", view->zoom);
     
@@ -1373,28 +1363,28 @@ void Gui::paintChangeSize(int size)
   paint_brush_preview->bitmap->clear(convertFormat(getFltkColor(FL_BACKGROUND2_COLOR), true));
   paint_brush_preview->bitmap->rect(0, 0,
                      paint_brush_preview->bitmap->w - 1,
-                     paint_brush_preview->bitmap->h - 21,
+                     paint_brush_preview->bitmap->h - 1,
                      getFltkColor(Project::fltk_theme_bevel_down), 0);
   paint_brush_preview->bitmap->rect(0, 0,
                      paint_brush_preview->bitmap->w - 1,
                      paint_brush_preview->bitmap->h - 1,
                      getFltkColor(Project::fltk_theme_bevel_down), 0);
 
-  const double aspect = 72.0 / size;
+  const double aspect = 128.0 / size;
 
   for (int i = 0; i < brush->solid_count; i++)
   {
     int temp_x = brush->solidx[i];
     int temp_y = brush->solidy[i];
 
-    if (size > 72)
+    if (size > 128)
     {
       temp_x *= aspect;
       temp_y *= aspect;
     }
 
-    temp_x += 48;
-    temp_y += 48;
+    temp_x += paint_brush_preview->w() / 2;
+    temp_y += paint_brush_preview->h() / 2;
 
     paint_brush_preview->bitmap->setpixelSolid(temp_x, temp_y,
                      convertFormat(getFltkColor(FL_FOREGROUND_COLOR), true), 0);
@@ -1549,22 +1539,30 @@ void Gui::toolChange(Widget *, void *var)
 void Gui::colorChange(Widget *widget, void *)
 {
   int pos = hue->var;
-  int mx = pos % 128;
-  int my = pos / 128;
+  int mx = pos % 192;
+  int my = pos / 192;
+
+  int dist = 68;
+  int inner = dist + 6;
+  int outer = dist + 25;
+  int center = inner + (outer - inner) / 2;
 
   if (widget == hue)
   {
-    if (((mx - 64) * (mx - 64) + (my - 64) * (my - 64)) < (30 * 30))
+    const int md = ((mx - 96) * (mx - 96) + (my - 96) * (my - 96));
+
+    if (md < ((inner - 32) * (inner - 32)))
     {
+      hue->redraw();
       satval->redraw();
       return;
     }
   }
 
-  float mouse_angle = atan2f(my - 64, mx - 64);
+  float mouse_angle = atan2f(my - 96, mx - 96);
   int h = ((int)(mouse_angle * 244.46) + 1536) % 1536;
-  int s = (satval->var % 64) * 4.05;
-  int v = (satval->var / 64) * 4.05;
+  int s = (satval->var % 96) * 2.69;
+  int v = (satval->var / 96) * 2.69;
 
   int r, g, b;
 
@@ -1584,94 +1582,89 @@ void Gui::colorChange(Widget *widget, void *)
     //Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
 
     float angle = ((M_PI * 2) / 1536) * i;
-    int x1 = 64 + 62 * std::cos(angle);
-    int y1 = 64 + 62 * std::sin(angle);
-    int x2 = 64 + 50 * std::cos(angle);
-    int y2 = 64 + 50 * std::sin(angle);
-
+    int x1 = 96 + outer * std::cos(angle);
+    int y1 = 96 + outer * std::sin(angle);
+    int x2 = 96 + inner * std::cos(angle);
+    int y2 = 96 + inner * std::sin(angle);
     hue->bitmap->line(x1, y1, x2, y2, makeRgb(0, 0, 0), 252);
     hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makeRgb(0, 0, 0), 252);
   }
 
   for (int i = 1; i < 1536; i++)
   {
-    //joe
     Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
     //Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
 
     float angle = ((M_PI * 2) / 1536) * i;
-    int x1 = 64 + 61 * std::cos(angle);
-    int y1 = 64 + 61 * std::sin(angle);
-    int x2 = 64 + 51 * std::cos(angle);
-    int y2 = 64 + 51 * std::sin(angle);
+    int x1 = 96 + (outer - 1) * std::cos(angle);
+    int y1 = 96 + (outer - 1) * std::sin(angle);
+    int x2 = 96 + (inner + 1) * std::cos(angle);
+    int y2 = 96 + (inner + 1) * std::sin(angle);
 
-    hue->bitmap->line(x1, y1, x2, y2, makeRgb(0, 0, 0), 252);
-    hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makeRgb(0, 0, 0), 252);
+    hue->bitmap->line(x1, y1, x2, y2, makeRgb(0, 0, 0), 248);
+    hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makeRgb(0, 0, 0), 248);
   }
 
   for (int i = 1; i < 1536; i++)
   {
-    //joe
     Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
     //Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
 
     float angle = ((M_PI * 2) / 1536) * i;
-    int x1 = 64 + 60 * std::cos(angle);
-    int y1 = 64 + 60 * std::sin(angle);
-    int x2 = 64 + 52 * std::cos(angle);
-    int y2 = 64 + 52 * std::sin(angle);
+    int x1 = 96 + (outer - 3) * std::cos(angle);
+    int y1 = 96 + (outer - 3) * std::sin(angle);
+    int x2 = 96 + (inner + 3) * std::cos(angle);
+    int y2 = 96 + (inner + 3) * std::sin(angle);
 
     hue->bitmap->line(x1, y1, x2, y2, makeRgb(r, g, b), 0);
     hue->bitmap->line(x1 + 1, y1, x2 + 1, y2, makeRgb(r, g, b), 0);
   }
 
-  const int x1 = 64 + 56 * std::cos(mouse_angle);
-  const int y1 = 64 + 56 * std::sin(mouse_angle);
+  const int x1 = 96 + center * std::cos(mouse_angle);
+  const int y1 = 96 + center * std::sin(mouse_angle);
 
-  //joe
   Blend::hsvToRgb(h, 255, 255, &r, &g, &b);
   //Blend::wheelToRgb(h, 255, 255, &r, &g, &b);
-  hue->bitmap->rect(x1 - 6, y1 - 6, x1 + 6, y1 + 6, makeRgb(0, 0, 0), 192);
-  hue->bitmap->rect(x1 - 5, y1 - 5, x1 + 5, y1 + 5, makeRgb(0, 0, 0), 96);
-  hue->bitmap->xorRect(x1 - 4, y1 - 4, x1 + 4, y1 + 4);
-  hue->bitmap->rectfill(x1 - 3, y1 - 3, x1 + 3, y1 + 3, makeRgb(r, g, b), 0);
+  hue->bitmap->rect(x1 - 10, y1 - 10, x1 + 10, y1 + 10, makeRgb(0, 0, 0), 192);
+  hue->bitmap->rect(x1 - 9, y1 - 9, x1 + 9, y1 + 9, makeRgb(0, 0, 0), 96);
+  hue->bitmap->xorRect(x1 - 8, y1 - 8, x1 + 8, y1 + 8);
+  hue->bitmap->rectfill(x1 - 7, y1 - 7, x1 + 7, y1 + 7, makeRgb(r, g, b), 0);
 
   // saturation/value
-  hue->bitmap->rect(32 - 2, 32 - 2, 95 + 2, 95 + 2, makeRgb(0, 0, 0), 192);
-  hue->bitmap->rect(32 - 1, 32 - 1, 95 + 1, 95 + 1, makeRgb(0, 0, 0), 96);
-  hue->bitmap->rect(0, 0, 127, 127, makeRgb(0, 0, 0), 0);
+  hue->bitmap->rect(48 - 1, 48 - 1, 48 + 95 + 1, 48 + 95 + 1, makeRgb(0, 0, 0), 192);
 
-  for (int y = 0; y < 64; y++)
+  for (int y = 0; y < 96; y++)
   {
-    for (int x = 0; x < 64; x++)
+    for (int x = 0; x < 96; x++)
     {
-      Blend::hsvToRgb(h, x * 4.05, y * 4.05, &r, &g, &b);
+      Blend::hsvToRgb(h, x * 2.69, y * 2.69, &r, &g, &b);
       //Blend::wheelToRgb(h, x * 4.05, y * 4.05, &r, &g, &b);
       satval->bitmap->setpixelSolid(x, y, makeRgb(r, g, b), 0);
     }
   }
 
-  int x = (satval->var % 64);
-  int y = (satval->var / 64);
+  int x = (satval->var % 96);
+  int y = (satval->var / 96);
 
-  if (x < 4)
-    x = 4;
-  if (y < 4)
-    y = 4;
-  if (x > 59)
-    x = 59;
-  if (y > 59)
-    y = 59;
+  if (x < 9)
+    x = 9;
+  if (y < 9)
+    y = 9;
+  if (x > 86)
+    x = 86;
+  if (y > 86)
+    y = 86;
 
-  satval->bitmap->rect(x - 6, y - 6, x + 6, y + 6, makeRgb(0, 0, 0), 192);
-  satval->bitmap->rect(x - 5, y - 5, x + 5, y + 5, makeRgb(0, 0, 0), 96);
-  satval->bitmap->xorRect(x - 4, y - 4, x + 4, y + 4);
+  satval->bitmap->rect(x - 10, y - 10, x + 10, y + 10, makeRgb(0, 0, 0), 192);
+  satval->bitmap->rect(x - 9, y - 9, x + 9, y + 9, makeRgb(0, 0, 0), 96);
+  satval->bitmap->xorRect(x - 8, y - 8, x + 8, y + 8);
 
+//  colorSwatch();
+  colorTrans();
+  colorHexUpdate();
   hue->redraw();
   satval->redraw();
 
-  colorSwatch();
-  colorHexUpdate();
 }
 
 void Gui::colorHue(Widget *, void *)
@@ -1688,22 +1681,41 @@ void Gui::colorTransInput(Widget *, void *)
 {
   Project::brush->trans = atoi(trans_input->value());
   trans->var = Project::brush->trans / 8.22;
-  trans->redraw();
-  colorSwatch();
-  Project::tool->redraw(view);
+//  colorTrans();
 }
 
-void Gui::colorTrans(Widget *, void *)
+void Gui::colorTrans()
 {
-//  Project::brush->trans = trans->var * 16.8;
   Project::brush->trans = trans->var * 8.23;
   char s[16];
   snprintf(s, sizeof(s), "%d", Project::brush->trans);
   trans_input->value(s);
   trans_input->redraw();
-  colorSwatch();
+
+  for (int y = 0; y < trans->bitmap->h; y++)
+  {
+    for (int x = 0; x < trans->bitmap->w; x++)
+    {
+      const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xff989898 : 0xff686868;
+      trans->bitmap->setpixel(x, y, checker);
+    }
+  }
+
+  const int c = Project::brush->color;
+  const float mul = 255.0 / (trans->bitmap->w - 1);
+
+  for (int x = 0; x < trans->bitmap->w; x++)
+  {
+    trans->bitmap->vline(0, x, trans->bitmap->h - 1, c, x * mul);
+  }
+
+  const int stepx = trans->stepx;
+  const int pos = trans->var * stepx;
+
+  trans->bitmap->xorRect(pos + 1, 1, pos + stepx - 2, trans->h() - 2);
+  trans->bitmap->rect(pos, 0, pos + stepx - 1, trans->h() - 1, makeRgb(0, 0, 0), 0);
+  trans->redraw();
   Project::tool->redraw(view);
-//  colorChange(0, 0);
 }
 
 void Gui::colorBlend(Widget *, void *)
@@ -1724,6 +1736,13 @@ void Gui::originEnable(Widget *, void *var)
 void Gui::constrainEnable(Widget *, void *var)
 {
   Project::stroke->constrain = *(int *)var;
+}
+
+// limit mouse framerate
+void Gui::mouseTimer()
+{
+  view->mouse_timer_ready = true;
+  Fl::repeat_timeout(1.0 / 125, (Fl_Timeout_Handler)Gui::mouseTimer);
 }
 
 void Gui::selectCopy()
@@ -1946,6 +1965,11 @@ int Gui::getTextFontFace()
 int Gui::getTextFontSize()
 {
   return atoi(font_size->value());
+}
+
+int Gui::getTextFontAngle()
+{
+  return atoi(font_angle->value());
 }
 
 void Gui::textChangedSize(InputInt *input, void *)

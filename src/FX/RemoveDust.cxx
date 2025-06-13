@@ -25,7 +25,6 @@ namespace
   namespace Items
   {
     DialogWindow *dialog;
-    Fl_Box *box;
     InputInt *amount;
     CheckBox *invert;
     Fl_Button *ok;
@@ -109,23 +108,23 @@ void RemoveDust::begin()
 
 void RemoveDust::init()
 {
-  int y1 = 8;
+  int y1 = 16;
 
-  Items::dialog = new DialogWindow(384, 0, "Remove Dust");
-  Items::box = new Fl_Box(FL_FLAT_BOX, 8, 8, 368, 32, "Cleans up scanned images.");
-  Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-//    Items::box->labelsize(12);
-  y1 += 32;
-  Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount (1-10)", 0, 1, 10);
-  y1 += 24 + 8;
+  Items::dialog = new DialogWindow(400, 0, "Remove Dust");
+
+  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32, "Amount (1-10)", 0, 1, 10);
+  y1 += 32 + 16;
   Items::amount->value("4");
   Items::amount->center();
+
   Items::invert = new CheckBox(Items::dialog, 0, y1, 16, 16, "Invert First", 0);
-  y1 += 16 + 8;
+  y1 += 16 + 16;
   Items::invert->center();
+
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
   Items::cancel->callback((Fl_Callback *)quit);
+
   Items::dialog->set_modal();
   Items::dialog->end();
 }

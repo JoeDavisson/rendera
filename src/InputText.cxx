@@ -35,8 +35,8 @@ InputText::InputText(Fl_Group *g, int x, int y, int w, int h,
   if (cb)
     callback(cb, &var);
   maximum_size(256);
-  labelsize(12);
-  textsize(12);
+  labelsize(16);
+  textsize(16);
   copy_label(text);
   when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
   resize(group->x() + x, group->y() + y, w, h);

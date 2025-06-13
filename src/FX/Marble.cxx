@@ -20,7 +20,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Marble.H"
 #include "Fractal.H"
+#include "Gui.H"
 #include "Images.H"
+#include "Inline.H"
+#include "View.H"
 
 namespace
 {
@@ -64,8 +67,10 @@ void Marble::apply(Bitmap *dest)
   Fractal::marble(&plasma, &marble, &marbx, &marby, (Items::marb->var + 1) << 2, 50, Items::type->value());
 
   int color = Project::brush->color;
-  int trans = Items::blend->var * 10.96;
-  int threshold = Items::threshold->var * 10.96;
+//  int trans = Items::blend->var * 10.96;
+//  int threshold = Items::threshold->var * 10.96;
+  int trans = Items::blend->var * 13.43;
+  int threshold = Items::threshold->var * 13.43;
   int (*current_blend)(const int, const int, const int) = &Blend::trans;
 
   switch (Items::mode->value())
@@ -138,30 +143,32 @@ void Marble::init()
   int x1 = 8;
   int y1 = 8;
 
-  Items::dialog = new DialogWindow(304 + 16, 0, "Marble");
-  Items::preview = new Widget(Items::dialog, 8, y1, 304, 304, 0, 1, 1, 0);
-  y1 += 304 + 8;
-  Items::marb = new Widget(Items::dialog, 8, y1, 144, 24, "Marbleize", images_marbleize_large_png, 12, 24, (Fl_Callback *)setMarb);
+  Items::dialog = new DialogWindow(344, 0, "Marble");
+
+  Items::preview = new Widget(Items::dialog, 8, y1, 328, 328, 0, 1, 1, 0);
+  y1 += 328 + 8;
+
+  Items::marb = new Widget(Items::dialog, 8, y1, 160, 32, "Marbleize", images_marbleize_png, 16, 32, (Fl_Callback *)setMarb);
   Items::marb->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::marb->labelfont(FL_COURIER);
-  Items::marb->labelsize(12);
-  Items::turb = new Widget(Items::dialog, 8 + 144 + 16, y1, 144, 24, "Turbulence", images_turbulence_large_png, 12, 24, (Fl_Callback *)setTurb);
+
+  Items::turb = new Widget(Items::dialog, 8 + 160 + 8, y1, 160, 32, "Turbulence", images_turbulence_png, 16, 32, (Fl_Callback *)setTurb);
   Items::turb->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::turb->labelfont(FL_COURIER);
-  Items::turb->labelsize(12);
-  y1 += 24 + 16 + 8;
-  Items::blend = new Widget(Items::dialog, 8, y1, 144, 24, "Blend", images_transparency_large_png, 6, 24, (Fl_Callback *)setBlend);
+  y1 += 64;
+
+  Items::blend = new Widget(Items::dialog, 8, y1, 160, 32, "Blend", images_marble_blend_png, 8, 32, (Fl_Callback *)setBlend);
   Items::blend->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::blend->labelfont(FL_COURIER);
-  Items::blend->labelsize(12);
-  Items::threshold = new Widget(Items::dialog, 8 + 144 + 16, y1, 144, 24, "Threshold", images_transparency_large_png, 6, 24, (Fl_Callback *)setThreshold);
+
+  Items::threshold = new Widget(Items::dialog, 8 + 160 + 8, y1, 160, 32, "Threshold", images_marble_blend_png, 8, 32, (Fl_Callback *)setThreshold);
   Items::threshold->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::threshold->labelfont(FL_COURIER);
-  Items::threshold->labelsize(12);
-  y1 += 24 + 16 + 8;
-  Items::type = new Fl_Choice(x1, y1, 96, 24, 0);
-  Items::type->textsize(12);
-  Items::type->labelsize(12);
+  y1 += 64;
+
+  Items::type = new Fl_Choice(x1, y1, 160, 32, 0);
+  Items::type->labelsize(16);
+  Items::type->textsize(16);
   Items::type->tooltip("Type");
   Items::type->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::type->labelfont(FL_COURIER);
@@ -174,10 +181,11 @@ void Marble::init()
   Items::type->add("Immiscible");
   Items::type->value(0);
   Items::type->callback((Fl_Callback *)update);
-  x1 += 96 + 8;
-  Items::mode = new Fl_Choice(x1, y1, 96, 24, 0);
-  Items::mode->textsize(12);
-  Items::mode->labelsize(12);
+  x1 += 160 + 8;
+
+  Items::mode = new Fl_Choice(x1, y1, 160, 32, 0);
+  Items::mode->labelsize(16);
+  Items::mode->textsize(16);
   Items::mode->tooltip("Blending Mode");
   Items::mode->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::mode->labelfont(FL_COURIER);
@@ -186,19 +194,27 @@ void Marble::init()
   Items::mode->add("Darken");
   Items::mode->value(0);
   Items::mode->callback((Fl_Callback *)update);
-  x1 += 96 + 8;
-  Items::palette_editor = new Fl_Button(x1, y1, 64, 24, "Color...");
-  Items::palette_editor->labelsize(12);
+  x1 = 8;
+  y1 += 32 + 8;
+
+  Items::palette_editor = new Fl_Button(x1, y1, 160, 32, "Color...");
+  Items::palette_editor->labelsize(16);
   Items::palette_editor->callback((Fl_Callback *)getColor);
-  x1 += 64 + 8;
-  Items::color = new Widget(Items::dialog, x1, y1, 24, 24, 0, 0, 0, 0);
-  y1 += 24 + 8;
-  Items::change = new Fl_Button(8, y1 + 8, 96, 24, "Randomize");
-  Items::change->labelsize(12);
-  Items::change->callback((Fl_Callback *)update);
+  x1 += 160 + 8;
+
+  Items::color = new Widget(Items::dialog, x1, y1, 160, 32, 0, 0, 0, 0);
+  x1 = 8;
+  y1 += 40;
+
+  Items::change = new Fl_Button(x1, y1 + 12, 96, 40, "Apply");
+  Items::change->labelsize(16);
+  Items::change->tooltip("Apply Changes");
+  Items::change->callback((Fl_Callback *)updateMain);
+
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
   Items::cancel->callback((Fl_Callback *)quit);
+
   Items::dialog->set_modal();
   Items::dialog->end();
 }
@@ -210,6 +226,12 @@ void Marble::update()
   apply(Items::temp);
   FX::drawPreview(Items::temp, Items::preview->bitmap);
   Items::preview->redraw();
+}
+
+void Marble::updateMain()
+{
+  Items::temp->blit(Project::bmp, 0, 0, 0, 0, Items::temp->w, Items::temp->h);
+  Gui::getView()->drawMain(true);
 }
 
 void Marble::setMarb()

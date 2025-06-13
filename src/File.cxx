@@ -202,10 +202,10 @@ void File::pngReadFromArray(png_structp png_ptr,
 
 void File::init()
 {
-  strcpy(load_dir, ".");
-  strcpy(save_dir, ".");
-  strcpy(pal_load_dir, ".");
-  strcpy(pal_save_dir, ".");
+  snprintf(load_dir, sizeof(load_dir), ".");
+  snprintf(save_dir, sizeof(save_dir), ".");
+  snprintf(pal_load_dir, sizeof(pal_load_dir), ".");
+  snprintf(pal_save_dir, sizeof(pal_save_dir), ".");
 }
 
 /*
@@ -943,7 +943,10 @@ void File::save(Fl_Widget *, void *)
   }
 
   char fn[256];
-  strcpy(fn, fc.filename());
+//joe
+//  strcpy(fn, fc.filename());
+  snprintf(fn, sizeof(fn), "%s", fc.filename());
+
   int ext_value = fc.filter_value();
   fl_filename_setext(fn, sizeof(fn), ext_string[ext_value]);
 
@@ -1346,7 +1349,10 @@ void File::loadPalette()
   }
 
   char fn[256];
-  strcpy(fn, fc.filename());
+
+  snprintf(fn, sizeof(fn), "%s", fc.filename());
+// joe
+//  strcpy(fn, fc.filename());
 
   FileSP in(fn, "r");
 
@@ -1394,7 +1400,9 @@ void File::savePalette()
 
   char fn[256];
 
-  strcpy(fn, fc.filename());
+  snprintf(fn, sizeof(fn), "%s", fc.filename());
+//joe
+//  strcpy(fn, fc.filename());
   fl_filename_setext(fn, sizeof(fn), ".gpl");
 
   if (fileExists(fn))
@@ -1475,7 +1483,9 @@ void File::saveSelection()
   }
 
   char fn[256];
-  strcpy(fn, fc.filename());
+  snprintf(fn, sizeof(fn), "%s", fc.filename());
+//joe
+//  strcpy(fn, fc.filename());
   int ext_value = fc.filter_value();
   fl_filename_setext(fn, sizeof(fn), ext_string[ext_value]);
 
@@ -1527,7 +1537,9 @@ void File::decodeURI(char *s)
 // extract directory from a path/filename string
 void File::getDirectory(char *dest, const char *src)
 {
-  strcpy(dest, src);
+  snprintf(dest, sizeof(*dest), "%s", src);
+// joe
+//  strcpy(dest, src);
 
   int len = strlen(dest);
 

@@ -25,13 +25,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <cmath>
 #include <climits>
-#include <stdint.h>
+#include <cstdint>
 
 #ifndef __BYTE_ORDER__
 #define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
 #endif
 
-static unsigned int rnd_seed = 12345;
+static int rnd_seed = 12345;
 
 struct rgba_type
 {
@@ -203,7 +203,7 @@ inline int rnd()
   rnd_seed ^= rnd_seed >> 13;
   rnd_seed ^= rnd_seed <<  5;
 
-  return (int)rnd_seed;
+  return rnd_seed;
 }
 
 // file access functions

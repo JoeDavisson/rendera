@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "FileSP.H"
+#include "Gamma.H"
 #include "KDtree.H"
 #include "Inline.H"
 #include "Palette.H"
@@ -524,6 +525,17 @@ void Palette::set4LevelRGB()
   fillTable();
 }
 
+
+// 111
+// 00000000
+
+// 111
+// 00000000
+
+// 11
+// 00000000
+
+/*
 void Palette::set332()
 {
   int index = 0;
@@ -534,11 +546,55 @@ void Palette::set332()
     {
       for (int b = 0; b < 4; b++)
       {
-        data[index++] = makeRgb(r * 36.43, g * 36.43, b * 85);
+
+//        int rr = (r << 5) | (((r >> 2) << 5) - 1);
+//        int gg = (g << 5) | (((g >> 2) << 5) - 1);
+//        int bb = (b << 6) | (((b >> 1) << 6) - 1);
+
+        int rr = (r << 5) | (r << 2) | (r >> 1);
+        int gg = (g << 5) | (g << 2) | (g >> 1);
+        int bb = (b << 6) | (b << 4) | (b << 2) | (b);
+
+        rr = Gamma::fix(rr);
+        gg = Gamma::fix(gg);
+        bb = Gamma::fix(bb);
+
+        rr /= 257;
+        gg /= 257;
+        bb /= 257;
+
+        data[index++] = makeRgb(rr, gg, bb);
+//        data[index++] = makeRgb(r << 5, g << 5, b << 6);
       }
     }
   }
 
+//  data[255] = makeRgb(255, 255, 255);
+
   max = index;
   fillTable();
 }
+*/
+
+void Palette::set332()
+{
+  int index = 0;
+
+  for (int r = 0; r < 8; r++)
+  {
+    for (int g = 0; g < 8; g++)
+    {
+      for (int b = 0; b < 4; b++)
+      {
+//        data[index++] = makeRgb(r * 36.43, g * 36.43, b * 85);
+        data[index++] = makeRgb(r << 5, g << 5, b << 6);
+      }
+    }
+  }
+
+  data[255] = makeRgb(255, 255, 255);
+
+  max = index;
+  fillTable();
+}
+

@@ -35,9 +35,10 @@ public:
   ~InputFloat();
   const char *value();
   void value(const char *);
-  void maximum_size(int);
+  void maximum_size(const int);
   void center();
-  int limitValue(int, int);
+//  int limitValue(int, int);
+  void textsize(const int);
 
   int var;
   double min;

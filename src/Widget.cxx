@@ -23,12 +23,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Widget.H>
+#include <FL/Fl_Group.H>
 
 #include "Bitmap.H"
 #include "Blend.H"
-#include "Inline.H"
 #include "File.H"
+#include "Gui.H"
+#include "Inline.H"
 #include "Project.H"
+#include "View.H"
 #include "Widget.H"
 
 // load a PNG image from a file
@@ -79,6 +82,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
   use_highlight = true;
+  labelsize(16);
 }
 
 // load static PNG image from file
@@ -101,6 +105,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   image = new Fl_RGB_Image((unsigned char *)bitmap->data, bitmap->w, bitmap->h, 4, 0);
 
   resize(group->x() + x, group->y() + y, w, h);
+  labelsize(16);
 }
 
 // use a blank bitmap
@@ -123,6 +128,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
   use_highlight = false;
+  labelsize(16);
 }
 
 Widget::~Widget()
@@ -142,18 +148,26 @@ int Widget::handle(int event)
       return 1;
     case FL_PUSH:
     case FL_DRAG:
+
+      if (Gui::getView()->mouse_timer_ready == false)
+        return 1;
+
+      Gui::getView()->mouse_timer_ready = false;
+
       Fl::focus(0);
 
       if (stepx <= 0 || stepy <= 0)
         return 0;
 
       x1 = (Fl::event_x() - x()) / stepx;
+
       if (x1 > w() / stepx - 1)
         x1 = w() / stepx - 1;
       if (x1 < 0)
         x1 = 0;
 
       y1 = (Fl::event_y() - y()) / stepy;
+
       if (y1 > h() / stepy - 1)
         y1 = h() / stepy - 1;
       if (y1 < 0)
@@ -209,5 +223,6 @@ void Widget::draw()
   }
 
   fl_pop_clip();
+  fl_rect(x(), y(), w(), h(), 36);
 }
 

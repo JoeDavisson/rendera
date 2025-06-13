@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "InputInt.H"
 #include "Map.H"
 #include "Project.H"
-#include "Separator.H"
 #include "Transform.H"
 #include "Undo.H"
 #include "View.H"
@@ -132,30 +131,37 @@ namespace Resize
 
   void init()
   {
-    int y1 = 8;
+    int y1 = 16;
 
-    Items::dialog = new DialogWindow(256, 0, "Resize Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 32768);
+    Items::dialog = new DialogWindow(400, 0, "Resize Image");
+
+    Items::width = new InputInt(Items::dialog, 0, y1, 128, 32, "Width", (Fl_Callback *)checkWidth, 1, 32768);
     Items::width->center();
-    y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height", (Fl_Callback *)checkHeight, 1, 32768);
+    y1 += 32 + 16;
+
+    Items::height = new InputInt(Items::dialog, 0, y1, 128, 32, "Height", (Fl_Callback *)checkHeight, 1, 32768);
     Items::height->center();
-    y1 += 24 + 8;
+    y1 += 32 + 16;
+
     Items::width->maximum_size(8);
     Items::height->maximum_size(8);
     Items::width->value("640");
     Items::height->value("480");
+
     Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
     Items::keep_aspect->center();
-    y1 += 16 + 8;
     Items::keep_aspect->value(0);
+    y1 += 16 + 16;
+
     Items::center = new CheckBox(Items::dialog, 0, y1, 16, 16, "Center", 0);
-    Items::center->center();
-    y1 += 16 + 8;
     Items::center->value(1);
+    Items::center->center();
+    y1 += 16 + 16;
+
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
+
     Items::dialog->set_modal();
     Items::dialog->end(); 
   }
@@ -518,31 +524,37 @@ namespace Scale
 
   void init()
   {
-    int y1 = 8;
+    int y1 = 16;
     int ww = 0;
     int hh = 0;
 
-    Items::dialog = new DialogWindow(256, 0, "Scale Image");
-    Items::width = new InputInt(Items::dialog, 0, y1, 96, 24, "Width", (Fl_Callback *)checkWidth, 1, 32768);
+    Items::dialog = new DialogWindow(400, 0, "Scale Image");
+
+    Items::width = new InputInt(Items::dialog, 0, y1, 128, 32, "Width", (Fl_Callback *)checkWidth, 1, 32768);
     Items::width->center();
-    y1 += 24 + 8;
-    Items::height = new InputInt(Items::dialog, 0, y1, 96, 24, "Height", (Fl_Callback *)checkHeight, 1, 32768);
+    y1 += 32 + 16;
+
+    Items::height = new InputInt(Items::dialog, 0, y1, 128, 32, "Height", (Fl_Callback *)checkHeight, 1, 32768);
     Items::height->center();
-    y1 += 24 + 8;
-    Items::percent = new InputInt(Items::dialog, 0, y1, 96, 24, "%", (Fl_Callback *)checkPercent, 1, 1000);
+    y1 += 32 + 16;
+
+    Items::percent = new InputInt(Items::dialog, 0, y1, 128, 32, "%", (Fl_Callback *)checkPercent, 1, 1000);
     Items::percent->value("100");
     Items::percent->center();
-    y1 += 24 + 8;
+    y1 += 32 + 16;
+
     Items::width->maximum_size(8);
     Items::height->maximum_size(8);
     Items::width->value("640");
     Items::height->value("480");
     Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
     Items::keep_aspect->value(1);
-    y1 += 16 + 8;
-    Items::mode = new Fl_Choice(0, y1, 96, 24, "Mode:");
-    Items::mode->labelsize(12);
-    Items::mode->textsize(12);
+    Items::keep_aspect->center();
+    y1 += 16 + 16;
+
+    Items::mode = new Fl_Choice(0, y1, 128, 32, "Mode:");
+    Items::mode->labelsize(16);
+    Items::mode->textsize(16);
     Items::mode->add("Nearest");
     Items::mode->add("Bilinear");
     Items::mode->add("Bicubic");
@@ -550,14 +562,16 @@ namespace Scale
     Items::mode->align(FL_ALIGN_LEFT);
     Items::mode->measure_label(ww, hh);
     Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
-    y1 += 24 + 8;
-    Items::keep_aspect->center();
+    y1 += 32 + 16;
+
     Items::wrap = new CheckBox(Items::dialog, 0, y1, 16, 16, "Wrap Edges", 0);
-    y1 += 16 + 8;
     Items::wrap->center();
+    y1 += 16 + 16;
+
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
+
     Items::dialog->set_modal();
     Items::dialog->end(); 
   }
@@ -725,20 +739,24 @@ namespace RotateArbitrary
 
   void init()
   {
-    int y1 = 8;
+    int y1 = 16;
 
-    Items::dialog = new DialogWindow(256, 0, "Arbitrary Rotation");
-    Items::angle = new InputFloat(Items::dialog, 0, y1, 128, 24, "Angle", 0, -359.99, 359.99);
+    Items::dialog = new DialogWindow(400, 0, "Arbitrary Rotation");
+
+    Items::angle = new InputFloat(Items::dialog, 0, y1, 128, 32, "Angle", 0, -359.99, 359.99);
     Items::angle->center();
-    y1 += 24 + 8;
     Items::angle->value("0");
-    Items::scale = new InputFloat(Items::dialog, 0, y1, 96, 24, "Scale (1-10)", 0, 1, 10);
+    y1 += 32 + 16;
+
+    Items::scale = new InputFloat(Items::dialog, 0, y1, 128, 32, "Scale (1-10)", 0, 1, 10);
     Items::scale->center();
     Items::scale->value("1.000");
-    y1 += 24 + 8;
+    y1 += 32 + 16;
+
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
     Items::cancel->callback((Fl_Callback *)quit);
+
     Items::dialog->set_modal();
     Items::dialog->end(); 
   }

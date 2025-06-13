@@ -118,16 +118,19 @@ void Sobel::begin()
 
 void Sobel::init()
 {
-  int y1 = 8;
+  int y1 = 16;
 
   Items::dialog = new DialogWindow(256, 0, "Sobel Edge Detection");
-  Items::amount = new InputInt(Items::dialog, 0, y1, 96, 24, "Amount %", 0, 0, 100);
+
+  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32, "Amount %", 0, 0, 100);
   Items::amount->value("100");
   Items::amount->center();
-  y1 += 24 + 8;
+  y1 += 32 + 16;
+
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
   Items::cancel->callback((Fl_Callback *)quit);
+
   Items::dialog->set_modal();
   Items::dialog->end();
 }

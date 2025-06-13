@@ -35,12 +35,23 @@ namespace
 
   void change(Fl_Widget *w, InputFloat *i)
   {
+    bool shift = Fl::event_shift() ? true : false;
     double val = std::atof(i->input.value());
 
-    if (w == &i->dec)
-      val -= 1;
-    else if (w == &i->inc)
-      val += 1;
+    if (shift == true)
+    {
+      if (w == &i->dec)
+        val -= 10;
+      else if (w == &i->inc)
+        val += 10;
+    }
+      else
+    {
+      if (w == &i->dec)
+        val -= 1;
+      else if (w == &i->inc)
+        val += 1;
+    }
 
     if (val < i->min)
       val = i->min;
@@ -50,6 +61,7 @@ namespace
 
     snprintf(str, sizeof(str), "%.5f", val);
     i->input.value(str);
+
     if (i->cb)
       i->cb(w, i);
   }
@@ -73,9 +85,9 @@ InputFloat::InputFloat(Fl_Group *g, int x, int y, int w, int h,
   dec.callback((Fl_Callback *)change, this);
   inc.callback((Fl_Callback *)change, this);
   input.maximum_size(16);
-  input.textsize(12);
+  input.textsize(16);
   input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
-  labelsize(12);
+  labelsize(16);
   copy_label(text);
   resize(group->x() + x, group->y() + y, w, h);
 
@@ -97,7 +109,7 @@ void InputFloat::value(const char *s)
   input.value(s);
 }
 
-void InputFloat::maximum_size(int size)
+void InputFloat::maximum_size(const int size)
 {
   input.maximum_size(size);
 }
@@ -108,5 +120,10 @@ void InputFloat::center()
 
   measure_label(ww, hh);
   resize(group->x() + group->w() / 2 - (w() + ww) / 2 + ww, y(), w(), h());
+}
+
+void InputFloat::textsize(const int size)
+{
+  input.textsize(size);
 }
 

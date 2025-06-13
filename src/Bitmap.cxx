@@ -19,11 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include <algorithm>
-#include <thread>
 #include <vector>
-#include <cmath>
-#include <cstdlib>
-#include <cstring>
 
 #include "Bitmap.H"
 #include "Blend.H"
@@ -36,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 static inline int xorValue(const int x, const int y)
 {
-  static const unsigned int xor_colors[2] = { 0x00000000, 0xffffffff };
+  static const unsigned int xor_colors[2] = { 0xff000000, 0xffffffff };
 
   return xor_colors[(x & 1) ^ (y & 1)];
 }
@@ -782,7 +778,7 @@ void Bitmap::pointStretch(Bitmap *dest,
       const int checker_x = ((dx + x + checker_offset_x) >> 3);
       const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
 
-      *p = convertFormat(Blend::trans(checker, c, 255 - geta(c)), bgr_order);
+      *p = 0xff000000 | convertFormat(Blend::trans(checker, c, 255 - geta(c)), bgr_order);
       p++;
 
       xinc += bx;
@@ -918,7 +914,7 @@ void Bitmap::filteredStretch(Bitmap *dest,
       const int checker_x = ((dx + x + checker_offset_x) >> 3);
       const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
 
-      *p = convertFormat(Blend::trans(checker, c, 255 - a), bgr_order);
+      *p = 0xff000000 | convertFormat(Blend::trans(checker, c, 255 - a), bgr_order);
       p++;
 
       xinc += bx;

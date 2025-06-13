@@ -33,12 +33,12 @@ public:
   InputInt(Fl_Group *, int, int, int, int, const char *,
            Fl_Callback *, int, int);
   ~InputInt();
+
   const char *value();
-  int handle(int);
   void value(const char *);
-  void maximum_size(int);
+  void maximum_size(const int);
   void center();
-  int limitValue(int, int);
+  void textsize(const int);
 
   int var;
   int min;

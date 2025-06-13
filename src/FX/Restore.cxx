@@ -30,7 +30,6 @@ namespace
   namespace Items
   {
     DialogWindow *dialog;
-    Fl_Box *box;
     CheckBox *normalize;
     CheckBox *invert;
     CheckBox *preserve_lum;
@@ -145,26 +144,27 @@ void Restore::begin()
 
 void Restore::init()
 {
-  int y1 = 8;
+  int y1 = 16;
 
-  Items::dialog = new DialogWindow(384, 0, "Restore");
-  Items::box = new Fl_Box(FL_FLAT_BOX, 8, 8, 368, 32, "Attempts to correct color fading.");
-  Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-//    Items::box->labelsize(12);
-  y1 += 32;
+  Items::dialog = new DialogWindow(400, 0, "Restore");
+
   Items::normalize = new CheckBox(Items::dialog, 0, y1, 16, 16, "Normalize First", 0);
-  y1 += 16 + 8;
+  y1 += 16 + 16;
   Items::normalize->value(1);
   Items::normalize->center();
+
   Items::invert = new CheckBox(Items::dialog, 0, y1, 16, 16, "Invert First", 0);
   Items::invert->center();
-  y1 += 16 + 8;
+  y1 += 16 + 16;
+
   Items::preserve_lum = new CheckBox(Items::dialog, 8, y1, 16, 16, "Preserve Luminosity", 0);
-  y1 += 16 + 8;
+  y1 += 16 + 16;
+
   Items::preserve_lum->center();
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
   Items::cancel->callback((Fl_Callback *)quit);
+
   Items::dialog->set_modal();
   Items::dialog->end();
 }

@@ -29,6 +29,8 @@ public:
   Group(int, int, int, int, const char *);
   ~Group();
 
+  static const int title_height = 32;
+
 protected:
   void draw();
 };

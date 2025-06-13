@@ -18,7 +18,7 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include <string.h>
+#include <cstring>
 
 #include <FL/fl_draw.H>
 #include <FL/Fl_Group.H>
@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 Group::Group(int x, int y, int w, int h, const char *l)
 : Fl_Group(x, y, w, h, l)
 {
-  labelsize(12);
+  labelsize(16);
   labelcolor(FL_FOREGROUND_COLOR);
   align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
 
@@ -44,14 +44,18 @@ void Group::draw()
   int lw = 0;
   int lh = 0;
 
-  fl_draw_box(FL_UP_FRAME, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
-
   if (strlen(label()) > 0)
   {
-    fl_draw_box(FL_UP_BOX, x(), y(), w(), 20, FL_INACTIVE_COLOR);
+    fl_draw_box(FL_UP_BOX, x(), y(), w(), title_height, FL_INACTIVE_COLOR);
     measure_label(lw, lh);
-    draw_label(x() + (w() - lw) / 2, y() + 4, lw, lh);
-     fl_draw_box(FL_UP_FRAME, x(), y() + 20, w(), h() - 20, FL_BACKGROUND_COLOR);
+    draw_label(x() + (w() - lw) / 2, y() + 8, lw, lh);
+    fl_draw_box(FL_UP_FRAME,
+                x(), y() + title_height, w(), h() - title_height,
+                FL_BACKGROUND_COLOR);
+  }
+    else
+  {
+    fl_draw_box(FL_UP_FRAME, x(), y(), w(), h(), FL_BACKGROUND_COLOR);
   }
 
   draw_children();

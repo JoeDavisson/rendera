@@ -41,6 +41,7 @@ public:
   static int getSelectAlpha();
   static int getTextFontFace();
   static int getTextFontSize();
+  static int getTextFontAngle();
   static int getTextSmooth();
   static int getTool();
 
@@ -68,8 +69,7 @@ public:
   static void colorHexUpdate();
   static void colorHue(Widget *, void *);
   static void colorSatVal(Widget *, void *);
-  static void colorSwatch();
-  static void colorTrans(Widget *, void *);
+  static void colorTrans();
   static void colorTransInput(Widget *, void *);
   static void colorUpdate(int);
   static void transUpdate(int);
@@ -140,6 +140,8 @@ public:
   static void progressHide();
   static void progressShow(float);
   static void progressShow(float, int);
+
+  static void mouseTimer();
 
   static void selectAlpha();
   static void selectCopy();

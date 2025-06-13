@@ -18,7 +18,12 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <cmath>
+#include <vector>
+
 #include <FL/fl_draw.H>
+#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Image_Surface.H>
 
 #include "Bitmap.H"
 #include "Blend.H"
@@ -33,10 +38,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Tool.H"
 #include "Undo.H"
 #include "View.H"
+#include "Widget.H"
 
 Text::Text()
 {
-  temp = 0;
+  textbmp = 0;
 }
 
 Text::~Text()
@@ -57,19 +63,22 @@ void Text::push(View *view)
   // render text to image
   Blend::set(Project::brush->blend);
 
+  int w = textbmp->w;
+  int h = textbmp->h;
+
   if (Gui::getTextSmooth() > 0)
   {
-    for (int y = 0; y < temp->h; y++)
+    for (int y = 0; y < h; y++)
     {
-      for (int x = 0; x < temp->w; x++)
+      for (int x = 0; x < w; x++)
       {
-        int c = temp->getpixel(x, y);
+        int c = textbmp->getpixel(x, y);
         int t = getv(c);
 
         if (t < 255)
         {
-          Project::bmp->setpixel(view->imgx - temp->w / 2 + x,
-                                 view->imgy - temp->h / 2 + y,
+          Project::bmp->setpixel(view->imgx - w / 2 + x,
+                                 view->imgy - h / 2 + y,
                                  Project::brush->color,
                                  scaleVal(Project::brush->trans, t));
         }
@@ -78,17 +87,17 @@ void Text::push(View *view)
   }
     else
   {
-    for (int y = 0; y < temp->h; y++)
+    for (int y = 0; y < h; y++)
     {
-      for (int x = 0; x < temp->w; x++)
+      for (int x = 0; x < w; x++)
       {
-        int c = temp->getpixel(x, y);
+        int c = textbmp->getpixel(x, y);
         int t = getv(c);
 
         if (t < 192)
         {
-          Project::bmp->setpixel(view->imgx - temp->w / 2 + x,
-                                 view->imgy - temp->h / 2 + y,
+          Project::bmp->setpixel(view->imgx - w / 2 + x,
+                                 view->imgy - h / 2 + y,
                                  Project::brush->color,
                                  Project::brush->trans);
         }
@@ -96,8 +105,8 @@ void Text::push(View *view)
     }
   }
 
-  delete temp;
-  temp = 0;
+  delete textbmp;
+  textbmp = 0;
 
   Blend::set(Blend::TRANS);
 
@@ -119,74 +128,89 @@ void Text::move(View *view)
   // write text string to FLTK's offscreen image
   int face = Gui::getTextFontFace();
   int size = Gui::getTextFontSize();
+  int angle = 360 - Gui::getTextFontAngle();
   const char *s = Gui::textInput();
 
-  if (size > 256)
-    size = 256;
   if (size < 4)
     size = 4;
 
-  if (strlen(s) > 250)
-    return;
-
   // add a space before and after string, or some
-  // scripty fonts won't render propery on the sides
-  char string[256];
+  // scripty fonts won't render properly on the sides
+  std::vector<char> string((int)strlen(s) + 8, 0);
+
   string[0] = ' ';
 
-  unsigned int i = 0;
+  int i = 0;
 
-  for ( ; i <= strlen(s); i++)
+  for (i = 0; i < (int)strlen(s); i++)
     string[i + 1] = s[i];
 
-  string[i++] = ' ';
+  i++;
+
+  string[i] = ' ';
+
+  // compensate for odd string length
+  if ((strlen(s) & 1) == 1)
+    string[i++] = ' ';
+  else
+    i++;
+
   string[i] = '\0';
 
+  // measurement/rotation
   fl_font(face, size);
 
-  // measure size of image we need
   int tw = 0, th = 0;
-  fl_measure(string, tw, th, 1);
+  fl_measure(string.data(), tw, th);
 
-  // draw text string to offscreen image
-  Fl_Offscreen offscreen = fl_create_offscreen(tw, th);
+  int tsize = tw > th ? tw : th;
+  tsize *= std::sqrt(2);
 
-  delete temp;
-  temp = new Bitmap(tw, th);
-  temp->clear(makeRgb(255, 255, 255));
+  const float center = (float)tsize / 2;
+  const float d = (M_PI * (float)angle) / 180;
 
-  fl_begin_offscreen(offscreen);
+  float dx = -std::cos(d) * ((float)tw / 2);
+  float dy = std::sin(d) * ((float)tw / 2);
+
+  delete textbmp;
+  textbmp = new Bitmap(tsize, tsize);
+
+  Fl_RGB_Image textbuf((unsigned char *)&textbmp->data, tsize, tsize, 4, 0);
+  Fl_Image_Surface surf(tsize, tsize, 1);
+  Fl_Surface_Device::push_current(&surf);
+  fl_font(face, size);
   fl_color(FL_WHITE);
-  fl_rectf(0, 0, tw, th);
+  fl_rectf(0, 0, tsize, tsize);
   fl_color(FL_BLACK);
-  fl_draw(string, 0, th - 1 - fl_descent());
+  fl_draw(angle, string.data(), center + dx, center + dy);
+  fl_read_image((unsigned char *)textbmp->data, 0, 0, tsize, tsize, 255);
+  Fl_Surface_Device::pop_current();
 
-  fl_read_image((unsigned char *)temp->data, 0, 0, tw, th, 255);
-
-  fl_end_offscreen();
-  fl_delete_offscreen(offscreen);
-
-  // create preview map
+  // create preview
   int imgx = view->imgx;
   int imgy = view->imgy;
+
+  int w = textbmp->w;
+  int h = textbmp->h;
 
   Map *map = Project::map;
   map->clear(0);
 
-  for (int y = 0; y < temp->h; y++)
+  for (int y = 0; y < h; y++)
   {
-    for (int x = 0; x < temp->w; x++)
+    for (int x = 0; x < w; x++)
     {
-      int c = temp->getpixel(x, y);
+      int c = textbmp->getpixel(x, y);
       int t = getv(c);
 
       if (t < 192)
-        map->setpixel(imgx - temp->w / 2 + x, imgy - temp->h / 2 + y, 255);
+        map->setpixel(imgx - w / 2 + x,
+                      imgy - h / 2 + y, 255);
     }
   }
 
-  stroke->size(imgx - temp->w / 2, imgy - temp->h / 2,
-               imgx + temp->w / 2, imgy + temp->h / 2);
+  stroke->size(imgx - w / 2, imgy - h / 2,
+               imgx + w / 2, imgy + h / 2);
   redraw(view);
 }
 
@@ -196,8 +220,8 @@ void Text::key(View *)
 
 void Text::done(View *, int)
 {
-  delete temp;
-  temp = 0;
+  delete textbmp;
+  textbmp = 0;
 }
 
 void Text::redraw(View *view)

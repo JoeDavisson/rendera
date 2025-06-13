@@ -32,7 +32,7 @@ StaticText::StaticText(Fl_Group *g, int x, int y, int w, int h,
 : Fl_Box(FL_NO_BOX, x, y, w, h, text)
 {
   align(FL_ALIGN_CENTER);
-  labelsize(12);
+  labelsize(16);
   group = g;
   resize(group->x() + x, group->y() + y, w, h);
 }

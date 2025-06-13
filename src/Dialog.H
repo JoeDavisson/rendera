@@ -31,7 +31,6 @@ public:
   static void javaExport();
   static int javaExportOption();
   static void pngOptions();
-  static void textOptions();
   static int pngUsePalette();
   static int pngUseAlpha();
   static int pngAlphaLevels();

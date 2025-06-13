@@ -113,14 +113,14 @@ void RotateHue::init()
   Items::dialog = new DialogWindow(424, 0, "Rotate Hue");
   Items::preview = new Widget(Items::dialog, 8, y1, 408, 408, 0, 1, 1, 0);
   y1 += 408 + 8;
-  Items::dec_hue = new Fl_Repeat_Button(8, y1, 20, 24, "@<");
+  Items::dec_hue = new Fl_Repeat_Button(8, y1, 20, 32, "@<");
   Items::dec_hue->callback((Fl_Callback *)decHue);
-  Items::hue = new Widget(Items::dialog, 8 + 20 + 4, y1, 360, 24, 0, 1, 24, (Fl_Callback *)setHue);
+  Items::hue = new Widget(Items::dialog, 8 + 20 + 4, y1, 360, 32, 0, 1, 32, (Fl_Callback *)setHue);
   Items::hue->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::hue->labelfont(FL_COURIER);
-  Items::inc_hue = new Fl_Repeat_Button(8 + 16 + 4 + 360 + 8, y1, 20, 24, "@>");
+  Items::inc_hue = new Fl_Repeat_Button(8 + 16 + 4 + 360 + 8, y1, 20, 32, "@>");
   Items::inc_hue->callback((Fl_Callback *)incHue);
-  y1 += 24 + 8 + 24;
+  y1 += 24 + 8 + 32;
   Items::preserve_lum = new CheckBox(Items::dialog, 0, y1, 16, 16, "Preserve Luminosity", (Fl_Callback *)setHue);
   Items::preserve_lum->center();
   y1 += 16 + 8;
@@ -140,15 +140,15 @@ void RotateHue::setHue()
   for (int x = 0; x < 360; x++)
   {
     if (!(x % 60))
-      Items::hue->bitmap->vline(8, x, 23, getFltkColor(FL_FOREGROUND_COLOR), 160);
+      Items::hue->bitmap->vline(8, x, 31, getFltkColor(FL_FOREGROUND_COLOR), 160);
     else if (!(x % 30))
-      Items::hue->bitmap->vline(16, x, 23, getFltkColor(FL_FOREGROUND_COLOR), 160);
+      Items::hue->bitmap->vline(16, x, 31, getFltkColor(FL_FOREGROUND_COLOR), 160);
     else if (!(x % 15))
-      Items::hue->bitmap->vline(20, x, 23, getFltkColor(FL_FOREGROUND_COLOR), 160);
+      Items::hue->bitmap->vline(20, x, 31, getFltkColor(FL_FOREGROUND_COLOR), 160);
   }
 
   Items::hue->bitmap->rect(0, 0, Items::hue->bitmap->w - 1, Items::hue->bitmap->h - 1, makeRgb(0, 0, 0), 0);
-  Items::hue->bitmap->xorVline(0, hx, 23);
+  Items::hue->bitmap->xorVline(0, hx, 31);
   Items::hue->redraw();
 
   char degree[16];

@@ -18,6 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <cstdlib>
+
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl.H>

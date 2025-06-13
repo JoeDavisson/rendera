@@ -207,26 +207,26 @@ void StainedGlass::begin()
 
 void StainedGlass::init()
 {
-  int y1 = 8;
+  int y1 = 16;
 
-  Items::dialog = new DialogWindow(256, 0, "Stained Glass");
-  Items::detail = new InputInt(Items::dialog, 0, y1, 96, 24, "Detail (1-50000)", 0, 1, 50000);
-  y1 += 24 + 8;
+  Items::dialog = new DialogWindow(400, 0, "Stained Glass");
+  Items::detail = new InputInt(Items::dialog, 0, y1, 128, 32, "Detail (1-50000)", 0, 1, 50000);
+  y1 += 32 + 16;
   Items::detail->value("5000");
   Items::detail->center();
-  Items::edge = new InputInt(Items::dialog, 0, y1, 96, 24, "Edge Detect (1-50)", 0, 1, 50);
-  y1 += 24 + 8;
+  Items::edge = new InputInt(Items::dialog, 0, y1, 128, 32, "Edge Detect (1-50)", 0, 1, 50);
+  y1 += 32 + 16;
   Items::edge->value("16");
   Items::edge->center();
   Items::uniform = new CheckBox(Items::dialog, 0, y1, 16, 16, "Uniform", 0);
   Items::uniform->center();
-  y1 += 16 + 8;
+  y1 += 16 + 16;
   Items::sat_alpha = new CheckBox(Items::dialog, 0, y1, 16, 16, "Saturation to Alpha", 0);
   Items::sat_alpha->center();
-  y1 += 16 + 8;
+  y1 += 16 + 16;
   Items::draw_edges = new CheckBox(Items::dialog, 0, y1, 16, 16, "Draw Edges", 0);
   Items::draw_edges->center();
-  y1 += 16 + 8;
+  y1 += 16 + 16;
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
   Items::cancel->callback((Fl_Callback *)quit);

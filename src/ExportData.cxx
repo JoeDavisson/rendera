@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cstring>
 #include <cstdio>
 #include <cmath>
-#include <stdint.h>
+#include <cstdint>
 #include <vector>
 
 #include <FL/Fl_Choice.H>
@@ -95,24 +95,24 @@ namespace ExportOptions
 
   void init()
   {
-    int y1 = 8;
+    int y1 = 16;
     int ww = 0, hh = 0;
 
-    Items::dialog = new DialogWindow(256, 0, "Export Data Options");
+    Items::dialog = new DialogWindow(400, 0, "Export Data Options");
 
-    Items::tilex = new InputInt(Items::dialog, 0, y1, 96, 24, "Tile Width:", 0, 1, 256);
+    Items::tilex = new InputInt(Items::dialog, 0, y1, 128, 32, "Tile Width:", 0, 1, 256);
     Items::tilex->value("8");
     Items::tilex->center();
-    y1 += 24 + 8;
+    y1 += 32 + 16;
 
-    Items::tiley = new InputInt(Items::dialog, 0, y1, 96, 24, "Tile Height:", 0, 1, 256);
+    Items::tiley = new InputInt(Items::dialog, 0, y1, 128, 32, "Tile Height:", 0, 1, 256);
     Items::tiley->value("8");
     Items::tiley->center();
-    y1 += 24 + 8;
+    y1 += 32 + 16;
 
-    Items::bpp = new Fl_Choice(0, y1, 128, 24, "Colors:");
-    Items::bpp->labelsize(12);
-    Items::bpp->textsize(12);
+    Items::bpp = new Fl_Choice(0, y1, 128, 32, "Colors:");
+    Items::bpp->labelsize(16);
+    Items::bpp->textsize(16);
     Items::bpp->add("2 (1 bpp)");
     Items::bpp->add("4 (2 bpp)");
     Items::bpp->add("16 (4 bpp)");
@@ -123,14 +123,15 @@ namespace ExportOptions
     Items::bpp->resize(Items::dialog->x() + Items::dialog->w() / 2
                         - (Items::bpp->w() + ww) / 2 + ww,
                         Items::bpp->y(), Items::bpp->w(), Items::bpp->h());
-    y1 += 24 + 8;
+    y1 += 32 + 16;
 
     Items::aligned = new CheckBox(Items::dialog, 0, y1, 16, 16, "Aligned (Binary)", 0);
     Items::aligned->tooltip("Keeps binary output aligned\nto even values");
     Items::aligned->center();
-    y1 += 24 + 8;
+    y1 += 16 + 16;
 
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
+
     Items::dialog->set_modal();
     Items::dialog->end();
   }
@@ -166,7 +167,9 @@ bool ExportData::fileExists(const char *fn)
 void ExportData::init()
 {
   ExportOptions::init();
-  strcpy(save_dir, ".");
+//joe
+//  strcpy(save_dir, ".");
+  snprintf(save_dir, sizeof(save_dir), ".");
 }
 
 void ExportData::save(Fl_Widget *, void *)
@@ -195,7 +198,10 @@ void ExportData::save(Fl_Widget *, void *)
   }
 
   char fn[256];
-  strcpy(fn, fc.filename());
+//joe
+//  strcpy(fn, fc.filename());
+  snprintf(fn, sizeof(fn), "%s", fc.filename());
+
   int ext_value = fc.filter_value();
   fl_filename_setext(fn, sizeof(fn), ext_string[ext_value]);
 

@@ -42,6 +42,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Palette.H"
 
+FL_EXPORT bool fl_disable_wayland = true;
+
 enum
 {
   OPTION_MEM,
@@ -67,7 +69,7 @@ void setDarkTheme()
   int h = 0;
   int s = 0;
 
-  // 32 - 55
+  // greyscale ramps (colors 32 - 55) used in the GUI
   for (int i = 0; i < 24; i++)
   {
     int v = i * 6;
@@ -116,6 +118,8 @@ int main(int argc, char *argv[])
 {
   Fl_File_Icon::load_system_icons();
   setDarkTheme();
+
+  // Fl::keyboard_screen_scaling(0);
 
   // parse command line
   int memory_max = 1000;
@@ -213,7 +217,6 @@ int main(int argc, char *argv[])
   {
     #ifndef WIN32
       return 0;
-    #else
     #endif
   }
 
@@ -273,7 +276,8 @@ int main(int argc, char *argv[])
   Gui::drawPalette();
 */
 
-  Fl::add_timeout(.1, (Fl_Timeout_Handler)Gui::imagesUpdateMemInfo);
+  Fl::add_timeout(1.0 / 10, (Fl_Timeout_Handler)Gui::imagesUpdateMemInfo);
+  Fl::add_timeout(1.0 / 125, (Fl_Timeout_Handler)Gui::mouseTimer);
 
   int ret = Fl::run();
   return ret;

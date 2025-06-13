@@ -357,14 +357,16 @@ void Dither::begin()
 
 void Dither::init()
 {
-  int y1 = 8;
+  int y1 = 16;
   int ww = 0;
   int hh = 0;
 
-  Items::dialog = new DialogWindow(256, 0, "Apply Colors");
-  Items::mode = new Fl_Choice(0, y1, 128, 24, "Dither:");
+  Items::dialog = new DialogWindow(400, 0, "Apply Colors");
+
+  Items::mode = new Fl_Choice(0, y1, 192, 32, "Dither:");
   Items::mode->tooltip("Dither Mode");
-  Items::mode->textsize(10);
+  Items::mode->textsize(16);
+  Items::mode->labelsize(16);
   Items::mode->add("No Dithering");
   Items::mode->add("Floyd-Steinberg");
   Items::mode->add("Jarvis-Judice-Ninke");
@@ -374,16 +376,20 @@ void Dither::init()
   Items::mode->value(0);
   Items::mode->measure_label(ww, hh);
   Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
-  y1 += 24 + 8;
+  y1 += 32 + 16;
+
   Items::gamma = new CheckBox(Items::dialog, 0, y1, 16, 16, "Gamma Correction", 0);
   Items::gamma->center();
-  y1 += 16 + 8;
+  y1 += 16 + 16;
+
   Items::lum_only = new CheckBox(Items::dialog, 0, y1, 16, 16, "Luminosity Based", 0);
   Items::lum_only->center();
-  y1 += 16 + 8;
+  y1 += 16 + 16;
+
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
   Items::cancel->callback((Fl_Callback *)quit);
+
   Items::dialog->set_modal();
   Items::dialog->end();
 }
