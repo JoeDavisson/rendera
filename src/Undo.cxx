@@ -304,9 +304,6 @@ void Undo::pushRedo(const int x, const int y, const int w, const int h,
   redo_stack[redo_current]->y = y;
   redo_stack[redo_current]->undo_mode = undo_mode;
   redo_current--;
-
-  if (redo_current < 0)
-    redo_current = 0;
 }
 
 void Undo::popRedo()
