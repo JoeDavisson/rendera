@@ -44,8 +44,12 @@ Palette::Palette()
   // data structure for color lookup
   table = new unsigned char[16777216];
 
+  data[0] = makeRgb(0, 0, 0);
+  data[1] = makeRgb(255, 255, 255);
+  max = 2;
+
   // use a default palette
-  setDefault();
+//  setDefault();
 }
 
 Palette::~Palette()

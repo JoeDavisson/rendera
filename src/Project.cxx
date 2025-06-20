@@ -82,6 +82,7 @@ void Project::init(int memory_limit, int undo_limit)
 
   brush = new Brush();
   palette = new Palette();
+  palette->setDefault();
   stroke = new Stroke();
   undo = 0;
   last = 0;

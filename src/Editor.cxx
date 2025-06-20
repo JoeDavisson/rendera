@@ -67,6 +67,7 @@ namespace
     Fl_Repeat_Button *remove;
     Fl_Button *replace;
     Fl_Button *undo;
+    Fl_Button *redo;
     Fl_Button *rgb_ramp;
     Fl_Button *hsv_ramp;
     InputText *hexcolor;
@@ -85,9 +86,14 @@ namespace
   int replace_state = 0;
   int ramp_begin = 0;
   int ramp_state = 0;
-  bool begin_undo;
   int oldsvx, oldsvy, oldhy;
-  Palette *undo_palette;
+
+  int levels = 256;
+  int undo_current = levels - 1;
+  int redo_current = levels - 1;
+
+  Palette **undo_stack;
+  Palette **redo_stack;
 }
 
 void Editor::updateInfo(char *s)
@@ -103,24 +109,6 @@ void Editor::updateIndex(int index)
   snprintf(s, sizeof(s), "  Index = %d", index);
   Items::index_text->copy_label(s);
   Items::index_text->redraw();
-}
-
-void Editor::storeUndo()
-{
-  Project::palette->copy(undo_palette);
-  begin_undo = true;
-}
-
-void Editor::getUndo()
-{
-  if (begin_undo)
-  {
-    begin_undo = false;
-    undo_palette->copy(Project::palette);
-    Project::palette->draw(Items::palette);
-    Gui::paletteDraw();
-    Items::palette->do_callback();
-  }
 }
 
 void Editor::setHsvSliders()
@@ -269,7 +257,7 @@ void Editor::checkHexColorWeb()
 
 void Editor::insertColor()
 {
-  storeUndo();
+  push();
   Project::palette->insertColor(Project::brush->color, Items::palette->var);
   Project::palette->draw(Items::palette);
   Gui::paletteDraw();
@@ -278,7 +266,7 @@ void Editor::insertColor()
 
 void Editor::removeColor()
 {
-  storeUndo();
+  push();
   Project::palette->deleteColor(Items::palette->var);
   Project::palette->draw(Items::palette);
   Gui::paletteDraw();
@@ -291,7 +279,7 @@ void Editor::removeColor()
 
 void Editor::checkReplaceColor(int pos)
 {
-  storeUndo();
+  push();
   Project::palette->replaceColor(Project::brush->color, pos);
   Project::palette->draw(Items::palette);
   Gui::colorUpdate(Project::brush->color);
@@ -315,19 +303,19 @@ void Editor::replaceColor()
 
 void Editor::copyColor(int c1, int c2)
 {
-  storeUndo();
+  push();
   Project::palette->data[c2] = Project::palette->data[c1];
 }
 
 void Editor::swapColor(int c1, int c2)
 {
-  storeUndo();
+  push();
   Project::palette->swapColor(c1, c2);
 }
 
 void Editor::checkRampRgb(int end)
 {
-  storeUndo();
+  push();
 
   Palette *pal = Project::palette;
   int begin = ramp_begin;
@@ -363,7 +351,7 @@ void Editor::checkRampRgb(int end)
 
 void Editor::checkRampHsv(int end)
 {
-  storeUndo();
+  push();
 
   Palette *pal = Project::palette;
   int begin = ramp_begin;
@@ -534,7 +522,6 @@ void Editor::begin()
   setHsvSliders();
   setHsv();
   Items::dialog->show();
-  begin_undo = false;
   ramp_begin = 0;
   ramp_state = 0;
   updateInfo((char *)"  Shift to swap, Ctrl to copy, Right-click to move cursor.");
@@ -559,6 +546,116 @@ void Editor::close()
   Items::hsv_ramp->value(0);
   Project::palette->fillTable();
   Items::dialog->hide();
+}
+
+void Editor::resetUndo()
+{
+  for (int i = 0; i < levels; i++)
+  {
+    delete undo_stack[i];
+    delete redo_stack[i];
+
+    undo_stack[i] = new Palette();
+    redo_stack[i] = new Palette();
+  }
+
+  undo_current = levels - 1;
+  redo_current = levels - 1;
+}
+
+void Editor::doPush()
+{
+  if (undo_current < 0)
+  {
+    undo_current = 0;
+
+    Palette *temp_pal = undo_stack[levels - 1];
+
+    for (int i = levels - 1; i > 0; i--)
+      undo_stack[i] = undo_stack[i - 1];
+
+    undo_stack[0] = temp_pal;
+  }
+
+  delete undo_stack[undo_current];
+  undo_stack[undo_current] = new Palette();
+  Project::palette->copy(undo_stack[undo_current]);
+  undo_current--;
+}
+
+void Editor::push()
+{
+  doPush();
+
+  for (int i = 0; i < levels; i++)
+  {
+    delete redo_stack[i];
+    redo_stack[i] = new Palette();
+  }
+
+  redo_current = levels - 1;
+}
+
+void Editor::pop()
+{
+  if (undo_current >= levels - 1)
+    return;
+
+  pushRedo();
+
+  if (undo_current >= 0)
+  {
+    delete undo_stack[undo_current];
+    undo_stack[undo_current] = new Palette();
+  }
+
+  undo_current++;
+  undo_stack[undo_current]->copy(Project::palette);
+
+  Gui::paletteDraw();
+  Items::palette->do_callback();
+}
+
+void Editor::pushRedo()
+{
+  if (redo_current < 0)
+  {
+    redo_current = 0;
+
+    Palette *temp_pal = redo_stack[levels - 1];
+
+    for (int i = levels - 1; i > 0; i--)
+      redo_stack[i] = redo_stack[i - 1];
+
+    redo_stack[0] = temp_pal;
+  }
+
+  Project::palette->copy(redo_stack[redo_current]);
+
+  redo_current--;
+
+  if (redo_current < 0)
+    redo_current = 0;
+}
+
+void Editor::popRedo()
+{
+  if (redo_current >= levels - 1)
+    return;
+
+  doPush();
+
+  if (redo_current >= 0)
+  {
+    delete redo_stack[redo_current];
+    redo_stack[redo_current] = new Palette();
+  }
+
+  redo_current++;
+  redo_stack[redo_current]->copy(Project::palette);
+
+  Gui::paletteDraw();
+  Items::palette->do_callback();
 }
 
 void Editor::init()
@@ -594,8 +691,12 @@ void Editor::init()
   Items::insert->labelsize(18);
   y1 += 42 + 8;
 
-  Items::undo = new Fl_Button(x1, y1, 128, 42, "Undo");
-  Items::undo->callback((Fl_Callback *)getUndo);
+  Items::undo = new Fl_Button(x1, y1, 60, 42, "Undo");
+  Items::undo->callback((Fl_Callback *)pop);
+//  y1 += 42 + 8;
+    
+  Items::redo = new Fl_Button(x1 + 68, y1, 60, 42, "Redo");
+  Items::redo->callback((Fl_Callback *)popRedo);
   y1 += 42 + 8;
     
   Items::rgb_ramp = new Fl_Button(x1, y1, 128, 40, "RGB Ramp");
@@ -666,7 +767,15 @@ void Editor::init()
   Items::dialog->set_modal();
   Items::dialog->end(); 
 
-  undo_palette = new Palette();
-}
+  undo_stack = new Palette *[levels];
+  redo_stack = new Palette *[levels];
 
+  for (int i = 0; i < levels; i++)
+  {
+    undo_stack[i] = 0;
+    redo_stack[i] = 0;
+  }
+
+  resetUndo();
+}
 
