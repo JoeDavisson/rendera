@@ -283,7 +283,7 @@ public:
         {
           Project::tool->reset();
           view->drawMain(true);
-          break;
+          return 1;
         }
 
         // inhibit use of keys while rendering
@@ -600,14 +600,14 @@ void Gui::init()
   aspect = new Fl_Choice(pos, 8, 128, 32, "");
   aspect->tooltip("Aspect Ratio");
   aspect->textsize(10);
-  aspect->resize(top->x() + pos, top->y() + 8, 128, 32);
+  aspect->resize(top->x() + pos, top->y() + 8, 160, 32);
   aspect->add("Normal (1:1)");
   aspect->add("Wide (2:1)");
   aspect->add("Tall (1:2)");
   aspect->value(0);
   aspect->callback((Fl_Callback *)aspectMode);
   aspect->textsize(16);
-  pos += 128 + gap;
+  pos += 160 + gap;
 
   new Separator(top, pos, 0, TOP_HEIGHT, Separator::VERTICAL, "");
   pos += 4 + gap;
