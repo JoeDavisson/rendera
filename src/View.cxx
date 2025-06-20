@@ -583,8 +583,10 @@ void View::drawGrid()
   if (zoom < 2 && (gridx == 1 || gridy == 1))
     return;
 
-  x2 = w() - 1;
-  y2 = h() - 1;
+  float scale = getScale();
+
+  x2 = w() * scale - 1;
+  y2 = h() * scale - 1;
 
   t = 216 - zoom;
 
