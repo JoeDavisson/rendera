@@ -633,9 +633,6 @@ void Editor::pushRedo()
   Project::palette->copy(redo_stack[redo_current]);
 
   redo_current--;
-
-  if (redo_current < 0)
-    redo_current = 0;
 }
 
 void Editor::popRedo()
