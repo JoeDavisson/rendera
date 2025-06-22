@@ -257,6 +257,9 @@ void Editor::checkHexColorWeb()
 
 void Editor::insertColor()
 {
+  if (Project::palette->max >= 256)
+    return;
+
   push();
   Project::palette->insertColor(Project::brush->color, Items::palette->var);
   Project::palette->draw(Items::palette);
@@ -266,6 +269,9 @@ void Editor::insertColor()
 
 void Editor::removeColor()
 {
+  if (Project::palette->max <= 1)
+    return;
+
   push();
   Project::palette->deleteColor(Items::palette->var);
   Project::palette->draw(Items::palette);
