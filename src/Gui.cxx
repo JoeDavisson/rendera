@@ -1686,7 +1686,13 @@ void Gui::colorTransInput(Widget *, void *)
 
 void Gui::colorTrans()
 {
-  Project::brush->trans = trans->var * 8.23;
+  int temp_trans = trans->var * 8;
+
+  if (temp_trans >= 248)
+    temp_trans = 255;
+
+  Project::brush->trans = temp_trans;
+
   char s[16];
   snprintf(s, sizeof(s), "%d", Project::brush->trans);
   trans_input->value(s);
