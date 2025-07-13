@@ -726,7 +726,7 @@ void Editor::init()
                                   "Hexadecimal", (Fl_Callback *)checkHexColor);
   Items::hexcolor->maximum_size(6);
   Items::hexcolor->labelsize(16);
-  Items::hexcolor->textsize(24);
+  Items::hexcolor->textsize(18);
   Items::hexcolor->textfont(FL_COURIER);
   Items::hexcolor->when(FL_WHEN_ENTER_KEY | FL_WHEN_NOT_CHANGED);
   Items::hexcolor->align(FL_ALIGN_LEFT | FL_ALIGN_BOTTOM);
@@ -737,7 +737,7 @@ void Editor::init()
                                       (Fl_Callback *)checkHexColorWeb);
   Items::hexcolor_web->maximum_size(3);
   Items::hexcolor_web->labelsize(16);
-  Items::hexcolor_web->textsize(24);
+  Items::hexcolor_web->textsize(18);
   Items::hexcolor_web->textfont(FL_COURIER);
   Items::hexcolor_web->when(FL_WHEN_ENTER_KEY | FL_WHEN_NOT_CHANGED);
   Items::hexcolor_web->align(FL_ALIGN_LEFT | FL_ALIGN_BOTTOM);

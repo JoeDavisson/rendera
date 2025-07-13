@@ -66,7 +66,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
-#define TOP_HEIGHT 48
+#define TOP_HEIGHT 64
 #define TOOLS_WIDTH 64
 #define OPTIONS_WIDTH 176
 #define COLORS_WIDTH 208
@@ -119,7 +119,7 @@ namespace
   InputInt *gridx;
   InputInt *gridy;
   Fl_Choice *aspect;
-  ToggleButton *filter;
+  CheckBox *filter;
 
   // tools
   Widget *tool;
@@ -210,7 +210,7 @@ namespace
   // tables
   const int brush_sizes[16] =
   {
-    1, 2, 3, 4, 6, 12, 18, 24, 30, 40, 50, 60, 70, 80, 90, 100
+    1, 2, 3, 4, 6, 8, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
   };
 
   // space between widgets
@@ -363,7 +363,7 @@ void Gui::init()
 
   // main window
   FL_NORMAL_SIZE = 18;
-  window = new MainWin(1280, 812 + gap, "Rendera");
+  window = new MainWin(1280, 828 + gap, "Rendera");
   window->callback(closeCallback);
   window->xclass("Rendera");
 
@@ -446,6 +446,8 @@ void Gui::init()
     (Fl_Callback *)paletteTwoBits, 0, 0);
   menubar->add("Palette/Presets/C64", 0,
     (Fl_Callback *)paletteC64, 0, 0);
+  menubar->add("Palette/Presets/VCS", 0,
+    (Fl_Callback *)paletteVCS, 0, 0);
   menubar->add("&Palette/Presets/Web Safe", 0,
     (Fl_Callback *)paletteWebSafe, 0, 0);
   menubar->add("&Palette/Presets/3-level RGB", 0,
@@ -551,56 +553,61 @@ void Gui::init()
   top = new Group(0, menubar->h(), window->w(), TOP_HEIGHT, "");
   pos = gap;
 
-  zoom_one = new Button(top, pos, 8, 32, 32,
+  zoom_one = new Button(top, pos, 8, 48, 48,
                         "Actual Size (1)", images_zoom_one_png,
                         (Fl_Callback *)zoomOne);
-  pos += 32 + gap;
+  pos += 48 + gap;
 
-  zoom_in = new Button(top, pos, 8, 32, 32,
+  zoom_in = new Button(top, pos, 8, 48, 48,
                        "Zoom In (+)", images_zoom_in_png,
                        (Fl_Callback *)zoomIn);
-  pos += 32 + gap;
+  pos += 48 + gap;
 
-  zoom_out = new Button(top, pos, 8, 32, 32,
+  zoom_out = new Button(top, pos, 8, 48, 48,
                         "Zoom Out (-)", images_zoom_out_png,
                         (Fl_Callback *)zoomOut);
-  pos += 32 + gap;
+  pos += 48 + gap;
 
-  zoom = new StaticText(top, pos, 8, 56, 32, "");
-  pos += 56 + gap;
+  zoom = new StaticText(top, pos, 8, 64, 48, "");
+  zoom->labelsize(20);
+  pos += 64 + gap;
 
   new Separator(top, pos, 0, TOP_HEIGHT, Separator::VERTICAL, "");
   pos += 4 + gap;
 
-  grid = new ToggleButton(top, pos, 8, 32, 32,
+  grid = new ToggleButton(top, pos, 8, 48, 48,
                           "Show Grid", images_grid_png,
                           (Fl_Callback *)gridEnable);
-  pos += 32 + gap;
+  pos += 48 + gap;
 
-  gridsnap = new ToggleButton(top, pos, 8, 32, 32,
+  gridsnap = new ToggleButton(top, pos, 8, 48, 48,
                           "Snap to Grid", images_gridsnap_png,
                           (Fl_Callback *)gridSnap);
-  pos += 64;
+  pos += 96;
 
-  gridx = new InputInt(top, pos, 8, 72, 32,
+  gridx = new InputInt(top, pos, 8 + 4, 104, 40,
                        "X:",
                        (Fl_Callback *)gridX, 1, 256);
+  gridx->labelsize(18);
+  gridx->textsize(18);
   gridx->value("8");
-  pos += 72 + 32;
+  pos += 104 + 48;
 
-  gridy = new InputInt(top, pos, 8, 72, 32,
+  gridy = new InputInt(top, pos, 8 + 4, 104, 40,
                        "Y:",
                        (Fl_Callback *)gridY, 1, 256);
+  gridy->labelsize(18);
+  gridy->textsize(18);
   gridy->value("8");
-  pos += 72 + gap;
+  pos += 104 + gap;
 
   new Separator(top, pos, 0, TOP_HEIGHT, Separator::VERTICAL, "");
   pos += 4 + gap;
 
-  aspect = new Fl_Choice(pos, 8, 128, 32, "");
-  aspect->tooltip("Aspect Ratio");
+  aspect = new Fl_Choice(pos, 8 + 4, 160, 40, "");
+  aspect->tooltip("Aspect Ratio\n(simulates non-standard displays");
   aspect->textsize(10);
-  aspect->resize(top->x() + pos, top->y() + 8, 160, 32);
+  aspect->resize(top->x() + pos, top->y() + 8 + 4, 160, 40);
   aspect->add("Normal (1:1)");
   aspect->add("Wide (2:1)");
   aspect->add("Tall (1:2)");
@@ -612,11 +619,12 @@ void Gui::init()
   new Separator(top, pos, 0, TOP_HEIGHT, Separator::VERTICAL, "");
   pos += 4 + gap;
 
-  filter = new ToggleButton(top, pos, 8, 32, 32,
-                            "Smooth Display\nWhen Zoomed Out",
-                            images_filter_png,
+  filter = new CheckBox(top, pos, 8, 48, 48,
+                            "Filter",
                             (Fl_Callback *)filterToggle);
-  pos += 32 + gap;
+  filter->tooltip("Filter Display\nWhen Zoomed Out");
+  filter->value(0);
+  pos += 48 + gap;
 
   top->resizable(0);
   top->end();
@@ -960,6 +968,7 @@ void Gui::init()
                            (Fl_Callback *)colorHexInput);
   hexcolor->maximum_size(6);
   hexcolor->textfont(FL_COURIER);
+  hexcolor->textsize(18);
 
   pos += 32 + gap;
 
@@ -1092,7 +1101,7 @@ void Gui::init()
   colors->resize(colors->x(), colors->y(), colors->w(), right_height);
   files->resize(files->x(), files->y(), files->w(), right_height);
 
-  window->size_range(1024, 812 + gap, 0, 0, 0, 0, 0);
+  window->size_range(1024, 828 + gap, 0, 0, 0, 0, 0);
   window->resizable(view);
   window->end();
 
@@ -1266,6 +1275,7 @@ void Gui::paletteSwatches(Widget *widget, void *var)
   }
 
   int c = widget->bitmap->getpixel(x * step + 2, y * step + 2);
+
   pal->draw(widget);
   colorUpdate(c);
 }
@@ -2029,6 +2039,13 @@ void Gui::paletteC64()
   Project::palette->draw(palette_swatches);
 }
 
+void Gui::paletteVCS()
+{
+  Project::palette->setVCS();
+  palette_swatches->var = 0;
+  Project::palette->draw(palette_swatches);
+}
+
 void Gui::paletteWebSafe()
 {
   Project::palette->setWebSafe();
@@ -2364,7 +2381,7 @@ void Gui::fillReset()
 
 void Gui::filterToggle()
 {
-  view->filter = filter->var ? true : false;
+  view->filter = filter->value() == 1 ? true : false;
   view->drawMain(true);
 }
 

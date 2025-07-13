@@ -894,7 +894,7 @@ void View::draw()
     //           blitw * ax, blith * ay);
 
     updateView(blitx * ax, blity * ay, x() + blitx * ax, y() + blity * ay,
-               blitw * ax, blith * ay);
+               blitw * ax + 1, blith * ay + 1);
 
     if (Gui::getClone())
       drawCloneCursor();

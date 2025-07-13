@@ -71,9 +71,9 @@ InputFloat::InputFloat(Fl_Group *g, int x, int y, int w, int h,
                    const char *text, Fl_Callback *input_cb,
                    double val_min, double val_max)
 : Fl_Group(x, y, w, h, 0),
-  input(x + 16, y, w - 32, h),
-  dec(x, y, 16, h, "@<"),
-  inc(x + w - 16, y, 16, h, "@>")
+  input(x + 24, y, w - 48, h),
+  dec(x, y, 24, h, "@<"),
+  inc(x + w - 24, y, 24, h, "@>")
 {
   resizable(input);
   end();

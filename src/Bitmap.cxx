@@ -675,6 +675,23 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
   }
 }
 
+
+// replaces alpha channel with solid color
+void Bitmap::fillAlpha(const int color)
+{
+  for (int y = 0; y < h; y++)
+  {
+    int *p = row[y];
+
+    for (int x = 0; x < w; x++)
+    {
+      const int c = Blend::trans(color, *p, 255 - geta(*p));
+
+      *p++ = c | 0xff000000;
+    }
+  }
+}
+
 // for wide aspect view
 void Bitmap::doubleHorizontal()
 {

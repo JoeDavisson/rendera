@@ -127,6 +127,7 @@ public:
   static void paletteGrays();
   static void paletteTwoBits();
   static void paletteC64();
+  static void paletteVCS();
   static void paletteDefault();
   static void paletteDraw();
   static void paletteIndex(int);

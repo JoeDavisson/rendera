@@ -60,6 +60,7 @@ public:
   void clip(int *, int *, int *, int *);
   void setClip(int, int, int, int);
   void blit(Bitmap *, int, int, int, int, int, int);
+  void fillAlpha(const int);
   void doubleHorizontal();
   void doubleVertical();
   void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);

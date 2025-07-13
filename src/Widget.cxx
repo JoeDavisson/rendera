@@ -63,6 +63,8 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
                     Project::theme_highlight_color, 192);
   Blend::set(Blend::TRANS);
 
+  bitmap2->fillAlpha(getFltkColor(FL_BACKGROUND2_COLOR));
+
   if ((stepx > 1) && (stepy > 1))
   {
     for (int y1 = 0; y1 < bitmap2->h; y1 += stepy)
@@ -208,8 +210,13 @@ void Widget::draw()
 
   fl_push_clip(x() + offsetx, y() + offsety, stepx, stepy);
 
+//  if (stepx >= 0 && stepy >= 0)
+//    fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND2_COLOR);
   if (stepx >= 0 && stepy >= 0)
-    fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND2_COLOR);
+  {
+    fl_draw_box(FL_BORDER_BOX, x() + offsetx, y() + offsety,
+                stepx, stepy, FL_BACKGROUND2_COLOR);
+  }
 
   if (use_highlight)
   {
