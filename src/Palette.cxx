@@ -472,33 +472,24 @@ void Palette::setC64()
 
 void Palette::setVCS()
 {
-  const int c_blue[16] =
-  {
-    0, 6, 9, 10, 13, 19, 22, 23, 24, 21, 20, 16, 11, 10, 10, 9
-  };
-
-  const int c_red[16] =
-  {
-    0, 18, 20, 22, 24, 22, 19, 16, 14, 11, 10, 9, 10, 13, 16, 18
-  };
-
-  const int luma[8] =
-  {
-    4, 8, 11, 15, 18, 21, 24, 26
-  };
-
   int index = 0;
 
-  for (int y = 0; y < 16; y++)
+  for (int x = 0; x < 8; x++)
   {
-    for (int x = 0; x < 8; x++)
+    for (int y = 0; y < 16; y++)
     {
+      const int y_fix = ((y - 1) + 16) & 15;
+      const float d = (M_PI * (float)y_fix * 17) / 112;
+      const float c_blue = y == 0 ? 128 : 128 + 64 * -std::cos(d);
+      const float c_red = y == 0 ? 128 : 128 + 64 * std::sin(d);
+      const float luma = 32 + x * 28;
+
       int r = 0, g = 0, b = 0;
 
       if (y == 0)
-        Blend::yccToRgb(x == 0 ? 0 : luma[x] * 8, 128, 128, &r, &g, &b);
+        Blend::yccToRgb(x == 0 ? 0 : luma, c_blue, c_red, &r, &g, &b);
       else
-        Blend::yccToRgb(luma[x] * 8, c_blue[y] * 8, c_red[y] * 8, &r, &g, &b);
+        Blend::yccToRgb(luma, c_blue, c_red, &r, &g, &b);
 
       const int c1 = makeRgb(r, g, b);
 
