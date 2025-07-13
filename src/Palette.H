@@ -47,6 +47,7 @@ public:
   void setGrays();
   void setTwoBits();
   void setC64();
+  void setVCS();
   void setWebSafe();
   void set3LevelRGB();
   void set4LevelRGB();
