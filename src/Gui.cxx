@@ -66,7 +66,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
-#define TOP_HEIGHT 64
+#define TOP_HEIGHT 56
 #define TOOLS_WIDTH 64
 #define OPTIONS_WIDTH 176
 #define COLORS_WIDTH 208
@@ -553,39 +553,39 @@ void Gui::init()
   top = new Group(0, menubar->h(), window->w(), TOP_HEIGHT, "");
   pos = gap;
 
-  zoom_one = new Button(top, pos, 8, 48, 48,
+  zoom_one = new Button(top, pos, 8, 40, 40,
                         "Actual Size (1)", images_zoom_one_png,
                         (Fl_Callback *)zoomOne);
-  pos += 48 + gap;
+  pos += 40 + gap;
 
-  zoom_in = new Button(top, pos, 8, 48, 48,
+  zoom_in = new Button(top, pos, 8, 40, 40,
                        "Zoom In (+)", images_zoom_in_png,
                        (Fl_Callback *)zoomIn);
-  pos += 48 + gap;
+  pos += 40 + gap;
 
-  zoom_out = new Button(top, pos, 8, 48, 48,
+  zoom_out = new Button(top, pos, 8, 40, 40,
                         "Zoom Out (-)", images_zoom_out_png,
                         (Fl_Callback *)zoomOut);
-  pos += 48 + gap;
+  pos += 40 + gap;
 
-  zoom = new StaticText(top, pos, 8, 64, 48, "");
+  zoom = new StaticText(top, pos, 8, 64, 40, "");
   zoom->labelsize(20);
   pos += 64 + gap;
 
   new Separator(top, pos, 0, TOP_HEIGHT, Separator::VERTICAL, "");
   pos += 4 + gap;
 
-  grid = new ToggleButton(top, pos, 8, 48, 48,
+  grid = new ToggleButton(top, pos, 8, 40, 40,
                           "Show Grid", images_grid_png,
                           (Fl_Callback *)gridEnable);
-  pos += 48 + gap;
+  pos += 40 + gap;
 
-  gridsnap = new ToggleButton(top, pos, 8, 48, 48,
+  gridsnap = new ToggleButton(top, pos, 8, 40, 40,
                           "Snap to Grid", images_gridsnap_png,
                           (Fl_Callback *)gridSnap);
   pos += 96;
 
-  gridx = new InputInt(top, pos, 8 + 4, 104, 40,
+  gridx = new InputInt(top, pos, 8, 104, 40,
                        "X:",
                        (Fl_Callback *)gridX, 1, 256);
   gridx->labelsize(18);
@@ -593,7 +593,7 @@ void Gui::init()
   gridx->value("8");
   pos += 104 + 48;
 
-  gridy = new InputInt(top, pos, 8 + 4, 104, 40,
+  gridy = new InputInt(top, pos, 8, 104, 40,
                        "Y:",
                        (Fl_Callback *)gridY, 1, 256);
   gridy->labelsize(18);
@@ -604,10 +604,10 @@ void Gui::init()
   new Separator(top, pos, 0, TOP_HEIGHT, Separator::VERTICAL, "");
   pos += 4 + gap;
 
-  aspect = new Fl_Choice(pos, 8 + 4, 160, 40, "");
+  aspect = new Fl_Choice(pos, 8, 160, 40, "");
   aspect->tooltip("Aspect Ratio\n(simulates non-standard displays");
   aspect->textsize(10);
-  aspect->resize(top->x() + pos, top->y() + 8 + 4, 160, 40);
+  aspect->resize(top->x() + pos, top->y() + 8, 160, 40);
   aspect->add("Normal (1:1)");
   aspect->add("Wide (2:1)");
   aspect->add("Tall (1:2)");
@@ -619,7 +619,7 @@ void Gui::init()
   new Separator(top, pos, 0, TOP_HEIGHT, Separator::VERTICAL, "");
   pos += 4 + gap;
 
-  filter = new CheckBox(top, pos, 8, 48, 48,
+  filter = new CheckBox(top, pos, 8, 48, 40,
                             "Filter",
                             (Fl_Callback *)filterToggle);
   filter->tooltip("Filter Display\nWhen Zoomed Out");
@@ -856,15 +856,11 @@ void Gui::init()
   new Separator(offset, 0, pos, OPTIONS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + gap;
 
-  offset_up = new RepeatButton(offset, 64, pos, 48, 48, "", images_up_png, (Fl_Callback *)offsetUp);
-  pos += 28;
-
-  offset_left = new RepeatButton(offset, 8, pos, 48, 48, "", images_left_png, (Fl_Callback *)offsetLeft);
-  offset_right = new RepeatButton(offset, 120, pos, 48, 48, "", images_right_png, (Fl_Callback *)offsetRight);
-  pos += 28;
-
-  offset_down = new RepeatButton(offset, 64, pos, 48, 48, "", images_down_png, (Fl_Callback *)offsetDown);
-  pos += 48;
+  offset_left = new RepeatButton(offset, 16, pos + 26, 40, 40, "", images_left_png, (Fl_Callback *)offsetLeft);
+  offset_up = new RepeatButton(offset, 68, pos, 40, 40, "", images_up_png, (Fl_Callback *)offsetUp);
+  offset_right = new RepeatButton(offset, 120, pos + 26, 40, 40, "", images_right_png, (Fl_Callback *)offsetRight);
+  offset_down = new RepeatButton(offset, 68, pos + 52, 40, 40, "", images_down_png, (Fl_Callback *)offsetDown);
+  pos += 92;
 
   new StaticText(offset, 8, pos, 160, 32, "Nudge");
 
@@ -980,10 +976,10 @@ void Gui::init()
   trans_input->value("0");
   pos += 32 + 8;
 
-  trans = new Widget(colors, 8, pos, 192, 48, "Transparency", 6, 48,
+  trans = new Widget(colors, 8, pos, 192, 42, "Transparency", 6, 42,
                      (Fl_Callback *)colorTrans);
 
-  pos += 48 + gap;
+  pos += 42 + gap;
 
   new Separator(colors, 0, pos, COLORS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + gap;
@@ -1712,7 +1708,7 @@ void Gui::colorTrans()
   {
     for (int x = 0; x < trans->bitmap->w; x++)
     {
-      const int checker = ((x >> 4) & 1) ^ ((y >> 4) & 1) ? 0xff989898 : 0xff686868;
+      const int checker = ((x / 16) & 1) ^ (((y + 3) / 16) & 1) ? 0xff989898 : 0xff686868;
       trans->bitmap->setpixel(x, y, checker);
     }
   }
