@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "GetColor.H"
 #include "Gui.H"
+#include "Inline.H"
 #include "Palette.H"
 #include "Project.H"
 #include "Undo.H"
@@ -53,14 +54,33 @@ bool GetColor::inbox(int x, int y, int x1, int y1, int x2, int y2)
 void GetColor::push(View *view)
 {
   Bitmap *bmp = Project::bmp;
+  Palette *pal = Project::palette;
 
-  if (inbox(view->imgx, view->imgy, bmp->cl, bmp->ct,
-                                   bmp->cr, bmp->cb))
+  if (inbox(view->imgx, view->imgy, bmp->cl, bmp->ct, bmp->cr, bmp->cb))
   {
-    const int c = bmp->getpixel(view->imgx, view->imgy);
+    const int color = bmp->getpixel(view->imgx, view->imgy);
 
-    Gui::colorUpdate(c);
-    Gui::getcolorUpdate(c);
+    if (Gui::getBestMatch() == 1)
+    {
+      int nearest = 99999999;
+      int use = 0;
+
+      for (int i = 0; i < pal->max; i++)
+      {
+        int d = diff24(color, pal->data[i]);
+
+        if (d < nearest)
+        {
+          nearest = d;
+          use = i;
+        }
+      }
+
+      Gui::paletteIndex(use);
+    }
+
+    Gui::colorUpdate(color);
+    Gui::getcolorUpdate(color);
   }
 }
 

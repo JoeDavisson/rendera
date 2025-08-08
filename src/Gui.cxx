@@ -145,6 +145,7 @@ namespace
   Fl_Choice *paint_mode;
 
   Widget *getcolor_color;
+  CheckBox *getcolor_best;
 
   InputInt *fill_range;
   InputInt *fill_feather;
@@ -605,7 +606,7 @@ void Gui::init()
   pos += 4 + gap;
 
   aspect = new Fl_Choice(pos, 8, 160, 40, "");
-  aspect->tooltip("Aspect Ratio\n(simulates non-standard displays");
+  aspect->tooltip("Aspect Ratio\n(simulates non-square displays)");
   aspect->textsize(10);
   aspect->resize(top->x() + pos, top->y() + 8, 160, 40);
   aspect->add("Normal (1:1)");
@@ -622,7 +623,7 @@ void Gui::init()
   filter = new CheckBox(top, pos, 8, 48, 40,
                             "Filter",
                             (Fl_Callback *)filterToggle);
-  filter->tooltip("Filter Display\nWhen Zoomed Out");
+  filter->tooltip("Filter display\nwhen zoomed out");
   filter->value(0);
   pos += 48 + gap;
 
@@ -834,7 +835,15 @@ void Gui::init()
 
   getcolor_color = new Widget(getcolor, 8, pos, 160, 160, "Selected Color", 0, 0, 0);
   getcolor_color->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
-  pos += 160 + gap;
+  pos += 160 + gap + 16;
+
+  new Separator(getcolor, 0, pos, OPTIONS_WIDTH, Separator::HORIZONTAL, "");
+  pos += 4 + gap;
+
+  getcolor_best = new CheckBox(getcolor, 8, pos, 16, 16, "Best Match", 0);
+  getcolor_best->tooltip("Use nearest color in palette");
+  getcolor_best->center();
+  getcolor_best->value(0);
 
   getcolor->resizable(0);
   getcolor->end();
@@ -1231,9 +1240,29 @@ void Gui::transUpdate(int t)
 
 void Gui::getcolorUpdate(int c)
 {
-  getcolor_color->bitmap->clear(c);
-  getcolor_color->bitmap->rect(0, 0, getcolor_color->bitmap->w - 1, getcolor_color->bitmap->h - 1, makeRgb(0, 0, 0), 0);
+  Palette *pal = Project::palette;
+  const int index = palette_swatches->var;
+
+  if (getcolor_best->value())
+  {
+    getcolor_color->bitmap->clear(pal->data[index]);
+  }
+    else
+  {
+    getcolor_color->bitmap->clear(c);
+  }
+
+  getcolor_color->bitmap->rect(0,
+                               0,
+                               getcolor_color->bitmap->w - 1,
+                               getcolor_color->bitmap->h - 1,
+                               makeRgb(0, 0, 0), 0);
   getcolor_color->redraw();
+}
+
+int Gui::getBestMatch()
+{
+  return getcolor_best->value();
 }
 
 void Gui::paletteSwatches(Widget *widget, void *var)
