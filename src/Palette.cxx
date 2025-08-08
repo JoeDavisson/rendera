@@ -47,9 +47,6 @@ Palette::Palette()
   data[0] = makeRgb(0, 0, 0);
   data[1] = makeRgb(255, 255, 255);
   max = 2;
-
-  // use a default palette
-//  setDefault();
 }
 
 Palette::~Palette()
@@ -478,11 +475,13 @@ void Palette::setVCS()
   {
     for (int y = 0; y < 16; y++)
     {
-      const int y_fix = ((y - 1) + 16) & 15;
-      const float d = (M_PI * (float)y_fix * 17) / 112;
-      const float c_blue = y == 0 ? 128 : 128 + 64 * -std::cos(d);
-      const float c_red = y == 0 ? 128 : 128 + 64 * std::sin(d);
-      const float luma = 32 + x * 28;
+      const float luma = 36 + x * 24;
+      const float sat = 76 - luma / 16;
+      const float hue = (float)y - 0.66;
+      const float bias = 6.8;
+      const float d = M_PI * hue / bias;
+      const float c_blue = y == 0 ? 128 : 128 + sat * -std::cos(d);
+      const float c_red = y == 0 ? 128 : 128 + sat * std::sin(d);
 
       int r = 0, g = 0, b = 0;
 
@@ -491,9 +490,9 @@ void Palette::setVCS()
       else
         Blend::yccToRgb(luma, c_blue, c_red, &r, &g, &b);
 
-      const int c1 = makeRgb(r, g, b);
+      const int c = makeRgb(r, g, b);
 
-      data[index++] = c1;
+      data[index++] = c;
     }
   }
 
@@ -560,17 +559,6 @@ void Palette::set4LevelRGB()
   fillTable();
 }
 
-
-// 111
-// 00000000
-
-// 111
-// 00000000
-
-// 11
-// 00000000
-
-/*
 void Palette::set332()
 {
   int index = 0;
@@ -581,47 +569,6 @@ void Palette::set332()
     {
       for (int b = 0; b < 4; b++)
       {
-
-//        int rr = (r << 5) | (((r >> 2) << 5) - 1);
-//        int gg = (g << 5) | (((g >> 2) << 5) - 1);
-//        int bb = (b << 6) | (((b >> 1) << 6) - 1);
-
-        int rr = (r << 5) | (r << 2) | (r >> 1);
-        int gg = (g << 5) | (g << 2) | (g >> 1);
-        int bb = (b << 6) | (b << 4) | (b << 2) | (b);
-
-        rr = Gamma::fix(rr);
-        gg = Gamma::fix(gg);
-        bb = Gamma::fix(bb);
-
-        rr /= 257;
-        gg /= 257;
-        bb /= 257;
-
-        data[index++] = makeRgb(rr, gg, bb);
-//        data[index++] = makeRgb(r << 5, g << 5, b << 6);
-      }
-    }
-  }
-
-//  data[255] = makeRgb(255, 255, 255);
-
-  max = index;
-  fillTable();
-}
-*/
-
-void Palette::set332()
-{
-  int index = 0;
-
-  for (int r = 0; r < 8; r++)
-  {
-    for (int g = 0; g < 8; g++)
-    {
-      for (int b = 0; b < 4; b++)
-      {
-//        data[index++] = makeRgb(r * 36.43, g * 36.43, b * 85);
         data[index++] = makeRgb(r << 5, g << 5, b << 6);
       }
     }
