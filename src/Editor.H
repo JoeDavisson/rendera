@@ -27,6 +27,13 @@ public:
   static void begin();
   static void init();
 
+  static void resetUndo();
+  static void doPush();
+  static void push();
+  static void pop();
+  static void pushRedo();
+  static void popRedo();
+
 private:
   static void updateInfo(char *);
   static void updateIndex(int);
@@ -49,13 +56,6 @@ private:
   static void rgbRamp();
   static void hsvRamp();
   static void close();
-
-  static void resetUndo();
-  static void doPush();
-  static void push();
-  static void pop();
-  static void pushRedo();
-  static void popRedo();
 
   Editor() { }
   ~Editor() { }

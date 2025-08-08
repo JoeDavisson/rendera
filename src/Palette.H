@@ -37,7 +37,8 @@ public:
   void swapColor(int, int);
   void fillTable();
   int lookup(const int);
-  void sort();
+  void sortValue();
+  void sortHue();
   void normalize();
   int load(const char *);
   int save(const char *);

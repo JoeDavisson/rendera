@@ -363,7 +363,7 @@ void Gui::init()
 
   // main window
   FL_NORMAL_SIZE = 18;
-  window = new MainWin(1280, 828 + gap, "Rendera");
+  window = new MainWin(1280, 828, "Rendera");
   window->callback(closeCallback);
   window->xclass("Rendera");
 
@@ -433,9 +433,7 @@ void Gui::init()
   menubar->add("&Palette/&Create...", 0,
     (Fl_Callback *)Dialog::makePalette, 0, 0);
   menubar->add("&Palette/&Apply...", 0,
-    (Fl_Callback *)Dither::begin, 0, 0);
-//  menubar->add("&Palette/&Normalize", 0,
-//    (Fl_Callback *)paletteNormalize, 0, FL_MENU_DIVIDER);
+    (Fl_Callback *)Dither::begin, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/Presets/Default", 0,
     (Fl_Callback *)paletteDefault, 0, 0);
   menubar->add("Palette/Presets/Black and White", 0,
@@ -457,7 +455,9 @@ void Gui::init()
   menubar->add("&Palette/Presets/332", 0,
     (Fl_Callback *)palette332, 0, 0);
   menubar->add("&Palette/&Editor... (E)", 0,
-    (Fl_Callback *)Editor::begin, 0, 0);
+    (Fl_Callback *)Editor::begin, 0, FL_MENU_DIVIDER);
+  menubar->add("&Palette/&Sort", 0,
+    (Fl_Callback *)paletteSortHue, 0, 0);
 
 //  menubar->add("F&X/Color/Test", 0,
 //    (Fl_Callback *)Test::begin, 0, 0);
@@ -1097,7 +1097,7 @@ void Gui::init()
   colors->resize(colors->x(), colors->y(), colors->w(), right_height);
   files->resize(files->x(), files->y(), files->w(), right_height);
 
-  window->size_range(1024, 828 + gap, 0, 0, 0, 0, 0);
+  window->size_range(1024, 828, 0, 0, 0, 0, 0);
   window->resizable(view);
   window->end();
 
@@ -1998,6 +1998,22 @@ const char *Gui::textInput()
 int Gui::getTool()
 {
   return tool->var;
+}
+
+void Gui::paletteSortValue()
+{
+  Editor::push();
+  Project::palette->sortValue();
+  palette_swatches->var = 0;
+  Project::palette->draw(palette_swatches);
+}
+
+void Gui::paletteSortHue()
+{
+  Editor::push();
+  Project::palette->sortHue();
+  palette_swatches->var = 0;
+  Project::palette->draw(palette_swatches);
 }
 
 void Gui::paletteDefault()

@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Palette.H"
 #include "Widget.H"
 
-static bool sortByLum(const int c1, const int c2)
+static bool sort_value_cb(const int c1, const int c2)
 {
   return getl(c1) < getl(c2);
 }
@@ -244,9 +244,70 @@ int Palette::lookup(const int c)
   return table[c & 0xffffff];
 }
 
-void Palette::sort()
+void Palette::sortValue()
 {
-  std::sort(data, data + max, sortByLum);
+  std::sort(data, data + max, sort_value_cb);
+}
+
+// sort into grays, low-sat colors, hi-sat colors
+void Palette::sortHue()
+{
+  std::vector<int> bucket(25 * 256, 0);
+  std::vector<int> count(25, 0);
+
+  int h, s, v;
+
+  for (int j = 0; j < max; j++)
+  {
+    const int c = data[j];
+    const int r = getr(c);
+    const int g = getg(c);
+    const int b = getb(c);
+    Blend::rgbToHsv(r, g, b, &h, &s, &v);
+
+    if (s == 0)
+    {
+      bucket[count[0]++] = c;
+    }
+    else if (s < 128)
+    {
+      for (int i = 0; i < 12; i++)
+      {
+        if (h >= i * 128 && h < (i + 1) * 128)
+        {
+          bucket[(i + 1) * 256 + count[i + 1]++] = c;
+        }
+      }
+    }
+      else
+    {
+      for (int i = 0; i < 12; i++)
+      {
+        if (h >= i * 128 && h < (i + 1) * 128)
+        {
+          bucket[(i + 13) * 256 + count[i + 13]++] = c;
+        }
+      }
+    }
+  }
+
+  for (int i = 0; i < 25; i++)
+  {
+    std::sort(&bucket[i * 256], &bucket[i * 256] + count[i], sort_value_cb);
+  }
+
+  int index = 0;
+
+  for (int i = 0; i < 25; i++)
+  {
+    for (int j = 0; j < count[i]; j++)
+    {
+      data[index++] = bucket[i * 256 + j];
+    }
+  }
+
+  max = index;
+  fillTable();
 }
 
 void Palette::normalize()

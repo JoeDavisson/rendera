@@ -120,6 +120,8 @@ public:
   static void paintTextureTurb(Widget *, void *);
   static void paintAverageEdge(Widget *, void *);
 
+  static void paletteSortValue();
+  static void paletteSortHue();
   static void palette3LevelRGB();
   static void palette4LevelRGB();
   static void palette332();
@@ -132,7 +134,6 @@ public:
   static void paletteDraw();
   static void paletteIndex(int);
   static void paletteNormalize();
-  static void paletteSort();
   static void paletteSwatches(Widget *, void *);
   static void paletteWebSafe();
 
