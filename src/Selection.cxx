@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Bitmap.H"
 #include "Brush.H"
+#include "CheckBox.H"
 #include "Gui.H"
 #include "Map.H"
 #include "Inline.H"
@@ -230,7 +231,8 @@ void Selection::paste(View *view)
   Blend::set(Project::brush->blend);
 
   const int trans = Project::brush->trans;
-  const int alpha = Gui::getSelectAlpha();
+//  const int alpha = Gui::getSelectAlpha();
+  const int alpha = Gui::selection_alpha->value();
 
   for (int y = 0; y < h; y++)
   {

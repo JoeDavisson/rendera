@@ -1827,11 +1827,6 @@ void Gui::selectCropEnable(bool enable)
   selection_crop->redraw();
 }
 
-int Gui::getSelectAlpha()
-{
-  return selection_alpha->value();
-}
-
 void Gui::selectFlipX()
 {
   Project::select_bmp->flipHorizontal();
@@ -1984,10 +1979,12 @@ void Gui::offsetDown(Widget *, void *)
   Project::tool->release(view);
 }
 
+/*
 int Gui::getTool()
 {
   return tool->var;
 }
+*/
 
 void Gui::paletteSortValue()
 {

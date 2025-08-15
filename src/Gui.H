@@ -42,9 +42,6 @@ class Fl_Menu_Bar;
 class Gui
 {
 public:
-  static int getSelectAlpha();
-  static int getTool();
-
   static Fl_Menu_Bar *getMenuBar();
   static View *getView();
   static Fl_Double_Window *getWindow();

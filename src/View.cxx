@@ -163,7 +163,7 @@ int View::handle(int event)
   imgx /= ax;
   imgy /= ay;
 
-  switch (Gui::getTool())
+  switch (Gui::tool->var)
   {
     case Tool::PAINT:
       if (gridsnap)
@@ -319,39 +319,6 @@ int View::handle(int event)
           Project::tool->redraw(this);
 
           saveCoords();
-          break;
-        case 4:
-          // restrict brush resize to painting mode
-          if (Gui::getTool() != Tool::PAINT)
-            break;
-
-          resizing = true;
-          const int mx = (mousex / ax) / zoom - Project::brush->size / 2;
-          const int my = (mousey / ay) / zoom - Project::brush->size / 2;
-          const int lx = (last_mousex / ax) / zoom - Project::brush->size / 2;
-          const int ly = (last_mousey / ay) / zoom - Project::brush->size / 2;
-          const int dx = std::abs(mx - lx);
-          const int dy = std::abs(my - ly);
-          int size = std::sqrt(dx * dx + dy * dy);
-
-          if (size < 1)
-            size = 1;
-
-          if (size > Brush::max_size)
-            size = Brush::max_size;
-
-          Gui::paintChangeSize(size);
-          Project::map->clear(0);
-          Project::stroke->drawBrush(ox + (last_mousex / ax) / zoom,
-                                     oy + (last_mousey / ay) / zoom,
-                                     255);
-          Project::stroke->makeBlitRect(imgx - 40, imgy - 40,
-                                        imgx + 40, imgy + 40,
-                                        ox, oy, size, zoom);
-          drawMain(false);
-          Project::stroke->previewPaint(this);
-          redraw();
-
           break;
       } 
 
@@ -631,7 +598,7 @@ void View::drawGrid()
 
 void View::changeCursor()
 {
-  switch (Gui::getTool())
+  switch (Gui::tool->var)
   {
     case Tool::GETCOLOR:
     case Tool::FILL:
@@ -653,7 +620,7 @@ void View::changeCursor()
 
 void View::drawCloneCursor()
 {
-  if (Gui::getTool() != Tool::PAINT && Gui::getTool() != Tool::TEXT)
+  if (Gui::tool->var != Tool::PAINT && Gui::tool->var != Tool::TEXT)
     return;
 
   float scale = getScale();

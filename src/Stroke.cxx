@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Brush.H"
+#include "CheckBox.H"
 #include "Clone.H"
 #include "Gui.H"
 #include "Inline.H"
@@ -925,7 +926,7 @@ void Stroke::previewSelection(View *view)
   const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
   const int trans = Project::brush->trans;
-  const int use_alpha = Gui::getSelectAlpha();
+  const int use_alpha = Gui::selection_alpha->value();
 
   int ox = view->ox;
   int oy = view->oy;
