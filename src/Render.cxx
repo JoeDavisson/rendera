@@ -38,6 +38,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "View.H"
 
+#include "FL/Fl_Choice.H"
+
 Bitmap *Render::bmp;
 Map *Render::map;
 Brush *Render::brush;
@@ -862,7 +864,8 @@ void Render::begin()
   int size = 1;
 
   // for tools that grow outward
-  switch (Gui::getPaintMode())
+//  switch (Gui::getPaintMode())
+  switch (Gui::paint_mode->value())
   {
     case BLURRY:
       size = (3 << brush->blurry_edge);
@@ -894,7 +897,7 @@ void Render::begin()
 
   view->rendering = true;
 
-  switch (Gui::getPaintMode())
+  switch (Gui::paint_mode->value())
   {
     case SOLID:
       solid();

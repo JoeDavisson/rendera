@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Project.H"
 #include "Stroke.H"
 #include "Tool.H"
+#include "ToggleButton.H"
 #include "Undo.H"
 #include "View.H"
 #include "Widget.H"
@@ -896,14 +897,14 @@ void View::draw()
     updateView(blitx * ax, blity * ay, x() + blitx * ax, y() + blity * ay,
                blitw * ax + 1, blith * ay + 1);
 
-    if (Gui::getClone())
+    if (Gui::clone->var)
       drawCloneCursor();
   }
     else
   {
     updateView(0, 0, x(), y(), w(), h());
 
-    if (Gui::getClone())
+    if (Gui::clone->var)
       drawCloneCursor();
   }
 }

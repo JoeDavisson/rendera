@@ -25,9 +25,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Bitmap.H"
 #include "Brush.H"
+#include "CheckBox.H"
 #include "Fill.H"
+#include "Group.H"
 #include "Gui.H"
 #include "Inline.H"
+#include "InputInt.H"
 #include "KDtree.H"
 #include "Map.H"
 #include "Project.H"
@@ -387,8 +390,13 @@ void Fill::push(View *view)
     int color = makeRgba(rgba.r, rgba.g, rgba.b, 255 - Project::brush->trans);
     int target = Project::bmp->getpixel(view->imgx, view->imgy);
 
-    fill(view->imgx, view->imgy, color, target,
-         Gui::getFillRange(), Gui::getFillFeather(), Gui::getFillColorOnly());
+    fill(view->imgx,
+         view->imgy,
+         color,
+         target,
+         atoi(Gui::fill_range->value()),
+         atoi(Gui::fill_feather->value()),
+         Gui::fill_color_only->value());
 
     view->drawMain(true);
   }

@@ -42,12 +42,6 @@ class Fl_Menu_Bar;
 class Gui
 {
 public:
-  static int getClone();
-  static int getFillColorOnly();
-  static int getFillFeather();
-  static int getFillRange();
-  static int getPaintMode();
-  static int getPaletteIndex();
   static int getSelectAlpha();
   static int getTool();
 

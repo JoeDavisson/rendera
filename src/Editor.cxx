@@ -521,7 +521,7 @@ void Editor::hsvRamp()
 
 void Editor::begin()
 {
-  Items::palette->var = Gui::getPaletteIndex();
+  Items::palette->var = Gui::palette_swatches->var;
   last_index = Items::palette->var;
   Project::palette->draw(Items::palette);
   updateHexColor();

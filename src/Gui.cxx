@@ -1313,11 +1313,6 @@ void Gui::paletteNormalize()
   Project::palette->draw(palette_swatches);
 }
 
-int Gui::getPaletteIndex()
-{
-  return palette_swatches->var;
-}
-
 void Gui::paletteDraw()
 {
   Project::palette->draw(palette_swatches);
@@ -2303,11 +2298,6 @@ View *Gui::getView()
   return view;
 }
 
-int Gui::getClone()
-{
-  return clone->var;
-}
-
 void Gui::paintMode()
 {
   Project::brush->aa = 0;
@@ -2352,26 +2342,6 @@ void Gui::paintMode()
       paint_average_edge->show();
       break;
   }
-}
-
-int Gui::getPaintMode()
-{
-  return paint_mode->value();
-}
-
-int Gui::getFillColorOnly()
-{
-  return fill_color_only->value();
-}
-
-int Gui::getFillFeather()
-{
-  return atoi(fill_feather->value());
-}
-
-int Gui::getFillRange()
-{
-  return atoi(fill_range->value());
 }
 
 void Gui::fillReset()
