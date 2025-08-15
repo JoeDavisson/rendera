@@ -437,29 +437,29 @@ void Gui::init()
   menubar->add("&Palette/&Apply...", 0,
     (Fl_Callback *)Dither::begin, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/Presets/Default", 0,
-    (Fl_Callback *)paletteDefault, 0, 0);
+    (Fl_Callback *)Palette::setDefault, 0, 0);
   menubar->add("Palette/Presets/Black and White", 0,
-    (Fl_Callback *)paletteBlackAndWhite, 0, 0);
+    (Fl_Callback *)Palette::setBlackAndWhite, 0, 0);
   menubar->add("Palette/Presets/Grays", 0,
-    (Fl_Callback *)paletteGrays, 0, 0);
+    (Fl_Callback *)Palette::setGrays, 0, 0);
   menubar->add("Palette/Presets/Two Bits", 0,
-    (Fl_Callback *)paletteTwoBits, 0, 0);
+    (Fl_Callback *)Palette::setTwoBits, 0, 0);
   menubar->add("Palette/Presets/C64", 0,
-    (Fl_Callback *)paletteC64, 0, 0);
+    (Fl_Callback *)Palette::setC64, 0, 0);
   menubar->add("Palette/Presets/VCS", 0,
-    (Fl_Callback *)paletteVCS, 0, 0);
+    (Fl_Callback *)Palette::setVCS, 0, 0);
   menubar->add("&Palette/Presets/Web Safe", 0,
-    (Fl_Callback *)paletteWebSafe, 0, 0);
+    (Fl_Callback *)Palette::setWebSafe, 0, 0);
   menubar->add("&Palette/Presets/3-level RGB", 0,
-    (Fl_Callback *)palette3LevelRGB, 0, 0);
+    (Fl_Callback *)Palette::set3LevelRGB, 0, 0);
   menubar->add("&Palette/Presets/4-level RGB", 0,
-    (Fl_Callback *)palette4LevelRGB, 0, 0);
+    (Fl_Callback *)Palette::set4LevelRGB, 0, 0);
   menubar->add("&Palette/Presets/332", 0,
-    (Fl_Callback *)palette332, 0, 0);
+    (Fl_Callback *)Palette::set332, 0, 0);
   menubar->add("&Palette/&Editor... (E)", 0,
     (Fl_Callback *)Editor::begin, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/&Sort", 0,
-    (Fl_Callback *)paletteSortHue, 0, 0);
+    (Fl_Callback *)Palette::sortHue, 0, 0);
 
 //  menubar->add("F&X/Color/Test", 0,
 //    (Fl_Callback *)Test::begin, 0, 0);
@@ -1116,6 +1116,7 @@ void Gui::init()
   Fl_Tooltip::color(fl_rgb_color(192, 224, 248));
   Fl_Tooltip::textcolor(FL_BLACK);
 
+  Palette::setDefault();
   colorUpdate(Project::palette->data[palette_swatches->var]);
   paletteDraw();
   tool->do_callback();
@@ -1304,12 +1305,6 @@ void Gui::paletteSwatches(Widget *widget, void *var)
 void Gui::paletteIndex(int var)
 {
   palette_swatches->var = var;
-  Project::palette->draw(palette_swatches);
-}
-
-void Gui::paletteNormalize()
-{
-  Project::palette->normalize();
   Project::palette->draw(palette_swatches);
 }
 
@@ -1977,99 +1972,6 @@ void Gui::offsetDown(Widget *, void *)
   view->imgy = view->gridsnap ? view->gridy : 1;
   Project::tool->drag(view);
   Project::tool->release(view);
-}
-
-/*
-int Gui::getTool()
-{
-  return tool->var;
-}
-*/
-
-void Gui::paletteSortValue()
-{
-  Editor::push();
-  Project::palette->sortValue();
-  palette_swatches->var = 0;
-  Project::palette->draw(palette_swatches);
-}
-
-void Gui::paletteSortHue()
-{
-  Editor::push();
-  Project::palette->sortHue();
-  palette_swatches->var = 0;
-  Project::palette->draw(palette_swatches);
-}
-
-void Gui::paletteDefault()
-{
-  Project::palette->setDefault();
-  palette_swatches->var = 0;
-  Project::palette->draw(palette_swatches);
-}
-
-void Gui::paletteBlackAndWhite()
-{
-  Project::palette->setBlackAndWhite();
-  palette_swatches->var = 0;
-  Project::palette->draw(palette_swatches);
-}
-
-void Gui::paletteGrays()
-{
-  Project::palette->setGrays();
-  palette_swatches->var = 0;
-  Project::palette->draw(palette_swatches);
-}
-
-void Gui::paletteTwoBits()
-{
-  Project::palette->setTwoBits();
-  palette_swatches->var = 0;
-  Project::palette->draw(palette_swatches);
-}
-
-void Gui::paletteC64()
-{
-  Project::palette->setC64();
-  palette_swatches->var = 0;
-  Project::palette->draw(palette_swatches);
-}
-
-void Gui::paletteVCS()
-{
-  Project::palette->setVCS();
-  palette_swatches->var = 0;
-  Project::palette->draw(palette_swatches);
-}
-
-void Gui::paletteWebSafe()
-{
-  Project::palette->setWebSafe();
-  palette_swatches->var = 0;
-  Project::palette->draw(palette_swatches);
-}
-
-void Gui::palette3LevelRGB()
-{
-  Project::palette->set3LevelRGB();
-  palette_swatches->var = 0;
-  Project::palette->draw(palette_swatches);
-}
-
-void Gui::palette4LevelRGB()
-{
-  Project::palette->set4LevelRGB();
-  palette_swatches->var = 0;
-  Project::palette->draw(palette_swatches);
-}
-
-void Gui::palette332()
-{
-  Project::palette->set332();
-  palette_swatches->var = 0;
-  Project::palette->draw(palette_swatches);
 }
 
 void Gui::aspectMode()

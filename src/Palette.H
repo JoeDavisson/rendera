@@ -37,22 +37,22 @@ public:
   void swapColor(int, int);
   void fillTable();
   int lookup(const int);
-  void sortValue();
-  void sortHue();
-  void normalize();
   int load(const char *);
   int save(const char *);
 
-  void setDefault();
-  void setBlackAndWhite();
-  void setGrays();
-  void setTwoBits();
-  void setC64();
-  void setVCS();
-  void setWebSafe();
-  void set3LevelRGB();
-  void set4LevelRGB();
-  void set332();
+  static void sortValue();
+  static void sortHue();
+  static void normalize();
+  static void setDefault();
+  static void setBlackAndWhite();
+  static void setGrays();
+  static void setTwoBits();
+  static void setC64();
+  static void setVCS();
+  static void setWebSafe();
+  static void set3LevelRGB();
+  static void set4LevelRGB();
+  static void set332();
 
   int *data;
   unsigned char *table;
