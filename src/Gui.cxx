@@ -199,97 +199,6 @@ namespace
   Fl_Box *coords;
   Fl_Box *info;
 
-/*
-  // top
-  Button *zoom_one;
-  Button *zoom_in;
-  Button *zoom_out;
-  StaticText *zoom;
-  ToggleButton *grid;
-  ToggleButton *gridsnap;
-  InputInt *gridx;
-  InputInt *gridy;
-  Fl_Choice *aspect;
-  CheckBox *filter;
-
-  // tools
-  Widget *tool;
-  ToggleButton *clone;
-  ToggleButton *origin;
-  ToggleButton *constrain;
-
-  // options
-  Widget *paint_brush_preview;
-  Widget *paint_size;
-  InputInt *paint_size_value;
-  Widget *paint_stroke;
-  Widget *paint_shape;
-  Widget *paint_coarse_edge;
-  Widget *paint_fine_edge;
-  Widget *paint_blurry_edge;
-  Widget *paint_watercolor_edge;
-  Widget *paint_chalk_edge;
-  Widget *paint_texture_edge;
-  Widget *paint_texture_marb;
-  Widget *paint_texture_turb;
-  Widget *paint_average_edge;
-  Fl_Choice *paint_mode;
-
-  Widget *getcolor_color;
-  CheckBox *getcolor_best;
-
-  InputInt *fill_range;
-  InputInt *fill_feather;
-  CheckBox *fill_color_only;
-  Fl_Button *fill_reset;
-
-  StaticText *selection_x;
-  StaticText *selection_y;
-  StaticText *selection_w;
-  StaticText *selection_h;
-  Fl_Button *selection_reset;
-  Fl_Button *selection_copy;
-  CheckBox *selection_alpha;
-  Button *selection_flip;
-  Button *selection_mirror;
-  Button *selection_rotate;
-  Fl_Button *selection_paste;
-  Fl_Button *selection_crop;
-
-  StaticText *offset_x;
-  StaticText *offset_y;
-  RepeatButton *offset_up;
-  RepeatButton *offset_left;
-  RepeatButton *offset_right;
-  RepeatButton *offset_down;
-
-  Fl_Hold_Browser *font_browse;
-  InputInt *font_size;
-  InputInt *font_angle;
-  Fl_Input *text_input;
-  CheckBox *text_smooth;
-
-  // colors
-  Widget *hue;
-  Widget *satval;
-  InputText *hexcolor;
-  InputInt *trans_input;
-  Widget *trans;
-  Fl_Choice *blend;
-  Widget *palette_swatches;
-
-  // files
-  Fl_Hold_Browser *file_browse;
-  Fl_Input *file_rename;
-  Button *file_close;
-  Button *file_move_up;
-  Button *file_move_down;
-  Fl_Box *file_mem;
-
-  // view
-  View *view;
-*/
-
   // height of rightmost panels
   int left_height = 0;
   int right_height = 0;
@@ -2085,39 +1994,6 @@ void Gui::offsetDown(Widget *, void *)
   Project::tool->release(view);
 }
 
-/*
-int Gui::getTextFontFace()
-{
-  int index = font_browse->value();
-
-  if (index < 1)
-    index = 1;
-
-  return index - 1;
-}
-
-int Gui::getTextFontSize()
-{
-  return atoi(font_size->value());
-}
-
-int Gui::getTextFontAngle()
-{
-  return atoi(font_angle->value());
-}
-
-void Gui::textChangedSize(InputInt *input, void *)
-{
-  input->redraw();
-  Project::tool->move(view);
-}
-
-const char *Gui::textInput()
-{
-  return text_input->value();
-}
-*/
-
 int Gui::getTool()
 {
   return tool->var;
@@ -2487,13 +2363,6 @@ int Gui::getPaintMode()
 {
   return paint_mode->value();
 }
-
-/*
-int Gui::getTextSmooth()
-{
-  return text_smooth->value();
-}
-*/
 
 int Gui::getFillColorOnly()
 {
