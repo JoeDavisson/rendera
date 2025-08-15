@@ -40,20 +40,6 @@ public:
   int load(const char *);
   int save(const char *);
 
-  static void sortValue();
-  static void sortHue();
-  static void normalize();
-  static void setDefault();
-  static void setBlackAndWhite();
-  static void setGrays();
-  static void setTwoBits();
-  static void setC64();
-  static void setVCS();
-  static void setWebSafe();
-  static void set3LevelRGB();
-  static void set4LevelRGB();
-  static void set332();
-
   int *data;
   unsigned char *table;
   int max;

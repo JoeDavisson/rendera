@@ -251,10 +251,3 @@ void Text::reset()
 {
 }
 
-void Text::textChangedSize(InputInt *input, void *)
-{
-  input->redraw();
-  Project::tool->move(Gui::view);
-}
-
-

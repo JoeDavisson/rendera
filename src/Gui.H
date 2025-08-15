@@ -117,6 +117,20 @@ public:
   static void paintTextureTurb(Widget *, void *);
   static void paintAverageEdge(Widget *, void *);
 
+  static void paletteSortValue();
+  static void paletteSortHue();
+  static void paletteNormalize();
+  static void paletteSetDefault();
+  static void paletteSetBlackAndWhite();
+  static void paletteSetGrays();
+  static void paletteSetTwoBits();
+  static void paletteSetC64();
+  static void paletteSetVCS();
+  static void paletteSetWebSafe();
+  static void paletteSet3LevelRGB();
+  static void paletteSet4LevelRGB();
+  static void paletteSet332();
+
   static void paletteDraw();
   static void paletteIndex(int);
   static void paletteSwatches(Widget *, void *);
@@ -148,6 +162,7 @@ public:
   static void statusCoords(char *);
   static void statusInfo(char *);
 
+  static void textChangedSize(InputInt *, void *);
   static void toolChange(Widget *, void *);
 
   static void zoomIn(Button *, void *);

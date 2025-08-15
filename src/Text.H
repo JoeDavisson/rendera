@@ -43,12 +43,6 @@ public:
   bool isActive();
   void reset();
 
-//  static int getTextFontFace();
-//  static int getTextFoneSize();
-//  static int getTextFontAngle();
-
-  static void textChangedSize(InputInt *, void *);
-
 private:
   Bitmap *textbmp;
 };

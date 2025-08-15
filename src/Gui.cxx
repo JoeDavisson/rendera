@@ -18,9 +18,11 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <typeinfo>
+#include <vector>
 
 #include <FL/fl_draw.H>
 #include <FL/Fl_Box.H>
@@ -167,6 +169,11 @@ Fl_Box *Gui::file_mem;
 
 // view
 View *Gui::view;
+
+static bool sort_value_cb(const int c1, const int c2)
+{
+  return getl(c1) < getl(c2);
+}
 
 namespace
 {
@@ -437,29 +444,29 @@ void Gui::init()
   menubar->add("&Palette/&Apply...", 0,
     (Fl_Callback *)Dither::begin, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/Presets/Default", 0,
-    (Fl_Callback *)Palette::setDefault, 0, 0);
+    (Fl_Callback *)paletteSetDefault, 0, 0);
   menubar->add("Palette/Presets/Black and White", 0,
-    (Fl_Callback *)Palette::setBlackAndWhite, 0, 0);
+    (Fl_Callback *)paletteSetBlackAndWhite, 0, 0);
   menubar->add("Palette/Presets/Grays", 0,
-    (Fl_Callback *)Palette::setGrays, 0, 0);
+    (Fl_Callback *)paletteSetGrays, 0, 0);
   menubar->add("Palette/Presets/Two Bits", 0,
-    (Fl_Callback *)Palette::setTwoBits, 0, 0);
+    (Fl_Callback *)paletteSetTwoBits, 0, 0);
   menubar->add("Palette/Presets/C64", 0,
-    (Fl_Callback *)Palette::setC64, 0, 0);
+    (Fl_Callback *)paletteSetC64, 0, 0);
   menubar->add("Palette/Presets/VCS", 0,
-    (Fl_Callback *)Palette::setVCS, 0, 0);
+    (Fl_Callback *)paletteSetVCS, 0, 0);
   menubar->add("&Palette/Presets/Web Safe", 0,
-    (Fl_Callback *)Palette::setWebSafe, 0, 0);
+    (Fl_Callback *)paletteSetWebSafe, 0, 0);
   menubar->add("&Palette/Presets/3-level RGB", 0,
-    (Fl_Callback *)Palette::set3LevelRGB, 0, 0);
+    (Fl_Callback *)paletteSet3LevelRGB, 0, 0);
   menubar->add("&Palette/Presets/4-level RGB", 0,
-    (Fl_Callback *)Palette::set4LevelRGB, 0, 0);
+    (Fl_Callback *)paletteSet4LevelRGB, 0, 0);
   menubar->add("&Palette/Presets/332", 0,
-    (Fl_Callback *)Palette::set332, 0, 0);
+    (Fl_Callback *)paletteSet332, 0, 0);
   menubar->add("&Palette/&Editor... (E)", 0,
     (Fl_Callback *)Editor::begin, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/&Sort", 0,
-    (Fl_Callback *)Palette::sortHue, 0, 0);
+    (Fl_Callback *)paletteSortHue, 0, 0);
 
 //  menubar->add("F&X/Color/Test", 0,
 //    (Fl_Callback *)Test::begin, 0, 0);
@@ -896,17 +903,17 @@ void Gui::init()
   }
 
   font_browse->value(1);
-  font_browse->callback((Fl_Callback *)Text::textChangedSize);
+  font_browse->callback((Fl_Callback *)textChangedSize);
   pos += 384 + gap;
 
   // font size
   font_size = new InputInt(text, 64, pos, 96, 32, "Size:",
-                           (Fl_Callback *)Text::textChangedSize, 4, 500);
+                           (Fl_Callback *)textChangedSize, 4, 500);
   font_size->value("48");
   pos += 32 + gap;
 
   font_angle = new InputInt(text, 64, pos, 96, 32, "Angle:",
-                           (Fl_Callback *)Text::textChangedSize, -359, 359);
+                           (Fl_Callback *)textChangedSize, -359, 359);
   font_angle->value("0");
   pos += 32 + gap;
 
@@ -914,7 +921,7 @@ void Gui::init()
   text_input->textsize(16);
   text_input->value("Text");
   text_input->resize(text->x() + 8, text->y() + pos, 160, 32);
-  text_input->callback((Fl_Callback *)Text::textChangedSize);
+  text_input->callback((Fl_Callback *)textChangedSize);
   pos += 32 + gap;
 
   text_smooth = new CheckBox(text, 8, pos, 16, 16, "Antialiased", 0);
@@ -1116,7 +1123,7 @@ void Gui::init()
   Fl_Tooltip::color(fl_rgb_color(192, 224, 248));
   Fl_Tooltip::textcolor(FL_BLACK);
 
-  Palette::setDefault();
+  paletteSetDefault();
   colorUpdate(Project::palette->data[palette_swatches->var]);
   paletteDraw();
   tool->do_callback();
@@ -1300,6 +1307,376 @@ void Gui::paletteSwatches(Widget *widget, void *var)
 
   pal->draw(widget);
   colorUpdate(c);
+}
+
+void Gui::paletteSortValue()
+{
+  Palette *pal = Project::palette;
+
+  std::sort(pal->data, pal->data + pal->max, sort_value_cb);
+  Gui::palette_swatches->var = 0;
+  pal->draw(Gui::palette_swatches);
+}
+
+// sort into grays, low-sat colors, hi-sat colors
+void Gui::paletteSortHue()
+{
+  Palette *pal = Project::palette;
+
+  std::vector<int> bucket(25 * 256, 0);
+  std::vector<int> count(25, 0);
+
+  int h, s, v;
+
+  for (int j = 0; j < pal->max; j++)
+  {
+    const int c = pal->data[j];
+    const int r = getr(c);
+    const int g = getg(c);
+    const int b = getb(c);
+    Blend::rgbToHsv(r, g, b, &h, &s, &v);
+
+    if (s == 0)
+    {
+      bucket[count[0]++] = c;
+    }
+    else if (s < 128)
+    {
+      for (int i = 0; i < 12; i++)
+      {
+        if (h >= i * 128 && h < (i + 1) * 128)
+        {
+          bucket[(i + 1) * 256 + count[i + 1]++] = c;
+        }
+      }
+    }
+      else
+    {
+      for (int i = 0; i < 12; i++)
+      {
+        if (h >= i * 128 && h < (i + 1) * 128)
+        {
+          bucket[(i + 13) * 256 + count[i + 13]++] = c;
+        }
+      }
+    }
+  }
+
+  for (int i = 0; i < 25; i++)
+  {
+    std::sort(&bucket[i * 256], &bucket[i * 256] + count[i], sort_value_cb);
+  }
+
+  int index = 0;
+
+  for (int i = 0; i < 25; i++)
+  {
+    for (int j = 0; j < count[i]; j++)
+    {
+      pal->data[index++] = bucket[i * 256 + j];
+    }
+  }
+
+  pal->max = index;
+  pal->fillTable();
+  Gui::palette_swatches->var = 0;
+  pal->draw(Gui::palette_swatches);
+}
+
+void Gui::paletteNormalize()
+{
+  Palette *pal = Project::palette;
+
+  // search for highest & lowest RGB values
+  int r_high = 0;
+  int g_high = 0;
+  int b_high = 0;
+  int r_low = 0xffffff;
+  int g_low = 0xffffff;
+  int b_low = 0xffffff;
+
+  for (int i = 0; i < pal->max; i++)
+  {
+    rgba_type rgba = getRgba(pal->data[i]);
+
+    const int r = rgba.r;
+    const int g = rgba.g;
+    const int b = rgba.b;
+
+    if (r < r_low)
+      r_low = r;
+    if (r > r_high)
+      r_high = r;
+    if (g < g_low)
+      g_low = g;
+    if (g > g_high)
+      g_high = g;
+    if (b < b_low)
+      b_low = b;
+    if (b > b_high)
+      b_high = b;
+  }
+
+  if (!(r_high - r_low))
+    r_high++;
+  if (!(g_high - g_low))
+    g_high++;
+  if (!(b_high - b_low))
+    b_high++;
+
+  // scale palette
+  double r_scale = 255.0 / (r_high - r_low);
+  double g_scale = 255.0 / (g_high - g_low);
+  double b_scale = 255.0 / (b_high - b_low);
+
+  for (int i = 0; i < pal->max; i++)
+  {
+    rgba_type rgba = getRgba(pal->data[i]);
+
+    const int r = (rgba.r - r_low) * r_scale;
+    const int g = (rgba.g - g_low) * g_scale;
+    const int b = (rgba.b - b_low) * b_scale;
+
+    pal->data[i] = makeRgb(r, g, b);
+  }
+
+  pal->fillTable();
+  Gui::palette_swatches->var = 0;
+  pal->draw(Gui::palette_swatches);
+}
+
+void Gui::paletteSetDefault()
+{
+  static int hue[] =
+  {
+    0, 109, 192, 256, 328, 364, 512, 657,
+    768, 864, 940, 1024, 1160, 1280, 1425
+  }; 
+
+  static int sat[] = { 192, 255, 144, 96 };
+  static int val[] = { 128, 255, 255, 255 };
+
+  Palette *pal = Project::palette;
+  int index = 0;
+
+  // grays
+  pal->data[index++] = makeRgb(255, 255, 255);
+  pal->data[index++] = makeRgb(160, 160, 160);
+  pal->data[index++] = makeRgb(96, 96, 96);
+  pal->data[index++] = makeRgb(0, 0, 0);
+
+  //colors
+  for (int h = 0; h < 15; h++)
+  {
+    for (int v = 3; v >= 0; v--)
+    {
+      int r, g, b;
+
+      Blend::hsvToRgb(hue[h] / 32 * 32, sat[v], val[v], &r, &g, &b);
+      pal->data[index++] = makeRgb(r, g, b);
+    }
+  }
+
+  pal->max = index;
+  pal->fillTable();
+  Gui::palette_swatches->var = 0;
+  pal->draw(Gui::palette_swatches);
+}
+
+void Gui::paletteSetBlackAndWhite()
+{
+  Palette *pal = Project::palette;
+
+  pal->data[0] = makeRgb(0, 0, 0);
+  pal->data[1] = makeRgb(255, 255, 255);
+
+  pal->max = 2;
+  pal->fillTable();
+}
+
+void Gui::paletteSetGrays()
+{
+  Palette *pal = Project::palette;
+
+  for (int i = 0; i < 16; i++)
+  {
+    pal->data[i] = makeRgb(i * 17, i * 17, i * 17);
+  }
+
+  pal->max = 16;
+  pal->fillTable();
+  Gui::palette_swatches->var = 0;
+  pal->draw(Gui::palette_swatches);
+}
+
+void Gui::paletteSetTwoBits()
+{
+  Palette *pal = Project::palette;
+  pal->data[0] = makeRgb(0x00, 0x00, 0x00);
+  pal->data[1] = makeRgb(0x4a, 0x4a, 0x4a);
+  pal->data[2] = makeRgb(0x7b, 0x7b, 0x7b);
+  pal->data[3] = makeRgb(0xb2, 0xb2, 0xb2);
+
+  pal->max = 4;
+  pal->fillTable();
+  Gui::palette_swatches->var = 0;
+  pal->draw(Gui::palette_swatches);
+}
+
+// from colodore.com
+void Gui::paletteSetC64()
+{
+  Palette *pal = Project::palette;
+
+  pal->data[0] = makeRgb(0, 0, 0);
+  pal->data[1] = makeRgb(255, 255, 255);
+  pal->data[2] = makeRgb(129, 51, 56);
+  pal->data[3] = makeRgb(117, 206, 200);
+  pal->data[4] = makeRgb(142, 60, 151);
+  pal->data[5] = makeRgb(86, 172, 77);
+  pal->data[6] = makeRgb(46, 44, 155);
+  pal->data[7] = makeRgb(237, 241, 113);
+  pal->data[8] = makeRgb(142, 80, 41);
+  pal->data[9] = makeRgb(85, 56, 0);
+  pal->data[10] = makeRgb(196, 108, 113);
+  pal->data[11] = makeRgb(74, 74, 74);
+  pal->data[12] = makeRgb(123, 123, 123);
+  pal->data[13] = makeRgb(169, 255, 159);
+  pal->data[14] = makeRgb(112, 109, 235);
+  pal->data[15] = makeRgb(178, 178, 178);
+
+  pal->max = 16;
+  pal->fillTable();
+  Gui::palette_swatches->var = 0;
+  pal->draw(Gui::palette_swatches);
+}
+
+void Gui::paletteSetVCS()
+{
+  Palette *pal = Project::palette;
+  int index = 0;
+
+  for (int x = 0; x < 8; x++)
+  {
+    for (int y = 0; y < 16; y++)
+    {
+      const float luma = 36 + x * 24;
+      const float sat = 76 - luma / 16;
+      const float hue = (float)y - 0.66;
+      const float bias = 6.8;
+      const float d = M_PI * hue / bias;
+      const float c_blue = y == 0 ? 128 : 128 + sat * -std::cos(d);
+      const float c_red = y == 0 ? 128 : 128 + sat * std::sin(d);
+
+      int r = 0, g = 0, b = 0;
+
+      if (y == 0)
+        Blend::yccToRgb(x == 0 ? 0 : luma, c_blue, c_red, &r, &g, &b);
+      else
+        Blend::yccToRgb(luma, c_blue, c_red, &r, &g, &b);
+
+      const int c = makeRgb(r, g, b);
+
+      pal->data[index++] = c;
+    }
+  }
+
+  pal->max = index;
+  pal->fillTable();
+  Gui::palette_swatches->var = 0;
+  pal->draw(Gui::palette_swatches);
+}
+
+void Gui::paletteSetWebSafe()
+{
+  Palette *pal = Project::palette;
+  int index = 0;
+
+  for (int b = 0; b < 6; b++)
+  {
+    for (int g = 0; g < 6; g++)
+    {
+      for (int r = 0; r < 6; r++)
+      {
+        pal->data[index++] = makeRgb(r * 51, g * 51, b * 51);
+      }
+    }
+  }
+
+  pal->max = index;
+  pal->fillTable();
+  Gui::palette_swatches->var = 0;
+  pal->draw(Gui::palette_swatches);
+}
+
+void Gui::paletteSet3LevelRGB()
+{
+  Palette *pal = Project::palette;
+  int index = 0;
+
+  for (int r = 0; r < 3; r++)
+  {
+    for (int g = 0; g < 3; g++)
+    {
+      for (int b = 0; b < 3; b++)
+      {
+        pal->data[index++] = makeRgb(std::min(r * 128, 255),
+                                     std::min(g * 128, 255),
+                                     std::min(b * 128, 255));
+      }
+    }
+  }
+
+  pal->max = index;
+  pal->fillTable();
+  Gui::palette_swatches->var = 0;
+  pal->draw(Gui::palette_swatches);
+}
+
+void Gui::paletteSet4LevelRGB()
+{
+  Palette *pal = Project::palette;
+  int index = 0;
+
+  for (int r = 0; r < 4; r++)
+  {
+    for (int g = 0; g < 4; g++)
+    {
+      for (int b = 0; b < 4; b++)
+      {
+        pal->data[index++] = makeRgb(r * 85, g * 85, b * 85);
+      }
+    }
+  }
+
+  pal->max = index;
+  pal->fillTable();
+  Gui::palette_swatches->var = 0;
+  pal->draw(Gui::palette_swatches);
+}
+
+void Gui::paletteSet332()
+{
+  Palette *pal = Project::palette;
+  int index = 0;
+
+  for (int r = 0; r < 8; r++)
+  {
+    for (int g = 0; g < 8; g++)
+    {
+      for (int b = 0; b < 4; b++)
+      {
+        pal->data[index++] = makeRgb(r << 5, g << 5, b << 6);
+      }
+    }
+  }
+
+  pal->data[255] = makeRgb(255, 255, 255);
+
+  pal->max = index;
+  pal->fillTable();
+  Gui::palette_swatches->var = 0;
+  pal->draw(Gui::palette_swatches);
 }
 
 void Gui::paletteIndex(int var)
@@ -2253,6 +2630,12 @@ void Gui::filterToggle()
 {
   view->filter = filter->value() == 1 ? true : false;
   view->drawMain(true);
+}
+
+void Gui::textChangedSize(InputInt *input, void *)
+{
+  input->redraw();
+  Project::tool->move(view);
 }
 
 // use default interval
