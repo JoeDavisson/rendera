@@ -60,6 +60,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "StaticText.H"
 #include "Stroke.H"
 #include "ToggleButton.H"
+#include "Text.H"
 #include "Tool.H"
 #include "Transform.H"
 #include "Undo.H"
@@ -77,6 +78,95 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define TOTAL_WIDTH (TOOLS_WIDTH + OPTIONS_WIDTH + COLORS_WIDTH + FILES_WIDTH)
 
 class MainWin;
+
+// top
+Button *Gui::zoom_one;
+Button *Gui::zoom_in;
+Button *Gui::zoom_out;
+StaticText *Gui::zoom;
+ToggleButton *Gui::grid;
+ToggleButton *Gui::gridsnap;
+InputInt *Gui::gridx;
+InputInt *Gui::gridy;
+Fl_Choice *Gui::aspect;
+CheckBox *Gui::filter;
+
+// tools
+Widget *Gui::tool;
+ToggleButton *Gui::clone;
+ToggleButton *Gui::origin;
+ToggleButton *Gui::constrain;
+
+// options
+Widget *Gui::paint_brush_preview;
+Widget *Gui::paint_size;
+InputInt *Gui::paint_size_value;
+Widget *Gui::paint_stroke;
+Widget *Gui::paint_shape;
+Widget *Gui::paint_coarse_edge;
+Widget *Gui::paint_fine_edge;
+Widget *Gui::paint_blurry_edge;
+Widget *Gui::paint_watercolor_edge;
+Widget *Gui::paint_chalk_edge;
+Widget *Gui::paint_texture_edge;
+Widget *Gui::paint_texture_marb;
+Widget *Gui::paint_texture_turb;
+Widget *Gui::paint_average_edge;
+Fl_Choice *Gui::paint_mode;
+
+Widget *Gui::getcolor_color;
+CheckBox *Gui::getcolor_best;
+
+InputInt *Gui::fill_range;
+InputInt *Gui::fill_feather;
+CheckBox *Gui::fill_color_only;
+Fl_Button *Gui::fill_reset;
+
+StaticText *Gui::selection_x;
+StaticText *Gui::selection_y;
+StaticText *Gui::selection_w;
+StaticText *Gui::selection_h;
+Fl_Button *Gui::selection_reset;
+Fl_Button *Gui::selection_copy;
+CheckBox *Gui::selection_alpha;
+Button *Gui::selection_flip;
+Button *Gui::selection_mirror;
+Button *Gui::selection_rotate;
+Fl_Button *Gui::selection_paste;
+Fl_Button *Gui::selection_crop;
+
+StaticText *Gui::offset_x;
+StaticText *Gui::offset_y;
+RepeatButton *Gui::offset_up;
+RepeatButton *Gui::offset_left;
+RepeatButton *Gui::offset_right;
+RepeatButton *Gui::offset_down;
+
+Fl_Hold_Browser *Gui::font_browse;
+InputInt *Gui::font_size;
+InputInt *Gui::font_angle;
+Fl_Input *Gui::text_input;
+CheckBox *Gui::text_smooth;
+
+// colors
+Widget *Gui::hue;
+Widget *Gui::satval;
+InputText *Gui::hexcolor;
+InputInt *Gui::trans_input;
+Widget *Gui::trans;
+Fl_Choice *Gui::blend;
+Widget *Gui::palette_swatches;
+
+// files
+Fl_Hold_Browser *Gui::file_browse;
+Fl_Input *Gui::file_rename;
+Button *Gui::file_close;
+Button *Gui::file_move_up;
+Button *Gui::file_move_down;
+Fl_Box *Gui::file_mem;
+
+// view
+View *Gui::view;
 
 namespace
 {
@@ -109,6 +199,7 @@ namespace
   Fl_Box *coords;
   Fl_Box *info;
 
+/*
   // top
   Button *zoom_one;
   Button *zoom_in;
@@ -197,6 +288,7 @@ namespace
 
   // view
   View *view;
+*/
 
   // height of rightmost panels
   int left_height = 0;
@@ -895,17 +987,17 @@ void Gui::init()
   }
 
   font_browse->value(1);
-  font_browse->callback((Fl_Callback *)textChangedSize);
+  font_browse->callback((Fl_Callback *)Text::textChangedSize);
   pos += 384 + gap;
 
   // font size
   font_size = new InputInt(text, 64, pos, 96, 32, "Size:",
-                           (Fl_Callback *)textChangedSize, 4, 500);
+                           (Fl_Callback *)Text::textChangedSize, 4, 500);
   font_size->value("48");
   pos += 32 + gap;
 
   font_angle = new InputInt(text, 64, pos, 96, 32, "Angle:",
-                           (Fl_Callback *)textChangedSize, -359, 359);
+                           (Fl_Callback *)Text::textChangedSize, -359, 359);
   font_angle->value("0");
   pos += 32 + gap;
 
@@ -913,7 +1005,7 @@ void Gui::init()
   text_input->textsize(16);
   text_input->value("Text");
   text_input->resize(text->x() + 8, text->y() + pos, 160, 32);
-  text_input->callback((Fl_Callback *)textChangedSize);
+  text_input->callback((Fl_Callback *)Text::textChangedSize);
   pos += 32 + gap;
 
   text_smooth = new CheckBox(text, 8, pos, 16, 16, "Antialiased", 0);
@@ -1993,6 +2085,7 @@ void Gui::offsetDown(Widget *, void *)
   Project::tool->release(view);
 }
 
+/*
 int Gui::getTextFontFace()
 {
   int index = font_browse->value();
@@ -2023,6 +2116,7 @@ const char *Gui::textInput()
 {
   return text_input->value();
 }
+*/
 
 int Gui::getTool()
 {
@@ -2394,10 +2488,12 @@ int Gui::getPaintMode()
   return paint_mode->value();
 }
 
+/*
 int Gui::getTextSmooth()
 {
   return text_smooth->value();
 }
+*/
 
 int Gui::getFillColorOnly()
 {

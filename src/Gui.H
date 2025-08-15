@@ -23,10 +23,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 class Widget;
 class Button;
+class CheckBox;
 class ToggleButton;
 class InputInt;
+class InputText;
+class RepeatButton;
+class StaticText;
 class View;
+
+class Fl_Box;
+class Fl_Button;
+class Fl_Choice;
 class Fl_Double_Window;
+class Fl_Hold_Browser;
+class Fl_Input;
 class Fl_Menu_Bar;
 
 class Gui
@@ -40,10 +50,6 @@ public:
   static int getPaintMode();
   static int getPaletteIndex();
   static int getSelectAlpha();
-  static int getTextFontFace();
-  static int getTextFontSize();
-  static int getTextFontAngle();
-  static int getTextSmooth();
   static int getTool();
 
   static Fl_Menu_Bar *getMenuBar();
@@ -165,15 +171,101 @@ public:
   static void statusCoords(char *);
   static void statusInfo(char *);
 
-  static void textChangedSize(InputInt *, void *);
-  static const char *textInput();
-
   static void toolChange(Widget *, void *);
 
   static void zoomIn(Button *, void *);
   static void zoomOut(Button *, void *);
   static void zoomOne(Button *, void *);
   static void zoomLevel();
+
+  // top
+  static Button *zoom_one;
+  static Button *zoom_in;
+  static Button *zoom_out;
+  static StaticText *zoom;
+  static ToggleButton *grid;
+  static ToggleButton *gridsnap;
+  static InputInt *gridx;
+  static InputInt *gridy;
+  static Fl_Choice *aspect;
+  static CheckBox *filter;
+
+  // tools
+  static Widget *tool;
+  static ToggleButton *clone;
+  static ToggleButton *origin;
+  static ToggleButton *constrain;
+
+  // options
+  static Widget *paint_brush_preview;
+  static Widget *paint_size;
+  static InputInt *paint_size_value;
+  static Widget *paint_stroke;
+  static Widget *paint_shape;
+  static Widget *paint_coarse_edge;
+  static Widget *paint_fine_edge;
+  static Widget *paint_blurry_edge;
+  static Widget *paint_watercolor_edge;
+  static Widget *paint_chalk_edge;
+  static Widget *paint_texture_edge;
+  static Widget *paint_texture_marb;
+  static Widget *paint_texture_turb;
+  static Widget *paint_average_edge;
+  static Fl_Choice *paint_mode;
+
+  static Widget *getcolor_color;
+  static CheckBox *getcolor_best;
+
+  static InputInt *fill_range;
+  static InputInt *fill_feather;
+  static CheckBox *fill_color_only;
+  static Fl_Button *fill_reset;
+
+  static StaticText *selection_x;
+  static StaticText *selection_y;
+  static StaticText *selection_w;
+  static StaticText *selection_h;
+  static Fl_Button *selection_reset;
+  static Fl_Button *selection_copy;
+  static CheckBox *selection_alpha;
+  static Button *selection_flip;
+  static Button *selection_mirror;
+  static Button *selection_rotate;
+  static Fl_Button *selection_paste;
+  static Fl_Button *selection_crop;
+
+  static StaticText *offset_x;
+  static StaticText *offset_y;
+  static RepeatButton *offset_up;
+  static RepeatButton *offset_left;
+  static RepeatButton *offset_right;
+  static RepeatButton *offset_down;
+
+  static Fl_Hold_Browser *font_browse;
+  static InputInt *font_size;
+  static InputInt *font_angle;
+  static Fl_Input *text_input;
+  static CheckBox *text_smooth;
+
+  // colors
+  static Widget *hue;
+  static Widget *satval;
+  static InputText *hexcolor;
+  static InputInt *trans_input;
+  static Widget *trans;
+  static Fl_Choice *blend;
+  static Widget *palette_swatches;
+
+  // files
+  static Fl_Hold_Browser *file_browse;
+  static Fl_Input *file_rename;
+  static Button *file_close;
+  static Button *file_move_up;
+  static Button *file_move_down;
+  static Fl_Box *file_mem;
+
+  // view
+  static View *view;
 
 private:
   Gui() { }

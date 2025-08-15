@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define TEXT_H
 
 class Bitmap;
+class InputInt;
 class View;
 
 #include "Tool.H"
@@ -41,6 +42,12 @@ public:
   void redraw(View *);
   bool isActive();
   void reset();
+
+//  static int getTextFontFace();
+//  static int getTextFoneSize();
+//  static int getTextFontAngle();
+
+  static void textChangedSize(InputInt *, void *);
 
 private:
   Bitmap *textbmp;
