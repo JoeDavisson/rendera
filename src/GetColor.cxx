@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Brush.H"
+#include "CheckBox.H"
 #include "GetColor.H"
 #include "Gui.H"
 #include "Inline.H"
@@ -60,7 +61,7 @@ void GetColor::push(View *view)
   {
     const int color = bmp->getpixel(view->imgx, view->imgy);
 
-    if (Gui::getBestMatch() == 1)
+    if (Gui::getcolor_best->value() == 1)
     {
       int nearest = 99999999;
       int use = 0;

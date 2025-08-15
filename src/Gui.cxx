@@ -1261,11 +1261,6 @@ void Gui::getcolorUpdate(int c)
   getcolor_color->redraw();
 }
 
-int Gui::getBestMatch()
-{
-  return getcolor_best->value();
-}
-
 void Gui::paletteSwatches(Widget *widget, void *var)
 {
   Palette *pal = Project::palette;

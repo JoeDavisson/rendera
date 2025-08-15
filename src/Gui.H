@@ -42,7 +42,6 @@ class Fl_Menu_Bar;
 class Gui
 {
 public:
-  static int getBestMatch();
   static int getClone();
   static int getFillColorOnly();
   static int getFillFeather();
