@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2024 Joe Davisson.
+Copyright (c) 2025 Joe Davisson.
 
 This file is part of Rendera.
 
@@ -80,7 +80,7 @@ namespace About
   {
     int y1 = 16;
     int ww = 0, hh = 0;
-    const char *credits = "\nCopyright (c) 2024 Joe Davisson.\n\nRendera is based in part on the work\nof the FLTK project (http://www.fltk.org).";
+    const char *credits = "\nCopyright (c) 2025 Joe Davisson.\n\nRendera is based in part on the work\nof the FLTK project (http://www.fltk.org).";
 
     Items::dialog = new DialogWindow(400, 0, "About");
 
