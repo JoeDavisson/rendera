@@ -104,6 +104,7 @@ OBJ= \
   $(SRC_DIR)/Dialog.o \
   $(SRC_DIR)/Editor.o \
   $(SRC_DIR)/Gui.o \
+  $(SRC_DIR)/Progress.o \
   $(SRC_DIR)/Project.o \
   $(SRC_DIR)/Fractal.o \
   $(SRC_DIR)/Render.o \
