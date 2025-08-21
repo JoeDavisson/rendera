@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "InputInt.H"
 #include "KDtree.H"
 #include "Map.H"
+#include "Progress.H"
 #include "Project.H"
 #include "Stroke.H"
 #include "Undo.H"
@@ -249,7 +250,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
   Stroke *stroke = Project::stroke;
   int count = 0;
 
-  Gui::progressShow((cb - ct) + 1);
+  Progress::show((cb - ct) + 1);
 
   for (y = ct; y <= cb; y++)
   {
@@ -266,7 +267,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
       }
     }
 
-    if (Gui::progressUpdate(y) < 0)
+    if (Progress::update(y) < 0)
       return;
   }
 
@@ -330,7 +331,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
     std::swap(tt, tb);
 
   root = KDtree::build(&points[0], count, 0);
-  Gui::progressShow((cb - ct) + 1);
+  Progress::show((cb - ct) + 1);
 
   for (y = ct; y <= cb; y++)
   {
@@ -371,11 +372,11 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
       }
     }
 
-    if (Gui::progressUpdate(y) < 0)
+    if (Progress::update(y) < 0)
       break;
   }
 
-  Gui::progressHide();
+  Progress::hide();
 }
 
 void Fill::push(View *view)

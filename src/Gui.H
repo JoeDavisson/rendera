@@ -35,9 +35,11 @@ class Fl_Box;
 class Fl_Button;
 class Fl_Choice;
 class Fl_Double_Window;
+class Fl_Group;
 class Fl_Hold_Browser;
 class Fl_Input;
 class Fl_Menu_Bar;
+class Fl_Progress;
 
 class Gui
 {
@@ -45,6 +47,7 @@ public:
   static Fl_Menu_Bar *getMenuBar();
   static View *getView();
   static Fl_Double_Window *getWindow();
+  static Fl_Group *getStatus();
 
   static void init();
   static void show();
@@ -135,11 +138,13 @@ public:
   static void paletteIndex(int);
   static void paletteSwatches(Widget *, void *);
 
+/*
   static int progressUpdate(int);
   static void progressEnable(bool);
   static void progressHide();
   static void progressShow(float);
   static void progressShow(float, int);
+*/
 
   static void mouseTimer();
 
@@ -258,6 +263,13 @@ public:
 
   // view
   static View *view;
+
+  // status
+  static Fl_Box *coords;
+  static Fl_Box *info;
+
+  // progress
+  static Fl_Progress *progress;
 
 private:
   Gui() { }

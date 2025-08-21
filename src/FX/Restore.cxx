@@ -77,7 +77,7 @@ void Restore::apply()
   const double ba = (256.0 / (256 - bb)) / std::sqrt(256.0 / (bb + 1));
 
   // begin restore
-  Gui::progressShow(bmp->h);
+  Progress::show(bmp->h);
 
   for (int y = bmp->ct; y <= bmp->cb; y++)
   {
@@ -108,11 +108,11 @@ void Restore::apply()
       p++;
     }
 
-    if (Gui::progressUpdate(y) < 0)
+    if (Progress::update(y) < 0)
       return;
   }
 
-  Gui::progressHide();
+  Progress::hide();
 }
 
 void Restore::close()
@@ -133,7 +133,7 @@ void Restore::close()
 
 void Restore::quit()
 {
-  Gui::progressHide();
+  Progress::hide();
   Items::dialog->hide();
 }
 

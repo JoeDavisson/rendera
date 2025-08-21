@@ -50,7 +50,7 @@ void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
   }
 
   Bitmap temp(bmp->cw, bmp->ch);
-  Gui::progressShow(bmp->h);
+  Progress::show(bmp->h);
 
   // x direction
   for (int y = bmp->ct; y <= bmp->cb; y++)
@@ -86,14 +86,14 @@ void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
       p++;
     }
 
-    if (Gui::progressUpdate(y) < 0)
+    if (Progress::update(y) < 0)
       return;
   }
 
   Bitmap temp2(bmp->cw, bmp->ch);
   temp.blit(&temp2, 0, 0, 0, 0, temp.w, temp.h);
 
-  Gui::progressShow(bmp->h);
+  Progress::show(bmp->h);
 
   // y direction
   for (int y = bmp->ct; y <= bmp->cb; y++)
@@ -130,7 +130,7 @@ void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
       p++;
     }
 
-    if (Gui::progressUpdate(y) < 0)
+    if (Progress::update(y) < 0)
       return;
   }
 
@@ -158,7 +158,7 @@ void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
     }
   }
 
-  Gui::progressHide();
+  Progress::hide();
 }
 
 void UnsharpMask::close()
@@ -175,7 +175,7 @@ void UnsharpMask::close()
 
 void UnsharpMask::quit()
 {
-  Gui::progressHide();
+  Progress::hide();
   Items::dialog->hide();
 }
 

@@ -47,6 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Map.H"
 #include "Octree.H"
 #include "Palette.H"
+#include "Progress.H"
 #include "Project.H"
 #include "Quantize.H"
 #include "Separator.H"

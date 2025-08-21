@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Inline.H"
 #include "Octree.H"
 #include "Palette.H"
+#include "Progress.H"
 #include "Quantize.H"
 
 void Quantize::makeColor(color_type *c,
@@ -242,7 +243,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   }
 
   // show progress bar
-  Gui::progressShow(count - size);
+  Progress::show(count - size);
 
   // measure offset between array elements
   const int step = &(colors[1].freq) - &(colors[0].freq);
@@ -296,11 +297,11 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
       return;
 
     // update progress bar
-    Gui::progressUpdate(count);
+    Progress::update(count);
   }
 
   // hide progress bar
-  Gui::progressHide();
+  Progress::hide();
 
   // build palette
   int index = 0;

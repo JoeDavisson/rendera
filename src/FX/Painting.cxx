@@ -36,7 +36,7 @@ void Painting::apply()
   Bitmap *bmp = Project::bmp;
   int amount = atoi(Items::amount->value());
 
-  Gui::progressShow(bmp->h);
+  Progress::show(bmp->h);
 
   for (int y = bmp->ct; y <= bmp->cb; y++)
   {
@@ -82,11 +82,11 @@ void Painting::apply()
       p++;
     }
 
-    if (Gui::progressUpdate(y) < 0)
+    if (Progress::update(y) < 0)
       return;
   }
 
-  Gui::progressHide();
+  Progress::hide();
 }
 
 void Painting::close()
@@ -98,7 +98,7 @@ void Painting::close()
 
 void Painting::quit()
 {
-  Gui::progressHide();
+  Progress::hide();
   Items::dialog->hide();
 }
 

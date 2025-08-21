@@ -118,7 +118,7 @@ void Marble::close()
 
 void Marble::quit()
 {
-  Gui::progressHide();
+  Progress::hide();
   Items::dialog->hide();
   delete Items::temp;
 }

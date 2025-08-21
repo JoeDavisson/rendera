@@ -34,7 +34,7 @@ namespace
 
 void RemoveDust::apply(Bitmap *bmp, int amount)
 {
-  Gui::progressShow(bmp->h);
+  Progress::show(bmp->h);
 
   for (int y = bmp->ct + 1; y <= bmp->cb - 1; y++)
   {
@@ -74,11 +74,11 @@ void RemoveDust::apply(Bitmap *bmp, int amount)
       p++;
     }
 
-    if (Gui::progressUpdate(y) < 0)
+    if (Progress::update(y) < 0)
       return;
   }
 
-  Gui::progressHide();
+  Progress::hide();
 }
 
 void RemoveDust::close()
@@ -97,7 +97,7 @@ void RemoveDust::close()
 
 void RemoveDust::quit()
 {
-  Gui::progressHide();
+  Progress::hide();
   Items::dialog->hide();
 }
 

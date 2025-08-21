@@ -51,7 +51,7 @@ void Saturate::apply(Bitmap *bmp)
 
   const double scale = 255.0 / size;
 
-  Gui::progressShow(bmp->h);
+  Progress::show(bmp->h);
 
   for (int y = bmp->ct; y <= bmp->cb; y++)
   {
@@ -90,11 +90,11 @@ void Saturate::apply(Bitmap *bmp)
       p++;
     }
 
-    if (Gui::progressUpdate(y) < 0)
+    if (Progress::update(y) < 0)
       return;
   }
 
-  Gui::progressHide();
+  Progress::hide();
 }
 
 void Saturate::begin()

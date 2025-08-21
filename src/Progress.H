@@ -18,31 +18,28 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include "AlphaClear.H"
+#ifndef PROGRESS_H
+#define PROGRESS_H
 
-void AlphaClear::apply(Bitmap *bmp)
+class Progress
 {
-  Progress::show(bmp->h);
+public:
+  static void enable(bool);
+  static void hide();
+  static void show(float);
+  static void show(float, int);
+  static int update(int);
 
-  for (int y = bmp->ct; y <= bmp->cb; y++)
-  {
-    int *p = bmp->row[y] + bmp->cl;
+private:
+  Progress() { }
+  ~Progress() { }
 
-    for (int x = bmp->cl; x <= bmp->cr; x++)
-    {
-      *p++ |= 0xff000000;
-    }
+  static bool active;
+  static float value;
+  static float step;
+  static int interval;
 
-    if (Progress::update(y) < 0)
-      return;
-  }
+};
 
-  Progress::hide();
-}
-
-void AlphaClear::begin()
-{
-  Project::undo->push();
-  apply(Project::bmp);
-}
+#endif
 

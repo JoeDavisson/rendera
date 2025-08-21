@@ -106,7 +106,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
   // use alternative blur for sizes 1 & 2
   if (size < 3)
   {
-    Gui::progressShow(bmp->h);
+    Progress::show(bmp->h);
 
     for (int pass = 0; pass < size; pass++)
     {
@@ -159,7 +159,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
           }
         }
 
-        if (Gui::progressUpdate(y) < 0)
+        if (Progress::update(y) < 0)
           break;
       }
     }
@@ -172,7 +172,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
       }
     }
   
-    Gui::progressHide();
+    Progress::hide();
     return;
   }
 
@@ -190,14 +190,14 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
   std::vector<int> buf_b(larger, 0);
   std::vector<int> buf_a(larger, 0);
 
-  Gui::progressShow(6, 1);
+  Progress::show(6, 1);
 
   int pass_count = 0;
 
   for (int pass = 0; pass < 3; pass++)
   {
     // x direction
-    if (Gui::progressUpdate(pass_count++))
+    if (Progress::update(pass_count++))
       break;
 
     for (int y = src.ct; y <= src.cb; y++)
@@ -249,7 +249,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
     }
 
     // y direction
-    if (Gui::progressUpdate(pass_count++))
+    if (Progress::update(pass_count++))
       break;
 
     for (int x = src.cl; x <= src.cr; x++)
@@ -316,7 +316,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
   }
 
   src.blit(bmp, border, border, 0, 0, bmp->w, bmp->h);
-  Gui::progressHide();
+  Progress::hide();
 }
 
 void GaussianBlur::close()
@@ -333,7 +333,7 @@ void GaussianBlur::close()
 
 void GaussianBlur::quit()
 {
-  Gui::progressHide();
+  Progress::hide();
   Items::dialog->hide();
 }
 

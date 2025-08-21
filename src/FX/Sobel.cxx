@@ -38,7 +38,7 @@ void Sobel::apply(Bitmap *bmp, int amount)
   int div = 1;
 
   Bitmap temp(bmp->cw, bmp->ch);
-  Gui::progressShow(bmp->h);
+  Progress::show(bmp->h);
 
   for (int y = bmp->ct; y <= bmp->cb; y++)
   {
@@ -86,13 +86,13 @@ void Sobel::apply(Bitmap *bmp, int amount)
       p++;
     }
 
-    if (Gui::progressUpdate(y) < 0)
+    if (Progress::update(y) < 0)
       return;
   }
 
   temp.blit(bmp, 0, 0, bmp->cl, bmp->ct, temp.w, temp.h);
 
-  Gui::progressHide();
+  Progress::hide();
 }
 
 void Sobel::close()
@@ -107,7 +107,7 @@ void Sobel::close()
 
 void Sobel::quit()
 {
-  Gui::progressHide();
+  Progress::hide();
   Items::dialog->hide();
 }
 

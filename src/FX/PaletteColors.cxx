@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 void PaletteColors::apply(Bitmap *bmp, Palette *pal)
 {
-  Gui::progressShow(bmp->h);
+  Progress::show(bmp->h);
 
   const float inc = 1.0 / (bmp->cw * bmp->ch);
   float freq[256];
@@ -108,11 +108,11 @@ void PaletteColors::apply(Bitmap *bmp, Palette *pal)
       p++;
     }
 
-    if (Gui::progressUpdate(y) < 0)
+    if (Progress::update(y) < 0)
       return;
   }
 
-  Gui::progressHide();
+  Progress::hide();
 }
 
 void PaletteColors::begin()

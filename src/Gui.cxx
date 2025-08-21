@@ -169,6 +169,11 @@ Fl_Box *Gui::file_mem;
 
 // view
 View *Gui::view;
+Fl_Box *Gui::coords;
+Fl_Box *Gui::info;
+
+// progress
+Fl_Progress *Gui::progress;
 
 static bool sort_value_cb(const int c1, const int c2)
 {
@@ -202,19 +207,21 @@ namespace
   Fl_Group *middle;
 
   // status
-  Fl_Progress *progress;
-  Fl_Box *coords;
-  Fl_Box *info;
+//  Fl_Progress *progress;
+//  Fl_Box *coords;
+//  Fl_Box *info;
 
   // height of rightmost panels
   int left_height = 0;
   int right_height = 0;
 
   // progress indicator related
+/*
   float progress_value = 0;
   float progress_step = 0;
   int progress_interval = 50;
   bool progress_enable = true;
+*/
 
   // tables
   const int brush_sizes[16] =
@@ -546,7 +553,7 @@ void Gui::init()
   info->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
   info->copy_label("Welcome to Rendera!");
 
-  progress = new Fl_Progress(pos, window->w() - 256 - 8, 256, 24);
+  progress = new Fl_Progress(window->w() - 256 - 8, pos, 256, 24);
   progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4, 256, 24);
   progress->minimum(0);
   progress->maximum(100);
@@ -2569,6 +2576,11 @@ Fl_Menu_Bar *Gui::getMenuBar()
   return menubar;
 }
 
+Fl_Group *Gui::getStatus()
+{
+  return status;
+}
+
 View *Gui::getView()
 {
   return view;
@@ -2638,6 +2650,7 @@ void Gui::textChangedSize(InputInt *input, void *)
   Project::tool->move(view);
 }
 
+/*
 // use default interval
 void Gui::progressShow(float step)
 {
@@ -2726,6 +2739,7 @@ void Gui::progressEnable(bool state)
 {
   progress_enable = state;
 }
+*/
 
 void Gui::statusCoords(char *s)
 {

@@ -35,7 +35,7 @@ void Sharpen::apply(Bitmap *bmp, int amount)
 {
   Bitmap temp(bmp->cw, bmp->ch);
 
-  Gui::progressShow(bmp->h);
+  Progress::show(bmp->h);
 
   for (int y = bmp->ct; y <= bmp->cb; y++)
   {
@@ -61,13 +61,13 @@ void Sharpen::apply(Bitmap *bmp, int amount)
       p++;
     }
 
-    if (Gui::progressUpdate(y) < 0)
+    if (Progress::update(y) < 0)
       return;
   }
 
   temp.blit(bmp, 0, 0, bmp->cl, bmp->ct, temp.w, temp.h);
 
-  Gui::progressHide();
+  Progress::hide();
 
 }
 
@@ -81,7 +81,7 @@ void Sharpen::close()
 
 void Sharpen::quit()
 {
-  Gui::progressHide();
+  Progress::hide();
   Items::dialog->hide();
 }
 
