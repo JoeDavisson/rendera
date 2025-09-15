@@ -21,33 +21,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef GUI_H
 #define GUI_H
 
-class Widget;
-class Button;
-class CheckBox;
 class ColorOptions;
 class FillOptions;
 class GetColorOptions;
 class ImagesOptions;
-class InputInt;
-class InputText;
 class OffsetOptions;
 class PaintOptions;
-class RepeatButton;
-class StaticText;
 class SelectionOptions;
 class TextOptions;
-class ToggleButton;
 class ToolsOptions;
 class View;
 class ViewOptions;
 
 class Fl_Box;
-class Fl_Button;
-class Fl_Choice;
 class Fl_Double_Window;
 class Fl_Group;
-class Fl_Hold_Browser;
-class Fl_Input;
 class Fl_Menu_Bar;
 class Fl_Progress;
 
@@ -110,14 +98,11 @@ public:
 
   static void updateMemInfo();
 
-  // view
   static View *view;
 
-  // status
   static Fl_Box *coords;
   static Fl_Box *info;
 
-  // progress
   static Fl_Progress *progress;
 
   static ViewOptions *top;

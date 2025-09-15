@@ -18,27 +18,11 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include <cmath>
-#include <cstdio>
-#include <typeinfo>
-#include <vector>
-
-#include <FL/fl_draw.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Choice.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Progress.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Tooltip.H>
 
-#include "Bitmap.H"
-#include "Blend.H"
-#include "Brush.H"
-#include "Button.H"
-#include "CheckBox.H"
-#include "Clone.H"
 #include "ColorOptions.H"
 #include "Dialog.H"
 #include "Editor.H"
@@ -46,37 +30,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "FX/FX.H"
 #include "File.H"
 #include "FillOptions.H"
-#include "Gamma.H"
 #include "GetColorOptions.H"
-#include "Group.H"
 #include "Gui.H"
-#include "Images.H"
 #include "ImagesOptions.H"
-#include "Inline.H"
-#include "InputInt.H"
-#include "InputText.H"
-#include "Map.H"
 #include "OffsetOptions.H"
 #include "Palette.H"
 #include "PaintOptions.H"
 #include "Project.H"
-#include "Render.H"
-#include "RepeatButton.H"
 #include "Separator.H"
 #include "Selection.H"
 #include "SelectionOptions.H"
-#include "StaticText.H"
-#include "Stroke.H"
-#include "Text.H"
 #include "TextOptions.H"
-#include "ToggleButton.H"
 #include "Tool.H"
 #include "ToolsOptions.H"
 #include "Transform.H"
-#include "Undo.H"
 #include "View.H"
 #include "ViewOptions.H"
-#include "Widget.H"
 
 class MainWin;
 
@@ -461,47 +430,38 @@ void Gui::init()
   status->resizable(0);
   status->end();
 
-  // top
   top = new ViewOptions(0, menubar->h(), window->w(), TOP_HEIGHT, "");
 
   left_height = window->h() - top->h() - menubar->h() - status->h();
 
-  // tools
   tools = new ToolsOptions(0, top->h() + menubar->h(),
                            64, left_height,
                            "Tools");
 
-  // paint
   paint = new PaintOptions(TOOLS_WIDTH, top->h() + menubar->h(),
                     OPTIONS_WIDTH, left_height,
                     "Paint");
 
-  // selection
   selection = new SelectionOptions(TOOLS_WIDTH, top->h() + menubar->h(),
                                    OPTIONS_WIDTH, left_height,
                                   "Selection");
 
-  // getcolor
   getcolor = new GetColorOptions(TOOLS_WIDTH, top->h() + menubar->h(),
                                  OPTIONS_WIDTH, left_height,
                                  "Get Color");
 
-  // offset
   offset = new OffsetOptions(TOOLS_WIDTH, top->h() + menubar->h(),
                              OPTIONS_WIDTH, left_height,
                              "Offset");
 
-  // text
   text = new TextOptions(TOOLS_WIDTH, top->h() + menubar->h(),
                          OPTIONS_WIDTH, left_height,
                          "Text");
 
-  // fill
   fill = new FillOptions(TOOLS_WIDTH, top->h() + menubar->h(),
                          OPTIONS_WIDTH, left_height,
                          "Fill");
 
-  // colors
   colors = new ColorOptions(window->w() - COLORS_WIDTH - IMAGES_WIDTH,
                             top->h() + menubar->h(),
                             COLORS_WIDTH,
@@ -510,14 +470,12 @@ void Gui::init()
 
   right_height = left_height;
 
-  // images
   images = new ImagesOptions(window->w() - IMAGES_WIDTH,
                          top->h() + menubar->h(),
                          IMAGES_WIDTH,
                          window->h() - top->h() - menubar->h() - status->h(),
                         "Images");
 
-  // middle
   middle = new Fl_Group(TOOLS_WIDTH + OPTIONS_WIDTH,
                         top->h() + menubar->h(),
                         window->w() - TOTAL_WIDTH,
@@ -528,7 +486,6 @@ void Gui::init()
   middle->resizable(view);
   middle->end();
 
-  // container for left panels
   left = new Fl_Group(0, top->h() + menubar->h(),
                             TOOLS_WIDTH + OPTIONS_WIDTH, left_height);
 
@@ -540,7 +497,6 @@ void Gui::init()
   left->add(text);
   left->end();
 
-  // container for right panels
   right = new Fl_Group(window->w() - COLORS_WIDTH - IMAGES_WIDTH,
                        top->h() + menubar->h(),
                        COLORS_WIDTH + IMAGES_WIDTH,
@@ -549,7 +505,6 @@ void Gui::init()
   right->add(images);
   right->add(colors);
 
-  // resize these panels
   colors->resize(colors->x(), colors->y(), colors->w(), right_height);
   images->resize(images->x(), images->y(), images->w(), right_height);
 
@@ -569,7 +524,7 @@ void Gui::init()
   colors->colorUpdate(Project::palette->data[0]);
 }
 
-// show the main program window (called after gui is constructed)
+// show the main program window (called after main GUI is constructed)
 void Gui::show()
 {
   window->show();
@@ -596,8 +551,6 @@ void Gui::menuClearItem(const char *s)
 }
 
 // callback functions
-
-// sort into grays, low-sat colors, hi-sat colors
 void Gui::paletteSortByHue()
 {
   Editor::push();
@@ -864,7 +817,7 @@ void Gui::selectFromImage()
   Project::selection->reload();
   Project::selection->redraw(view);
 
-// joe
+// FIXME
 //  tool->var = Tool::SELECT;
 //  toolChange(tool, (void *)&tool->var);
 }
