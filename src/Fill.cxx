@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "CheckBox.H"
 #include "Fill.H"
+#include "FillOptions.H"
 #include "Group.H"
 #include "Gui.H"
 #include "Inline.H"
@@ -395,9 +396,12 @@ void Fill::push(View *view)
          view->imgy,
          color,
          target,
-         atoi(Gui::fill_range->value()),
-         atoi(Gui::fill_feather->value()),
-         Gui::fill_color_only->value());
+//         atoi(Gui::fill_range->value()),
+//         atoi(Gui::fill_feather->value()),
+         Gui::fill->fillGetRange(),
+         Gui::fill->fillGetFeather(),
+         Gui::fill->fillGetColorOnly());
+//         Gui::fill_color_only->value());
 
     view->drawMain(true);
   }

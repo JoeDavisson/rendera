@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "Button.H"
 #include "CheckBox.H"
+#include "ColorOptions.H"
 #include "Dialog.H"
 #include "DialogWindow.H"
 #include "Editor.H"
@@ -223,7 +224,7 @@ void Editor::checkHexColor()
   
   c |= 0xff000000;
   
-  Gui::colorUpdate(convertFormat((int)c, true));
+  Gui::colors->colorUpdate(convertFormat((int)c, true));
   setHsvSliders();
   setHsv();
   updateHexColor();
@@ -252,7 +253,7 @@ void Editor::checkHexColorWeb()
   setHsvSliders();
   setHsv();
   updateHexColor();
-  Gui::colorUpdate(c);
+  Gui::colors->colorUpdate(c);
 }
 
 void Editor::insertColor()
@@ -263,7 +264,7 @@ void Editor::insertColor()
   push();
   Project::palette->insertColor(Project::brush->color, Items::palette->var);
   Project::palette->draw(Items::palette);
-  Gui::paletteDraw();
+  Gui::colors->paletteDraw();
   Items::palette->do_callback();
 }
 
@@ -275,7 +276,7 @@ void Editor::removeColor()
   push();
   Project::palette->deleteColor(Items::palette->var);
   Project::palette->draw(Items::palette);
-  Gui::paletteDraw();
+  Gui::colors->paletteDraw();
 
   if (Items::palette->var > Project::palette->max - 1)
     Items::palette->var = Project::palette->max - 1;
@@ -288,8 +289,8 @@ void Editor::checkReplaceColor(int pos)
   push();
   Project::palette->replaceColor(Project::brush->color, pos);
   Project::palette->draw(Items::palette);
-  Gui::colorUpdate(Project::brush->color);
-  Gui::paletteDraw();
+  Gui::colors->colorUpdate(Project::brush->color);
+  Gui::colors->paletteDraw();
   Items::replace->value(0);
   Items::replace->redraw();
   Items::dialog->cursor(FL_CURSOR_DEFAULT);
@@ -350,7 +351,7 @@ void Editor::checkRampRgb(int end)
   Items::rgb_ramp->value(0);
   Items::rgb_ramp->redraw();
   Project::palette->draw(Items::palette);
-  Gui::paletteDraw();
+  Gui::colors->paletteDraw();
   ramp_state = 0;
   Items::dialog->cursor(FL_CURSOR_DEFAULT);
 }
@@ -394,7 +395,7 @@ void Editor::checkRampHsv(int end)
   Items::hsv_ramp->value(0);
   Items::hsv_ramp->redraw();
   Project::palette->draw(Items::palette);
-  Gui::paletteDraw();
+  Gui::colors->paletteDraw();
   ramp_state = 0;
   Items::dialog->cursor(FL_CURSOR_DEFAULT);
 }
@@ -436,7 +437,7 @@ void Editor::checkPalette()
       Project::brush->color = pal->data[pos];
       updateHexColor();
       setHsvSliders();
-      Gui::colorUpdate(Project::brush->color);
+      Gui::colors->colorUpdate(Project::brush->color);
       setHsv();
       Project::palette->draw(Items::palette);
     }
@@ -446,7 +447,7 @@ void Editor::checkPalette()
       Project::brush->color = pal->data[pos];
       updateHexColor();
       setHsvSliders();
-      Gui::colorUpdate(Project::brush->color);
+      Gui::colors->colorUpdate(Project::brush->color);
       setHsv();
       Project::palette->draw(Items::palette);
     }
@@ -455,12 +456,12 @@ void Editor::checkPalette()
       Project::brush->color = pal->data[pos];
       updateHexColor();
       setHsvSliders();
-      Gui::colorUpdate(Project::brush->color);
+      Gui::colors->colorUpdate(Project::brush->color);
       setHsv();
     }
   }
 
-  Gui::paletteIndex(pos);
+  Gui::colors->paletteIndex(pos);
   updateIndex(pos);
   last_index = pos;
 
@@ -477,7 +478,7 @@ void Editor::getHue()
   Blend::hsvToRgb(h, s, v, &r, &g, &b);
   Project::brush->color = makeRgb(r, g, b);
 
-  Gui::colorUpdate(Project::brush->color);
+  Gui::colors->colorUpdate(Project::brush->color);
   updateHexColor();
   setHsv();
 }
@@ -492,7 +493,7 @@ void Editor::getSatVal()
   Blend::hsvToRgb(h, s, v, &r, &g, &b);
   Project::brush->color = makeRgb(r, g, b);
 
-  Gui::colorUpdate(Project::brush->color);
+  Gui::colors->colorUpdate(Project::brush->color);
   updateHexColor();
   setHsv();
 }
@@ -521,7 +522,7 @@ void Editor::hsvRamp()
 
 void Editor::begin()
 {
-  Items::palette->var = Gui::palette_swatches->var;
+  Items::palette->var = Gui::colors->paletteGetIndex();
   last_index = Items::palette->var;
   Project::palette->draw(Items::palette);
   updateHexColor();
@@ -618,7 +619,7 @@ void Editor::pop()
   undo_current++;
   undo_stack[undo_current]->copy(Project::palette);
 
-  Gui::paletteDraw();
+  Gui::colors->paletteDraw();
   Items::palette->do_callback();
 }
 
@@ -657,7 +658,7 @@ void Editor::popRedo()
   redo_current++;
   redo_stack[redo_current]->copy(Project::palette);
 
-  Gui::paletteDraw();
+  Gui::colors->paletteDraw();
   Items::palette->do_callback();
 }
 

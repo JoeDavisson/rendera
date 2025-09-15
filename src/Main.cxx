@@ -253,7 +253,7 @@ int main(int argc, char *argv[])
 
   // delay showing main gui until after all arguments are checked
   Gui::show();
-  Gui::imagesAddFile("new");
+//  Gui::imagesAddFile("new");
 
     if (custom_settings == true)
     {
@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
   Gui::drawPalette();
 */
 
-  Fl::add_timeout(1.0 / 10, (Fl_Timeout_Handler)Gui::imagesUpdateMemInfo);
+  Fl::add_timeout(1.0 / 10, (Fl_Timeout_Handler)Gui::updateMemInfo);
   Fl::add_timeout(1.0 / 125, (Fl_Timeout_Handler)Gui::mouseTimer);
 
   int ret = Fl::run();

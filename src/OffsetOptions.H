@@ -18,21 +18,24 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef STATIC_TEXT_H
-#define STATIC_TEXT_H
+#ifndef OFFSET_OPTIONS_H
+#define OFFSET_OPTIONS_H
 
-#include <FL/Fl_Box.H>
+#include "Group.H"
 
-class Fl_Box;
-class Fl_Group;
+class Group;
 
-class StaticText : public Fl_Box
+class OffsetOptions : public Group
 {
 public:
-  StaticText(Fl_Group *, int, int, int, int, const char *);
-  ~StaticText();
+  OffsetOptions(int, int, int, int, const char *);
+  ~OffsetOptions();
 
-  Fl_Group *group;
+  void offsetValues(int, int);
+  void offsetLeft();
+  void offsetRight();
+  void offsetUp();
+  void offsetDown();
 };
 
 #endif

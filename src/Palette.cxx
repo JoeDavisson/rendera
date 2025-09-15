@@ -18,6 +18,7 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <algorithm>
 #include <vector>
 
 #include "Bitmap.H"
@@ -27,6 +28,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Inline.H"
 #include "Palette.H"
 #include "Widget.H"
+
+static bool sort_value_cb(const int c1, const int c2)
+{
+  return getl(c1) < getl(c2);
+}
 
 Palette::Palette()
 {
@@ -306,3 +312,128 @@ int Palette::load(const char *fn)
   return 0;
 }
 
+// sort into grays, low-sat colors, hi-sat colors
+void Palette::sortByHue()
+{
+  std::vector<int> bucket(25 * 256, 0);
+  std::vector<int> count(25, 0);
+
+  int h, s, v;
+
+  for (int j = 0; j < max; j++)
+  {
+    const int c = data[j];
+    const int r = getr(c);
+    const int g = getg(c);
+    const int b = getb(c);
+    Blend::rgbToHsv(r, g, b, &h, &s, &v);
+
+    if (s == 0)
+    {
+      bucket[count[0]++] = c;
+    }
+    else if (s < 128)
+    {
+      for (int i = 0; i < 12; i++)
+      {
+        if (h >= i * 128 && h < (i + 1) * 128)
+        {
+          bucket[(i + 1) * 256 + count[i + 1]++] = c;
+        }
+      }
+    }
+      else
+    {
+      for (int i = 0; i < 12; i++)
+      {
+        if (h >= i * 128 && h < (i + 1) * 128)
+        {
+          bucket[(i + 13) * 256 + count[i + 13]++] = c;
+        }
+      }
+    }
+  }
+
+  for (int i = 0; i < 25; i++)
+  {
+    std::sort(&bucket[i * 256], &bucket[i * 256] + count[i], sort_value_cb);
+  }
+
+  int index = 0;
+
+  for (int i = 0; i < 25; i++)
+  {
+    for (int j = 0; j < count[i]; j++)
+    {
+      data[index++] = bucket[i * 256 + j];
+    }
+  }
+
+  max = index;
+  fillTable();
+}
+
+void Palette::sortByValue()
+{   
+  std::sort(data, data + max, sort_value_cb);
+  fillTable();
+} 
+
+void Palette::normalize()
+{
+  // search for highest & lowest RGB values
+  int r_high = 0;
+  int g_high = 0;
+  int b_high = 0;
+  int r_low = 0xffffff;
+  int g_low = 0xffffff;
+  int b_low = 0xffffff;
+
+  for (int i = 0; i < max; i++)
+  {
+    rgba_type rgba = getRgba(data[i]);
+
+    const int r = rgba.r;
+    const int g = rgba.g;
+    const int b = rgba.b;
+
+    if (r < r_low)
+      r_low = r;
+    if (r > r_high)
+      r_high = r;
+    if (g < g_low)
+      g_low = g;
+    if (g > g_high)
+      g_high = g;
+    if (b < b_low)
+      b_low = b;
+    if (b > b_high)
+      b_high = b;
+  }
+
+  if (!(r_high - r_low))
+    r_high++;
+  if (!(g_high - g_low))
+    g_high++;
+  if (!(b_high - b_low))
+    b_high++;
+
+  // scale palette
+  double r_scale = 255.0 / (r_high - r_low);
+  double g_scale = 255.0 / (g_high - g_low);
+  double b_scale = 255.0 / (b_high - b_low);
+
+  for (int i = 0; i < max; i++)
+  {
+    rgba_type rgba = getRgba(data[i]);
+
+    const int r = (rgba.r - r_low) * r_scale;
+    const int g = (rgba.g - g_low) * g_scale;
+    const int b = (rgba.b - b_low) * b_scale;
+
+    data[i] = makeRgb(r, g, b);
+  }
+
+  fillTable();
+}
+ 

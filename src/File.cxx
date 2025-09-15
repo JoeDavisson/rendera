@@ -30,10 +30,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Native_File_Chooser.H>
 
 #include "Bitmap.H"
+#include "ColorOptions.H"
 #include "Dialog.H"
 #include "File.H"
 #include "FileSP.H"
 #include "Gui.H"
+#include "ImagesOptions.H"
 #include "Inline.H"
 #include "Map.H"
 #include "Palette.H"
@@ -285,7 +287,7 @@ int File::loadFile(const char *fn)
     char s[256];
 
     getFilename(s, fn);
-    Gui::imagesAddFile(s);
+    Gui::images->imagesAddFile(s);
   }
 
   // redraw
@@ -1374,7 +1376,7 @@ void File::loadPalette()
       errorMessage();
       return;
     }
-    Gui::paletteDraw();
+    Gui::colors->paletteDraw();
   }
 }
 

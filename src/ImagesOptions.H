@@ -18,21 +18,29 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef STATIC_TEXT_H
-#define STATIC_TEXT_H
+#ifndef IMAGES_OPTIONS_H
+#define IMAGES_OPTIONS_H
 
-#include <FL/Fl_Box.H>
+#include "Group.H"
 
-class Fl_Box;
-class Fl_Group;
+class Button;
+class Group;
+class ToggleButton;
 
-class StaticText : public Fl_Box
+class ImagesOptions : public Group
 {
 public:
-  StaticText(Fl_Group *, int, int, int, int, const char *);
-  ~StaticText();
+  ImagesOptions(int, int, int, int, const char *);
+  ~ImagesOptions();
 
-  Fl_Group *group;
+  void imagesBrowse();
+  void imagesRename();
+  void imagesAddFile(const char *);
+  void imagesCloseFile();
+  void imagesDuplicate();
+  void imagesMoveUp();
+  void imagesMoveDown();
+  void imagesMemLabel(const char *);
 };
 
 #endif

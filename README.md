@@ -32,7 +32,7 @@ Version 0.3.0 has a redesigned interface which allows scaling up and down with c
 ## Get the Source
 ```$ git clone https://github.com/JoeDavisson/rendera.git```
 
-*Note: CMake support needs a bit of work, for now please use the GNU_Makefile which creates a self-contained executable.* 
+*Note: CMake support needs a bit of work, for now please use the Makefile which creates a self-contained executable.* 
 
 ### Dependencies
  * fltk-1.4.3 source

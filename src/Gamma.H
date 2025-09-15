@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef GAMMA_H
 #define GAMMA_H
 
+#include <cmath>
+
 class Gamma
 {
 public:

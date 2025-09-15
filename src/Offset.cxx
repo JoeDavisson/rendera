@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Gui.H"
 #include "Offset.H"
+#include "OffsetOptions.H"
 #include "Project.H"
 #include "Stroke.H"
 #include "Tool.H"
@@ -87,7 +88,7 @@ void Offset::drag(View *view)
   temp_y = y;
 
   view->drawMain(true);
-  Gui::offsetValues(dx, dy);
+  Gui::offset->offsetValues(dx, dy);
 }
 
 void Offset::release(View *)
@@ -99,7 +100,7 @@ void Offset::release(View *)
   Project::undo->push(temp_x, temp_y, Project::bmp->w, Project::bmp->h,
                       Undo::OFFSET);
   
-  Gui::offsetValues(0, 0);
+  Gui::offset->offsetValues(0, 0);
 }
 
 void Offset::move(View *)

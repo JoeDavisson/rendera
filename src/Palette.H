@@ -39,6 +39,9 @@ public:
   int lookup(const int);
   int load(const char *);
   int save(const char *);
+  void sortByHue();
+  void sortByValue();
+  void normalize();
 
   int *data;
   unsigned char *table;

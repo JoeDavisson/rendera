@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Map.H"
 #include "Project.H"
 #include "Render.H"
+#include "SelectionOptions.H"
 #include "Stroke.H"
 #include "View.H"
 
@@ -926,7 +927,8 @@ void Stroke::previewSelection(View *view)
   const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
   const int trans = Project::brush->trans;
-  const int use_alpha = Gui::selection_alpha->value();
+//  const int use_alpha = Gui::selection->selection_alpha->value();
+  const int use_alpha = Gui::selection->selectGetAlpha();
 
   int ox = view->ox;
   int oy = view->oy;

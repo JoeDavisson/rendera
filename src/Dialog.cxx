@@ -38,12 +38,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "Button.H"
 #include "CheckBox.H"
+#include "ColorOptions.H"
 #include "Dialog.H"
 #include "DialogWindow.H"
 #include "File.H"
 #include "Group.H"
 #include "Gui.H"
 #include "Images.H"
+#include "ImagesOptions.H"
 #include "Inline.H"
 #include "InputInt.H"
 #include "InputText.H"
@@ -335,7 +337,7 @@ namespace NewImage
     Gui::getView()->oy = 0;
     Gui::getView()->drawMain(true);
 
-    Gui::imagesAddFile("new");
+    Gui::images->imagesAddFile("new");
     Project::undo->reset();
   }
 
@@ -398,7 +400,7 @@ namespace MakePalette
   {
     Items::dialog->hide();
     Quantize::pca(Project::bmp, Project::palette, atoi(Items::colors->value()));
-    Gui::paletteDraw();
+    Gui::colors->paletteDraw();
     Project::palette->fillTable();
   }
 

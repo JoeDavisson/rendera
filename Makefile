@@ -25,7 +25,7 @@ LIBS=$(shell ./fltk/fltk-config --use-images --ldstaticflags)
 ifeq ($(PLATFORM),linux)
   HOST=
   CXX=g++
-  CXXFLAGS= -O3 -Wall -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -g -O3 -Wall -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   EXE=rendera
 endif
 
@@ -117,6 +117,16 @@ OBJ= \
   $(SRC_DIR)/Offset.o \
   $(SRC_DIR)/Paint.o \
   $(SRC_DIR)/Text.o \
+  $(SRC_DIR)/ViewOptions.o \
+  $(SRC_DIR)/PaintOptions.o \
+  $(SRC_DIR)/GetColorOptions.o \
+  $(SRC_DIR)/ImagesOptions.o \
+  $(SRC_DIR)/OffsetOptions.o \
+  $(SRC_DIR)/SelectionOptions.o \
+  $(SRC_DIR)/TextOptions.o \
+  $(SRC_DIR)/FillOptions.o \
+  $(SRC_DIR)/ToolsOptions.o \
+  $(SRC_DIR)/ColorOptions.o \
 
 # build program
 default: $(OBJ)

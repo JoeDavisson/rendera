@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Inline.H"
 #include "KDtree.H"
 #include "Map.H"
+#include "PaintOptions.H"
 #include "Project.H"
 #include "Render.H"
 #include "Stroke.H"
@@ -865,7 +866,7 @@ void Render::begin()
 
   // for tools that grow outward
 //  switch (Gui::getPaintMode())
-  switch (Gui::paint_mode->value())
+  switch (Gui::paint->getPaintMode())
   {
     case BLURRY:
       size = (3 << brush->blurry_edge);
@@ -897,7 +898,7 @@ void Render::begin()
 
   view->rendering = true;
 
-  switch (Gui::paint_mode->value())
+  switch (Gui::paint->getPaintMode())
   {
     case SOLID:
       solid();

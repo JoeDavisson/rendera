@@ -21,8 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef REPEAT_BUTTON_H
 #define REPEAT_BUTTON_H
 
+#include <FL/Fl_Repeat_Button.H>
+
 class Bitmap;
 class Fl_Group;
+class Fl_Repeat_Button;
 
 class RepeatButton : public Fl_Repeat_Button
 {

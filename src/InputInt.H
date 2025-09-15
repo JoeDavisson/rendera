@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef INPUT_INT_H
 #define INPUT_INT_H
 
+//#include <FL/Fl_Widget.H>
+#include <FL/Fl_Group.H>
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Repeat_Button.H>
 

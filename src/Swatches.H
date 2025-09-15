@@ -18,21 +18,27 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef STATIC_TEXT_H
-#define STATIC_TEXT_H
+#ifndef SWATCHES_H
+#define SWATCHES_H
 
-#include <FL/Fl_Box.H>
-
-class Fl_Box;
-class Fl_Group;
-
-class StaticText : public Fl_Box
+class Swatches
 {
 public:
-  StaticText(Fl_Group *, int, int, int, int, const char *);
-  ~StaticText();
+  static void enable(bool);
+  static void hide();
+  static void show(float);
+  static void show(float, int);
+  static int update(int);
 
-  Fl_Group *group;
+private:
+  Progress() { }
+  ~Progress() { }
+
+  static bool active;
+  static float value;
+  static float step;
+  static int interval;
+
 };
 
 #endif

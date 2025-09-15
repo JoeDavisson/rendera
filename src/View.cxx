@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 
 #include <FL/fl_draw.H>
+#include <FL/Fl_Double_Window.H>
 
 #include "Bitmap.H"
 #include "Blend.H"
@@ -35,8 +36,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.H"
 #include "Tool.H"
 #include "ToggleButton.H"
+#include "ToolsOptions.H"
 #include "Undo.H"
 #include "View.H"
+#include "ViewOptions.H"
 #include "Widget.H"
 
 #include "FX/GaussianBlur.H"
@@ -163,7 +166,7 @@ int View::handle(int event)
   imgx /= ax;
   imgy /= ay;
 
-  switch (Gui::tool->var)
+  switch (Gui::tools->getTool())
   {
     case Tool::PAINT:
       if (gridsnap)
@@ -598,7 +601,7 @@ void View::drawGrid()
 
 void View::changeCursor()
 {
-  switch (Gui::tool->var)
+  switch (Gui::tools->getTool())
   {
     case Tool::GETCOLOR:
     case Tool::FILL:
@@ -620,8 +623,11 @@ void View::changeCursor()
 
 void View::drawCloneCursor()
 {
-  if (Gui::tool->var != Tool::PAINT && Gui::tool->var != Tool::TEXT)
+  if (Gui::tools->getTool() != Tool::PAINT &&
+      Gui::tools->getTool() != Tool::TEXT)
+  {
     return;
+  }
 
   float scale = getScale();
 
@@ -697,7 +703,8 @@ void View::zoomIn(int x, int y)
     clipOrigin();
   }
 
-  Gui::zoomLevel();
+//  Gui::zoomLevel();
+  Gui::top->zoomLevel();
   Project::tool->redraw(this);
   saveCoords();
 }
@@ -719,7 +726,8 @@ void View::zoomOut(int x, int y)
     clipOrigin();
   }
 
-  Gui::zoomLevel();
+//  Gui::zoomLevel();
+  Gui::top->zoomLevel();
   Project::tool->redraw(this);
   saveCoords();
 }
@@ -730,7 +738,8 @@ void View::zoomOne()
   ox = 0;
   oy = 0;
 
-  Gui::zoomLevel();
+//  Gui::zoomLevel();
+  Gui::top->zoomLevel();
   Project::tool->redraw(this);
   saveCoords();
 }
@@ -864,14 +873,14 @@ void View::draw()
     updateView(blitx * ax, blity * ay, x() + blitx * ax, y() + blity * ay,
                blitw * ax + 1, blith * ay + 1);
 
-    if (Gui::clone->var)
+    if (Clone::active)
       drawCloneCursor();
   }
     else
   {
     updateView(0, 0, x(), y(), w(), h());
 
-    if (Gui::clone->var)
+    if (Clone::active)
       drawCloneCursor();
   }
 }

@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Inline.H"
 #include "Project.H"
 #include "Selection.H"
+#include "SelectionOptions.H"
 #include "Stroke.H"
 #include "Tool.H"
 #include "Undo.H"
@@ -143,9 +144,9 @@ void Selection::copy(View *view)
     return;
 
   state = STATE_COPY;
-  Gui::selectCopyEnable(false);
-  Gui::selectPasteEnable(true);
-  Gui::selectCropEnable(false);
+  Gui::selection->selectCopyEnable(false);
+  Gui::selection->selectPasteEnable(true);
+  Gui::selection->selectCropEnable(false);
 
   absrect(view, &beginx, &beginy, &lastx, &lasty);
 
@@ -170,7 +171,7 @@ void Selection::copy(View *view)
   Project::select_bmp = new Bitmap(w, h);
   Project::bmp->blit(Project::select_bmp, beginx, beginy, 0, 0, w, h);
 
-  Gui::selectValues(0, 0, 0, 0);
+  Gui::selection->selectValues(0, 0, 0, 0);
 }
 
 void Selection::crop(View *view)
@@ -209,7 +210,7 @@ void Selection::crop(View *view)
   view->ox = 0;
   view->oy = 0;
   view->drawMain(true);
-  Gui::selectValues(0, 0, 0, 0);
+  Gui::selection->selectValues(0, 0, 0, 0);
 }
 
 void Selection::paste(View *view)
@@ -232,7 +233,8 @@ void Selection::paste(View *view)
 
   const int trans = Project::brush->trans;
 //  const int alpha = Gui::getSelectAlpha();
-  const int alpha = Gui::selection_alpha->value();
+//  const int alpha = Gui::selection_alpha->value();
+  const int alpha = Gui::selection->selectGetAlpha();
 
   for (int y = 0; y < h; y++)
   {
@@ -449,7 +451,7 @@ void Selection::drag(View *view)
   int w = abs(temp_lastx - temp_beginx) + 1;
   int h = abs(temp_lasty - temp_beginy) + 1;
 
-  Gui::selectValues(x, y, w, h);
+  Gui::selection->selectValues(x, y, w, h);
   redraw(view);
 }
 
@@ -458,8 +460,8 @@ void Selection::release(View *view)
   if (state == STATE_DRAG)
   {
     state = STATE_RESIZE;
-    Gui::selectCopyEnable(true);
-    Gui::selectCropEnable(true);
+    Gui::selection->selectCopyEnable(true);
+    Gui::selection->selectCropEnable(true);
   }
 
   drag_started = false;
@@ -474,7 +476,7 @@ void Selection::release(View *view)
   const int h = abs(lasty - beginy) + 1;
 
   if (state != STATE_COPY)
-    Gui::selectValues(x, y, w, h);
+    Gui::selection->selectValues(x, y, w, h);
 }
 
 void Selection::move(View *view)
@@ -567,11 +569,11 @@ bool Selection::isActive()
 void Selection::reset()
 {
   state = STATE_INACTIVE;
-  Gui::selectValues(0, 0, 0, 0);
-  Gui::selectCopyEnable(false);
-  Gui::selectPasteEnable(false);
-  Gui::selectCropEnable(false);
-  Gui::getView()->drawMain(true);
+  Gui::selection->selectValues(0, 0, 0, 0);
+  Gui::selection->selectCopyEnable(false);
+  Gui::selection->selectPasteEnable(false);
+  Gui::selection->selectCropEnable(false);
+  Gui::view->drawMain(true);
 }
 
 void Selection::reload()
@@ -584,9 +586,9 @@ void Selection::reload()
   state = STATE_COPY;
 
   Project::stroke->size(beginx, beginy, lastx, lasty);
-  Gui::selectValues(0, 0, w, h);
-  Gui::selectCopyEnable(false);
-  Gui::selectPasteEnable(true);
-  Gui::selectCropEnable(false);
+  Gui::selection->selectValues(0, 0, w, h);
+  Gui::selection->selectCopyEnable(false);
+  Gui::selection->selectPasteEnable(true);
+  Gui::selection->selectCropEnable(false);
 }
 
