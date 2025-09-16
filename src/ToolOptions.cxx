@@ -104,6 +104,12 @@ void ToolOptions::init()
   tool->do_callback();
 }
 
+void ToolOptions::change(int t)
+{
+  tool->var = t;
+  tool->do_callback();
+}
+
 void ToolOptions::change(Widget *, void *var)
 {
   int tool = *(int *)var;

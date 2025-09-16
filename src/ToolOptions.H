@@ -32,6 +32,7 @@ public:
   ~ToolOptions();
 
   void init();
+  void change(int);
   void change(Widget *, void *);
   void cloneEnable(Widget *, void *);
   void constrainEnable(Widget *, void *);

@@ -817,9 +817,7 @@ void Gui::selectFromImage()
   Project::selection->reload();
   Project::selection->redraw(view);
 
-// FIXME
-//  tool->var = Tool::SELECT;
-//  toolChange(tool, (void *)&tool->var);
+  tools->change(Tool::SELECT);
 }
 
 void Gui::selectToImage()
