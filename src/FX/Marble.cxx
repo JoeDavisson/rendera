@@ -140,28 +140,28 @@ void Marble::begin()
 
 void Marble::init()
 {
-  int x1 = 8;
+  int x1 = 528 / 2 - (160 * 2 + 8 * 3) / 2;
   int y1 = 8;
 
-  Items::dialog = new DialogWindow(344, 0, "Marble");
+  Items::dialog = new DialogWindow(528, 0, "Marble");
 
-  Items::preview = new Widget(Items::dialog, 8, y1, 328, 328, 0, 1, 1, 0);
-  y1 += 328 + 8;
+  Items::preview = new Widget(Items::dialog, 8, y1, 512, 512, 0, 1, 1, 0);
+  y1 += 512 + 8;
 
-  Items::marb = new Widget(Items::dialog, 8, y1, 160, 32, "Marbleize", images_marbleize_png, 16, 32, (Fl_Callback *)setMarb);
+  Items::marb = new Widget(Items::dialog, x1, y1, 160, 32, "Marbleize", images_marbleize_png, 16, 32, (Fl_Callback *)setMarb);
   Items::marb->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::marb->labelfont(FL_COURIER);
 
-  Items::turb = new Widget(Items::dialog, 8 + 160 + 8, y1, 160, 32, "Turbulence", images_turbulence_png, 16, 32, (Fl_Callback *)setTurb);
+  Items::turb = new Widget(Items::dialog, x1 + 160 + 8, y1, 160, 32, "Turbulence", images_turbulence_png, 16, 32, (Fl_Callback *)setTurb);
   Items::turb->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::turb->labelfont(FL_COURIER);
   y1 += 64;
 
-  Items::blend = new Widget(Items::dialog, 8, y1, 160, 32, "Blend", images_marble_blend_png, 8, 32, (Fl_Callback *)setBlend);
+  Items::blend = new Widget(Items::dialog, x1, y1, 160, 32, "Blend", images_marble_blend_png, 8, 32, (Fl_Callback *)setBlend);
   Items::blend->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::blend->labelfont(FL_COURIER);
 
-  Items::threshold = new Widget(Items::dialog, 8 + 160 + 8, y1, 160, 32, "Threshold", images_marble_blend_png, 8, 32, (Fl_Callback *)setThreshold);
+  Items::threshold = new Widget(Items::dialog, x1 + 160 + 8, y1, 160, 32, "Threshold", images_marble_blend_png, 8, 32, (Fl_Callback *)setThreshold);
   Items::threshold->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::threshold->labelfont(FL_COURIER);
   y1 += 64;
@@ -181,9 +181,8 @@ void Marble::init()
   Items::type->add("Immiscible");
   Items::type->value(0);
   Items::type->callback((Fl_Callback *)update);
-  x1 += 160 + 8;
 
-  Items::mode = new Fl_Choice(x1, y1, 160, 32, 0);
+  Items::mode = new Fl_Choice(x1 + 160 + 8, y1, 160, 32, 0);
   Items::mode->labelsize(16);
   Items::mode->textsize(16);
   Items::mode->tooltip("Blending Mode");
@@ -194,17 +193,16 @@ void Marble::init()
   Items::mode->add("Darken");
   Items::mode->value(0);
   Items::mode->callback((Fl_Callback *)update);
-  x1 = 8;
-  y1 += 32 + 8;
+
+  y1 += 32 + 16;
 
   Items::palette_editor = new Fl_Button(x1, y1, 160, 32, "Color...");
   Items::palette_editor->labelsize(16);
   Items::palette_editor->callback((Fl_Callback *)getColor);
-  x1 += 160 + 8;
 
-  Items::color = new Widget(Items::dialog, x1, y1, 160, 32, 0, 0, 0, 0);
+  Items::color = new Widget(Items::dialog, x1 + 160 + 8, y1, 160, 32, 0, 0, 0, 0);
   x1 = 8;
-  y1 += 40;
+  y1 += 32 + 16;
 
   Items::change = new Fl_Button(x1, y1 + 12, 96, 40, "Apply");
   Items::change->labelsize(16);

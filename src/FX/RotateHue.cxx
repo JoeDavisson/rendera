@@ -110,17 +110,18 @@ void RotateHue::quit()
 
 void RotateHue::init()
 {
+  int x1 = 528 / 2 - (360 + 28 * 2) / 2;
   int y1 = 8;
 
-  Items::dialog = new DialogWindow(424, 0, "Rotate Hue");
-  Items::preview = new Widget(Items::dialog, 8, y1, 408, 408, 0, 1, 1, 0);
-  y1 += 408 + 8;
-  Items::dec_hue = new Fl_Repeat_Button(8, y1, 20, 32, "@<");
+  Items::dialog = new DialogWindow(528, 0, "Rotate Hue");
+  Items::preview = new Widget(Items::dialog, 8, y1, 512, 512, 0, 1, 1, 0);
+  y1 += 512 + 8;
+  Items::dec_hue = new Fl_Repeat_Button(x1, y1, 20, 32, "@<");
   Items::dec_hue->callback((Fl_Callback *)decHue);
-  Items::hue = new Widget(Items::dialog, 8 + 20 + 4, y1, 360, 32, 0, 1, 32, (Fl_Callback *)setHue);
+  Items::hue = new Widget(Items::dialog, x1 + 28, y1, 360, 32, 0, 1, 32, (Fl_Callback *)setHue);
   Items::hue->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::hue->labelfont(FL_COURIER);
-  Items::inc_hue = new Fl_Repeat_Button(8 + 16 + 4 + 360 + 8, y1, 20, 32, "@>");
+  Items::inc_hue = new Fl_Repeat_Button(x1 + 28 + 360 + 8, y1, 20, 32, "@>");
   Items::inc_hue->callback((Fl_Callback *)incHue);
   y1 += 24 + 8 + 32;
   Items::preserve_lum = new CheckBox(Items::dialog, 0, y1, 16, 16, "Preserve Luminosity", (Fl_Callback *)setHue);
