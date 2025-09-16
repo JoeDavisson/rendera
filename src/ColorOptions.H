@@ -36,8 +36,6 @@ public:
   void colorChange(Widget *, void *);
   void colorHexInput();
   void colorHexUpdate();
-//  void colorHue();
-//  void colorSatVal();
   void colorTrans();
   void colorTransInput();
   void colorUpdate(int);

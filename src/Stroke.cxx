@@ -927,8 +927,7 @@ void Stroke::previewSelection(View *view)
   const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
   const int trans = Project::brush->trans;
-//  const int use_alpha = Gui::selection->selection_alpha->value();
-  const int use_alpha = Gui::selection->selectGetAlpha();
+  const int use_alpha = Gui::selection->getAlpha();
 
   int ox = view->ox;
   int oy = view->oy;

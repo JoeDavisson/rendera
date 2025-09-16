@@ -213,11 +213,11 @@ public:
             return 1;
           case 'c':
             if (ctrl)
-              Gui::selection->selectCopy();
+              Gui::selection->copy();
             return 1;
           case 'v':
             if (ctrl)
-              Gui::selection->selectPaste();
+              Gui::selection->paste();
             return 1;
           case 'e':
             Editor::begin();

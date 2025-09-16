@@ -50,23 +50,21 @@ namespace
   Fl_Button *selection_paste;
   Fl_Button *selection_crop;
 
-  void cb_selectAlpha(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->selectAlpha(); }
+  void cb_alpha(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->alpha(); }
 
-  void cb_selectCopy(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->selectCopy(); }
+  void cb_copy(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->copy(); }
 
-  void cb_selectPaste(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->selectPaste(); }
+  void cb_paste(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->paste(); }
 
-  void cb_selectCrop(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->selectCrop(); }
+  void cb_crop(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->crop(); }
 
-  void cb_selectFlipX(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->selectFlipX(); }
+  void cb_flipX(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->flipX(); }
 
-  void cb_selectFlipY(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->selectFlipY(); }
+  void cb_flipY(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->flipY(); }
 
-  void cb_selectReset(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->selectReset(); }
+  void cb_reset(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->reset(); }
 
-//  void cb_selectRotate180(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->selectRotate180(); }
-
-  void cb_selectRotate90(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->selectRotate90(); }
+  void cb_rotate90(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->rotate90(); }
 }
 
 SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
@@ -94,7 +92,7 @@ SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
   pos += 4 + Gui::SPACING;
 
   selection_reset = new Fl_Button(this->x() + 8, this->y() + pos, 160, 48, "Reset");
-  selection_reset->callback((Fl_Callback *)cb_selectReset);
+  selection_reset->callback((Fl_Callback *)cb_reset);
   pos += 48 + Gui::SPACING;
 
 
@@ -102,14 +100,14 @@ SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
   pos += 4 + Gui::SPACING;
 
   selection_alpha = new CheckBox(this, 8, pos, 16, 16, "Alpha Mask",
-                                 (Fl_Callback *)cb_selectAlpha);
+                                 (Fl_Callback *)cb_alpha);
   selection_alpha->center();
   selection_alpha->value(1);
   pos += 24 + Gui::SPACING;
 
-  selection_mirror = new Button(this, 8, pos, 48, 48, "Mirror", images_select_mirror_png, (Fl_Callback *)cb_selectFlipX);
-  selection_flip = new Button(this, 8 + 48 + 8, pos, 48, 48, "Flip", images_select_flip_png, (Fl_Callback *)cb_selectFlipY);
-  selection_rotate = new Button(this, 8 + 48 + 8 + 48 + 8, pos, 48, 48, "Rotate", images_select_rotate_png, (Fl_Callback *)cb_selectRotate90);
+  selection_mirror = new Button(this, 8, pos, 48, 48, "Mirror", images_select_mirror_png, (Fl_Callback *)cb_flipX);
+  selection_flip = new Button(this, 8 + 48 + 8, pos, 48, 48, "Flip", images_select_flip_png, (Fl_Callback *)cb_flipY);
+  selection_rotate = new Button(this, 8 + 48 + 8 + 48 + 8, pos, 48, 48, "Rotate", images_select_rotate_png, (Fl_Callback *)cb_rotate90);
   pos += 48 + Gui::SPACING;
 
   new Separator(this, 0, pos, Gui::OPTIONS_WIDTH, Separator::HORIZONTAL, "");
@@ -117,13 +115,13 @@ SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
 
   selection_copy = new Fl_Button(this->x() + 8, this->y() + pos, 160, 40, "Copy");
   selection_copy->tooltip("Ctrl-C");
-  selection_copy->callback((Fl_Callback *)cb_selectCopy);
+  selection_copy->callback((Fl_Callback *)cb_copy);
   selection_copy->deactivate();
   pos += 40 + Gui::SPACING;
 
   selection_paste = new Fl_Button(this->x() + 8, this->y() + pos, 160, 40, "Paste");
   selection_paste->tooltip("Ctrl-V");
-  selection_paste->callback((Fl_Callback *)cb_selectPaste);
+  selection_paste->callback((Fl_Callback *)cb_paste);
   selection_paste->deactivate();
   pos += 40 + Gui::SPACING;
 
@@ -131,11 +129,11 @@ SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
   pos += 4 + Gui::SPACING;
 
   selection_crop = new Fl_Button(this->x() + 8, this->y() + pos, 160, 48, "Crop");
-  selection_crop->callback((Fl_Callback *)cb_selectCrop);
+  selection_crop->callback((Fl_Callback *)cb_crop);
   selection_crop->deactivate();
   pos += 48 + Gui::SPACING;
 
-  selectValues(0, 0, 0, 0);
+  values(0, 0, 0, 0);
 
   resizable(0);
   end();
@@ -145,12 +143,12 @@ SelectionOptions::~SelectionOptions()
 {
 }
 
-void SelectionOptions::selectCopy()
+void SelectionOptions::copy()
 {
   Project::tool->done(Gui::Gui::view, 0);
 }
 
-void SelectionOptions::selectCopyEnable(bool enable)
+void SelectionOptions::copyEnable(bool enable)
 {
   if (enable == true)
     selection_copy->activate();
@@ -160,12 +158,12 @@ void SelectionOptions::selectCopyEnable(bool enable)
   selection_copy->redraw();
 }
 
-void SelectionOptions::selectPaste()
+void SelectionOptions::paste()
 {
   Project::tool->done(Gui::Gui::view, 2);
 }
 
-void SelectionOptions::selectPasteEnable(bool enable)
+void SelectionOptions::pasteEnable(bool enable)
 {
   if (enable == true)
     selection_paste->activate();
@@ -175,17 +173,17 @@ void SelectionOptions::selectPasteEnable(bool enable)
   selection_paste->redraw();
 }
 
-void SelectionOptions::selectAlpha()
+void SelectionOptions::alpha()
 {
   Project::selection->redraw(Gui::view);
 }
 
-void SelectionOptions::selectCrop()
+void SelectionOptions::crop()
 {
   Project::tool->done(Gui::view, 1);
 }
 
-void SelectionOptions::selectCropEnable(bool enable)
+void SelectionOptions::cropEnable(bool enable)
 {
   if (enable == true)
     selection_crop->activate();
@@ -195,19 +193,19 @@ void SelectionOptions::selectCropEnable(bool enable)
   selection_crop->redraw();
 }
 
-void SelectionOptions::selectFlipX()
+void SelectionOptions::flipX()
 {
   Project::select_bmp->flipHorizontal();
   Project::selection->redraw(Gui::view);
 }
 
-void SelectionOptions::selectFlipY()
+void SelectionOptions::flipY()
 {
   Project::select_bmp->flipVertical();
   Project::selection->redraw(Gui::view);
 }
 
-void SelectionOptions::selectRotate90()
+void SelectionOptions::rotate90()
 {
   int w = Project::select_bmp->w;
   int h = Project::select_bmp->h;
@@ -234,19 +232,13 @@ void SelectionOptions::selectRotate90()
   Project::selection->redraw(Gui::view);
 }
 
-void SelectionOptions::selectRotate180()
-{
-  Project::select_bmp->rotate180();
-  Project::selection->redraw(Gui::view);
-}
-
-void SelectionOptions::selectReset()
+void SelectionOptions::reset()
 {
   Project::tool->reset();
   Project::selection->redraw(Gui::view);
 }
 
-void SelectionOptions::selectValues(int x, int y, int w, int h)
+void SelectionOptions::values(int x, int y, int w, int h)
 {
   char s[256];
 
@@ -267,7 +259,7 @@ void SelectionOptions::selectValues(int x, int y, int w, int h)
   selection_h->redraw();
 }
 
-int SelectionOptions::selectGetAlpha()
+int SelectionOptions::getAlpha()
 {
   return selection_alpha->value();
 }

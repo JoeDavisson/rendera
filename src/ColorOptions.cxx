@@ -316,30 +316,16 @@ void ColorOptions::colorChange(Widget *widget, void *)
   satval->bitmap->rect(x - 9, y - 9, x + 9, y + 9, makeRgb(0, 0, 0), 96);
   satval->bitmap->xorRect(x - 8, y - 8, x + 8, y + 8);
 
-//  colorSwatch();
   colorTrans();
   colorHexUpdate();
   hue->redraw();
   satval->redraw();
 }
 
-/*
-void ColorOptions::colorHue()
-{
-  colorChange(0, 0);
-}
-
-void ColorOptions::colorSatVal()
-{
-  colorChange(0, 0);
-}
-*/
-
 void ColorOptions::colorTransInput()
 {
   Project::brush->trans = atoi(trans_input->value());
   trans->var = Project::brush->trans / 8.22;
-//  colorTrans();
 }
 
 void ColorOptions::colorTrans()

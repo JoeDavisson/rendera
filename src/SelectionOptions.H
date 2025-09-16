@@ -31,22 +31,19 @@ public:
   SelectionOptions(int, int, int, int, const char *);
   ~SelectionOptions();
 
-  void selectAlpha();
-  void selectCopy();
-  void selectCopyEnable(bool);
-  void selectPaste();
-  void selectPasteEnable(bool);
-  void selectCrop();
-  void selectCropEnable(bool);
-  void selectFlipX();
-  void selectFlipY();
-//  void selectFromImage();
-  void selectReset();
-  void selectRotate180();
-  void selectRotate90();
-//  void selectToImage();
-  void selectValues(int, int, int, int);
-  int selectGetAlpha();
+  void alpha();
+  void copy();
+  void copyEnable(bool);
+  void paste();
+  void pasteEnable(bool);
+  void crop();
+  void cropEnable(bool);
+  void flipX();
+  void flipY();
+  void reset();
+  void rotate90();
+  void values(int, int, int, int);
+  int getAlpha();
 };
 
 #endif
