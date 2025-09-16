@@ -70,7 +70,7 @@ void Text::push(View *view)
   int w = textbmp->w;
   int h = textbmp->h;
 
-  if (Gui::text->textGetSmooth() > 0)
+  if (Gui::text->getSmooth() > 0)
   {
     for (int y = 0; y < h; y++)
     {
@@ -130,19 +130,16 @@ void Text::move(View *view)
   Stroke *stroke = Project::stroke;
 
   // write text string to FLTK's offscreen image
-  int index = Gui::text->textGetFont();
+  int index = Gui::text->getFont();
 
   if (index < 1)
     index = 1;
 
   int face =  index - 1;
 
-  int size = Gui::text->textGetSize();
-  int angle = 360 - Gui::text->textGetAngle();
-  const char *s = Gui::text->textGetInput();
-//  int size = atoi(Gui::font_size->value());
-//  int angle = 360 - atoi(Gui::font_angle->value());
-//  const char *s = Gui::text_input->value();
+  int size = Gui::text->getSize();
+  int angle = 360 - Gui::text->getAngle();
+  const char *s = Gui::text->getInput();
 
   if (size < 4)
     size = 4;

@@ -53,7 +53,7 @@ namespace
   Fl_Input *text_input;
   CheckBox *text_smooth;
 
-  void cb_textChangedSize(Fl_Widget *w, void *data) { TextOptions *temp = (TextOptions *)data; temp->textChangedSize((InputInt *)w, data); }
+  void cb_changedSize(Fl_Widget *w, void *data) { TextOptions *temp = (TextOptions *)data; temp->changedSize((InputInt *)w, data); }
 }
 
 TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
@@ -74,17 +74,17 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
   }
 
   text_browse->value(1);
-  text_browse->callback((Fl_Callback *)cb_textChangedSize);
+  text_browse->callback((Fl_Callback *)cb_changedSize);
   pos += 384 + Gui::SPACING;
 
   // font size
   text_size = new InputInt(this, 64, pos, 96, 32, "Size:",
-                           (Fl_Callback *)cb_textChangedSize, 4, 500);
+                           (Fl_Callback *)cb_changedSize, 4, 500);
   text_size->value("48");
   pos += 32 + Gui::SPACING;
 
   text_angle = new InputInt(this, 64, pos, 96, 32, "Angle:",
-                           (Fl_Callback *)cb_textChangedSize, -359, 359);
+                           (Fl_Callback *)cb_changedSize, -359, 359);
   text_angle->value("0");
   pos += 32 + Gui::SPACING;
   
@@ -92,7 +92,7 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
   text_input->textsize(16);
   text_input->value("Text");
   text_input->resize(this->x() + 8, this->y() + pos, 160, 32);
-  text_input->callback((Fl_Callback *)cb_textChangedSize);
+  text_input->callback((Fl_Callback *)cb_changedSize);
   pos += 32 + Gui::SPACING;
 
   text_smooth = new CheckBox(this, 8, pos, 16, 16, "Antialiased", 0);
@@ -107,33 +107,33 @@ TextOptions::~TextOptions()
 {
 }
 
-void TextOptions::textChangedSize(InputInt *input, void *)
+void TextOptions::changedSize(InputInt *input, void *)
 {
   input->redraw();
   Project::tool->move(Gui::view);
 }
 
-const char *TextOptions::textGetInput()
+const char *TextOptions::getInput()
 {
   return text_input->value();
 }
 
-int TextOptions::textGetSize()
+int TextOptions::getSize()
 {
   return atoi(text_size->value());
 }
 
-int TextOptions::textGetAngle()
+int TextOptions::getAngle()
 {
   return atoi(text_angle->value());
 }
 
-int TextOptions::textGetSmooth()
+int TextOptions::getSmooth()
 {
   return text_smooth->value();
 }
 
-int TextOptions::textGetFont()
+int TextOptions::getFont()
 {
   return text_browse->value();
 }

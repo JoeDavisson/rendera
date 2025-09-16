@@ -177,7 +177,6 @@ void ColorOptions::colorUpdate(int c)
 
   Project::brush->color = c;
   colorHexUpdate();
-//  colorSwatch();
   colorTrans();
 }
 
@@ -223,7 +222,6 @@ void ColorOptions::colorChange(Widget *widget, void *)
 
   int r, g, b;
 
-  //joe
   Blend::hsvToRgb(h, s, v, &r, &g, &b);
   //Blend::wheelToRgb(h, s, v, &r, &g, &b);
   Project::brush->color = makeRgb(r, g, b);
@@ -234,7 +232,6 @@ void ColorOptions::colorChange(Widget *widget, void *)
 
   for (int i = 1; i < 1536; i++)
   {
-    //joe
     Blend::hsvToRgb(i, 255, 255, &r, &g, &b);
     //Blend::wheelToRgb(i, 255, 255, &r, &g, &b);
 

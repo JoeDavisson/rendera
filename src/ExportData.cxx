@@ -167,8 +167,6 @@ bool ExportData::fileExists(const char *fn)
 void ExportData::init()
 {
   ExportOptions::init();
-//joe
-//  strcpy(save_dir, ".");
   snprintf(save_dir, sizeof(save_dir), ".");
 }
 
@@ -198,8 +196,6 @@ void ExportData::save(Fl_Widget *, void *)
   }
 
   char fn[256];
-//joe
-//  strcpy(fn, fc.filename());
   snprintf(fn, sizeof(fn), "%s", fc.filename());
 
   int ext_value = fc.filter_value();

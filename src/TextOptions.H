@@ -32,12 +32,12 @@ public:
   TextOptions(int, int, int, int, const char *);
   ~TextOptions();
 
-  void textChangedSize(InputInt *, void *);
-  const char *textGetInput();
-  int textGetSize();
-  int textGetAngle();
-  int textGetSmooth();
-  int textGetFont();
+  void changedSize(InputInt *, void *);
+  const char *getInput();
+  int getSize();
+  int getAngle();
+  int getSmooth();
+  int getFont();
 };
 
 #endif

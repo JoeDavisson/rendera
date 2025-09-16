@@ -945,8 +945,6 @@ void File::save(Fl_Widget *, void *)
   }
 
   char fn[256];
-//joe
-//  strcpy(fn, fc.filename());
   snprintf(fn, sizeof(fn), "%s", fc.filename());
 
   int ext_value = fc.filter_value();
@@ -1353,8 +1351,6 @@ void File::loadPalette()
   char fn[256];
 
   snprintf(fn, sizeof(fn), "%s", fc.filename());
-// joe
-//  strcpy(fn, fc.filename());
 
   FileSP in(fn, "r");
 
@@ -1403,8 +1399,6 @@ void File::savePalette()
   char fn[256];
 
   snprintf(fn, sizeof(fn), "%s", fc.filename());
-//joe
-//  strcpy(fn, fc.filename());
   fl_filename_setext(fn, sizeof(fn), ".gpl");
 
   if (fileExists(fn))
@@ -1486,8 +1480,7 @@ void File::saveSelection()
 
   char fn[256];
   snprintf(fn, sizeof(fn), "%s", fc.filename());
-//joe
-//  strcpy(fn, fc.filename());
+
   int ext_value = fc.filter_value();
   fl_filename_setext(fn, sizeof(fn), ext_string[ext_value]);
 
@@ -1540,8 +1533,6 @@ void File::decodeURI(char *s)
 void File::getDirectory(char *dest, const char *src)
 {
   snprintf(dest, sizeof(*dest), "%s", src);
-// joe
-//  strcpy(dest, src);
 
   int len = strlen(dest);
 
