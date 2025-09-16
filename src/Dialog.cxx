@@ -337,7 +337,7 @@ namespace NewImage
     Gui::getView()->oy = 0;
     Gui::getView()->drawMain(true);
 
-    Gui::images->imagesAddFile("new");
+    Gui::images->addFile("new");
     Project::undo->reset();
   }
 

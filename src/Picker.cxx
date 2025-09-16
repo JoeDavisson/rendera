@@ -24,24 +24,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "ColorOptions.H"
 #include "CheckBox.H"
-#include "GetColor.H"
-#include "GetColorOptions.H"
 #include "Gui.H"
 #include "Inline.H"
 #include "Palette.H"
+#include "Picker.H"
+#include "PickerOptions.H"
 #include "Project.H"
 #include "Undo.H"
 #include "View.H"
 
-GetColor::GetColor()
+Picker::Picker()
 {
 }
 
-GetColor::~GetColor()
+Picker::~Picker()
 {
 }
 
-bool GetColor::inbox(int x, int y, int x1, int y1, int x2, int y2)
+bool Picker::inbox(int x, int y, int x1, int y1, int x2, int y2)
 {
   if (x1 > x2)
     std::swap(x1, x2);
@@ -54,7 +54,7 @@ bool GetColor::inbox(int x, int y, int x1, int y1, int x2, int y2)
     return 0;
 }
 
-void GetColor::push(View *view)
+void Picker::push(View *view)
 {
   Bitmap *bmp = Project::bmp;
   Palette *pal = Project::palette;
@@ -63,7 +63,7 @@ void GetColor::push(View *view)
   {
     const int color = bmp->getpixel(view->imgx, view->imgy);
 
-    if (Gui::getcolor->getcolorUseBest() == 1)
+    if (Gui::picker->useBest() == 1)
     {
       int nearest = 99999999;
       int use = 0;
@@ -83,42 +83,42 @@ void GetColor::push(View *view)
     }
 
     Gui::colors->colorUpdate(color);
-    Gui::getcolor->getcolorUpdate(color);
+    Gui::picker->update(color);
   }
 }
 
-void GetColor::drag(View *view)
+void Picker::drag(View *view)
 {
   push(view);
 }
 
-void GetColor::release(View *)
+void Picker::release(View *)
 {
 }
 
-void GetColor::move(View *)
+void Picker::move(View *)
 {
 }
 
-void GetColor::key(View *)
+void Picker::key(View *)
 {
 }
 
-void GetColor::done(View *, int)
+void Picker::done(View *, int)
 {
 }
 
-void GetColor::redraw(View *view)
+void Picker::redraw(View *view)
 {
   view->drawMain(true);
 }
 
-bool GetColor::isActive()
+bool Picker::isActive()
 {
   return false;
 }
 
-void GetColor::reset()
+void Picker::reset()
 {
 }
 

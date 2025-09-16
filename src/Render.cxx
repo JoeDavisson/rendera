@@ -866,7 +866,7 @@ void Render::begin()
 
   // for tools that grow outward
 //  switch (Gui::getPaintMode())
-  switch (Gui::paint->getPaintMode())
+  switch (Gui::paint->getMode())
   {
     case BLURRY:
       size = (3 << brush->blurry_edge);
@@ -898,7 +898,7 @@ void Render::begin()
 
   view->rendering = true;
 
-  switch (Gui::paint->getPaintMode())
+  switch (Gui::paint->getMode())
   {
     case SOLID:
       solid();

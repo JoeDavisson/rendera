@@ -31,7 +31,7 @@ public:
   enum
   {
     PAINT,
-    GETCOLOR,
+    PICKER,
     SELECT,
     OFFSET,
     TEXT,

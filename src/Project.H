@@ -32,7 +32,7 @@ class Stroke;
 class Undo;
 
 class Paint;
-class GetColor;
+class Picker;
 class Selection;
 class Offset;
 class Text;
@@ -68,7 +68,7 @@ public:
   static int undo_max;
 
   static Paint *paint;
-  static GetColor *getcolor;
+  static Picker *picker;
   static Selection *selection;
   static Offset *offset;
   static Text *text;

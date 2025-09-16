@@ -22,9 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "CheckBox.H"
 #include "ColorOptions.H"
 #include "Gui.H"
-#include "GetColorOptions.H"
 #include "Inline.H"
 #include "Palette.H"
+#include "PickerOptions.H"
 #include "Project.H"
 #include "Separator.H"
 #include "Widget.H"
@@ -33,60 +33,60 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  Widget *getcolor_color;
-  CheckBox *getcolor_best;
+  Widget *picker_color;
+  CheckBox *picker_best;
 }
 
-GetColorOptions::GetColorOptions(int x, int y, int w, int h, const char *l)
+PickerOptions::PickerOptions(int x, int y, int w, int h, const char *l)
 : Group(x, y, w, h, l)                     
 {
   int pos = Group::title_height + Gui::SPACING;
 
-  getcolor_color = new Widget(this, 8, pos, 160, 160, "Selected Color", 0, 0, 0);
-  getcolor_color->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
+  picker_color = new Widget(this, 8, pos, 160, 160, "Selected Color", 0, 0, 0);
+  picker_color->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   pos += 160 + Gui::SPACING + 16;
 
   new Separator(this, 0, pos, Gui::OPTIONS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + Gui::SPACING;
 
-  getcolor_best = new CheckBox(this, 8, pos, 16, 16, "Best Match", 0);
-  getcolor_best->tooltip("Use nearest color in palette");
-  getcolor_best->center();
-  getcolor_best->value(0);
+  picker_best = new CheckBox(this, 8, pos, 16, 16, "Best Match", 0);
+  picker_best->tooltip("Use nearest color in palette");
+  picker_best->center();
+  picker_best->value(0);
 
   resizable(0);
   end();
 }
 
-GetColorOptions::~GetColorOptions()
+PickerOptions::~PickerOptions()
 {
 }
 
-void GetColorOptions::getcolorUpdate(int c)
+void PickerOptions::update(int c)
 {
   Palette *pal = Project::palette;
-//  const int index = palette_swatches->var;
   const int index = Gui::colors->paletteSwatchesIndex();
 
-  if (getcolor_best->value())
+  if (picker_best->value())
   {
-    getcolor_color->bitmap->clear(pal->data[index]);
+    picker_color->bitmap->clear(pal->data[index]);
   }
     else
   {
-    getcolor_color->bitmap->clear(c);
+    picker_color->bitmap->clear(c);
   }
 
-  getcolor_color->bitmap->rect(0,
+  picker_color->bitmap->rect(0,
                                0,
-                               getcolor_color->bitmap->w - 1,
-                               getcolor_color->bitmap->h - 1,
+                               picker_color->bitmap->w - 1,
+                               picker_color->bitmap->h - 1,
                                makeRgb(0, 0, 0), 0);
-  getcolor_color->redraw();
+
+  picker_color->redraw();
 }
 
-int GetColorOptions::getcolorUseBest()
+int PickerOptions::useBest()
 {
-  return getcolor_best->value();
+  return picker_best->value();
 }
 

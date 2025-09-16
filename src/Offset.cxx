@@ -88,7 +88,7 @@ void Offset::drag(View *view)
   temp_y = y;
 
   view->drawMain(true);
-  Gui::offset->offsetValues(dx, dy);
+  Gui::offset->values(dx, dy);
 }
 
 void Offset::release(View *)
@@ -100,7 +100,7 @@ void Offset::release(View *)
   Project::undo->push(temp_x, temp_y, Project::bmp->w, Project::bmp->h,
                       Undo::OFFSET);
   
-  Gui::offset->offsetValues(0, 0);
+  Gui::offset->values(0, 0);
 }
 
 void Offset::move(View *)

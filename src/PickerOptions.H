@@ -18,8 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef GETCOLOR_OPTIONS_H
-#define GETCOLOR_OPTIONS_H
+#ifndef PICKER_OPTIONS_H
+#define PICKER_OPTIONS_H
 
 #include "Group.H"
 
@@ -27,14 +27,14 @@ class Button;
 class Group;
 class ToggleButton;
 
-class GetColorOptions : public Group
+class PickerOptions : public Group
 {
 public:
-  GetColorOptions(int, int, int, int, const char *);
-  ~GetColorOptions();
+  PickerOptions(int, int, int, int, const char *);
+  ~PickerOptions();
 
-  void getcolorUpdate(int);
-  int getcolorUseBest();
+  void update(int);
+  int useBest();
 };
 
 #endif

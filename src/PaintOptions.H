@@ -32,23 +32,23 @@ public:
   PaintOptions(int, int, int, int, const char *);
   ~PaintOptions();
 
-  void paintChangeSize(int);
-  void paintMode();
-  void paintSize(Widget *, void *);
-  void paintSizeValue(Widget *, void *);
-  void paintShape(Widget *, void *);
-  void paintStroke(Widget *, void *);
-  void paintCoarseEdge(Widget *, void *);
-  void paintFineEdge(Widget *, void *);
-  void paintBlurryEdge(Widget *, void *);
-  void paintWatercolorEdge(Widget *, void *);
-  void paintChalkEdge(Widget *, void *);
-  void paintTextureEdge(Widget *, void *);
-  void paintTextureMarb(Widget *, void *);
-  void paintTextureTurb(Widget *, void *);
-  void paintAverageEdge(Widget *, void *);
-  void paintUpdateBrush();
-  int getPaintMode();
+  void changeSize(int);
+  void mode();
+  void size(Widget *, void *);
+  void sizeValue(Widget *, void *);
+  void shape(Widget *, void *);
+  void stroke(Widget *, void *);
+  void coarseEdge(Widget *, void *);
+  void fineEdge(Widget *, void *);
+  void blurryEdge(Widget *, void *);
+  void watercolorEdge(Widget *, void *);
+  void chalkEdge(Widget *, void *);
+  void textureEdge(Widget *, void *);
+  void textureMarb(Widget *, void *);
+  void textureTurb(Widget *, void *);
+  void averageEdge(Widget *, void *);
+  void updateBrush();
+  int getMode();
 };
 
 #endif

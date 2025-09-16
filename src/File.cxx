@@ -287,7 +287,7 @@ int File::loadFile(const char *fn)
     char s[256];
 
     getFilename(s, fn);
-    Gui::images->imagesAddFile(s);
+    Gui::images->addFile(s);
   }
 
   // redraw

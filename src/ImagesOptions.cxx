@@ -45,15 +45,15 @@ namespace
   Button *images_move_down;
   Fl_Box *images_mem;
 
-  void cb_imagesBrowse(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->imagesBrowse(); }
+  void cb_browse(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->browse(); }
 
-  void cb_imagesCloseFile(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->imagesCloseFile(); }
+  void cb_closeFile(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->closeFile(); }
 
-  void cb_imagesMoveUp(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->imagesMoveUp(); }
+  void cb_moveUp(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->moveUp(); }
 
-  void cb_imagesMoveDown(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->imagesMoveDown(); }
+  void cb_moveDown(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->moveDown(); }
 
-  void cb_imagesRename(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->imagesRename(); }
+  void cb_rename(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->rename(); }
 }
 
 ImagesOptions::ImagesOptions(int x, int y, int w, int h, const char *l)
@@ -66,22 +66,22 @@ ImagesOptions::ImagesOptions(int x, int y, int w, int h, const char *l)
   images_browse = new Fl_Hold_Browser(8, pos, 160, 256);
   images_browse->textsize(14);
   images_browse->resize(this->x() + 8, this->y() + pos, 160, 384);
-  images_browse->callback((Fl_Callback *)cb_imagesBrowse);
+  images_browse->callback((Fl_Callback *)cb_browse);
 
   pos += images_browse->h() + Gui::SPACING;
 
   images_close = new Button(this, 8, pos, 48, 48,
                           "Close File (Delete)", images_close_png,
-                          (Fl_Callback *)cb_imagesCloseFile);
+                          (Fl_Callback *)cb_closeFile);
 
   images_move_up = new Button(this, 8 + 48 + 8, pos, 48, 48,
                             "Move Up", images_up_large_png,
-                            (Fl_Callback *)cb_imagesMoveUp);
+                            (Fl_Callback *)cb_moveUp);
 
   images_move_down = new Button(this, 8 + 48 + 8 + 48 + 8, pos,
                               48, 48,
                               "Move Down", images_down_large_png,
-                              (Fl_Callback *)cb_imagesMoveDown);
+                              (Fl_Callback *)cb_moveDown);
 
   pos += 48 + Gui::SPACING;
 
@@ -89,7 +89,7 @@ ImagesOptions::ImagesOptions(int x, int y, int w, int h, const char *l)
   images_rename->value("");
   images_rename->when(FL_WHEN_ENTER_KEY);
   images_rename->resize(this->x() + 8, this->y() + pos, 160, 32);
-  images_rename->callback((Fl_Callback *)cb_imagesRename);
+  images_rename->callback((Fl_Callback *)cb_rename);
   pos += 32 + Gui::SPACING;
 
   new Separator(this, 0, pos, Gui::IMAGES_WIDTH, Separator::HORIZONTAL, "");
@@ -109,7 +109,7 @@ ImagesOptions::~ImagesOptions()
 {
 }
 
-void ImagesOptions::imagesBrowse()
+void ImagesOptions::browse()
 {
   const int line = images_browse->value();
 
@@ -127,7 +127,7 @@ void ImagesOptions::imagesBrowse()
   }                
 }
   
-void ImagesOptions::imagesRename()
+void ImagesOptions::rename()
 { 
   const int line = images_browse->value();
   
@@ -138,14 +138,14 @@ void ImagesOptions::imagesRename()
   }
 }
 
-void ImagesOptions::imagesAddFile(const char *name)
+void ImagesOptions::addFile(const char *name)
 {
   images_browse->add(name, 0);
   images_browse->select(Project::current + 1);
-  imagesBrowse();
+  browse();
 }
 
-void ImagesOptions::imagesCloseFile()
+void ImagesOptions::closeFile()
 {
   if (Project::removeImage() == false)
     return;
@@ -166,7 +166,7 @@ void ImagesOptions::imagesCloseFile()
 
   if (Project::last == 0)
   {
-    imagesAddFile("new");
+    addFile("new");
     Project::last = 1;
   }
 
@@ -177,7 +177,7 @@ void ImagesOptions::imagesCloseFile()
   Gui::view->drawMain(true);
 }
 
-void ImagesOptions::imagesDuplicate()
+void ImagesOptions::duplicate()
 {
   const int current = Project::current;
   const int last = Project::last;
@@ -190,10 +190,10 @@ void ImagesOptions::imagesDuplicate()
   Project::newImage(bmp->cw, bmp->ch);
   bmp_list[current]->blit(bmp_list[last], 0, 0, 0, 0, bmp->w, bmp->h);
 
-  imagesAddFile("new");
+  addFile("new");
 }
 
-void ImagesOptions::imagesMoveUp()
+void ImagesOptions::moveUp()
 {
   int temp = Project::current;
 
@@ -201,11 +201,11 @@ void ImagesOptions::imagesMoveUp()
   {
     images_browse->swap(temp + 1, temp); 
     images_browse->select(temp);
-    imagesBrowse();
+    browse();
   }
 }
 
-void ImagesOptions::imagesMoveDown()
+void ImagesOptions::moveDown()
 {
   int temp = Project::current;
 
@@ -213,11 +213,11 @@ void ImagesOptions::imagesMoveDown()
   {
     images_browse->swap(temp + 1, temp + 2); 
     images_browse->select(temp + 2);
-    imagesBrowse();
+    browse();
   }
 }
 
-void ImagesOptions::imagesMemLabel(const char *s)
+void ImagesOptions::memLabel(const char *s)
 {
   images_mem->copy_label(s);
 }

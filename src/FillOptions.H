@@ -31,10 +31,10 @@ public:
   FillOptions(int, int, int, int, const char *);
   ~FillOptions();
 
-  int fillGetRange();
-  int fillGetFeather();
-  int fillGetColorOnly();
-  void fillReset();
+  int getRange();
+  int getFeather();
+  int getColorOnly();
+  void reset();
 };
 
 #endif

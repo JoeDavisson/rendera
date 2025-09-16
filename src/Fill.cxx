@@ -396,12 +396,9 @@ void Fill::push(View *view)
          view->imgy,
          color,
          target,
-//         atoi(Gui::fill_range->value()),
-//         atoi(Gui::fill_feather->value()),
-         Gui::fill->fillGetRange(),
-         Gui::fill->fillGetFeather(),
-         Gui::fill->fillGetColorOnly());
-//         Gui::fill_color_only->value());
+         Gui::fill->getRange(),
+         Gui::fill->getFeather(),
+         Gui::fill->getColorOnly());
 
     view->drawMain(true);
   }

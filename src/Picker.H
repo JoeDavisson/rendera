@@ -25,11 +25,11 @@ class View;
 
 #include "Tool.H"
 
-class GetColor : public Tool
+class Picker : public Tool
 {
 public:
-  GetColor();
-  ~GetColor();
+  Picker();
+  ~Picker();
 
   void push(View *);
   void drag(View *);

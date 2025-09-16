@@ -22,12 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Clone.H"
 #include "FillOptions.H"
-#include "GetColorOptions.H"
 #include "Gui.H"
 #include "Images.H"
 #include "Map.H"
 #include "OffsetOptions.H"
 #include "PaintOptions.H"
+#include "PickerOptions.H"
 #include "Project.H"
 #include "Selection.H"
 #include "SelectionOptions.H"
@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "TextOptions.H"
 #include "ToggleButton.H"
 #include "Tool.H"
-#include "ToolsOptions.H"
+#include "ToolOptions.H"
 #include "View.H"
 #include "Widget.H"
 
@@ -50,23 +50,23 @@ namespace
   ToggleButton *origin;
   ToggleButton *constrain;
 
-  void cb_toolChange(Fl_Widget *w, void *data) { ToolsOptions *temp = (ToolsOptions *)data; temp->toolChange((Widget *)w, data); }
+  void cb_change(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->change((Widget *)w, data); }
 
-  void cb_toolCloneEnable(Fl_Widget *w, void *data) { ToolsOptions *temp = (ToolsOptions *)data; temp->toolCloneEnable((Widget *)w, data); }
+  void cb_cloneEnable(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->cloneEnable((Widget *)w, data); }
 
-  void cb_toolConstrainEnable(Fl_Widget *w, void *data) { ToolsOptions *temp = (ToolsOptions *)data; temp->toolConstrainEnable((Widget *)w, data); }
+  void cb_constrainEnable(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->constrainEnable((Widget *)w, data); }
 
-  void cb_toolOriginEnable(Fl_Widget *w, void *data) { ToolsOptions *temp = (ToolsOptions *)data; temp->toolOriginEnable((Widget *)w, data); }
+  void cb_originEnable(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->originEnable((Widget *)w, data); }
 }
 
-ToolsOptions::ToolsOptions(int x, int y, int w, int h, const char *l)
+ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
 : Group(x, y, w, h, l)                     
 {
   int pos = Group::title_height + Gui::SPACING;
 
   tool = new Widget(this, 8, pos, 48, 6 * 48,
                     "Tools", images_tools_png, 48, 48,
-                    (Fl_Callback *)cb_toolChange);
+                    (Fl_Callback *)cb_change);
 
   pos += 6 * 48 + Gui::SPACING;
 
@@ -76,42 +76,42 @@ ToolsOptions::ToolsOptions(int x, int y, int w, int h, const char *l)
   clone = new ToggleButton(this, 8, pos, 48, 48,
                            "Clone (Ctrl+Click to set target)",
                            images_clone_png,
-                           (Fl_Callback *)cb_toolCloneEnable);
+                           (Fl_Callback *)cb_cloneEnable);
 
   pos += 48 + 8;
 
   origin = new ToggleButton(this, 8, pos, 48, 48,
                             "Start From Center", images_origin_png,
-                            (Fl_Callback *)cb_toolOriginEnable);
+                            (Fl_Callback *)cb_originEnable);
 
   pos += 48 + 8;
 
   constrain = new ToggleButton(this, 8, pos, 48, 48,
                               "Lock Proportions",
                               images_constrain_png,
-                              (Fl_Callback *)cb_toolConstrainEnable);
+                              (Fl_Callback *)cb_constrainEnable);
 
   resizable(0);
   end();
 }
 
-ToolsOptions::~ToolsOptions()
+ToolOptions::~ToolOptions()
 {
 }
 
-void ToolsOptions::init()
+void ToolOptions::init()
 {
   tool->do_callback();
 }
 
-void ToolsOptions::toolChange(Widget *, void *var)
+void ToolOptions::change(Widget *, void *var)
 {
   int tool = *(int *)var;
 
   if (tool != Tool::PAINT)
     Gui::paint->hide();
-  if (tool != Tool::GETCOLOR)
-    Gui::getcolor->hide();
+  if (tool != Tool::PICKER)
+    Gui::picker->hide();
   if (tool != Tool::SELECT)
     Gui::selection->hide();
   if (tool != Tool::OFFSET)
@@ -129,22 +129,19 @@ void ToolsOptions::toolChange(Widget *, void *var)
     case Tool::PAINT:
       Project::setTool(Tool::PAINT);
       Project::tool->reset();
-//      paint_brush_preview->do_callback();
-//      paint_shape->do_callback();
-      Gui::paint->paintUpdateBrush();
+      Gui::paint->updateBrush();
       Gui::paint->show();
       Gui::statusInfo((char *)"Middle-click to navigate. Mouse wheel zooms. Esc to cancel rendering.");
       
       break;
-    case Tool::GETCOLOR:
-      Project::setTool(Tool::GETCOLOR);
+    case Tool::PICKER:
+      Project::setTool(Tool::PICKER);
       Project::tool->reset();
-      Gui::getcolor->show();
+      Gui::picker->show();
       Gui::statusInfo((char *)"Click to select a color from the image.");
       break;
     case Tool::SELECT:
       Project::setTool(Tool::SELECT);
-      //  Project::tool->reset();
       Project::tool->redraw(Gui::view);
       Gui::selection->show();
       Gui::statusInfo((char *)"Draw a box, then click inside box to move, outside to change size.");
@@ -170,22 +167,22 @@ void ToolsOptions::toolChange(Widget *, void *var)
   }
 }
 
-void ToolsOptions::toolCloneEnable(Widget *, void *var)
+void ToolOptions::cloneEnable(Widget *, void *var)
 {
   Clone::active = *(int *)var;
 }
 
-void ToolsOptions::toolOriginEnable(Widget *, void *var)
+void ToolOptions::originEnable(Widget *, void *var)
 {
   Project::stroke->origin = *(int *)var;
 }
 
-void ToolsOptions::toolConstrainEnable(Widget *, void *var)
+void ToolOptions::constrainEnable(Widget *, void *var)
 {
   Project::stroke->constrain = *(int *)var;
 }
 
-int ToolsOptions::getTool()
+int ToolOptions::getTool()
 {
   return tool->var;
 }

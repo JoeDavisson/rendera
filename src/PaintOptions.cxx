@@ -20,12 +20,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Brush.H"
-#include "GetColor.H"
 #include "Gui.H"
 #include "Images.H"
 #include "Inline.H"
 #include "InputInt.H"
 #include "PaintOptions.H"
+#include "Picker.H"
 #include "Project.H"
 #include "Render.H"
 #include "Separator.H"
@@ -58,33 +58,33 @@ namespace
   Widget *paint_average_edge;
   Fl_Choice *paint_mode;
 
-  void cb_paintSizeValue(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintSizeValue((Widget *)w, data); }
+  void cb_sizeValue(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->sizeValue((Widget *)w, data); }
 
-  void cb_paintSize(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintSize((Widget *)w, data); }
+  void cb_size(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->size((Widget *)w, data); }
 
-  void cb_paintShape(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintShape((Widget *)w, data); }
+  void cb_shape(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->shape((Widget *)w, data); }
 
-  void cb_paintStroke(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintStroke((Widget *)w, data); }
+  void cb_stroke(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->stroke((Widget *)w, data); }
 
-  void cb_paintMode(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintMode(); }
+  void cb_mode(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->mode(); }
 
-  void cb_paintCoarseEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintCoarseEdge((Widget *)w, data); }
+  void cb_coarseEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->coarseEdge((Widget *)w, data); }
 
-  void cb_paintFineEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintFineEdge((Widget *)w, data); }
+  void cb_fineEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->fineEdge((Widget *)w, data); }
 
-  void cb_paintBlurryEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintBlurryEdge((Widget *)w, data); }
+  void cb_blurryEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->blurryEdge((Widget *)w, data); }
 
-  void cb_paintWatercolorEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintWatercolorEdge((Widget *)w, data); }
+  void cb_watercolorEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->watercolorEdge((Widget *)w, data); }
 
-  void cb_paintChalkEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintChalkEdge((Widget *)w, data); }
+  void cb_chalkEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->chalkEdge((Widget *)w, data); }
 
-  void cb_paintTextureEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintTextureEdge((Widget *)w, data); }
+  void cb_textureEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->textureEdge((Widget *)w, data); }
 
-  void cb_paintTextureMarb(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintTextureMarb((Widget *)w, data); }
+  void cb_textureMarb(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->textureMarb((Widget *)w, data); }
 
-  void cb_paintTextureTurb(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintTextureTurb((Widget *)w, data); }
+  void cb_textureTurb(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->textureTurb((Widget *)w, data); }
 
-  void cb_paintAverageEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->paintAverageEdge((Widget *)w, data); }
+  void cb_averageEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->averageEdge((Widget *)w, data); }
 }
 
 PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
@@ -98,18 +98,18 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
   pos += 160 + 8;
 
   paint_size_value = new InputInt(this, 8, pos, 160, 32,
-                       "", (Fl_Callback *)cb_paintSizeValue, 1, Brush::max_size);
+                       "", (Fl_Callback *)cb_sizeValue, 1, Brush::max_size);
   paint_size_value->textsize(16);
   pos += 32 + 8;
 
   paint_size = new Widget(this, 8, pos, 160, 32,
                           "Brush Size", images_size_png, 10, 32,
-                          (Fl_Callback *)cb_paintSize);
+                          (Fl_Callback *)cb_size);
   pos += 32 + 8;
 
   paint_shape = new Widget(this, 8, pos, 160, 40,
                            "Shape Adjust", images_shape_png, 10, 40,
-                           (Fl_Callback *)cb_paintShape);
+                           (Fl_Callback *)cb_shape);
   pos += 40 + Gui::SPACING;
 
   new Separator(this, 0, pos, Gui::OPTIONS_WIDTH, Separator::HORIZONTAL, "");
@@ -117,7 +117,7 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
 
   paint_stroke = new Widget(this, 8, pos, 160, 80,
                             "Brushstroke Type", images_stroke_png, 40, 40,
-                            (Fl_Callback *)cb_paintStroke);
+                            (Fl_Callback *)cb_stroke);
 
   pos += 80 + Gui::SPACING;
 
@@ -139,41 +139,41 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
   paint_mode->add("Average");
   paint_mode->value(0);
   paint_mode->textsize(16);
-  paint_mode->callback((Fl_Callback *)cb_paintMode);
+  paint_mode->callback((Fl_Callback *)cb_mode);
   pos += 32 + 8;
 
   paint_coarse_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_edge_png, 20, 32,
-                          (Fl_Callback *)cb_paintCoarseEdge);
+                          (Fl_Callback *)cb_coarseEdge);
   paint_fine_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_edge_png, 20, 32,
-                          (Fl_Callback *)cb_paintFineEdge);
+                          (Fl_Callback *)cb_fineEdge);
   paint_blurry_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_edge_png, 20, 32,
-                          (Fl_Callback *)cb_paintBlurryEdge);
+                          (Fl_Callback *)cb_blurryEdge);
   paint_watercolor_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_watercolor_edge_png, 20, 32,
-                          (Fl_Callback *)cb_paintWatercolorEdge);
+                          (Fl_Callback *)cb_watercolorEdge);
   paint_chalk_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_chalk_edge_png, 20, 32,
-                          (Fl_Callback *)cb_paintChalkEdge);
+                          (Fl_Callback *)cb_chalkEdge);
   paint_texture_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_edge_png, 20, 32,
-                          (Fl_Callback *)cb_paintTextureEdge);
+                          (Fl_Callback *)cb_textureEdge);
   paint_texture_marb = new Widget(this, 8, pos + 40, 160, 32,
                           "Marbleize", images_marbleize_png, 20, 32,
-                          (Fl_Callback *)cb_paintTextureMarb);
+                          (Fl_Callback *)cb_textureMarb);
   paint_texture_turb = new Widget(this, 8, pos + 80, 160, 32,
                           "Turbulence", images_turbulence_png, 20, 32,
-                          (Fl_Callback *)cb_paintTextureTurb);
+                          (Fl_Callback *)cb_textureTurb);
   paint_average_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_edge_png, 20, 32,
-                          (Fl_Callback *)cb_paintAverageEdge);
+                          (Fl_Callback *)cb_averageEdge);
 
   resizable(0);
   end();
 
-  paintMode();
+  mode();
   paint_size->var = 0;
   paint_size->do_callback();
   paint_coarse_edge->var = 3;
@@ -192,7 +192,7 @@ PaintOptions::~PaintOptions()
 {
 }
 
-void PaintOptions::paintMode()
+void PaintOptions::mode()
 {
   Project::brush->aa = 0;
   paint_coarse_edge->hide();
@@ -238,7 +238,7 @@ void PaintOptions::paintMode()
   }
 }
 
-void PaintOptions::paintChangeSize(int size)
+void PaintOptions::changeSize(int size)
 {
   Brush *brush = Project::brush;
   float round = (float)(15 - paint_shape->var) / 15;
@@ -283,85 +283,85 @@ void PaintOptions::paintChangeSize(int size)
   paint_size_value->redraw();
 }
 
-void PaintOptions::paintSize(Widget *, void *var)
+void PaintOptions::size(Widget *, void *var)
 {
   int size = brush_sizes[*(int *)var];
-  paintChangeSize(size);
+  changeSize(size);
   char s[16];
   snprintf(s, sizeof(s), "%d", (int)size);
   paint_size_value->value(s);
   paint_size_value->redraw();
 }
 
-void PaintOptions::paintSizeValue(Widget *, void *)
+void PaintOptions::sizeValue(Widget *, void *)
 {
   int size;
   sscanf(paint_size_value->value(), "%d", &size);
-  paintChangeSize(size);
+  changeSize(size);
 }
 
-void PaintOptions::paintShape(Widget *, void *)
+void PaintOptions::shape(Widget *, void *)
 {
-  paintChangeSize(Project::brush->size);
+  changeSize(Project::brush->size);
 }
 
-void PaintOptions::paintStroke(Widget *, void *var)
+void PaintOptions::stroke(Widget *, void *var)
 {
   Project::stroke->type = *(int *)var;
 }
 
-void PaintOptions::paintCoarseEdge(Widget *, void *var)
+void PaintOptions::coarseEdge(Widget *, void *var)
 {
   Project::brush->coarse_edge = *(int *)var;
 }
 
-void PaintOptions::paintFineEdge(Widget *, void *var)
+void PaintOptions::fineEdge(Widget *, void *var)
 {
   Project::brush->fine_edge = *(int *)var;
 }
 
-void PaintOptions::paintBlurryEdge(Widget *, void *var)
+void PaintOptions::blurryEdge(Widget *, void *var)
 {
   Project::brush->blurry_edge = *(int *)var;
 }
 
-void PaintOptions::paintWatercolorEdge(Widget *, void *var)
+void PaintOptions::watercolorEdge(Widget *, void *var)
 {
   Project::brush->watercolor_edge = *(int *)var;
 }
 
-void PaintOptions::paintChalkEdge(Widget *, void *var)
+void PaintOptions::chalkEdge(Widget *, void *var)
 {
   Project::brush->chalk_edge = *(int *)var;
 }
 
-void PaintOptions::paintTextureEdge(Widget *, void *var)
+void PaintOptions::textureEdge(Widget *, void *var)
 {
   Project::brush->texture_edge = *(int *)var;
 }
 
-void PaintOptions::paintTextureMarb(Widget *, void *var)
+void PaintOptions::textureMarb(Widget *, void *var)
 {
   Project::brush->texture_marb = *(int *)var;
 }
 
-void PaintOptions::paintTextureTurb(Widget *, void *var)
+void PaintOptions::textureTurb(Widget *, void *var)
 {
   Project::brush->texture_turb = *(int *)var;
 }
 
-void PaintOptions::paintAverageEdge(Widget *, void *var)
+void PaintOptions::averageEdge(Widget *, void *var)
 {
   Project::brush->average_edge = *(int *)var;
 }
 
-void PaintOptions::paintUpdateBrush()
+void PaintOptions::updateBrush()
 {
   paint_brush_preview->do_callback();
   paint_shape->do_callback();
 }
 
-int PaintOptions::getPaintMode()
+int PaintOptions::getMode()
 {
   return paint_mode->value();
 }

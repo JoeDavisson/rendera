@@ -25,12 +25,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "Dialog.H"
 #include "Fill.H"
-#include "GetColor.H"
 #include "Inline.H"
 #include "Map.H"
 #include "Offset.H"
 #include "Paint.H"
 #include "Palette.H"
+#include "Picker.H"
 #include "Project.H"
 #include "Selection.H"
 #include "Stroke.H"
@@ -59,7 +59,7 @@ int Project::mem_max;
 int Project::undo_max;
   
 Paint *Project::paint;
-GetColor *Project::getcolor;
+Picker *Project::picker;
 Selection *Project::selection;
 Offset *Project::offset;
 Text *Project::text;
@@ -87,7 +87,7 @@ void Project::init(int memory_limit, int undo_limit)
   last = 0;
 
   paint = new Paint();
-  getcolor = new GetColor();
+  picker = new Picker();
   selection = new Selection();
   offset = new Offset();
   text = new Text();
@@ -120,8 +120,8 @@ void Project::setTool(int num)
     case Tool::PAINT:
       tool = paint; 
       break;
-    case Tool::GETCOLOR:
-      tool = getcolor; 
+    case Tool::PICKER:
+      tool = picker; 
       break;
     case Tool::SELECT:
       tool = selection; 

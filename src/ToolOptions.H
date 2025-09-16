@@ -18,24 +18,24 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef TOOLS_OPTIONS_H
-#define TOOLS_OPTIONS_H
+#ifndef TOOL_OPTIONS_H
+#define TOOL_OPTIONS_H
 
 #include "Group.H"
 
 class Group;
 
-class ToolsOptions : public Group
+class ToolOptions : public Group
 {
 public:
-  ToolsOptions(int, int, int, int, const char *);
-  ~ToolsOptions();
+  ToolOptions(int, int, int, int, const char *);
+  ~ToolOptions();
 
   void init();
-  void toolChange(Widget *, void *);
-  void toolCloneEnable(Widget *, void *);
-  void toolConstrainEnable(Widget *, void *);
-  void toolOriginEnable(Widget *, void *);
+  void change(Widget *, void *);
+  void cloneEnable(Widget *, void *);
+  void constrainEnable(Widget *, void *);
+  void originEnable(Widget *, void *);
   int getTool();
 };
 

@@ -23,13 +23,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 class ColorOptions;
 class FillOptions;
-class GetColorOptions;
 class ImagesOptions;
 class OffsetOptions;
 class PaintOptions;
+class PickerOptions;
 class SelectionOptions;
 class TextOptions;
-class ToolsOptions;
+class ToolOptions;
 class View;
 class ViewOptions;
 
@@ -107,13 +107,13 @@ public:
 
   static ViewOptions *top;
   static PaintOptions *paint;
-  static GetColorOptions *getcolor;
+  static PickerOptions *picker;
   static ImagesOptions *images;
   static OffsetOptions *offset;
   static SelectionOptions *selection;
   static TextOptions *text;
   static FillOptions *fill;
-  static ToolsOptions *tools;
+  static ToolOptions *tools;
   static ColorOptions *colors;
 
 private:

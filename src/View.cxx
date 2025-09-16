@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.H"
 #include "Tool.H"
 #include "ToggleButton.H"
-#include "ToolsOptions.H"
+#include "ToolOptions.H"
 #include "Undo.H"
 #include "View.H"
 #include "ViewOptions.H"
@@ -603,7 +603,7 @@ void View::changeCursor()
 {
   switch (Gui::tools->getTool())
   {
-    case Tool::GETCOLOR:
+    case Tool::PICKER:
     case Tool::FILL:
       window()->cursor(FL_CURSOR_CROSS);
       break;

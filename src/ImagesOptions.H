@@ -33,14 +33,14 @@ public:
   ImagesOptions(int, int, int, int, const char *);
   ~ImagesOptions();
 
-  void imagesBrowse();
-  void imagesRename();
-  void imagesAddFile(const char *);
-  void imagesCloseFile();
-  void imagesDuplicate();
-  void imagesMoveUp();
-  void imagesMoveDown();
-  void imagesMemLabel(const char *);
+  void browse();
+  void rename();
+  void addFile(const char *);
+  void closeFile();
+  void duplicate();
+  void moveUp();
+  void moveDown();
+  void memLabel(const char *);
 };
 
 #endif

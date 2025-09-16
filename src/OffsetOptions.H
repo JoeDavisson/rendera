@@ -31,11 +31,11 @@ public:
   OffsetOptions(int, int, int, int, const char *);
   ~OffsetOptions();
 
-  void offsetValues(int, int);
-  void offsetLeft();
-  void offsetRight();
-  void offsetUp();
-  void offsetDown();
+  void values(int, int);
+  void left();
+  void right();
+  void up();
+  void down();
 };
 
 #endif

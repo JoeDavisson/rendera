@@ -30,19 +30,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "FX/FX.H"
 #include "File.H"
 #include "FillOptions.H"
-#include "GetColorOptions.H"
 #include "Gui.H"
 #include "ImagesOptions.H"
 #include "OffsetOptions.H"
 #include "Palette.H"
 #include "PaintOptions.H"
+#include "PickerOptions.H"
 #include "Project.H"
 #include "Separator.H"
 #include "Selection.H"
 #include "SelectionOptions.H"
 #include "TextOptions.H"
 #include "Tool.H"
-#include "ToolsOptions.H"
+#include "ToolOptions.H"
 #include "Transform.H"
 #include "View.H"
 #include "ViewOptions.H"
@@ -60,13 +60,13 @@ Fl_Progress *Gui::progress;
 // groups
 ViewOptions *Gui::top;
 PaintOptions *Gui::paint;
-GetColorOptions *Gui::getcolor;
+PickerOptions *Gui::picker;
 ImagesOptions *Gui::images;
 OffsetOptions *Gui::offset;
 SelectionOptions *Gui::selection;
 TextOptions *Gui::text;
 FillOptions *Gui::fill;
-ToolsOptions *Gui::tools;
+ToolOptions *Gui::tools;
 ColorOptions *Gui::colors;
 
 namespace
@@ -434,7 +434,7 @@ void Gui::init()
 
   left_height = window->h() - top->h() - menubar->h() - status->h();
 
-  tools = new ToolsOptions(0, top->h() + menubar->h(),
+  tools = new ToolOptions(0, top->h() + menubar->h(),
                            64, left_height,
                            "Tools");
 
@@ -446,9 +446,9 @@ void Gui::init()
                                    OPTIONS_WIDTH, left_height,
                                   "Selection");
 
-  getcolor = new GetColorOptions(TOOLS_WIDTH, top->h() + menubar->h(),
-                                 OPTIONS_WIDTH, left_height,
-                                 "Get Color");
+  picker = new PickerOptions(TOOLS_WIDTH, top->h() + menubar->h(),
+                               OPTIONS_WIDTH, left_height,
+                               "Get Color");
 
   offset = new OffsetOptions(TOOLS_WIDTH, top->h() + menubar->h(),
                              OPTIONS_WIDTH, left_height,
@@ -491,7 +491,7 @@ void Gui::init()
 
   left->add(tools);
   left->add(paint);
-  left->add(getcolor);
+  left->add(picker);
   left->add(selection);
   left->add(offset);
   left->add(text);
@@ -520,7 +520,7 @@ void Gui::init()
   paletteSetDefault();
   tools->init();
   top->zoomLevel();
-  images->imagesAddFile("new");
+  images->addFile("new");
   colors->colorUpdate(Project::palette->data[0]);
 }
 
@@ -830,7 +830,7 @@ void Gui::selectToImage()
   select_bmp->blit(temp, 0, 0, 0, 0, temp->w, temp->h);
 
   if (Project::newImageFromBitmap(temp) != -1)
-    images->imagesAddFile("new_from_selection");
+    images->addFile("new_from_selection");
 }
 
 void Gui::clearToBlack()
@@ -891,7 +891,7 @@ void Gui::clearToWhite()
 
 void Gui::closeFile()
 {
-  images->imagesCloseFile();
+  images->closeFile();
 }
 
 Fl_Menu_Bar *Gui::getMenuBar()
@@ -960,13 +960,13 @@ void Gui::updateMemInfo()
           mem, mem_gb ? "GB" : "MB", max, max_gb ? "GB" : "MB",
           undos, Project::undo_max, redos);
 
-  images->imagesMemLabel(s);
+  images->memLabel(s);
 
   Fl::repeat_timeout(1.0, (Fl_Timeout_Handler)Gui::updateMemInfo);
 }
 
 void Gui::duplicate()
 {
-  images->imagesDuplicate();
+  images->duplicate();
 }
 

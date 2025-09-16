@@ -42,13 +42,13 @@ namespace
   RepeatButton *offset_right;
   RepeatButton *offset_down;
 
-  void cb_offsetLeft(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->offsetLeft(); }
+  void cb_left(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->left(); }
 
-  void cb_offsetRight(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->offsetRight(); }
+  void cb_right(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->right(); }
 
-  void cb_offsetUp(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->offsetUp(); }
+  void cb_up(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->up(); }
 
-  void cb_offsetDown(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->offsetDown(); }
+  void cb_down(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->down(); }
 }
 
 OffsetOptions::OffsetOptions(int x, int y, int w, int h, const char *l)
@@ -67,15 +67,15 @@ OffsetOptions::OffsetOptions(int x, int y, int w, int h, const char *l)
   new Separator(this, 0, pos, Gui::OPTIONS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + Gui::SPACING;
 
-  offset_left = new RepeatButton(this, 16, pos + 26, 40, 40, "", images_left_png, (Fl_Callback *)cb_offsetLeft);
-  offset_up = new RepeatButton(this, 68, pos, 40, 40, "", images_up_png, (Fl_Callback *)cb_offsetUp);
-  offset_right = new RepeatButton(this, 120, pos + 26, 40, 40, "", images_right_png, (Fl_Callback *)cb_offsetRight);
-  offset_down = new RepeatButton(this, 68, pos + 52, 40, 40, "", images_down_png, (Fl_Callback *)cb_offsetDown);
+  offset_left = new RepeatButton(this, 16, pos + 26, 40, 40, "", images_left_png, (Fl_Callback *)cb_left);
+  offset_up = new RepeatButton(this, 68, pos, 40, 40, "", images_up_png, (Fl_Callback *)cb_up);
+  offset_right = new RepeatButton(this, 120, pos + 26, 40, 40, "", images_right_png, (Fl_Callback *)cb_right);
+  offset_down = new RepeatButton(this, 68, pos + 52, 40, 40, "", images_down_png, (Fl_Callback *)cb_down);
   pos += 92;
 
   new StaticText(this, 8, pos, 160, 32, "Nudge");
 
-  offsetValues(0, 0);
+  values(0, 0);
 
   resizable(0);
   end();
@@ -85,7 +85,7 @@ OffsetOptions::~OffsetOptions()
 {
 }
 
-void OffsetOptions::offsetValues(int x, int y)
+void OffsetOptions::values(int x, int y)
 {
   char s[256];
 
@@ -98,7 +98,7 @@ void OffsetOptions::offsetValues(int x, int y)
   offset_y->redraw();
 }
 
-void OffsetOptions::offsetLeft()
+void OffsetOptions::left()
 {
   View *view = Gui::view;
 
@@ -110,7 +110,7 @@ void OffsetOptions::offsetLeft()
   Project::tool->release(view);
 }
 
-void OffsetOptions::offsetRight()
+void OffsetOptions::right()
 {
   View *view = Gui::view;
 
@@ -122,7 +122,7 @@ void OffsetOptions::offsetRight()
   Project::tool->release(view);
 }
 
-void OffsetOptions::offsetUp()
+void OffsetOptions::up()
 {
   View *view = Gui::view;
 
@@ -134,7 +134,7 @@ void OffsetOptions::offsetUp()
   Project::tool->release(view);
 }
 
-void OffsetOptions::offsetDown()
+void OffsetOptions::down()
 {
   View *view = Gui::view;
 

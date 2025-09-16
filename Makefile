@@ -113,19 +113,19 @@ OBJ= \
   $(SRC_DIR)/View.o \
   $(SRC_DIR)/Selection.o \
   $(SRC_DIR)/Fill.o \
-  $(SRC_DIR)/GetColor.o \
+  $(SRC_DIR)/Picker.o \
   $(SRC_DIR)/Offset.o \
   $(SRC_DIR)/Paint.o \
   $(SRC_DIR)/Text.o \
   $(SRC_DIR)/ViewOptions.o \
   $(SRC_DIR)/PaintOptions.o \
-  $(SRC_DIR)/GetColorOptions.o \
+  $(SRC_DIR)/PickerOptions.o \
   $(SRC_DIR)/ImagesOptions.o \
   $(SRC_DIR)/OffsetOptions.o \
   $(SRC_DIR)/SelectionOptions.o \
   $(SRC_DIR)/TextOptions.o \
   $(SRC_DIR)/FillOptions.o \
-  $(SRC_DIR)/ToolsOptions.o \
+  $(SRC_DIR)/ToolOptions.o \
   $(SRC_DIR)/ColorOptions.o \
 
 # build program
