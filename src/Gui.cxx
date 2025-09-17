@@ -109,7 +109,7 @@ namespace
       // hide any open windows so FLTK ends the program
       if (Dialog::choice("Exit", "Are You Sure?"))
       {
-        widget->hide();
+         Fl::hide_all_windows();
       }
     }
   }
