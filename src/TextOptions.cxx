@@ -70,10 +70,10 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
   int pos = Group::title_height + Gui::SPACING;
 
   // add font names
-  text_browse = new Fl_Hold_Browser(8, pos, 160, 320);
+  text_browse = new Fl_Hold_Browser(8, pos, 160, 384);
   text_browse->labelsize(16);
   text_browse->textsize(16);
-  text_browse->resize(this->x() + 8, this->y() + pos, 160, 320);
+  text_browse->resize(this->x() + 8, this->y() + pos, 160, 384);
 
   for (int i = 0; i < Fl::set_fonts("*"); i++)
   {
@@ -83,7 +83,7 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
 
   text_browse->value(1);
   text_browse->callback((Fl_Callback *)cb_changedSize);
-  pos += 320 + Gui::SPACING;
+  pos += 384 + Gui::SPACING;
 
   // font size
   text_size = new InputInt(this, 64, pos, 96, 32, "Size:",
