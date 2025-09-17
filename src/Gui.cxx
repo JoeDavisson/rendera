@@ -222,6 +222,9 @@ public:
           case 'e':
             Editor::begin();
             return 1;
+          case 'f':
+            Gui::toggleTextPreview();
+            return 1;
         }
     }
 
@@ -922,6 +925,11 @@ void Gui::statusInfo(char *s)
 {
   info->copy_label(s);
   info->redraw();
+}
+
+void Gui::toggleTextPreview()
+{
+  text->toggleTextPreview();
 }
 
 void Gui::updateMemInfo()

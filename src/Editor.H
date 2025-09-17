@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Editor
 {
 public:
+  static void update();
   static void begin();
   static void init();
 

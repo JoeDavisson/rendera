@@ -32,6 +32,9 @@ public:
   TextOptions(int, int, int, int, const char *);
   ~TextOptions();
 
+  void initTextPreview();
+  void toggleTextPreview();
+  void closeTextPreview();
   void changedSize(InputInt *, void *);
   const char *getInput();
   int getSize();

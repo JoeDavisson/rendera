@@ -96,6 +96,8 @@ public:
   static void statusCoords(char *);
   static void statusInfo(char *);
 
+  static void toggleTextPreview();
+
   static void updateMemInfo();
 
   static View *view;

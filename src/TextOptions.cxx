@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Button.H"
 #include "Bitmap.H"
 #include "CheckBox.H"
+#include "DialogWindow.H"
 #include "FillOptions.H"
 #include "Gui.H"
 #include "InputInt.H"
@@ -42,6 +43,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Hold_Browser.H>
 
@@ -52,8 +55,13 @@ namespace
   InputInt *text_angle;
   Fl_Input *text_input;
   CheckBox *text_smooth;
+  DialogWindow *preview_win;
+  Fl_Box *preview_text;
+  Fl_Button *preview_done;
 
   void cb_changedSize(Fl_Widget *w, void *data) { TextOptions *temp = (TextOptions *)data; temp->changedSize((InputInt *)w, data); }
+
+  void cb_closeTextPreview(Fl_Widget *w, void *data) { TextOptions *temp = (TextOptions *)data; temp->closeTextPreview(); }
 }
 
 TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
@@ -62,10 +70,10 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
   int pos = Group::title_height + Gui::SPACING;
 
   // add font names
-  text_browse = new Fl_Hold_Browser(8, pos, 160, 384);
+  text_browse = new Fl_Hold_Browser(8, pos, 160, 320);
   text_browse->labelsize(16);
   text_browse->textsize(16);
-  text_browse->resize(this->x() + 8, this->y() + pos, 160, 384);
+  text_browse->resize(this->x() + 8, this->y() + pos, 160, 320);
 
   for (int i = 0; i < Fl::set_fonts("*"); i++)
   {
@@ -75,7 +83,7 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
 
   text_browse->value(1);
   text_browse->callback((Fl_Callback *)cb_changedSize);
-  pos += 384 + Gui::SPACING;
+  pos += 320 + Gui::SPACING;
 
   // font size
   text_size = new InputInt(this, 64, pos, 96, 32, "Size:",
@@ -99,6 +107,7 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
   text_smooth->center();
   text_smooth->value(1);
 
+  initTextPreview();
   resizable(0);
   end();
 }
@@ -107,8 +116,47 @@ TextOptions::~TextOptions()
 {
 }
 
+void TextOptions::initTextPreview()
+{
+  int pos = 8;
+
+  preview_win = new DialogWindow(528, 460, "Font Preview");
+  preview_text = new Fl_Box(8, 8, 512, 384, "The quick brown\nfox jumps over\nthe lazy dog. ");
+  preview_text->box(FL_DOWN_BOX);
+  preview_text->align(FL_ALIGN_CENTER);
+  preview_text->labelsize(48);
+
+  pos += 384 + 8;
+
+  new Separator(preview_win, 0, pos, 528, Separator::HORIZONTAL, "");
+  pos += 12;
+
+  preview_done = new Fl_Button(424, pos, 96, 40, "Done (F)");
+  preview_done->shortcut('f');
+  preview_done->callback((Fl_Callback *)cb_closeTextPreview);
+  preview_win->set_non_modal();
+  preview_win->end();
+}
+
+void TextOptions::toggleTextPreview()
+{
+  if (preview_win->shown() == 0)
+    preview_win->show();
+  else
+    preview_win->hide();
+}
+
+void TextOptions::closeTextPreview()
+{
+  preview_win->hide();
+}
+
 void TextOptions::changedSize(InputInt *input, void *)
 {
+  int font = getFont();
+  preview_win->show();
+  preview_text->labelfont(font - 1);
+  preview_text->redraw();
   input->redraw();
   Project::tool->move(Gui::view);
 }

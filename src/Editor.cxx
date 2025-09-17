@@ -93,6 +93,8 @@ namespace
   int undo_current = levels - 1;
   int redo_current = levels - 1;
 
+  bool initialized = false;
+
   Palette **undo_stack;
   Palette **redo_stack;
 }
@@ -520,15 +522,28 @@ void Editor::hsvRamp()
   }
 }
 
-void Editor::begin()
+void Editor::update()
 {
+  if (initialized == false)
+    return;
+
   Items::palette->var = Gui::colors->paletteGetIndex();
   last_index = Items::palette->var;
   Project::palette->draw(Items::palette);
   updateHexColor();
   setHsvSliders();
   setHsv();
-  Items::dialog->show();
+}
+
+void Editor::begin()
+{
+  update();
+
+  if (Items::dialog->shown() == 0)
+    Items::dialog->show();
+  else
+    Items::dialog->hide();
+
   ramp_begin = 0;
   ramp_state = 0;
   updateInfo((char *)"  Shift to swap, Ctrl to copy, Right-click to move cursor.");
@@ -536,9 +551,6 @@ void Editor::begin()
 
   while (Items::dialog->shown())
   {
-//    if (Fl::event_button1() == 0)
-//      button_down = false;
-
     Fl::wait();
   }
 }
@@ -768,7 +780,7 @@ void Editor::init()
   Items::info_text = new Fl_Box(FL_NO_BOX, Items::info->x(), Items::info->y(), Items::info->w(), Items::info->h(), "");
   Items::info_text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-  Items::dialog->set_modal();
+  Items::dialog->set_non_modal();
   Items::dialog->end(); 
 
   undo_stack = new Palette *[levels];
@@ -781,5 +793,6 @@ void Editor::init()
   }
 
   resetUndo();
+  initialized = true;
 }
 

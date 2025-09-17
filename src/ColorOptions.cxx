@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Button.H"
 #include "Bitmap.H"
 #include "ColorOptions.H"
+#include "Editor.H"
 #include "Gui.H"
 #include "Images.H"
 #include "Inline.H"
@@ -147,6 +148,7 @@ void ColorOptions::colorHexInput()
 
   colorUpdate(convertFormat((int)c, true));
   colorHexUpdate();
+  Editor::update();
 }
 
 void ColorOptions::colorHexUpdate()
@@ -317,6 +319,7 @@ void ColorOptions::colorChange(Widget *widget, void *)
   colorHexUpdate();
   hue->redraw();
   satval->redraw();
+  Editor::update();
 }
 
 void ColorOptions::colorTransInput()
@@ -426,6 +429,7 @@ void ColorOptions::paletteSwatches(Widget *widget, void *var)
 
   pal->draw(widget);
   colorUpdate(c);
+  Editor::update();
 }
 
 int ColorOptions::paletteSwatchesIndex()

@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Text::Text()
 {
-  textbmp = 0;
+  text_bmp = 0;
 }
 
 Text::~Text()
@@ -65,8 +65,8 @@ void Text::push(View *view)
   // render text to image
   Blend::set(Project::brush->blend);
 
-  int w = textbmp->w;
-  int h = textbmp->h;
+  int w = text_bmp->w;
+  int h = text_bmp->h;
 
   if (Gui::text->getSmooth() > 0)
   {
@@ -74,7 +74,7 @@ void Text::push(View *view)
     {
       for (int x = 0; x < w; x++)
       {
-        int c = textbmp->getpixel(x, y);
+        int c = text_bmp->getpixel(x, y);
         int t = getv(c);
 
         if (t < 255)
@@ -93,7 +93,7 @@ void Text::push(View *view)
     {
       for (int x = 0; x < w; x++)
       {
-        int c = textbmp->getpixel(x, y);
+        int c = text_bmp->getpixel(x, y);
         int t = getv(c);
 
         if (t < 192)
@@ -107,8 +107,8 @@ void Text::push(View *view)
     }
   }
 
-  delete textbmp;
-  textbmp = 0;
+  delete text_bmp;
+  text_bmp = 0;
 
   Blend::set(Blend::TRANS);
   view->drawMain(true);
@@ -177,10 +177,10 @@ void Text::move(View *view)
   float dx = -std::cos(d) * ((float)tw / 2);
   float dy = std::sin(d) * ((float)tw / 2);
 
-  delete textbmp;
-  textbmp = new Bitmap(tsize, tsize);
+  delete text_bmp;
+  text_bmp = new Bitmap(tsize, tsize);
 
-  Fl_RGB_Image textbuf((unsigned char *)&textbmp->data, tsize, tsize, 4, 0);
+  Fl_RGB_Image textbuf((unsigned char *)&text_bmp->data, tsize, tsize, 4, 0);
   Fl_Image_Surface surf(tsize, tsize, 1);
   Fl_Surface_Device::push_current(&surf);
   fl_font(face, size);
@@ -188,14 +188,14 @@ void Text::move(View *view)
   fl_rectf(0, 0, tsize, tsize);
   fl_color(FL_BLACK);
   fl_draw(angle, string.data(), center + dx, center + dy);
-  fl_read_image((unsigned char *)textbmp->data, 0, 0, tsize, tsize, 255);
+  fl_read_image((unsigned char *)text_bmp->data, 0, 0, tsize, tsize, 255);
   Fl_Surface_Device::pop_current();
 
   // create preview
   int imgx = view->imgx;
   int imgy = view->imgy;
-  int w = textbmp->w;
-  int h = textbmp->h;
+  int w = text_bmp->w;
+  int h = text_bmp->h;
 
   Map *map = Project::map;
   map->clear(0);
@@ -204,17 +204,19 @@ void Text::move(View *view)
   {
     for (int x = 0; x < w; x++)
     {
-      int c = textbmp->getpixel(x, y);
+      int c = text_bmp->getpixel(x, y);
       int t = getv(c);
 
       if (t < 192)
-        map->setpixel(imgx - w / 2 + x,
-                      imgy - h / 2 + y, 255);
+      {
+        map->setpixel(imgx - w / 2 + x, imgy - h / 2 + y, 255);
+      }
     }
   }
 
   stroke->size(imgx - w / 2, imgy - h / 2,
                imgx + w / 2, imgy + h / 2);
+
   redraw(view);
 }
 
@@ -224,8 +226,8 @@ void Text::key(View *)
 
 void Text::done(View *, int)
 {
-  delete textbmp;
-  textbmp = 0;
+  delete text_bmp;
+  text_bmp = 0;
 }
 
 void Text::redraw(View *view)

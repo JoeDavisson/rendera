@@ -75,6 +75,7 @@ int DialogWindow::handle(int event)
   switch (event)
   {
     case FL_PUSH:
+    case FL_MOVE:
       xpos = x();
       ypos = y();
       break;
