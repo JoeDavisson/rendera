@@ -137,7 +137,7 @@ fltklib:
 	cd ./fltk; \
 	make clean; \
 	./configure --host=$(HOST) --enable-xft --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
-	make -j10; \
+	make -j6; \
 	cd ..; \
 	echo "FLTK libs built.";
 
