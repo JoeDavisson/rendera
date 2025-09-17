@@ -58,9 +58,7 @@ void Text::push(View *view)
   Stroke *stroke = Project::stroke;
 
   move(view);
-
   Project::undo->push();
-
   Clone::move(view->imgx, view->imgy);
   Clone::refresh(stroke->x1, stroke->y1, stroke->x2, stroke->y2);
 
@@ -113,7 +111,6 @@ void Text::push(View *view)
   textbmp = 0;
 
   Blend::set(Blend::TRANS);
-
   view->drawMain(true);
 }
 
@@ -135,7 +132,7 @@ void Text::move(View *view)
   if (index < 1)
     index = 1;
 
-  int face =  index - 1;
+  int face = index - 1;
 
   int size = Gui::text->getSize();
   int angle = 360 - Gui::text->getAngle();
@@ -147,7 +144,6 @@ void Text::move(View *view)
   // add a space before and after string, or some
   // scripty fonts won't render properly on the sides
   std::vector<char> string((int)strlen(s) + 8, 0);
-
   string[0] = ' ';
 
   int i = 0;
@@ -156,7 +152,6 @@ void Text::move(View *view)
     string[i + 1] = s[i];
 
   i++;
-
   string[i] = ' ';
 
   // compensate for odd string length
@@ -199,7 +194,6 @@ void Text::move(View *view)
   // create preview
   int imgx = view->imgx;
   int imgy = view->imgy;
-
   int w = textbmp->w;
   int h = textbmp->h;
 
