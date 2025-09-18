@@ -30,8 +30,10 @@ class PickerOptions;
 class SelectionOptions;
 class TextOptions;
 class ToolOptions;
-class View;
 class ViewOptions;
+
+class Group;
+class View;
 
 class Fl_Box;
 class Fl_Double_Window;

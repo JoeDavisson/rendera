@@ -438,20 +438,20 @@ void Gui::init()
   left_height = window->h() - top->h() - menubar->h() - status->h();
 
   tools = new ToolOptions(0, top->h() + menubar->h(),
-                           64, left_height,
-                           "Tools");
+                          64, left_height,
+                          "Tools");
 
   paint = new PaintOptions(TOOLS_WIDTH, top->h() + menubar->h(),
-                    OPTIONS_WIDTH, left_height,
-                    "Paint");
+                           OPTIONS_WIDTH, left_height,
+                           "Paint");
 
   selection = new SelectionOptions(TOOLS_WIDTH, top->h() + menubar->h(),
                                    OPTIONS_WIDTH, left_height,
                                   "Selection");
 
   picker = new PickerOptions(TOOLS_WIDTH, top->h() + menubar->h(),
-                               OPTIONS_WIDTH, left_height,
-                               "Get Color");
+                             OPTIONS_WIDTH, left_height,
+                             "Get Color");
 
   offset = new OffsetOptions(TOOLS_WIDTH, top->h() + menubar->h(),
                              OPTIONS_WIDTH, left_height,
@@ -507,9 +507,9 @@ void Gui::init()
 
   right->add(images);
   right->add(colors);
-
   colors->resize(colors->x(), colors->y(), colors->w(), right_height);
   images->resize(images->x(), images->y(), images->w(), right_height);
+  right->end();
 
   window->size_range(1024, 828, 0, 0, 0, 0, 0);
   window->resizable(view);

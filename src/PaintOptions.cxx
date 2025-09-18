@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Brush.H"
+#include "Group.H"
 #include "Gui.H"
 #include "Images.H"
 #include "Inline.H"
@@ -88,7 +89,7 @@ namespace
 }
 
 PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
-: Group(x, y, w, h, l)                     
+: Group(x, y, w, h, l)
 {
   int pos = Group::title_height + Gui::SPACING;
 
@@ -285,10 +286,10 @@ void PaintOptions::changeSize(int size)
 
 void PaintOptions::size(Widget *, void *var)
 {
-  int size = brush_sizes[*(int *)var];
-  changeSize(size);
+  int new_size = brush_sizes[*(int *)var];
+  changeSize(new_size);
   char s[16];
-  snprintf(s, sizeof(s), "%d", (int)size);
+  snprintf(s, sizeof(s), "%d", (int)new_size);
   paint_size_value->value(s);
   paint_size_value->redraw();
 }

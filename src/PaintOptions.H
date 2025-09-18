@@ -49,6 +49,25 @@ public:
   void averageEdge(Widget *, void *);
   void updateBrush();
   int getMode();
+
+/*
+  Group *paint_group;
+  Widget *paint_brush_preview;
+  Widget *paint_size;
+  InputInt *paint_size_value;
+  Widget *paint_stroke;
+  Widget *paint_shape;
+  Widget *paint_coarse_edge;
+  Widget *paint_fine_edge;
+  Widget *paint_blurry_edge;
+  Widget *paint_watercolor_edge;
+  Widget *paint_chalk_edge;
+  Widget *paint_texture_edge;
+  Widget *paint_texture_marb;
+  Widget *paint_texture_turb;
+  Widget *paint_average_edge;
+  Fl_Choice *paint_mode;
+*/
 };
 
 #endif
