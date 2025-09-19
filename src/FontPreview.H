@@ -18,39 +18,21 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef TEXT_OPTIONS_H
-#define TEXT_OPTIONS_H
+#ifndef FONT_PREVIEW_H
+#define FONT_PREVIEW_H
 
-#include "Group.H"
-
-//class DialogWindow;
-class Group;
-class InputInt;
-class Fl_Button;
-class Fl_Input;
-class Fl_Hold_Browser;
-class Fl_Widget;
-
-class TextOptions : public Group
+class FontPreview
 {
 public:
-  TextOptions(int, int, int, int, const char *);
-  ~TextOptions();
+  static void init();
 
-  void changedSize();
-  const char *getInput();
-  int getSize();
-  int getAngle();
-  int getSmooth();
-  int getFont();
+  static void toggle();
+  static void close();
+  static void update(const int);
 
 private:
-  Fl_Hold_Browser *text_browse;
-  InputInt *text_size;
-  InputInt *text_angle;
-  Fl_Input *text_input;
-  CheckBox *text_smooth;
-  Fl_Button *text_toggle_preview;
+  FontPreview() { }
+  ~FontPreview() { }
 };
 
 #endif

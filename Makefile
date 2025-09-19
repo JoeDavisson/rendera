@@ -103,6 +103,7 @@ OBJ= \
   $(SRC_DIR)/Clone.o \
   $(SRC_DIR)/Dialog.o \
   $(SRC_DIR)/Editor.o \
+  $(SRC_DIR)/FontPreview.o \
   $(SRC_DIR)/Gui.o \
   $(SRC_DIR)/Progress.o \
   $(SRC_DIR)/Project.o \

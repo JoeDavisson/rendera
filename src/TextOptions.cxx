@@ -24,16 +24,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "CheckBox.H"
 #include "DialogWindow.H"
-#include "FillOptions.H"
+#include "FontPreview.H"
 #include "Gui.H"
 #include "InputInt.H"
 #include "Map.H"
 #include "OffsetOptions.H"
-#include "PaintOptions.H"
-#include "PickerOptions.H"
 #include "Project.H"
 #include "Selection.H"
-#include "SelectionOptions.H"
 #include "Separator.H"
 #include "StaticText.H"
 #include "Stroke.H"
@@ -51,8 +48,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace
 {
   void cb_changedSize(Fl_Widget *w, void *data) { TextOptions *temp = (TextOptions *)data; temp->changedSize(); }
-
-  void cb_closeTextPreview(Fl_Widget *w, void *data) { TextOptions *temp = (TextOptions *)data; temp->closeTextPreview(); }
 }
 
 TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
@@ -97,8 +92,12 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
   text_smooth = new CheckBox(this, 8, pos, 16, 16, "Antialiased", 0);
   text_smooth->center();
   text_smooth->value(1);
+  pos += 16 + Gui::SPACING;
 
-  initTextPreview();
+  text_toggle_preview = new Fl_Button(this->x() + 8, this->y() + pos,
+                                    160, 32, "Font Preview (F)");
+  text_toggle_preview->callback((Fl_Callback *)FontPreview::toggle);
+
   resizable(0);
   end();
 }
@@ -107,47 +106,11 @@ TextOptions::~TextOptions()
 {
 }
 
-void TextOptions::initTextPreview()
-{
-  int pos = 8;
-
-  preview_win = new DialogWindow(528, 460, "Font Preview");
-  preview_text = new Fl_Box(8, 8, 512, 384, "The quick brown\nfox jumps over\nthe lazy dog. ");
-  preview_text->box(FL_DOWN_BOX);
-  preview_text->align(FL_ALIGN_CENTER);
-  preview_text->labelsize(48);
-
-  pos += 384 + 8;
-
-  new Separator(preview_win, 0, pos, 528, Separator::HORIZONTAL, "");
-  pos += 12;
-
-  preview_done = new Fl_Button(424, pos, 96, 40, "Done (F)");
-  preview_done->shortcut('f');
-  preview_done->callback(cb_closeTextPreview, (void *)this);
-  preview_win->set_non_modal();
-  preview_win->end();
-}
-
-void TextOptions::toggleTextPreview()
-{
-  if (preview_win->shown() == 0)
-    preview_win->show();
-  else
-    preview_win->hide();
-}
-
-void TextOptions::closeTextPreview()
-{
-  preview_win->hide();
-}
-
 void TextOptions::changedSize()
 {
   int font = getFont();
-  preview_win->show();
-  preview_text->labelfont(font - 1);
-  preview_text->redraw();
+
+  FontPreview::update(font - 1);
   text_input->redraw();
   Project::tool->move(Gui::view);
 }

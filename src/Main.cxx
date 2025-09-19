@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Editor.H"
 #include "ExportData.H"
 #include "File.H"
+#include "FontPreview.H"
 #include "FX/FX.H"
 #include "Gamma.H"
 #include "Gui.H"
@@ -234,6 +235,7 @@ int main(int argc, char *argv[])
   Gui::init();
   Dialog::init();
   Editor::init();
+  FontPreview::init();
 
   //Fl_Shared_Image::add_handler(File::previewJpeg);
   //Fl_Shared_Image::add_handler(File::previewPng);

@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "FX/FX.H"
 #include "File.H"
 #include "FillOptions.H"
+#include "FontPreview.H"
 #include "Gui.H"
 #include "ImagesOptions.H"
 #include "OffsetOptions.H"
@@ -223,7 +224,7 @@ public:
             Editor::begin();
             return 1;
           case 'f':
-            Gui::toggleTextPreview();
+            FontPreview::toggle();
             return 1;
         }
     }
@@ -930,7 +931,7 @@ void Gui::statusInfo(char *s)
 
 void Gui::toggleTextPreview()
 {
-  text->toggleTextPreview();
+  FontPreview::toggle();
 }
 
 void Gui::updateMemInfo()
