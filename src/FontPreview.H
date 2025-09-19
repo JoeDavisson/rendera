@@ -29,6 +29,8 @@ public:
   static void toggle();
   static void close();
   static void update(const int);
+  static void changedSize();
+  static int getFont();
 
 private:
   FontPreview() { }

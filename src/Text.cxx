@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "CheckBox.H"
 #include "Clone.H"
+#include "FontPreview.H"
 #include "Gui.H"
 #include "Inline.H"
 #include "InputInt.H"
@@ -127,7 +128,7 @@ void Text::move(View *view)
   Stroke *stroke = Project::stroke;
 
   // write text string to FLTK's offscreen image
-  int index = Gui::text->getFont();
+  int index = FontPreview::getFont();
 
   if (index < 1)
     index = 1;

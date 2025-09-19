@@ -55,23 +55,6 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
 {
   int pos = Group::title_height + Gui::SPACING;
 
-  // add font names
-  text_browse = new Fl_Hold_Browser(8, pos, 160, 384);
-  text_browse->labelsize(16);
-  text_browse->textsize(16);
-  text_browse->resize(this->x() + 8, this->y() + pos, 160, 384);
-
-  for (int i = 0; i < Fl::set_fonts("*"); i++)
-  {
-    const char *name = Fl::get_font_name((Fl_Font)i, 0);
-    text_browse->add(name);
-  }
-
-  text_browse->value(1);
-  text_browse->callback(cb_changedSize, (void *)this);
-  pos += 384 + Gui::SPACING;
-
-  // font size
   text_size = new InputInt(this, 64, pos, 96, 32, "Size:", 0, 4, 500);
   text_size->callback(cb_changedSize, (void *)this);
   text_size->value("48");
@@ -95,7 +78,7 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
   pos += 16 + Gui::SPACING;
 
   text_toggle_preview = new Fl_Button(this->x() + 8, this->y() + pos,
-                                    160, 32, "Font Preview (F)");
+                                    160, 32, "Select Font (F)");
   text_toggle_preview->callback((Fl_Callback *)FontPreview::toggle);
 
   resizable(0);
@@ -108,7 +91,7 @@ TextOptions::~TextOptions()
 
 void TextOptions::changedSize()
 {
-  int font = getFont();
+  int font = FontPreview::getFont();
 
   FontPreview::update(font - 1);
   text_input->redraw();
@@ -133,10 +116,5 @@ int TextOptions::getAngle()
 int TextOptions::getSmooth()
 {
   return text_smooth->value();
-}
-
-int TextOptions::getFont()
-{
-  return text_browse->value();
 }
 
