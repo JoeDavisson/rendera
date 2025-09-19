@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Group.H"
 
+class Fl_Choice;
+class InputInt;
 class Group;
 class Widget;
 
@@ -34,24 +36,23 @@ public:
 
   void changeSize(int);
   void mode();
-  void size(Widget *, void *);
-  void sizeValue(Widget *, void *);
-  void shape(Widget *, void *);
-  void stroke(Widget *, void *);
-  void coarseEdge(Widget *, void *);
-  void fineEdge(Widget *, void *);
-  void blurryEdge(Widget *, void *);
-  void watercolorEdge(Widget *, void *);
-  void chalkEdge(Widget *, void *);
-  void textureEdge(Widget *, void *);
-  void textureMarb(Widget *, void *);
-  void textureTurb(Widget *, void *);
-  void averageEdge(Widget *, void *);
+  void size();
+  void sizeValue();
+  void shape();
+  void stroke();
+  void coarseEdge();
+  void fineEdge();
+  void blurryEdge();
+  void watercolorEdge();
+  void chalkEdge();
+  void textureEdge();
+  void textureMarb();
+  void textureTurb();
+  void averageEdge();
   void updateBrush();
   int getMode();
 
-/*
-  Group *paint_group;
+private:
   Widget *paint_brush_preview;
   Widget *paint_size;
   InputInt *paint_size_value;
@@ -67,7 +68,7 @@ public:
   Widget *paint_texture_turb;
   Widget *paint_average_edge;
   Fl_Choice *paint_mode;
-*/
+
 };
 
 #endif

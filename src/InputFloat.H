@@ -37,7 +37,6 @@ public:
   void value(const char *);
   void maximum_size(const int);
   void center();
-//  int limitValue(int, int);
   void textsize(const int);
 
   int var;
@@ -47,7 +46,6 @@ public:
   Fl_Float_Input input;
   Fl_Repeat_Button dec;
   Fl_Repeat_Button inc;
-  void (*cb)(Fl_Widget *, void *);
 };
 
 #endif

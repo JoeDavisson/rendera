@@ -31,12 +31,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <FL/Fl_Group.H>
 
-namespace
-{
-  Widget *picker_color;
-  CheckBox *picker_best;
-}
-
 PickerOptions::PickerOptions(int x, int y, int w, int h, const char *l)
 : Group(x, y, w, h, l)                     
 {

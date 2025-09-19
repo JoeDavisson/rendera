@@ -438,7 +438,7 @@ void Gui::init()
   left_height = window->h() - top->h() - menubar->h() - status->h();
 
   tools = new ToolOptions(0, top->h() + menubar->h(),
-                          64, left_height,
+                          TOOLS_WIDTH, left_height,
                           "Tools");
 
   paint = new PaintOptions(TOOLS_WIDTH, top->h() + menubar->h(),
@@ -498,6 +498,7 @@ void Gui::init()
   left->add(selection);
   left->add(offset);
   left->add(text);
+  left->add(fill);
   left->end();
 
   right = new Fl_Group(window->w() - COLORS_WIDTH - IMAGES_WIDTH,
@@ -521,10 +522,10 @@ void Gui::init()
   Fl_Tooltip::textcolor(FL_BLACK);
 
   paletteSetDefault();
-  tools->init();
   top->zoomLevel();
   images->addFile("new");
   colors->colorUpdate(Project::palette->data[0]);
+  tools->init();
 }
 
 // show the main program window (called after main GUI is constructed)

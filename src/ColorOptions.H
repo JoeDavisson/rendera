@@ -24,8 +24,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Group.H"
 
 class Group;
+class InputInt;
+class InputText;
 class Palette;
 class Widget;
+class Fl_Choice;
 
 class ColorOptions : public Group
 {
@@ -33,7 +36,7 @@ public:
   ColorOptions(int, int, int, int, const char *);
   ~ColorOptions();
 
-  void colorChange(Widget *, void *);
+  void colorChange();
   void colorHexInput();
   void colorHexUpdate();
   void colorTrans();
@@ -44,9 +47,19 @@ public:
   void paletteDraw();
   void paletteIndex(int);
   int paletteGetIndex();
-  void paletteSwatches(Widget *, void *);
+  void paletteSwatches();
   int paletteSwatchesIndex();
   void changePalette(Palette *);
+
+private:
+  Widget *hue;
+  Widget *satval;
+  InputText *hexcolor;
+  InputInt *trans_input;
+  Widget *trans;
+  Fl_Choice *blend;
+  Widget *palette_swatches;
+
 };
 
 #endif

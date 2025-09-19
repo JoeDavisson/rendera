@@ -45,15 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  Widget *hue;
-  Widget *satval;
-  InputText *hexcolor;
-  InputInt *trans_input;
-  Widget *trans;
-  Fl_Choice *blend;
-  Widget *palette_swatches;
-
-  void cb_colorChange(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->colorChange((Widget *)w, data); }
+  void cb_colorChange(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->colorChange(); }
 
   void cb_colorHexInput(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->colorHexInput(); }
 
@@ -61,7 +53,7 @@ namespace
 
   void cb_colorTransInput(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->colorTransInput(); }
 
-  void cb_paletteSwatches(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->paletteSwatches((Widget *)w, data); }
+  void cb_paletteSwatches(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->paletteSwatches(); }
 }
 
 ColorOptions::ColorOptions(int x, int y, int w, int h, const char *l)
@@ -70,13 +62,16 @@ ColorOptions::ColorOptions(int x, int y, int w, int h, const char *l)
   int pos = Group::title_height + Gui::SPACING;
 
   // satval overlaps the hue color wheel
-  hue = new Widget(this, 8, pos, 192, 192, 0, 1, 1, (Fl_Callback *)cb_colorChange);
-  satval = new Widget(this, 8 + 48, pos + 48, 96, 96, 0, 1, 1, (Fl_Callback *)cb_colorChange);
+  hue = new Widget(this, 8, pos, 192, 192, 0, 1, 1, 0);
+  hue->callback(cb_colorChange, (void *)this);
+
+  satval = new Widget(this, 8 + 48, pos + 48, 96, 96, 0, 1, 1, 0);
+  satval->callback(cb_colorChange, (void *)this);
 
   pos += 192 + 8;
 
-  hexcolor = new InputText(this, 56, pos, 136, 32, "Hex:",
-                           (Fl_Callback *)cb_colorHexInput);
+  hexcolor = new InputText(this, 56, pos, 136, 32, "Hex:", 0);
+  hexcolor->callback(cb_colorHexInput, (void *)this);
   hexcolor->maximum_size(6);
   hexcolor->textfont(FL_COURIER);
   hexcolor->textsize(18);
@@ -86,13 +81,13 @@ ColorOptions::ColorOptions(int x, int y, int w, int h, const char *l)
   new Separator(this, 0, pos, Gui::COLORS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + Gui::SPACING;
 
-  trans_input = new InputInt(this, 8, pos, 192, 32,
-                             "", (Fl_Callback *)cb_colorTransInput, 0, 255);
+  trans_input = new InputInt(this, 8, pos, 192, 32, "", 0, 0, 255);
+  trans_input->callback(cb_colorTransInput, (void *)this);
   trans_input->value("0");
   pos += 32 + 8;
 
-  trans = new Widget(this, 8, pos, 192, 42, "Transparency", 6, 42,
-                     (Fl_Callback *)cb_colorTrans);
+  trans = new Widget(this, 8, pos, 192, 42, "Transparency", 6, 42, 0);
+  trans->callback(cb_colorTrans, (void *)this);
 
   pos += 42 + Gui::SPACING;
 
@@ -113,16 +108,15 @@ ColorOptions::ColorOptions(int x, int y, int w, int h, const char *l)
   blend->add("Alpha Subtract");
   blend->add("Smooth");
   blend->value(0);
-  blend->callback((Fl_Callback *)cb_colorChange);
+  blend->callback(cb_colorChange, (void *)this);
   blend->textsize(16);
   pos += 32 + Gui::SPACING;
 
   new Separator(this, 0, pos, Gui::COLORS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + Gui::SPACING;
 
-  palette_swatches = new Widget(this, 8, pos, 192, 192,
-                       0, 12, 12,
-                       (Fl_Callback *)cb_paletteSwatches);
+  palette_swatches = new Widget(this, 8, pos, 192, 192, 0, 12, 12, 0);
+  palette_swatches->callback(cb_paletteSwatches, (void *)this);
   pos += 192 + Gui::SPACING;
 
   resizable(0);
@@ -194,7 +188,7 @@ void ColorOptions::transUpdate(int t)
   colorTrans();
 }
 
-void ColorOptions::colorChange(Widget *widget, void *)
+void ColorOptions::colorChange()
 {
   int pos = hue->var;
   int mx = pos % 192;
@@ -205,7 +199,8 @@ void ColorOptions::colorChange(Widget *widget, void *)
   int outer = dist + 25;
   int center = inner + (outer - inner) / 2;
 
-  if (widget == hue)
+//  if (widget == hue)
+  if (hue->visible_focus())
   {
     const int md = ((mx - 96) * (mx - 96) + (my - 96) * (my - 96));
 
@@ -370,7 +365,7 @@ void ColorOptions::colorTrans()
 
 void ColorOptions::colorBlend()
 {
-  colorChange(0, 0);
+  colorChange();
 }
 
 void ColorOptions::paletteDraw()
@@ -391,19 +386,19 @@ int ColorOptions::paletteGetIndex()
   return palette_swatches->var;
 } 
 
-void ColorOptions::paletteSwatches(Widget *widget, void *var)
+void ColorOptions::paletteSwatches()
 {
   Palette *pal = Project::palette;
-  int pos = *(int *)var;
+  int pos = palette_swatches->var;
 
   if (pos > pal->max - 1)
   {
     pos = pal->max - 1;
-    widget->var = pos;
+    palette_swatches->var = pos;
   }
                          
-  int step = widget->stepx;
-  int div = widget->w() / step;
+  int step = palette_swatches->stepx;
+  int div = palette_swatches->w() / step;
                         
   int x = pos % div;
   int y = pos / div;
@@ -414,7 +409,7 @@ void ColorOptions::paletteSwatches(Widget *widget, void *var)
     pos = x + div * y;
     x = pos % div;
     y = pos / div;
-    widget->var = pos;
+    palette_swatches->var = pos;
   }
 
   if (pos > pal->max - 1)
@@ -422,12 +417,12 @@ void ColorOptions::paletteSwatches(Widget *widget, void *var)
     pos = pal->max - 1;
     x = pos % div;
     y = pos / div;
-    widget->var = pos;
+    palette_swatches->var = pos;
   }
 
-  int c = widget->bitmap->getpixel(x * step + 2, y * step + 2);
+  int c = palette_swatches->bitmap->getpixel(x * step + 2, y * step + 2);
 
-  pal->draw(widget);
+  pal->draw(palette_swatches);
   colorUpdate(c);
   Editor::update();
 }

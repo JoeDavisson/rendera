@@ -23,7 +23,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Group.H"
 
+class CheckBox;
+class InputInt;
 class Group;
+class Fl_Button;
 
 class FillOptions : public Group
 {
@@ -35,6 +38,12 @@ public:
   int getFeather();
   int getColorOnly();
   void reset();
+
+private:
+  InputInt *fill_range;
+  InputInt *fill_feather;
+  CheckBox *fill_color_only;
+  Fl_Button *fill_reset;
 };
 
 #endif

@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Group.H"
 
 class Group;
+class StaticText;
+class RepeatButton;
 
 class OffsetOptions : public Group
 {
@@ -36,6 +38,14 @@ public:
   void right();
   void up();
   void down();
+
+private:
+  StaticText *offset_x;
+  StaticText *offset_y;
+  RepeatButton *offset_up;
+  RepeatButton *offset_left;
+  RepeatButton *offset_right;
+  RepeatButton *offset_down;
 };
 
 #endif

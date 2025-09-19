@@ -37,19 +37,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  StaticText *selection_x;
-  StaticText *selection_y;
-  StaticText *selection_w;
-  StaticText *selection_h;
-  Fl_Button *selection_reset;
-  Fl_Button *selection_copy;
-  CheckBox *selection_alpha;
-  Button *selection_flip;
-  Button *selection_mirror;
-  Button *selection_rotate;
-  Fl_Button *selection_paste;
-  Fl_Button *selection_crop;
-
   void cb_alpha(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->alpha(); }
 
   void cb_copy(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->copy(); }
@@ -92,22 +79,31 @@ SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
   pos += 4 + Gui::SPACING;
 
   selection_reset = new Fl_Button(this->x() + 8, this->y() + pos, 160, 48, "Reset");
-  selection_reset->callback((Fl_Callback *)cb_reset);
+  selection_reset->callback(cb_reset, (void *)this);
   pos += 48 + Gui::SPACING;
 
 
   new Separator(this, 0, pos, Gui::OPTIONS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + Gui::SPACING;
 
-  selection_alpha = new CheckBox(this, 8, pos, 16, 16, "Alpha Mask",
-                                 (Fl_Callback *)cb_alpha);
+  selection_alpha = new CheckBox(this, 8, pos, 16, 16, "Alpha Mask", 0);
+  selection_alpha->callback(cb_alpha, (void *)this);
   selection_alpha->center();
   selection_alpha->value(1);
   pos += 24 + Gui::SPACING;
 
-  selection_mirror = new Button(this, 8, pos, 48, 48, "Mirror", images_select_mirror_png, (Fl_Callback *)cb_flipX);
-  selection_flip = new Button(this, 8 + 48 + 8, pos, 48, 48, "Flip", images_select_flip_png, (Fl_Callback *)cb_flipY);
-  selection_rotate = new Button(this, 8 + 48 + 8 + 48 + 8, pos, 48, 48, "Rotate", images_select_rotate_png, (Fl_Callback *)cb_rotate90);
+  selection_mirror = new Button(this, 8, pos, 48, 48, "Mirror",
+                                images_select_mirror_png, 0);
+  selection_mirror->callback(cb_flipX, (void *)this);
+
+  selection_flip = new Button(this, 8 + 48 + 8, pos, 48, 48, "Flip",
+                              images_select_flip_png, 0);
+  selection_flip->callback(cb_flipY, (void *)this);
+
+  selection_rotate = new Button(this, 8 + 48 + 8 + 48 + 8, pos, 48, 48,
+                                "Rotate", images_select_rotate_png, 0);
+  selection_rotate->callback(cb_rotate90, (void *)this);
+
   pos += 48 + Gui::SPACING;
 
   new Separator(this, 0, pos, Gui::OPTIONS_WIDTH, Separator::HORIZONTAL, "");
@@ -115,13 +111,13 @@ SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
 
   selection_copy = new Fl_Button(this->x() + 8, this->y() + pos, 160, 40, "Copy");
   selection_copy->tooltip("Ctrl-C");
-  selection_copy->callback((Fl_Callback *)cb_copy);
+  selection_copy->callback(cb_copy, (void *)this);
   selection_copy->deactivate();
   pos += 40 + Gui::SPACING;
 
   selection_paste = new Fl_Button(this->x() + 8, this->y() + pos, 160, 40, "Paste");
   selection_paste->tooltip("Ctrl-V");
-  selection_paste->callback((Fl_Callback *)cb_paste);
+  selection_paste->callback(cb_paste, (void *)this);
   selection_paste->deactivate();
   pos += 40 + Gui::SPACING;
 
@@ -129,7 +125,7 @@ SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
   pos += 4 + Gui::SPACING;
 
   selection_crop = new Fl_Button(this->x() + 8, this->y() + pos, 160, 48, "Crop");
-  selection_crop->callback((Fl_Callback *)cb_crop);
+  selection_crop->callback(cb_crop);
   selection_crop->deactivate();
   pos += 48 + Gui::SPACING;
 

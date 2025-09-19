@@ -50,16 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  Fl_Hold_Browser *text_browse;
-  InputInt *text_size;
-  InputInt *text_angle;
-  Fl_Input *text_input;
-  CheckBox *text_smooth;
-  DialogWindow *preview_win;
-  Fl_Box *preview_text;
-  Fl_Button *preview_done;
-
-  void cb_changedSize(Fl_Widget *w, void *data) { TextOptions *temp = (TextOptions *)data; temp->changedSize((InputInt *)w, data); }
+  void cb_changedSize(Fl_Widget *w, void *data) { TextOptions *temp = (TextOptions *)data; temp->changedSize(); }
 
   void cb_closeTextPreview(Fl_Widget *w, void *data) { TextOptions *temp = (TextOptions *)data; temp->closeTextPreview(); }
 }
@@ -82,17 +73,17 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
   }
 
   text_browse->value(1);
-  text_browse->callback((Fl_Callback *)cb_changedSize);
+  text_browse->callback(cb_changedSize, (void *)this);
   pos += 384 + Gui::SPACING;
 
   // font size
-  text_size = new InputInt(this, 64, pos, 96, 32, "Size:",
-                           (Fl_Callback *)cb_changedSize, 4, 500);
+  text_size = new InputInt(this, 64, pos, 96, 32, "Size:", 0, 4, 500);
+  text_size->callback(cb_changedSize, (void *)this);
   text_size->value("48");
   pos += 32 + Gui::SPACING;
 
-  text_angle = new InputInt(this, 64, pos, 96, 32, "Angle:",
-                           (Fl_Callback *)cb_changedSize, -359, 359);
+  text_angle = new InputInt(this, 64, pos, 96, 32, "Angle:", 0, -359, 359);
+  text_angle->callback(cb_changedSize, (void *)this);
   text_angle->value("0");
   pos += 32 + Gui::SPACING;
   
@@ -100,7 +91,7 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
   text_input->textsize(16);
   text_input->value("Text");
   text_input->resize(this->x() + 8, this->y() + pos, 160, 32);
-  text_input->callback((Fl_Callback *)cb_changedSize);
+  text_input->callback(cb_changedSize, (void *)this);
   pos += 32 + Gui::SPACING;
 
   text_smooth = new CheckBox(this, 8, pos, 16, 16, "Antialiased", 0);
@@ -133,7 +124,7 @@ void TextOptions::initTextPreview()
 
   preview_done = new Fl_Button(424, pos, 96, 40, "Done (F)");
   preview_done->shortcut('f');
-  preview_done->callback((Fl_Callback *)cb_closeTextPreview);
+  preview_done->callback(cb_closeTextPreview, (void *)this);
   preview_win->set_non_modal();
   preview_win->end();
 }
@@ -151,13 +142,13 @@ void TextOptions::closeTextPreview()
   preview_win->hide();
 }
 
-void TextOptions::changedSize(InputInt *input, void *)
+void TextOptions::changedSize()
 {
   int font = getFont();
   preview_win->show();
   preview_text->labelfont(font - 1);
   preview_text->redraw();
-  input->redraw();
+  text_input->redraw();
   Project::tool->move(Gui::view);
 }
 

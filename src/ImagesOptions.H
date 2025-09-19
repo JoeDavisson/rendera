@@ -26,6 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Button;
 class Group;
 class ToggleButton;
+class Fl_Box;
+class Fl_Hold_Browser;
+class Fl_Input;
 
 class ImagesOptions : public Group
 {
@@ -41,6 +44,15 @@ public:
   void moveUp();
   void moveDown();
   void memLabel(const char *);
+
+private:
+  Fl_Hold_Browser *images_browse;
+  Fl_Input *images_rename;
+  Button *images_close;
+  Button *images_move_up;
+  Button *images_move_down;
+  Fl_Box *images_mem;
+
 };
 
 #endif

@@ -23,8 +23,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Group.H"
 
+class DialogWindow;
 class Group;
 class InputInt;
+class Fl_Box;
+class Fl_Button;
+class Fl_Input;
+class Fl_Hold_Browser;
+class Fl_Widget;
 
 class TextOptions : public Group
 {
@@ -35,12 +41,22 @@ public:
   void initTextPreview();
   void toggleTextPreview();
   void closeTextPreview();
-  void changedSize(InputInt *, void *);
+  void changedSize();
   const char *getInput();
   int getSize();
   int getAngle();
   int getSmooth();
   int getFont();
+
+private:
+  Fl_Hold_Browser *text_browse;
+  InputInt *text_size;
+  InputInt *text_angle;
+  Fl_Input *text_input;
+  CheckBox *text_smooth;
+  DialogWindow *preview_win;
+  Fl_Box *preview_text;
+  Fl_Button *preview_done;
 };
 
 #endif

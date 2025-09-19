@@ -21,13 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef INPUT_INT_H
 #define INPUT_INT_H
 
-//#include <FL/Fl_Widget.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Repeat_Button.H>
 
 class Fl_Group;
 class Fl_Repeat_Button;
+class Fl_Widget;
 
 class InputInt : public Fl_Group
 {
@@ -49,7 +49,6 @@ public:
   Fl_Int_Input input;
   Fl_Repeat_Button dec;
   Fl_Repeat_Button inc;
-  void (*cb)(Fl_Widget *, void *);
 };
 
 #endif

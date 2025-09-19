@@ -23,7 +23,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Group.H"
 
+class Button;
+class CheckBox;
 class Group;
+class StaticText;
+class Fl_Button;
 
 class SelectionOptions : public Group
 {
@@ -44,6 +48,20 @@ public:
   void rotate90();
   void values(int, int, int, int);
   int getAlpha();
+
+private:
+  StaticText *selection_x;
+  StaticText *selection_y;
+  StaticText *selection_w;
+  StaticText *selection_h;
+  Fl_Button *selection_reset;
+  Fl_Button *selection_copy;
+  CheckBox *selection_alpha;
+  Button *selection_flip;
+  Button *selection_mirror;
+  Button *selection_rotate;
+  Fl_Button *selection_paste;
+  Fl_Button *selection_crop;
 };
 
 #endif

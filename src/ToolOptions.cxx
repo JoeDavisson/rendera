@@ -45,18 +45,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  Widget *tool;
-  ToggleButton *clone;
-  ToggleButton *origin;
-  ToggleButton *constrain;
+  void cb_change(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->change(); }
 
-  void cb_change(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->change((Widget *)w, data); }
+  void cb_cloneEnable(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->cloneEnable(); }
 
-  void cb_cloneEnable(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->cloneEnable((Widget *)w, data); }
+  void cb_constrainEnable(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->constrainEnable(); }
 
-  void cb_constrainEnable(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->constrainEnable((Widget *)w, data); }
-
-  void cb_originEnable(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->originEnable((Widget *)w, data); }
+  void cb_originEnable(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->originEnable(); }
 }
 
 ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
@@ -65,8 +60,8 @@ ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
   int pos = Group::title_height + Gui::SPACING;
 
   tool = new Widget(this, 8, pos, 48, 6 * 48,
-                    "Tools", images_tools_png, 48, 48,
-                    (Fl_Callback *)cb_change);
+                    "Tools", images_tools_png, 48, 48, 0);
+  tool->callback(cb_change, (void *)this);
 
   pos += 6 * 48 + Gui::SPACING;
 
@@ -75,21 +70,21 @@ ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
 
   clone = new ToggleButton(this, 8, pos, 48, 48,
                            "Clone (Ctrl+Click to set target)",
-                           images_clone_png,
-                           (Fl_Callback *)cb_cloneEnable);
+                           images_clone_png, 0);
+  clone->callback(cb_cloneEnable, (void *)this);
 
   pos += 48 + 8;
 
   origin = new ToggleButton(this, 8, pos, 48, 48,
-                            "Start From Center", images_origin_png,
-                            (Fl_Callback *)cb_originEnable);
+                            "Start From Center", images_origin_png, 0);
+  origin->callback(cb_originEnable, (void *)this);
 
   pos += 48 + 8;
 
   constrain = new ToggleButton(this, 8, pos, 48, 48,
                               "Lock Proportions",
-                              images_constrain_png,
-                              (Fl_Callback *)cb_constrainEnable);
+                              images_constrain_png, 0);
+  constrain->callback(cb_constrainEnable, (void *)this);
 
   resizable(0);
   end();
@@ -110,27 +105,27 @@ void ToolOptions::change(int t)
   tool->do_callback();
 }
 
-void ToolOptions::change(Widget *, void *var)
+void ToolOptions::change()
 {
-  int tool = *(int *)var;
+  const int current_tool = tool->var;
 
-  if (tool != Tool::PAINT)
+  if (current_tool != Tool::PAINT)
     Gui::paint->hide();
-  if (tool != Tool::PICKER)
+  if (current_tool != Tool::PICKER)
     Gui::picker->hide();
-  if (tool != Tool::SELECT)
+  if (current_tool != Tool::SELECT)
     Gui::selection->hide();
-  if (tool != Tool::OFFSET)
+  if (current_tool != Tool::OFFSET)
     Gui::offset->hide();
-  if (tool != Tool::TEXT)
+  if (current_tool != Tool::TEXT)
     Gui::text->hide();
-  if (tool != Tool::FILL)
+  if (current_tool != Tool::FILL)
     Gui::fill->hide();
 
   Project::map->clear(0);
   Gui::view->drawMain(true);
 
-  switch (tool)
+  switch (current_tool)
   {
     case Tool::PAINT:
       Project::setTool(Tool::PAINT);
@@ -173,19 +168,19 @@ void ToolOptions::change(Widget *, void *var)
   }
 }
 
-void ToolOptions::cloneEnable(Widget *, void *var)
+void ToolOptions::cloneEnable()
 {
-  Clone::active = *(int *)var;
+  Clone::active = clone->var;
 }
 
-void ToolOptions::originEnable(Widget *, void *var)
+void ToolOptions::originEnable()
 {
-  Project::stroke->origin = *(int *)var;
+  Project::stroke->origin = origin->var;
 }
 
-void ToolOptions::constrainEnable(Widget *, void *var)
+void ToolOptions::constrainEnable()
 {
-  Project::stroke->constrain = *(int *)var;
+  Project::stroke->constrain = constrain->var;
 }
 
 int ToolOptions::getTool()

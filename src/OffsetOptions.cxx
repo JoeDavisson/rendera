@@ -35,13 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  StaticText *offset_x;
-  StaticText *offset_y;
-  RepeatButton *offset_up;
-  RepeatButton *offset_left;
-  RepeatButton *offset_right;
-  RepeatButton *offset_down;
-
   void cb_left(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->left(); }
 
   void cb_right(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->right(); }
@@ -67,10 +60,22 @@ OffsetOptions::OffsetOptions(int x, int y, int w, int h, const char *l)
   new Separator(this, 0, pos, Gui::OPTIONS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + Gui::SPACING;
 
-  offset_left = new RepeatButton(this, 16, pos + 26, 40, 40, "", images_left_png, (Fl_Callback *)cb_left);
-  offset_up = new RepeatButton(this, 68, pos, 40, 40, "", images_up_png, (Fl_Callback *)cb_up);
-  offset_right = new RepeatButton(this, 120, pos + 26, 40, 40, "", images_right_png, (Fl_Callback *)cb_right);
-  offset_down = new RepeatButton(this, 68, pos + 52, 40, 40, "", images_down_png, (Fl_Callback *)cb_down);
+  offset_left = new RepeatButton(this, 16, pos + 26, 40, 40, "",
+                                 images_left_png, 0);
+  offset_left->callback(cb_left, (void *)this);
+
+  offset_up = new RepeatButton(this, 68, pos, 40, 40, "",
+                               images_up_png, 0);
+  offset_up->callback(cb_up, (void *)this);
+
+  offset_right = new RepeatButton(this, 120, pos + 26, 40, 40, "",
+                                  images_right_png, 0);
+  offset_right->callback(cb_right, (void *)this);
+
+  offset_down = new RepeatButton(this, 68, pos + 52, 40, 40, "",
+                                 images_down_png, 0);
+  offset_down->callback(cb_down, (void *)this);
+
   pos += 92;
 
   new StaticText(this, 8, pos, 160, 32, "Nudge");

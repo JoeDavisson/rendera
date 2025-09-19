@@ -24,8 +24,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Group.H"
 
 class Button;
+class CheckBox;
 class Group;
+class InputInt;
+class StaticText;
 class ToggleButton;
+class Fl_Choice;
 
 class ViewOptions : public Group
 {
@@ -47,6 +51,18 @@ public:
 
   void aspectMode();
   void filterToggle();
+
+private:
+  Button *zoom_one;
+  Button *zoom_in;
+  Button *zoom_out;
+  StaticText *zoom;
+  ToggleButton *grid;
+  ToggleButton *gridsnap;
+  InputInt *gridx;
+  InputInt *gridy;
+  Fl_Choice *aspect;
+  CheckBox *filter;
 };
 
 #endif

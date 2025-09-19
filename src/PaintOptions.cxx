@@ -43,49 +43,33 @@ namespace
     1, 2, 3, 4, 6, 8, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
   };
 
-  Widget *paint_brush_preview;
-  Widget *paint_size;
-  InputInt *paint_size_value;
-  Widget *paint_stroke;
-  Widget *paint_shape;
-  Widget *paint_coarse_edge;
-  Widget *paint_fine_edge;
-  Widget *paint_blurry_edge;
-  Widget *paint_watercolor_edge;
-  Widget *paint_chalk_edge;
-  Widget *paint_texture_edge;
-  Widget *paint_texture_marb;
-  Widget *paint_texture_turb;
-  Widget *paint_average_edge;
-  Fl_Choice *paint_mode;
+  void cb_sizeValue(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->sizeValue(); }
 
-  void cb_sizeValue(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->sizeValue((Widget *)w, data); }
+  void cb_size(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->size(); }
 
-  void cb_size(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->size((Widget *)w, data); }
+  void cb_shape(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->shape(); }
 
-  void cb_shape(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->shape((Widget *)w, data); }
-
-  void cb_stroke(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->stroke((Widget *)w, data); }
+  void cb_stroke(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->stroke(); }
 
   void cb_mode(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->mode(); }
 
-  void cb_coarseEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->coarseEdge((Widget *)w, data); }
+  void cb_coarseEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->coarseEdge(); }
 
-  void cb_fineEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->fineEdge((Widget *)w, data); }
+  void cb_fineEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->fineEdge(); }
 
-  void cb_blurryEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->blurryEdge((Widget *)w, data); }
+  void cb_blurryEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->blurryEdge(); }
 
-  void cb_watercolorEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->watercolorEdge((Widget *)w, data); }
+  void cb_watercolorEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->watercolorEdge(); }
 
-  void cb_chalkEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->chalkEdge((Widget *)w, data); }
+  void cb_chalkEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->chalkEdge(); }
 
-  void cb_textureEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->textureEdge((Widget *)w, data); }
+  void cb_textureEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->textureEdge(); }
 
-  void cb_textureMarb(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->textureMarb((Widget *)w, data); }
+  void cb_textureMarb(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->textureMarb(); }
 
-  void cb_textureTurb(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->textureTurb((Widget *)w, data); }
+  void cb_textureTurb(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->textureTurb(); }
 
-  void cb_averageEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->averageEdge((Widget *)w, data); }
+  void cb_averageEdge(Fl_Widget *w, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->averageEdge(); }
 }
 
 PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
@@ -99,18 +83,21 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
   pos += 160 + 8;
 
   paint_size_value = new InputInt(this, 8, pos, 160, 32,
-                       "", (Fl_Callback *)cb_sizeValue, 1, Brush::max_size);
+                       "", 0, 1, Brush::max_size);
   paint_size_value->textsize(16);
+  paint_size_value->callback(cb_sizeValue, (void *)this);
   pos += 32 + 8;
 
   paint_size = new Widget(this, 8, pos, 160, 32,
                           "Brush Size", images_size_png, 10, 32,
-                          (Fl_Callback *)cb_size);
+                          0);
+  paint_size->callback(cb_size, (void *)this);
   pos += 32 + 8;
 
   paint_shape = new Widget(this, 8, pos, 160, 40,
                            "Shape Adjust", images_shape_png, 10, 40,
-                           (Fl_Callback *)cb_shape);
+                           0);
+  paint_shape->callback(cb_shape, (void *)this);
   pos += 40 + Gui::SPACING;
 
   new Separator(this, 0, pos, Gui::OPTIONS_WIDTH, Separator::HORIZONTAL, "");
@@ -118,7 +105,8 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
 
   paint_stroke = new Widget(this, 8, pos, 160, 80,
                             "Brushstroke Type", images_stroke_png, 40, 40,
-                            (Fl_Callback *)cb_stroke);
+                            0);
+  paint_stroke->callback(cb_stroke, (void *)this);
 
   pos += 80 + Gui::SPACING;
 
@@ -140,41 +128,50 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
   paint_mode->add("Average");
   paint_mode->value(0);
   paint_mode->textsize(16);
-  paint_mode->callback((Fl_Callback *)cb_mode);
+  paint_mode->callback(cb_mode, (void *)this);
   pos += 32 + 8;
 
   paint_coarse_edge = new Widget(this, 8, pos, 160, 32,
-                          "Edge", images_edge_png, 20, 32,
-                          (Fl_Callback *)cb_coarseEdge);
+                          "Edge", images_edge_png, 20, 32, 0);
+  paint_coarse_edge->callback(cb_coarseEdge, (void *)this);
+
   paint_fine_edge = new Widget(this, 8, pos, 160, 32,
-                          "Edge", images_edge_png, 20, 32,
-                          (Fl_Callback *)cb_fineEdge);
+                          "Edge", images_edge_png, 20, 32, 0);
+  paint_fine_edge->callback(cb_fineEdge, (void *)this);
+
   paint_blurry_edge = new Widget(this, 8, pos, 160, 32,
-                          "Edge", images_edge_png, 20, 32,
-                          (Fl_Callback *)cb_blurryEdge);
+                          "Edge", images_edge_png, 20, 32, 0);
+  paint_blurry_edge->callback(cb_blurryEdge, (void *)this);
+
   paint_watercolor_edge = new Widget(this, 8, pos, 160, 32,
-                          "Edge", images_watercolor_edge_png, 20, 32,
-                          (Fl_Callback *)cb_watercolorEdge);
+                          "Edge", images_watercolor_edge_png, 20, 32, 0);
+  paint_watercolor_edge->callback(cb_watercolorEdge, (void *)this);
+
   paint_chalk_edge = new Widget(this, 8, pos, 160, 32,
-                          "Edge", images_chalk_edge_png, 20, 32,
-                          (Fl_Callback *)cb_chalkEdge);
+                          "Edge", images_chalk_edge_png, 20, 32, 0);
+  paint_chalk_edge->callback(cb_chalkEdge, (void *)this);
+
   paint_texture_edge = new Widget(this, 8, pos, 160, 32,
-                          "Edge", images_edge_png, 20, 32,
-                          (Fl_Callback *)cb_textureEdge);
+                          "Edge", images_edge_png, 20, 32, 0);
+  paint_texture_edge->callback(cb_textureEdge, (void *)this);
+
   paint_texture_marb = new Widget(this, 8, pos + 40, 160, 32,
-                          "Marbleize", images_marbleize_png, 20, 32,
-                          (Fl_Callback *)cb_textureMarb);
+                          "Marbleize", images_marbleize_png, 20, 32, 0);
+  paint_texture_marb->callback(cb_textureMarb, (void *)this);
+
   paint_texture_turb = new Widget(this, 8, pos + 80, 160, 32,
-                          "Turbulence", images_turbulence_png, 20, 32,
-                          (Fl_Callback *)cb_textureTurb);
+                          "Turbulence", images_turbulence_png, 20, 32, 0);
+  paint_texture_turb->callback(cb_textureTurb, (void *)this);
+
   paint_average_edge = new Widget(this, 8, pos, 160, 32,
-                          "Edge", images_edge_png, 20, 32,
-                          (Fl_Callback *)cb_averageEdge);
+                          "Edge", images_edge_png, 20, 32, 0);
+  paint_average_edge->callback(cb_averageEdge, (void *)this);
 
   resizable(0);
   end();
 
   mode();
+
   paint_size->var = 0;
   paint_size->do_callback();
   paint_coarse_edge->var = 3;
@@ -239,12 +236,12 @@ void PaintOptions::mode()
   }
 }
 
-void PaintOptions::changeSize(int size)
+void PaintOptions::changeSize(int new_size)
 {
   Brush *brush = Project::brush;
   float round = (float)(15 - paint_shape->var) / 15;
 
-  brush->make(size, round);
+  brush->make(new_size, round);
   paint_brush_preview->bitmap->clear(convertFormat(getFltkColor(FL_BACKGROUND2_COLOR), true));
   paint_brush_preview->bitmap->rect(0, 0,
                      paint_brush_preview->bitmap->w - 1,
@@ -255,14 +252,14 @@ void PaintOptions::changeSize(int size)
                      paint_brush_preview->bitmap->h - 1,
                      getFltkColor(Project::fltk_theme_bevel_down), 0);
 
-  const double aspect = 128.0 / size;
+  const double aspect = 128.0 / new_size;
 
   for (int i = 0; i < brush->solid_count; i++)
   {
     int temp_x = brush->solidx[i];
     int temp_y = brush->solidy[i];
 
-    if (size > 128)
+    if (new_size > 128)
     {
       temp_x *= aspect;
       temp_y *= aspect;
@@ -278,82 +275,83 @@ void PaintOptions::changeSize(int size)
   paint_brush_preview->redraw();
 
   char s[32];
-  snprintf(s, sizeof(s), "%d", (int)size);
-
-  paint_size_value->value(s);
-  paint_size_value->redraw();
-}
-
-void PaintOptions::size(Widget *, void *var)
-{
-  int new_size = brush_sizes[*(int *)var];
-  changeSize(new_size);
-  char s[16];
   snprintf(s, sizeof(s), "%d", (int)new_size);
+
   paint_size_value->value(s);
   paint_size_value->redraw();
 }
 
-void PaintOptions::sizeValue(Widget *, void *)
+void PaintOptions::size()
 {
-  int size;
-  sscanf(paint_size_value->value(), "%d", &size);
-  changeSize(size);
+  int pos = paint_size->var;
+
+  if (pos > 15)
+    pos = 15;
+
+  int new_size = brush_sizes[pos];
+  changeSize(new_size);
 }
 
-void PaintOptions::shape(Widget *, void *)
+void PaintOptions::sizeValue()
+{
+  int new_size = 1;
+  sscanf(paint_size_value->value(), "%d", &new_size);
+  changeSize(new_size);
+}
+
+void PaintOptions::shape()
 {
   changeSize(Project::brush->size);
 }
 
-void PaintOptions::stroke(Widget *, void *var)
+void PaintOptions::stroke()
 {
-  Project::stroke->type = *(int *)var;
+  Project::stroke->type = paint_stroke->var;
 }
 
-void PaintOptions::coarseEdge(Widget *, void *var)
+void PaintOptions::coarseEdge()
 {
-  Project::brush->coarse_edge = *(int *)var;
+  Project::brush->coarse_edge = paint_coarse_edge->var;
 }
 
-void PaintOptions::fineEdge(Widget *, void *var)
+void PaintOptions::fineEdge()
 {
-  Project::brush->fine_edge = *(int *)var;
+  Project::brush->fine_edge = paint_fine_edge->var;
 }
 
-void PaintOptions::blurryEdge(Widget *, void *var)
+void PaintOptions::blurryEdge()
 {
-  Project::brush->blurry_edge = *(int *)var;
+  Project::brush->blurry_edge = paint_blurry_edge->var;
 }
 
-void PaintOptions::watercolorEdge(Widget *, void *var)
+void PaintOptions::watercolorEdge()
 {
-  Project::brush->watercolor_edge = *(int *)var;
+  Project::brush->watercolor_edge = paint_watercolor_edge->var;
 }
 
-void PaintOptions::chalkEdge(Widget *, void *var)
+void PaintOptions::chalkEdge()
 {
-  Project::brush->chalk_edge = *(int *)var;
+  Project::brush->chalk_edge = paint_chalk_edge->var;
 }
 
-void PaintOptions::textureEdge(Widget *, void *var)
+void PaintOptions::textureEdge()
 {
-  Project::brush->texture_edge = *(int *)var;
+  Project::brush->texture_edge = paint_texture_edge->var;
 }
 
-void PaintOptions::textureMarb(Widget *, void *var)
+void PaintOptions::textureMarb()
 {
-  Project::brush->texture_marb = *(int *)var;
+  Project::brush->texture_marb = paint_texture_marb->var;
 }
 
-void PaintOptions::textureTurb(Widget *, void *var)
+void PaintOptions::textureTurb()
 {
-  Project::brush->texture_turb = *(int *)var;
+  Project::brush->texture_turb = paint_texture_turb->var;
 }
 
-void PaintOptions::averageEdge(Widget *, void *var)
+void PaintOptions::averageEdge()
 {
-  Project::brush->average_edge = *(int *)var;
+  Project::brush->average_edge = paint_average_edge->var;
 }
 
 void PaintOptions::updateBrush()

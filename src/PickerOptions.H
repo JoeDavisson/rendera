@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Group.H"
 
 class Button;
+class CheckBox;
 class Group;
 class ToggleButton;
 
@@ -35,6 +36,10 @@ public:
 
   void update(int);
   int useBest();
+
+private:
+  Widget *picker_color;
+  CheckBox *picker_best;
 };
 
 #endif

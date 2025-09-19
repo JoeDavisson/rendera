@@ -31,10 +31,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  char str[256];
-
   void change(Fl_Widget *w, InputInt *i)
   {
+    char str[256];
     bool shift = Fl::event_shift() ? true : false;
     int val = std::atoi(i->input.value());
 
@@ -62,8 +61,8 @@ namespace
     snprintf(str, sizeof(str), "%d", val);
     i->input.value(str);
 
-    if (i->cb)
-      i->cb(w, i);
+    if(i->callback())
+      i->do_callback();
   }
 }
 
@@ -77,10 +76,11 @@ InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
 {
   resizable(input);
   end();
+
   align(FL_ALIGN_LEFT);
   group = g;
   var = 0;
-  cb = input_cb;
+  callback(input_cb);
   input.callback((Fl_Callback *)change, this);
   input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
   dec.callback((Fl_Callback *)change, this);
@@ -88,6 +88,7 @@ InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
   input.maximum_size(5);
   input.textsize(16);
   input.cursor_color(FL_FOREGROUND_COLOR);
+  input.value("");
   labelsize(16);
   copy_label(text);
   resize(group->x() + x, group->y() + y, w, h);

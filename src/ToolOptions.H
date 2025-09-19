@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Group.H"
 
 class Group;
+class ToggleButton;
+class Widget;
 
 class ToolOptions : public Group
 {
@@ -33,11 +35,17 @@ public:
 
   void init();
   void change(int);
-  void change(Widget *, void *);
-  void cloneEnable(Widget *, void *);
-  void constrainEnable(Widget *, void *);
-  void originEnable(Widget *, void *);
+  void change();
+  void cloneEnable();
+  void constrainEnable();
+  void originEnable();
   int getTool();
+
+private:
+  Widget *tool;
+  ToggleButton *clone;
+  ToggleButton *origin;
+  ToggleButton *constrain;
 };
 
 #endif

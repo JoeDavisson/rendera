@@ -38,13 +38,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  Fl_Hold_Browser *images_browse;
-  Fl_Input *images_rename;
-  Button *images_close;
-  Button *images_move_up;
-  Button *images_move_down;
-  Fl_Box *images_mem;
-
   void cb_browse(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->browse(); }
 
   void cb_closeFile(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->closeFile(); }
@@ -66,22 +59,22 @@ ImagesOptions::ImagesOptions(int x, int y, int w, int h, const char *l)
   images_browse = new Fl_Hold_Browser(8, pos, 160, 256);
   images_browse->textsize(14);
   images_browse->resize(this->x() + 8, this->y() + pos, 160, 384);
-  images_browse->callback((Fl_Callback *)cb_browse);
+  images_browse->callback(cb_browse, (void *)this);
 
   pos += images_browse->h() + Gui::SPACING;
 
   images_close = new Button(this, 8, pos, 48, 48,
-                          "Close File (Delete)", images_close_png,
-                          (Fl_Callback *)cb_closeFile);
+                          "Close File (Delete)", images_close_png, 0);
+  images_close->callback(cb_closeFile, (void *)this);
 
   images_move_up = new Button(this, 8 + 48 + 8, pos, 48, 48,
-                            "Move Up", images_up_large_png,
-                            (Fl_Callback *)cb_moveUp);
+                            "Move Up", images_up_large_png, 0);
+  images_move_up->callback(cb_moveUp, (void *)this);
 
   images_move_down = new Button(this, 8 + 48 + 8 + 48 + 8, pos,
                               48, 48,
-                              "Move Down", images_down_large_png,
-                              (Fl_Callback *)cb_moveDown);
+                              "Move Down", images_down_large_png, 0);
+  images_move_down->callback(cb_moveDown, (void *)this);
 
   pos += 48 + Gui::SPACING;
 
@@ -89,7 +82,7 @@ ImagesOptions::ImagesOptions(int x, int y, int w, int h, const char *l)
   images_rename->value("");
   images_rename->when(FL_WHEN_ENTER_KEY);
   images_rename->resize(this->x() + 8, this->y() + pos, 160, 32);
-  images_rename->callback((Fl_Callback *)cb_rename);
+  images_rename->callback(cb_rename, (void *)this);
   pos += 32 + Gui::SPACING;
 
   new Separator(this, 0, pos, Gui::IMAGES_WIDTH, Separator::HORIZONTAL, "");

@@ -40,11 +40,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  InputInt *fill_range;
-  InputInt *fill_feather;
-  CheckBox *fill_color_only;
-  Fl_Button *fill_reset;
-
   void cb_reset(Fl_Widget *w, void *data) { FillOptions *temp = (FillOptions *)data; temp->reset(); }
 }
 
@@ -72,7 +67,7 @@ FillOptions::FillOptions(int x, int y, int w, int h, const char *l)
   pos += 4 + Gui::SPACING;
 
   fill_reset = new Fl_Button(this->x() + 8, this->y() + pos, 160, 48, "Reset");
-  fill_reset->callback((Fl_Callback *)cb_reset);
+  fill_reset->callback(cb_reset, (void *)this);
 
   resizable(0);
   end();

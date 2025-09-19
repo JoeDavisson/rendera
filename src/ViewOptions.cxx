@@ -39,17 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  Button *zoom_one;
-  Button *zoom_in;
-  Button *zoom_out;
-  StaticText *zoom;
-  ToggleButton *grid;
-  ToggleButton *gridsnap;
-  InputInt *gridx;
-  InputInt *gridy;
-  Fl_Choice *aspect;
-  CheckBox *filter;
-
   void cb_zoomIn(Fl_Widget *w, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->zoomIn(); }
 
   void cb_zoomOut(Fl_Widget *w, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->zoomOut(); }
@@ -75,20 +64,20 @@ ViewOptions::ViewOptions(int x, int y, int w, int h, const char *l)
   int pos = Gui::SPACING;
 
   zoom_one = new Button(this, pos, 8, 40, 40,
-                        "Actual Size (1)", images_zoom_one_png,
-                        (Fl_Callback *)cb_zoomOne);
+                        "Actual Size (1)", images_zoom_one_png, 0);
+  zoom_one->callback(cb_zoomOne, (void *)this);
 
   pos += 40 + Gui::SPACING;
 
   zoom_in = new Button(this, pos, 8, 40, 40,
-                       "Zoom In (+)", images_zoom_in_png,
-                       (Fl_Callback *)cb_zoomIn);
+                       "Zoom In (+)", images_zoom_in_png, 0);
+  zoom_in->callback(cb_zoomIn, (void *)this);
 
   pos += 40 + Gui::SPACING;
 
   zoom_out = new Button(this, pos, 8, 40, 40,
-                        "Zoom Out (-)", images_zoom_out_png,
-                        (Fl_Callback *)cb_zoomOut);
+                        "Zoom Out (-)", images_zoom_out_png, 0);
+  zoom_out->callback(cb_zoomOut, (void *)this);
 
   pos += 40 + Gui::SPACING;
 
@@ -100,29 +89,27 @@ ViewOptions::ViewOptions(int x, int y, int w, int h, const char *l)
   pos += 4 + Gui::SPACING;
 
   grid = new ToggleButton(this, pos, 8, 40, 40,
-                          "Show Grid", images_grid_png,
-                          (Fl_Callback *)cb_gridEnable);
+                          "Show Grid", images_grid_png, 0);
+  grid->callback(cb_gridEnable, (void *)this);
 
   pos += 40 + Gui::SPACING;
 
   gridsnap = new ToggleButton(this, pos, 8, 40, 40,
-                          "Snap to Grid", images_gridsnap_png,
-                          (Fl_Callback *)cb_gridSnap);
+                          "Snap to Grid", images_gridsnap_png, 0);
+  gridsnap->callback(cb_gridSnap, (void *)this);
 
   pos += 96; 
 
-  gridx = new InputInt(this, pos, 8, 104, 40,
-                       "X:",
-                       (Fl_Callback *)cb_gridX, 1, 256);
+  gridx = new InputInt(this, pos, 8, 104, 40, "X:", 0, 1, 256);
+  gridx->callback(cb_gridX, (void *)this);
 
   gridx->labelsize(18);
   gridx->textsize(18);
   gridx->value("8");
   pos += 104 + 48;
 
-  gridy = new InputInt(this, pos, 8, 104, 40,
-                       "Y:",
-                       (Fl_Callback *)cb_gridY, 1, 256);
+  gridy = new InputInt(this, pos, 8, 104, 40, "Y:", 0, 1, 256);
+  gridy->callback(cb_gridY, (void *)this);
 
   gridy->labelsize(18);
   gridy->textsize(18);
@@ -140,16 +127,15 @@ ViewOptions::ViewOptions(int x, int y, int w, int h, const char *l)
   aspect->add("Wide (2:1)");
   aspect->add("Tall (1:2)");
   aspect->value(0);
-  aspect->callback((Fl_Callback *)cb_aspectMode);
+  aspect->callback(cb_aspectMode, (void *)this);
   aspect->textsize(16);
   pos += 160 + Gui::SPACING;
 
   new Separator(this, pos, 0, Gui::TOP_HEIGHT, Separator::VERTICAL, "");
   pos += 4 + Gui::SPACING;
 
-  filter = new CheckBox(this, pos, 8, 48, 40,
-                            "Filter",
-                            (Fl_Callback *)cb_filterToggle);
+  filter = new CheckBox(this, pos, 8, 48, 40, "Filter", 0);
+  filter->callback(cb_filterToggle, (void *)this);
 
   filter->tooltip("Filter display\nwhen zoomed out");
   filter->value(0);
