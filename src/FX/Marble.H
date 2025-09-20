@@ -42,7 +42,7 @@ private:
   static void setTurb();
   static void setBlend();
   static void setThreshold();
-  static void getColor();
+//  static void getColor();
 };
 
 #endif

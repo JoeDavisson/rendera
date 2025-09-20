@@ -65,6 +65,11 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
   text_angle->value("0");
   pos += 32 + Gui::SPACING;
   
+  text_thickness = new InputInt(this, 64, pos, 96, 32, "Thickness:", 0, 0, 31);
+//  text_thickness->callback(cb_changedSize, (void *)this);
+  text_thickness->value("0");
+  pos += 32 + Gui::SPACING;
+  
   text_input = new Fl_Input(8, pos, 160, 32, "");
   text_input->textsize(16);
   text_input->value("Text");
@@ -116,5 +121,10 @@ int TextOptions::getAngle()
 int TextOptions::getSmooth()
 {
   return text_smooth->value();
+}
+
+int TextOptions::getThickness()
+{
+  return atoi(text_thickness->value());
 }
 

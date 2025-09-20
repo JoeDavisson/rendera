@@ -68,6 +68,37 @@ void Text::push(View *view)
 
   int w = text_bmp->w;
   int h = text_bmp->h;
+  const int thickness = Gui::text->getThickness();
+
+  if (thickness > 0)
+  {
+    Map map(w, h);
+    map.clear(0);
+
+    for (int y = 0; y < h; y++)
+    {
+      for (int x = 0; x < w; x++)
+      {
+        int c = text_bmp->getpixel(x, y);
+        int t = getv(c);
+
+        if (t < 192)
+          map.setpixel(x, y, 1);
+      }
+    }
+
+    for (int i = 0; i < thickness; i++)
+      map.grow(i & 1);
+
+    for (int y = 0; y < h; y++)
+    {
+      for (int x = 0; x < w; x++)
+      {
+        if (map.getpixel(x, y) == 1)
+          text_bmp->setpixel(x, y, makeRgb(0, 0, 0));
+      }
+    }
+  }
 
   if (Gui::text->getSmooth() > 0)
   {
@@ -210,9 +241,17 @@ void Text::move(View *view)
 
       if (t < 192)
       {
-        map->setpixel(imgx - w / 2 + x, imgy - h / 2 + y, 255);
+        map->setpixel(imgx - w / 2 + x, imgy - h / 2 + y, 1);
       }
     }
+  }
+
+  const int thickness = Gui::text->getThickness();
+
+  if (thickness > 0)
+  {
+    for (int i = 0; i < thickness; i++)
+      map->grow(i & 1);
   }
 
   stroke->size(imgx - w / 2, imgy - h / 2,

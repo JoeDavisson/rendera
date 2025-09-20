@@ -200,6 +200,9 @@ void Widget::draw()
   if (stepx < 1 || stepy < 1)
     return;
 
+  if (stepx > w() || stepy > h())
+    return;
+
   int offsety = (var / (w() / stepx)) * stepy;
   int offsetx = var;
 

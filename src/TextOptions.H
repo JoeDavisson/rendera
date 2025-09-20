@@ -40,10 +40,12 @@ public:
   int getSize();
   int getAngle();
   int getSmooth();
+  int getThickness();
 
 private:
   InputInt *text_size;
   InputInt *text_angle;
+  InputInt *text_thickness;
   Fl_Input *text_input;
   CheckBox *text_smooth;
   Fl_Button *text_toggle_preview;

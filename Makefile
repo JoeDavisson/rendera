@@ -25,7 +25,7 @@ LIBS=$(shell ./fltk/fltk-config --use-images --ldstaticflags)
 ifeq ($(PLATFORM),linux)
   HOST=
   CXX=g++
-  CXXFLAGS= -O3 -Wall -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -g -O3 -Wall -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   EXE=rendera
 endif
 
@@ -102,6 +102,7 @@ OBJ= \
   $(SRC_DIR)/Brush.o \
   $(SRC_DIR)/Clone.o \
   $(SRC_DIR)/Dialog.o \
+  $(SRC_DIR)/Wheel.o \
   $(SRC_DIR)/Editor.o \
   $(SRC_DIR)/FontPreview.o \
   $(SRC_DIR)/Gui.o \

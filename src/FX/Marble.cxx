@@ -35,10 +35,10 @@ namespace
     Widget *turb;
     Widget *blend;
     Widget *threshold;
-    Widget *color;
+//    Widget *color;
     Fl_Choice *type;
     Fl_Choice *mode;
-    Fl_Button *palette_editor;
+//    Fl_Button *palette_editor;
     Fl_Button *change;
     Fl_Button *ok;
     Fl_Button *cancel;
@@ -132,41 +132,40 @@ void Marble::begin()
   apply(Items::temp);
   FX::drawPreview(Items::temp, Items::preview->bitmap);
   Items::preview->redraw();
-  Items::color->bitmap->clear(Project::brush->color);
-  Items::color->bitmap->rect(0, 0, Items::color->bitmap->w - 1, Items::color->bitmap->h - 1, makeRgb(0, 0, 0), 0);
-  Items::color->redraw();
+//  Items::color->bitmap->clear(Project::brush->color);
+//  Items::color->bitmap->rect(0, 0, Items::color->bitmap->w - 1, Items::color->bitmap->h - 1, makeRgb(0, 0, 0), 0);
+//  Items::color->redraw();
   Items::dialog->show();
 }
 
 void Marble::init()
 {
-  int x1 = 528 / 2 - (160 * 2 + 8 * 3) / 2;
   int y1 = 8;
 
-  Items::dialog = new DialogWindow(528, 0, "Marble");
+  Items::dialog = new DialogWindow(528, 8, "Marble");
 
   Items::preview = new Widget(Items::dialog, 8, y1, 512, 512, 0, 1, 1, 0);
   y1 += 512 + 8;
 
-  Items::marb = new Widget(Items::dialog, x1, y1, 160, 32, "Marbleize", images_marbleize_png, 16, 32, (Fl_Callback *)setMarb);
+  Items::marb = new Widget(Items::dialog, 8, y1, 160, 32, "Marbleize", images_marbleize_png, 16, 32, (Fl_Callback *)setMarb);
   Items::marb->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::marb->labelfont(FL_COURIER);
 
-  Items::turb = new Widget(Items::dialog, x1 + 160 + 8, y1, 160, 32, "Turbulence", images_turbulence_png, 16, 32, (Fl_Callback *)setTurb);
+  Items::turb = new Widget(Items::dialog, 8 + 160 + 8, y1, 160, 32, "Turbulence", images_turbulence_png, 16, 32, (Fl_Callback *)setTurb);
   Items::turb->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::turb->labelfont(FL_COURIER);
   y1 += 64;
 
-  Items::blend = new Widget(Items::dialog, x1, y1, 160, 32, "Blend", images_marble_blend_png, 8, 32, (Fl_Callback *)setBlend);
+  Items::blend = new Widget(Items::dialog, 8, y1, 160, 32, "Blend", images_marble_blend_png, 8, 32, (Fl_Callback *)setBlend);
   Items::blend->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::blend->labelfont(FL_COURIER);
 
-  Items::threshold = new Widget(Items::dialog, x1 + 160 + 8, y1, 160, 32, "Threshold", images_marble_blend_png, 8, 32, (Fl_Callback *)setThreshold);
+  Items::threshold = new Widget(Items::dialog, 8 + 160 + 8, y1, 160, 32, "Threshold", images_marble_blend_png, 8, 32, (Fl_Callback *)setThreshold);
   Items::threshold->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::threshold->labelfont(FL_COURIER);
   y1 += 64;
 
-  Items::type = new Fl_Choice(x1, y1, 160, 32, 0);
+  Items::type = new Fl_Choice(8, y1, 160, 32, 0);
   Items::type->labelsize(16);
   Items::type->textsize(16);
   Items::type->tooltip("Type");
@@ -182,7 +181,7 @@ void Marble::init()
   Items::type->value(0);
   Items::type->callback((Fl_Callback *)update);
 
-  Items::mode = new Fl_Choice(x1 + 160 + 8, y1, 160, 32, 0);
+  Items::mode = new Fl_Choice(8 + 160 + 8, y1, 160, 32, 0);
   Items::mode->labelsize(16);
   Items::mode->textsize(16);
   Items::mode->tooltip("Blending Mode");
@@ -196,15 +195,14 @@ void Marble::init()
 
   y1 += 32 + 16;
 
-  Items::palette_editor = new Fl_Button(x1, y1, 160, 32, "Color...");
-  Items::palette_editor->labelsize(16);
-  Items::palette_editor->callback((Fl_Callback *)getColor);
+//  Items::palette_editor = new Fl_Button(x1, y1, 160, 32, "Color...");
+//  Items::palette_editor->labelsize(16);
+//  Items::palette_editor->callback((Fl_Callback *)getColor);
 
-  Items::color = new Widget(Items::dialog, x1 + 160 + 8, y1, 160, 32, 0, 0, 0, 0);
-  x1 = 8;
-  y1 += 32 + 16;
+//  Items::color = new Widget(Items::dialog, x1 + 160 + 8, y1, 160, 32, 0, 0, 0, 0);
+//  y1 += 32 + 16;
 
-  Items::change = new Fl_Button(x1, y1 + 12, 96, 40, "Apply");
+  Items::change = new Fl_Button(8, y1 + 12, 96, 40, "Apply");
   Items::change->labelsize(16);
   Items::change->tooltip("Apply Changes");
   Items::change->callback((Fl_Callback *)updateMain);
@@ -268,13 +266,15 @@ void Marble::setThreshold()
   Items::old_threshold_var = Items::threshold->var;
 }
 
+/*
 void Marble::getColor()
 {
-  Editor::begin();
+//  Editor::begin();
   Items::color->bitmap->clear(Project::brush->color);
   Items::color->bitmap->rect(0, 0, Items::color->bitmap->w - 1, Items::color->bitmap->h - 1, makeRgb(0, 0, 0), 0);
   Items::color->redraw();
 
   update();
 }
+*/
 

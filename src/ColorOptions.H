@@ -28,6 +28,7 @@ class InputInt;
 class InputText;
 class Palette;
 class Widget;
+class Wheel;
 class Fl_Choice;
 
 class ColorOptions : public Group
@@ -52,8 +53,7 @@ public:
   void changePalette(Palette *);
 
 private:
-  Widget *hue;
-  Widget *satval;
+  Wheel *wheel;
   InputText *hexcolor;
   InputInt *trans_input;
   Widget *trans;
