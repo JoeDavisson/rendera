@@ -45,9 +45,6 @@ void Fractal::marble(Map *src, Map *dest, Map *marbx, Map *marby, float scale, f
 
   for (i = 0; i < 256; i++)
   {
-    // xval[i] = -scale * std::sin((float)i / (float)turbulence);
-    // yval[i] = scale * std::sin((float)i / (float)turbulence);
-
     switch (type)
     {
       case 0:
@@ -121,98 +118,6 @@ void Fractal::marble(Map *src, Map *dest, Map *marbx, Map *marby, float scale, f
     }
   }
 }
-
-/*
-void Fractal::wood(Map *src, Map *dest, Map *marbx, Map *marby, float scale, int turbulence)
-{
-  int xval[256];
-  int yval[256];
-
-  int x, y, i;
-  int xx, yy;
-  int w = src->w;
-  int h = src->h;
-
-  for (i = 0; i < 256; i++)
-  {
-//    xval[i] = -scale * std::sin((float)i / (float)turbulence);
-//    yval[i] = scale * std::sin((float)i / (float)turbulence);
-
-    //good
-    float xv = scale * std::sin((float)i / (float)turbulence);
-    float yv = scale * std::sin((float)i / (float)turbulence);
-
-    xv *= 50;
-    yv *= 50;
-
-    xval[i] = -(int)((xv - (int)xv) * 50);
-    yval[i] = (int)((yv - (int)yv) * 50);
-
-    // atan marble
-    float xv = scale * std::atan((float)i / (float)turbulence);
-    float yv = scale * std::atan((float)i / (float)turbulence);
-
-    xval[i] = -(int)((xv - (int)xv) * 255);
-    yval[i] = (int)((yv - (int)yv) * 255);
-
-    // another marble
-    float xv = scale * std::sin((float)i / (float)turbulence);
-    float yv = scale * std::atan((float)i / (float)turbulence);
-
-    xval[i] = -(int)((xv - (int)yv) * 100);
-    yval[i] = (int)((yv - (int)xv) * 100);
-
-    // malachite
-    float xv = scale * std::sin((float)i / (float)turbulence);
-    float yv = scale * std::atan((float)i / (float)turbulence);
-
-    xval[i] = -(int)((xv - (int)yv) * 10);
-    yval[i] = (int)((yv - (int)xv) * 100);
-
-    // streaks
-    float xv = -scale * std::sin((float)i / (float)turbulence);
-    float yv = scale * std::sin((float)i / (float)turbulence);
-
-    xv *= 10;
-    yv *= 10;
-
-    xval[i] = (xv - (int)xv) * 100;
-    yval[i] = (yv - (int)yv) * 100;
-
-    float xv = scale * std::sin((float)i / (float)turbulence);
-    float yv = scale * std::atan((float)i / (float)turbulence);
-
-    xv *= 10;
-    yv *= 10;
-
-    xval[i] = -(xv - (int)xv) * 255;
-    yval[i] = (yv - (int)yv) * 255;
-
-//    xval[i] = -(int)((float)scale * (float)std::sin((float)i / (float)turbulence) * 10);
-//    yval[i] = (int)((float)scale * (float)std::sin((float)i / (float)turbulence) * 10);
-  }
-
-  for (y = 0; y < h; y++)
-  {
-    for (x = 0; x < w; x++)
-    {
-      xx = x + xval[marbx->getpixel(x, y)];
-      yy = y + yval[marby->getpixel(x, y)];
-
-      while (xx < 0)
-        xx += w;
-      while (yy < 0)
-        yy += h;
-      while (xx >= w)
-        xx -= w;
-      while (yy >= h)
-        yy -= h;
-
-      dest->setpixel(x, y, src->getpixel(xx, yy));
-    }
-  }
-}
-*/
 
 void Fractal::plasma(Map * map, int turbulence)
 {
@@ -307,6 +212,5 @@ void Fractal::divide(Map * map, int x1, int y1, int x2, int y2)
   divide(map, x1, y, x, y2);
 
   level--;
-
 }
 
