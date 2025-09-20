@@ -54,6 +54,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "View.H"
 #include "Widget.H"
+#include "Wheel.H"
 
 #include "Normalize.H"
 #include "Equalize.H"

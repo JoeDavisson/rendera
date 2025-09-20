@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Images.H"
 #include "Inline.H"
 #include "View.H"
+#include "Wheel.H"
 
 namespace
 {
@@ -35,10 +36,9 @@ namespace
     Widget *turb;
     Widget *blend;
     Widget *threshold;
-//    Widget *color;
     Fl_Choice *type;
     Fl_Choice *mode;
-//    Fl_Button *palette_editor;
+    Wheel *wheel;
     Fl_Button *change;
     Fl_Button *ok;
     Fl_Button *cancel;
@@ -66,9 +66,7 @@ void Marble::apply(Bitmap *dest)
   Fractal::plasma(&marby, (Items::turb->var + 1) << 10);
   Fractal::marble(&plasma, &marble, &marbx, &marby, (Items::marb->var + 1) << 2, 50, Items::type->value());
 
-  int color = Project::brush->color;
-//  int trans = Items::blend->var * 10.96;
-//  int threshold = Items::threshold->var * 10.96;
+  int color = Items::wheel->getColor();
   int trans = Items::blend->var * 13.43;
   int threshold = Items::threshold->var * 13.43;
   int (*current_blend)(const int, const int, const int) = &Blend::trans;
@@ -125,6 +123,7 @@ void Marble::quit()
 
 void Marble::begin()
 {
+  Items::wheel->update(Project::brush->color);
   Bitmap *bmp = Project::bmp;
   Project::undo->push();
   Items::temp = new Bitmap(bmp->cw, bmp->ch);
@@ -132,9 +131,6 @@ void Marble::begin()
   apply(Items::temp);
   FX::drawPreview(Items::temp, Items::preview->bitmap);
   Items::preview->redraw();
-//  Items::color->bitmap->clear(Project::brush->color);
-//  Items::color->bitmap->rect(0, 0, Items::color->bitmap->w - 1, Items::color->bitmap->h - 1, makeRgb(0, 0, 0), 0);
-//  Items::color->redraw();
   Items::dialog->show();
 }
 
@@ -142,10 +138,10 @@ void Marble::init()
 {
   int y1 = 8;
 
-  Items::dialog = new DialogWindow(528, 8, "Marble");
+  Items::dialog = new DialogWindow(544, 8, "Marble");
 
-  Items::preview = new Widget(Items::dialog, 8, y1, 512, 512, 0, 1, 1, 0);
-  y1 += 512 + 8;
+  Items::preview = new Widget(Items::dialog, 8, y1, 528, 528, 0, 1, 1, 0);
+  y1 += 528 + 24;
 
   Items::marb = new Widget(Items::dialog, 8, y1, 160, 32, "Marbleize", images_marbleize_png, 16, 32, (Fl_Callback *)setMarb);
   Items::marb->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
@@ -193,16 +189,12 @@ void Marble::init()
   Items::mode->value(0);
   Items::mode->callback((Fl_Callback *)update);
 
-  y1 += 32 + 16;
+  Items::wheel = new Wheel(344, 544, 192, 192, ""); 
+  Items::wheel->callback((Fl_Callback *)update);
+  y1 = 8 + 528 + 8 + 192 + 8;
 
-//  Items::palette_editor = new Fl_Button(x1, y1, 160, 32, "Color...");
-//  Items::palette_editor->labelsize(16);
-//  Items::palette_editor->callback((Fl_Callback *)getColor);
 
-//  Items::color = new Widget(Items::dialog, x1 + 160 + 8, y1, 160, 32, 0, 0, 0, 0);
-//  y1 += 32 + 16;
-
-  Items::change = new Fl_Button(8, y1 + 12, 96, 40, "Apply");
+  Items::change = new Fl_Button(8, y1 + 12, 160, 40, "Apply To Image");
   Items::change->labelsize(16);
   Items::change->tooltip("Apply Changes");
   Items::change->callback((Fl_Callback *)updateMain);
@@ -265,16 +257,4 @@ void Marble::setThreshold()
   update();
   Items::old_threshold_var = Items::threshold->var;
 }
-
-/*
-void Marble::getColor()
-{
-//  Editor::begin();
-  Items::color->bitmap->clear(Project::brush->color);
-  Items::color->bitmap->rect(0, 0, Items::color->bitmap->w - 1, Items::color->bitmap->h - 1, makeRgb(0, 0, 0), 0);
-  Items::color->redraw();
-
-  update();
-}
-*/
 
