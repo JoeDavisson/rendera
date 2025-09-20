@@ -139,7 +139,7 @@ void ColorOptions::colorHexInput()
 
   colorUpdate(convertFormat((int)c, true));
   colorHexUpdate();
-  Editor::update();
+//  Editor::update();
 }
 
 void ColorOptions::colorHexUpdate()
@@ -177,8 +177,8 @@ void ColorOptions::colorChange()
 
   colorTrans();
   colorHexUpdate();
-  Editor::update();
-  wheel->update(Project::brush->color);
+//  Editor::update();
+//  wheel->update(Project::brush->color);
 }
 
 void ColorOptions::colorTransInput()
@@ -288,7 +288,7 @@ void ColorOptions::paletteSwatches()
 
   pal->draw(palette_swatches);
   colorUpdate(c);
-  Editor::update();
+//  Editor::update();
 }
 
 int ColorOptions::paletteSwatchesIndex()
