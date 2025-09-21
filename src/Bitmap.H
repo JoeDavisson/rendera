@@ -71,6 +71,7 @@ public:
   void rotate180();
   void offset(int, int, bool);
   void invert();
+  void scale(Bitmap *);
 };
 
 #endif

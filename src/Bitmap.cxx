@@ -1062,3 +1062,50 @@ void Bitmap::invert()
   }
 }
 
+void Bitmap::scale(Bitmap *dest)
+{
+  int sw = w;
+  int sh = h;
+  int dw = dest->w;
+  int dh = dest->h;
+
+  // scaling ratios
+  float ax = ((float)sw / dw);
+  float ay = ((float)sh / dh);
+
+  int ix = ax > 0 ? (int)(ax + 1) : 1;
+  int iy = ay > 0 ? (int)(ay + 1) : 1;
+  int div = ix * iy;
+
+  for (int y = 0; y < dh; y++)
+  {
+    for (int x = 0; x < dw; x++)
+    {
+      int r = 0;
+      int g = 0;
+      int b = 0;
+      int a = 0;
+
+      for (int j = 0; j < iy; j++)
+      {
+        for (int i = 0; i < ix; i++)
+        {
+          const int c = getpixel(x * ax + i, y * ay + j);
+
+          r += getr(c);
+          g += getg(c);
+          b += getb(c);
+          a += geta(c);
+        }
+      }
+
+      r /= div;
+      g /= div;
+      b /= div;
+      a /= div;
+
+      dest->setpixel(x, y, makeRgba(r, g, b, a));
+    }
+  }
+}
+
