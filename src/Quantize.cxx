@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 
 #include "Bitmap.H"
+#include "Editor.H"
 #include "Gui.H"
 #include "Inline.H"
 #include "Octree.H"
@@ -302,6 +303,9 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 
   // hide progress bar
   Progress::hide();
+
+  // push undo
+  Editor::push();
 
   // build palette
   int index = 0;
