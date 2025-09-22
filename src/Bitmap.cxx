@@ -762,16 +762,31 @@ void Bitmap::pointStretch(Bitmap *dest,
   if (dw < 1 || dh < 1)
     return;
 
-  // add in extra so the right/bottom edge gets filled
+  // add in extra so the right/bottom edges gets filled
   if (ax > 1)
     dw += ax;
 
   if (ay > 1)
     dh += ay;
 
-  // scale image
+  int xinc = 0;
   int yinc = 0;
 
+  // avoid clipping in inner X loop
+  for (int x = 0; x < dw; x++)
+  {
+    const int x1 = sx + (xinc >> 16);
+
+    if (x1 >= w || dx + x >= dest->w)
+    {
+      dw = x;
+      break;
+    }
+
+    xinc += bx;
+  }
+
+  // scale image
   for (int y = 0; y < dh; y++)
   {
     const int y1 = sy + (yinc >> 16);
@@ -780,24 +795,20 @@ void Bitmap::pointStretch(Bitmap *dest,
       break;
 
     const int checker_y = ((dy + y + checker_offset_y) >> 3);
-    int *p = dest->row[dy + y] + dx;
+    int *d = dest->row[dy + y] + dx;
+    int *s = row[y1] + sx;
 
-    int xinc = 0;
+    xinc = 0;
 
     for (int x = 0; x < dw; x++)
     {
-      const int x1 = sx + (xinc >> 16);
-
-      if (x1 >= w || dx + x >= dest->w)
-        break;
-
-      const int c = *(row[y1] + x1);
+      const int c = *(s + (xinc >> 16));
       const int checker_x = ((dx + x + checker_offset_x) >> 3);
       const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
 
-      *p = 0xff000000 | convertFormat(Blend::trans(checker, c, 255 - geta(c)), bgr_order);
-      p++;
-
+      *d = 0xff000000 | convertFormat(Blend::trans(checker, c, 255 - geta(c)),
+                                      bgr_order);
+      d++;
       xinc += bx;
     }
 
