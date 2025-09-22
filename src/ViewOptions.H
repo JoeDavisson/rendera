@@ -50,7 +50,6 @@ public:
   void gridY();
 
   void aspectMode();
-  void filterToggle();
 
 private:
   Button *zoom_one;
@@ -62,7 +61,6 @@ private:
   InputInt *gridx;
   InputInt *gridy;
   Fl_Choice *aspect;
-  CheckBox *filter;
 };
 
 #endif

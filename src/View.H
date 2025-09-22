@@ -76,7 +76,6 @@ public:
   bool mouse_timer_ready;
   bool mouse_in_viewport;
   bool bgr_order;
-  bool filter;
   int button;
   int button1, button2, button3;
   bool dclick;

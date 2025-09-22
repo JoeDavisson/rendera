@@ -54,8 +54,6 @@ namespace
   void cb_gridY(Fl_Widget *w, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->gridY(); }
 
   void cb_aspectMode(Fl_Widget *w, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->aspectMode(); }
-
-  void cb_filterToggle(Fl_Widget *w, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->filterToggle(); }
 }
 
 ViewOptions::ViewOptions(int x, int y, int w, int h, const char *l)
@@ -133,13 +131,6 @@ ViewOptions::ViewOptions(int x, int y, int w, int h, const char *l)
 
   new Separator(this, pos, 0, Gui::TOP_HEIGHT, Separator::VERTICAL, "");
   pos += 4 + Gui::SPACING;
-
-  filter = new CheckBox(this, pos, 8, 48, 40, "Filter", 0);
-  filter->callback(cb_filterToggle, (void *)this);
-
-  filter->tooltip("Filter display\nwhen zoomed out");
-  filter->value(0);
-  pos += 48 + Gui::SPACING;
 
   resizable(0);
   end();
@@ -230,13 +221,5 @@ void ViewOptions::aspectMode()
   View *view = Gui::view;
 
   view->changeAspect(aspect->value());
-}
-
-void ViewOptions::filterToggle()
-{
-  View *view = Gui::view;
-
-  view->filter = filter->value() == 1 ? true : false;
-  view->drawMain(true);
 }
 

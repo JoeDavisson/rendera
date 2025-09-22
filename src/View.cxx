@@ -123,7 +123,6 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   mouse_timer_ready = false;
   mouse_in_viewport = false;
   bgr_order = false;
-  filter = false;
   backbuf = 0;
   wimage = 0;
 
@@ -516,25 +515,12 @@ void View::drawMain(bool refresh)
 
   Bitmap *bmp = Project::bmp;
 
-  if (zoom >= 1.0 || filter == false || panning == true ||
-      rendering == true || Project::tool->isActive())
-  {
-    bmp->pointStretch(backbuf,
-                      ox, oy,
-                      sw - offx, sh - offy,
-                      offx * zoom, offy * zoom,
-                      dw - offx * zoom, dh - offy * zoom,
-                      bgr_order);
-  }
-    else
-  {
-    bmp->filteredStretch(backbuf,
-                         ox, oy,
-                         sw - offx, sh - offy,
-                         offx * zoom, offy * zoom,
-                         dw - offx * zoom, dh - offy * zoom,
-                         bgr_order);
-  }
+  bmp->pointStretch(backbuf,
+                    ox, oy,
+                    sw - offx, sh - offy,
+                    offx * zoom, offy * zoom,
+                    dw - offx * zoom, dh - offy * zoom,
+                    bgr_order);
 
   if (grid)
     drawGrid();
