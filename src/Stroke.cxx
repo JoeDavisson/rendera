@@ -838,6 +838,8 @@ void Stroke::previewPaint(View *view)
   const float zoom = view->zoom;
   const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
+  int ox = view->ox;
+  int oy = view->oy;
   int color, trans;
 
   if (Clone::active)
@@ -850,9 +852,6 @@ void Stroke::previewPaint(View *view)
     color = convertFormat(Project::brush->color, bgr_order);
     trans = Project::brush->trans;
   }
-
-  int ox = view->ox;
-  int oy = view->oy;
 
   ox *= zoom;
   oy *= zoom;

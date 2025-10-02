@@ -37,6 +37,7 @@ class Selection;
 class Offset;
 class Text;
 class Fill;
+class Gradient;
 
 class Project
 {
@@ -73,6 +74,7 @@ public:
   static Offset *offset;
   static Text *text;
   static Fill *fill;
+  static Gradient *gradient;
 
   static Tool *tool;
 

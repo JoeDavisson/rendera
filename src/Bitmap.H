@@ -43,6 +43,7 @@ public:
   void hline(int, int, int, int);
   void vline(int, int, int, int);
   void line(int, int, int, int, int, int);
+  void line(int, int, int, int, int, int, int);
   void rect(int, int, int, int, int, int);
   void rectfill(int, int, int, int, int, int);
   void rectfill(int, int, int, int, int);
@@ -71,6 +72,7 @@ public:
   void offset(int, int, bool);
   void invert();
   void scale(Bitmap *);
+  void gradient(int, int, int, int, int, bool);
 };
 
 #endif

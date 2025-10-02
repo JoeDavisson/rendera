@@ -223,6 +223,17 @@ void Bitmap::vline(int y1, int x, int y2, int c)
   }
 }
 
+void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t, int r)
+{
+  for (int j = -r; j <= r; j++)
+  {
+    for (int i = -r; i <= r; i++)
+    {
+      line(x1 + i, y1 + j, x2 + i, y2 + j, c, t);
+    }
+  }
+}
+
 void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
 {
   int dx = x2 - x1;
@@ -983,4 +994,50 @@ void Bitmap::scale(Bitmap *dest)
     }
   }
 }
+
+void Bitmap::gradient(int x1, int y1, int x2, int y2,
+                      int start_color, bool use_color)
+{
+  float dx = x2 - x1;
+  float dy = y2 - y1;
+  float length = dx * dx + dy * dy;
+
+  if (length == 0)
+    return;
+
+  for (int y = 0; y < h; y++)
+  {
+    for (int x = 0; x < w; x++)
+    {
+      float t = (dx * (x - x1) + dy * (y - y1)) / length;
+
+      if (t < 0)
+        t = 0;
+
+      if (t > 1)
+        t = 1;
+
+      const int c = getpixel(x, y);
+      int r, g, b, a;
+
+      if (use_color == true)
+      {
+        r = getr(start_color);
+        g = getg(start_color);
+        b = getg(start_color);
+        a = geta(start_color) - geta(c) * t;
+      }
+        else
+      {
+        r = getr(c);
+        g = getg(c);
+        b = getb(c);
+        a = geta(c) - geta(c) * t;
+      }
+
+      setpixel(x, y, makeRgba(r, g, b, a));
+    }
+  }
+}
+
 

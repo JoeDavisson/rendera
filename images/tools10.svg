@@ -200,8 +200,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.9999998"
-     inkscape:cx="574.37503"
-     inkscape:cy="90.500005"
+     inkscape:cx="113.62501"
+     inkscape:cy="124.25001"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -258,6 +258,16 @@
      id="layer1"
      transform="translate(0,-284.36218)"
      style="display:inline">
+    <rect
+       style="display:inline;opacity:0.580001;fill:none;stroke:none"
+       id="rect3929-17-367"
+       width="32"
+       height="31.999994"
+       x="88"
+       y="372.36218"
+       inkscape:export-filename="../../EasyChop/src/test.svg"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
     <rect
        style="opacity:0.580001;fill:none;stroke:none"
        id="rect3929-17"
@@ -1358,16 +1368,6 @@
        height="23.999998"
        x="180"
        y="484.36218"
-       inkscape:export-filename="/home/joe/rendera/data/theme/dark/zoom_one.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       style="display:inline;opacity:0.580001;fill:#4d4d4d;stroke:none"
-       id="rect3929-17-367"
-       width="32"
-       height="31.999994"
-       x="136"
-       y="524.36218"
        inkscape:export-filename="/home/joe/rendera/data/theme/dark/zoom_one.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />

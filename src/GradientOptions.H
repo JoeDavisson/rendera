@@ -18,37 +18,23 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef TEXT_OPTIONS_H
-#define TEXT_OPTIONS_H
+#ifndef GRADIENT_OPTIONS_H
+#define GRADIENT_OPTIONS_H
 
 #include "Group.H"
 
+//class CheckBox;
+//class InputInt;
 class Group;
-class InputInt;
-class Fl_Button;
-class Fl_Input;
-class Fl_Widget;
+//class Fl_Button;
 
-class TextOptions : public Group
+class GradientOptions : public Group
 {
 public:
-  TextOptions(int, int, int, int, const char *);
-  ~TextOptions();
-
-  void changedSize();
-  const char *getInput();
-  int getSize();
-  int getAngle();
-  int getSmooth();
-  int getWeight();
+  GradientOptions(int, int, int, int, const char *);
+  ~GradientOptions();
 
 private:
-  InputInt *text_size;
-  InputInt *text_angle;
-  InputInt *text_weight;
-  Fl_Input *text_input;
-  CheckBox *text_smooth;
-  Fl_Button *text_toggle_preview;
 };
 
 #endif

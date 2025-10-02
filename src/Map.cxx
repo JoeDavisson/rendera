@@ -897,12 +897,11 @@ void Map::growBlock(unsigned char *s0, unsigned char *s1,
 
 void Map::shrink(int offset)
 {
-  int x, y;
   unsigned char *s0, *s1, *s2, *s3;
 
-  for(y = offset; y < h - 1; y += 2)
+  for(int y = offset; y < h - 1; y += 2)
   {
-    for(x = offset; x < w - 1; x += 2)
+    for(int x = offset; x < w - 1; x += 2)
     {
 
       s0 = row[y] + x;
@@ -917,12 +916,11 @@ void Map::shrink(int offset)
 
 void Map::grow(int offset)
 {
-  int x, y;
   unsigned char *s0, *s1, *s2, *s3;
 
-  for(y = offset; y < h - 1; y += 2)
+  for(int y = offset; y < h - 1; y += 2)
   {
-    for(x = offset; x < w - 1; x += 2)
+    for(int x = offset; x < w - 1; x += 2)
     {
       s0 = row[y] + x;
       s1 = row[y] + x + 1;

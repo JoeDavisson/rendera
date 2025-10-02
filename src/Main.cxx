@@ -278,6 +278,41 @@ int main(int argc, char *argv[])
   Gui::drawPalette();
 */
 
+/*
+Bitmap *bmp = new Bitmap(2000, 2000);
+int index = 0;
+
+for (int y = 0; y < bmp->h; y++)
+{
+  for (int x = 0; x < bmp->w; x++)
+  {
+    bmp->setpixel(x, y, 0);
+    index++;
+  }
+}
+
+printf("index = %d\n", index);
+*/
+
+
+/*
+for (int y = 0; y < bmp->h; y++)
+{
+  int *p = bmp->row[y];
+
+  for (int x = 0; x < bmp->w; x++)
+  {
+    *p++ = 0;
+    index++;
+  }
+}
+
+printf("index = %d\n", index);
+
+
+return 0;
+*/
+
   Fl::add_timeout(1.0 / 10, (Fl_Timeout_Handler)Gui::updateMemInfo);
   Fl::add_timeout(1.0 / 125, (Fl_Timeout_Handler)Gui::mouseTimer);
 

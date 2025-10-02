@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Clone.H"
 #include "FillOptions.H"
+#include "GradientOptions.H"
 #include "Gui.H"
 #include "Images.H"
 #include "Map.H"
@@ -59,11 +60,11 @@ ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
 {
   int pos = Group::title_height + Gui::SPACING;
 
-  tool = new Widget(this, 8, pos, 48, 6 * 48,
+  tool = new Widget(this, 8, pos, 48, 8 * 48,
                     "Tools", images_tools_png, 48, 48, 0);
   tool->callback(cb_change, (void *)this);
 
-  pos += 6 * 48 + Gui::SPACING;
+  pos += 8 * 48 + Gui::SPACING;
 
   new Separator(this, 0, pos, Gui::TOOLS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + Gui::SPACING;
@@ -121,6 +122,8 @@ void ToolOptions::change()
     Gui::text->hide();
   if (current_tool != Tool::FILL)
     Gui::fill->hide();
+  if (current_tool != Tool::GRADIENT)
+    Gui::gradient->hide();
 
   Project::map->clear(0);
   Gui::view->drawMain(true);
@@ -164,6 +167,12 @@ void ToolOptions::change()
       Project::tool->reset();
       Gui::fill->show();
       Gui::statusInfo((char *)"Click to fill an area with the selected color. Blending modes ignored. Esc to cancel.");
+      break;
+    case Tool::GRADIENT:
+      Project::setTool(Tool::GRADIENT);
+      Project::tool->reset();
+      Gui::gradient->show();
+      Gui::statusInfo((char *)"Click and drag to make gradient.");
       break;
   }
 }

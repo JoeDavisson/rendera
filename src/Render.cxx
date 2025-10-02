@@ -78,6 +78,7 @@ int Render::fineEdge(int x1, int y1, const int x2, const int y2,
   return temp < trans ? trans : temp;
 }
 
+/*
 // "shrinks" a 2x2 block
 void Render::shrinkBlock(unsigned char *s0, unsigned char *s1,
                          unsigned char *s2, unsigned char *s3)
@@ -129,6 +130,7 @@ void Render::growBlock(unsigned char *s0, unsigned char *s1,
 
   *s0 = *s1 = *s2 = *s3 = 1;
 }
+*/
 
 // updates the viewport during rendering
 int Render::update(int pos)
@@ -209,7 +211,7 @@ void Render::coarse()
         const unsigned char d2 = *s2;
         const unsigned char d3 = *s3;
 
-        shrinkBlock(s0, s1, s2, s3);
+        map->shrinkBlock(s0, s1, s2, s3);
 
         if (!*s0 && d0)
           bmp->setpixel(x, y, color, soft_trans);
@@ -454,7 +456,7 @@ void Render::watercolor()
         const unsigned char d2 = *s2;
         const unsigned char d3 = *s3;
 
-        growBlock(s0, s1, s2, s3);
+        map->growBlock(s0, s1, s2, s3);
 
         if (*s0 & (!(rnd() & 15)))
         {
@@ -531,7 +533,7 @@ void Render::chalk()
         unsigned char d2 = *s2;
         unsigned char d3 = *s3;
 
-        shrinkBlock(s0, s1, s2, s3);
+        map->shrinkBlock(s0, s1, s2, s3);
 
         int t = 0;
 
@@ -692,7 +694,7 @@ void Render::texture()
         unsigned char d2 = *s2;
         unsigned char d3 = *s3;
 
-        shrinkBlock(s0, s1, s2, s3);
+        map->shrinkBlock(s0, s1, s2, s3);
 
         if (!*s0 && d0)
         {
@@ -809,7 +811,7 @@ void Render::average()
         const unsigned char d2 = *s2;
         const unsigned char d3 = *s3;
 
-        shrinkBlock(s0, s1, s2, s3);
+        map->shrinkBlock(s0, s1, s2, s3);
 
         if (!*s0 && d0)
           bmp->setpixel(x, y, average, soft_trans);

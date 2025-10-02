@@ -35,7 +35,9 @@ public:
     SELECT,
     OFFSET,
     TEXT,
-    FILL
+    FILL,
+    GRADIENT,
+    ARROW
   };
 
   // called when mouse button is initially pressed

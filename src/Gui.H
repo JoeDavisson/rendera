@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 class ColorOptions;
 class FillOptions;
+class GradientOptions;
 class ImagesOptions;
 class OffsetOptions;
 class PaintOptions;
@@ -117,6 +118,7 @@ public:
   static SelectionOptions *selection;
   static TextOptions *text;
   static FillOptions *fill;
+  static GradientOptions *gradient;
   static ToolOptions *tools;
   static ColorOptions *colors;
 

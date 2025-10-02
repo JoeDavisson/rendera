@@ -55,7 +55,7 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
 {
   int pos = Group::title_height + Gui::SPACING;
 
-  text_size = new InputInt(this, 64, pos, 96, 32, "Size:", 0, 4, 500);
+  text_size = new InputInt(this, 64, pos, 96, 32, "Size:", 0, 4, 256);
   text_size->callback(cb_changedSize, (void *)this);
   text_size->value("48");
   pos += 32 + Gui::SPACING;
@@ -65,9 +65,8 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
   text_angle->value("0");
   pos += 32 + Gui::SPACING;
   
-  text_thickness = new InputInt(this, 64, pos, 96, 32, "Thickness:", 0, 0, 31);
-//  text_thickness->callback(cb_changedSize, (void *)this);
-  text_thickness->value("0");
+  text_weight = new InputInt(this, 64, pos, 96, 32, "Weight:", 0, 0, 31);
+  text_weight->value("0");
   pos += 32 + Gui::SPACING;
   
   text_input = new Fl_Input(8, pos, 160, 32, "");
@@ -123,8 +122,8 @@ int TextOptions::getSmooth()
   return text_smooth->value();
 }
 
-int TextOptions::getThickness()
+int TextOptions::getWeight()
 {
-  return atoi(text_thickness->value());
+  return atoi(text_weight->value());
 }
 

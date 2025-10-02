@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "File.H"
 #include "FillOptions.H"
 #include "FontPreview.H"
+#include "GradientOptions.H"
 #include "Gui.H"
 #include "ImagesOptions.H"
 #include "OffsetOptions.H"
@@ -67,6 +68,7 @@ OffsetOptions *Gui::offset;
 SelectionOptions *Gui::selection;
 TextOptions *Gui::text;
 FillOptions *Gui::fill;
+GradientOptions *Gui::gradient;
 ToolOptions *Gui::tools;
 ColorOptions *Gui::colors;
 
@@ -466,6 +468,10 @@ void Gui::init()
                          OPTIONS_WIDTH, left_height,
                          "Fill");
 
+  gradient = new GradientOptions(TOOLS_WIDTH, top->h() + menubar->h(),
+                                 OPTIONS_WIDTH, left_height,
+                                 "Gradient");
+
   colors = new ColorOptions(window->w() - COLORS_WIDTH - IMAGES_WIDTH,
                             top->h() + menubar->h(),
                             COLORS_WIDTH,
@@ -500,6 +506,7 @@ void Gui::init()
   left->add(offset);
   left->add(text);
   left->add(fill);
+  left->add(gradient);
   left->end();
 
   right = new Fl_Group(window->w() - COLORS_WIDTH - IMAGES_WIDTH,

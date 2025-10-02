@@ -112,13 +112,13 @@ inline int getv(const int c)
   return (getr(c) + getg(c) + getb(c)) / 3;
 }
 
-// get rec 601 luminance
+// get luminance
 inline int getl(const int c)
 {
-  return ((76 * getr(c)) + (150 * getg(c)) + (29 * getb(c))) / 255;
+  return (76 * getr(c) + 150 * getg(c) + 29 * getb(c)) / 255;
 }
 
-// get rec 601 luminance from unpacked RGB values
+// get luminance from unpacked RGB values
 inline int getlUnpacked(const int r, const int g, const int b)
 {
   return (76 * r + 150 * g + 29 * b) / 255;

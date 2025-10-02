@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Brush.H"
 #include "Dialog.H"
 #include "Fill.H"
+#include "Gradient.H"
 #include "Inline.H"
 #include "Map.H"
 #include "Offset.H"
@@ -64,6 +65,7 @@ Selection *Project::selection;
 Offset *Project::offset;
 Text *Project::text;
 Fill *Project::fill;
+Gradient *Project::gradient;
 
 Tool *Project::tool;
 
@@ -92,6 +94,7 @@ void Project::init(int memory_limit, int undo_limit)
   offset = new Offset();
   text = new Text();
   fill = new Fill();
+  gradient = new Gradient();
 
   max_images = 256;
   mem_max = memory_limit;
@@ -109,7 +112,7 @@ void Project::init(int memory_limit, int undo_limit)
     zoom_list[i] = 1;
   }
 
-  newImage(512, 512);
+  newImage(1024, 1024);
   setTool(Tool::PAINT);
 }
 
@@ -134,6 +137,9 @@ void Project::setTool(int num)
       break;
     case Tool::FILL:
       tool = fill; 
+      break;
+    case Tool::GRADIENT:
+      tool = gradient; 
       break;
     default:
       tool = paint; 
