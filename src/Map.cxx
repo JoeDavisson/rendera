@@ -938,7 +938,7 @@ void Map::dilate(const int amount)
   {
     for (int y = 1; y < h - 1; y++)
     {
-      unsigned char *p = row[y];
+      unsigned char *p = row[y] + 1;
 
       for (int x = 1; x < w - 1; x++)
       {
@@ -949,10 +949,12 @@ void Map::dilate(const int amount)
         {
           for (int i = -1; i <= 1; i++)
           {
-            const int temp = *q++;
+            const int temp = *q;
 
             if (temp == 1)
               c |= temp;
+
+            q++;
           }
  
           q += w - 3;
