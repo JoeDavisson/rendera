@@ -69,9 +69,9 @@ public:
                    unsigned char *, unsigned char *);
   void growBlock(unsigned char *, unsigned char *,
                  unsigned char *, unsigned char *);
-  void shrink(int);
-  void grow(int);
-  void dilate();
+  void shrink(const int);
+  void grow(const int);
+  void dilate(const int);
 
   // misc
   void blur(int);

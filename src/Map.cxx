@@ -895,7 +895,7 @@ void Map::growBlock(unsigned char *s0, unsigned char *s1,
   *s0 = *s1 = *s2 = *s3 = 1;
 }
 
-void Map::shrink(int offset)
+void Map::shrink(const int offset)
 {
   unsigned char *s0, *s1, *s2, *s3;
 
@@ -914,7 +914,7 @@ void Map::shrink(int offset)
   }
 }
 
-void Map::grow(int offset)
+void Map::grow(const int offset)
 {
   unsigned char *s0, *s1, *s2, *s3;
 
@@ -932,44 +932,47 @@ void Map::grow(int offset)
   }
 }
 
-void Map::dilate()
+void Map::dilate(const int amount)
 {
-  for (int y = 1; y < h - 1; y++)
+  for (int z = 0; z < amount; z++)
   {
-    unsigned char *p = row[y];
-
-    for (int x = 1; x < w - 1; x++)
+    for (int y = 1; y < h - 1; y++)
     {
-      int c = 0;
-      unsigned char *q = (p - w - 1);
+      unsigned char *p = row[y];
 
-      for (int j = -1; j <= 1; j++)
+      for (int x = 1; x < w - 1; x++)
       {
-        for (int i = -1; i <= 1; i++)
+        int c = 0;
+        unsigned char *q = (p - w - 1);
+
+        for (int j = -1; j <= 1; j++)
         {
-          const int temp = *q++;
+          for (int i = -1; i <= 1; i++)
+          {
+            const int temp = *q++;
 
-          if (temp == 1)
-            c |= temp;
-        }
+            if (temp == 1)
+              c |= temp;
+          }
  
-        q += w - 3;
+          q += w - 3;
+        }
+
+        // mark pixel
+        if (c == 1)
+          *p = 2;
+        else if (c == 0)
+          *p = 0;
+
+        p++;
       }
-
-      // mark pixel
-      if (c == 1)
-        *p = 2;
-      else if (c == 0)
-        *p = 0;
-
-      p++;
     }
-  }
 
-  for (int i = 0; i < w * h; i++)
-  {
-    if (data[i] == 2)
-      data[i] = 1;
+    for (int i = 0; i < w * h; i++)
+    {
+      if (data[i] == 2)
+        data[i] = 1;
+    }
   }
 }
 

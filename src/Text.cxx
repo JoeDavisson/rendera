@@ -176,10 +176,11 @@ void Text::push(View *view)
         break;
     }
 
-    for (int i = 0; i < (smooth > 0 ? weight * 2 : weight); i++)
-    {
-      map.dilate();
-    }
+    map.dilate(smooth > 0 ? weight * 2 : weight);
+//    for (int i = 0; i < (smooth > 0 ? weight * 2 : weight); i++)
+//    {
+//      map.dilate();
+//    }
   }
 
   for (int y = 0; y < h; y++)
@@ -381,20 +382,26 @@ void Text::move(View *view)
 
   for (int y = 0; y < h; y++)
   {
+    int *tb = text_bmp->row[y];
+
     for (int x = 0; x < w; x++)
     {
-      int c = text_bmp->getpixel(x, y);
-      int t = getv(c);
+//      int c = text_bmp->getpixel(x, y);
+//      int t = getv(c);
+      const int t = getv(*tb++);
 
       if (t < 192)
         map->setpixel(imgx - w / 2 + x, imgy - h / 2 + y, 1);
+
+//      if (t < 192)
+//        map->setpixel(imgx - w / 2 + x, imgy - h / 2 + y, 1);
     }
   }
 
   if (weight > 0)
   {
-    for (int i = 0; i < weight; i++)
-      map->dilate();
+//    for (int i = 0; i < weight; i++)
+      map->dilate(weight);
   }
 
   stroke->size(imgx - w / 2, imgy - h / 2,
