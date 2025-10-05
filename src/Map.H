@@ -71,6 +71,7 @@ public:
                  unsigned char *, unsigned char *);
   void shrink(int);
   void grow(int);
+  void dilate();
 
   // misc
   void blur(int);

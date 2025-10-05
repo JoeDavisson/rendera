@@ -75,8 +75,8 @@ void Text::push(View *view)
   int angle = 360 - Gui::text->getAngle();
   const char *s = Gui::text->getInput();
 
-  if (size < 4)
-    size = 4;
+  if (size < 2)
+    size = 2;
 
   if (size > 256)
     size = 256;
@@ -86,7 +86,7 @@ void Text::push(View *view)
 
   if (smooth > 0 && weight > 0)
   {
-    size *= 4;
+    size *= 2;
   }
 
   // add a space before and after string, or some
@@ -128,7 +128,6 @@ void Text::push(View *view)
   delete text_bmp;
   text_bmp = new Bitmap(tsize, tsize);
 
-  Fl_RGB_Image textbuf((unsigned char *)&text_bmp->data, tsize, tsize, 4, 0);
   Fl_Image_Surface surf(tsize, tsize, 1);
   Fl_Surface_Device::push_current(&surf);
   fl_font(face, size);
@@ -143,16 +142,23 @@ void Text::push(View *view)
   int h = text_bmp->h;
 
   // start progress bar
-  Progress::show(h * (weight > 0 ? 2 : 0)
-                 + (smooth > 0 && weight > 0 ? h / 4 : h));
-
-  int yy = 0;
+  int yy = h * 2;
 
   if (weight > 0)
   {
-    Map map(w, h);
-    map.clear(0);
+    yy += h;
 
+    if (smooth > 0)
+      yy -= h / 2;
+  }
+
+  Progress::show(yy);
+
+  Map map(w, h);
+  map.clear(0);
+
+  if (weight > 0)
+  {
     for (int y = 0; y < h; y++)
     {
       unsigned char *m = map.row[y];
@@ -160,7 +166,7 @@ void Text::push(View *view)
 
       for (int x = 0; x < w; x++)
       {
-        if (getv(*tb++) < 192)
+         if (getv(*tb++) < 192)
           *m = 1;
 
         m++;
@@ -170,41 +176,35 @@ void Text::push(View *view)
         break;
     }
 
-    if (smooth > 0)
+    for (int i = 0; i < (smooth > 0 ? weight * 2 : weight); i++)
     {
-      for (int i = 0; i < weight * 4; i++)
-        map.grow(i & 1);
+      map.dilate();
     }
-      else
+  }
+
+  for (int y = 0; y < h; y++)
+  {
+    unsigned char *m = map.row[y];
+    int *tb = text_bmp->row[y];
+
+    for (int x = 0; x < w; x++)
     {
-      for (int i = 0; i < weight; i++)
-        map.grow(i & 1);
+      if (*m == 1)
+        *tb = makeRgb(0, 0, 0);
+
+      m++;
+      tb++;
     }
 
-    for (int y = 0; y < h; y++)
-    {
-      unsigned char *m = map.row[y];
-      int *tb = text_bmp->row[y];
-
-      for (int x = 0; x < w; x++)
-      {
-        if (*m == 1)
-          *tb = makeRgb(0, 0, 0);
-
-        m++;
-        tb++;
-      }
-
-      if (Progress::update(yy++) < 0)
-        break;
-    }
+    if (Progress::update(yy++) < 0)
+      break;
   }
 
   if (smooth > 0)
   {
     if (weight > 0)
     {
-      Bitmap scaled_bmp(w / 4, h / 4);
+      Bitmap scaled_bmp(w / 2, h / 2);
       text_bmp->scale(&scaled_bmp);
 
       for (int y = 0; y < scaled_bmp.h; y++)
@@ -217,8 +217,8 @@ void Text::push(View *view)
 
           if (t < 255)
           {
-            Project::bmp->setpixel(view->imgx - w / 8 + x,
-                                   view->imgy - h / 8 + y,
+            Project::bmp->setpixel(view->imgx - w / 4 + x,
+                                   view->imgy - h / 4 + y,
                                    Project::brush->color,
                                    scaleVal(Project::brush->trans, t));
           }
@@ -312,6 +312,7 @@ void Text::move(View *view)
   int face = index - 1;
   int size = Gui::text->getSize();
   int angle = 360 - Gui::text->getAngle();
+  int weight = Gui::text->getWeight();
   const char *s = Gui::text->getInput();
 
   if (size < 4)
@@ -359,7 +360,6 @@ void Text::move(View *view)
   delete text_bmp;
   text_bmp = new Bitmap(tsize, tsize);
 
-  Fl_RGB_Image textbuf((unsigned char *)&text_bmp->data, tsize, tsize, 4, 0);
   Fl_Image_Surface surf(tsize, tsize, 1);
   Fl_Surface_Device::push_current(&surf);
   fl_font(face, size);
@@ -375,7 +375,6 @@ void Text::move(View *view)
   int imgy = view->imgy;
   int w = text_bmp->w;
   int h = text_bmp->h;
-  int weight = Gui::text->getWeight();
 
   Map *map = Project::map;
   map->clear(0);
@@ -388,16 +387,14 @@ void Text::move(View *view)
       int t = getv(c);
 
       if (t < 192)
-      {
         map->setpixel(imgx - w / 2 + x, imgy - h / 2 + y, 1);
-      }
     }
   }
 
   if (weight > 0)
   {
     for (int i = 0; i < weight; i++)
-      map->grow(i & 1);
+      map->dilate();
   }
 
   stroke->size(imgx - w / 2, imgy - h / 2,

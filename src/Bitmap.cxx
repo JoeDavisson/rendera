@@ -965,6 +965,8 @@ void Bitmap::scale(Bitmap *dest)
 
   for (int y = 0; y < dh; y++)
   {
+    int *p = dest->row[y];
+
     for (int x = 0; x < dw; x++)
     {
       int r = 0;
@@ -990,7 +992,7 @@ void Bitmap::scale(Bitmap *dest)
       b /= div;
       a /= div;
 
-      dest->setpixel(x, y, makeRgba(r, g, b, a));
+      *p++ = makeRgba(r, g, b, a);
     }
   }
 }
@@ -1039,5 +1041,4 @@ void Bitmap::gradient(int x1, int y1, int x2, int y2,
     }
   }
 }
-
 

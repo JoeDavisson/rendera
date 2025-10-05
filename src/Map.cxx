@@ -899,9 +899,9 @@ void Map::shrink(int offset)
 {
   unsigned char *s0, *s1, *s2, *s3;
 
-  for(int y = offset; y < h - 1; y += 2)
+  for (int y = offset; y < h - 1; y += 2)
   {
-    for(int x = offset; x < w - 1; x += 2)
+    for (int x = offset; x < w - 1; x += 2)
     {
 
       s0 = row[y] + x;
@@ -918,9 +918,9 @@ void Map::grow(int offset)
 {
   unsigned char *s0, *s1, *s2, *s3;
 
-  for(int y = offset; y < h - 1; y += 2)
+  for (int y = offset; y < h - 1; y += 2)
   {
-    for(int x = offset; x < w - 1; x += 2)
+    for (int x = offset; x < w - 1; x += 2)
     {
       s0 = row[y] + x;
       s1 = row[y] + x + 1;
@@ -929,6 +929,47 @@ void Map::grow(int offset)
 
       growBlock(s0, s1, s2, s3);
     }
+  }
+}
+
+void Map::dilate()
+{
+  for (int y = 1; y < h - 1; y++)
+  {
+    unsigned char *p = row[y];
+
+    for (int x = 1; x < w - 1; x++)
+    {
+      int c = 0;
+      unsigned char *q = (p - w - 1);
+
+      for (int j = -1; j <= 1; j++)
+      {
+        for (int i = -1; i <= 1; i++)
+        {
+          const int temp = *q++;
+
+          if (temp == 1)
+            c |= temp;
+        }
+ 
+        q += w - 3;
+      }
+
+      // mark pixel
+      if (c == 1)
+        *p = 2;
+      else if (c == 0)
+        *p = 0;
+
+      p++;
+    }
+  }
+
+  for (int i = 0; i < w * h; i++)
+  {
+    if (data[i] == 2)
+      data[i] = 1;
   }
 }
 

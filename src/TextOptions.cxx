@@ -71,6 +71,7 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
   
   text_input = new Fl_Input(8, pos, 160, 32, "");
   text_input->textsize(16);
+  text_input->maximum_size(16);
   text_input->value("Text");
   text_input->resize(this->x() + 8, this->y() + pos, 160, 32);
   text_input->callback(cb_changedSize, (void *)this);
