@@ -376,14 +376,6 @@ void Text::move(View *view)
   Map *map = Project::map;
   map->clear(0);
 
-  int startx = imgx - w / 2;
-
-  if (startx < 0)
-    startx = -startx;
-
-  if (startx >= map->w)
-    startx = map->w - 1;
-
   for (int y = 0; y < h; y++)
   {
     const int cy = imgy - h / 2 + y;
