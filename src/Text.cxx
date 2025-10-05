@@ -177,10 +177,6 @@ void Text::push(View *view)
     }
 
     map.dilate(smooth > 0 ? weight * 2 : weight);
-//    for (int i = 0; i < (smooth > 0 ? weight * 2 : weight); i++)
-//    {
-//      map.dilate();
-//    }
   }
 
   for (int y = 0; y < h; y++)
@@ -421,7 +417,7 @@ void Text::move(View *view)
 
   if (weight > 0)
   {
-      map->dilate(weight);
+    map->dilate(weight);
   }
 
   stroke->size(imgx - w / 2, imgy - h / 2,
