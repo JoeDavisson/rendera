@@ -380,27 +380,47 @@ void Text::move(View *view)
   Map *map = Project::map;
   map->clear(0);
 
+  int startx = imgx - w / 2;
+
+  if (startx < 0)
+    startx = -startx;
+
+  if (startx >= map->w)
+    startx = map->w - 1;
+
   for (int y = 0; y < h; y++)
   {
+    const int cy = imgy - h / 2 + y;
+
+    if (cy < 0 || cy >= map->h)
+      continue;
+
+    unsigned char *m = map->row[cy] + imgx - w / 2;
     int *tb = text_bmp->row[y];
 
     for (int x = 0; x < w; x++)
     {
-//      int c = text_bmp->getpixel(x, y);
-//      int t = getv(c);
-      const int t = getv(*tb++);
+      const int cx = imgx - w / 2 + x;
+
+      if (cx < 0 || cx >= map->w - 1)
+      {
+        m++;
+        tb++;
+        continue;
+      }
+
+      const int t = getv(*tb);
 
       if (t < 192)
-        map->setpixel(imgx - w / 2 + x, imgy - h / 2 + y, 1);
+        *m = 1;
 
-//      if (t < 192)
-//        map->setpixel(imgx - w / 2 + x, imgy - h / 2 + y, 1);
+      m++;
+      tb++;
     }
   }
 
   if (weight > 0)
   {
-//    for (int i = 0; i < weight; i++)
       map->dilate(weight);
   }
 
