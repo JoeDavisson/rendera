@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 bool Progress::active = true;
 float Progress::value = 0;
 float Progress::step = 0;
-int Progress::interval = 50;
+int Progress::interval = 100;
 
 void Progress::enable(bool state)
 {
@@ -56,18 +56,18 @@ void Progress::hide()
 }
 
 // use default interval
-void Progress::show(float new_step)
+void Progress::show(float max)
 {
   if (active == false)
     return;
 
-  if (new_step == 0)
-    new_step = .001;
+  if (max == 0)
+    max = .001;
 
   Gui::view->rendering = true;
   value = 0;
-  interval = 50;
-  step = 100.0 / (new_step / interval);
+  interval = max / 10;
+  step = 100.0 / (max / interval);
   // keep progress bar on right side in case window was resized
   Gui::progress->resize(Gui::getStatus()->x() + Gui::getWindow()->w() - 256 - 8, Gui::getStatus()->y() + 4, 256, 24);
   Gui::info->hide();
@@ -75,13 +75,13 @@ void Progress::show(float new_step)
 }
 
 // custom interval
-void Progress::show(float new_step, int new_interval)
+void Progress::show(float max, int new_interval)
 {
   if (active == false)
     return;
 
-  if (new_step == 0)
-    new_step = .001;
+  if (max == 0)
+    max = .001;
 
   if (new_interval < 1)
      new_interval = 1;
@@ -89,9 +89,10 @@ void Progress::show(float new_step, int new_interval)
   Gui::view->rendering = true;
   value = 0;
   interval = new_interval;
-  step = 100.0 / (new_step / new_interval);
+  step = 100.0 / (max / new_interval);
   // keep progress bar on right side in case window was resized
-  Gui::progress->resize(Gui::getStatus()->x() + Gui::getWindow()->w() - 256 - 8, Gui::getStatus()->y() + 4, 256, 16);
+  Gui::progress->resize(Gui::getStatus()->x() + Gui::getWindow()->w() - 256 - 8,
+                        Gui::getStatus()->y() + 4, 256, 24);
   Gui::info->hide();
   Gui::progress->show();
 }
@@ -115,7 +116,6 @@ int Progress::update(int y)
     char percent[16];
     snprintf(percent, sizeof(percent), "%d%%", (int)value);
     Gui::progress->copy_label(percent);
-    Fl::check();
     value += step;
     Gui::view->drawMain(true);
   }
