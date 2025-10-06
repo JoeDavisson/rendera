@@ -104,9 +104,8 @@ void Map::resize(int width, int height)
 
 void Map::clear(const unsigned char c)
 {
-//  for (int i = 0; i < w * h; i++)
-//    data[i] = c;
-  std::fill_n(data, w * h, c);
+  for (int i = 0; i < w * h; i++)
+    data[i] = c;
 }
 
 void Map::invert()
