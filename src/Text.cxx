@@ -403,13 +403,7 @@ void Text::move(View *view)
 
     for (int x = x1; x < x2; x++)
     {
-      const int t = getv(*tb);
-
-      if (t < 192)
-        *m = 1;
-
-      m++;
-      tb++;
+      *m++ = !((*tb++ & 255) >> 7); 
     }
   }
 
