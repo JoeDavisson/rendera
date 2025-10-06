@@ -376,27 +376,33 @@ void Text::move(View *view)
   Map *map = Project::map;
   map->clear(0);
 
-  for (int y = 0; y < h; y++)
+  int x1 = 0;
+  int y1 = 0;
+  int x2 = w;
+  int y2 = h;
+
+  const int left = imgx - w / 2;
+  const int top = imgy - h / 2;
+
+  if (left < 0)
+    x1 = -left;
+
+  if (left + w >= map->w)
+    x2 = map->w - left - 1;
+
+  if (top < 0)
+    y1 = -top;
+
+  if (top + h >= map->h)
+    y2 = map->h - top - 1;
+
+  for (int y = y1; y < y2; y++)
   {
-    const int cy = imgy - h / 2 + y;
+    unsigned char *m = map->row[top + y] + x1 + left;
+    int *tb = text_bmp->row[y] + x1;
 
-    if (cy < 0 || cy >= map->h)
-      continue;
-
-    unsigned char *m = map->row[cy] + imgx - w / 2;
-    int *tb = text_bmp->row[y];
-
-    for (int x = 0; x < w; x++)
+    for (int x = x1; x < x2; x++)
     {
-      const int cx = imgx - w / 2 + x;
-
-      if (cx < 0 || cx >= map->w - 1)
-      {
-        m++;
-        tb++;
-        continue;
-      }
-
       const int t = getv(*tb);
 
       if (t < 192)
@@ -408,13 +414,9 @@ void Text::move(View *view)
   }
 
   if (weight > 0)
-  {
     map->dilate(weight);
-  }
 
-  stroke->size(imgx - w / 2, imgy - h / 2,
-               imgx + w / 2, imgy + h / 2);
-
+  stroke->size(imgx - w / 2, imgy - h / 2, imgx + w / 2, imgy + h / 2);
   redraw(view);
 }
 
