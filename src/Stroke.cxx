@@ -899,18 +899,7 @@ void Stroke::previewPaint(View *view)
       const int xm = ((x + ox) * zr) >> 16;
 
       if (map->getpixel(xm, ym))
-      {
-        if (Clone::active == false)
-        {
-          *p = Blend::trans(*p, color, trans);
-        }
-          else
-        {
-          const int c = convertFormat(makeRgb(255, 0, 192), bgr_order);
-
-          *p = Blend::trans(*p, c, 128);
-        }
-      }
+        *p = blendFast(*p, color, trans);
 
       p++;
     }

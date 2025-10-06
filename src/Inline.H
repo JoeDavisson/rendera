@@ -170,6 +170,18 @@ inline int convertFormat(const int c, const bool bgr_order)
   return c;
 }
 
+// inline blending (for brushstroke preview, etc)
+inline int blendFast(const int c1, const int c2, const int t)
+{
+  const int rb = (((((c1 & 0xff00ff) - (c2 & 0xff00ff)) * t) >> 8) + c2)
+                 & 0xff00ff;
+
+  const int g = (((((c1 & 0xff00) - (c2 & 0xff00)) * t) >> 8) + c2) & 0xff00;
+
+  return rb | g | 0xff000000;
+}
+
+
 // get an FLTK color
 inline int getFltkColor(const int c)
 {
