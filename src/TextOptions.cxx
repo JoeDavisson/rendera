@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Stroke.H"
 #include "ToggleButton.H"
 #include "Tool.H"
+#include "Text.H"
 #include "TextOptions.H"
 #include "View.H"
 #include "Widget.H"
@@ -94,13 +95,19 @@ TextOptions::~TextOptions()
 {
 }
 
+void TextOptions::init()
+{
+  Project::text->change();
+}
+
 void TextOptions::changedSize()
 {
   int font = FontPreview::getFont();
 
   FontPreview::update(font - 1);
   text_input->redraw();
-  Project::tool->move(Gui::view);
+  Project::text->change();
+  Project::text->move(Gui::view);
 }
 
 const char *TextOptions::getInput()

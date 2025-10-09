@@ -35,6 +35,7 @@ public:
   TextOptions(int, int, int, int, const char *);
   ~TextOptions();
 
+  void init();
   void changedSize();
   const char *getInput();
   int getSize();

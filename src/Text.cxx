@@ -48,7 +48,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 Text::Text()
 {
-  text_bmp = 0;
+  preview_text = 0;
+  preview_surf = 0;
 }
 
 Text::~Text()
@@ -125,21 +126,20 @@ void Text::push(View *view)
   float dx = -std::cos(d) * ((float)tw / 2);
   float dy = std::sin(d) * ((float)tw / 2);
 
-  delete text_bmp;
-  text_bmp = new Bitmap(tsize, tsize);
+  Bitmap text_final(tsize, tsize);
 
-  Fl_Image_Surface surf(tsize, tsize, 1);
-  Fl_Surface_Device::push_current(&surf);
+  Fl_Image_Surface text_surf(tsize, tsize, 1);
+  Fl_Surface_Device::push_current(&text_surf);
   fl_font(face, size);
   fl_color(FL_WHITE);
   fl_rectf(0, 0, tsize, tsize);
   fl_color(FL_BLACK);
   fl_draw(angle, string.data(), center + dx, center + dy);
-  fl_read_image((unsigned char *)text_bmp->data, 0, 0, tsize, tsize, 255);
+  fl_read_image((unsigned char *)text_final.data, 0, 0, tsize, tsize, 255);
   Fl_Surface_Device::pop_current();
 
-  int w = text_bmp->w;
-  int h = text_bmp->h;
+  int w = text_final.w;
+  int h = text_final.h;
 
   // start progress bar
   int yy = h * 2;
@@ -162,7 +162,7 @@ void Text::push(View *view)
     for (int y = 0; y < h; y++)
     {
       unsigned char *m = map.row[y];
-      int *tb = text_bmp->row[y];
+      int *tb = text_final.row[y];
 
       for (int x = 0; x < w; x++)
       {
@@ -182,7 +182,7 @@ void Text::push(View *view)
   for (int y = 0; y < h; y++)
   {
     unsigned char *m = map.row[y];
-    int *tb = text_bmp->row[y];
+    int *tb = text_final.row[y];
 
     for (int x = 0; x < w; x++)
     {
@@ -202,7 +202,7 @@ void Text::push(View *view)
     if (weight > 0)
     {
       Bitmap scaled_bmp(w / 2, h / 2);
-      text_bmp->scale(&scaled_bmp);
+      text_final.scale(&scaled_bmp);
 
       for (int y = 0; y < scaled_bmp.h; y++)
       {
@@ -231,7 +231,7 @@ void Text::push(View *view)
     {
       for (int y = 0; y < h; y++)
       {
-        int *tb = text_bmp->row[y];
+        int *tb = text_final.row[y];
 
         for (int x = 0; x < w; x++)
         {
@@ -257,7 +257,7 @@ void Text::push(View *view)
   {
     for (int y = 0; y < h; y++)
     {
-      int *tb = text_bmp->row[y];
+      int *tb = text_final.row[y];
 
       for (int x = 0; x < w; x++)
       {
@@ -280,10 +280,6 @@ void Text::push(View *view)
   }
 
   Progress::hide();
-
-  delete text_bmp;
-  text_bmp = 0;
-
   Blend::set(Blend::TRANS);
   view->drawMain(true);
 }
@@ -300,6 +296,84 @@ void Text::move(View *view)
 {
   Stroke *stroke = Project::stroke;
 
+  // create preview
+  int imgx = view->imgx;
+  int imgy = view->imgy;
+  int w = preview_text->w;
+  int h = preview_text->h;
+
+  Map *map = Project::map;
+  map->clear(0);
+
+  int x1 = 0;
+  int y1 = 0;
+  int x2 = w;
+  int y2 = h;
+
+  const int left = imgx - w / 2;
+  const int top = imgy - h / 2;
+
+  if (left < 0)
+    x1 = -left;
+
+  if (left + w >= map->w)
+    x2 = map->w - left - 1;
+
+  if (top < 0)
+    y1 = -top;
+
+  if (top + h >= map->h)
+    y2 = map->h - top - 1;
+
+  // draw
+  for (int y = y1; y < y2; y++)
+  {
+    unsigned char *m = map->row[top + y] + x1 + left;
+    int *tb = preview_text->row[y] + x1;
+
+    for (int x = x1; x < x2; x++)
+    {
+      *m++ = !((*tb++ & 255) >> 7); 
+    }
+  }
+
+  int weight = Gui::text->getWeight();
+
+  if (weight > 0)
+    map->dilate(weight);
+
+  stroke->size(imgx - w / 2, imgy - h / 2, imgx + w / 2, imgy + h / 2);
+  redraw(view);
+}
+
+void Text::key(View *)
+{
+}
+
+void Text::done(View *, int)
+{
+}
+
+void Text::redraw(View *view)
+{
+  Stroke *stroke = Project::stroke;
+
+  view->drawMain(false);
+  stroke->previewPaint(view);
+  view->redraw();
+}
+
+bool Text::isActive()
+{
+  return false;
+}
+
+void Text::reset()
+{
+}
+
+void Text::change()
+{
   // write text string to FLTK's offscreen image
   int index = FontPreview::getFont();
 
@@ -309,7 +383,6 @@ void Text::move(View *view)
   int face = index - 1;
   int size = Gui::text->getSize();
   int angle = 360 - Gui::text->getAngle();
-  int weight = Gui::text->getWeight();
   const char *s = Gui::text->getInput();
 
   if (size < 4)
@@ -354,91 +427,18 @@ void Text::move(View *view)
   float dx = -std::cos(d) * ((float)tw / 2);
   float dy = std::sin(d) * ((float)tw / 2);
 
-  delete text_bmp;
-  text_bmp = new Bitmap(tsize, tsize);
+  delete preview_text;
+  preview_text = new Bitmap(tsize, tsize);
 
-  Fl_Image_Surface surf(tsize, tsize, 1);
-  Fl_Surface_Device::push_current(&surf);
+  delete preview_surf;
+  preview_surf = new Fl_Image_Surface(tsize, tsize, 1);
+  Fl_Surface_Device::push_current(preview_surf);
   fl_font(face, size);
   fl_color(FL_WHITE);
   fl_rectf(0, 0, tsize, tsize);
   fl_color(FL_BLACK);
   fl_draw(angle, string.data(), center + dx, center + dy);
-  fl_read_image((unsigned char *)text_bmp->data, 0, 0, tsize, tsize, 255);
+  fl_read_image((unsigned char *)preview_text->data, 0, 0, tsize, tsize, 255);
   Fl_Surface_Device::pop_current();
-
-  // create preview
-  int imgx = view->imgx;
-  int imgy = view->imgy;
-  int w = text_bmp->w;
-  int h = text_bmp->h;
-
-  Map *map = Project::map;
-  map->clear(0);
-
-  int x1 = 0;
-  int y1 = 0;
-  int x2 = w;
-  int y2 = h;
-
-  const int left = imgx - w / 2;
-  const int top = imgy - h / 2;
-
-  if (left < 0)
-    x1 = -left;
-
-  if (left + w >= map->w)
-    x2 = map->w - left - 1;
-
-  if (top < 0)
-    y1 = -top;
-
-  if (top + h >= map->h)
-    y2 = map->h - top - 1;
-
-  for (int y = y1; y < y2; y++)
-  {
-    unsigned char *m = map->row[top + y] + x1 + left;
-    int *tb = text_bmp->row[y] + x1;
-
-    for (int x = x1; x < x2; x++)
-    {
-      *m++ = !((*tb++ & 255) >> 7); 
-    }
-  }
-
-  if (weight > 0)
-    map->dilate(weight);
-
-  stroke->size(imgx - w / 2, imgy - h / 2, imgx + w / 2, imgy + h / 2);
-  redraw(view);
-}
-
-void Text::key(View *)
-{
-}
-
-void Text::done(View *, int)
-{
-  delete text_bmp;
-  text_bmp = 0;
-}
-
-void Text::redraw(View *view)
-{
-  Stroke *stroke = Project::stroke;
-
-  view->drawMain(false);
-  stroke->previewPaint(view);
-  view->redraw();
-}
-
-bool Text::isActive()
-{
-  return false;
-}
-
-void Text::reset()
-{
 }
 

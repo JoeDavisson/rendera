@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Map;
 class InputInt;
 class View;
+class Fl_Image_Surface;
 
 #include "Tool.H"
 
@@ -43,9 +44,11 @@ public:
   void redraw(View *);
   bool isActive();
   void reset();
+  void change();
 
 private:
-  Bitmap *text_bmp;
+  Bitmap *preview_text;
+  Fl_Image_Surface *preview_surf;
 };
 
 #endif

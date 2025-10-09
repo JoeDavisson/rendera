@@ -534,6 +534,7 @@ void Gui::init()
   images->addFile("new");
   colors->colorUpdate(Project::palette->data[0]);
   tools->init();
+  text->init();
 }
 
 // show the main program window (called after main GUI is constructed)
