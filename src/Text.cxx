@@ -128,7 +128,7 @@ void Text::push(View *view)
 
   Bitmap text_final(tsize, tsize);
 
-  Fl_Image_Surface text_surf(tsize, tsize, 1);
+  Fl_Image_Surface text_surf(tsize, tsize, 0);
   Fl_Surface_Device::push_current(&text_surf);
   fl_font(face, size);
   fl_color(FL_WHITE);
@@ -431,7 +431,7 @@ void Text::change()
   preview_text = new Bitmap(tsize, tsize);
 
   delete preview_surf;
-  preview_surf = new Fl_Image_Surface(tsize, tsize, 1);
+  preview_surf = new Fl_Image_Surface(tsize, tsize, 0);
   Fl_Surface_Device::push_current(preview_surf);
   fl_font(face, size);
   fl_color(FL_WHITE);

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Blend.H"
+#include "Brush.H"
 #include "Clone.H"
 #include "Gamma.H"
 #include "Inline.H"
@@ -522,7 +523,7 @@ void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
     xorHline(x1, y1, x2);
 }
 
-// non-blending version
+// non-blending version (this version does not set the blend target)
 void Bitmap::setpixel(const int x, const int y, const int c)
 {
   if (x < cl || x > cr || y < ct || y > cb)
@@ -973,6 +974,7 @@ void Bitmap::scale(Bitmap *dest)
       int b = 0;
       int a = 0;
 
+//FIXME improve the clipping to not require getpixel
       for (int j = 0; j < iy; j++)
       {
         for (int i = 0; i < ix; i++)
@@ -996,15 +998,18 @@ void Bitmap::scale(Bitmap *dest)
   }
 }
 
-void Bitmap::gradient(int x1, int y1, int x2, int y2,
-                      int start_color, bool use_color)
+void Bitmap::gradientLinear(int x1, int y1, int x2, int y2,
+                            int color, int trans,
+                            bool use_color, bool inverse)
 {
-  float dx = x2 - x1;
-  float dy = y2 - y1;
-  float length = dx * dx + dy * dy;
+  const float dx = x2 - x1;
+  const float dy = y2 - y1;
+  const float length = dx * dx + dy * dy;
 
-  if (length == 0)
+  if (length <= 0)
     return;
+
+  Blend::set(Project::brush->blend);
 
   for (int y = 0; y < h; y++)
   {
@@ -1015,29 +1020,149 @@ void Bitmap::gradient(int x1, int y1, int x2, int y2,
       if (t < 0)
         t = 0;
 
-      if (t > 1)
-        t = 1;
+      if (t > 1.0)
+        t = 1.0;
+
+      if (inverse == true)
+        t = 1.0 - t;
 
       const int c = getpixel(x, y);
-      int r, g, b, a;
+
+//FIXME
+// add to GUI:
+// blend
+// normal
+// lighten
+// darken
+// colorize
+
+//FIXME check smooth blender for crashes
 
       if (use_color == true)
       {
-        r = getr(start_color);
-        g = getg(start_color);
-        b = getg(start_color);
-        a = geta(start_color) - geta(c) * t;
+        setpixel(x, y, Blend::current(c, color, scaleVal(trans, t * 255)));
       }
         else
       {
-        r = getr(c);
-        g = getg(c);
-        b = getb(c);
-        a = geta(c) - geta(c) * t;
-      }
+        const int r = getr(c);
+        const int g = getg(c);
+        const int b = getb(c);
+        const int a = geta(c) - geta(c) * t;
 
-      setpixel(x, y, makeRgba(r, g, b, a));
+        setpixel(x, y, makeRgba(r, g, b, a));
+      }
     }
   }
+
+  Blend::set(Blend::TRANS);
+}
+
+void Bitmap::gradientRadial(int x1, int y1, int x2, int y2,
+                            int color, int trans,
+                            bool use_color, bool inverse)
+{
+  const float dx = std::abs(x2 - x1);
+  const float dy = std::abs(y2 - y1);
+  const float length = (dx * dx + dy * dy);
+
+  if (length <= 0)
+    return;
+
+  Blend::set(Project::brush->blend);
+
+  for (int y = 0; y < h; y++)
+  {
+    for (int x = 0; x < w; x++)
+    {
+      float t = ((x - x1) * (x - x1) + (y - y1) * (y - y1)) / length;
+
+      if (t < 0)
+        t = 0;
+
+      if (t > 1)
+        t = 1;
+
+      if (inverse == true)
+        t = 1.0 - t;
+
+      const int c = getpixel(x, y);
+
+      if (use_color == true)
+      {
+        setpixel(x, y, Blend::current(c, color, scaleVal(trans, t * 255)));
+      }
+        else
+      {
+        const int r = getr(c);
+        const int g = getg(c);
+        const int b = getb(c);
+        const int a = geta(c) - geta(c) * t;
+
+        setpixel(x, y, makeRgba(r, g, b, a));
+      }
+    }
+  }
+
+  Blend::set(Blend::TRANS);
+}
+
+void Bitmap::gradientElliptical(int x1, int y1, int x2, int y2,
+                                int color, int trans,
+                                bool use_color, bool inverse)
+{
+  if (x1 > x2)
+    std::swap(x1, x2);
+
+  if (y1 > y2)
+    std::swap(y1, y2);
+
+  const float dx = x2 - x1;
+  const float dy = y2 - y1;
+
+  if (dx == 0 || dy == 0)
+    return;
+
+  const float rx = dx / 2;
+  const float ry = dy / 2;
+  const float cx = x1 + rx;
+  const float cy = y1 + ry;
+
+  Blend::set(Project::brush->blend);
+
+  for (int y = 0; y < h; y++)
+  {
+    for (int x = 0; x < w; x++)
+    {
+      float t = ((x - cx) * (x - cx) / (rx * rx)) +
+                ((y - cy) * (y - cy) / (ry * ry));
+
+      if (t < 0)
+        t = 0;
+
+      if (t > 1)
+        t = 1;
+
+      if (inverse == true)
+        t = 1.0 - t;
+
+      const int c = getpixel(x, y);
+
+      if (use_color == true)
+      {
+        setpixel(x, y, Blend::current(c, color, scaleVal(trans, t * 255)));
+      }
+        else
+      {
+        const int r = getr(c);
+        const int g = getg(c);
+        const int b = getb(c);
+        const int a = geta(c) - geta(c) * t;
+
+        setpixel(x, y, makeRgba(r, g, b, a));
+      }
+    }
+  }
+
+  Blend::set(Blend::TRANS);
 }
 

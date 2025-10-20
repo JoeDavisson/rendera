@@ -152,12 +152,14 @@ int Blend::lighten(const int c1, const int c2, const int t)
   int r = rgba1.r + (rgba2.r * (255 - t)) / 255;
   int g = rgba1.g + (rgba2.g * (255 - t)) / 255;
   int b = rgba1.b + (rgba2.b * (255 - t)) / 255;
+  int a = rgba1.a + (rgba2.a * (255 - t)) / 255;
 
   r = std::min(r, 255);
   g = std::min(g, 255);
   b = std::min(b, 255);
+  a = std::min(a, 255);
 
-  return makeRgba(r, g, b, rgba1.a);
+  return makeRgba(r, g, b, a);
 }
 
 int Blend::darken(const int c1, const int c2, const int t)
@@ -165,7 +167,7 @@ int Blend::darken(const int c1, const int c2, const int t)
   const rgba_type rgba1 = getRgba(c1);
   const rgba_type rgba2 = getRgba(c2);
 
-  int r = 0, g = 0, b = 0;
+  int r = 0, g = 0, b = 0, a = 0;
   int h = 0, s = 0, v = 0;
 
   rgbToHsv(rgba2.r, rgba2.g, rgba2.b, &h, &s, &v);
@@ -179,12 +181,14 @@ int Blend::darken(const int c1, const int c2, const int t)
   r = rgba1.r - r * (255 - t) / 255;
   g = rgba1.g - g * (255 - t) / 255;
   b = rgba1.b - b * (255 - t) / 255;
+  a = rgba1.a + (rgba2.a * (255 - t)) / 255;
 
   r = std::max(r, 0);
   g = std::max(g, 0);
   b = std::max(b, 0);
+  a = std::min(a, 255);
 
-  return makeRgba(r, g, b, rgba1.a);
+  return makeRgba(r, g, b, a);
 }
 
 int Blend::colorize(const int c1, const int c2, const int t)

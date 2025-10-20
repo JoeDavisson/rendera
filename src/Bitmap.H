@@ -72,7 +72,9 @@ public:
   void offset(int, int, bool);
   void invert();
   void scale(Bitmap *);
-  void gradient(int, int, int, int, int, bool);
+  void gradientLinear(int, int, int, int, int, int, bool, bool);
+  void gradientRadial(int, int, int, int, int, int, bool, bool);
+  void gradientElliptical(int, int, int, int, int, int, bool, bool);
 };
 
 #endif

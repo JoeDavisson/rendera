@@ -23,10 +23,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Group.H"
 
-//class CheckBox;
+class CheckBox;
 //class InputInt;
 class Group;
 //class Fl_Button;
+class Fl_Choice;
 
 class GradientOptions : public Group
 {
@@ -34,7 +35,14 @@ public:
   GradientOptions(int, int, int, int, const char *);
   ~GradientOptions();
 
+  int style();
+  bool useColor();
+  bool inverse();
+
 private:
+  Fl_Choice *gradient_style;
+  CheckBox *gradient_use_color;
+  CheckBox *gradient_inverse;
 };
 
 #endif

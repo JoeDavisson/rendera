@@ -859,8 +859,14 @@ void Gui::clearToColor()
   Project::undo->push();
 
   Bitmap *bmp = Project::bmp;
+  int c = Project::brush->color & 0xffffff;
+  c |= (255 - Project::brush->trans) << 24;
 
-  bmp->rectfill(bmp->cl, bmp->ct, bmp->cr, bmp->cb, Project::brush->color, 0);
+  for (int i = 0; i < bmp->w * bmp->h; i++)
+  {
+    bmp->data[i] = c;
+  }
+
   view->drawMain(true);
 }
 
