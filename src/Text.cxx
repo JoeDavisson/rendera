@@ -317,13 +317,13 @@ void Text::move(View *view)
     x1 = -left;
 
   if (left + w >= map->w)
-    x2 = map->w - left - 1;
+    x2 = map->w - left;
 
   if (top < 0)
     y1 = -top;
 
   if (top + h >= map->h)
-    y2 = map->h - top - 1;
+    y2 = map->h - top;
 
   // draw
   for (int y = y1; y < y2; y++)
