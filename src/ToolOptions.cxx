@@ -60,11 +60,11 @@ ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
 {
   int pos = Group::title_height + Gui::SPACING;
 
-  tool = new Widget(this, 8, pos, 48, 8 * 48,
+  tool = new Widget(this, 8, pos, 48, 7 * 48,
                     "Tools", images_tools_png, 48, 48, 0);
   tool->callback(cb_change, (void *)this);
 
-  pos += 8 * 48 + Gui::SPACING;
+  pos += 7 * 48 + Gui::SPACING;
 
   new Separator(this, 0, pos, Gui::TOOLS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + Gui::SPACING;
