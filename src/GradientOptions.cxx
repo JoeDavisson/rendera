@@ -30,11 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Group.H>
 
-namespace
-{
-//  void cb_changeStyle(Fl_Widget *w, void *data) { GradientOptions *temp = (GradientOptions *)data; temp->changeStyle(); }
-}
-
 GradientOptions::GradientOptions(int x, int y, int w, int h, const char *l)
 : Group(x, y, w, h, l)                     
 {
@@ -85,6 +80,4 @@ bool GradientOptions::inverse()
 {
   return gradient_inverse->value() > 0 ? true : false;
 }
-
-
 

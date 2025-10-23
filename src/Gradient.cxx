@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 #include <cmath>
 
+#include "Blend.H"
 #include "Bitmap.H"
 #include "Brush.H"
 #include "Gui.H"
@@ -28,10 +29,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gradient.H"
 #include "GradientOptions.H"
 #include "Map.H"
+#include "Progress.H"
 #include "Project.H"
 #include "Stroke.H"
 #include "Undo.H"
 #include "View.H"
+
+//FIXME add rectangular gradient
+
+//FIXME limit blending modes to usable ones
+// add to GUI:
+// blend
+// normal
+// lighten
+// darken
+// colorize
 
 namespace
 {
@@ -41,6 +53,191 @@ namespace
   int endy;
 
   bool started = false;
+
+  void gradientLinear(int x1, int y1, int x2, int y2,
+                              int color, int trans,
+                              bool use_color, bool inverse)
+  {
+    Bitmap *bmp = Project::bmp;
+
+    const float dx = x2 - x1;
+    const float dy = y2 - y1;
+    const float length = dx * dx + dy * dy;
+
+    if (length <= 0)
+      return;
+
+    Blend::set(Project::brush->blend);
+    Progress::show(bmp->h);
+    int yy = 0;
+
+    for (int y = 0; y < bmp->h; y++)
+    {
+      for (int x = 0; x < bmp->w; x++)
+      {
+        float t = (dx * (x - x1) + dy * (y - y1)) / length;
+
+        if (t < 0)
+          t = 0;
+
+        if (t > 1.0)
+          t = 1.0;
+
+        if (inverse == true)
+          t = 1.0 - t;
+
+        const int c = bmp->getpixel(x, y);
+
+        if (use_color == true)
+        {
+          bmp->setpixel(x, y,
+                        Blend::current(c, color, scaleVal(trans, t * 255)));
+        }
+          else
+        {
+          const int r = getr(c);
+          const int g = getg(c);
+          const int b = getb(c);
+          const int a = geta(c) - geta(c) * t;
+
+          bmp->setpixel(x, y, makeRgba(r, g, b, a));
+        }
+      }
+
+      if (Progress::update(yy++) < 0)
+        break;
+    }
+
+    Progress::hide();
+    Blend::set(Blend::TRANS);
+  }
+
+  void gradientRadial(int x1, int y1, int x2, int y2,
+                              int color, int trans,
+                              bool use_color, bool inverse)
+  {
+    Bitmap *bmp = Project::bmp;
+
+    const float dx = std::abs(x2 - x1);
+    const float dy = std::abs(y2 - y1);
+    const float length = (dx * dx + dy * dy);
+
+    if (length <= 0)
+      return;
+
+    Blend::set(Project::brush->blend);
+    Progress::show(bmp->h);
+    int yy = 0;
+
+    for (int y = 0; y < bmp->h; y++)
+    {
+      for (int x = 0; x < bmp->w; x++)
+      {
+        float t = ((x - x1) * (x - x1) + (y - y1) * (y - y1)) / length;
+
+        if (t < 0)
+          t = 0;
+
+        if (t > 1)
+          t = 1;
+
+        if (inverse == true)
+          t = 1.0 - t;
+
+        const int c = bmp->getpixel(x, y);
+
+        if (use_color == true)
+        {
+          bmp->setpixel(x, y,
+                        Blend::current(c, color, scaleVal(trans, t * 255)));
+        }
+          else
+        {
+          const int r = getr(c);
+          const int g = getg(c);
+          const int b = getb(c);
+          const int a = geta(c) - geta(c) * t;
+
+          bmp->setpixel(x, y, makeRgba(r, g, b, a));
+        }
+      }
+
+      if (Progress::update(yy++) < 0)
+        break;
+    }
+
+    Progress::hide();
+    Blend::set(Blend::TRANS);
+  }
+
+  void gradientElliptical(int x1, int y1, int x2, int y2,
+                                  int color, int trans,
+                                  bool use_color, bool inverse)
+  {
+    Bitmap *bmp = Project::bmp;
+
+    if (x1 > x2)
+      std::swap(x1, x2);
+
+    if (y1 > y2)
+      std::swap(y1, y2);
+
+    const float dx = x2 - x1;
+    const float dy = y2 - y1;
+
+    if (dx == 0 || dy == 0)
+      return;
+
+    const float rx = dx / 2;
+    const float ry = dy / 2;
+    const float cx = x1 + rx;
+    const float cy = y1 + ry;
+
+    Blend::set(Project::brush->blend);
+    Progress::show(bmp->h);
+    int yy = 0;
+
+    for (int y = 0; y < bmp->h; y++)
+    {
+      for (int x = 0; x < bmp->w; x++)
+      {
+        float t = ((x - cx) * (x - cx) / (rx * rx)) +
+                  ((y - cy) * (y - cy) / (ry * ry));
+
+        if (t < 0)
+          t = 0;
+
+        if (t > 1)
+          t = 1;
+
+        if (inverse == true)
+          t = 1.0 - t;
+
+        const int c = bmp->getpixel(x, y);
+
+        if (use_color == true)
+        {
+          bmp->setpixel(x, y,
+                        Blend::current(c, color, scaleVal(trans, t * 255)));
+        }
+          else
+        {
+          const int r = getr(c);
+          const int g = getg(c);
+          const int b = getb(c);
+          const int a = geta(c) - geta(c) * t;
+
+          bmp->setpixel(x, y, makeRgba(r, g, b, a));
+        }
+      }
+
+      if (Progress::update(yy++) < 0)
+        break;
+    }
+
+    Progress::hide();
+    Blend::set(Blend::TRANS);
+  }
 }
 
 Gradient::Gradient()
@@ -110,7 +307,6 @@ void Gradient::release(View *view)
   started = false;
 
   Project::undo->push();
-  Bitmap *bmp = Project::bmp;
 
   const int style = Gui::gradient->style();
   const bool use_color = Gui::gradient->useColor();
@@ -121,20 +317,20 @@ void Gradient::release(View *view)
   switch (style)
   {
     case 0:
-      bmp->gradientLinear(beginx, beginy, endx, endy,
-                          color, trans, use_color, inverse);
+      gradientLinear(beginx, beginy, endx, endy,
+                     color, trans, use_color, inverse);
       break;
     case 1:
-      bmp->gradientRadial(beginx, beginy, endx, endy,
-                          color, trans, use_color, inverse);
+      gradientRadial(beginx, beginy, endx, endy,
+                     color, trans, use_color, inverse);
       break;
     case 2:
-//      bmp->gradientRectangular(beginx, beginy, endx, endy,
-//                          color, trans, use_color, inverse);
+//    gradientRectangular(beginx, beginy, endx, endy,
+//                        color, trans, use_color, inverse);
       break;
     case 3:
-      bmp->gradientElliptical(beginx, beginy, endx, endy,
-                              color, trans, use_color, inverse);
+      gradientElliptical(beginx, beginy, endx, endy,
+                         color, trans, use_color, inverse);
       break;
   }
 
