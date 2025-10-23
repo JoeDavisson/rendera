@@ -67,9 +67,14 @@ void Progress::show(float max)
   Gui::view->rendering = true;
   value = 0;
   interval = max / 10;
+
+  if (interval < 1)
+    interval = 1;
+
   step = 100.0 / (max / interval);
   // keep progress bar on right side in case window was resized
-  Gui::progress->resize(Gui::getStatus()->x() + Gui::getWindow()->w() - 256 - 8, Gui::getStatus()->y() + 4, 256, 24);
+  Gui::progress->resize(Gui::getStatus()->x() + Gui::getWindow()->w() - 256 - 8,                        Gui::getStatus()->y() + 4, 256, 24);
+
   Gui::info->hide();
   Gui::progress->show();
 }
