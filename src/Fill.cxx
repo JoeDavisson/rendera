@@ -71,11 +71,11 @@ bool Fill::inbox(int x, int y, int x1, int y1, int x2, int y2)
 bool Fill::isEdge(Map *map, const int x, const int y)
 {
   // special case
-  if (x < 1 || x > map->w - 2 || y < 1 || y > map->h - 2)
+  if (x < 1 || x >= map->w - 1 || y < 1 || y >= map->h - 1)
   {
-    if (*(map->row[y] + x))
-      return 0;
-    else
+//    if (*(map->row[y] + x))
+//      return 0;
+//    else
       return 1;
   }
 
