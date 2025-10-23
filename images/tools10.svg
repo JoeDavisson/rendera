@@ -23,16 +23,16 @@
   <defs
      id="defs4">
     <linearGradient
-       id="linearGradient2"
-       inkscape:collect="always">
+       inkscape:collect="always"
+       id="linearGradient2">
       <stop
-         style="stop-color:#1a1a1a;stop-opacity:1;"
+         style="stop-color:#000000;stop-opacity:1;"
          offset="0"
-         id="stop2" />
+         id="stop1" />
       <stop
-         style="stop-color:#1a1a1a;stop-opacity:0;"
+         style="stop-color:#000000;stop-opacity:0;"
          offset="1"
-         id="stop3" />
+         id="stop2" />
     </linearGradient>
     <inkscape:path-effect
        effect="spiro"
@@ -185,12 +185,12 @@
        inkscape:collect="always"
        xlink:href="#linearGradient2"
        id="linearGradient3"
-       x1="93"
-       y1="569.36218"
-       x2="115"
-       y2="591.36218"
+       x1="94.665848"
+       y1="571.07129"
+       x2="114.50082"
+       y2="591.08014"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1,0,0,0.99115017,0,5.0122077)" />
+       gradientTransform="matrix(0.85714286,0,0,0.84955745,14.857143,87.204967)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -199,9 +199,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.9999998"
-     inkscape:cx="113.62501"
-     inkscape:cy="124.25001"
+     inkscape:zoom="2.828427"
+     inkscape:cx="154.50284"
+     inkscape:cy="194.10082"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -265,9 +265,9 @@
        height="31.999994"
        x="88"
        y="372.36218"
-       inkscape:export-filename="../../EasyChop/src/test.svg"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
+       inkscape:export-filename="tools.png"
+       inkscape:export-xdpi="144"
+       inkscape:export-ydpi="144" />
     <rect
        style="opacity:0.580001;fill:none;stroke:none"
        id="rect3929-17"
@@ -279,12 +279,12 @@
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <rect
-       style="display:inline;opacity:0.580001;fill:#b3b3b3;stroke:none;stroke-width:1"
+       style="display:inline;opacity:0.580001;fill:#b3b3b3;stroke:none;stroke-width:0.999997"
        id="rect3929-17-35"
-       width="28"
-       height="27.999992"
-       x="90"
-       y="566.36218"
+       width="24"
+       height="23.999994"
+       x="92"
+       y="568.36218"
        inkscape:export-filename="/home/joe/rendera/data/theme/dark/zoom_one.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
@@ -3907,22 +3907,22 @@
        id="path2353"
        sodipodi:nodetypes="cccc" />
     <rect
-       style="display:inline;opacity:0.580001;fill:url(#linearGradient3);fill-opacity:1;stroke:none;stroke-width:0.999995"
+       style="display:inline;opacity:0.75;fill:url(#linearGradient3);fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none"
        id="rect3929-17-5"
-       width="28"
-       height="27.999992"
-       x="90"
-       y="566.36218"
+       width="24"
+       height="23.999998"
+       x="92"
+       y="568.36218"
        inkscape:export-filename="/home/joe/rendera/data/theme/dark/zoom_one.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <rect
-       style="display:inline;opacity:1;fill:none;stroke:#000000;stroke-width:0.75;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:none"
+       style="display:inline;opacity:1;fill:none;stroke:#000000;stroke-width:0.749999;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
        id="rect3929-17-62"
-       width="28"
-       height="27.999994"
-       x="90"
-       y="566.36218"
+       width="24"
+       height="23.999996"
+       x="92"
+       y="568.36218"
        inkscape:export-filename="/home/joe/rendera/data/theme/dark/zoom_one.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
