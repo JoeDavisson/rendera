@@ -46,6 +46,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
+//FIXME should free memory when switched to another tool
+
 Text::Text()
 {
   preview_text = 0;
