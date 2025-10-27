@@ -36,13 +36,15 @@ public:
   ~GradientOptions();
 
   int style();
+  int blendingMode();
   bool useColor();
   bool inverse();
 
 private:
   Fl_Choice *gradient_style;
-  CheckBox *gradient_use_color;
+//  CheckBox *gradient_use_color;
   CheckBox *gradient_inverse;
+  Fl_Choice *gradient_blend;
 };
 
 #endif

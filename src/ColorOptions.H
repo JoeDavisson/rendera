@@ -59,7 +59,6 @@ private:
   Widget *trans;
   Fl_Choice *blend;
   Widget *palette_swatches;
-
 };
 
 #endif

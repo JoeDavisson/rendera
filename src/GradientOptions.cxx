@@ -18,6 +18,7 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include "Blend.H"
 #include "Bitmap.H"
 #include "CheckBox.H"
 #include "GradientOptions.H"
@@ -45,18 +46,33 @@ GradientOptions::GradientOptions(int x, int y, int w, int h, const char *l)
   gradient_style->add("Elliptical");
   gradient_style->value(0);
   gradient_style->textsize(16);
-  pos += 40 + 8;
+  pos += 40 + Gui::SPACING;
 
-  gradient_use_color = new CheckBox(this, 8, pos, 16, 16,
-                                          "Use Paint Color", 0);
-  gradient_use_color->center();
-  gradient_use_color->value(0);
+  gradient_blend = new Fl_Choice(8, pos, 160, 32, "");
+  gradient_blend->tooltip("Gradient\nBlending Mode");
+  gradient_blend->textsize(10);
+  gradient_blend->resize(this->x() + 8, this->y() + pos, 160, 32);
+  gradient_blend->add("Alpha Blend");
+  gradient_blend->add("Normal");
+  gradient_blend->add("Gamma Correct");
+  gradient_blend->add("Lighten");
+  gradient_blend->add("Darken");
+  gradient_blend->add("Colorize");
+  gradient_blend->value(0);
+//  gradient_blend->callback(cb_colorChange, (void *)this);
+  gradient_blend->textsize(16);
+  pos += 40 + Gui::SPACING;
 
-  pos += 32 + 8;
+//  gradient_use_color = new CheckBox(this, 8, pos, 16, 16,
+//                                          "Use Paint Color", 0);
+//  gradient_use_color->center();
+//  gradient_use_color->value(0);
+//  pos += 32 + Gui::SPACING;
 
   gradient_inverse = new CheckBox(this, 8, pos, 16, 16, "Inverse", 0);
   gradient_inverse->center();
   gradient_inverse->value(0);
+  pos += 32 + Gui::SPACING;
 
   resizable(0);
   end();
@@ -71,9 +87,28 @@ int GradientOptions::style()
   return gradient_style->value();
 }
 
+int GradientOptions::blendingMode()
+{
+  switch (gradient_blend->value())
+  {
+    case 1:
+      return Blend::TRANS;
+    case 2:
+      return Blend::GAMMA_CORRECT;
+    case 3:
+      return Blend::LIGHTEN;
+    case 4:
+      return Blend::DARKEN;
+    case 5:
+      return Blend::COLORIZE;
+    default:
+      return Blend::TRANS;
+  }
+}
+
 bool GradientOptions::useColor()
 {
-  return gradient_use_color->value() > 0 ? true : false;
+  return gradient_blend->value() != 0 ? true : false;
 }
 
 bool GradientOptions::inverse()

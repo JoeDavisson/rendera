@@ -37,14 +37,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 //FIXME add rectangular gradient
 
-//FIXME limit blending modes to usable ones
-// add to GUI:
-// blend
-// normal
-// lighten
-// darken
-// colorize
-
 namespace
 {
   int beginx;
@@ -67,7 +59,7 @@ namespace
     if (length <= 0)
       return;
 
-    Blend::set(Project::brush->blend);
+    Blend::set(Gui::gradient->blendingMode());
     Progress::show(bmp->h);
     int yy = 0;
 
@@ -125,7 +117,7 @@ namespace
     if (length <= 0)
       return;
 
-    Blend::set(Project::brush->blend);
+    Blend::set(Gui::gradient->blendingMode());
     Progress::show(bmp->h);
     int yy = 0;
 
@@ -193,7 +185,7 @@ namespace
     const float cx = x1 + rx;
     const float cy = y1 + ry;
 
-    Blend::set(Project::brush->blend);
+    Blend::set(Gui::gradient->blendingMode());
     Progress::show(bmp->h);
     int yy = 0;
 
