@@ -47,6 +47,7 @@ public:
   void colorBlend();
   void paletteDraw();
   void paletteIndex(int);
+  void paletteInput();
   int paletteGetIndex();
   void paletteSwatches();
   int paletteSwatchesIndex();
@@ -59,6 +60,7 @@ private:
   Widget *trans;
   Fl_Choice *blend;
   Widget *palette_swatches;
+  InputInt *palette_input;
 };
 
 #endif

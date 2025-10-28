@@ -55,6 +55,8 @@ namespace
   void cb_colorTransInput(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->colorTransInput(); }
 
   void cb_paletteSwatches(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->paletteSwatches(); }
+
+  void cb_paletteInput(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->paletteInput(); }
 }
 
 ColorOptions::ColorOptions(int x, int y, int w, int h, const char *l)
@@ -114,7 +116,13 @@ ColorOptions::ColorOptions(int x, int y, int w, int h, const char *l)
 
   palette_swatches = new Widget(this, 8, pos, 192, 192, 0, 12, 12, 0);
   palette_swatches->callback(cb_paletteSwatches, (void *)this);
-  pos += 192 + Gui::SPACING;
+  pos += 192 + 8;
+
+  palette_input = new InputInt(this, 8, pos, 96, 32, "Index:", 0, 0, 255);
+  palette_input->callback(cb_paletteInput, (void *)this);
+  palette_input->value("0");
+  palette_input->center();
+  pos += 32 + Gui::SPACING;
 
   resizable(0);
   end();
@@ -237,12 +245,31 @@ void ColorOptions::paletteDraw()
   Project::palette->draw(palette_swatches);
   palette_swatches->var = 0;
   palette_swatches->redraw();
+  palette_input->value(palette_swatches->var);
 }
 
 void ColorOptions::paletteIndex(int var)
 { 
   palette_swatches->var = var;
+  palette_input->value(var);
   Project::palette->draw(palette_swatches);
+} 
+
+void ColorOptions::paletteInput()
+{ 
+  Palette *pal = Project::palette;
+  int index = atoi(palette_input->value());
+  int max = pal->max;
+
+  if (index >= max)
+  {
+    index = max - 1;
+    palette_input->value(index);
+  }
+
+  palette_swatches->var = index;
+  pal->draw(palette_swatches);
+  palette_swatches->do_callback();
 } 
 
 int ColorOptions::paletteGetIndex()
@@ -288,6 +315,7 @@ void ColorOptions::paletteSwatches()
 
   pal->draw(palette_swatches);
   colorUpdate(c);
+  palette_input->value(palette_swatches->var);
 //  Editor::update();
 }
 
@@ -299,6 +327,7 @@ int ColorOptions::paletteSwatchesIndex()
 void ColorOptions::changePalette(Palette *pal)
 {
   palette_swatches->var = 0;
+  palette_input->value(0);
   pal->draw(palette_swatches);
 }
 

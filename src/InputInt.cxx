@@ -31,9 +31,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
+  char str[256];
+
   void change(Fl_Widget *w, InputInt *i)
   {
-    char str[256];
     bool shift = Fl::event_shift() ? true : false;
     int val = std::atoi(i->input.value());
 
@@ -109,6 +110,12 @@ const char *InputInt::value()
 void InputInt::value(const char *s)
 {
   input.value(s);
+}
+
+void InputInt::value(const int val)
+{
+  snprintf(str, sizeof(str), "%d", val);
+  input.value(str);
 }
 
 void InputInt::maximum_size(const int size)

@@ -242,7 +242,7 @@ void Gui::init()
 
   // main window
   FL_NORMAL_SIZE = 18;
-  window = new MainWin(1280, 828, "Rendera");
+  window = new MainWin(1280, 864, "Rendera");
   window->callback(closeCallback);
   window->xclass("Rendera");
 
@@ -520,7 +520,7 @@ void Gui::init()
   images->resize(images->x(), images->y(), images->w(), right_height);
   right->end();
 
-  window->size_range(1024, 828, 0, 0, 0, 0, 0);
+  window->size_range(1024, 864, 0, 0, 0, 0, 0);
   window->resizable(view);
   window->end();
 

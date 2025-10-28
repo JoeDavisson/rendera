@@ -38,6 +38,7 @@ public:
 
   const char *value();
   void value(const char *);
+  void value(const int);
   void maximum_size(const int);
   void center();
   void textsize(const int);
