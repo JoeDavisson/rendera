@@ -82,7 +82,7 @@ ColorOptions::ColorOptions(int x, int y, int w, int h, const char *l)
 
   trans_input = new InputInt(this, 8, pos, 192, 32, "", 0, 0, 255);
   trans_input->callback(cb_colorTransInput, (void *)this);
-  trans_input->value("0");
+  trans_input->value(0);
   pos += 32 + 8;
 
   trans = new Widget(this, 8, pos, 192, 42, "Transparency", 6, 42, 0);
@@ -120,7 +120,7 @@ ColorOptions::ColorOptions(int x, int y, int w, int h, const char *l)
 
   palette_input = new InputInt(this, 8, pos, 96, 32, "Index:", 0, 0, 255);
   palette_input->callback(cb_paletteInput, (void *)this);
-  palette_input->value("0");
+  palette_input->value(0);
   palette_input->center();
   pos += 32 + Gui::SPACING;
 
@@ -171,9 +171,7 @@ void ColorOptions::transUpdate(int t)
   trans->var = t / 8;
   trans->redraw();
   Project::brush->trans = t;
-  char s[16];
-  snprintf(s, sizeof(s), "%d", Project::brush->trans);
-  trans_input->value(s);
+  trans_input->value(Project::brush->trans);
   trans_input->redraw();
   colorTrans();
 }
@@ -191,7 +189,7 @@ void ColorOptions::colorChange()
 
 void ColorOptions::colorTransInput()
 {
-  Project::brush->trans = atoi(trans_input->value());
+  Project::brush->trans = trans_input->value();
   trans->var = Project::brush->trans / 8.22;
 }
 
@@ -204,9 +202,7 @@ void ColorOptions::colorTrans()
 
   Project::brush->trans = temp_trans;
 
-  char s[16];
-  snprintf(s, sizeof(s), "%d", Project::brush->trans);
-  trans_input->value(s);
+  trans_input->value(temp_trans);
   trans_input->redraw();
 
   for (int y = 0; y < trans->bitmap->h; y++)
@@ -258,7 +254,7 @@ void ColorOptions::paletteIndex(int var)
 void ColorOptions::paletteInput()
 { 
   Palette *pal = Project::palette;
-  int index = atoi(palette_input->value());
+  int index = palette_input->value();
   int max = pal->max;
 
   if (index >= max)

@@ -101,12 +101,12 @@ namespace ExportOptions
     Items::dialog = new DialogWindow(400, 0, "Export Data Options");
 
     Items::tilex = new InputInt(Items::dialog, 0, y1, 128, 32, "Tile Width:", 0, 1, 256);
-    Items::tilex->value("8");
+    Items::tilex->value(8);
     Items::tilex->center();
     y1 += 32 + 16;
 
     Items::tiley = new InputInt(Items::dialog, 0, y1, 128, 32, "Tile Height:", 0, 1, 256);
-    Items::tiley->value("8");
+    Items::tiley->value(8);
     Items::tiley->center();
     y1 += 32 + 16;
 
@@ -322,8 +322,8 @@ int ExportData::saveText(const char *fn, int ext_value)
   Bitmap *bmp = Project::bmp;
   Palette *pal = Project::palette;
 
-  int tilex = atoi(ExportOptions::Items::tilex->value());
-  int tiley = atoi(ExportOptions::Items::tiley->value());
+  int tilex = ExportOptions::Items::tilex->value();
+  int tiley = ExportOptions::Items::tiley->value();
   int bit_level = ExportOptions::Items::bpp->value();
   int shift = 1 << bit_level;
   int pixels = 1 << (3 - bit_level);

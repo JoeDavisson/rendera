@@ -103,7 +103,7 @@ ViewOptions::ViewOptions(int x, int y, int w, int h, const char *l)
 
   gridx->labelsize(18);
   gridx->textsize(18);
-  gridx->value("8");
+  gridx->value(8);
   pos += 104 + 48;
 
   gridy = new InputInt(this, pos, 8, 104, 40, "Y:", 0, 1, 256);
@@ -111,7 +111,7 @@ ViewOptions::ViewOptions(int x, int y, int w, int h, const char *l)
 
   gridy->labelsize(18);
   gridy->textsize(18);
-  gridy->value("8");
+  gridy->value(8);
   pos += 104 + Gui::SPACING;
 
   new Separator(this, pos, 0, Gui::TOP_HEIGHT, Separator::VERTICAL, "");
@@ -204,7 +204,7 @@ void ViewOptions::gridX()
 {
   View *view = Gui::view;
 
-  view->gridx = atoi(gridx->value());
+  view->gridx = gridx->value();
   view->drawMain(true);
 }
 
@@ -212,7 +212,7 @@ void ViewOptions::gridY()
 {
   View *view = Gui::view;
 
-  view->gridy = atoi(gridy->value());
+  view->gridy = gridy->value();
   view->drawMain(true);
 }
 

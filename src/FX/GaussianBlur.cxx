@@ -324,8 +324,8 @@ void GaussianBlur::close()
   Items::dialog->hide();
   Project::undo->push();
 
-  int size = atof(Items::size->value());
-  int blend = 255 - atoi(Items::blend->value()) * 2.55;
+  int size = Items::size->value();
+  int blend = 255 - Items::blend->value() * 2.55;
   int mode = Items::mode->value();
 
   apply(Project::bmp, size, blend, mode);
@@ -352,11 +352,11 @@ void GaussianBlur::init()
 
   Items::size = new InputInt(Items::dialog, 0, y1, 128, 32, "Size (1-60)", 0, 1, 60);
   y1 += 32 + 16;
-  Items::size->value("1");
+  Items::size->value(1);
   Items::size->center();
 
   Items::blend = new InputInt(Items::dialog, 0, y1, 128, 32, "Blend %", 0, 0, 100);
-  Items::blend->value("100");
+  Items::blend->value(100);
   Items::blend->center();
   y1 += 32 + 16;
 

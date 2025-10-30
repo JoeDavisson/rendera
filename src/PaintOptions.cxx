@@ -274,10 +274,7 @@ void PaintOptions::changeSize(int new_size)
 
   paint_brush_preview->redraw();
 
-  char s[32];
-  snprintf(s, sizeof(s), "%d", (int)new_size);
-
-  paint_size_value->value(s);
+  paint_size_value->value(new_size);
   paint_size_value->redraw();
 }
 
@@ -294,9 +291,7 @@ void PaintOptions::size()
 
 void PaintOptions::sizeValue()
 {
-  int new_size = 1;
-  sscanf(paint_size_value->value(), "%d", &new_size);
-  changeSize(new_size);
+  changeSize(paint_size_value->value());
 }
 
 void PaintOptions::shape()

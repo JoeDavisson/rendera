@@ -89,7 +89,7 @@ void RemoveDust::close()
   if (Items::invert->value())
     Invert::apply(Project::bmp);
 
-  apply(Project::bmp, atoi(Items::amount->value()));
+  apply(Project::bmp, Items::amount->value());
 
   if (Items::invert->value())
     Invert::apply(Project::bmp);
@@ -114,7 +114,7 @@ void RemoveDust::init()
 
   Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32, "Amount (1-10)", 0, 1, 10);
   y1 += 32 + 16;
-  Items::amount->value("4");
+  Items::amount->value(4);
   Items::amount->center();
 
   Items::invert = new CheckBox(Items::dialog, 0, y1, 16, 16, "Invert First", 0);

@@ -34,7 +34,7 @@ namespace
 void Painting::apply()
 {
   Bitmap *bmp = Project::bmp;
-  int amount = atoi(Items::amount->value());
+  int amount = Items::amount->value();
 
   Progress::show(bmp->h);
 
@@ -115,7 +115,7 @@ void Painting::init()
 
   Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32, "Amount (1-10)", 0, 1, 10);
   y1 += 32 + 16;
-  Items::amount->value("3");
+  Items::amount->value(3);
   Items::amount->center();
 
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);

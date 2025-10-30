@@ -64,8 +64,8 @@ namespace
 void StainedGlass::apply()
 {
   Bitmap *bmp = Project::bmp;
-  int size = atoi(Items::detail->value());
-  int div = atoi(Items::edge->value());
+  int size = Items::detail->value();
+  int div = Items::edge->value();
 
   std::vector<int> seedx(size);
   std::vector<int> seedy(size);
@@ -212,11 +212,11 @@ void StainedGlass::init()
   Items::dialog = new DialogWindow(400, 0, "Stained Glass");
   Items::detail = new InputInt(Items::dialog, 0, y1, 128, 32, "Detail (1-50000)", 0, 1, 50000);
   y1 += 32 + 16;
-  Items::detail->value("5000");
+  Items::detail->value(5000);
   Items::detail->center();
   Items::edge = new InputInt(Items::dialog, 0, y1, 128, 32, "Edge Detect (1-50)", 0, 1, 50);
   y1 += 32 + 16;
-  Items::edge->value("16");
+  Items::edge->value(16);
   Items::edge->center();
   Items::uniform = new CheckBox(Items::dialog, 0, y1, 16, 16, "Uniform", 0);
   Items::uniform->center();

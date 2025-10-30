@@ -80,7 +80,6 @@ InputInt::InputInt(Fl_Group *g, int x, int y, int w, int h,
 
   align(FL_ALIGN_LEFT);
   group = g;
-  var = 0;
   callback(input_cb);
   input.callback((Fl_Callback *)change, this);
   input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
@@ -102,14 +101,9 @@ InputInt::~InputInt()
 {
 }
 
-const char *InputInt::value()
+int InputInt::value()
 {
-  return input.value();
-}
-
-void InputInt::value(const char *s)
-{
-  input.value(s);
+  return atoi(input.value());
 }
 
 void InputInt::value(const int val)

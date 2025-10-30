@@ -36,14 +36,12 @@ public:
            Fl_Callback *, int, int);
   ~InputInt();
 
-  const char *value();
-  void value(const char *);
+  int value();
   void value(const int);
   void maximum_size(const int);
   void center();
   void textsize(const int);
 
-  int var;
   int min;
   int max;
   Fl_Group *group;

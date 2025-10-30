@@ -33,13 +33,12 @@ public:
   InputFloat(Fl_Group *, int, int, int, int, const char *,
            Fl_Callback *, double, double);
   ~InputFloat();
-  const char *value();
-  void value(const char *);
+  float value();
+  void value(const float);
   void maximum_size(const int);
   void center();
   void textsize(const int);
 
-  int var;
   double min;
   double max;
   Fl_Group *group;

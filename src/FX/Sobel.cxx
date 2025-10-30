@@ -33,8 +33,6 @@ namespace
 
 void Sobel::apply(Bitmap *bmp, int amount)
 {
-//  Bitmap *bmp = Project::bmp;
-//  int amount = atoi(Items::amount->value());
   int div = 1;
 
   Bitmap temp(bmp->cw, bmp->ch);
@@ -99,10 +97,7 @@ void Sobel::close()
 {
   Items::dialog->hide();
   Project::undo->push();
-//  apply();
-//  Bitmap *bmp = Project::bmp;
-//  int amount = atoi(Items::amount->value());
-  apply(Project::bmp, atoi(Items::amount->value()));
+  apply(Project::bmp, Items::amount->value());
 }
 
 void Sobel::quit()
@@ -122,8 +117,9 @@ void Sobel::init()
 
   Items::dialog = new DialogWindow(256, 0, "Sobel Edge Detection");
 
-  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32, "Amount %", 0, 0, 100);
-  Items::amount->value("100");
+  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32,
+                               "Amount %", 0, 0, 100);
+  Items::amount->value(100);
   Items::amount->center();
   y1 += 32 + 16;
 

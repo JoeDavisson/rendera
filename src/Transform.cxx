@@ -55,11 +55,8 @@ namespace Resize
 
   void begin()
   {
-    char s[8];
-    snprintf(s, sizeof(s), "%d", Project::bmp->cw);
-    Items::width->value(s);
-    snprintf(s, sizeof(s), "%d", Project::bmp->ch);
-    Items::height->value(s);
+    Items::width->value(Project::bmp->cw);
+    Items::height->value(Project::bmp->ch);
     Items::dialog->show();
   }
 
@@ -70,11 +67,9 @@ namespace Resize
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
       float aspect = (float)hh / ww;
-      char s[8];
-      int w = atoi(Items::width->value());
+      int w = Items::width->value();
       int h = w * aspect;
-      snprintf(s, sizeof(s), "%d", h);
-      Items::height->value(s);
+      Items::height->value(h);
     }
   }
 
@@ -85,18 +80,16 @@ namespace Resize
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
       float aspect = (float)ww / hh;
-      char s[8];
-      int h = atoi(Items::height->value());
+      int h = Items::height->value();
       int w = h * aspect;
-      snprintf(s, sizeof(s), "%d", w);
-      Items::width->value(s);
+      Items::width->value(w);
     }
   }
 
   void close()
   {
-    const int w = atoi(Items::width->value());
-    const int h = atoi(Items::height->value());
+    const int w = Items::width->value();
+    const int h = Items::height->value();
 
     if (Project::enoughMemory(w, h) == false)
       return;
@@ -145,8 +138,8 @@ namespace Resize
 
     Items::width->maximum_size(8);
     Items::height->maximum_size(8);
-    Items::width->value("640");
-    Items::height->value("480");
+    Items::width->value(640);
+    Items::height->value(480);
 
     Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
     Items::keep_aspect->center();
@@ -442,12 +435,9 @@ namespace Scale
 
   void begin()
   {
-    char s[8];
-    snprintf(s, sizeof(s), "%d", Project::bmp->cw);
-    Items::width->value(s);
-    snprintf(s, sizeof(s), "%d", Project::bmp->ch);
-    Items::height->value(s);
-    Items::percent->value("100");
+    Items::width->value(Project::bmp->cw);
+    Items::height->value(Project::bmp->ch);
+    Items::percent->value(100);
     Items::dialog->show();
   }
 
@@ -458,11 +448,9 @@ namespace Scale
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
       float aspect = (float)hh / ww;
-      char s[8];
-      int w = atoi(Items::width->value());
+      int w = Items::width->value();
       int h = w * aspect;
-      snprintf(s, sizeof(s), "%d", h);
-      Items::height->value(s);
+      Items::height->value(h);
     }
   }
 
@@ -473,11 +461,9 @@ namespace Scale
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
       float aspect = (float)ww / hh;
-      char s[8];
-      int h = atoi(Items::height->value());
+      int h = Items::height->value();
       int w = h * aspect;
-      snprintf(s, sizeof(s), "%d", w);
-      Items::width->value(s);
+      Items::width->value(w);
     }
   }
 
@@ -485,10 +471,9 @@ namespace Scale
   {
     int w = Project::bmp->cw;
     int h = Project::bmp->ch;
-    char s[16];
 
-    w = (float)w * ((float)atoi(Items::percent->value()) / 100) + 0.5;
-    h = (float)h * ((float)atoi(Items::percent->value()) / 100) + 0.5;
+    w = (float)w * ((float)Items::percent->value() / 100) + 0.5;
+    h = (float)h * ((float)Items::percent->value() / 100) + 0.5;
 
     if (w < 1)
       w = 1;
@@ -496,17 +481,14 @@ namespace Scale
     if (h < 1)
       h = 1;
 
-    if (snprintf(s, sizeof(s), "%d", w) > 0)
-      Items::width->value(s);
-
-    if (snprintf(s, sizeof(s), "%d", h) > 0)
-      Items::height->value(s);
+    Items::width->value(w);
+    Items::height->value(h);
   }
 
   void close()
   {
-    int w = atoi(Items::width->value());
-    int h = atoi(Items::height->value());
+    int w = Items::width->value();
+    int h = Items::height->value();
 
     if (Project::enoughMemory(w, h) == false)
       return;
@@ -539,14 +521,14 @@ namespace Scale
     y1 += 32 + 16;
 
     Items::percent = new InputInt(Items::dialog, 0, y1, 128, 32, "%", (Fl_Callback *)checkPercent, 1, 1000);
-    Items::percent->value("100");
+    Items::percent->value(100);
     Items::percent->center();
     y1 += 32 + 16;
 
     Items::width->maximum_size(8);
     Items::height->maximum_size(8);
-    Items::width->value("640");
-    Items::height->value("480");
+    Items::width->value(640);
+    Items::height->value(480);
     Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
     Items::keep_aspect->value(1);
     Items::keep_aspect->center();
@@ -720,7 +702,7 @@ namespace RotateArbitrary
 
   void begin()
   {
-    Items::scale->value("1.000");
+    Items::scale->value(1.000);
     Items::dialog->show();
   }
 
@@ -729,7 +711,7 @@ namespace RotateArbitrary
     Items::dialog->hide();
     Project::undo->push();
 
-    apply(atof(Items::angle->value()), atof(Items::scale->value()));
+    apply(Items::angle->value(), Items::scale->value());
   }
 
   void quit()
@@ -745,12 +727,12 @@ namespace RotateArbitrary
 
     Items::angle = new InputFloat(Items::dialog, 0, y1, 128, 32, "Angle", 0, -359.99, 359.99);
     Items::angle->center();
-    Items::angle->value("0");
+    Items::angle->value(0);
     y1 += 32 + 16;
 
     Items::scale = new InputFloat(Items::dialog, 0, y1, 128, 32, "Scale (1-10)", 0, 1, 10);
     Items::scale->center();
-    Items::scale->value("1.000");
+    Items::scale->value(1.000);
     y1 += 32 + 16;
 
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);

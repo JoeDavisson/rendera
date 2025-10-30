@@ -166,9 +166,9 @@ void UnsharpMask::close()
   Items::dialog->hide();
   Project::undo->push();
 
-  const int radius = atoi(Items::radius->value());
-  const double amount = atof(Items::amount->value());
-  const int threshold = atoi(Items::threshold->value());
+  const int radius = Items::radius->value();
+  const double amount = Items::amount->value();
+  const int threshold = Items::threshold->value();
 
   apply(Project::bmp, radius, amount, threshold);
 }
@@ -192,17 +192,17 @@ void UnsharpMask::init()
 
   Items::radius = new InputInt(Items::dialog, 0, y1, 128, 32, "Radius (1-100)", 0, 1, 100);
   y1 += 32 + 16;
-  Items::radius->value("1");
+  Items::radius->value(1);
   Items::radius->center();
 
   Items::amount = new InputFloat(Items::dialog, 0, y1, 128, 32, "Amount (0-10)", 0, 0, 10);
   y1 += 32 + 16;
-  Items::amount->value("1.5");
+  Items::amount->value(1.5);
   Items::amount->center();
 
   Items::threshold = new InputInt(Items::dialog, 0, y1, 128, 32, "Threshold (0-255)", 0, 0, 255);
   y1 += 32 + 16;
-  Items::threshold->value("0");
+  Items::threshold->value(0);
   Items::threshold->center();
 
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);

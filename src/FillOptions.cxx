@@ -50,12 +50,12 @@ FillOptions::FillOptions(int x, int y, int w, int h, const char *l)
 
   fill_range = new InputInt(this, 8, pos, 160, 32, "Range (0-31)", 0, 0, 31);
   fill_range->align(FL_ALIGN_BOTTOM);
-  fill_range->value("0");
+  fill_range->value(0);
   pos += 32 + 32;
 
   fill_feather = new InputInt(this, 8, pos, 160, 32, "Feather (0-255)", 0, 0, 255);
   fill_feather->align(FL_ALIGN_BOTTOM);
-  fill_feather->value("0");
+  fill_feather->value(0);
   pos += 32 + 32;
 
   fill_color_only = new CheckBox(this, 8, pos, 16, 16, "Color Only", 0);
@@ -79,12 +79,12 @@ FillOptions::~FillOptions()
 
 int FillOptions::getRange()
 {
-  return atoi(fill_range->value());
+  return fill_range->value();
 }
 
 int FillOptions::getFeather()
 {
-  return atoi(fill_feather->value());
+  return fill_feather->value();
 }
 
 int FillOptions::getColorOnly()
@@ -94,7 +94,7 @@ int FillOptions::getColorOnly()
 
 void FillOptions::reset()
 {
-  fill_range->value("0");
-  fill_feather->value("0");
+  fill_range->value(0);
+  fill_feather->value(0);
 }
 

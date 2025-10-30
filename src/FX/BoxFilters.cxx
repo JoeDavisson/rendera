@@ -140,7 +140,7 @@ void BoxFilters::close()
   Items::dialog->hide();
   Project::undo->push();
 
-  const int amount = atoi(Items::amount->value());
+  const int amount = Items::amount->value();
   const int mode = Items::mode->value();
 
   apply(Project::bmp, amount, mode);
@@ -180,7 +180,7 @@ void BoxFilters::init()
   y1 += 32 + 16;
 
   Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32, "Amount %", 0, 0, 100);
-  Items::amount->value("50");
+  Items::amount->value(50);
   Items::amount->center();
   y1 += 32 + 16;
 

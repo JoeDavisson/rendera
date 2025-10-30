@@ -58,16 +58,16 @@ TextOptions::TextOptions(int x, int y, int w, int h, const char *l)
 
   text_size = new InputInt(this, 64, pos, 96, 32, "Size:", 0, 4, 256);
   text_size->callback(cb_changedSize, (void *)this);
-  text_size->value("48");
+  text_size->value(48);
   pos += 32 + Gui::SPACING;
 
   text_angle = new InputInt(this, 64, pos, 96, 32, "Angle:", 0, -359, 359);
   text_angle->callback(cb_changedSize, (void *)this);
-  text_angle->value("0");
+  text_angle->value(0);
   pos += 32 + Gui::SPACING;
   
   text_weight = new InputInt(this, 64, pos, 96, 32, "Weight:", 0, 0, 31);
-  text_weight->value("0");
+  text_weight->value(0);
   pos += 32 + Gui::SPACING;
   
   text_input = new Fl_Input(8, pos, 160, 32, "");
@@ -117,12 +117,12 @@ const char *TextOptions::getInput()
 
 int TextOptions::getSize()
 {
-  return atoi(text_size->value());
+  return text_size->value();
 }
 
 int TextOptions::getAngle()
 {
-  return atoi(text_angle->value());
+  return text_angle->value();
 }
 
 int TextOptions::getSmooth()
@@ -132,6 +132,6 @@ int TextOptions::getSmooth()
 
 int TextOptions::getWeight()
 {
-  return atoi(text_weight->value());
+  return text_weight->value();
 }
 

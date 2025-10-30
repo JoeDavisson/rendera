@@ -76,7 +76,7 @@ void Sharpen::close()
   Items::dialog->hide();
   Project::undo->push();
 
-  apply(Project::bmp, atoi(Items::amount->value()));
+  apply(Project::bmp, Items::amount->value());
 }
 
 void Sharpen::quit()
@@ -97,7 +97,7 @@ void Sharpen::init()
   Items::dialog = new DialogWindow(400, 0, "Sharpen");
   Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32, "Amount %", 0, 0, 100);
   y1 += 32 + 16;
-  Items::amount->value("10");
+  Items::amount->value(10);
   Items::amount->center();
 
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);

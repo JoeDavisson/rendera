@@ -146,7 +146,7 @@ namespace JpegQuality
     Items::dialog = new DialogWindow(256, 0, "JPEG Quality");
     Items::dialog->callback(closeCallback);
     Items::quality = new InputInt(Items::dialog, 0, y1, 96, 24, "Quality:", 0, 1, 100);
-    Items::quality->value("90");
+    Items::quality->value(90);
     Items::quality->center();
     y1 += 24 + 8;
     Items::dialog->addOkButton(&Items::ok, &y1);
@@ -252,7 +252,7 @@ namespace PngOptions
     Items::dialog->callback(closeCallback);
 
     Items::alpha_levels = new InputInt(Items::dialog, 0, y1, 128, 32, "Alpha Levels:", 0, 2, 16);
-    Items::alpha_levels->value("2");
+    Items::alpha_levels->value(2);
     Items::alpha_levels->center();
     y1 += 32 + 16;
 
@@ -285,12 +285,8 @@ namespace NewImage
 
   void begin()
   {
-    char s[16];
-    snprintf(s, sizeof(s), "%d", Project::bmp->cw);
-    Items::width->value(s);
-    snprintf(s, sizeof(s), "%d", Project::bmp->ch);
-    Items::height->value(s);
-    Items::dialog->show();
+    Items::width->value(Project::bmp->cw);
+    Items::height->value(Project::bmp->ch);
   }
 
   void checkWidth()
@@ -300,11 +296,9 @@ namespace NewImage
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
       float aspect = (float)hh / ww;
-      char s[16];
-      int w = atoi(Items::width->value());
+      int w = Items::width->value();
       int h = w * aspect;
-      snprintf(s, sizeof(s), "%d", h);
-      Items::height->value(s);
+      Items::height->value(h);
     }
   }
 
@@ -315,11 +309,9 @@ namespace NewImage
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
       float aspect = (float)ww / hh;
-      char s[16];
-      int h = atoi(Items::height->value());
+      int h = Items::height->value();
       int w = h * aspect;
-      snprintf(s, sizeof(s), "%d", w);
-      Items::width->value(s);
+      Items::width->value(w);
     }
   }
 
@@ -327,8 +319,7 @@ namespace NewImage
   {
     Items::dialog->hide();
 
-    if (Project::newImage(atoi(Items::width->value()),
-                         atoi(Items::height->value())) == -1)
+    if (Project::newImage(Items::width->value(), Items::height->value()) == -1)
     {
       return;
     }
@@ -366,8 +357,8 @@ namespace NewImage
     Items::keep_aspect->center();
     y1 += 16 + 16;
 
-    Items::width->value("640");
-    Items::height->value("480");
+    Items::width->value(640);
+    Items::height->value(480);
 
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
     Items::ok->callback((Fl_Callback *)close);
@@ -390,16 +381,14 @@ namespace MakePalette
 
   void begin()
   {
-    char s[16];
-    snprintf(s, sizeof(s), "%d", Project::palette->max);
-    Items::colors->value(s);
+    Items::colors->value(Project::palette->max);
     Items::dialog->show();
   }
 
   void close()
   {
     Items::dialog->hide();
-    Quantize::pca(Project::bmp, Project::palette, atoi(Items::colors->value()));
+    Quantize::pca(Project::bmp, Project::palette, Items::colors->value());
     Gui::colors->paletteDraw();
     Project::palette->fillTable();
   }
@@ -550,7 +539,7 @@ void Dialog::jpegQuality()
 
 int Dialog::jpegQualityValue()
 {
-  return atoi(JpegQuality::Items::quality->value());
+  return JpegQuality::Items::quality->value();
 }
 
 void Dialog::javaExport()
@@ -580,7 +569,7 @@ int Dialog::pngUseAlpha()
 
 int Dialog::pngAlphaLevels()
 {
-  return atoi(PngOptions::Items::alpha_levels->value());
+  return PngOptions::Items::alpha_levels->value();
 }
 
 void Dialog::newImage()

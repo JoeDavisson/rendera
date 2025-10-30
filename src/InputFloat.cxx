@@ -79,7 +79,6 @@ InputFloat::InputFloat(Fl_Group *g, int x, int y, int w, int h,
   end();
   align(FL_ALIGN_LEFT);
   group = g;
-  var = 0;
   callback(input_cb);
   input.callback((Fl_Callback *)change, this);
   dec.callback((Fl_Callback *)change, this);
@@ -99,14 +98,15 @@ InputFloat::~InputFloat()
 {
 }
 
-const char *InputFloat::value()
+float InputFloat::value()
 {
-  return input.value();
+  return atof(input.value());
 }
 
-void InputFloat::value(const char *s)
+void InputFloat::value(const float val)
 {
-  input.value(s);
+  snprintf(str, sizeof(str), "%f", val);
+  input.value(str);
 }
 
 void InputFloat::maximum_size(const int size)
