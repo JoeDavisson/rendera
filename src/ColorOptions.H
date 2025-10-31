@@ -41,6 +41,7 @@ public:
   void colorHexInput();
   void colorHexUpdate();
   void colorTrans();
+  void colorTransDraw(int);
   void colorTransInput();
   void colorUpdate(int);
   void transUpdate(int);

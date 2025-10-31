@@ -191,12 +191,17 @@ void ColorOptions::colorTransInput()
 {
   Project::brush->trans = trans_input->value();
   trans->var = Project::brush->trans / 8.22;
+  trans->redraw();
+  colorTransDraw(trans_input->value());
 }
 
 void ColorOptions::colorTrans()
 {
-  int temp_trans = trans->var * 8;
+  colorTransDraw(trans->var * 8);
+}
 
+void ColorOptions::colorTransDraw(int temp_trans)
+{
   if (temp_trans >= 248)
     temp_trans = 255;
 
