@@ -780,7 +780,7 @@ void Editor::init()
   Items::info_text = new Fl_Box(FL_NO_BOX, Items::info->x(), Items::info->y(), Items::info->w(), Items::info->h(), "");
   Items::info_text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-  Items::dialog->set_non_modal();
+  Items::dialog->set_modal();
   Items::dialog->end(); 
 
   undo_stack = new Palette *[levels];
