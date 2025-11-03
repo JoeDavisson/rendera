@@ -26,28 +26,13 @@ namespace
   {
     DialogWindow *dialog;
     InputInt *detail;
-    InputInt *edge;
-    CheckBox *uniform;
     CheckBox *sat_alpha;
     CheckBox *draw_edges;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
 
-  inline int isEdge(Bitmap *b, const int x, const int y, const int div)
-  {
-    const int c0 = getl(b->getpixel(x, y)) / div;
-    const int c1 = getl(b->getpixel(x + 1, y)) / div;
-    const int c2 = getl(b->getpixel(x, y + 1)) / div;
-    const int c3 = getl(b->getpixel(x + 1, y + 1)) / div;
-
-    if ((c0 == c1) && (c0 == c2) && (c0 == c3))
-      return 0;
-    else
-      return 1;
-  }
-
-  inline int isSegmentEdge(Bitmap *b, const int x, const int y)
+  int isSegmentEdge(Bitmap *b, const int x, const int y)
   {
     const int c0 = b->getpixel(x, y);
     const int c1 = b->getpixel(x + 1, y);
@@ -64,38 +49,24 @@ namespace
 void StainedGlass::apply()
 {
   Bitmap *bmp = Project::bmp;
-  int size = Items::detail->value();
-  int div = Items::edge->value();
+  int size = Items::detail->value() + 5;
 
-  std::vector<int> seedx(size);
-  std::vector<int> seedy(size);
-  std::vector<int> color(size);
+  size = std::pow(size, 2.5);
+
+  KDtree::node_type test_node;
+  KDtree::node_type *root, *found;
+  std::vector<KDtree::node_type> points(size);
+  int best_distance;
 
   for (int i = 0; i < size; i++)
   {
-    if (Items::uniform->value())
-    {
-      seedx[i] = rnd() % bmp->w; 
-      seedy[i] = rnd() % bmp->h; 
-    }
-      else
-    {
-      seedx[i] = rnd() % bmp->w; 
-      seedy[i] = rnd() % bmp->h; 
-
-      int count = 0;
-
-      do
-      {
-        seedx[i] = rnd() % bmp->w; 
-        seedy[i] = rnd() % bmp->h; 
-        count++;
-      }
-      while (!isEdge(bmp, seedx[i], seedy[i], div) && count < 10000);
-    }
-
-    color[i] = bmp->getpixel(seedx[i], seedy[i]);
+    points[i].x[0] = rnd() % bmp->w; 
+    points[i].x[1] = rnd() % bmp->h; 
+    points[i].x[2] = 0;
+    points[i].index = bmp->getpixel(points[i].x[0], points[i].x[1]);
   }
+
+  root = KDtree::build(&points[0], size, 0);
 
   Progress::show(bmp->h);
 
@@ -106,28 +77,17 @@ void StainedGlass::apply()
 
     for (int x = bmp->cl; x <= bmp->cr; x++)
     {
-      // find nearest color
-      int nearest = 999999999;
-      int use = -1;
+      test_node.x[0] = x;
+      test_node.x[1] = y;
+      test_node.x[2] = 0;
+      found = 0;
+      KDtree::nearest(root, &test_node, &found, &best_distance, 0);
 
-      for (int i = 0; i < size; i++)
-      {
-        const int dx = x - seedx[i];
-        const int dy = y - seedy[i];
-        const int distance = dx * dx + dy * dy;
-
-        if (distance < nearest)
-        {
-          nearest = distance;
-          use = i;
-        }
-      }
-
-      if (use != -1)
+      if (found)
       {
         if (Items::sat_alpha->value())
         {
-          rgba_type rgba = getRgba(color[use]);
+          rgba_type rgba = getRgba(found->index);
 
           int h, s, v;
 
@@ -136,7 +96,7 @@ void StainedGlass::apply()
         }
           else
         {
-          *p = color[use];
+          *p = found->index;
         }
       }
 
@@ -148,21 +108,17 @@ void StainedGlass::apply()
   }
 
   // draw edges
-  if (Items::draw_edges->value())
+  if (found && Items::draw_edges->value())
   {
     Map *map = Project::map;
     map->clear(0);
-//      for (int y = bmp->ct * 4; y <= bmp->cb * 4; y++)
-//      {
-//        for (int x = bmp->cl * 4; x <= bmp->cr * 4; x++)
-//        {
+
     for (int y = bmp->ct; y <= bmp->cb; y++)
     {
       for (int x = bmp->cl; x <= bmp->cr; x++)
       {
         if (isSegmentEdge(bmp, x, y))
           map->setpixel(x, y, 1);
-//            map->setpixelAA(x, y, 255);
       }
     }
 
@@ -174,10 +130,8 @@ void StainedGlass::apply()
       {
         const int c = map->getpixel(x, y);
 
-//          *p = Blend::trans(*p, makeRgb(0, 0, 0), 255 - c);
         if (c)
           *p = makeRgb(0, 0, 0);
-//        *p = Blend::trans(*p, makeRgb(0, 0, 0), 160);
 
         p++;
       }
@@ -210,23 +164,20 @@ void StainedGlass::init()
   int y1 = 16;
 
   Items::dialog = new DialogWindow(400, 0, "Stained Glass");
-  Items::detail = new InputInt(Items::dialog, 0, y1, 128, 32, "Detail (1-50000)", 0, 1, 50000);
-  y1 += 32 + 16;
-  Items::detail->value(5000);
+
+  Items::detail = new InputInt(Items::dialog, 0, y1, 128, 32, "Detail (1-100)", 0, 1, 100);
+  Items::detail->value(25);
   Items::detail->center();
-  Items::edge = new InputInt(Items::dialog, 0, y1, 128, 32, "Edge Detect (1-50)", 0, 1, 50);
   y1 += 32 + 16;
-  Items::edge->value(16);
-  Items::edge->center();
-  Items::uniform = new CheckBox(Items::dialog, 0, y1, 16, 16, "Uniform", 0);
-  Items::uniform->center();
-  y1 += 16 + 16;
+
   Items::sat_alpha = new CheckBox(Items::dialog, 0, y1, 16, 16, "Saturation to Alpha", 0);
   Items::sat_alpha->center();
   y1 += 16 + 16;
+
   Items::draw_edges = new CheckBox(Items::dialog, 0, y1, 16, 16, "Draw Edges", 0);
   Items::draw_edges->center();
   y1 += 16 + 16;
+
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
   Items::cancel->callback((Fl_Callback *)quit);
