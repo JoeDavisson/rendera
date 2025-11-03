@@ -67,6 +67,9 @@ void Palette::draw(Widget *widget)
   while ((w % step) != 0)
     step--;
 
+  while (((w / step) & ((w / step) - 1)) != 0)
+    step--;
+
   widget->stepx = step;
   widget->stepy = step;
   widget->bitmap->clear(makeRgb(0, 0, 0));
