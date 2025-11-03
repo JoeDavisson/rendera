@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef BITMAP_H
 #define BITMAP_H
 
-class Palette;
-
 class Bitmap
 {
 public:
@@ -47,7 +45,6 @@ public:
   void rect(int, int, int, int, int, int);
   void rectfill(int, int, int, int, int, int);
   void rectfill(int, int, int, int, int);
-  void rectfillNoClip(int, int, int, int, int);
   void xorLine(int, int, int, int);
   void xorHline(int, int, int);
   void xorVline(int, int, int);

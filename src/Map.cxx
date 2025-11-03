@@ -114,25 +114,18 @@ void Map::invert()
     data[i] = 255 - data[i];
 }
 
-void Map::setpixel(const int x, const int y, const int c)
+void Map::setpixel(const int x, const int y, const unsigned char c)
 {
-  if (x < 0 || x >= w || y < 0 || y >= h)
-    return;
-
-  *(row[y] + x) = c & 0xff;
+  if (x >= 0 && x < w && y >= 0 && y < h)
+    *(row[y] + x) = c;
 }
 
-int Map::getpixel(int x, int y)
+int Map::getpixel(const int x, const int y)
 {
-  if (x < 0 || x >= w || y < 0 || y >= h)
+  if (x >= 0 && x < w && y >= 0 && y < h)
+    return *(row[y] + x);
+  else
     return 0;
-
-  return *(row[y] + x);
-}
-
-int Map::getpixelNoClip(const int x, const int y)
-{
-  return *(row[y] + x);
 }
 
 void Map::line(int x1, int y1, int x2, int y2, int c)

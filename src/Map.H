@@ -41,9 +41,8 @@ public:
   void resize(int, int);
   void clear(const unsigned char);
   void invert();
-  void setpixel(const int, const int, const int);
+  void setpixel(const int, const int, const unsigned char);
   int getpixel(const int, const int);
-  int getpixelNoClip(const int x, const int y);
   void line(int, int, int, int, int);
   void oval(int, int, int, int, int);
   void ovalfill(int, int, int, int, int);

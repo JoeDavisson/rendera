@@ -360,18 +360,6 @@ void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c)
     hline(x1, y1, x2, c);
 }
 
-// non-clipping, non-blending version
-void Bitmap::rectfillNoClip(int x1, int y1, int x2, int y2, int c)
-{
-  if (x1 > x2)
-    std::swap(x1, x2);
-  if (y1 > y2)
-    std::swap(y1, y2);
-
-  for (; y1 <= y2; y1++)
-    hline(x1, y1, x2, c);
-}
-
 void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 {
   int dx = x2 - x1;
@@ -526,10 +514,8 @@ void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
 // non-blending version (this version does not set the blend target)
 void Bitmap::setpixel(const int x, const int y, const int c)
 {
-  if (x < cl || x > cr || y < ct || y > cb)
-    return;
-
-  *(row[y] + x) = c;
+  if (x >= cl && x <= cr && y >= ct && y <= cb)
+    *(row[y] + x) = c;
 }
 
 void Bitmap::setpixel(const int x, const int y, const int c2, const int t)
@@ -544,12 +530,12 @@ void Bitmap::setpixel(const int x, const int y, const int c2, const int t)
 
 void Bitmap::setpixelSolid(const int x, const int y, const int c2, const int t)
 {
-  if (x < cl || x > cr || y < ct || y > cb)
-    return;
+  if (x >= cl && x <= cr && y >= ct && y <= cb)
+  {
+    int *c1 = row[y] + x;
 
-  int *c1 = row[y] + x;
-
-  *c1 = Blend::current(*c1, c2, t);
+    *c1 = Blend::current(*c1, c2, t);
+  }
 }
 
 void Bitmap::setpixelClone(const int x, const int y, const int, const int t)
