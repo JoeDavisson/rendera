@@ -69,9 +69,9 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
 {
   int count = 0;
 
-  float step_r = (gamut->high_r - gamut->low_r) / 15.9375;
-  float step_g = (gamut->high_g - gamut->low_g) / 15.9375;
-  float step_b = (gamut->high_b - gamut->low_b) / 15.9375;
+  float step_r = (gamut->high_r - gamut->low_r) / 16;
+  float step_g = (gamut->high_g - gamut->low_g) / 16;
+  float step_b = (gamut->high_b - gamut->low_b) / 16;
 
   if (step_r < 1)
     step_r = 1;
