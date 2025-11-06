@@ -181,7 +181,6 @@ inline int blendFast(const int c1, const int c2, const int t)
   return rb | g | 0xff000000;
 }
 
-
 // get an FLTK color
 inline int getFltkColor(const int c)
 {
