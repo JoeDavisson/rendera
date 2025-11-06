@@ -720,8 +720,7 @@ void Bitmap::doubleVertical()
     {
       *(row[y * 2] + x) = *p;
       *(row[y * 2 + 1] + x) = *p;
-     p++;
-
+      p++;
     }
   }
 }
@@ -803,8 +802,7 @@ void Bitmap::pointStretch(Bitmap *dest,
       const int checker_x = ((dx + x + checker_offset_x) >> 3);
       const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
 
-      *d = 0xff000000 | convertFormat(Blend::trans(checker, c, 255 - geta(c)),
-                                      bgr_order);
+      *d = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
       d++;
       xinc += bx;
     }
@@ -820,6 +818,7 @@ void Bitmap::flipHorizontal()
     for (int x = 0; x < w / 2; x++)
     {
       const int temp = *(row[y] + x);
+
       *(row[y] + x) = *(row[y] + w - 1 - x);
       *(row[y] + w - 1 - x) = temp;
     }
@@ -833,6 +832,7 @@ void Bitmap::flipVertical()
     for (int x = 0; x < w; x++)
     {
       const int temp = *(row[y] + x);
+
       *(row[y] + x) = *(row[h - 1 - y] + x);
       *(row[h - 1 - y] + x) = temp;
     }
@@ -885,9 +885,11 @@ void Bitmap::rotate180()
     for (int x = 0; x < w; x++)
     {
       const int temp = *(row[y] + x);
+
       *(row[y] + x) = *(row[h - 1 - y] + w - 1 - x);
       *(row[h - 1 - y] + w - 1 - x) = temp;
       count++;
+
       if (count >= size)
         break; 
     }
@@ -912,10 +914,13 @@ void Bitmap::offset(int x, int y, const bool reverse)
 
   while (x < 0)
     x += w;
+
   while (y < 0)
     y += h;
+
   while (x >= w)
     x -= w;
+
   while (y >= h)
     y -= h;
 
@@ -960,7 +965,6 @@ void Bitmap::scale(Bitmap *dest)
       int b = 0;
       int a = 0;
 
-//FIXME improve the clipping to not require getpixel
       for (int j = 0; j < iy; j++)
       {
         for (int i = 0; i < ix; i++)
