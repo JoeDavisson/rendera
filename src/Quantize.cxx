@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <vector>
 #include <algorithm>
 
+#include "Blend.H"
 #include "Bitmap.H"
 #include "Editor.H"
 #include "Gui.H"
@@ -62,59 +63,70 @@ void Quantize::merge(color_type *c1, color_type *c2)
   c1->freq = div;
 }
 
+
+//FIXME todo:
+// allow user selection of ycc/rgb averaging
+
 // reduces input color count by averaging sections of the color cube and
 // adding their popularities together
 int Quantize::limitColors(Octree *histogram, color_type *colors,
-                          gamut_type *gamut)
+                          gamut_type *gamut, int pal_size)
 {
   int count = 0;
 
-  float step_r = (gamut->high_r - gamut->low_r) / 16;
-  float step_g = (gamut->high_g - gamut->low_g) / 16;
-  float step_b = (gamut->high_b - gamut->low_b) / 16;
+  int div_y = 128;
+  int div_cb = 8;
+  int div_cr = 8;
 
-  if (step_r < 1)
-    step_r = 1;
+  float step_y = (gamut->high_y - gamut->low_y) / div_y;
+  float step_cb = (gamut->high_cb - gamut->low_cb) / div_cb;
+  float step_cr = (gamut->high_cr - gamut->low_cr) / div_cr;
 
-  if (step_g < 1)
-    step_g = 1;
+  if (step_y < 1)
+    step_y = 1;
 
-  if (step_b < 1)
-    step_b = 1;
+  if (step_cb < 1)
+    step_cb = 1;
 
-  float r, g, b;
+  if (step_cr < 1)
+    step_cr = 1;
 
-  for (b = gamut->low_b; b <= (gamut->high_b + 1) - step_b; b += step_b)
+  for (int cr = gamut->low_cr; cr <= (gamut->high_cr + 1) - step_cr; cr += step_cr)
   {
-    for (g = gamut->low_g; g <= (gamut->high_g + 1) - step_g; g += step_g)
+    for (int cb = gamut->low_cb; cb <= (gamut->high_cb + 1) - step_cb; cb += step_cb)
     {
-      for (r = gamut->low_r; r <= (gamut->high_r + 1) - step_r; r += step_r)
+      for (int y = gamut->low_y; y <= (gamut->high_y + 1) - step_y; y += step_y)
       {
         float rr = 0;
         float gg = 0;
         float bb = 0;
         float div = 0;
 
-        for (float k = 0; k < step_b; k++)
+        for (float k = 0; k < step_cr; k++)
         {
-          const float bk = b + k;
+          const float crk = cr + k;
 
-          for (float j = 0; j < step_g; j++)
+          for (float j = 0; j < step_cb; j++)
           {
-            const float gj = g + j;
+            const float cbj = cb + j;
 
-            for (float i = 0; i < step_r; i++)
+            for (float i = 0; i < step_y; i++)
             {
-              const float ri = r + i;
-              const float d = histogram->read(ri, gj, bk);
+              const float yi = y + i;
+
+              int r, g, b;
+
+              Blend::yccToRgb(yi, cbj, crk, &r, &g, &b);
+               
+              const float d = histogram->read(r, g, b);
 
               if (d > 0)
               {
-                histogram->write(ri, gj, bk, 0);
+                histogram->write(r, g, b, 0);
 
-                rr += d * ri;
-                gg += d * gj;
-                bb += d * bk;
+                rr += d * r;
+                gg += d * g;
+                bb += d * b;
                 div += d;
               }
             }
@@ -148,7 +160,7 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
 // http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 //
 // To make this more practical, input colors are reduced to a maximum of
-// 4096 by the limitColors() function above.
+// 8192 by the limitColors() function above.
 
 void Quantize::pca(Bitmap *src, Palette *pal, int size)
 {
@@ -158,12 +170,12 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   // range of RGB values in image
   gamut_type gamut;
 
-  gamut.low_r = 255;
-  gamut.low_g = 255;
-  gamut.low_b = 255;
-  gamut.high_r = 0;
-  gamut.high_g = 0;
-  gamut.high_b = 0;
+  gamut.low_y = 255;
+  gamut.low_cb = 255;
+  gamut.low_cr = 255;
+  gamut.high_y = 0;
+  gamut.high_cb = -255;
+  gamut.high_cr = -255;
 
   // build histogram
   float weight = 1.0 / (src->cw * src->ch);
@@ -181,28 +193,32 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 
       histogram.write(rgba.r, rgba.g, rgba.b, freq + weight);
 
-      if (rgba.r < gamut.low_r)
-        gamut.low_r = rgba.r;
+      float y, cb, cr;
 
-      if (rgba.g < gamut.low_g)
-        gamut.low_g = rgba.g;
+      Blend::rgbToYcc(rgba.r, rgba.g, rgba.b, &y, &cb, &cr);
 
-      if (rgba.b < gamut.low_b)
-        gamut.low_b = rgba.b;
+      if (y < gamut.low_y)
+        gamut.low_y = y;
 
-      if (rgba.r > gamut.high_r)
-        gamut.high_r = rgba.r; 
+      if (cb < gamut.low_cb)
+        gamut.low_cb = cb;
 
-      if (rgba.g > gamut.high_g)
-        gamut.high_g = rgba.g; 
+      if (cr < gamut.low_cr)
+        gamut.low_cr = cr;
 
-      if (rgba.b > gamut.high_b)
-        gamut.high_b = rgba.b; 
+      if (y > gamut.high_y)
+        gamut.high_y = y; 
+
+      if (cb > gamut.high_cb)
+        gamut.high_cb = cb; 
+
+      if (cr > gamut.high_cr)
+        gamut.high_cr = cr; 
     }
   }
 
   // color list
-  const int colors_max = 4096;
+  const int colors_max = 8192;
   std::vector<color_type> colors(colors_max);
 
   // quantization error matrix
@@ -227,7 +243,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   }
     else
   {
-    count = limitColors(&histogram, &colors[0], &gamut);
+    count = limitColors(&histogram, &colors[0], &gamut, size);
   }
 
   // set max
