@@ -41,15 +41,15 @@ private:
 
   struct gamut_type
   {
-    float low_r, low_g, low_b;
-    float high_r, high_g, high_b;
+    float low_y, low_cb, low_cr;
+    float high_y, high_cb, high_cr;
   };
 
   static void makeColor(color_type *,
                         const float, const float, const float, const float);
   static float error(color_type *, color_type *);
   static void merge(color_type *, color_type *);
-  static int limitColors(Octree *, color_type *, gamut_type *);
+  static int limitColors(Octree *, color_type *, gamut_type *, int);
 };
 
 #endif
