@@ -166,16 +166,6 @@ void ColorOptions::colorUpdate(int c)
   colorTrans();
 }
 
-void ColorOptions::transUpdate(int t)
-{
-  trans->var = t / 8;
-  trans->redraw();
-  Project::brush->trans = t;
-  trans_input->value(Project::brush->trans);
-  trans_input->redraw();
-  colorTrans();
-}
-
 void ColorOptions::colorChange()
 {
   Project::brush->color = wheel->getColor();
@@ -183,28 +173,23 @@ void ColorOptions::colorChange()
 
   colorTrans();
   colorHexUpdate();
-//  Editor::update();
-//  wheel->update(Project::brush->color);
 }
 
 void ColorOptions::colorTransInput()
 {
   Project::brush->trans = trans_input->value();
-  trans->var = Project::brush->trans / 8.22;
+  trans->var = Project::brush->trans / 7.969;
   trans->redraw();
-  colorTransDraw(trans_input->value());
+  colorTransDraw(Project::brush->trans);
 }
 
 void ColorOptions::colorTrans()
 {
-  colorTransDraw(trans->var * 8);
+  colorTransDraw(trans->var * 8.226);
 }
 
 void ColorOptions::colorTransDraw(int temp_trans)
 {
-  if (temp_trans >= 248)
-    temp_trans = 255;
-
   Project::brush->trans = temp_trans;
 
   trans_input->value(temp_trans);
@@ -214,7 +199,9 @@ void ColorOptions::colorTransDraw(int temp_trans)
   {
     for (int x = 0; x < trans->bitmap->w; x++)
     {
-      const int checker = ((x / 16) & 1) ^ (((y + 3) / 16) & 1) ? 0xff989898 : 0xff686868;
+      const int checker = ((x / 16) & 1) ^ (((y + 3) / 16) & 1)
+                          ? 0xff989898 : 0xff686868;
+
       trans->bitmap->setpixel(x, y, checker);
     }
   }
@@ -231,7 +218,8 @@ void ColorOptions::colorTransDraw(int temp_trans)
   const int pos = trans->var * stepx;
 
   trans->bitmap->xorRect(pos + 1, 1, pos + stepx - 2, trans->h() - 2);
-  trans->bitmap->rect(pos, 0, pos + stepx - 1, trans->h() - 1, makeRgb(0, 0, 0), 0);
+  trans->bitmap->rect(pos, 0, pos + stepx - 1, trans->h() - 1,
+                      makeRgb(0, 0, 0), 0);
   trans->redraw();
   Project::tool->redraw(Gui::view);
 }

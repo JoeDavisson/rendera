@@ -44,7 +44,6 @@ public:
   void colorTransDraw(int);
   void colorTransInput();
   void colorUpdate(int);
-  void transUpdate(int);
   void colorBlend();
   void paletteDraw();
   void paletteIndex(int);
