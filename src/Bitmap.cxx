@@ -802,8 +802,7 @@ void Bitmap::pointStretch(Bitmap *dest,
       const int checker_x = ((dx + x + checker_offset_x) >> 3);
       const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
 
-      *d = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
-      d++;
+      *d++ = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
       xinc += bx;
     }
 
@@ -952,11 +951,13 @@ void Bitmap::scale(Bitmap *dest)
 
   int ix = ax > 0 ? (int)(ax + 1) : 1;
   int iy = ay > 0 ? (int)(ay + 1) : 1;
-  int div = ix * iy;
+  float r_div = 1.0 / (ix * iy);
+  int yinc = 0;
 
   for (int y = 0; y < dh; y++)
   {
     int *p = dest->row[y];
+    int xinc = 0;
 
     for (int x = 0; x < dw; x++)
     {
@@ -969,7 +970,7 @@ void Bitmap::scale(Bitmap *dest)
       {
         for (int i = 0; i < ix; i++)
         {
-          const int c = getpixel(x * ax + i, y * ay + j);
+          const int c = getpixel(xinc + i, yinc + j);
 
           r += getr(c);
           g += getg(c);
@@ -978,13 +979,16 @@ void Bitmap::scale(Bitmap *dest)
         }
       }
 
-      r /= div;
-      g /= div;
-      b /= div;
-      a /= div;
+      r *= r_div;
+      g *= r_div;
+      b *= r_div;
+      a *= r_div;
 
       *p++ = makeRgba(r, g, b, a);
+      xinc += ax;
     }
+
+    yinc += ay;
   }
 }
 
