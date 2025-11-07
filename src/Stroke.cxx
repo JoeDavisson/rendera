@@ -888,21 +888,27 @@ void Stroke::previewPaint(View *view)
   if (yy2 >= backbuf->h - 1)
     yy2 = backbuf->h - 1;
 
+  int yinc = (yy1 + oy) * zr;
+
   // draw brushstroke preview
   for (int y = yy1; y <= yy2; y++)
   {
-    const int ym = ((y + oy) * zr) >> 16;
+    const int ym = yinc >> 16;
     int *p = backbuf->row[y] + xx1;
+    int xinc = (xx1 + ox) * zr;
 
     for (int x = xx1; x <= xx2; x++)
     {
-      const int xm = ((x + ox) * zr) >> 16;
+      const int xm = xinc >> 16;
 
       if (map->getpixel(xm, ym))
         *p = blendFast(*p, color, trans);
 
       p++;
+      xinc += zr;
     }
+
+    yinc += zr;
   }
 }
 
