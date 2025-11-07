@@ -962,15 +962,18 @@ void Stroke::previewSelection(View *view)
     Blend::set(Project::brush->blend);
   else
     Blend::set(Blend::TRANS);
- 
-  for (int y = yy1; y <= yy2; y++)
-  {
-    int ym = ((y - yy3) * zr) >> 16;
-    int *p = backbuf->row[y] + xx1;
 
-    for (int x = xx1; x <= xx2; x++)
+  int yinc = (yy1 - yy3) * zr;
+ 
+  for (int y = yy1 - yy3; y <= yy2 - yy3; y++)
+  {
+    const int ym = yinc >> 16;
+    int *p = backbuf->row[y + yy3] + xx1;
+    int xinc = (xx1 - xx3) * zr;
+
+    for (int x = xx1 - xx3; x <= xx2 - xx3; x++)
     {
-      const int xm = ((x - xx3) * zr) >> 16;
+      const int xm = xinc >> 16;
       const int c = convertFormat(select_bmp->getpixel(xm, ym), bgr_order);
 
       if (use_alpha)
@@ -979,7 +982,10 @@ void Stroke::previewSelection(View *view)
         *p = Blend::current(*p, c, trans);
 
       p++;
+      xinc += zr;
     }
+
+    yinc += zr;
   }
 
   Blend::set(Blend::TRANS);
