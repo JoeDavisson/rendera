@@ -159,15 +159,10 @@ inline int diff32(const int c1, const int c2)
 // currently only supporting RGB/BGR
 inline int convertFormat(const int c, const bool bgr_order)
 {
-  if (bgr_order)
-  {
-    const unsigned int rb = c & 0x00ff00ff;
-    const unsigned int ga = c & 0xff00ff00;
+  const int ga = c & 0xff00ff00;
+  const int rb = c & 0x00ff00ff;
 
-    return (int)(((rb << 16) | (rb >> 16)) | ga);
-  }
-
-  return c;
+  return bgr_order ? ((rb << 16) | (rb >> 16)) | ga : c;
 }
 
 // inline blending (for brushstroke preview, etc)
