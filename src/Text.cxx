@@ -199,6 +199,8 @@ void Text::push(View *view)
       break;
   }
 
+  Blend::set(Project::brush->blend);
+
   if (smooth > 0)
   {
     if (weight > 0)
