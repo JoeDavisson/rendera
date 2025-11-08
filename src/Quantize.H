@@ -47,7 +47,7 @@ private:
 
   static void makeColor(color_type *,
                         const float, const float, const float, const float);
-  static float error(color_type *, color_type *);
+  static float error(const color_type *, const color_type *);
   static void merge(color_type *, color_type *);
   static int limitColors(Octree *, color_type *, gamut_type *, int);
 };

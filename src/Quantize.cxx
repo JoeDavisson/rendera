@@ -42,7 +42,7 @@ void Quantize::makeColor(color_type *c,
 }
 
 // compute quantization error
-float Quantize::error(color_type *c1, color_type *c2)
+float Quantize::error(const color_type *c1, const color_type *c2)
 {
   const float r = c1->r - c2->r;
   const float g = c1->g - c2->g;
@@ -55,14 +55,16 @@ float Quantize::error(color_type *c1, color_type *c2)
 // merge two colors
 void Quantize::merge(color_type *c1, color_type *c2)
 {
+  const float freq1 = c1->freq;
+  const float freq2 = c2->freq;
   const float div = c1->freq + c2->freq;
+  const float mul = 1.0f / div;
 
-  c1->r = (c1->freq * c1->r + c2->freq * c2->r) / div;
-  c1->g = (c1->freq * c1->g + c2->freq * c2->g) / div;
-  c1->b = (c1->freq * c1->b + c2->freq * c2->b) / div;
+  c1->r = (freq1 * c1->r + freq2 * c2->r) * mul;
+  c1->g = (freq1 * c1->g + freq2 * c2->g) * mul;
+  c1->b = (freq1 * c1->b + freq2 * c2->b) * mul;
   c1->freq = div;
 }
-
 
 //FIXME todo:
 // allow user selection of ycc/rgb averaging
@@ -74,7 +76,7 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
 {
   int count = 0;
 
-  int div_y = 128;
+  int div_y = 64;
   int div_cb = 8;
   int div_cr = 8;
 
@@ -160,7 +162,7 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
 // http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 //
 // To make this more practical, input colors are reduced to a maximum of
-// 8192 by the limitColors() function above.
+// 4096 by the limitColors() function above.
 
 void Quantize::pca(Bitmap *src, Palette *pal, int size)
 {
@@ -186,6 +188,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     for (int i = src->cl; i <= src->cr; i++)
     {
       rgba_type rgba = getRgba(src->getpixel(i, j));
+
       float freq = histogram.read(rgba.r, rgba.g, rgba.b);
 
       if (freq < weight)
@@ -218,7 +221,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   }
 
   // color list
-  const int colors_max = 8192;
+  const int colors_max = 4096;
   std::vector<color_type> colors(colors_max);
 
   // quantization error matrix
