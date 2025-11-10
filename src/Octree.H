@@ -26,7 +26,7 @@ class Octree
 public:
   struct node_type
   {
-    float value;
+    double value;
     node_type *child[8];
   };
 
@@ -34,9 +34,9 @@ public:
   ~Octree();
 
   void clear(node_type *);
-  void write(const int, const int, const int, const float);
-  void writePath(const int, const int, const int, const float);
-  float read(const int, const int, const int);
+  void write(const int, const int, const int, const double);
+  void writePath(const int, const int, const int, const double);
+  double read(const int, const int, const int);
   int read(const int);
 
 private:

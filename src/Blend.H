@@ -61,8 +61,8 @@ public:
   static void rgbToHsv(const int, const int, const int, int *, int *, int *);
   static void hsvToRgb(const int, const int, const int, int *, int *, int *);
   static void rgbToYcc(const int, const int, const int,
-                       float *, float *, float *);
-  static void yccToRgb(const float, const float, const float,
+                       double *, double *, double *);
+  static void yccToRgb(const double, const double, const double,
                        int *, int *, int *);
   static void wheelToRgb(const int, const int, const int,
                        int *, int *, int *);

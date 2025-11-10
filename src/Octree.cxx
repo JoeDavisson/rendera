@@ -43,7 +43,7 @@ void Octree::clear(node_type *node)
   delete node;
 }
 
-void Octree::write(const int r, const int g, const int b, const float value)
+void Octree::write(const int r, const int g, const int b, const double value)
 {
   node_type *node = root;
 
@@ -70,7 +70,7 @@ void Octree::write(const int r, const int g, const int b, const float value)
   node->value = value;
 }
 
-void Octree::writePath(const int r, const int g, const int b, const float value)
+void Octree::writePath(const int r, const int g, const int b, const double value)
 {
   node_type *node = root;
 
@@ -95,7 +95,7 @@ void Octree::writePath(const int r, const int g, const int b, const float value)
   }
 }
 
-float Octree::read(const int r, const int g, const int b)
+double Octree::read(const int r, const int g, const int b)
 {
   node_type *node = root;
 

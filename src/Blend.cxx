@@ -206,7 +206,7 @@ int Blend::luminosity(const int c1, const int c2, const int t)
 int Blend::keepLum(const int c, const int lum)
 {
   int r, g, b;
-  float y, cb, cr;
+  double y, cb, cr;
   const rgba_type rgba1 = getRgba(c);
 
   rgbToYcc(rgba1.r, rgba1.g, rgba1.b, &y, &cb, &cr);
@@ -402,14 +402,14 @@ void Blend::hsvToRgb(const int h, const int s, const int v, int *r, int *g, int 
 }
 
 // from JFIF specification: https://www.w3.org/Graphics/JPEG/jfif3.pdf
-void Blend::rgbToYcc(const int r, const int g, const int b, float *y, float *cb, float *cr)
+void Blend::rgbToYcc(const int r, const int g, const int b, double *y, double *cb, double *cr)
 {
   *y = r * 0.299 + g * 0.587 + b * 0.114;
   *cb = r * -0.1687 + g * -0.3313 + b * 0.500 + 128;
   *cr = r * 0.500 + g * -0.4187 + b * -0.0813 + 128;
 }
 
-void Blend::yccToRgb(const float y, const float cb, const float cr, int *r, int *g, int *b)
+void Blend::yccToRgb(const double y, const double cb, const double cr, int *r, int *g, int *b)
 {
   *r = y + (cr - 128) * 1.402;
   *g = y + (cb - 128) * -0.34414 + (cr - 128) * -0.71414;

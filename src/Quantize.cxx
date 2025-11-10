@@ -32,8 +32,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Quantize.H"
 
 void Quantize::makeColor(color_type *c,
-                         const float r, const float g, const float b,
-                         const float freq)
+                         const double r, const double g, const double b,
+                         const double freq)
 {
   c->r = r;
   c->g = g;
@@ -42,25 +42,28 @@ void Quantize::makeColor(color_type *c,
 }
 
 // compute quantization error
-float Quantize::error(const color_type *c1, const color_type *c2)
+double Quantize::error(const color_type *c1, const color_type *c2)
 {
-  const float r = c1->r - c2->r;
-  const float g = c1->g - c2->g;
-  const float b = c1->b - c2->b;
+  const double r = c1->r - c2->r;
+  const double g = c1->g - c2->g;
+  const double b = c1->b - c2->b;
+  const double f1 = c1->freq;
+  const double f2 = c2->freq;
 
-  return ((c1->freq * c2->freq) / (c1->freq + c2->freq))
-         * (r * r + g * g + b * b);
+  return ((f1 * f2) / (f1 + f2)) * (r * r + g * g + b * b);
 }
 
 // merge two colors
 void Quantize::merge(color_type *c1, color_type *c2)
 {
-  const float div = c1->freq + c2->freq;
-  const float mul = 1.0f / div;
+  const double f1 = c1->freq;
+  const double f2 = c2->freq;
+  const double div = f1 + f2;
+  const double mul = 1.0f / div;
 
-  c1->r = (c1->freq * c1->r + c2->freq * c2->r) * mul;
-  c1->g = (c1->freq * c1->g + c2->freq * c2->g) * mul;
-  c1->b = (c1->freq * c1->b + c2->freq * c2->b) * mul;
+  c1->r = (f1 * c1->r + f2 * c2->r) * mul;
+  c1->g = (f1 * c1->g + f2 * c2->g) * mul;
+  c1->b = (f1 * c1->b + f2 * c2->b) * mul;
   c1->freq = div;
 }
 
@@ -78,9 +81,9 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
   int div_cb = 8;
   int div_cr = 8;
 
-  float step_y = (gamut->high_y - gamut->low_y) / div_y;
-  float step_cb = (gamut->high_cb - gamut->low_cb) / div_cb;
-  float step_cr = (gamut->high_cr - gamut->low_cr) / div_cr;
+  double step_y = (gamut->high_y - gamut->low_y) / div_y;
+  double step_cb = (gamut->high_cb - gamut->low_cb) / div_cb;
+  double step_cr = (gamut->high_cr - gamut->low_cr) / div_cr;
 
   if (step_y < 1)
     step_y = 1;
@@ -97,28 +100,28 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
     {
       for (int y = gamut->low_y; y <= (gamut->high_y + 1) - step_y; y += step_y)
       {
-        float rr = 0;
-        float gg = 0;
-        float bb = 0;
-        float div = 0;
+        double rr = 0;
+        double gg = 0;
+        double bb = 0;
+        double div = 0;
 
-        for (float k = 0; k < step_cr; k++)
+        for (double k = 0; k < step_cr; k++)
         {
-          const float crk = cr + k;
+          const double crk = cr + k;
 
-          for (float j = 0; j < step_cb; j++)
+          for (double j = 0; j < step_cb; j++)
           {
-            const float cbj = cb + j;
+            const double cbj = cb + j;
 
-            for (float i = 0; i < step_y; i++)
+            for (double i = 0; i < step_y; i++)
             {
-              const float yi = y + i;
+              const double yi = y + i;
 
               int r, g, b;
 
               Blend::yccToRgb(yi, cbj, crk, &r, &g, &b);
                
-              const float d = histogram->read(r, g, b);
+              const double d = histogram->read(r, g, b);
 
               if (d > 0)
               {
@@ -178,7 +181,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   gamut.high_cr = -255;
 
   // build histogram
-  float weight = 1.0 / (src->cw * src->ch);
+  double weight = 1.0f / (src->cw * src->ch);
   int count = 0;
 
   for (int j = src->ct; j <= src->cb; j++)
@@ -187,14 +190,14 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     {
       rgba_type rgba = getRgba(src->getpixel(i, j));
 
-      float freq = histogram.read(rgba.r, rgba.g, rgba.b);
+      double freq = histogram.read(rgba.r, rgba.g, rgba.b);
 
       if (freq < weight)
         count++;
 
       histogram.write(rgba.r, rgba.g, rgba.b, freq + weight);
 
-      float y, cb, cr;
+      double y, cb, cr;
 
       Blend::rgbToYcc(rgba.r, rgba.g, rgba.b, &y, &cb, &cr);
 
@@ -223,7 +226,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   std::vector<color_type> colors(colors_max);
 
   // quantization error matrix
-  std::vector<float> err_data(((colors_max + 1) * colors_max) / 2);
+  std::vector<double> err_data(((colors_max + 1) * colors_max) / 2);
 
   // skip if already enough colors
   if (count <= size)
@@ -233,7 +236,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     for (int i = 0; i < 16777216; i++)
     {
       rgba_type rgba = getRgba(i);
-      const float freq = histogram.read(rgba.r, rgba.g, rgba.b);
+      const double freq = histogram.read(rgba.r, rgba.g, rgba.b);
 
       if (freq > 0)
       {
@@ -270,16 +273,16 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   while (count > size)
   {
     int ii = 0, jj = 0;
-    float least_err = 999999999;
-    float *a = &(colors[0].freq);
+    double least_err = 999999999;
+    double *a = &(colors[0].freq);
 
     // find lowest value in error matrix
     for (int j = 0; j < max; j++)
     {
       if (*a > 0)
       {
-        float *e = &err_data[(j + 1) * j / 2];
-        float *b = &(colors[0].freq);
+        double *e = &err_data[(j + 1) * j / 2];
+        double *b = &(colors[0].freq);
 
         for (int i = 0; i < j; i++)
         {
