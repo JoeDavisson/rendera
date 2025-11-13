@@ -41,8 +41,8 @@ private:
 
   struct gamut_type
   {
-    double low_y, low_cb, low_cr;
-    double high_y, high_cb, high_cr;
+    double low_x, low_y, low_z;
+    double high_x, high_y, high_z;
   };
 
   static void makeColor(color_type *,
