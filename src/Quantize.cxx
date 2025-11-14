@@ -72,9 +72,11 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
 {
   int count = 0;
 
-  double step_x = (g->high_x - g->low_x) / 16;
-  double step_y = (g->high_y - g->low_y) / 32;
-  double step_z = (g->high_z - g->low_z) / 8;
+  int step_x = (g->high_x - g->low_x) / 16 + 1;
+  int step_y = (g->high_y - g->low_y) / 32 + 1;
+  int step_z = (g->high_z - g->low_z) / 8 + 1;
+
+  //printf("%d, %d, %d\n", step_x, step_y, step_z);
 
   if (step_x < 1)
     step_x = 1;
@@ -85,11 +87,11 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
   if (step_z < 1)
     step_z = 1;
 
-  for (double z = g->low_z; z <= g->high_z - step_z; z += step_z)
+  for (int z = g->low_z; z <= g->high_z; z += step_z)
   {
-    for (double y = g->low_y; y <= g->high_y - step_y; y += step_y)
+    for (int y = g->low_y; y <= g->high_y; y += step_y)
     {
-      for (double x = g->low_x; x <= g->high_x - step_x; x += step_x)
+      for (int x = g->low_x; x <= g->high_x; x += step_x)
       {
         double rr = 0;
         double gg = 0;
@@ -112,16 +114,19 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
               const int g = yj;
               const int b = zk;
  
-              const double d = histogram->read(r, g, b);
-
-              if (d > 0)
+              if (r < 256 && g < 256 && b < 256)
               {
-                histogram->write(r, g, b, 0);
+                const double d = histogram->read(r, g, b);
 
-                rr += d * r;
-                gg += d * g;
-                bb += d * b;
-                div += d;
+                if (d > 0)
+                {
+                  histogram->write(r, g, b, 0);
+
+                  rr += d * r;
+                  gg += d * g;
+                  bb += d * b;
+                  div += d;
+                }
               }
             }
           }
