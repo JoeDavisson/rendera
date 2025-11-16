@@ -287,6 +287,7 @@ namespace NewImage
   {
     Items::width->value(Project::bmp->cw);
     Items::height->value(Project::bmp->ch);
+    Items::dialog->show();
   }
 
   void checkWidth()
