@@ -18,6 +18,19 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+/*
+Modified pairwise clustering quantization, adapted from the algorithm
+described here:
+
+http://www.visgraf.impa.br/Projects/quantization/quant.html
+http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
+
+To save time/memory, colors are initially "posterized" to a maximum of 262144,
+then further reduced to a maximum of 4096 by averaging sections of the color
+cube. The perceptual influence of RGB values are taken into account to improve
+results.
+*/
+
 #include <vector>
 #include <algorithm>
 
@@ -32,8 +45,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Quantize.H"
 
 void Quantize::makeColor(color_type *c,
-                         const double r, const double g, const double b,
-                         const double freq)
+                         const float r, const float g, const float b,
+                         const float freq)
 {
   c->r = r;
   c->g = g;
@@ -41,23 +54,23 @@ void Quantize::makeColor(color_type *c,
   c->freq = freq;
 }
 
-double Quantize::error(const color_type *c1, const color_type *c2)
+float Quantize::error(const color_type *c1, const color_type *c2)
 {
-  const double r = c1->r - c2->r;
-  const double g = c1->g - c2->g;
-  const double b = c1->b - c2->b;
-  const double f1 = c1->freq;
-  const double f2 = c2->freq;
+  const float r = c1->r - c2->r;
+  const float g = c1->g - c2->g;
+  const float b = c1->b - c2->b;
+  const float f1 = c1->freq;
+  const float f2 = c2->freq;
 
   return ((f1 * f2) / (f1 + f2)) * (r * r + g * g + b * b);
 }
 
 void Quantize::merge(color_type *c1, color_type *c2)
 {
-  const double f1 = c1->freq;
-  const double f2 = c2->freq;
-  const double div = f1 + f2;
-  const double mul = 1.0 / div;
+  const float f1 = c1->freq;
+  const float f2 = c2->freq;
+  const float div = f1 + f2;
+  const float mul = 1.0 / div;
 
   c1->r = (f1 * c1->r + f2 * c2->r) * mul;
   c1->g = (f1 * c1->g + f2 * c2->g) * mul;
@@ -65,16 +78,14 @@ void Quantize::merge(color_type *c1, color_type *c2)
   c1->freq = div;
 }
 
-// Reduce color count by averaging sections of the color cube and
-// adding their popularities together.
 int Quantize::limitColors(Octree *histogram, color_type *colors,
                           gamut_type *g, int pal_size)
 {
   int count = 0;
 
-  double step_x = (g->high_x - g->low_x) / 16 + 1;
-  double step_y = (g->high_y - g->low_y) / 32 + 1;
-  double step_z = (g->high_z - g->low_z) / 8 + 1;
+  float step_x = (g->high_x - g->low_x) / 16 + 1;
+  float step_y = (g->high_y - g->low_y) / 32 + 1;
+  float step_z = (g->high_z - g->low_z) / 8 + 1;
 
   if (step_x < 1)
     step_x = 1;
@@ -85,16 +96,16 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
   if (step_z < 1)
     step_z = 1;
 
-  for (double z = g->low_z; z <= g->high_z; z += step_z)
+  for (float z = g->low_z; z <= g->high_z; z += step_z)
   {
-    for (double y = g->low_y; y <= g->high_y; y += step_y)
+    for (float y = g->low_y; y <= g->high_y; y += step_y)
     {
-      for (double x = g->low_x; x <= g->high_x; x += step_x)
+      for (float x = g->low_x; x <= g->high_x; x += step_x)
       {
-        double rr = 0;
-        double gg = 0;
-        double bb = 0;
-        double div = 0;
+        float rr = 0;
+        float gg = 0;
+        float bb = 0;
+        float div = 0;
 
         for (int k = 0; k < step_z; k++)
         {
@@ -114,7 +125,7 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
  
               if (r < 256 && g < 256 && b < 256)
               {
-                const double d = histogram->read(r, g, b);
+                const float d = histogram->read(r, g, b);
 
                 if (d > 0)
                 {
@@ -151,12 +162,6 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
   return count;
 }
 
-// Approximate pairwise clustering quantization, adapted from the algorithm
-// described here:
-//
-// http://www.visgraf.impa.br/Projects/quantization/quant.html
-// http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
-
 void Quantize::pca(Bitmap *src, Palette *pal, int size)
 {
   // popularity histogram
@@ -173,7 +178,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   gamut.high_z = -255;
 
   // build histogram
-  double weight = 1.0 / (src->cw * src->ch);
+  float weight = 1.0 / (src->cw * src->ch);
   int count = 0;
 
   for (int j = src->ct; j <= src->cb; j++)
@@ -182,16 +187,24 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     {
       rgba_type rgba = getRgba(src->getpixel(i, j));
 
-      double freq = histogram.read(rgba.r, rgba.g, rgba.b);
+      const int step_r = 255 / 63;
+      const int step_g = 255 / 127;
+      const int step_b = 255 / 31;
+
+      rgba.r = (rgba.r / step_r) * step_r;
+      rgba.g = (rgba.g / step_g) * step_g;
+      rgba.b = (rgba.b / step_b) * step_b;
+
+      float freq = histogram.read(rgba.r, rgba.g, rgba.b);
 
       if (freq < weight)
         count++;
 
       histogram.write(rgba.r, rgba.g, rgba.b, freq + weight);
 
-      const double x = rgba.r;
-      const double y = rgba.g;
-      const double z = rgba.b;
+      const float x = rgba.r;
+      const float y = rgba.g;
+      const float z = rgba.b;
 
       if (x < gamut.low_x)
         gamut.low_x = x;
@@ -218,7 +231,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   std::vector<color_type> colors(colors_max);
 
   // quantization error matrix
-  std::vector<double> err_data(((colors_max + 1) * colors_max) / 2);
+  std::vector<float> err_data(((colors_max + 1) * colors_max) / 2);
 
   // skip if already enough colors
   if (count <= size)
@@ -228,7 +241,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     for (int i = 0; i < 16777216; i++)
     {
       rgba_type rgba = getRgba(i);
-      const double freq = histogram.read(rgba.r, rgba.g, rgba.b);
+      const float freq = histogram.read(rgba.r, rgba.g, rgba.b);
 
       if (freq > 0)
       {
@@ -265,16 +278,16 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   while (count > size)
   {
     int ii = 0, jj = 0;
-    double least_err = 999999999;
-    double *a = &(colors[0].freq);
+    float least_err = 999999999;
+    float *a = &(colors[0].freq);
 
     // find lowest value in error matrix
     for (int j = 0; j < max; j++)
     {
       if (*a > 0)
       {
-        double *e = &err_data[(j + 1) * j / 2];
-        double *b = &(colors[0].freq);
+        float *e = &err_data[(j + 1) * j / 2];
+        float *b = &(colors[0].freq);
 
         for (int i = 0; i < j; i++)
         {
@@ -312,14 +325,10 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
       return;
     }
 
-    // update progress bar
     Progress::update(count);
   }
 
-  // hide progress bar
   Progress::hide();
-
-  // push undo
   Editor::push();
 
   // build palette
