@@ -57,7 +57,7 @@ void Quantize::merge(color_type *c1, color_type *c2)
   const double f1 = c1->freq;
   const double f2 = c2->freq;
   const double div = f1 + f2;
-  const double mul = 1.0f / div;
+  const double mul = 1.0 / div;
 
   c1->r = (f1 * c1->r + f2 * c2->r) * mul;
   c1->g = (f1 * c1->g + f2 * c2->g) * mul;
@@ -72,11 +72,9 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
 {
   int count = 0;
 
-  int step_x = (g->high_x - g->low_x) / 16 + 1;
-  int step_y = (g->high_y - g->low_y) / 32 + 1;
-  int step_z = (g->high_z - g->low_z) / 8 + 1;
-
-  //printf("%d, %d, %d\n", step_x, step_y, step_z);
+  double step_x = (g->high_x - g->low_x) / 16 + 1;
+  double step_y = (g->high_y - g->low_y) / 32 + 1;
+  double step_z = (g->high_z - g->low_z) / 8 + 1;
 
   if (step_x < 1)
     step_x = 1;
@@ -87,11 +85,11 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
   if (step_z < 1)
     step_z = 1;
 
-  for (int z = g->low_z; z <= g->high_z; z += step_z)
+  for (double z = g->low_z; z <= g->high_z; z += step_z)
   {
-    for (int y = g->low_y; y <= g->high_y; y += step_y)
+    for (double y = g->low_y; y <= g->high_y; y += step_y)
     {
-      for (int x = g->low_x; x <= g->high_x; x += step_x)
+      for (double x = g->low_x; x <= g->high_x; x += step_x)
       {
         double rr = 0;
         double gg = 0;
@@ -175,7 +173,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   gamut.high_z = -255;
 
   // build histogram
-  double weight = 1.0f / (src->cw * src->ch);
+  double weight = 1.0 / (src->cw * src->ch);
   int count = 0;
 
   for (int j = src->ct; j <= src->cb; j++)
@@ -191,11 +189,9 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 
       histogram.write(rgba.r, rgba.g, rgba.b, freq + weight);
 
-      double x, y, z;
-
-      x = rgba.r;
-      y = rgba.g;
-      z = rgba.b;
+      const double x = rgba.r;
+      const double y = rgba.g;
+      const double z = rgba.b;
 
       if (x < gamut.low_x)
         gamut.low_x = x;
