@@ -404,9 +404,17 @@ void Blend::hsvToRgb(const int h, const int s, const int v, int *r, int *g, int 
 // from JFIF specification: https://www.w3.org/Graphics/JPEG/jfif3.pdf
 void Blend::rgbToYcc(const int r, const int g, const int b, double *y, double *cb, double *cr)
 {
-  *y = r * 0.299 + g * 0.587 + b * 0.114;
-  *cb = r * -0.1687 + g * -0.3313 + b * 0.500 + 128;
-  *cr = r * 0.500 + g * -0.4187 + b * -0.0813 + 128;
+  int rr = Gamma::fix(r);
+  int gg = Gamma::fix(g);
+  int bb = Gamma::fix(b);
+
+  rr /= 257;
+  gg /= 257;
+  bb /= 257;
+
+  *y = rr * 0.299 + gg * 0.587 + bb * 0.114;
+  *cb = rr * -0.1687 + gg * -0.3313 + bb * 0.500 + 128;
+  *cr = rr * 0.500 + gg * -0.4187 + bb * -0.0813 + 128;
 }
 
 void Blend::yccToRgb(const double y, const double cb, const double cr, int *r, int *g, int *b)
@@ -418,6 +426,14 @@ void Blend::yccToRgb(const double y, const double cb, const double cr, int *r, i
   *r = clamp(*r, 255);
   *g = clamp(*g, 255);
   *b = clamp(*b, 255);
+
+  *r *= 257;
+  *g *= 257;
+  *b *= 257;
+
+  *r = Gamma::unfix(*r);
+  *g = Gamma::unfix(*g);
+  *b = Gamma::unfix(*b);
 }
 
 // same as RGB<->HSV, except hues are arranged like an artist's color wheel
