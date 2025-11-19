@@ -39,10 +39,13 @@ results.
 #include "Editor.H"
 #include "Gui.H"
 #include "Inline.H"
-#include "Octree.H"
 #include "Palette.H"
 #include "Progress.H"
 #include "Quantize.H"
+
+#include "Project.H"
+#include "ImagesOptions.H"
+#include "Undo.H"
 
 void Quantize::makeColor(color_type *c,
                          const float r, const float g, const float b,
@@ -78,7 +81,7 @@ void Quantize::merge(color_type *c1, color_type *c2)
   c1->freq = div;
 }
 
-int Quantize::limitColors(Octree *histogram, color_type *colors,
+int Quantize::limitColors(float *histogram, color_type *colors,
                           gamut_type *g, int pal_size)
 {
   int count = 0;
@@ -125,11 +128,11 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
  
               if (r < 256 && g < 256 && b < 256)
               {
-                const float d = histogram->read(r, g, b);
+                const float d = histogram[makeRgb24(r, g, b)];
 
                 if (d > 0)
                 {
-                  histogram->write(r, g, b, 0);
+                  histogram[makeRgb24(r, g, b)] = 0;
 
                   rr += d * r;
                   gg += d * g;
@@ -165,7 +168,7 @@ int Quantize::limitColors(Octree *histogram, color_type *colors,
 void Quantize::pca(Bitmap *src, Palette *pal, int size)
 {
   // popularity histogram
-  Octree histogram;
+  std::vector<float> histogram(16777216, 0);
 
   // range of RGB values in image
   gamut_type gamut;
@@ -178,7 +181,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   gamut.high_z = -255;
 
   // build histogram
-  float weight = 1.0 / (src->cw * src->ch);
+  const float weight = 1.0 / (src->cw * src->ch);
   int count = 0;
 
   for (int j = src->ct; j <= src->cb; j++)
@@ -187,20 +190,12 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     {
       rgba_type rgba = getRgba(src->getpixel(i, j));
 
-      const int step_r = 255 / 63;
-      const int step_g = 255 / 127;
-      const int step_b = 255 / 31;
-
-      rgba.r = (rgba.r / step_r) * step_r;
-      rgba.g = (rgba.g / step_g) * step_g;
-      rgba.b = (rgba.b / step_b) * step_b;
-
-      float freq = histogram.read(rgba.r, rgba.g, rgba.b);
+      float freq = histogram[makeRgb24(rgba.r, rgba.g, rgba.b)];
 
       if (freq < weight)
         count++;
 
-      histogram.write(rgba.r, rgba.g, rgba.b, freq + weight);
+      histogram[makeRgb24(rgba.r, rgba.g, rgba.b)] = freq + weight;
 
       const float x = rgba.r;
       const float y = rgba.g;
@@ -241,7 +236,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     for (int i = 0; i < 16777216; i++)
     {
       rgba_type rgba = getRgba(i);
-      const float freq = histogram.read(rgba.r, rgba.g, rgba.b);
+      const float freq = histogram[makeRgb24(rgba.r, rgba.g, rgba.b)];
 
       if (freq > 0)
       {
@@ -252,7 +247,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   }
     else
   {
-    count = limitColors(&histogram, &colors[0], &gamut, size);
+    count = limitColors(histogram.data(), &colors[0], &gamut, size);
   }
 
   // set max
@@ -265,7 +260,9 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   for (int j = 0; j < max; j++)
   {
     for (int i = 0; i < j; i++)
+    {
       err_data[i + (j + 1) * j / 2] = error(&colors[i], &colors[j]);
+    }
   }
 
   // show progress bar
@@ -315,7 +312,9 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     for (int j = ii; j < max; j++)
     {
       if (colors[j].freq > 0)
+      {
         err_data[ii + (j + 1) * j / 2] = error(&colors[ii], &colors[j]);
+      }
     }
 
     // user cancelled operation

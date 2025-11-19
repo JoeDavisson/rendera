@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define QUANTIZE_H
 
 class Bitmap;
-class Octree;
 class Palette;
 
 class Quantize
@@ -49,7 +48,7 @@ private:
                         const float, const float, const float, const float);
   static float error(const color_type *, const color_type *);
   static void merge(color_type *, color_type *);
-  static int limitColors(Octree *, color_type *, gamut_type *, int);
+  static int limitColors(float *, color_type *, gamut_type *, int);
 };
 
 #endif
