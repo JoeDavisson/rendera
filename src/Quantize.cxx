@@ -25,10 +25,7 @@ described here:
 http://www.visgraf.impa.br/Projects/quantization/quant.html
 http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 
-To save time/memory, colors are initially "posterized" to a maximum of 262144,
-then further reduced to a maximum of 4096 by averaging sections of the color
-cube. The perceptual influence of RGB values are taken into account to improve
-results.
+This averages the input colors down to a maximum of 4096 to improve efficiency.
 */
 
 #include <vector>
