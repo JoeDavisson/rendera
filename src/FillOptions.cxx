@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_reset(Fl_Widget *w, void *data) { FillOptions *temp = (FillOptions *)data; temp->reset(); }
+  void cb_reset(Fl_Widget *w, void *data) { (void)w; FillOptions *temp = (FillOptions *)data; temp->reset(); }
 }
 
 FillOptions::FillOptions(int x, int y, int w, int h, const char *l)
