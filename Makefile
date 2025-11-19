@@ -73,6 +73,7 @@ OBJ= \
   $(SRC_DIR)/FX/Marble.o \
   $(SRC_DIR)/FX/Dither.o \
   $(SRC_DIR)/FX/SideAbsorptions.o \
+  $(SRC_DIR)/FX/CubePlot.o \
   $(SRC_DIR)/FX/Test.o \
   $(SRC_DIR)/FilterMatrix.o \
   $(SRC_DIR)/Gamma.o \
@@ -84,7 +85,6 @@ OBJ= \
   $(SRC_DIR)/Blend.o \
   $(SRC_DIR)/Map.o \
   $(SRC_DIR)/KDtree.o \
-  $(SRC_DIR)/Octree.o \
   $(SRC_DIR)/Palette.o \
   $(SRC_DIR)/Quantize.o \
   $(SRC_DIR)/Button.o \
