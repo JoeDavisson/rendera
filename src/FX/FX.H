@@ -41,12 +41,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Editor.H"
 #include "Gamma.H"
 #include "Gui.H"
+#include "ImagesOptions.H"
 #include "Inline.H"
 #include "InputFloat.H"
 #include "InputInt.H"
 #include "KDtree.H"
 #include "Map.H"
-#include "Octree.H"
 #include "Palette.H"
 #include "Progress.H"
 #include "Project.H"
@@ -83,6 +83,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Marble.H"
 #include "Dither.H"
 #include "SideAbsorptions.H"
+#include "CubePlot.H"
 #include "Test.H"
 
 class FX

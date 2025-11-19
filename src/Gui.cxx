@@ -396,12 +396,14 @@ void Gui::init()
   menubar->add("F&X/Photo/Remove Dust...", 0,
     (Fl_Callback *)RemoveDust::begin, 0, 0);
 
-  menubar->add("F&X/Artistic/Stained Glass...", 0,
+  menubar->add("F&X/Misc/Stained Glass...", 0,
     (Fl_Callback *)StainedGlass::begin, 0, 0);
-  menubar->add("F&X/Artistic/Painting...", 0,
+  menubar->add("F&X/Misc/Painting...", 0,
     (Fl_Callback *)Painting::begin, 0, 0);
-  menubar->add("F&X/Artistic/Marble...", 0,
+  menubar->add("F&X/Misc/Marble...", 0,
     (Fl_Callback *)Marble::begin, 0, 0);
+  menubar->add("F&X/Misc/Cube Plot...", 0,
+    (Fl_Callback *)CubePlot::begin, 0, 0);
 
   menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);

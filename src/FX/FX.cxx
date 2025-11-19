@@ -71,5 +71,6 @@ void FX::init()
   Painting::init();
   Marble::init();
   Dither::init();
+  CubePlot::init();
 }
 
