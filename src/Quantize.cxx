@@ -83,39 +83,39 @@ int Quantize::limitColors(float *histogram, color_type *colors,
 {
   int count = 0;
 
-  float step_x = (g->high_x - g->low_x) / 16 + 1;
-  float step_y = (g->high_y - g->low_y) / 32 + 1;
-  float step_z = (g->high_z - g->low_z) / 8 + 1;
+  float step_x = (float)(g->high_x - g->low_x) / 15.999;
+  float step_y = (float)(g->high_y - g->low_y) / 31.999;
+  float step_z = (float)(g->high_z - g->low_z) / 7.999;
 
-  if (step_x < 1)
-    step_x = 1;
-
-  if (step_y < 1)
-    step_y = 1;
-
-  if (step_z < 1)
-    step_z = 1;
+  int last_z = g->low_z;
 
   for (float z = g->low_z; z <= g->high_z; z += step_z)
   {
+    int size_z = (int)(z + step_z) - last_z;
+    int last_y = g->low_y;
+
     for (float y = g->low_y; y <= g->high_y; y += step_y)
     {
+      int size_y = (int)(y + step_y) - last_y;
+      int last_x = g->low_x;
+
       for (float x = g->low_x; x <= g->high_x; x += step_x)
       {
+        int size_x = (int)(x + step_x) - last_x;
         float rr = 0;
         float gg = 0;
         float bb = 0;
         float div = 0;
 
-        for (int k = 0; k < step_z; k++)
+        for (int k = 0; k < size_z; k++)
         {
           const int zk = z + k;
 
-          for (int j = 0; j < step_y; j++)
+          for (int j = 0; j < size_y; j++)
           {
             const int yj = y + j;
 
-            for (int i = 0; i < step_x; i++)
+            for (int i = 0; i < size_x; i++)
             {
               const int xi = x + i;
 
@@ -137,8 +137,14 @@ int Quantize::limitColors(float *histogram, color_type *colors,
                   div += d;
                 }
               }
+
+              last_x = x;
             }
+
+            last_y = y;
           }
+
+          last_z = z;
         }
 
         if (div > 0)
