@@ -25,7 +25,7 @@ described here:
 http://www.visgraf.impa.br/Projects/quantization/quant.html
 http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 
-This averages the input colors down to a maximum of 4096 to improve efficiency.
+This averages the input colors down to improve efficiency.
 */
 
 #include <vector>
@@ -89,8 +89,8 @@ int Quantize::limitColors(double *histogram, color_type *colors,
 
   const double root = std::cbrt((double)colors_max);
   double div_x = root;
-  double div_y = root;
-  double div_z = root;
+  double div_y = root * 2;
+  double div_z = root / 2;
 
   int last_count = 0;
   int count = 0;
@@ -166,10 +166,6 @@ int Quantize::limitColors(double *histogram, color_type *colors,
                     freq += d;
                   }
                 }
-//                else
-//                {
-//                  printf("error %d, %d, %d\n", r, g, b);
-//                }
 
                 last_x = x;
               }
@@ -211,9 +207,9 @@ int Quantize::limitColors(double *histogram, color_type *colors,
 
     printf("count = %d\n", count);
 
-    div_x *= 1.1;
-    div_y *= 1.1;
-    div_z *= 1.1;
+    div_x *= 1.05;
+    div_y *= 1.05;
+    div_z *= 1.05;
 
     last_count = count;
 
@@ -229,102 +225,6 @@ int Quantize::limitColors(double *histogram, color_type *colors,
   printf("final count = %d\n", last_count);
   return last_count;
 }
-
-/*
-int Quantize::limitColors(double *histogram, color_type *colors,
-                          gamut_type *g, int pal_size)
-{
-  int count = 0;
-
-  double step_x = (double)(g->high_x - g->low_x) / 16;
-  double step_y = (double)(g->high_y - g->low_y) / 32;
-  double step_z = (double)(g->high_z - g->low_z) / 8;
-
-  int last_z = g->low_z;
-
-  for (double z = g->low_z; z < g->high_z - step_z; z += step_z)
-  {
-    int size_z = (int)(z + step_z) - last_z;
-    int last_y = g->low_y;
-
-    for (double y = g->low_y; y < g->high_y - step_y; y += step_y)
-    {
-      int size_y = (int)(y + step_y) - last_y;
-      int last_x = g->low_x;
-
-      for (double x = g->low_x; x < g->high_x - step_x; x += step_x)
-      {
-        int size_x = (int)(x + step_x) - last_x;
-        double rr = 0;
-        double gg = 0;
-        double bb = 0;
-        double freq = 0;
-
-        for (int k = 0; k < size_z; k++)
-        {
-          const int zk = z + k;
-
-          for (int j = 0; j < size_y; j++)
-          {
-            const int yj = y + j;
-
-            for (int i = 0; i < size_x; i++)
-            {
-              const int xi = x + i;
-
-              const int r = xi;
-              const int g = yj;
-              const int b = zk;
- 
-              if (r < 256 && g < 256 && b < 256)
-              {
-                const double d = histogram[makeRgb24(r, g, b)];
-
-                if (d > 0)
-                {
-                  histogram[makeRgb24(r, g, b)] = 0;
-
-                  rr += d * r;
-                  gg += d * g;
-                  bb += d * b;
-                  freq += d;
-                }
-              }
-                else
-              {
-                printf("error %d, %d, %d\n", r, g, b);
-              }
-
-              last_x = x;
-            }
-
-            last_y = y;
-          }
-
-          last_z = z;
-        }
-
-        if (freq > 0)
-        {
-          rr /= freq;
-          gg /= freq;
-          bb /= freq;
-
-          rr = clamp(rr, 255);
-          gg = clamp(gg, 255);
-          bb = clamp(bb, 255);
-
-          makeColor(&colors[count], rr, gg, bb, freq);
-          count++;
-        }
-      }
-    }
-  }
-
-  printf("count = %d\n", count);
-  return count;
-}
-*/
 
 void Quantize::pca(Bitmap *src, Palette *pal, int size)
 {
