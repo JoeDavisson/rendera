@@ -51,7 +51,6 @@ void Progress::hide()
   Gui::progress->copy_label("");
   Gui::progress->redraw();
   Gui::progress->hide();
-  Gui::info->show();
   Gui::view->rendering = false;
 }
 
@@ -75,7 +74,6 @@ void Progress::show(float max)
   // keep progress bar on right side in case window was resized
   Gui::progress->resize(Gui::getStatus()->x() + Gui::getWindow()->w() - 256 - 8,                        Gui::getStatus()->y() + 4, 256, 24);
 
-  Gui::info->hide();
   Gui::progress->show();
 }
 
@@ -98,7 +96,6 @@ void Progress::show(float max, int new_interval)
   // keep progress bar on right side in case window was resized
   Gui::progress->resize(Gui::getStatus()->x() + Gui::getWindow()->w() - 256 - 8,
                         Gui::getStatus()->y() + 4, 256, 24);
-  Gui::info->hide();
   Gui::progress->show();
 }
 
