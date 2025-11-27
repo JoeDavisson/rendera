@@ -44,7 +44,11 @@ This averages the input colors down to improve efficiency.
 #include "ImagesOptions.H"
 #include "Undo.H"
 
-const int colors_max = 3072;
+namespace
+{
+  const int colors_max = 3072;
+  char str[256];
+}
 
 void Quantize::makeColor(color_type *c,
                          const double r, const double g, const double b,
@@ -87,7 +91,7 @@ int Quantize::limitColors(double *histogram, color_type *colors,
   const int diff_y = (double)g->high_y - g->low_y;
   const int diff_z = (double)g->high_z - g->low_z;
 
-  const double root = std::cbrt((double)colors_max);
+  double root = std::cbrt(colors_max);
   double div_x = root;
   double div_y = root * 2;
   double div_z = root / 2;
@@ -205,13 +209,8 @@ int Quantize::limitColors(double *histogram, color_type *colors,
     if (count >= colors_max)
       break;
 
-    printf("count = %d\n", count);
-
-    div_x *= 1.05;
-    div_y *= 1.05;
-    div_z *= 1.05;
-
-    last_count = count;
+    snprintf(str, sizeof(str), "Colors = %d/%d", count, colors_max);
+    Gui::statusInfo(str);
 
     for (int i = 0; i < colors_max; i++)
     {
@@ -220,15 +219,22 @@ int Quantize::limitColors(double *histogram, color_type *colors,
       colors[i].b = temp_colors[i].b;
       colors[i].freq = temp_colors[i].freq;
     }
+
+    div_x *= 1.05;
+    div_y *= 1.05;
+    div_z *= 1.05;
+
+    last_count = count;
   }
 
-  printf("final count = %d\n", last_count);
   return last_count;
 }
 
 void Quantize::pca(Bitmap *src, Palette *pal, int size)
 {
   // popularity histogram
+  Gui::saveStatusInfo();
+  Gui::statusInfo("Calculating Histogram...");
   std::vector<double> histogram(16777216, 0);
 
   // range of RGB values in image
@@ -327,6 +333,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 
   // show progress bar
   Progress::show(count - size);
+  Gui::statusInfo("Merging...");
 
   // measure offset between array elements
   const int step = &(colors[1].freq) - &(colors[0].freq);
@@ -403,5 +410,6 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   }
 
   pal->max = index;
+  Gui::restoreStatusInfo();
 }
 
