@@ -26,8 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class CubePlot
 {
 public:
-  static void applyAll();
-  static void applyPalette();
+  static void apply(const bool);
   static void close();
   static void quit();
   static void begin();
