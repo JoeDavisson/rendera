@@ -87,6 +87,7 @@ namespace
 
   // status
   Group *status;
+  char status_text[256];
 
   // height of rightmost panels
   int left_height = 0;
@@ -424,7 +425,9 @@ void Gui::init()
   info = new Fl_Box(FL_FLAT_BOX, pos, 4, window->w() - pos, 24, "");
   info->resize(status->x() + pos, status->y() + 4, window->w() - pos, 24);
   info->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
-  info->copy_label("Welcome to Rendera!");
+//  info->copy_label("Welcome to Rendera!");
+  statusInfo("Welcome to Rendera!");
+  saveStatusInfo();
 
   progress = new Fl_Progress(window->w() - 256 - 8, pos, 256, 24);
   progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4, 256, 24);
@@ -933,16 +936,29 @@ Fl_Double_Window *Gui::getWindow()
   return window;
 }
 
-void Gui::statusCoords(char *s)
+void Gui::statusCoords(const char *str)
 {
-  coords->copy_label(s);
+  coords->copy_label(str);
   coords->redraw();
 }
 
-void Gui::statusInfo(char *s)
+void Gui::statusInfo(const char *str)
 {
-  info->copy_label(s);
+  info->copy_label(str);
   info->redraw();
+  Fl::check();
+}
+
+void Gui::saveStatusInfo()
+{
+  strncpy(status_text, info->label(), sizeof(status_text) - 1);
+}
+
+void Gui::restoreStatusInfo()
+{
+  info->copy_label(status_text);
+  info->redraw();
+  Fl::check();
 }
 
 void Gui::toggleTextPreview()

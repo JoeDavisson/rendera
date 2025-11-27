@@ -96,8 +96,10 @@ public:
   static void selectFromImage();
   static void selectToImage();
 
-  static void statusCoords(char *);
-  static void statusInfo(char *);
+  static void statusCoords(const char *);
+  static void statusInfo(const char *);
+  static void saveStatusInfo();
+  static void restoreStatusInfo();
 
   static void toggleTextPreview();
 
