@@ -164,10 +164,10 @@ int Quantize::limitColors(double *histogram, color_type *colors,
                   {
                     temp_hist[makeRgb24(r, g, b)] = 0;
 
-                    rr += d * r;
-                    gg += d * g;
-                    bb += d * b;
-                    freq += d;
+                    rr += d * d * r * r;
+                    gg += d * d * g * g;
+                    bb += d * d * b * b;
+                    freq += d * d;
                   }
                 }
 
@@ -185,6 +185,11 @@ int Quantize::limitColors(double *histogram, color_type *colors,
             rr /= freq;
             gg /= freq;
             bb /= freq;
+
+            rr = std::sqrt(rr);
+            gg = std::sqrt(gg);
+            bb = std::sqrt(bb);
+            freq = std::sqrt(freq);
 
             rr = clamp(rr, 255);
             gg = clamp(gg, 255);
