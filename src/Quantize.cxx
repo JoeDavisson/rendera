@@ -93,8 +93,8 @@ int Quantize::limitColors(double *histogram, color_type *colors,
 
   double root = std::cbrt(colors_max);
   double div_x = root;
-  double div_y = root * 2;
-  double div_z = root / 2;
+  double div_y = root / 2;
+  double div_z = root * 2;
 
   int last_count = 0;
   int count = 0;
