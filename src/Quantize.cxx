@@ -46,7 +46,7 @@ This averages the input colors down to improve efficiency.
 
 namespace
 {
-  const int colors_max = 3072;
+  const int colors_max = 3375;
   char str[256];
 }
 
@@ -100,14 +100,14 @@ int Quantize::limitColors(double *histogram, color_type *colors,
   int count = 0;
 
   std::vector<double> temp_hist(16777216, 0);
-  std::vector<color_type> temp_colors(colors_max);
+  std::vector<color_type> temp_colors(4096);
 
   while (true)
   {
     for (int i = 0; i < 16777216; i++)
       temp_hist[i] = histogram[i];
 
-    for (int i = 0; i < colors_max; i++)
+    for (int i = 0; i < 4096; i++)
     {
       temp_colors[i].r = 0;
       temp_colors[i].g = 0;
@@ -197,17 +197,8 @@ int Quantize::limitColors(double *histogram, color_type *colors,
             makeColor(&temp_colors[count], rr, gg, bb, freq);
             count++;
           }
-
-          if (count >= colors_max)
-            break;
         }
-
-        if (count >= colors_max)
-          break;
       }
-
-      if (count >= colors_max)
-        break;
     }
 
     if (count >= colors_max)
@@ -216,7 +207,7 @@ int Quantize::limitColors(double *histogram, color_type *colors,
     snprintf(str, sizeof(str), "Colors = %d/%d", count, colors_max);
     Gui::statusInfo(str);
 
-    for (int i = 0; i < colors_max; i++)
+    for (int i = 0; i < 4096; i++)
     {
       colors[i].r = temp_colors[i].r;
       colors[i].g = temp_colors[i].g;
@@ -293,7 +284,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   }
 
   // color list
-  std::vector<color_type> colors(colors_max);
+  std::vector<color_type> colors(4096);
 
   // quantization error matrix
   std::vector<double> err_data(((colors_max + 1) * colors_max) / 2);
@@ -392,6 +383,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     if (Fl::get_key(FL_Escape))
     {
       Progress::hide();
+      Gui::restoreStatusInfo();
       return;
     }
 
