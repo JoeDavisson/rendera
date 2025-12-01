@@ -38,19 +38,12 @@ private:
     double r, g, b, freq;
   };
 
-  struct gamut_type
-  {
-    int low_x, low_y, low_z;
-    int high_x, high_y, high_z;
-  };
-
   static bool sort_greater_cb(const color_type &, const color_type &);
-  static bool sort_less_cb(const color_type &, const color_type &);
   static void makeColor(color_type *,
                         const double, const double, const double, const double);
   static double error(const color_type *, const color_type *);
   static void merge(color_type *, color_type *);
-  static int limitColors(double *, color_type *, gamut_type *, int);
+  static int limitColors(double *, color_type *, int);
 };
 
 #endif

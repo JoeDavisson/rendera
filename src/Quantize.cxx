@@ -46,18 +46,12 @@ This averages the input colors down to improve efficiency.
 
 namespace
 {
-  const int colors_max = 2197;
-  char str[256];
+  const int colors_max = 3000;
 }
 
 bool Quantize::sort_greater_cb(const color_type &a, const color_type &b)
 {
   return a.freq > b.freq;
-}
-
-bool Quantize::sort_less_cb(const color_type &a, const color_type &b)
-{
-  return a.freq < b.freq;
 }
 
 void Quantize::makeColor(color_type *c,
@@ -94,25 +88,34 @@ void Quantize::merge(color_type *c1, color_type *c2)
   c1->freq = div;
 }
 
-int Quantize::limitColors(double *histogram, color_type *colors,
-                          gamut_type *gmt, int pal_size)
+int Quantize::limitColors(double *histogram, color_type *colors, int pal_size)
 {
-  double root = std::cbrt(colors_max);
-  double div_x = root;
-  double div_y = root * 2;
-  double div_z = root / 2;
+  int root = 64;
+  int div_x = root;
+  int div_y = root * 2;
+  int div_z = root / 2;
   
-  double step_x = 256.0 / div_x;
-  double step_y = 256.0 / div_y;
-  double step_z = 256.0 / div_z;
+  int step_x = 256 / div_x;
+  int step_y = 256 / div_y;
+  int step_z = 256 / div_z;
 
-  int count = 0;
+  int temp_count = 0;
 
-  for (double z = 0; z <= 256 - step_z; z += step_z)
+  std::vector<color_type> temp_colors(262144);
+
+  for (int i = 0; i < 262144; i++)
   {
-    for (double y = 0; y <= 256 - step_y; y += step_y)
+    temp_colors[i].r = 0;
+    temp_colors[i].g = 0;
+    temp_colors[i].b = 0;
+    temp_colors[i].freq = 0;
+  }
+
+  for (int z = 0; z <= 256 - step_z; z += step_z)
+  {
+    for (int y = 0; y <= 256 - step_y; y += step_y)
     {
-      for (double x = 0; x <= 256 - step_x; x += step_x)
+      for (int x = 0; x <= 256 - step_x; x += step_x)
       {
         double rr = 0;
         double gg = 0;
@@ -166,127 +169,49 @@ int Quantize::limitColors(double *histogram, color_type *colors,
           gg = clamp(gg, 255);
           bb = clamp(bb, 255);
 
-          makeColor(&colors[count], rr, gg, bb, freq);
-          count++;
+          makeColor(&temp_colors[temp_count], rr, gg, bb, freq);
+          temp_count++;
         }
       }
     }
-
-    snprintf(str, sizeof(str), "Colors = %d/%d", count, colors_max);
-    Gui::statusInfo(str);
   }
 
-  int temp_count = 0;
+  std::sort(temp_colors.begin(), temp_colors.end(), sort_greater_cb);
 
-  if (count < colors_max)
+  double temp_total = 0;
+
+  for (int i = 0; i < 262144; i++)
   {
-    root = 64;
-    div_x = root;
-    div_y = root * 2;
-    div_z = root / 2;
-  
-    step_x = 256 / div_x;
-    step_y = 256 / div_y;
-    step_z = 256 / div_z;
+    if (temp_colors[i].freq == 0)
+      break;
 
-    std::vector<color_type> temp_colors(262144);
+    temp_total += 1.0;
+  }
 
-    for (int i = 0; i < 262144; i++)
-    {
-      temp_colors[i].r = 0;
-      temp_colors[i].g = 0;
-      temp_colors[i].b = 0;
-      temp_colors[i].freq = 0;
-    }
+  int count = 0;
+  double div = colors_max;
 
-    for (int z = 0; z <= 256 - step_z; z += step_z)
-    {
-      for (int y = 0; y <= 256 - step_y; y += step_y)
-      {
-        for (int x = 0; x <= 256 - step_x; x += step_x)
-        {
-          double rr = 0;
-          double gg = 0;
-          double bb = 0;
-          double freq = 0;
+  for (double i = 0; i < temp_total; i += temp_total / div)
+  {
+    if (temp_colors[i].freq == 0)
+      continue;
 
-          for (int k = 0; k < step_z; k++)
-          {
-            const int zk = z + k;
+    colors[count].r = temp_colors[i].r;
+    colors[count].g = temp_colors[i].g;
+    colors[count].b = temp_colors[i].b;
+    colors[count].freq = temp_colors[i].freq;
+    count++;
 
-            for (int j = 0; j < step_y; j++)
-            {
-              const int yj = y + j;
+    if (count >= colors_max)
+      break;
 
-              for (int i = 0; i < step_x; i++)
-              {
-                const int xi = x + i;
+    div += 1.0;
 
-                int r = xi;
-                int g = yj;
-                int b = zk;
-
-                if (r < 256 && g < 256 && b < 256)
-                {
-                  const double d = histogram[makeRgb24(r, g, b)];
-
-                  if (d > 0)
-                  {
-                    rr += (r * r) * d;
-                    gg += (g * g) * d;
-                    bb += (b * b) * d;
-
-                    freq += d;
-                  }
-                }
-              }
-            }
-          }
-
-          if (freq > 0)
-          {
-            rr /= freq;
-            gg /= freq;
-            bb /= freq;
-
-            rr = std::sqrt(rr);
-            gg = std::sqrt(gg);
-            bb = std::sqrt(bb);
-
-            rr = clamp(rr, 255);
-            gg = clamp(gg, 255);
-            bb = clamp(bb, 255);
-
-            makeColor(&temp_colors[temp_count], rr, gg, bb, freq);
-            temp_count++;
-          }
-        }
-      }
-
-      snprintf(str, sizeof(str), "Colors = %d/%d", count, colors_max);
-      Gui::statusInfo(str);
-    }
-
-    std::sort(temp_colors.begin(), temp_colors.end(), sort_greater_cb);
-
-    for (int i = 0; i < colors_max / 2; i++)
-    {
-      if (temp_colors[i].freq == 0)
-        continue;
-
-      colors[count].r = temp_colors[i].r;
-      colors[count].g = temp_colors[i].g;
-      colors[count].b = temp_colors[i].b;
-      colors[count].freq = temp_colors[i].freq;
-      count++;
-
-      if (count >= colors_max)
-        break;
-    }
+    if (temp_total / div < 1.0)
+      break;
   }
 
   //printf("count = %d\n", count);
-  //printf("temp_count = %d\n", temp_count);
   return count;
 }
 
@@ -296,16 +221,6 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   Gui::saveStatusInfo();
   Gui::statusInfo("Calculating Histogram...");
   std::vector<double> histogram(16777216, 0);
-
-  // range of RGB values in image
-  gamut_type gamut;
-
-  gamut.low_x = 255;
-  gamut.low_y = 255;
-  gamut.low_z = 255;
-  gamut.high_x = -255;
-  gamut.high_y = -255;
-  gamut.high_z = -255;
 
   // build histogram
   const double weight = 1.0 / (src->cw * src->ch);
@@ -323,36 +238,11 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
         count++;
 
       histogram[makeRgb24(rgba.r, rgba.g, rgba.b)] = freq + weight;
-
-      const double x = rgba.r;
-      const double y = rgba.g;
-      const double z = rgba.b;
-
-      if (x < gamut.low_x)
-        gamut.low_x = x;
-
-      if (y < gamut.low_y)
-        gamut.low_y = y;
-
-      if (z < gamut.low_z)
-        gamut.low_z = z;
-
-      if (x > gamut.high_x)
-        gamut.high_x = x; 
-
-      if (y > gamut.high_y)
-        gamut.high_y = y; 
-
-      if (z > gamut.high_z)
-        gamut.high_z = z; 
     }
   }
 
   // color list
   std::vector<color_type> colors(colors_max);
-
-  // quantization error matrix
-//  std::vector<double> err_data(((colors_max + 1) * colors_max) / 2);
 
   // skip if already enough colors
   if (count <= size)
@@ -373,7 +263,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   }
     else
   {
-    count = limitColors(histogram.data(), &colors[0], &gamut, size);
+    count = limitColors(histogram.data(), &colors[0], size);
   }
 
   // quantization error matrix
