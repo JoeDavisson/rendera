@@ -44,10 +44,7 @@ This averages the input colors down to improve efficiency.
 #include "ImagesOptions.H"
 #include "Undo.H"
 
-namespace
-{
-  const int colors_max = 3000;
-}
+const int colors_max = 3000;
 
 bool Quantize::sort_greater_cb(const color_type &a, const color_type &b)
 {
@@ -90,20 +87,11 @@ void Quantize::merge(color_type *c1, color_type *c2)
 
 int Quantize::limitColors(double *histogram, color_type *colors, int pal_size)
 {
-  int root = 64;
-  int div_x = root;
-  int div_y = root * 2;
-  int div_z = root / 2;
-  
-  int step_x = 256 / div_x;
-  int step_y = 256 / div_y;
-  int step_z = 256 / div_z;
-
   int temp_count = 0;
 
-  std::vector<color_type> temp_colors(262144);
+  std::vector<color_type> temp_colors(16777216);
 
-  for (int i = 0; i < 262144; i++)
+  for (int i = 0; i < 16777216; i++)
   {
     temp_colors[i].r = 0;
     temp_colors[i].g = 0;
@@ -111,87 +99,32 @@ int Quantize::limitColors(double *histogram, color_type *colors, int pal_size)
     temp_colors[i].freq = 0;
   }
 
-  for (int z = 0; z <= 256 - step_z; z += step_z)
+  // build color list
+  for (int z = 0; z < 256; z++)
   {
-    for (int y = 0; y <= 256 - step_y; y += step_y)
+    for (int y = 0; y < 256; y++)
     {
-      for (int x = 0; x <= 256 - step_x; x += step_x)
+      for (int x = 0; x < 256; x++)
       {
-        double rr = 0;
-        double gg = 0;
-        double bb = 0;
-        double freq = 0;
-
-        for (int k = 0; k < step_z; k++)
-        {
-          const int zk = z + k;
-
-          for (int j = 0; j < step_y; j++)
-          {
-            const int yj = y + j;
-
-            for (int i = 0; i < step_x; i++)
-            {
-              const int xi = x + i;
-
-              int r = xi;
-              int g = yj;
-              int b = zk;
-
-              if (r < 256 && g < 256 && b < 256)
-              {
-                const double d = histogram[makeRgb24(r, g, b)];
-
-                if (d > 0)
-                {
-                  rr += (r * r) * d;
-                  gg += (g * g) * d;
-                  bb += (b * b) * d;
-
-                  freq += d;
-                }
-              }
-            }
-          }
-        }
+        const double freq = histogram[makeRgb24(x, y, z)];
 
         if (freq > 0)
         {
-          rr /= freq;
-          gg /= freq;
-          bb /= freq;
-
-          rr = std::sqrt(rr);
-          gg = std::sqrt(gg);
-          bb = std::sqrt(bb);
-
-          rr = clamp(rr, 255);
-          gg = clamp(gg, 255);
-          bb = clamp(bb, 255);
-
-          makeColor(&temp_colors[temp_count], rr, gg, bb, freq);
+          makeColor(&temp_colors[temp_count], x, y, z, freq);
           temp_count++;
         }
       }
     }
   }
 
+  // sort by popularity
   std::sort(temp_colors.begin(), temp_colors.end(), sort_greater_cb);
 
-  double temp_total = 0;
-
-  for (int i = 0; i < 262144; i++)
-  {
-    if (temp_colors[i].freq == 0)
-      break;
-
-    temp_total += 1.0;
-  }
-
+  // choose a diverse range of popularities
   int count = 0;
-  double div = colors_max;
+  double step = (double)temp_count / colors_max;
 
-  for (double i = 0; i < temp_total; i += temp_total / div)
+  for (double i = 0; i < temp_count; i += step)
   {
     if (temp_colors[i].freq == 0)
       continue;
@@ -204,11 +137,6 @@ int Quantize::limitColors(double *histogram, color_type *colors, int pal_size)
 
     if (count >= colors_max)
       break;
-
-    div += 1.0;
-
-    if (temp_total / div < 1.0)
-      break;
   }
 
   //printf("count = %d\n", count);
@@ -219,7 +147,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 {
   // popularity histogram
   Gui::saveStatusInfo();
-  Gui::statusInfo("Calculating Histogram...");
+  Gui::statusInfo("Creating Color List...");
   std::vector<double> histogram(16777216, 0);
 
   // build histogram
