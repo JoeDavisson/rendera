@@ -46,8 +46,13 @@ This averages the input colors down to improve efficiency.
 
 namespace
 {
-  const int colors_max = 3375;
+  const int colors_max = 4096;
   char str[256];
+}
+
+bool Quantize::sort_cb(const color_type &a, const color_type &b)
+{
+  return a.freq > b.freq;
 }
 
 void Quantize::makeColor(color_type *c,
@@ -85,16 +90,136 @@ void Quantize::merge(color_type *c1, color_type *c2)
 }
 
 int Quantize::limitColors(double *histogram, color_type *colors,
-                          gamut_type *g, int pal_size)
+                          gamut_type *gmt, int pal_size)
 {
-  const int diff_x = (double)g->high_x - g->low_x;
-  const int diff_y = (double)g->high_y - g->low_y;
-  const int diff_z = (double)g->high_z - g->low_z;
+  int root = 16;
+  int div_x = root;
+  int div_y = root * 2;
+  int div_z = root / 2;
+  
+  int step_x = 256 / div_x;
+  int step_y = 256 / div_y;
+  int step_z = 256 / div_z;
+
+  int count = 0;
+
+  std::vector<color_type> temp_colors(32768);
+
+  for (int i = 0; i < 32768; i++)
+  {
+    temp_colors[i].r = 0;
+    temp_colors[i].g = 0;
+    temp_colors[i].b = 0;
+    temp_colors[i].freq = 0;
+  }
+
+  for (int z = 0; z <= 256 - step_z; z += step_z)
+  {
+    for (int y = 0; y <= 256 - step_y; y += step_y)
+    {
+      for (int x = 0; x <= 256 - step_x; x += step_x)
+      {
+        double rr = 0;
+        double gg = 0;
+        double bb = 0;
+        double freq = 0;
+
+        for (int k = 0; k < step_z; k++)
+        {
+          const int zk = z + k;
+
+          for (int j = 0; j < step_y; j++)
+          {
+            const int yj = y + j;
+
+            for (int i = 0; i < step_x; i++)
+            {
+              const int xi = x + i;
+
+              int r = xi;
+              int g = yj;
+              int b = zk;
+
+              if (r < 256 && g < 256 && b < 256)
+              {
+                const double d = histogram[makeRgb24(r, g, b)];
+
+                if (d > 0)
+                {
+                  histogram[makeRgb24(r, g, b)] = 0;
+
+                  rr += (r * r) * d;
+                  gg += (g * g) * d;
+                  bb += (b * b) * d;
+
+                  freq += d;
+                }
+              }
+            }
+          }
+        }
+
+        if (freq > 0)
+        {
+          rr /= freq;
+          gg /= freq;
+          bb /= freq;
+
+          rr = std::sqrt(rr);
+          gg = std::sqrt(gg);
+          bb = std::sqrt(bb);
+
+          rr = clamp(rr, 255);
+          gg = clamp(gg, 255);
+          bb = clamp(bb, 255);
+
+          makeColor(&temp_colors[count], rr, gg, bb, freq);
+          count++;
+        }
+      }
+    }
+
+    snprintf(str, sizeof(str), "Colors = %d/%d", count, colors_max);
+    Gui::statusInfo(str);
+  }
+
+  count = 0;
+  std::sort(temp_colors.begin(), temp_colors.end(), sort_cb);
+//  for (int i = 0; i < 32; i++)
+//    printf("freq = %lf\n", temp_colors[i].freq);
+
+  for (int i = 0; i < colors_max; i++)
+  {
+      if (temp_colors[i].freq == 0)
+      {
+        puts("whatever");
+        break;
+      }
+
+      colors[i].r = temp_colors[i].r;
+      colors[i].g = temp_colors[i].g;
+      colors[i].b = temp_colors[i].b;
+      colors[i].freq = temp_colors[i].freq;
+      count++;
+  }
+
+//  printf("count = %d\n", count);
+  return count;
+}
+
+
+/*
+int Quantize::limitColors(double *histogram, color_type *colors,
+                          gamut_type *gmt, int pal_size)
+{
+  const double diff_x = (double)gmt->high_x - gmt->low_x;
+  const double diff_y = (double)gmt->high_y - gmt->low_y;
+  const double diff_z = (double)gmt->high_z - gmt->low_z;
 
   double root = std::cbrt(colors_max);
   double div_x = root;
-  double div_y = root / 2;
-  double div_z = root * 2;
+  double div_y = root * 2;
+  double div_z = root / 2;
 
   int last_count = 0;
   int count = 0;
@@ -102,7 +227,7 @@ int Quantize::limitColors(double *histogram, color_type *colors,
   std::vector<double> temp_hist(16777216, 0);
   std::vector<color_type> temp_colors(colors_max);
 
-  while (true)
+  for (int pass = 0; pass < 100; pass++)
   {
     for (int i = 0; i < 16777216; i++)
       temp_hist[i] = histogram[i];
@@ -120,19 +245,19 @@ int Quantize::limitColors(double *histogram, color_type *colors,
     double step_z = diff_z / div_z;
 
     count = 0;
-    int last_z = g->low_z;
+    double last_z = gmt->low_z;
 
-    for (double z = g->low_z; z < g->high_z - step_z; z += step_z)
+    for (double z = gmt->low_z; z < gmt->high_z - step_z; z += step_z)
     {
       int size_z = (int)(z + step_z) - last_z;
-      int last_y = g->low_y;
+      double last_y = gmt->low_y;
 
-      for (double y = g->low_y; y < g->high_y - step_y; y += step_y)
+      for (double y = gmt->low_y; y < gmt->high_y - step_y; y += step_y)
       {
         int size_y = (int)(y + step_y) - last_y;
-        int last_x = g->low_x;
+        double last_x = gmt->low_x;
 
-        for (double x = g->low_x; x < g->high_x - step_x; x += step_x)
+        for (double x = gmt->low_x; x < gmt->high_x - step_x; x += step_x)
         {
           int size_x = (int)(x + step_x) - last_x;
           double rr = 0;
@@ -152,10 +277,10 @@ int Quantize::limitColors(double *histogram, color_type *colors,
               {
                 const int xi = x + i;
 
-                const int r = xi;
-                const int g = yj;
-                const int b = zk;
- 
+                int r = xi;
+                int g = yj;
+                int b = zk;
+
                 if (r < 256 && g < 256 && b < 256)
                 {
                   const double d = temp_hist[makeRgb24(r, g, b)];
@@ -196,10 +321,10 @@ int Quantize::limitColors(double *histogram, color_type *colors,
 
             makeColor(&temp_colors[count], rr, gg, bb, freq);
             count++;
-          }
 
-          if (count >= colors_max)
-            break;
+            if (count >= colors_max)
+              break;
+          }
         }
 
         if (count >= colors_max)
@@ -231,10 +356,12 @@ int Quantize::limitColors(double *histogram, color_type *colors,
     last_count = count;
   }
 
-  printf("count = %d\n", last_count);
+  printf("count = %d\n", count);
+  printf("last_count = %d\n", last_count);
 
   return last_count;
 }
+*/
 
 void Quantize::pca(Bitmap *src, Palette *pal, int size)
 {
@@ -320,6 +447,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     else
   {
     count = limitColors(histogram.data(), &colors[0], &gamut, size);
+puts("got here");
   }
 
   // quantization error matrix
