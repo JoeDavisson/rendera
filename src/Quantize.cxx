@@ -46,7 +46,7 @@ This averages the input colors down to improve efficiency.
 
 namespace
 {
-  const int colors_max = 2048;
+  const int colors_max = 2197;
   char str[256];
 }
 
@@ -97,22 +97,22 @@ void Quantize::merge(color_type *c1, color_type *c2)
 int Quantize::limitColors(double *histogram, color_type *colors,
                           gamut_type *gmt, int pal_size)
 {
-  int root = 16;
-  int div_x = root;
-  int div_y = root * 2;
-  int div_z = root / 2;
+  double root = std::cbrt(colors_max);
+  double div_x = root;
+  double div_y = root * 2;
+  double div_z = root / 2;
   
-  int step_x = 256 / div_x;
-  int step_y = 256 / div_y;
-  int step_z = 256 / div_z;
+  double step_x = 256.0 / div_x;
+  double step_y = 256.0 / div_y;
+  double step_z = 256.0 / div_z;
 
   int count = 0;
 
-  for (int z = 0; z <= 256 - step_z; z += step_z)
+  for (double z = 0; z <= 256 - step_z; z += step_z)
   {
-    for (int y = 0; y <= 256 - step_y; y += step_y)
+    for (double y = 0; y <= 256 - step_y; y += step_y)
     {
-      for (int x = 0; x <= 256 - step_x; x += step_x)
+      for (double x = 0; x <= 256 - step_x; x += step_x)
       {
         double rr = 0;
         double gg = 0;
@@ -176,113 +176,117 @@ int Quantize::limitColors(double *histogram, color_type *colors,
     Gui::statusInfo(str);
   }
 
-  root = 64;
-  div_x = root;
-  div_y = root * 2;
-  div_z = root / 2;
-  
-  step_x = 256 / div_x;
-  step_y = 256 / div_y;
-  step_z = 256 / div_z;
-
-  std::vector<color_type> temp_colors(262144);
   int temp_count = 0;
 
-  for (int i = 0; i < 262144; i++)
+  if (count < colors_max)
   {
-    temp_colors[i].r = 0;
-    temp_colors[i].g = 0;
-    temp_colors[i].b = 0;
-    temp_colors[i].freq = 0;
-  }
+    root = 64;
+    div_x = root;
+    div_y = root * 2;
+    div_z = root / 2;
+  
+    step_x = 256 / div_x;
+    step_y = 256 / div_y;
+    step_z = 256 / div_z;
 
-  for (int z = 0; z <= 256 - step_z; z += step_z)
-  {
-    for (int y = 0; y <= 256 - step_y; y += step_y)
+    std::vector<color_type> temp_colors(262144);
+
+    for (int i = 0; i < 262144; i++)
     {
-      for (int x = 0; x <= 256 - step_x; x += step_x)
+      temp_colors[i].r = 0;
+      temp_colors[i].g = 0;
+      temp_colors[i].b = 0;
+      temp_colors[i].freq = 0;
+    }
+
+    for (int z = 0; z <= 256 - step_z; z += step_z)
+    {
+      for (int y = 0; y <= 256 - step_y; y += step_y)
       {
-        double rr = 0;
-        double gg = 0;
-        double bb = 0;
-        double freq = 0;
-
-        for (int k = 0; k < step_z; k++)
+        for (int x = 0; x <= 256 - step_x; x += step_x)
         {
-          const int zk = z + k;
+          double rr = 0;
+          double gg = 0;
+          double bb = 0;
+          double freq = 0;
 
-          for (int j = 0; j < step_y; j++)
+          for (int k = 0; k < step_z; k++)
           {
-            const int yj = y + j;
+            const int zk = z + k;
 
-            for (int i = 0; i < step_x; i++)
+            for (int j = 0; j < step_y; j++)
             {
-              const int xi = x + i;
+              const int yj = y + j;
 
-              int r = xi;
-              int g = yj;
-              int b = zk;
-
-              if (r < 256 && g < 256 && b < 256)
+              for (int i = 0; i < step_x; i++)
               {
-                const double d = histogram[makeRgb24(r, g, b)];
+                const int xi = x + i;
 
-                if (d > 0)
+                int r = xi;
+                int g = yj;
+                int b = zk;
+
+                if (r < 256 && g < 256 && b < 256)
                 {
-                  rr += (r * r) * d;
-                  gg += (g * g) * d;
-                  bb += (b * b) * d;
+                  const double d = histogram[makeRgb24(r, g, b)];
 
-                  freq += d;
+                  if (d > 0)
+                  {
+                    rr += (r * r) * d;
+                    gg += (g * g) * d;
+                    bb += (b * b) * d;
+
+                    freq += d;
+                  }
                 }
               }
             }
           }
-        }
 
-        if (freq > 0)
-        {
-          rr /= freq;
-          gg /= freq;
-          bb /= freq;
+          if (freq > 0)
+          {
+            rr /= freq;
+            gg /= freq;
+            bb /= freq;
 
-          rr = std::sqrt(rr);
-          gg = std::sqrt(gg);
-          bb = std::sqrt(bb);
+            rr = std::sqrt(rr);
+            gg = std::sqrt(gg);
+            bb = std::sqrt(bb);
 
-          rr = clamp(rr, 255);
-          gg = clamp(gg, 255);
-          bb = clamp(bb, 255);
+            rr = clamp(rr, 255);
+            gg = clamp(gg, 255);
+            bb = clamp(bb, 255);
 
-          makeColor(&temp_colors[temp_count], rr, gg, bb, freq);
-          temp_count++;
+            makeColor(&temp_colors[temp_count], rr, gg, bb, freq);
+            temp_count++;
+          }
         }
       }
+
+      snprintf(str, sizeof(str), "Colors = %d/%d", count, colors_max);
+      Gui::statusInfo(str);
     }
 
-    snprintf(str, sizeof(str), "Colors = %d/%d", count, colors_max);
-    Gui::statusInfo(str);
+    std::sort(temp_colors.begin(), temp_colors.end(), sort_greater_cb);
+
+    for (int i = 0; i < colors_max / 2; i++)
+    {
+      if (temp_colors[i].freq == 0)
+        continue;
+
+      colors[count].r = temp_colors[i].r;
+      colors[count].g = temp_colors[i].g;
+      colors[count].b = temp_colors[i].b;
+      colors[count].freq = temp_colors[i].freq;
+      count++;
+
+      if (count >= colors_max)
+        break;
+    }
   }
 
-  std::sort(temp_colors.begin(), temp_colors.end(), sort_greater_cb);
-
-  for (int i = 0; i < temp_count; i++)
-  {
-    if (temp_colors[i].freq == 0)
-      continue;
-
-    colors[count].r = temp_colors[i].r;
-    colors[count].g = temp_colors[i].g;
-    colors[count].b = temp_colors[i].b;
-    colors[count].freq = temp_colors[i].freq;
-    count++;
-
-    if (count >= colors_max)
-      break;
-  }
-
-  printf("count = %d\n", count);
-  printf("temp_count = %d\n", temp_count);
+  //printf("count = %d\n", count);
+  //printf("temp_count = %d\n", temp_count);
   return count;
 }
 
