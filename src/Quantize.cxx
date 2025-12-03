@@ -124,11 +124,11 @@ int Quantize::limitColors(double *histogram, color_type *colors, int pal_size)
   int count = 0;
   double step = (double)temp_count / colors_max;
 
+  if (step < 1.0)
+    step = 1.0;
+
   for (double i = 0; i < temp_count; i += step)
   {
-    if (temp_colors[i].freq == 0)
-      continue;
-
     colors[count].r = temp_colors[i].r;
     colors[count].g = temp_colors[i].g;
     colors[count].b = temp_colors[i].b;
