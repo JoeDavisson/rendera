@@ -146,7 +146,7 @@ namespace JpegQuality
     Items::dialog = new DialogWindow(256, 0, "JPEG Quality");
     Items::dialog->callback(closeCallback);
     Items::quality = new InputInt(Items::dialog, 0, y1, 96, 24, "Quality:", 0, 1, 100);
-    Items::quality->value(90);
+    Items::quality->value(95);
     Items::quality->center();
     y1 += 24 + 8;
     Items::dialog->addOkButton(&Items::ok, &y1);
