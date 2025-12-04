@@ -77,11 +77,10 @@ void Quantize::merge(color_type *c1, color_type *c2)
   const double f1 = c1->freq;
   const double f2 = c2->freq;
   const double div = f1 + f2;
-  const double mul = 1.0 / div;
 
-  c1->r = (f1 * c1->r + f2 * c2->r) * mul;
-  c1->g = (f1 * c1->g + f2 * c2->g) * mul;
-  c1->b = (f1 * c1->b + f2 * c2->b) * mul;
+  c1->r = (f1 * c1->r + f2 * c2->r) / div;
+  c1->g = (f1 * c1->g + f2 * c2->g) / div;
+  c1->b = (f1 * c1->b + f2 * c2->b) / div;
   c1->freq = div;
 }
 
