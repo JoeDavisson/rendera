@@ -24,8 +24,6 @@ described here:
 
 http://www.visgraf.impa.br/Projects/quantization/quant.html
 http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
-
-This averages the input colors down to improve efficiency.
 */
 
 #include <vector>
@@ -84,8 +82,7 @@ void Quantize::merge(color_type &c1, const color_type &c2)
   c1.freq = div;
 }
 
-//int Quantize::limitColors(double *histogram, color_type *colors, int pal_size)
-int Quantize::limitColors(const std::vector<double> &histogram,
+int Quantize::limitColors(const std::vector<float> &histogram,
                           std::vector<color_type> &colors,
                           const int pal_size)
 {
@@ -150,7 +147,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   // popularity histogram
   Gui::saveStatusInfo();
   Gui::statusInfo("Creating Color List...");
-  std::vector<double> histogram(16777216, 0);
+  std::vector<float> histogram(16777216, 0);
 
   // build histogram
   const double weight = 1.0 / (src->cw * src->ch);
@@ -203,7 +200,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     size = max;
 
   // init error matrix
-  std::vector<double> err_data(((max + 1) * max) / 2);
+  std::vector<float> err_data(((max + 1) * max) / 2);
 
   for (int j = 0; j < max; j++)
   {
@@ -224,7 +221,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   while (count > size)
   {
     int ii = 0, jj = 0;
-    double least_err = 99999;
+    float least_err = 99999;
     double *a = &(colors[0].freq);
 
     // find lowest value in error matrix
@@ -232,7 +229,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     {
       if (*a > 0)
       {
-        double *e = &err_data[(j + 1) * j / 2];
+        float *e = &err_data[(j + 1) * j / 2];
         double *b = &(colors[0].freq);
 
         for (int i = 0; i < j; i++)
