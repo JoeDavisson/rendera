@@ -51,40 +51,43 @@ bool Quantize::sort_greater_cb(const color_type &a, const color_type &b)
   return a.freq > b.freq;
 }
 
-void Quantize::makeColor(color_type *c,
+void Quantize::makeColor(color_type &c,
                          const double r, const double g, const double b,
                          const double freq)
 {
-  c->r = r;
-  c->g = g;
-  c->b = b;
-  c->freq = freq;
+  c.r = r;
+  c.g = g;
+  c.b = b;
+  c.freq = freq;
 }
 
-double Quantize::error(const color_type *c1, const color_type *c2)
+double Quantize::error(const color_type &c1, const color_type &c2)
 {
-  const double r = c1->r - c2->r;
-  const double g = c1->g - c2->g;
-  const double b = c1->b - c2->b;
-  const double f1 = c1->freq;
-  const double f2 = c2->freq;
+  const double r = c1.r - c2.r;
+  const double g = c1.g - c2.g;
+  const double b = c1.b - c2.b;
+  const double f1 = c1.freq;
+  const double f2 = c2.freq;
 
   return ((f1 * f2) / (f1 + f2)) * (r * r + g * g + b * b);
 }
 
-void Quantize::merge(color_type *c1, color_type *c2)
+void Quantize::merge(color_type &c1, const color_type &c2)
 {
-  const double f1 = c1->freq;
-  const double f2 = c2->freq;
+  const double f1 = c1.freq;
+  const double f2 = c2.freq;
   const double div = f1 + f2;
 
-  c1->r = (f1 * c1->r + f2 * c2->r) / div;
-  c1->g = (f1 * c1->g + f2 * c2->g) / div;
-  c1->b = (f1 * c1->b + f2 * c2->b) / div;
-  c1->freq = div;
+  c1.r = (f1 * c1.r + f2 * c2.r) / div;
+  c1.g = (f1 * c1.g + f2 * c2.g) / div;
+  c1.b = (f1 * c1.b + f2 * c2.b) / div;
+  c1.freq = div;
 }
 
-int Quantize::limitColors(double *histogram, color_type *colors, int pal_size)
+//int Quantize::limitColors(double *histogram, color_type *colors, int pal_size)
+int Quantize::limitColors(const std::vector<double> &histogram,
+                          std::vector<color_type> &colors,
+                          const int pal_size)
 {
   int temp_count = 0;
 
@@ -109,7 +112,7 @@ int Quantize::limitColors(double *histogram, color_type *colors, int pal_size)
 
         if (freq > 0)
         {
-          makeColor(&temp_colors[temp_count], x, y, z, freq);
+          makeColor(temp_colors[temp_count], x, y, z, freq);
           temp_count++;
         }
       }
@@ -183,18 +186,15 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 
       if (freq > 0)
       {
-        makeColor(&colors[count], rgba.r, rgba.g, rgba.b, freq);
+        makeColor(colors[count], rgba.r, rgba.g, rgba.b, freq);
         count++;
       }
     }
   }
     else
   {
-    count = limitColors(histogram.data(), &colors[0], size);
+    count = limitColors(histogram, colors, size);
   }
-
-  // quantization error matrix
-  std::vector<double> err_data(((count + 1) * count) / 2);
 
   // set max
   int max = count;
@@ -203,16 +203,18 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     size = max;
 
   // init error matrix
+  std::vector<double> err_data(((max + 1) * max) / 2);
+
   for (int j = 0; j < max; j++)
   {
     for (int i = 0; i < j; i++)
     {
-      err_data[i + (j + 1) * j / 2] = error(&colors[i], &colors[j]);
+      err_data[i + (j + 1) * j / 2] = error(colors[i], colors[j]);
     }
   }
 
   // show progress bar
-  Progress::show(count - size);
+  Progress::show(max - size);
   Gui::statusInfo("Merging...");
 
   // measure offset between array elements
@@ -222,7 +224,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   while (count > size)
   {
     int ii = 0, jj = 0;
-    double least_err = 999999999;
+    double least_err = 99999;
     double *a = &(colors[0].freq);
 
     // find lowest value in error matrix
@@ -251,7 +253,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     }
 
     // compute quantization level and replace i, delete j
-    merge(&colors[ii], &colors[jj]);
+    merge(colors[ii], colors[jj]);
     colors[jj].freq = 0;
     count--;
 
@@ -260,7 +262,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     {
       if (colors[j].freq > 0)
       {
-        err_data[ii + (j + 1) * j / 2] = error(&colors[ii], &colors[j]);
+        err_data[ii + (j + 1) * j / 2] = error(colors[ii], colors[j]);
       }
     }
 

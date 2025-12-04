@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef QUANTIZE_H
 #define QUANTIZE_H
 
+#include <vector>
+
 class Bitmap;
 class Palette;
 
@@ -39,11 +41,13 @@ private:
   };
 
   static bool sort_greater_cb(const color_type &, const color_type &);
-  static void makeColor(color_type *,
+  static void makeColor(color_type &,
                         const double, const double, const double, const double);
-  static double error(const color_type *, const color_type *);
-  static void merge(color_type *, color_type *);
-  static int limitColors(double *, color_type *, int);
+  static double error(const color_type &, const color_type &);
+  static void merge(color_type &, const color_type &);
+  static int limitColors(const std::vector<double> &,
+                         std::vector<color_type> &,
+                         const int);
 };
 
 #endif
