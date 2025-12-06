@@ -70,16 +70,17 @@ double Quantize::error(const color_type &c1, const color_type &c2)
   return ((f1 * f2) / (f1 + f2)) * (r * r + g * g + b * b);
 }
 
-void Quantize::merge(color_type &c1, const color_type &c2)
+void Quantize::merge(color_type &c1, color_type &c2)
 {
   const double f1 = c1.freq;
   const double f2 = c2.freq;
-  const double div = f1 + f2;
+  const double sum = f1 + f2;
 
-  c1.r = (f1 * c1.r + f2 * c2.r) / div;
-  c1.g = (f1 * c1.g + f2 * c2.g) / div;
-  c1.b = (f1 * c1.b + f2 * c2.b) / div;
-  c1.freq = div;
+  c1.r = (f1 * c1.r + f2 * c2.r) / sum;
+  c1.g = (f1 * c1.g + f2 * c2.g) / sum;
+  c1.b = (f1 * c1.b + f2 * c2.b) / sum;
+  c1.freq = sum;
+  c2.freq = 0;
 }
 
 int Quantize::limitColors(const std::vector<float> &histogram,
@@ -251,7 +252,6 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 
     // compute quantization level and replace i, delete j
     merge(colors[ii], colors[jj]);
-    colors[jj].freq = 0;
     count--;
 
     // recompute error matrix for new row
