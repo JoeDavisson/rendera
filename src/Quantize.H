@@ -45,7 +45,7 @@ private:
                         const double, const double, const double, const double);
   static double error(const color_type &, const color_type &);
   static void merge(color_type &, color_type &);
-  static int limitColors(const std::vector<float> &,
+  static int limitColors(const std::vector<double> &,
                          std::vector<color_type> &,
                          const int);
 };

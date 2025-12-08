@@ -83,7 +83,7 @@ void Quantize::merge(color_type &c1, color_type &c2)
   c2.freq = 0;
 }
 
-int Quantize::limitColors(const std::vector<float> &histogram,
+int Quantize::limitColors(const std::vector<double> &histogram,
                           std::vector<color_type> &colors,
                           const int pal_size)
 {
@@ -148,7 +148,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   // popularity histogram
   Gui::saveStatusInfo();
   Gui::statusInfo("Creating Color List...");
-  std::vector<float> histogram(16777216, 0);
+  std::vector<double> histogram(16777216, 0);
 
   // build histogram
   const double weight = 1.0 / (src->cw * src->ch);
@@ -201,7 +201,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     size = max;
 
   // init error matrix
-  std::vector<float> err_data(((max + 1) * max) / 2);
+  std::vector<double> err_data(((max + 1) * max) / 2);
 
   for (int j = 0; j < max; j++)
   {
@@ -222,7 +222,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   while (count > size)
   {
     int ii = 0, jj = 0;
-    float least_err = 99999;
+    double least_err = 99999;
     double *a = &(colors[0].freq);
 
     // find lowest value in error matrix
@@ -230,7 +230,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     {
       if (*a > 0)
       {
-        float *e = &err_data[(j + 1) * j / 2];
+        double *e = &err_data[(j + 1) * j / 2];
         double *b = &(colors[0].freq);
 
         for (int i = 0; i < j; i++)
