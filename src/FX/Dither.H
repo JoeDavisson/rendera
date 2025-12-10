@@ -26,7 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Dither
 {
 public:
-  static void apply(Bitmap *, int, bool, bool);
+//  static void apply(Bitmap *, int, bool, bool);
+  static void apply(Bitmap *, int, bool);
   static void close();
   static void quit();
   static void begin();

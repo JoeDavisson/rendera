@@ -27,7 +27,6 @@ namespace
     DialogWindow *dialog;
     Fl_Choice *mode;
     CheckBox *gamma;
-    CheckBox *lum_only;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -38,9 +37,7 @@ enum
   THRESHOLD,
   FLOYD,
   JARVIS,
-  STUCKI,
   ATKINSON,
-  SIERRA
 };
  
 namespace Threshold
@@ -79,18 +76,6 @@ namespace Jarvis
   const int div = 48;
 }
 
-namespace Stucki
-{
-  int matrix[3][5] =
-  {
-    { 0, 0, 0, 8, 4 },
-    { 2, 4, 8, 4, 2 },
-    { 1, 2, 4, 2, 1 }
-  };
-
-  const int div = 42;
-}
-
 namespace Atkinson
 {
   int matrix[3][5] =
@@ -103,19 +88,7 @@ namespace Atkinson
   const int div = 8;
 }
 
-namespace Sierra
-{
-  int matrix[3][5] =
-  {
-    { 0, 0, 0, 5, 3 },
-    { 2, 4, 5, 4, 2 },
-    { 0, 2, 3, 2, 0 }
-  };
-
-  const int div = 32;
-}
-
-void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
+void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma)
 {
   int (*matrix)[5] = Threshold::matrix;
   int w = 5, h = 3;
@@ -135,17 +108,9 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
       matrix = Jarvis::matrix;
       div = Jarvis::div;
       break;
-    case STUCKI:
-      matrix = Stucki::matrix;
-      div = Stucki::div;
-      break;
     case ATKINSON:
       matrix = Atkinson::matrix;
       div = Atkinson::div;
-      break;
-    case SIERRA:
-      matrix = Sierra::matrix;
-      div = Sierra::div;
       break;
     default:
       matrix = Threshold::matrix;
@@ -155,178 +120,109 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma, bool lum_only)
 
   Progress::show(bmp->h);
 
-  if (lum_only)
+  int dir = 1;
+  int x_start = 0;
+  int x_end = bmp->cr;
+
+  float c_y, c_cb, c_cr;
+
+  for (int y = bmp->ct; y <= bmp->cb; y++)
   {
-    for (int y = bmp->ct; y <= bmp->cb; y++)
+    for (int x = x_start; x != x_end + dir; x += dir)
     {
-      int *p = bmp->row[y] + bmp->cl;
+      const int c = bmp->getpixel(x, y);
+      rgba_type rgba = getRgba(c);
 
-      for (int x = bmp->cl; x <= bmp->cr; x++)
+      Blend::rgbToYcc(rgba.r, rgba.g, rgba.b, &c_y, &c_cb, &c_cr);
+      const int alpha = rgba.a;
+      const int old_y = c_y;
+//      const int old_cb = c_cb;
+//      const int old_cr = c_cr;
+
+      const int pal_index = Project::palette->lookup(c);
+      const int pal_color = Project::palette->data[pal_index];
+
+      rgba = getRgba(pal_color);
+      Blend::rgbToYcc(rgba.r, rgba.g, rgba.b, &c_y, &c_cb, &c_cr);
+      bmp->setpixel(x, y, makeRgba(rgba.r, rgba.g, rgba.b, alpha));
+
+      const float new_y = c_y;
+//      const float new_cb = c_cb;
+//      const float new_cr = c_cr;
+
+      float err_y;
+
+      if (fix_gamma)
       {
-        const int alpha = geta(*p);
-        const int old_l = getl(*p);
-        const int pal_index = Project::palette->lookup(Blend::keepLum(*p, old_l));
-        const int cp = Project::palette->data[pal_index];
-
-        rgba_type rgba = getRgba(cp);
-        *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
-
-        const int new_l = getl(*p);
-        int el;
-
-        if (fix_gamma)
-        {
-          el = Gamma::fix(old_l) - Gamma::fix(new_l);
-
-          if (el < -16383) el = -16383;
-          if (el > 16383) el = 16383;
-        }
-          else
-        {
-          el = old_l - new_l;
-
-          if (el < -127) el = -127;
-          if (el > 127) el = 127;
-        }
-
-        for (int j = 0; j < h; j++)
-        {
-          for (int i = 0; i < w; i++)
-          {
-            if (matrix[j][i] > 0)
-            {
-              int c = bmp->getpixel(x - w / 2 + i, y + j);
-              int l = getl(c);
-
-              if (fix_gamma)
-                l = Gamma::fix(l); 
-
-              l += (el * matrix[j][i]) / div;
-
-              if (fix_gamma)
-                l = Gamma::unfix(clamp(l, 65535));
-              else
-                l = clamp(l, 255);
-
-              rgba = getRgba(Blend::keepLum(c, l));
-
-              bmp->setpixelSolid(x - w / 2 + i, y + j,
-                               makeRgba(rgba.r, rgba.g, rgba.b, rgba.a), 0);
-            }  
-          }
-        }
-
-        p++;
+        err_y = Gamma::fix(old_y) - Gamma::fix(new_y);
+      }
+        else
+      {
+        err_y = old_y - new_y;
       }
 
-      if (Progress::update(y) < 0)
-        return;
-    }
-  }
-    else
-  {
-    for (int y = bmp->ct; y <= bmp->cb; y++)
-    {
-      int *p = bmp->row[y] + bmp->cl;
+//      float err_cb = old_cb - new_cb;
+//      float err_cr = old_cr - new_cr;
 
-      for (int x = bmp->cl; x <= bmp->cr; x++)
+      for (int j = 0; j < h; j++)
       {
-        rgba_type rgba = getRgba(*p);
-        const int alpha = rgba.a;
-        const int old_r = rgba.r;
-        const int old_g = rgba.g;
-        const int old_b = rgba.b;
-
-        const int pal_index = Project::palette->lookup(*p);
-        const int c = Project::palette->data[pal_index];
-
-        rgba = getRgba(c);
-        *p = makeRgba(rgba.r, rgba.g, rgba.b, alpha);
-
-        const int new_r = rgba.r;
-        const int new_g = rgba.g;
-        const int new_b = rgba.b;
-        int er, eg, eb;
-
-        if (fix_gamma)
+        for (int i = 0; i < w; i++)
         {
-          er = Gamma::fix(old_r) - Gamma::fix(new_r);
-          eg = Gamma::fix(old_g) - Gamma::fix(new_g);
-          eb = Gamma::fix(old_b) - Gamma::fix(new_b);
-
-          if (er < -16383) er = -16383;
-          if (er > 16383) er = 16383;
-          if (eg < -16383) eg = -16383;
-          if (eg > 16383) eg = 16383;
-          if (eb < -16383) eb = -16383;
-          if (eb > 16383) eb = 16383;
-        }
-          else
-        {
-          er = old_r - new_r;
-          eg = old_g - new_g;
-          eb = old_b - new_b;
-
-          if (er < -127) er = -127;
-          if (er > 127) er = 127;
-          if (eg < -127) eg = -127;
-          if (eg > 127) eg = 127;
-          if (eb < -127) eb = -127;
-          if (eb > 127) eb = 127;
-        }
-
-        for (int j = 0; j < h; j++)
-        {
-          for (int i = 0; i < w; i++)
+          if (matrix[j][i] > 0)
           {
-            if (matrix[j][i] > 0)
+            if (dir == 1)
             {
               rgba = getRgba(bmp->getpixel(x - w / 2 + i, y + j));
-              int r, g, b;
+            }
+              else
+            {
+              rgba = getRgba(bmp->getpixel(x + w / 2 - i, y + j));
+            }
 
-              if (fix_gamma)
-              {
-                r = Gamma::fix(rgba.r); 
-                g = Gamma::fix(rgba.g); 
-                b = Gamma::fix(rgba.b);
-              }
-                else
-              {
-                r = rgba.r; 
-                g = rgba.g; 
-                b = rgba.b; 
-              }
+            int r = rgba.r;
+            int g = rgba.g;
+            int b = rgba.b;
 
-              r += (er * matrix[j][i]) / div;
-              g += (eg * matrix[j][i]) / div;
-              b += (eb * matrix[j][i]) / div;
+            Blend::rgbToYcc(r, g, b, &c_y, &c_cb, &c_cr);
 
-              if (fix_gamma)
-              {
-                r = Gamma::unfix(clamp(r, 65535));
-                g = Gamma::unfix(clamp(g, 65535));
-                b = Gamma::unfix(clamp(b, 65535));
-              }
-                else
-              {
-                r = clamp(r, 255);
-                g = clamp(g, 255);
-                b = clamp(b, 255);
-              }
+            if (fix_gamma)
+            {
+              c_y = Gamma::fix(c_y);
+            }
 
+            c_y += (err_y * matrix[j][i]) / div;
+
+            if (fix_gamma)
+            {
+              c_y = Gamma::unfix(clamp(c_y, 65535));
+            }
+              else
+            {
+              c_y = clamp(c_y, 255);
+            }
+
+            Blend::yccToRgb(c_y, c_cb, c_cr, &r, &g, &b);
+
+            if (dir == 1)
+            {
               bmp->setpixelSolid(x - w / 2 + i, y + j,
-                               makeRgba(r, g, b, rgba.a), 0);
-            }  
-          }
-
+                                 makeRgba(r, g, b, rgba.a), 0);
+            }
+              else
+            {
+              bmp->setpixelSolid(x + w / 2 - i, y + j,
+                                 makeRgba(r, g, b, rgba.a), 0);
+            }
+          }  
         }
-
-        p++;
       }
-
-      if (Progress::update(y) < 0)
-        return;
     }
+
+    dir = -dir;
+    std::swap(x_start, x_end);
+
+    if (Progress::update(y) < 0)
+      return;
   }
 
   Progress::hide();
@@ -339,9 +235,8 @@ void Dither::close()
 
   const int mode = Items::mode->value();
   const bool fix_gamma = Items::gamma->value();
-  const bool lum_only = Items::lum_only->value();
 
-  apply(Project::bmp, mode, fix_gamma, lum_only);
+  apply(Project::bmp, mode, fix_gamma);
 }
 
 void Dither::quit()
@@ -370,9 +265,7 @@ void Dither::init()
   Items::mode->add("No Dithering");
   Items::mode->add("Floyd-Steinberg");
   Items::mode->add("Jarvis-Judice-Ninke");
-  Items::mode->add("Stucki");
   Items::mode->add("Atkinson");
-  Items::mode->add("Sierra");
   Items::mode->value(0);
   Items::mode->measure_label(ww, hh);
   Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
@@ -380,10 +273,6 @@ void Dither::init()
 
   Items::gamma = new CheckBox(Items::dialog, 0, y1, 16, 16, "Gamma Correction", 0);
   Items::gamma->center();
-  y1 += 16 + 16;
-
-  Items::lum_only = new CheckBox(Items::dialog, 0, y1, 16, 16, "Luminosity Based", 0);
-  Items::lum_only->center();
   y1 += 16 + 16;
 
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
