@@ -80,17 +80,15 @@ void Quantize::merge(color_type &c1, color_type &c2)
   c1.g = (f1 * c1.g + f2 * c2.g) / sum;
   c1.b = (f1 * c1.b + f2 * c2.b) / sum;
   c1.freq = sum;
-  c2.freq = 0;
 }
 
 int Quantize::limitColors(const std::vector<double> &histogram,
-                          std::vector<color_type> &colors,
-                          const int pal_size)
+                          std::vector<color_type> &colors)
 {
   int temp_count = 0;
-
   std::vector<color_type> temp_colors(16777216);
 
+  // build color list
   for (int i = 0; i < 16777216; i++)
   {
     temp_colors[i].r = 0;
@@ -99,7 +97,6 @@ int Quantize::limitColors(const std::vector<double> &histogram,
     temp_colors[i].freq = 0;
   }
 
-  // build color list
   for (int z = 0; z < 256; z++)
   {
     for (int y = 0; y < 256; y++)
@@ -158,7 +155,8 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   {
     for (int i = src->cl; i <= src->cr; i++)
     {
-      rgba_type rgba = getRgba(src->getpixel(i, j));
+      const int c = src->getpixel(i, j);
+      rgba_type rgba = getRgba(c);
 
       double freq = histogram[makeRgb24(rgba.r, rgba.g, rgba.b)];
 
@@ -191,7 +189,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   }
     else
   {
-    count = limitColors(histogram, colors, size);
+    count = limitColors(histogram, colors);
   }
 
   // set max
@@ -252,6 +250,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 
     // compute quantization level and replace i, delete j
     merge(colors[ii], colors[jj]);
+    colors[jj].freq = 0;
     count--;
 
     // recompute error matrix for new row
