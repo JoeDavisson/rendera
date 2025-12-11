@@ -124,8 +124,6 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma)
   int x_start = 0;
   int x_end = bmp->cr;
 
-  float c_y, c_cb, c_cr;
-
   for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     for (int x = x_start; x != x_end + dir; x += dir)
@@ -142,7 +140,6 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma)
       int pal_color = Project::palette->data[pal_index];
 
       rgba = getRgba(pal_color);
-      Blend::rgbToYcc(rgba.r, rgba.g, rgba.b, &c_y, &c_cb, &c_cr);
       bmp->setpixel(x, y, makeRgba(rgba.r, rgba.g, rgba.b, alpha));
 
       int new_r = rgba.r;
@@ -206,6 +203,7 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma)
               g = clamp(g, 255);
               b = clamp(b, 255);
             }
+
 
             c = makeRgba(r, g, b, rgba.a);
 
