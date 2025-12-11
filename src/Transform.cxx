@@ -177,7 +177,9 @@ namespace Scale
 
   void do_blur(Bitmap *bmp, float size)
   {
-    GaussianBlur::apply(bmp, size / 2, 0, 0);
+    float f = size - (int)size;
+    size -= 1.0;
+    GaussianBlur::apply(bmp, size, f, 0);
   }
 
   float cubic(const float f[4], const float t)
