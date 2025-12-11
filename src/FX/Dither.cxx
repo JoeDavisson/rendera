@@ -130,39 +130,39 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma)
   {
     for (int x = x_start; x != x_end + dir; x += dir)
     {
-      const int c = bmp->getpixel(x, y);
+      int c = bmp->getpixel(x, y);
       rgba_type rgba = getRgba(c);
 
-      Blend::rgbToYcc(rgba.r, rgba.g, rgba.b, &c_y, &c_cb, &c_cr);
-      const int alpha = rgba.a;
-      const int old_y = c_y;
-//      const int old_cb = c_cb;
-//      const int old_cr = c_cr;
+      int old_r = rgba.r;
+      int old_g = rgba.g;
+      int old_b = rgba.b;
+      int alpha = rgba.a;
 
-      const int pal_index = Project::palette->lookup(c);
-      const int pal_color = Project::palette->data[pal_index];
+      int pal_index = Project::palette->lookup(c);
+      int pal_color = Project::palette->data[pal_index];
 
       rgba = getRgba(pal_color);
       Blend::rgbToYcc(rgba.r, rgba.g, rgba.b, &c_y, &c_cb, &c_cr);
       bmp->setpixel(x, y, makeRgba(rgba.r, rgba.g, rgba.b, alpha));
 
-      const float new_y = c_y;
-//      const float new_cb = c_cb;
-//      const float new_cr = c_cr;
+      int new_r = rgba.r;
+      int new_g = rgba.g;
+      int new_b = rgba.b;
 
-      float err_y;
+      float er, eg, eb;
 
       if (fix_gamma)
       {
-        err_y = Gamma::fix(old_y) - Gamma::fix(new_y);
+        er = Gamma::fix(old_r) - Gamma::fix(new_r);
+        eg = Gamma::fix(old_g) - Gamma::fix(new_g);
+        eb = Gamma::fix(old_b) - Gamma::fix(new_b);
       }
         else
       {
-        err_y = old_y - new_y;
+        er = old_r - new_r;
+        eg = old_g - new_g;
+        eb = old_b - new_b;
       }
-
-//      float err_cb = old_cb - new_cb;
-//      float err_cr = old_cr - new_cr;
 
       for (int j = 0; j < h; j++)
       {
@@ -183,35 +183,39 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma)
             int g = rgba.g;
             int b = rgba.b;
 
-            Blend::rgbToYcc(r, g, b, &c_y, &c_cb, &c_cr);
-
             if (fix_gamma)
             {
-              c_y = Gamma::fix(c_y);
+              r = Gamma::fix(r);
+              g = Gamma::fix(g);
+              b = Gamma::fix(b);
             }
 
-            c_y += (err_y * matrix[j][i]) / div;
+            r += (float)(er * matrix[j][i]) / div;
+            g += (float)(eg * matrix[j][i]) / div;
+            b += (float)(eb * matrix[j][i]) / div;
 
             if (fix_gamma)
             {
-              c_y = Gamma::unfix(clamp(c_y, 65535));
+              r = Gamma::unfix(clamp(r, 65535));
+              g = Gamma::unfix(clamp(g, 65535));
+              b = Gamma::unfix(clamp(b, 65535));
             }
               else
             {
-              c_y = clamp(c_y, 255);
+              r = clamp(r, 255);
+              g = clamp(g, 255);
+              b = clamp(b, 255);
             }
 
-            Blend::yccToRgb(c_y, c_cb, c_cr, &r, &g, &b);
+            c = makeRgba(r, g, b, rgba.a);
 
             if (dir == 1)
             {
-              bmp->setpixelSolid(x - w / 2 + i, y + j,
-                                 makeRgba(r, g, b, rgba.a), 0);
+              bmp->setpixelSolid(x - w / 2 + i, y + j, c, 0);
             }
               else
             {
-              bmp->setpixelSolid(x + w / 2 - i, y + j,
-                                 makeRgba(r, g, b, rgba.a), 0);
+              bmp->setpixelSolid(x + w / 2 - i, y + j, c, 0);
             }
           }  
         }
