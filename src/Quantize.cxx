@@ -214,7 +214,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   Gui::statusInfo("Merging...");
 
   // measure offset between array elements
-  const int step = &(colors[1].freq) - &(colors[0].freq);
+  const int freq_step = &(colors[1].freq) - &(colors[0].freq);
 
   // find minimum quantization error in matrix
   while (count > size)
@@ -241,11 +241,11 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
           }
 
           e++;
-          b += step;
+          b += freq_step;
         }
       }
 
-      a += step;
+      a += freq_step;
     }
 
     // compute quantization level and replace i, delete j
@@ -253,7 +253,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
     colors[jj].freq = 0;
     count--;
 
-    // recompute error matrix for new row
+    // recompute error matrix
     for (int j = ii; j < max; j++)
     {
       if (colors[j].freq > 0)
