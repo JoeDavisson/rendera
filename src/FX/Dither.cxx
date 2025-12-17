@@ -94,6 +94,9 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma)
   int w = 5, h = 3;
   int div = 1;
 
+  std::vector<err_type> err_row(bmp->w);
+  std::vector<std::vector<err_type>> err(h, err_row);
+
   switch (mode)
   {
     case THRESHOLD:
@@ -122,19 +125,33 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma)
 
   int dir = 1;
   int x_start = 0;
-  int x_end = bmp->cr;
+  int x_end = bmp->w - 1;
 
-  for (int y = bmp->ct; y <= bmp->cb; y++)
+  for (int y = 0; y < 3; y++)
+  {
+    for (int x = x_start; x != x_end + dir; x += dir)
+    {
+      rgba_type rgba = getRgba(bmp->getpixel(x, y));
+
+      err[y][x].r = rgba.r;
+      err[y][x].g = rgba.g;
+      err[y][x].b = rgba.b;
+    }
+  }
+
+  for (int y = 0; y < bmp->h; y++)
   {
     for (int x = x_start; x != x_end + dir; x += dir)
     {
       int c = bmp->getpixel(x, y);
       rgba_type rgba = getRgba(c);
 
-      int old_r = rgba.r;
-      int old_g = rgba.g;
-      int old_b = rgba.b;
+      int old_r = clamp(err[0][x].r, 255);
+      int old_g = clamp(err[0][x].g, 255);
+      int old_b = clamp(err[0][x].b, 255);
       int alpha = rgba.a;
+
+      c = makeRgb(old_r, old_g, old_b);
 
       int pal_index = Project::palette->lookup(c);
       int pal_color = Project::palette->data[pal_index];
@@ -142,24 +159,19 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma)
       rgba = getRgba(pal_color);
       bmp->setpixel(x, y, makeRgba(rgba.r, rgba.g, rgba.b, alpha));
 
+      err[0][x].r = rgba.r;
+      err[0][x].g = rgba.g;
+      err[0][x].b = rgba.b;
+
       int new_r = rgba.r;
       int new_g = rgba.g;
       int new_b = rgba.b;
 
       float er, eg, eb;
 
-      if (fix_gamma)
-      {
-        er = Gamma::fix(old_r) - Gamma::fix(new_r);
-        eg = Gamma::fix(old_g) - Gamma::fix(new_g);
-        eb = Gamma::fix(old_b) - Gamma::fix(new_b);
-      }
-        else
-      {
-        er = old_r - new_r;
-        eg = old_g - new_g;
-        eb = old_b - new_b;
-      }
+      er = old_r - new_r;
+      eg = old_g - new_g;
+      eb = old_b - new_b;
 
       for (int j = 0; j < h; j++)
       {
@@ -167,57 +179,53 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma)
         {
           if (matrix[j][i] > 0)
           {
-            if (dir == 1)
-            {
-              rgba = getRgba(bmp->getpixel(x - w / 2 + i, y + j));
-            }
-              else
-            {
-              rgba = getRgba(bmp->getpixel(x + w / 2 - i, y + j));
-            }
-
-            int r = rgba.r;
-            int g = rgba.g;
-            int b = rgba.b;
-
-            if (fix_gamma)
-            {
-              r = Gamma::fix(r);
-              g = Gamma::fix(g);
-              b = Gamma::fix(b);
-            }
-
-            r += (float)(er * matrix[j][i]) / div;
-            g += (float)(eg * matrix[j][i]) / div;
-            b += (float)(eb * matrix[j][i]) / div;
-
-            if (fix_gamma)
-            {
-              r = Gamma::unfix(clamp(r, 65535));
-              g = Gamma::unfix(clamp(g, 65535));
-              b = Gamma::unfix(clamp(b, 65535));
-            }
-              else
-            {
-              r = clamp(r, 255);
-              g = clamp(g, 255);
-              b = clamp(b, 255);
-            }
-
-
-            c = makeRgba(r, g, b, rgba.a);
+            int x1;
 
             if (dir == 1)
-            {
-              bmp->setpixelSolid(x - w / 2 + i, y + j, c, 0);
-            }
-              else
-            {
-              bmp->setpixelSolid(x + w / 2 - i, y + j, c, 0);
-            }
+              x1 = x - w / 2 + i;
+            else
+              x1 = x + w / 2 - i;
+            
+            int y1 = y + j;
+
+            if (x1 < 0 || x1 >= bmp->w || y1 < 0 || y1 >= bmp->h)
+              continue;
+
+            float r = err[j][x1].r;
+            float g = err[j][x1].g;
+            float b = err[j][x1].b;
+
+            r += er * ((float)matrix[j][i] / div);
+            g += eg * ((float)matrix[j][i] / div);
+            b += eb * ((float)matrix[j][i] / div);
+
+            r = clamp(r, 255);
+            g = clamp(g, 255);
+            b = clamp(b, 255);
+
+            err[j][x1].r = r;
+            err[j][x1].g = g;
+            err[j][x1].b = b;
           }  
         }
       }
+    }
+
+    for (int x = x_start; x != x_end + dir; x += dir)
+    {
+      err[0][x].r = err[1][x].r;
+      err[0][x].g = err[1][x].g;
+      err[0][x].b = err[1][x].b;
+
+      err[1][x].r = err[2][x].r;
+      err[1][x].g = err[2][x].g;
+      err[1][x].b = err[2][x].b;
+
+      rgba_type rgba = getRgba(bmp->getpixel(x, y + 3));
+
+      err[2][x].r = rgba.r;
+      err[2][x].g = rgba.g;
+      err[2][x].b = rgba.b;
     }
 
     dir = -dir;

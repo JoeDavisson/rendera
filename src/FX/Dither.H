@@ -36,6 +36,11 @@ public:
 private:
   Dither() { }
   ~Dither() { }
+
+  struct err_type
+  {
+    float r, g, b;
+  };
 };
 
 #endif
