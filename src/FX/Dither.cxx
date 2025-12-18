@@ -26,7 +26,7 @@ namespace
   {
     DialogWindow *dialog;
     Fl_Choice *mode;
-    CheckBox *gamma;
+    InputFloat *gamma;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -88,7 +88,7 @@ namespace Atkinson
   const int div = 8;
 }
 
-void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma)
+void Dither::apply(Bitmap *bmp, int mode, float gamma)
 {
   int (*matrix)[5] = Threshold::matrix;
   int w = 5, h = 3;
@@ -195,9 +195,9 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma)
             float g = err[j][x1].g;
             float b = err[j][x1].b;
 
-            r += er * ((float)matrix[j][i] / div);
-            g += eg * ((float)matrix[j][i] / div);
-            b += eb * ((float)matrix[j][i] / div);
+            r += (er * std::pow(matrix[j][i], gamma)) / std::pow(div, gamma);
+            g += (eg * std::pow(matrix[j][i], gamma)) / std::pow(div, gamma);
+            b += (eb * std::pow(matrix[j][i], gamma)) / std::pow(div, gamma);
 
             r = clamp(r, 255);
             g = clamp(g, 255);
@@ -228,8 +228,9 @@ void Dither::apply(Bitmap *bmp, int mode, bool fix_gamma)
       err[2][x].b = rgba.b;
     }
 
-    dir = -dir;
-    std::swap(x_start, x_end);
+    // uncomment this for serpentine scan
+    // dir = -dir;
+    // std::swap(x_start, x_end);
 
     if (Progress::update(y) < 0)
       return;
@@ -244,9 +245,9 @@ void Dither::close()
   Project::undo->push();
 
   const int mode = Items::mode->value();
-  const bool fix_gamma = Items::gamma->value();
+  const float gamma = Items::gamma->value();
 
-  apply(Project::bmp, mode, fix_gamma);
+  apply(Project::bmp, mode, gamma);
 }
 
 void Dither::quit()
@@ -281,8 +282,11 @@ void Dither::init()
   Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
   y1 += 32 + 16;
 
-  Items::gamma = new CheckBox(Items::dialog, 0, y1, 16, 16, "Gamma Correction", 0);
+  Items::gamma = new InputFloat(Items::dialog, 16, y1, 128, 32,
+                                "Gamma (1.0-3.0)", 0, 1.0, 3.0); 
+  Items::gamma->value(1.0);
   Items::gamma->center();
+
   y1 += 16 + 16;
 
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
