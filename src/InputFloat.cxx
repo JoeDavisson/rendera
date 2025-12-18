@@ -48,9 +48,9 @@ namespace
       else
     {
       if (w == &i->dec)
-        val -= 1;
+        val -= 0.5;
       else if (w == &i->inc)
-        val += 1;
+        val += 0.5;
     }
 
     if (val < i->min)
