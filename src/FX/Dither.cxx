@@ -26,9 +26,28 @@ namespace
   {
     DialogWindow *dialog;
     Fl_Choice *mode;
-    InputFloat *gamma;
     Fl_Button *ok;
     Fl_Button *cancel;
+  }
+
+  float toLinear(const float val)
+  {
+    return std::pow(val / 255.0, 2.2);
+  }
+
+  float toRGB(const float val)
+  {
+    return std::pow(val, 1.0 / 2.2) * 255.0;
+  }
+
+  float range(const float value, const float floor, const float ceiling)
+  {
+    if(value < floor)
+      return floor;
+    else if(value > ceiling)
+      return ceiling;
+    else
+      return value;
   }
 }
 
@@ -36,8 +55,7 @@ enum
 {
   THRESHOLD,
   FLOYD,
-  JARVIS,
-  ATKINSON,
+  ATKINSON
 };
  
 namespace Threshold
@@ -64,18 +82,6 @@ namespace Floyd
   const int div = 16;
 }
 
-namespace Jarvis
-{
-  int matrix[3][5] =
-  {
-    { 0, 0, 0, 7, 5 },
-    { 3, 5, 7, 5, 3 },
-    { 1, 3, 5, 3, 1 }
-  };
-
-  const int div = 48;
-}
-
 namespace Atkinson
 {
   int matrix[3][5] =
@@ -88,7 +94,7 @@ namespace Atkinson
   const int div = 8;
 }
 
-void Dither::apply(Bitmap *bmp, int mode, float gamma)
+void Dither::apply(Bitmap *bmp, const int mode)
 {
   int (*matrix)[5] = Threshold::matrix;
   int w = 5, h = 3;
@@ -106,10 +112,6 @@ void Dither::apply(Bitmap *bmp, int mode, float gamma)
     case FLOYD:
       matrix = Floyd::matrix;
       div = Floyd::div;
-      break;
-    case JARVIS:
-      matrix = Jarvis::matrix;
-      div = Jarvis::div;
       break;
     case ATKINSON:
       matrix = Atkinson::matrix;
@@ -133,9 +135,9 @@ void Dither::apply(Bitmap *bmp, int mode, float gamma)
     {
       rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
-      err[y][x].r = rgba.r;
-      err[y][x].g = rgba.g;
-      err[y][x].b = rgba.b;
+      err[y][x].r = toLinear(rgba.r);
+      err[y][x].g = toLinear(rgba.g);
+      err[y][x].b = toLinear(rgba.b);
     }
   }
 
@@ -146,12 +148,12 @@ void Dither::apply(Bitmap *bmp, int mode, float gamma)
       int c = bmp->getpixel(x, y);
       rgba_type rgba = getRgba(c);
 
-      int old_r = clamp(err[0][x].r, 255);
-      int old_g = clamp(err[0][x].g, 255);
-      int old_b = clamp(err[0][x].b, 255);
+      float old_r = range(err[0][x].r, 0.0, 1.0);
+      float old_g = range(err[0][x].g, 0.0, 1.0);
+      float old_b = range(err[0][x].b, 0.0, 1.0);
       int alpha = rgba.a;
 
-      c = makeRgb(old_r, old_g, old_b);
+      c = makeRgb(toRGB(old_r), toRGB(old_g), toRGB(old_b));
 
       int pal_index = Project::palette->lookup(c);
       int pal_color = Project::palette->data[pal_index];
@@ -159,13 +161,9 @@ void Dither::apply(Bitmap *bmp, int mode, float gamma)
       rgba = getRgba(pal_color);
       bmp->setpixel(x, y, makeRgba(rgba.r, rgba.g, rgba.b, alpha));
 
-      err[0][x].r = rgba.r;
-      err[0][x].g = rgba.g;
-      err[0][x].b = rgba.b;
-
-      int new_r = rgba.r;
-      int new_g = rgba.g;
-      int new_b = rgba.b;
+      float new_r = toLinear(rgba.r);
+      float new_g = toLinear(rgba.g);
+      float new_b = toLinear(rgba.b);
 
       float er, eg, eb;
 
@@ -195,13 +193,9 @@ void Dither::apply(Bitmap *bmp, int mode, float gamma)
             float g = err[j][x1].g;
             float b = err[j][x1].b;
 
-            r += (er * std::pow(matrix[j][i], gamma)) / std::pow(div, gamma);
-            g += (eg * std::pow(matrix[j][i], gamma)) / std::pow(div, gamma);
-            b += (eb * std::pow(matrix[j][i], gamma)) / std::pow(div, gamma);
-
-            r = clamp(r, 255);
-            g = clamp(g, 255);
-            b = clamp(b, 255);
+            r += (er * std::pow(matrix[j][i], 1.05)) / std::pow(div, 1.05);
+            g += (eg * std::pow(matrix[j][i], 1.05)) / std::pow(div, 1.05);
+            b += (eb * std::pow(matrix[j][i], 1.05)) / std::pow(div, 1.05);
 
             err[j][x1].r = r;
             err[j][x1].g = g;
@@ -223,14 +217,13 @@ void Dither::apply(Bitmap *bmp, int mode, float gamma)
 
       rgba_type rgba = getRgba(bmp->getpixel(x, y + 3));
 
-      err[2][x].r = rgba.r;
-      err[2][x].g = rgba.g;
-      err[2][x].b = rgba.b;
+      err[2][x].r = toLinear(rgba.r);
+      err[2][x].g = toLinear(rgba.g);
+      err[2][x].b = toLinear(rgba.b);
     }
 
-    // uncomment this for serpentine scan
-    // dir = -dir;
-    // std::swap(x_start, x_end);
+    dir = -dir;
+    std::swap(x_start, x_end);
 
     if (Progress::update(y) < 0)
       return;
@@ -245,9 +238,8 @@ void Dither::close()
   Project::undo->push();
 
   const int mode = Items::mode->value();
-  const float gamma = Items::gamma->value();
 
-  apply(Project::bmp, mode, gamma);
+  apply(Project::bmp, mode);
 }
 
 void Dither::quit()
@@ -275,19 +267,13 @@ void Dither::init()
   Items::mode->labelsize(16);
   Items::mode->add("No Dithering");
   Items::mode->add("Floyd-Steinberg");
-  Items::mode->add("Jarvis-Judice-Ninke");
   Items::mode->add("Atkinson");
   Items::mode->value(0);
   Items::mode->measure_label(ww, hh);
-  Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
+  Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2
+                      - (Items::mode->w() + ww) / 2 + ww,
+                      Items::mode->y(), Items::mode->w(), Items::mode->h());
   y1 += 32 + 16;
-
-  Items::gamma = new InputFloat(Items::dialog, 16, y1, 128, 32,
-                                "Gamma (1.0-3.0)", 0, 1.0, 3.0); 
-  Items::gamma->value(1.0);
-  Items::gamma->center();
-
-  y1 += 16 + 16;
 
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
