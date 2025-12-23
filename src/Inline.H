@@ -192,16 +192,6 @@ inline int clamp(const int value, const int ceiling)
     return value;
 }
 
-inline int range(const int value, const int floor, const int ceiling)
-{
-  if(value < floor)
-    return floor;
-  else if(value > ceiling)
-    return ceiling;
-  else
-    return value;
-}
-
 // pseudo-random number
 inline int rnd()
 {
