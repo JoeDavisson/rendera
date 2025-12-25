@@ -26,6 +26,7 @@ namespace
   {
     DialogWindow *dialog;
     Fl_Choice *mode;
+    InputInt *limit;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -94,11 +95,12 @@ namespace Atkinson
   const int div = 8;
 }
 
-void Dither::apply(Bitmap *bmp, const int mode)
+void Dither::apply(Bitmap *bmp, const int mode, const int limit)
 {
   int (*matrix)[5] = Threshold::matrix;
   int w = 5, h = 3;
   int div = 1;
+  const float limit_power = 1.0 + (float)(limit + 0) / 10;
 
   std::vector<err_type> err_row(bmp->w);
   std::vector<std::vector<err_type>> err(h, err_row);
@@ -193,9 +195,12 @@ void Dither::apply(Bitmap *bmp, const int mode)
             float g = err[j][x1].g;
             float b = err[j][x1].b;
 
-            r += (er * std::pow(matrix[j][i], 1.05)) / std::pow(div, 1.05);
-            g += (eg * std::pow(matrix[j][i], 1.05)) / std::pow(div, 1.05);
-            b += (eb * std::pow(matrix[j][i], 1.05)) / std::pow(div, 1.05);
+            const float mul_err = std::pow(matrix[j][i], limit_power);
+            const float div_err = std::pow(div, limit_power);
+
+            r += (er * mul_err) / div_err;
+            g += (eg * mul_err) / div_err;
+            b += (eb * mul_err) / div_err;
 
             err[j][x1].r = r;
             err[j][x1].g = g;
@@ -238,8 +243,9 @@ void Dither::close()
   Project::undo->push();
 
   const int mode = Items::mode->value();
+  const int limit = Items::limit->value();
 
-  apply(Project::bmp, mode);
+  apply(Project::bmp, mode, limit);
 }
 
 void Dither::quit()
@@ -273,6 +279,13 @@ void Dither::init()
   Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2
                       - (Items::mode->w() + ww) / 2 + ww,
                       Items::mode->y(), Items::mode->w(), Items::mode->h());
+  y1 += 32 + 16;
+
+  Items::limit = new InputInt(Items::dialog, 0, y1, 96, 32,
+                              "Limit (0 - 9)", 0, 0, 9);
+  Items::limit->value(0);
+  Items::limit->center();
+
   y1 += 32 + 16;
 
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
