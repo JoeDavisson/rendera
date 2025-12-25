@@ -233,7 +233,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
 
         for (int i = 0; i < j; i++)
         {
-          if (*b > 0 && *e < least_err)
+          if (*e < least_err && *b > 0)
           {
             least_err = *e;
             ii = i;
