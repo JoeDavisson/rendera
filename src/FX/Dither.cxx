@@ -100,7 +100,7 @@ void Dither::apply(Bitmap *bmp, const int mode, const int limit)
   int (*matrix)[5] = Threshold::matrix;
   int w = 5, h = 3;
   int div = 1;
-  const float limit_power = 1.0 + (float)(limit + 0) / 10;
+  const float limit_power = 1.0 + (float)limit / 10;
 
   std::vector<err_type> err_row(bmp->w);
   std::vector<std::vector<err_type>> err(h, err_row);
