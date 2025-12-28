@@ -268,7 +268,6 @@ void Dither::init()
   Items::dialog = new DialogWindow(400, 0, "Apply Colors");
 
   Items::mode = new Fl_Choice(0, y1, 192, 32, "Dither:");
-  Items::mode->tooltip("Dither Mode");
   Items::mode->textsize(16);
   Items::mode->labelsize(16);
   Items::mode->add("No Dithering");
