@@ -376,6 +376,7 @@ namespace MakePalette
   {
     DialogWindow *dialog;
     InputInt *colors;
+    Fl_Choice *samples;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
@@ -389,7 +390,11 @@ namespace MakePalette
   void close()
   {
     Items::dialog->hide();
-    Quantize::pca(Project::bmp, Project::palette, Items::colors->value());
+
+    const int samples = (Items::samples->value() + 1) * 1000;
+
+    Quantize::pca(Project::bmp, Project::palette,
+                  Items::colors->value(), samples);
     Gui::colors->paletteDraw();
     Project::palette->fillTable();
   }
@@ -402,11 +407,28 @@ namespace MakePalette
   void init()
   {
     int y1 = 16;
+    int ww = 0;
+    int hh = 0;
 
     Items::dialog = new DialogWindow(400, 0, "Create Palette");
 
     Items::colors = new InputInt(Items::dialog, 0, y1, 128, 32, "Colors:", 0, 1, 256);
     Items::colors->center();
+    y1 += 32 + 16;
+
+    Items::samples = new Fl_Choice(0, y1, 128, 32, "Sampling Level:");
+    Items::samples->textsize(16);
+    Items::samples->labelsize(16);
+    Items::samples->add("1000");
+    Items::samples->add("2000");
+    Items::samples->add("3000");
+    Items::samples->value(1);
+    Items::samples->measure_label(ww, hh);
+    Items::samples->resize(Items::dialog->x() + Items::dialog->w() / 2
+                           - (Items::samples->w() + ww) / 2 + ww,
+                           Items::samples->y(),
+                           Items::samples->w(),
+                           Items::samples->h());
     y1 += 32 + 16;
 
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
