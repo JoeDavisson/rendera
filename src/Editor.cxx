@@ -631,6 +631,7 @@ void Editor::pop()
   undo_current++;
   undo_stack[undo_current]->copy(Project::palette);
 
+  Project::palette->fillTable();
   Gui::colors->paletteDraw();
   Items::palette->do_callback();
 }
@@ -670,6 +671,7 @@ void Editor::popRedo()
   redo_current++;
   redo_stack[redo_current]->copy(Project::palette);
 
+  Project::palette->fillTable();
   Gui::colors->paletteDraw();
   Items::palette->do_callback();
 }

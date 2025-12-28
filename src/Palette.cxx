@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Bitmap.H"
 #include "Blend.H"
+#include "Editor.H"
 #include "FileSP.H"
 #include "KDtree.H"
 #include "Inline.H"
@@ -322,6 +323,8 @@ int Palette::load(const char *fn)
 // sort into grays, low-sat colors, hi-sat colors
 void Palette::sortByHue()
 {
+  Editor::push();
+
   std::vector<int> bucket(25 * 256, 0);
   std::vector<int> count(25, 0);
 
@@ -382,6 +385,8 @@ void Palette::sortByHue()
 
 void Palette::sortByValue()
 {   
+  Editor::push();
+
   std::sort(data, data + max, sort_value_cb);
   fillTable();
 } 
