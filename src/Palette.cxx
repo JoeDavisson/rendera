@@ -189,9 +189,9 @@ void Palette::fillTable()
   std::vector<KDtree::node_type> colors(max);
 
   int best_dist;
-  const int step_r = 4;
-  const int step_g = step_r / 2;
-  const int step_b = step_r * 2;
+  const int step_r = 2;
+  const int step_g = 2;
+  const int step_b = 2;
 
   for (int i = 0; i < max; i++)
   {
