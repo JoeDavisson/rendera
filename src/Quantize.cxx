@@ -42,8 +42,6 @@ http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 #include "ImagesOptions.H"
 #include "Undo.H"
 
-const int colors_max = 3000;
-
 bool Quantize::sort_greater_cb(const color_type &a, const color_type &b)
 {
   return a.freq > b.freq;
@@ -83,7 +81,8 @@ void Quantize::merge(color_type &c1, color_type &c2)
 }
 
 int Quantize::limitColors(const std::vector<double> &histogram,
-                          std::vector<color_type> &colors)
+                          std::vector<color_type> &colors,
+                          int samples)
 {
   int temp_count = 0;
   std::vector<color_type> temp_colors(16777216);
@@ -97,17 +96,17 @@ int Quantize::limitColors(const std::vector<double> &histogram,
     temp_colors[i].freq = 0;
   }
 
-  for (int z = 0; z < 256; z++)
+  for (int b = 0; b < 256; b++)
   {
-    for (int y = 0; y < 256; y++)
+    for (int g = 0; g < 256; g++)
     {
-      for (int x = 0; x < 256; x++)
+      for (int r = 0; r < 256; r++)
       {
-        const double freq = histogram[makeRgb24(x, y, z)];
+        const double freq = histogram[makeRgb24(r, g, b)];
 
         if (freq > 0)
         {
-          makeColor(temp_colors[temp_count], x, y, z, freq);
+          makeColor(temp_colors[temp_count], r, g, b, freq);
           temp_count++;
         }
       }
@@ -119,10 +118,7 @@ int Quantize::limitColors(const std::vector<double> &histogram,
 
   // choose a diverse range of popularities
   int count = 0;
-  double step = (double)temp_count / colors_max;
-
-  if (step < 1.0)
-    step = 1.0;
+  double step = (double)temp_count / samples;
 
   for (double i = 0; i < temp_count; i += step)
   {
@@ -132,7 +128,7 @@ int Quantize::limitColors(const std::vector<double> &histogram,
     colors[count].freq = temp_colors[i].freq;
     count++;
 
-    if (count >= colors_max)
+    if (count >= samples)
       break;
   }
 
@@ -140,7 +136,7 @@ int Quantize::limitColors(const std::vector<double> &histogram,
   return count;
 }
 
-void Quantize::pca(Bitmap *src, Palette *pal, int size)
+void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 {
   // popularity histogram
   Gui::saveStatusInfo();
@@ -168,7 +164,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   }
 
   // color list
-  std::vector<color_type> colors(colors_max);
+  std::vector<color_type> colors(samples);
 
   // skip if already enough colors
   if (count <= size)
@@ -189,7 +185,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size)
   }
     else
   {
-    count = limitColors(histogram, colors);
+    count = limitColors(histogram, colors, samples);
   }
 
   // set max
