@@ -83,7 +83,7 @@ namespace
   }
 }
 
-void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
+void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
 {
   const int border = 128;
   const int matrix[9] = { 0, 1, 0, 1, 2, 1, 0, 1, 0 };
@@ -171,6 +171,10 @@ void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
 
   if (size > border / 2 - 2)
     size = border / 2 - 2;
+
+  // force odd value to prevent image shift
+  if (((int)size & 1) == 0)
+    size += 1;
 
   int larger = src.w > src.h ? src.w : src.h;
 
@@ -314,13 +318,6 @@ void GaussianBlur::close()
   Project::undo->push();
 
   int size = Items::size->value();
-
-  // force odd value to prevent image shift
-  if (size > 3 && (size & 1) == 0)
-  {
-    size += 1;
-  }
-
   int blend = 255 - Items::blend->value() * 2.55;
   int mode = Items::mode->value();
 
