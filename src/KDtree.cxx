@@ -71,14 +71,9 @@ KDtree::node_type *KDtree::median(node_type *left, node_type *right,
 
     for (p = left; p <= right; p++)
     {
-      if (right == left)
-        return left;
-
       if (p->x[axis] < pivot)
       {
-        if (p != temp)
-          swapNodes(p, temp);
-
+        swapNodes(p, temp);
         temp++;
       }
     }
