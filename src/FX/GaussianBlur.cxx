@@ -85,13 +85,6 @@ namespace
 
 void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
 {
-  if (size < 1)
-  {
-    float f = size - (int)size;
-    blend = 255 - f * 255;
-    size = 1;
-  }
-
   const int border = 128;
   const int matrix[9] = { 0, 1, 0, 1, 2, 1, 0, 1, 0 };
 

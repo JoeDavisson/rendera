@@ -177,8 +177,9 @@ namespace Scale
 
   void do_blur(Bitmap *bmp, float size)
   {
+    size /= M_PI / 2;
     float f = size - (int)size;
-    size -= 1.0;
+
     GaussianBlur::apply(bmp, size, f, 0);
   }
 
@@ -235,9 +236,9 @@ namespace Scale
     float blur_size = 0;
 
     if (sw > dw)
-      mipx = (sw / dw);
+      mipx = (float)sw / dw;
     if (sh > dh)
-      mipy = (sh / dh);
+      mipy = (float)sh / dh;
 
     if (mipx > .5 || mipy > .5)
     {
