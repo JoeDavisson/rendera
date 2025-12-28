@@ -422,7 +422,7 @@ namespace MakePalette
     Items::samples->add("1000");
     Items::samples->add("2000");
     Items::samples->add("3000");
-    Items::samples->value(1);
+    Items::samples->value(0);
     Items::samples->measure_label(ww, hh);
     Items::samples->resize(Items::dialog->x() + Items::dialog->w() / 2
                            - (Items::samples->w() + ww) / 2 + ww,
