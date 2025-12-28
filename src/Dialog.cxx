@@ -412,11 +412,11 @@ namespace MakePalette
 
     Items::dialog = new DialogWindow(400, 0, "Create Palette");
 
-    Items::colors = new InputInt(Items::dialog, 0, y1, 128, 32, "Colors:", 0, 1, 256);
+    Items::colors = new InputInt(Items::dialog, 0, y1, 128, 32, "Palette Size:", 0, 1, 256);
     Items::colors->center();
     y1 += 32 + 16;
 
-    Items::samples = new Fl_Choice(0, y1, 128, 32, "Sampling Level:");
+    Items::samples = new Fl_Choice(0, y1, 128, 32, "Color Samples:");
     Items::samples->textsize(16);
     Items::samples->labelsize(16);
     Items::samples->add("1000");
