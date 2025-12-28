@@ -185,11 +185,11 @@ void Palette::fillTable()
   table = new unsigned char[16777216];
 
   KDtree::node_type test_node;
-  KDtree::node_type *root, *found;
+  KDtree::node_type *root;
   std::vector<KDtree::node_type> colors(max);
 
   int best_dist;
-  const int step = 4;
+  const int step = 2;
 
   for (int i = 0; i < max; i++)
   {
@@ -212,7 +212,7 @@ void Palette::fillTable()
         test_node.x[1] = g + step / 2;
         test_node.x[2] = b + step / 2;
 
-        found = 0;
+        KDtree::node_type *found = 0;
         KDtree::nearest(root, &test_node, &found, &best_dist, 0);
 
         for (int k = 0; k < step; k++)
@@ -236,7 +236,9 @@ void Palette::fillTable()
   }
 
   for (int i = 0; i < max; i++)
+  {
     table[data[i] & 0xffffff] = i;
+  }
 }
 
 // return the nearest palette entry for an RGB color
