@@ -175,12 +175,9 @@ namespace Scale
     Fl_Button *cancel;
   }
 
-  void do_blur(Bitmap *bmp, float size)
+  void do_blur(Bitmap *bmp, int blur_size)
   {
-    size /= M_PI / 2;
-    float f = size - (int)size;
-
-    GaussianBlur::apply(bmp, size, f, 0);
+    GaussianBlur::apply(bmp, blur_size, 0, 0);
   }
 
   float cubic(const float f[4], const float t)
@@ -233,16 +230,21 @@ namespace Scale
 
     float mipx = 0, mipy = 0;
     bool blur = false;
-    float blur_size = 0;
+    float sigma = 0;
+    int blur_size = 0;
 
-    if (sw > dw)
+    if (dw < sw)
       mipx = (float)sw / dw;
-    if (sh > dh)
+    if (dh < sh)
       mipy = (float)sh / dh;
 
-    if (mipx > .5 || mipy > .5)
+    if (mipx > 0 || mipy > 0)
     {
-      blur_size = mipx > mipy ? mipx : mipy;
+      float scale = mipx > mipy ? mipx : mipy;
+
+      sigma = scale / M_PI;
+      blur_size = 2.0 * std::ceil(3.0 * sigma) + 1;
+      blur_size /= 3;
       blur = true;
     }
 

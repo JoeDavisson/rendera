@@ -83,7 +83,7 @@ namespace
   }
 }
 
-void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
+void GaussianBlur::apply(Bitmap *bmp, int size, int blend, int mode)
 {
   const int border = 128;
   const int matrix[9] = { 0, 1, 0, 1, 2, 1, 0, 1, 0 };
