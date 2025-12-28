@@ -189,7 +189,9 @@ void Palette::fillTable()
   std::vector<KDtree::node_type> colors(max);
 
   int best_dist;
-  const int step = 2;
+  const int step_r = 4;
+  const int step_g = step_r / 2;
+  const int step_b = step_r * 2;
 
   for (int i = 0; i < max; i++)
   {
@@ -202,28 +204,28 @@ void Palette::fillTable()
 
   root = KDtree::build(&colors[0], max, 0);
 
-  for (int b = 0; b <= 256 - step; b += step)
+  for (int b = 0; b <= 256 - step_b; b += step_b)
   {
-    for (int g = 0; g <= 256 - step; g += step)
+    for (int g = 0; g <= 256 - step_g; g += step_g)
     {
-      for (int r = 0; r <= 256 - step; r += step)
+      for (int r = 0; r <= 256 - step_r; r += step_r)
       {
-        test_node.x[0] = r + step / 2;
-        test_node.x[1] = g + step / 2;
-        test_node.x[2] = b + step / 2;
+        test_node.x[0] = r + step_r / 2;
+        test_node.x[1] = g + step_g / 2;
+        test_node.x[2] = b + step_b / 2;
 
         KDtree::node_type *found = 0;
         KDtree::nearest(root, &test_node, &found, &best_dist, 0);
 
-        for (int k = 0; k < step; k++)
+        for (int k = 0; k < step_b; k++)
         {
           const int bk = b + k;
 
-          for (int j = 0; j < step; j++)
+          for (int j = 0; j < step_g; j++)
           {
             const int gj = g + j;
 
-            for (int i = 0; i < step; i++)
+            for (int i = 0; i < step_r; i++)
             {
               const int ri = r + i;
 
