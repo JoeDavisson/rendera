@@ -231,21 +231,23 @@ namespace Scale
     float mipx = 0, mipy = 0;
     bool blur = false;
     float sigma = 0;
-    int blur_size = 0;
+    float blur_size = 0;
 
     if (dw < sw)
       mipx = (float)sw / dw;
     if (dh < sh)
       mipy = (float)sh / dh;
 
-    if (mipx > 0 || mipy > 0)
+    if (mipx >= 2.0 || mipy >= 2.0)
     {
       float scale = mipx > mipy ? mipx : mipy;
 
       sigma = scale / M_PI;
       blur_size = 2.0 * std::ceil(3.0 * sigma) + 1;
       blur_size /= 3;
-      blur = true;
+
+      if (blur_size > 0)
+        blur = true;
     }
 
    if (Items::mode->value() == 0)
