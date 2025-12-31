@@ -175,9 +175,9 @@ namespace Scale
     Fl_Button *cancel;
   }
 
-  void do_blur(Bitmap *bmp, int blur_size)
+  void do_blur(Bitmap *bmp, float blur_size, float blur_blend)
   {
-    GaussianBlur::apply(bmp, blur_size, 0, 0);
+    GaussianBlur::apply(bmp, blur_size, blur_blend, 0);
   }
 
   float cubic(const float f[4], const float t)
@@ -228,29 +228,31 @@ namespace Scale
     const float ax = ((float)sw / dw);
     const float ay = ((float)sh / dh);
 
-    float mipx = 0, mipy = 0;
-    bool blur = false;
-    float sigma = 0;
-    float blur_size = 0;
+    float scale_x = 0, scale_y = 0;
 
     if (dw < sw)
-      mipx = (float)sw / dw;
+      scale_x = (float)sw / dw;
     if (dh < sh)
-      mipy = (float)sh / dh;
+      scale_y = (float)sh / dh;
 
-    if (mipx >= 2.0 || mipy >= 2.0)
+    float scale = scale_x > scale_y ? scale_x : scale_y;
+    float s = scale / M_PI;
+    float blur_size = std::sqrt(4.0 * (s * s) + 1);
+    float blur_blend = 0;
+
+    if (blur_size < 2)
     {
-      float scale = mipx > mipy ? mipx : mipy;
+      const float frac = blur_size - (int)blur_size;
 
-      sigma = scale / M_PI;
-      blur_size = 2.0 * std::ceil(3.0 * sigma) + 1;
-      blur_size /= 3;
-
-      if (blur_size > 0)
-        blur = true;
+      blur_blend = 255 - frac * 255;
     }
 
-   if (Items::mode->value() == 0)
+    bool blur = false;
+
+    if (blur_size > 1.0)
+      blur = true;
+
+    if (Items::mode->value() == 0)
     {
       // nearest
       for (int y = 0; y < dh; y++) 
@@ -270,7 +272,7 @@ namespace Scale
     {
       // bilinear
       if (blur)
-        do_blur(bmp, blur_size);
+        do_blur(bmp, blur_size, blur_blend);
 
       Progress::show(dh);
 
@@ -360,7 +362,7 @@ namespace Scale
     else if (Items::mode->value() == 2)
     {
       if (blur)
-        do_blur(bmp, blur_size);
+        do_blur(bmp, blur_size, blur_blend);
 
       // bicubic
       float r[4][4];
