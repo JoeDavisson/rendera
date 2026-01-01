@@ -46,7 +46,7 @@ void Progress::hide()
   if (active == false)
     return;
 
-  Gui::view->drawMain(true);
+  Gui::view->redraw();
   Gui::progress->value(0);
   Gui::progress->copy_label("");
   Gui::progress->redraw();
@@ -108,7 +108,7 @@ int Progress::update(int y)
   if (Fl::get_key(FL_Escape))
   {
     hide();
-    Gui::view->drawMain(true);
+    Gui::view->redraw();
     return -1;
   }
 
@@ -119,7 +119,7 @@ int Progress::update(int y)
     snprintf(percent, sizeof(percent), "%d%%", (int)value);
     Gui::progress->copy_label(percent);
     value += step;
-    Gui::view->drawMain(true);
+    Gui::view->redraw();
   }
 
   return 0;
