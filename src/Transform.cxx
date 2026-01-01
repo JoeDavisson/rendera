@@ -232,11 +232,13 @@ namespace Scale
 
     if (dw < sw)
       scale_x = (float)sw / dw;
+
     if (dh < sh)
       scale_y = (float)sh / dh;
 
     float scale = scale_x > scale_y ? scale_x : scale_y;
-    float s = scale / M_PI;
+
+    float s = 0.5 - std::sqrt(scale);
     float blur_size = std::sqrt(4.0 * (s * s) + 1);
     float blur_blend = 0;
 
