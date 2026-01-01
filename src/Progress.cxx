@@ -46,7 +46,7 @@ void Progress::hide()
   if (active == false)
     return;
 
-  Gui::view->redraw();
+  Gui::view->drawMain(true);
   Gui::progress->value(0);
   Gui::progress->copy_label("");
   Gui::progress->redraw();
