@@ -46,12 +46,12 @@ void Progress::hide()
   if (active == false)
     return;
 
-  Gui::view->drawMain(true);
   Gui::progress->value(0);
   Gui::progress->copy_label("");
   Gui::progress->redraw();
   Gui::progress->hide();
   Gui::view->rendering = false;
+  Gui::view->drawMain(true);
 }
 
 // use default interval
@@ -97,6 +97,7 @@ void Progress::show(float max, int new_interval)
   Gui::progress->resize(Gui::getStatus()->x() + Gui::getWindow()->w() - 256 - 8,
                         Gui::getStatus()->y() + 4, 256, 24);
   Gui::progress->show();
+  Gui::view->drawMain(true);
 }
 
 int Progress::update(int y)
@@ -108,7 +109,7 @@ int Progress::update(int y)
   if (Fl::get_key(FL_Escape))
   {
     hide();
-    Gui::view->redraw();
+    Gui::view->drawMain(true);
     return -1;
   }
 
@@ -119,7 +120,7 @@ int Progress::update(int y)
     snprintf(percent, sizeof(percent), "%d%%", (int)value);
     Gui::progress->copy_label(percent);
     value += step;
-    Gui::view->redraw();
+    Gui::view->drawMain(true);
   }
 
   return 0;
