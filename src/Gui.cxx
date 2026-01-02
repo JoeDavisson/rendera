@@ -209,6 +209,10 @@ public:
             {
               return Fl_Double_Window::handle(event);
             }
+          case 'y':
+            if (ctrl)
+              Project::undo->popRedo();
+            return 1;
           case 'z':
             if (ctrl && shift)
               Project::undo->popRedo();
