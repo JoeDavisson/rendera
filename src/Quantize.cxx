@@ -216,7 +216,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   while (count > size)
   {
     int ii = 0, jj = 0;
-    double least_err = 99999;
+    double least_err = 9999999;
     double *a = &(colors[0].freq);
 
     // find lowest value in error matrix
