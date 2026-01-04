@@ -242,6 +242,13 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
       }
 
       a += freq_step;
+
+      // bailout
+      if (ii != 0 && jj != 0)
+      {
+        if (least_err < 0.001)
+          break;
+      }
     }
 
     // compute quantization level and replace i, delete j
