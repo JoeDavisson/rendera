@@ -147,6 +147,8 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   const double weight = 1.0 / (src->cw * src->ch);
   int count = 0;
 
+  //printf("weight = %.17f\n", weight);
+
   for (int j = src->ct; j <= src->cb; j++)
   {
     for (int i = src->cl; i <= src->cr; i++)
@@ -246,7 +248,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
       // bailout
       if (ii != 0 && jj != 0)
       {
-        if (least_err < 0.001)
+        if (least_err < weight * 250)
           break;
       }
     }
