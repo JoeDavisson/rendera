@@ -180,6 +180,8 @@ void Palette::swapColor(int c1, int c2)
 }
 
 // generate color lookup table
+// fills 3x3 sections of the color cube to save time
+// then puts exact matches back in
 void Palette::fillTable()
 {
   delete[] table;
@@ -190,9 +192,6 @@ void Palette::fillTable()
   std::vector<KDtree::node_type> colors(max);
 
   int best_dist;
-  const int step_r = 2;
-  const int step_g = 2;
-  const int step_b = 2;
 
   for (int i = 0; i < max; i++)
   {
@@ -205,30 +204,39 @@ void Palette::fillTable()
 
   root = KDtree::build(&colors[0], max, 0);
 
-  for (int b = 0; b <= 256 - step_b; b += step_b)
+  for (int b = 0; b < 256; b += 3)
   {
-    for (int g = 0; g <= 256 - step_g; g += step_g)
+    for (int g = 0; g < 256; g += 3)
     {
-      for (int r = 0; r <= 256 - step_r; r += step_r)
+      for (int r = 0; r < 256; r += 3)
       {
-        test_node.x[0] = r;
-        test_node.x[1] = g;
-        test_node.x[2] = b;
+        test_node.x[0] = r + 1;
+        test_node.x[1] = g + 1;
+        test_node.x[2] = b + 1;
 
         KDtree::node_type *found = 0;
         KDtree::nearest(root, &test_node, &found, &best_dist, 0);
 
-        for (int k = 0; k < step_b; k++)
+        for (int k = 0; k < 3; k++)
         {
           const int bk = b + k;
 
-          for (int j = 0; j < step_g; j++)
+          if (bk > 255)
+            break;
+
+          for (int j = 0; j < 3; j++)
           {
             const int gj = g + j;
 
-            for (int i = 0; i < step_r; i++)
+            if (gj > 255)
+              break;
+
+            for (int i = 0; i < 3; i++)
             {
               const int ri = r + i;
+
+              if (ri > 255)
+                break;
 
               table[makeRgb24(ri, gj, bk)] = found->index;
             }
