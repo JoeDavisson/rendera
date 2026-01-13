@@ -65,7 +65,7 @@ double Quantize::error(const color_type &c1, const color_type &c2)
   const double f1 = c1.freq;
   const double f2 = c2.freq;
 
-  return ((2.0 * f1 * f2) / (f1 + f2)) * (r * r + g * g + b * b);
+  return ((f1 * f2) / (f1 + f2)) * (r * r + g * g + b * b);
 }
 
 void Quantize::merge(color_type &c1, color_type &c2)
