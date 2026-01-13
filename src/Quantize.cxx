@@ -65,7 +65,7 @@ double Quantize::error(const color_type &c1, const color_type &c2)
   const double f1 = c1.freq;
   const double f2 = c2.freq;
 
-  return ((f1 * f2) / (f1 + f2)) * (r * r + g * g + b * b);
+  return ((2.0 * f1 * f2) / (f1 + f2)) * (r * r + g * g + b * b);
 }
 
 void Quantize::merge(color_type &c1, color_type &c2)
@@ -145,9 +145,8 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 
   // build histogram
   const double weight = 1.0 / (src->cw * src->ch);
+  const double bailout = weight * size * std::sqrt(2);
   int count = 0;
-
-  //printf("weight = %.17f\n", weight);
 
   for (int j = src->ct; j <= src->cb; j++)
   {
@@ -218,8 +217,8 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   while (count > size)
   {
     int ii = 0, jj = 0;
-    double least_err = 9999999;
     double *a = &(colors[0].freq);
+    double least_err = 99999999;
 
     // find lowest value in error matrix
     for (int j = 0; j < max; j++)
@@ -248,7 +247,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
       // bailout
       if (ii != 0 && jj != 0)
       {
-        if (least_err < weight * 250)
+        if (least_err < bailout)
           break;
       }
     }

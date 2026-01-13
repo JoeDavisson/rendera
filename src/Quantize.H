@@ -30,6 +30,7 @@ class Quantize
 {
 public:
   static void pca(Bitmap *, Palette *, int, int);
+  static void uniform(Bitmap *, Palette *, int);
 
 private:
   Quantize() { }
