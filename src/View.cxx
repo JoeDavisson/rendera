@@ -479,13 +479,6 @@ void View::resize(int x, int y, int w, int h)
   Fl_Widget::resize(x, y, w, h);
 }
 
-// call if the entire view should be updated 
-void View::redraw()
-{
-  damage(FL_DAMAGE_ALL);
-  Fl::flush();
-}
-
 void View::changeAspect(int new_aspect)
 {
   aspect = new_aspect;
@@ -850,11 +843,6 @@ void View::draw()
 
     if (blitw < 1 || blith < 1)
       return;
-
-    // for testing
-    //fl_color(FL_WHITE);
-    //fl_rect(x() + blitx * ax, y() + blity * ay,
-    //           blitw * ax, blith * ay);
 
     updateView(blitx * ax, blity * ay, x() + blitx * ax, y() + blity * ay,
                blitw * ax + 1, blith * ay + 1);

@@ -145,7 +145,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 
   // build histogram
   const double weight = 1.0 / (src->cw * src->ch);
-  const double bailout = weight * size * std::sqrt(2);
+  const double bailout = weight * size * 0.707;
   int count = 0;
 
   for (int j = src->ct; j <= src->cb; j++)

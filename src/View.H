@@ -41,7 +41,6 @@ public:
 
   int handle(int);
   void resize(int, int, int, int);
-  void redraw();
 
   void changeAspect(int);
   void drawMain(bool);
