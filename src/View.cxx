@@ -563,7 +563,10 @@ void View::drawMain(bool refresh)
     drawGrid();
 
   if (refresh)
+  {
+    resized = true;
     redraw();
+  }
 }
 
 void View::drawGrid()
