@@ -21,7 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 
 #include <FL/fl_draw.H>
-#include <FL/Fl_Double_Window.H>
+
+#if defined linux
+  #include <FL/x.H>
+#endif
 
 #include "Bitmap.H"
 #include "Blend.H"
@@ -46,7 +49,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  Fl_RGB_Image *wimage;
+  #if defined linux
+    XImage *ximage = 0;
+  #endif
+
+   Fl_RGB_Image *wimage = 0;
 
   int oldx1 = 0;
   int oldy1 = 0;
@@ -85,23 +92,35 @@ namespace
     }
   }
 
-  void updateView(int sx, int sy, int dx, int dy, int w, int h)
-  {
-    fl_push_clip(dx, dy, w, h);
-    wimage->draw(dx, dy, w, h, sx, sy);
-    wimage->uncache();
-    fl_pop_clip();
-  }
-
   float getScale()
   {
     return Fl::screen_scale(Gui::getWindow()->screen_num());
+  }
+
+  void updateView(int sx, int sy, int dx, int dy, int w, int h)
+  {
+    #if defined linux
+      float scale = getScale();
+
+      sx *= scale;
+      sy *= scale;
+
+      XPutImage(fl_display, fl_window, fl_gc, ximage,
+                sx, sy, dx * scale, dy * scale, w * scale, h * scale);
+    #else
+      fl_push_clip(dx, dy, w, h);
+      wimage->draw(dx, dy, w, h, sx, sy);
+      wimage->uncache();
+      fl_pop_clip();
+    #endif
   }
 }
 
 View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
 : Fl_Widget(x, y, w, h, label)
 {
+  box(FL_NO_BOX);
+
   group = g;
   ox = 0;
   oy = 0;
@@ -124,15 +143,12 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   mouse_in_viewport = false;
   bgr_order = false;
   backbuf = 0;
-  wimage = 0;
 
   resize(group->x() + x, group->y() + y, w, h);
 }
 
 View::~View()
 {
-  delete backbuf;
-  delete wimage;
 }
 
 int View::handle(int event)
@@ -468,15 +484,39 @@ int View::handle(int event)
 void View::resize(int x, int y, int w, int h)
 {
   float scale = getScale();
+  int new_width = w * scale;
+  int new_height = h * scale;
 
   delete backbuf;
-  delete wimage;
-  backbuf = new Bitmap(w * scale, h * scale);
+  backbuf = new Bitmap(new_width, new_height);
   wimage = new Fl_RGB_Image((unsigned char *)backbuf->data,
-                            w * scale, h * scale, 4, 0);
+                             new_width, new_height, 4, 0);
   wimage->scale(w, h, 0, 1);
+
+  #if defined linux
+    // try to detect pixelformat (almost always RGB or BGR)
+    if(fl_visual->visual->blue_mask == 0xff)
+      bgr_order = true;
+
+    ximage = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
+                          (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
+//  #else
+//    delete wimage;
+
+//    backbuf = new Bitmap(new_width, new_height);
+//    wimage = new Fl_RGB_Image((unsigned char *)backbuf->data,
+//                                new_width, new_height, 4, 0);
+//    wimage->scale(w, h, 0, 1);
+  #endif
+
   drawMain(false);
   Fl_Widget::resize(x, y, w, h);
+}
+
+void View::redraw()
+{
+  damage(FL_DAMAGE_ALL);
+  Fl::flush();
 }
 
 void View::changeAspect(int new_aspect)
@@ -655,6 +695,8 @@ void View::drawCloneCursor()
              this->x() + oldx1 / scale - 12, this->y() + oldy1 / scale - 12, 26, 26);
   updateView(x1 / scale - 12, y1 / scale - 12,
              this->x() + x1 / scale - 12, this->y() + y1 / scale - 12, 26, 26);
+
+
 /*
   updateView(oldx1 - 12, oldy1 - 12,
              this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
@@ -682,7 +724,6 @@ void View::zoomIn(int x, int y)
     clipOrigin();
   }
 
-//  Gui::zoomLevel();
   Gui::top->zoomLevel();
   Project::tool->redraw(this);
   saveCoords();
@@ -705,7 +746,6 @@ void View::zoomOut(int x, int y)
     clipOrigin();
   }
 
-//  Gui::zoomLevel();
   Gui::top->zoomLevel();
   Project::tool->redraw(this);
   saveCoords();
@@ -717,7 +757,6 @@ void View::zoomOne()
   ox = 0;
   oy = 0;
 
-//  Gui::zoomLevel();
   Gui::top->zoomLevel();
   Project::tool->redraw(this);
   saveCoords();
@@ -824,6 +863,7 @@ void View::draw()
   if (Project::tool->isActive())
   {
     float scale = getScale();
+
     int blitx = Project::stroke->blitx / scale;
     int blity = Project::stroke->blity / scale;
     int blitw = Project::stroke->blitw / scale;
@@ -844,8 +884,21 @@ void View::draw()
     if (blitw < 1 || blith < 1)
       return;
 
-    updateView(blitx * ax, blity * ay, x() + blitx * ax, y() + blity * ay,
-               blitw * ax + 1, blith * ay + 1);
+    const int x1 = blitx * ax;
+    const int y1 = blity * ay;
+    const int x2 = x() + x1;
+    const int y2 = y() + y1;
+    const int w1 = blitw * ax + 1;
+    const int h1 = blith * ay + 1;
+
+
+    updateView(x1, y1, x2, y2, w1, h1);
+
+/*
+    fl_push_clip(x2, y2, w1, h1);
+    fl_rect(x2, y2, w1, h1, FL_WHITE);
+    fl_pop_clip();
+*/
 
     if (Clone::active)
       drawCloneCursor();
