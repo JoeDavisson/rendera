@@ -105,9 +105,13 @@ void Paint::move(View *view)
 {
   Stroke *stroke = Project::stroke;
 
-  view->drawMain(false);
+  const int brush_size = Project::brush->size;
+  int radius = brush_size / 2;
 
-  const int center = Brush::max / 2;
+  if (radius < 2)
+    radius = 2;
+
+  view->drawMain(false);
 
   switch (stroke->type)
   {
@@ -121,19 +125,23 @@ void Paint::move(View *view)
       stroke->previewPaint(view);
       break;
     case 0:
+      active = true;
+      /* fallthrough */
     case 2:
     case 4:
     case 6:
-      Project::map->rectfill(view->oldimgx - center, view->oldimgy - center,
-                          view->oldimgx + center, view->oldimgy + center, 0);
-      Project::map->rectfill(view->imgx - center, view->imgy - center,
-                          view->imgx + center, view->imgy + center, 0);
+
+      Project::map->rectfill(view->oldimgx - radius, view->oldimgy - radius,
+                          view->oldimgx + radius, view->oldimgy + radius, 0);
+      Project::map->rectfill(view->imgx - radius, view->imgy - radius,
+                          view->imgx + radius, view->imgy + radius, 0);
+
       stroke->drawBrush(view->imgx, view->imgy, 255);
-      stroke->size(view->imgx - center, view->imgy - center,
-                   view->imgx + center, view->imgy + center);
+      stroke->size(view->imgx - radius, view->imgy - radius,
+                   view->imgx + radius, view->imgy + radius);
       stroke->makeBlitRect(stroke->x1, stroke->y1,
                            stroke->x2, stroke->y2,
-                           view->ox, view->oy, Brush::max_size, view->zoom);
+                           view->ox, view->oy, brush_size, view->zoom);
       stroke->previewPaint(view);
       break;
   }
@@ -166,7 +174,6 @@ void Paint::redraw(View *view)
     view->drawMain(false);
     view->redraw();
   }
-
 }
 
 bool Paint::isActive()

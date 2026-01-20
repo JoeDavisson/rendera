@@ -53,10 +53,17 @@ namespace
     XImage *ximage = 0;
   #endif
 
-   Fl_RGB_Image *wimage = 0;
+  Fl_RGB_Image *wimage = 0;
 
   int oldx1 = 0;
   int oldy1 = 0;
+
+  int restore_x1 = 0;
+  int restore_y1 = 0;
+  int restore_x2 = 0;
+  int restore_y2 = 0;
+  int restore_w1 = 1;
+  int restore_h1 = 1;
 
   inline void gridSetpixel(const Bitmap *bmp, const int x, const int y,
                            const int c, const int t)
@@ -127,7 +134,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   zoom = 1;
   aspect = ASPECT_NORMAL;
   panning = false;
-  resizing = false;
+  resized = false;
   last_ox = 0;
   last_oy = 0;
   last_mousex = 0;
@@ -206,13 +213,9 @@ int View::handle(int event)
       {
         if (imgx % gridx < gridx / 2)
           imgx -= imgx % gridx;
-//        else
-//          imgx += gridx - imgx % gridx - 1;
 
         if (imgy % gridy < gridy / 2)
           imgy -= imgy % gridy;
-//        else
-//          imgy += gridy - imgy % gridy - 1;
       }
       break;
     default:
@@ -354,7 +357,6 @@ int View::handle(int event)
       Project::tool->release(this);
 
       panning = false;
-      resizing = false;
 
       if (Project::tool->isActive())
         Project::tool->redraw(this);
@@ -394,8 +396,8 @@ int View::handle(int event)
       if (mouse_in_viewport == false)
         return 1;
 
-      // ignore wheel during image navigation or resizing brush
-      if (panning || resizing)
+      // ignore wheel during image navigation
+      if (panning)
         break;
 
       if (Fl::event_dy() >= 0)
@@ -475,6 +477,11 @@ int View::handle(int event)
       return 1;
     }
 
+    case FL_ZOOM_EVENT:
+    {
+      resized = true;
+    }
+
     return 1;
   }
 
@@ -500,17 +507,12 @@ void View::resize(int x, int y, int w, int h)
 
     ximage = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
                           (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
-//  #else
-//    delete wimage;
-
-//    backbuf = new Bitmap(new_width, new_height);
-//    wimage = new Fl_RGB_Image((unsigned char *)backbuf->data,
-//                                new_width, new_height, 4, 0);
-//    wimage->scale(w, h, 0, 1);
   #endif
 
   drawMain(false);
   Fl_Widget::resize(x, y, w, h);
+
+  resized = true;
 }
 
 void View::redraw()
@@ -524,6 +526,7 @@ void View::changeAspect(int new_aspect)
   aspect = new_aspect;
   ox = 0;
   oy = 0;
+  resized = true;
   drawMain(true);
 }
 
@@ -696,14 +699,6 @@ void View::drawCloneCursor()
   updateView(x1 / scale - 12, y1 / scale - 12,
              this->x() + x1 / scale - 12, this->y() + y1 / scale - 12, 26, 26);
 
-
-/*
-  updateView(oldx1 - 12, oldy1 - 12,
-             this->x() + oldx1 - 12, this->y() + oldy1 - 12, 26, 26);
-  updateView(x1 - 12, y1 - 12,
-             this->x() + x1 - 12, this->y() + y1 - 12, 26, 26);
-*/
-
   oldx1 = x1;
   oldy1 = y1;
 }
@@ -860,7 +855,7 @@ void View::draw()
       break;
   }
 
-  if (Project::tool->isActive())
+  if (Project::tool->isActive() && resized == false)
   {
     float scale = getScale();
 
@@ -891,10 +886,18 @@ void View::draw()
     const int w1 = blitw * ax + 1;
     const int h1 = blith * ay + 1;
 
+    updateView(restore_x1, restore_y1,
+               restore_x2, restore_y2,
+               restore_w1, restore_h1);
 
     updateView(x1, y1, x2, y2, w1, h1);
 
 /*
+    // for testing
+    fl_push_clip(restore_x2, restore_y2, restore_w1, restore_h1);
+    fl_rect(restore_x2, restore_y2, restore_w1, restore_h1, FL_WHITE);
+    fl_pop_clip();
+
     fl_push_clip(x2, y2, w1, h1);
     fl_rect(x2, y2, w1, h1, FL_WHITE);
     fl_pop_clip();
@@ -902,6 +905,13 @@ void View::draw()
 
     if (Clone::active)
       drawCloneCursor();
+
+    restore_x1 = x1;
+    restore_y1 = y1;
+    restore_x2 = x2;
+    restore_y2 = y2;
+    restore_w1 = w1;
+    restore_h1 = h1;
   }
     else
   {
@@ -909,6 +919,8 @@ void View::draw()
 
     if (Clone::active)
       drawCloneCursor();
+
+    resized = false;
   }
 }
 

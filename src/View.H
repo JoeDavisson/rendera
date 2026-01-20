@@ -67,7 +67,7 @@ public:
   float zoom;
   int aspect;
   bool panning;
-  bool resizing;
+  bool resized;
   bool grid, gridsnap;
   int gridx, gridy;
   int px, py, pw, ph;
