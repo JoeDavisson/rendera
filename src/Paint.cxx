@@ -138,9 +138,7 @@ void Paint::move(View *view)
       break;
   }
 
-  active = true;
   view->redraw();
-  active = false;
 }
 
 void Paint::key(View *)
