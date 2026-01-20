@@ -474,6 +474,7 @@ int View::handle(int event)
         }
       }
 
+      resized = true;
       return 1;
     }
 
