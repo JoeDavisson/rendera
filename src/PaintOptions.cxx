@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Separator.H"
 #include "Stroke.H"
 #include "Widget.H"
+#include "View.H"
 
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Group.H>
@@ -233,6 +234,12 @@ void PaintOptions::mode()
     case Render::AVERAGE:
       paint_average_edge->show();
       break;
+  }
+
+  if (Gui::view)
+  {
+    Gui::view->resized = true;
+    Gui::view->redraw();
   }
 }
 

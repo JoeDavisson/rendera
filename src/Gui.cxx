@@ -52,38 +52,38 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class MainWin;
 
 // view
-View *Gui::view;
-Fl_Box *Gui::coords;
-Fl_Box *Gui::info;
+View *Gui::view = 0;
+Fl_Box *Gui::coords = 0;
+Fl_Box *Gui::info = 0;
 
 // progress
-Fl_Progress *Gui::progress;
+Fl_Progress *Gui::progress = 0;
 
 // groups
-ViewOptions *Gui::top;
-PaintOptions *Gui::paint;
-PickerOptions *Gui::picker;
-ImagesOptions *Gui::images;
-OffsetOptions *Gui::offset;
-SelectionOptions *Gui::selection;
-TextOptions *Gui::text;
-FillOptions *Gui::fill;
-GradientOptions *Gui::gradient;
-ToolOptions *Gui::tools;
-ColorOptions *Gui::colors;
+ViewOptions *Gui::top = 0;
+PaintOptions *Gui::paint = 0;
+PickerOptions *Gui::picker = 0;
+ImagesOptions *Gui::images = 0;
+OffsetOptions *Gui::offset = 0;
+SelectionOptions *Gui::selection = 0;
+TextOptions *Gui::text = 0;
+FillOptions *Gui::fill = 0;
+GradientOptions *Gui::gradient = 0;
+ToolOptions *Gui::tools = 0;
+ColorOptions *Gui::colors = 0;
 
 namespace
 {
   // window
-  MainWin *window;
+  MainWin *window = 0;
 
   // main menu
-  Fl_Menu_Bar *menubar;
+  Fl_Menu_Bar *menubar = 0;
 
   // containers
-  Fl_Group *left;
-  Fl_Group *middle;
-  Fl_Group *right;
+  Fl_Group *left = 0;
+  Fl_Group *middle = 0;
+  Fl_Group *right = 0;
 
   // status
   Group *status;
