@@ -82,6 +82,7 @@ public:
   bool shift;
   bool ctrl;
   bool alt;
+  bool dnd;
 
 protected:
   void draw();

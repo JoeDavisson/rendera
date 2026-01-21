@@ -150,6 +150,7 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   mouse_in_viewport = false;
   bgr_order = false;
   backbuf = 0;
+  dnd = false;
 
   resize(group->x() + x, group->y() + y, w, h);
 }
@@ -419,11 +420,17 @@ int View::handle(int event)
 
     case FL_DND_LEAVE:
     {
+      dnd = false;
+      resized = true;
+      redraw();
       return 1;
     }
 
     case FL_DND_DRAG:
     {
+      dnd = true;
+      resized = true;
+      redraw();
       return 1;
     }
 
@@ -464,6 +471,7 @@ int View::handle(int event)
             index += 7;
         
           File::loadFile(fn.data() + index);
+//puts(fn.data() + index);
 
           i++;
           index = i;
@@ -896,6 +904,7 @@ void View::draw()
 
     updateView(x1, y1, x2, y2, w1, h1);
 
+
 /*
     // for testing
     fl_push_clip(restore_x2, restore_y2, restore_w1, restore_h1);
@@ -923,6 +932,16 @@ void View::draw()
 
     if (Clone::active)
       drawCloneCursor();
+
+    if (dnd)
+    {
+      fl_push_clip(x(), y(), w(), h());
+      fl_line_style(FL_DASH, 4);
+      fl_rect(x(), y(), w(), h(), fl_rgb_color(192, 192, 192));
+      fl_line_style(0);
+      fl_pop_clip();
+      dnd = false;
+    }
 
     resized = false;
   }
