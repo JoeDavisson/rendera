@@ -471,7 +471,6 @@ int View::handle(int event)
             index += 7;
         
           File::loadFile(fn.data() + index);
-//puts(fn.data() + index);
 
           i++;
           index = i;
