@@ -125,8 +125,6 @@ void Paint::move(View *view)
       stroke->previewPaint(view);
       break;
     case 0:
-      active = true;
-      /* fallthrough */
     case 2:
     case 4:
     case 6:
@@ -146,7 +144,16 @@ void Paint::move(View *view)
       break;
   }
 
-  view->redraw();
+  if (stroke->type == 0)
+  {
+    active = true;
+    view->redraw();
+    active = false;
+  }
+    else
+  {
+    view->redraw();
+  }
 }
 
 void Paint::key(View *)
