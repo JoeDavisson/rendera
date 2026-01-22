@@ -121,6 +121,51 @@ namespace
       fl_pop_clip();
     #endif
   }
+
+  void dndPasteHandler()
+  {
+    Gui::view->changeCursor();
+
+    const int length = Fl::event_length();
+
+    // length includes '\0' character
+    std::vector<char> fn(length + 1, 0);
+
+    for (int i = 0; i < length + 1; i++)
+      fn.data()[i] = Fl::event_text()[i];
+
+    // convert to utf-8 (e.g. %20 becomes space)
+    File::decodeURI(fn.data());
+
+    int index = 0;
+
+    // separate individual file paths in the list
+    for (int i = 0; i < length; i++)
+      if (fn[i] == '\n')
+        fn[i] = '\0';
+
+    // try to load all the files in list
+    for (int i = 0; i < length; )
+    {
+      if (i == length - 1 || fn[i] == '\0')
+      {
+        // some systems use the "file://" resource identifier
+        if (strncasecmp(fn.data() + index, "file://", 7) == 0)
+          index += 7;
+        
+        File::loadFile(fn.data() + index);
+
+        i++;
+        index = i;
+      }
+        else
+      {
+        i++;
+      }
+    }
+
+    Gui::view->resized = true;
+  }
 }
 
 View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
@@ -415,6 +460,7 @@ int View::handle(int event)
 
     case FL_DND_ENTER:
     {
+      dnd = true;
       return 1;
     }
 
@@ -441,47 +487,7 @@ int View::handle(int event)
 
     case FL_PASTE:
     {
-      changeCursor();
-
-      const int length = Fl::event_length();
-
-      // length includes '\0' character
-      std::vector<char> fn(length + 1, 0);
-
-      for (int i = 0; i < length + 1; i++)
-        fn.data()[i] = Fl::event_text()[i];
-
-      // convert to utf-8 (e.g. %20 becomes space)
-      File::decodeURI(fn.data());
-
-      int index = 0;
-
-      // separate individual file paths in the list
-      for (int i = 0; i < length; i++)
-        if (fn[i] == '\n')
-          fn[i] = '\0';
-
-      // try to load all the files in list
-      for (int i = 0; i < length; )
-      {
-        if (i == length - 1 || fn[i] == '\0')
-        {
-          // some systems use the "file://" resource identifier
-          if (strncasecmp(fn.data() + index, "file://", 7) == 0)
-            index += 7;
-        
-          File::loadFile(fn.data() + index);
-
-          i++;
-          index = i;
-        }
-          else
-        {
-          i++;
-        }
-      }
-
-      resized = true;
+      Fl::add_timeout(0, (Fl_Timeout_Handler)dndPasteHandler);
       return 1;
     }
 
