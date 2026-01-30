@@ -77,6 +77,7 @@ void Quantize::merge(color_type &c1, color_type &c2)
   c1.r = (f1 * c1.r + f2 * c2.r) / sum;
   c1.g = (f1 * c1.g + f2 * c2.g) / sum;
   c1.b = (f1 * c1.b + f2 * c2.b) / sum;
+
   c1.freq = sum;
 }
 
@@ -144,8 +145,8 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   std::vector<double> histogram(16777216, 0);
 
   // build histogram
-  const double weight = 1.0 / (src->cw * src->ch);
-  const double bailout = weight * size * 0.707;
+  const double weight = 1.0;
+
   int count = 0;
 
   for (int j = src->ct; j <= src->cb; j++)
@@ -213,6 +214,9 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   // measure offset between array elements
   const int freq_step = &(colors[1].freq) - &(colors[0].freq);
 
+  // bailout value
+  const double bailout = 512;
+
   // find minimum quantization error in matrix
   while (count > size)
   {
@@ -235,6 +239,12 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
             least_err = *e;
             ii = i;
             jj = j;
+
+            if (ii != 0 && jj != 0)
+            {
+              if (least_err < bailout)
+                goto found;
+            }
           }
 
           e++;
@@ -243,16 +253,10 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
       }
 
       a += freq_step;
-
-      // bailout
-      if (ii != 0 && jj != 0)
-      {
-        if (least_err < bailout)
-          break;
-      }
     }
 
-    // compute quantization level and replace i, delete j
+    found:
+
     merge(colors[ii], colors[jj]);
     colors[jj].freq = 0;
     count--;

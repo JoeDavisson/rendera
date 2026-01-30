@@ -390,7 +390,7 @@ namespace MakePalette
   {
     Items::dialog->hide();
 
-    const int samples = 4096;
+    const int samples = 3000;
 
     Quantize::pca(Project::bmp, Project::palette,
                   Items::colors->value(), samples);
