@@ -82,6 +82,11 @@ inline int makeRgb24(const int r, const int g, const int b)
   return r | g << 8 | b << 16;
 }
 
+inline int makeRgb15(const int r, const int g, const int b)
+{
+  return r | g << 5 | b << 10;
+}
+
 // get red channel
 inline int getr(const int c)
 {
