@@ -240,11 +240,8 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
             ii = i;
             jj = j;
 
-            if (ii != 0 && jj != 0)
-            {
-              if (least_err < bailout)
-                goto found;
-            }
+            if (least_err < bailout && ii != 0 && jj != 0)
+              goto found;
           }
 
           e++;
