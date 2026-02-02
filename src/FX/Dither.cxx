@@ -36,7 +36,7 @@ namespace
     return std::pow(val / 255.0, 2.2);
   }
 
-  float toRGB(const float val)
+  float toRgb(const float val)
   {
     return std::pow(val, 1.0 / 2.2) * 255.0;
   }
@@ -155,7 +155,7 @@ void Dither::apply(Bitmap *bmp, const int mode, const int limit)
       float old_b = range(err[0][x].b, 0.0, 1.0);
       int alpha = rgba.a;
 
-      c = makeRgb(toRGB(old_r), toRGB(old_g), toRGB(old_b));
+      c = makeRgb(toRgb(old_r), toRgb(old_g), toRgb(old_b));
 
       int pal_index = Project::palette->lookup(c);
       int pal_color = Project::palette->data[pal_index];
