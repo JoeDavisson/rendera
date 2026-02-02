@@ -83,7 +83,7 @@ void Quantize::merge(color_type &c1, color_type &c2)
 
 int Quantize::limitColors(std::vector<color_type> &color_bin,
                           std::vector<color_type> &colors,
-                          int samples)
+                          int samples, int size)
 {
   // sort by popularity
   std::sort(color_bin.begin(), color_bin.end(), sort_greater_cb);
@@ -100,22 +100,36 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
   }
 
   // choose a diverse range of popularities
-  int count = 0;
-  double step = (double)color_bin_count / samples;
+  if (size < 16)
+    size = 16;
 
-  for (double i = 0; i < color_bin_count; i += step)
+  const double curve = (double)size / 256;
+  const double r = std::pow(color_bin_count, 1.0 / (samples - 1));
+  int count = 0;
+
+  for (int i = 0; i < samples; i++)
   {
-    colors[count].r = color_bin[i].r;
-    colors[count].g = color_bin[i].g;
-    colors[count].b = color_bin[i].b;
-    colors[count].freq = color_bin[i].freq;
+    const double index_lin = i * (double)(color_bin_count - 1) / (samples - 1);
+    const double index_log = std::pow(r, (double)i) - 1.0;
+    double index_lerp = index_lin + curve * (index_log - index_lin);
+
+    if (index_lerp < 0)
+      index_lerp = 0;
+
+    if (index_lerp > samples - 1)
+      index_lerp = samples - 1;
+
+    colors[count].r = color_bin[index_lerp].r;
+    colors[count].g = color_bin[index_lerp].g;
+    colors[count].b = color_bin[index_lerp].b;
+    colors[count].freq = color_bin[index_lerp].freq;
     count++;
 
     if (count >= samples)
       break;
   }
 
-  //printf("count = %d\n", count);
+  printf("count = %d\n", count);
   return count;
 }
 
@@ -123,9 +137,10 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 {
   Gui::saveStatusInfo();
   Gui::statusInfo("Creating Color List...");
-  std::vector<color_type> color_bin(32768);
 
   // initial color list
+  std::vector<color_type> color_bin(32768);
+
   for (int i = 0; i < 32768; i++)
   {
     color_bin[i].r = 0;
@@ -135,7 +150,6 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   }
 
   const double weight = 1.0;
-
   int count = 0;
 
   for (int j = src->ct; j <= src->cb; j++)
@@ -172,9 +186,9 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 
         if (freq > 0)
         {
-          const int r = color_bin[index].r;
-          const int g = color_bin[index].g;
-          const int b = color_bin[index].b;
+          const double r = color_bin[index].r;
+          const double g = color_bin[index].g;
+          const double b = color_bin[index].b;
 
           color_bin[index].r = std::sqrt(r / freq);
           color_bin[index].g = std::sqrt(g / freq);
@@ -215,7 +229,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   }
     else
   {
-    count = limitColors(color_bin, colors, samples);
+    count = limitColors(color_bin, colors, samples, size);
   }
 
   // set max
@@ -282,6 +296,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 
     found:
 
+    // merge pair
     merge(colors[ii], colors[jj]);
     colors[jj].freq = 0;
     count--;
@@ -316,7 +331,11 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   {
     if (colors[i].freq > 0)
     {
-      pal->data[index] = makeRgb(colors[i].r, colors[i].g, colors[i].b);
+      const int r = colors[i].r;
+      const int g = colors[i].g;
+      const int b = colors[i].b;
+
+      pal->data[index] = makeRgb(r, g, b);
       index++;
     }
   }
