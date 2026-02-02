@@ -113,9 +113,6 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
     const double index_log = std::pow(r, (double)i) - 1.0;
     double index_lerp = index_lin + curve * (index_log - index_lin);
 
-    if (index_lerp < 0)
-      index_lerp = 0;
-
     if (index_lerp > samples - 1)
       index_lerp = samples - 1;
 
