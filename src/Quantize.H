@@ -48,7 +48,7 @@ private:
   static void merge(color_type &, color_type &);
   static int limitColors(std::vector<color_type> &,
                          std::vector<color_type> &,
-                         int, int);
+                         int, int, int);
 };
 
 #endif
