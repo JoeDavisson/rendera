@@ -179,9 +179,7 @@ void Palette::swapColor(int c1, int c2)
   data[c2] = temp;
 }
 
-// generate color lookup table
-// fills 3x3 sections of the color cube to save time
-// then puts exact matches back in
+// generate palette lookup table
 void Palette::fillTable()
 {
   delete[] table;
@@ -204,39 +202,30 @@ void Palette::fillTable()
 
   root = KDtree::build(&colors[0], max, 0);
 
-  for (int b = 0; b < 256; b += 3)
+  for (int b = 0; b < 256; b += 4)
   {
-    for (int g = 0; g < 256; g += 3)
+    for (int g = 0; g < 256; g += 4)
     {
-      for (int r = 0; r < 256; r += 3)
+      for (int r = 0; r < 256; r += 4)
       {
-        test_node.x[0] = r + 1;
-        test_node.x[1] = g + 1;
-        test_node.x[2] = b + 1;
+        test_node.x[0] = r + 2;
+        test_node.x[1] = g + 2;
+        test_node.x[2] = b + 2;
 
         KDtree::node_type *found = 0;
         KDtree::nearest(root, &test_node, &found, &best_dist, 0);
 
-        for (int k = 0; k < 3; k++)
+        for (int k = 0; k < 4; k++)
         {
           const int bk = b + k;
 
-          if (bk > 255)
-            break;
-
-          for (int j = 0; j < 3; j++)
+          for (int j = 0; j < 4; j++)
           {
             const int gj = g + j;
 
-            if (gj > 255)
-              break;
-
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
               const int ri = r + i;
-
-              if (ri > 255)
-                break;
 
               table[makeRgb24(ri, gj, bk)] = found->index;
             }
@@ -246,9 +235,33 @@ void Palette::fillTable()
     }
   }
 
-  for (int i = 0; i < max; i++)
+  // put exact matches back in
+  for (int z = 0; z < max; z++)
   {
-    table[data[i] & 0xffffff] = i;
+     int r = getr(data[z]);
+     int g = getg(data[z]);
+     int b = getb(data[z]);
+
+     r = (r / 4) * 4;
+     g = (g / 4) * 4;
+     b = (b / 4) * 4;
+
+     for (int k = 0; k < 4; k++)
+     {
+       const int bk = b + k;
+
+       for (int j = 0; j < 4; j++)
+       {
+         const int gj = g + j;
+
+         for (int i = 0; i < 4; i++)
+         {
+           const int ri = r + i;
+
+           table[makeRgb24(ri, gj, bk)] = z;
+         }
+       }
+     }
   }
 }
 
