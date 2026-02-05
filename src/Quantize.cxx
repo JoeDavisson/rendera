@@ -42,7 +42,7 @@ http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 #include "ImagesOptions.H"
 #include "Undo.H"
 
-bool Quantize::sort_greater_cb(const color_type &a, const color_type &b)
+bool Quantize::sort_greater_freq(const color_type &a, const color_type &b)
 {
   return a.freq > b.freq;
 }
@@ -85,9 +85,8 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
                           std::vector<color_type> &colors,
                           int samples, int size, int pixel_count)
 {
-  // reserved colors
-  int count = 0;
-
+  // reserve up to 512 colors with a higher frequency (based on the image size)
+  // to preserve small areas of color which may otherwise get wiped out
   for (int b = 0; b <= 32 - 4; b += 4)
   {
     for (int g = 0; g <= 32 - 4; g += 4)
@@ -131,26 +130,25 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
 
         if (div > 0)
         {
-           r_avg = std::sqrt(r_avg / div);
-           g_avg = std::sqrt(g_avg / div);
-           b_avg = std::sqrt(b_avg / div);
+          r_avg = std::sqrt(r_avg / div);
+          g_avg = std::sqrt(g_avg / div);
+          b_avg = std::sqrt(b_avg / div);
 
-           colors[count].r = r_avg;
-           colors[count].g = g_avg;
-           colors[count].b = b_avg;
-           colors[count].freq = (double)pixel_count / samples;
-           count++;
+          const int index = makeRgb15((int)r_avg >> 3,
+                                      (int)g_avg >> 3,
+                                      (int)b_avg >> 3);
 
-           const int index = makeRgb15(r, g, b);
-
-           color_bin[index].freq = 0;
+          color_bin[index].r = r_avg;
+          color_bin[index].g = g_avg;
+          color_bin[index].b = b_avg;
+          color_bin[index].freq = (double)pixel_count / samples;
         }
       }
     }
   }
 
   // sort by popularity
-  std::sort(color_bin.begin(), color_bin.end(), sort_greater_cb);
+  std::sort(color_bin.begin(), color_bin.end(), sort_greater_freq);
 
   // find last element
   int color_bin_count = 0;
@@ -163,18 +161,14 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
     color_bin_count++;
   }
 
-  samples -= count;
-
-  // choose a diverse range of popularities
-  if (size < 16)
-    size = 16;
-
-  const double curve = (double)size / 256;
+  // the sampling curve depends on the number of target colors
   const double r = std::pow(color_bin_count, 1.0 / (samples - 1));
+  const double curve = (double)size / 256;
+  int count = 0;
 
   for (int i = 0; i < samples; i++)
   {
-    const double index_lin = i * (double)(color_bin_count - 1) / (samples - 1);
+    const double index_lin = (double)i * (double)(color_bin_count - 1) / (samples - 1);
     const double index_log = std::pow(r, (double)i) - 1.0;
     double index_lerp = index_lin + curve * (index_log - index_lin);
 
@@ -195,10 +189,12 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
 
 void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 {
+  int pixel_count = src->w * src->h;
+
   Gui::saveStatusInfo();
   Gui::statusInfo("Creating Color List...");
 
-  // initial color list
+  // average colors and place them into bins
   std::vector<color_type> color_bin(32768);
 
   for (int i = 0; i < 32768; i++)
@@ -289,7 +285,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   }
     else
   {
-    count = limitColors(color_bin, colors, samples, size, src->cw * src->ch);
+    count = limitColors(color_bin, colors, samples, size, pixel_count);
   }
 
   // set max
@@ -324,7 +320,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   {
     int ii = 0, jj = 0;
     double *a = &(colors[0].freq);
-    double least_err = 99999999;
+    double least_err = std::numeric_limits<double>::max();
 
     // find lowest value in error matrix
     for (int j = 0; j < max; j++)
@@ -339,6 +335,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
           if (*e < least_err && *b > 0)
           {
             least_err = *e;
+
             ii = i;
             jj = j;
 
