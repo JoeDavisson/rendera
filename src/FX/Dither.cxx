@@ -50,6 +50,25 @@ namespace
     else
       return value;
   }
+
+  int nearest(Palette *pal, int c)
+  {
+    int lowest = std::numeric_limits<int>::max();
+    int use = 0;
+
+    for (int i = 0; i < pal->max; i++)
+    {
+      const int d = diff24(c, pal->data[i]);
+
+      if (d < lowest)
+      {
+        lowest = d;
+        use = i;
+      }
+    }
+
+    return use;
+  }
 }
 
 enum
@@ -157,7 +176,7 @@ void Dither::apply(Bitmap *bmp, const int mode, const int limit)
 
       c = makeRgb(toRgb(old_r), toRgb(old_g), toRgb(old_b));
 
-      int pal_index = Project::palette->lookup(c);
+      int pal_index = nearest(Project::palette, c);
       int pal_color = Project::palette->data[pal_index];
 
       rgba = getRgba(pal_color);
