@@ -42,6 +42,29 @@ http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 #include "ImagesOptions.H"
 #include "Undo.H"
 
+namespace
+{
+  int makeRgbShift(const int r, const int g, const int b, const int shift)
+  {
+    return r | g << shift | b << (shift * 2);
+  }
+
+  int getrShift(const int c, const int shift)
+  {
+    return c & ((1 << shift) - 1);
+  }
+
+  int getgShift(const int c, const int shift)
+  {
+    return (c >> shift) & ((1 << shift) - 1);
+  }
+
+  int getbShift(const int c, const int shift)
+  {
+    return (c >> (shift * 2)) & ((1 << shift) - 1);
+  }
+}
+
 bool Quantize::sort_greater_freq(const color_type &a, const color_type &b)
 {
   return a.freq > b.freq;
@@ -83,33 +106,41 @@ void Quantize::merge(color_type &c1, color_type &c2)
 
 int Quantize::limitColors(std::vector<color_type> &color_bin,
                           std::vector<color_type> &colors,
-                          int samples, int size, int pixel_count)
+                          int num_bins, int samples, int size, int pixel_count)
 {
   // reserve up to 512 colors with a higher frequency (based on the image size)
   // to preserve small areas of color which may otherwise get wiped out
-  for (int b = 0; b <= 32 - 4; b += 4)
+  const int bin_size = std::cbrt(num_bins);
+  const int bin_step = bin_size / 8;
+  const int bin_shift = std::log2(bin_size);
+
+printf("num_bins = %d\n, bin_size = %d\n, bin_step = %d\n, bin_shift = %d\n", num_bins, bin_size, bin_step, bin_shift);
+
+int temp_count = 0;
+
+  for (int b = 0; b <= bin_size - bin_step; b += bin_step)
   {
-    for (int g = 0; g <= 32 - 4; g += 4)
+    for (int g = 0; g <= bin_size - bin_step; g += bin_step)
     {
-      for (int r = 0; r <= 32 - 4; r += 4)
+      for (int r = 0; r <= bin_size - bin_step; r += bin_step)
       {
         double r_avg = 0;
         double g_avg = 0;
         double b_avg = 0;
         int div = 0;
 
-        for (int k = 0; k < 4; k++)
+        for (int k = 0; k < bin_step; k++)
         {
           const int bk = b + k;
 
-          for (int j = 0; j < 4; j++)
+          for (int j = 0; j < bin_step; j++)
           {
             const int gj = g + j;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < bin_step; i++)
             {
               const int ri = r + i;
-              const int index = makeRgb15(ri, gj, bk);
+              const int index = makeRgbShift(ri, gj, bk, bin_shift);
 
               double freq = color_bin[index].freq;
 
@@ -134,18 +165,23 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
           g_avg = std::sqrt(g_avg / div);
           b_avg = std::sqrt(b_avg / div);
 
-          const int index = makeRgb15((int)r_avg >> 3,
-                                      (int)g_avg >> 3,
-                                      (int)b_avg >> 3);
+          const int index = makeRgbShift((int)r_avg >> (8 - bin_shift),
+                                         (int)g_avg >> (8 - bin_shift),
+                                         (int)b_avg >> (8 - bin_shift),
+                                         bin_shift);
 
           color_bin[index].r = r_avg;
           color_bin[index].g = g_avg;
           color_bin[index].b = b_avg;
           color_bin[index].freq = (double)pixel_count / samples;
+
+          temp_count++;
         }
       }
     }
   }
+
+  printf("temp_count = %d\n", temp_count);
 
   // sort by popularity
   std::sort(color_bin.begin(), color_bin.end(), sort_greater_freq);
@@ -153,7 +189,7 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
   // find last element
   int color_bin_count = 0;
 
-  for (int i = 0; i < 32768; i++)
+  for (int i = 0; i < num_bins; i++)
   {
     if (color_bin[i].freq == 0)
       break;
@@ -170,34 +206,41 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
   {
     const double index_lin = (double)i * (double)(color_bin_count - 1) / (samples - 1);
     const double index_log = std::pow(r, (double)i) - 1.0;
-    double index_lerp = index_lin + curve * (index_log - index_lin);
+    int index = index_lin + curve * (index_log - index_lin);
 
-    if (index_lerp > samples - 1)
-      index_lerp = samples - 1;
+    if (index < 0)
+      index = 0;
 
-    colors[count].r = color_bin[index_lerp].r;
-    colors[count].g = color_bin[index_lerp].g;
-    colors[count].b = color_bin[index_lerp].b;
-    colors[count].freq = color_bin[index_lerp].freq;
+    if (index > samples - 1)
+      index = samples - 1;
+
+    colors[count].r = color_bin[index].r;
+    colors[count].g = color_bin[index].g;
+    colors[count].b = color_bin[index].b;
+    colors[count].freq = color_bin[index].freq;
 
     count++;
   }
 
-  //printf("count = %d\n", count);
+  printf("count = %d\n", count);
   return count;
 }
 
 void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 {
-  int pixel_count = src->w * src->h;
+  const int pixel_count = src->w * src->h;
+  const int num_bins = size < 64 ? 32768 : 262144;
+  const int bin_size = std::cbrt(num_bins);
+  const int bin_step = 256 / bin_size;
+  const int bin_shift = std::log2(bin_size);
 
   Gui::saveStatusInfo();
   Gui::statusInfo("Creating Color List...");
 
   // average colors and place them into bins
-  std::vector<color_type> color_bin(32768);
+  std::vector<color_type> color_bin(num_bins);
 
-  for (int i = 0; i < 32768; i++)
+  for (int i = 0; i < num_bins; i++)
   {
     color_bin[i].r = 0;
     color_bin[i].g = 0;
@@ -215,10 +258,10 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
       const int c = src->getpixel(i, j);
       rgba_type rgba = getRgba(c);
 
-      const int r15 = rgba.r >> 3;
-      const int g15 = rgba.g >> 3;
-      const int b15 = rgba.b >> 3;
-      const int index = makeRgb15(r15, g15, b15);
+      const int rs = rgba.r >> (8 - bin_shift);
+      const int gs = rgba.g >> (8 - bin_shift);
+      const int bs = rgba.b >> (8 - bin_shift);
+      const int index = makeRgbShift(rs, gs, bs, bin_shift);
 
       color_bin[index].r += rgba.r * rgba.r;
       color_bin[index].g += rgba.g * rgba.g;
@@ -227,17 +270,17 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
     }
   }
 
-  for (int b = 0; b < 256; b += 8)
+  for (int b = 0; b < 256; b += bin_step)
   {
-    for (int g = 0; g < 256; g += 8)
+    for (int g = 0; g < 256; g += bin_step)
     {
-      for (int r = 0; r < 256; r += 8)
+      for (int r = 0; r < 256; r += bin_step)
       {
-        const int r15 = r >> 3;
-        const int g15 = g >> 3;
-        const int b15 = b >> 3;
+        const int rs = r >> (8 - bin_shift);
+        const int gs = g >> (8 - bin_shift);
+        const int bs = b >> (8 - bin_shift);
 
-        const int index = makeRgb15(r15, g15, b15);
+        const int index = makeRgbShift(rs, gs, bs, bin_shift);
         const int freq = color_bin[index].freq;
 
         if (freq > 0)
@@ -264,12 +307,12 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   {
     count = 0;
 
-    for (int i = 0; i < 32768; i++)
+    for (int i = 0; i < num_bins; i++)
     {
-      const int r15 = i & 31;
-      const int g15 = (i >> 5) & 31;
-      const int b15 = (i >> 10) & 31;
-      const int index = makeRgb15(r15, g15, b15);
+      const int rs = getrShift(i, bin_shift);
+      const int gs = getgShift(i, bin_shift);
+      const int bs = getbShift(i, bin_shift);
+      const int index = makeRgbShift(rs, gs, bs, bin_shift);
       const double freq = color_bin[index].freq;
 
       if (freq > 0)
@@ -285,7 +328,8 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   }
     else
   {
-    count = limitColors(color_bin, colors, samples, size, pixel_count);
+    count = limitColors(color_bin, colors,
+                        num_bins, samples, size, pixel_count);
   }
 
   // set max
