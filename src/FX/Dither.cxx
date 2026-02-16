@@ -178,13 +178,15 @@ void Dither::apply(Bitmap *bmp, const int mode, const int limit_value)
     for (int x = x_start; x != x_end + dir; x += dir)
     {
       int c1 = bmp->getpixel(x, y);
-      rgba_type rgba = getRgba(c1);
+      const rgba_type rgba = getRgba(c1);
 
-      double lum = 0.299 * toLinear(rgba.r) +
-                   0.587 * toLinear(rgba.g) +
-                   0.114 * toLinear(rgba.b);
+      const double rr = toLinear(rgba.r) - 0.5;
+      const double gg = toLinear(rgba.g) - 0.5;
+      const double bb = toLinear(rgba.b) - 0.5;
 
-      double weight = 1.0 - 0.25 * (4.0 * ((lum - 0.5) * (lum - 0.5)));
+      const double weight_r = 1.0 - 0.25 * (4.0 * (rr * rr));
+      const double weight_g = 1.0 - 0.25 * (4.0 * (gg * gg));
+      const double weight_b = 1.0 - 0.25 * (4.0 * (bb * bb));
 
       int alpha = rgba.a;
 
@@ -197,12 +199,12 @@ void Dither::apply(Bitmap *bmp, const int mode, const int limit_value)
       int pal_index = nearest(pal, c2);
       int pal_color = pal->data[pal_index];
 
-      rgba = getRgba(pal_color);
-      bmp->setpixel(x, y, makeRgba(rgba.r, rgba.g, rgba.b, alpha));
+      const rgba_type pal_rgba = getRgba(pal_color);
+      bmp->setpixel(x, y, makeRgba(pal_rgba.r, pal_rgba.g, pal_rgba.b, alpha));
 
-      double new_r = toLinear(rgba.r);
-      double new_g = toLinear(rgba.g);
-      double new_b = toLinear(rgba.b);
+      double new_r = toLinear(pal_rgba.r);
+      double new_g = toLinear(pal_rgba.g);
+      double new_b = toLinear(pal_rgba.b);
 
       double er, eg, eb;
 
@@ -232,12 +234,12 @@ void Dither::apply(Bitmap *bmp, const int mode, const int limit_value)
             double g = err[j][x1].g;
             double b = err[j][x1].b;
 
-            const double mul_err = (double)matrix[j][i] * weight * limit;
+            const double mul_err = (double)matrix[j][i] * limit;
             const double div_err = (double)div;
 
-            r += (er * mul_err) / div_err;
-            g += (eg * mul_err) / div_err;
-            b += (eb * mul_err) / div_err;
+            r += ((er * mul_err * weight_r) / div_err);
+            g += ((eg * mul_err * weight_g) / div_err);
+            b += ((eb * mul_err * weight_b) / div_err);
 
             err[j][x1].r = r;
             err[j][x1].g = g;
