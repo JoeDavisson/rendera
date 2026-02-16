@@ -38,7 +38,7 @@ private:
 
   struct err_type
   {
-    float r, g, b;
+    double r, g, b;
   };
 };
 

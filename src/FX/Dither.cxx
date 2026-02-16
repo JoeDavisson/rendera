@@ -31,17 +31,17 @@ namespace
     Fl_Button *cancel;
   }
 
-  float toLinear(const float val)
+  double toLinear(const double val)
   {
     return std::pow(val / 255.0, 2.2);
   }
 
-  float toRgb(const float val)
+  double toRgb(const double val)
   {
     return std::pow(val, 1.0 / 2.2) * 255.0;
   }
 
-  float range(const float value, const float floor, const float ceiling)
+  double range(const double value, const double floor, const double ceiling)
   {
     if(value < floor)
       return floor;
@@ -51,14 +51,24 @@ namespace
       return value;
   }
 
-  int nearest(Palette *pal, int c)
+  int nearest(const Palette *pal, int c1)
   {
     int lowest = std::numeric_limits<int>::max();
     int use = 0;
 
+    const int r1 = getr(c1);
+    const int g1 = getg(c1);
+    const int b1 = getb(c1);
+
     for (int i = 0; i < pal->max; i++)
     {
-      const int d = diff24(c, pal->data[i]);
+      const int c2 = pal->data[i];
+
+      const int r = r1 - getr(c2);
+      const int g = g1 - getg(c2);
+      const int b = b1 - getb(c2);
+
+      const int d = r * r + g * g + b * b;
 
       if (d < lowest)
       {
@@ -114,12 +124,13 @@ namespace Atkinson
   const int div = 8;
 }
 
-void Dither::apply(Bitmap *bmp, const int mode, const int limit)
+void Dither::apply(Bitmap *bmp, const int mode, const int limit_value)
 {
+  const Palette *pal = Project::palette;
   int (*matrix)[5] = Threshold::matrix;
   int w = 5, h = 3;
   int div = 1;
-  const float limit_power = 1.0 + (float)limit / 10;
+  const double limit = 1.0 - ((double)limit_value / 20);
 
   std::vector<err_type> err_row(bmp->w);
   std::vector<std::vector<err_type>> err(h, err_row);
@@ -166,27 +177,34 @@ void Dither::apply(Bitmap *bmp, const int mode, const int limit)
   {
     for (int x = x_start; x != x_end + dir; x += dir)
     {
-      int c = bmp->getpixel(x, y);
-      rgba_type rgba = getRgba(c);
+      int c1 = bmp->getpixel(x, y);
+      rgba_type rgba = getRgba(c1);
 
-      float old_r = range(err[0][x].r, 0.0, 1.0);
-      float old_g = range(err[0][x].g, 0.0, 1.0);
-      float old_b = range(err[0][x].b, 0.0, 1.0);
+      double lum = 0.299 * toLinear(rgba.r) +
+                   0.587 * toLinear(rgba.g) +
+                   0.114 * toLinear(rgba.b);
+
+      double weight = 1.0 - 0.25 * (4.0 * ((lum - 0.5) * (lum - 0.5)));
+
       int alpha = rgba.a;
 
-      c = makeRgb(toRgb(old_r), toRgb(old_g), toRgb(old_b));
+      double old_r = range(err[0][x].r, 0.0, 1.0);
+      double old_g = range(err[0][x].g, 0.0, 1.0);
+      double old_b = range(err[0][x].b, 0.0, 1.0);
 
-      int pal_index = nearest(Project::palette, c);
-      int pal_color = Project::palette->data[pal_index];
+      int c2 = makeRgb(toRgb(old_r), toRgb(old_g), toRgb(old_b));
+
+      int pal_index = nearest(pal, c2);
+      int pal_color = pal->data[pal_index];
 
       rgba = getRgba(pal_color);
       bmp->setpixel(x, y, makeRgba(rgba.r, rgba.g, rgba.b, alpha));
 
-      float new_r = toLinear(rgba.r);
-      float new_g = toLinear(rgba.g);
-      float new_b = toLinear(rgba.b);
+      double new_r = toLinear(rgba.r);
+      double new_g = toLinear(rgba.g);
+      double new_b = toLinear(rgba.b);
 
-      float er, eg, eb;
+      double er, eg, eb;
 
       er = old_r - new_r;
       eg = old_g - new_g;
@@ -210,12 +228,12 @@ void Dither::apply(Bitmap *bmp, const int mode, const int limit)
             if (x1 < 0 || x1 >= bmp->w || y1 < 0 || y1 >= bmp->h)
               continue;
 
-            float r = err[j][x1].r;
-            float g = err[j][x1].g;
-            float b = err[j][x1].b;
+            double r = err[j][x1].r;
+            double g = err[j][x1].g;
+            double b = err[j][x1].b;
 
-            const float mul_err = std::pow(matrix[j][i], limit_power);
-            const float div_err = std::pow(div, limit_power);
+            const double mul_err = (double)matrix[j][i] * weight * limit;
+            const double div_err = (double)div;
 
             r += (er * mul_err) / div_err;
             g += (eg * mul_err) / div_err;
@@ -301,7 +319,7 @@ void Dither::init()
 
   Items::limit = new InputInt(Items::dialog, 0, y1, 96, 32,
                               "Limit (0 - 9)", 0, 0, 9);
-  Items::limit->value(0);
+  Items::limit->value(5);
   Items::limit->center();
 
   y1 += 32 + 16;

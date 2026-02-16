@@ -114,10 +114,6 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
   const int bin_step = bin_size / 8;
   const int bin_shift = std::log2(bin_size);
 
-printf("num_bins = %d\n, bin_size = %d\n, bin_step = %d\n, bin_shift = %d\n", num_bins, bin_size, bin_step, bin_shift);
-
-int temp_count = 0;
-
   for (int b = 0; b <= bin_size - bin_step; b += bin_step)
   {
     for (int g = 0; g <= bin_size - bin_step; g += bin_step)
@@ -159,7 +155,7 @@ int temp_count = 0;
           }
         }
 
-        if (div > 0)
+        if (div > 4)
         {
           r_avg = std::sqrt(r_avg / div);
           g_avg = std::sqrt(g_avg / div);
@@ -174,14 +170,10 @@ int temp_count = 0;
           color_bin[index].g = g_avg;
           color_bin[index].b = b_avg;
           color_bin[index].freq = (double)pixel_count / samples;
-
-          temp_count++;
         }
       }
     }
   }
-
-  printf("temp_count = %d\n", temp_count);
 
   // sort by popularity
   std::sort(color_bin.begin(), color_bin.end(), sort_greater_freq);
@@ -204,7 +196,8 @@ int temp_count = 0;
 
   for (int i = 0; i < samples; i++)
   {
-    const double index_lin = (double)i * (double)(color_bin_count - 1) / (samples - 1);
+    const double index_lin = (double)i * (double)(color_bin_count - 1) /
+                             (samples - 1);
     const double index_log = std::pow(r, (double)i) - 1.0;
     int index = index_lin + curve * (index_log - index_lin);
 
@@ -222,7 +215,6 @@ int temp_count = 0;
     count++;
   }
 
-  printf("count = %d\n", count);
   return count;
 }
 
