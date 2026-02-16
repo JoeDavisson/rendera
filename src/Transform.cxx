@@ -66,9 +66,9 @@ namespace Resize
     {
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
-      float aspect = (float)hh / ww;
+      double aspect = (float)hh / ww;
       int w = Items::width->value();
-      int h = w * aspect;
+      int h = w * aspect + 0.5;
       Items::height->value(h);
     }
   }
@@ -79,9 +79,9 @@ namespace Resize
     {
       int ww = Project::bmp->cw;
       int hh = Project::bmp->ch;
-      float aspect = (float)ww / hh;
+      double aspect = (float)ww / hh;
       int h = Items::height->value();
-      int w = h * aspect;
+      int w = h * aspect + 0.5;
       Items::width->value(w);
     }
   }
@@ -460,7 +460,7 @@ namespace Scale
       int hh = Project::bmp->ch;
       float aspect = (float)hh / ww;
       int w = Items::width->value();
-      int h = w * aspect;
+      int h = w * aspect + 0.5;
       Items::height->value(h);
     }
   }
@@ -473,7 +473,7 @@ namespace Scale
       int hh = Project::bmp->ch;
       float aspect = (float)ww / hh;
       int h = Items::height->value();
-      int w = h * aspect;
+      int w = h * aspect + 0.5;
       Items::width->value(w);
     }
   }
