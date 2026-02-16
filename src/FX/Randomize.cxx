@@ -56,6 +56,8 @@ void Randomize::apply()
       }
     }
   }
+
+  Progress::hide();
 }
 
 void Randomize::begin()
