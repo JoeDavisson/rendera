@@ -184,9 +184,9 @@ void Dither::apply(Bitmap *bmp, const int mode, const int limit_value)
       const double gg = toLinear(rgba.g) - 0.5;
       const double bb = toLinear(rgba.b) - 0.5;
 
-      const double weight_r = 1.0 - 0.25 * (4.0 * (rr * rr));
-      const double weight_g = 1.0 - 0.25 * (4.0 * (gg * gg));
-      const double weight_b = 1.0 - 0.25 * (4.0 * (bb * bb));
+      const double weight_r = -(rr * rr) + 1.0;
+      const double weight_g = -(gg * gg) + 1.0;
+      const double weight_b = -(bb * bb) + 1.0;
 
       int alpha = rgba.a;
 
