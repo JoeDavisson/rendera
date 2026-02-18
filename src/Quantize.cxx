@@ -155,7 +155,7 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
           }
         }
 
-        if (div > 4)
+        if (div > 0)
         {
           r_avg = std::sqrt(r_avg / div);
           g_avg = std::sqrt(g_avg / div);
