@@ -31,17 +31,17 @@ namespace
     Fl_Button *cancel;
   }
 
-  double toLinear(const double val)
+  float toLinear(const float val)
   {
-    return std::pow(val / 255.0, 2.2);
+    return std::pow(val / 255.0f, 2.2f);
   }
 
-  double toRgb(const double val)
+  float toRgb(const float val)
   {
-    return std::pow(val, 1.0 / 2.2) * 255.0;
+    return std::pow(val, 1.0f / 2.2f) * 255.0f;
   }
 
-  double range(const double value, const double floor, const double ceiling)
+  float range(const float value, const float floor, const float ceiling)
   {
     if(value < floor)
       return floor;
@@ -50,46 +50,6 @@ namespace
     else
       return value;
   }
-
-  int nearest(Palette *pal, const int c1)
-  {
-    return pal->lookup(c1);
-  }
-
-/*
-  int nearest(const Palette *pal, int c1)
-  {
-    double lowest = std::numeric_limits<double>::max();
-    int use = 0;
-
-    const double r1 = getr(c1);
-    const double g1 = getg(c1);
-    const double b1 = getb(c1);
-
-    for (int i = 0; i < pal->max; i++)
-    {
-      const int c2 = pal->data[i];
-
-      const double r = r1 - getr(c2);
-      const double g = g1 - getg(c2);
-      const double b = b1 - getb(c2);
-      const double avg_r = (getr(r1) + getr(c2)) / 2;
-
-      const double rw = 2.0 + (avg_r / 256.0);
-      const double gw = 2.0 + ((255.0 - avg_r) / 256.0);
-
-      const double d = ((rw * r * r) + (4.0 * g * g) + (gw * b * b));
-
-      if (d < lowest)
-      {
-        lowest = d;
-        use = i;
-      }
-    }
-
-    return use;
-  }
-*/
 }
 
 enum
@@ -101,7 +61,7 @@ enum
  
 namespace Threshold
 {
-  int matrix[3][5] =
+  float matrix[3][5] =
   {
     { 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0 },
@@ -113,7 +73,7 @@ namespace Threshold
 
 namespace Floyd
 {
-  int matrix[3][5] =
+  float matrix[3][5] =
   {
     { 0, 0, 0, 7, 0 },
     { 0, 3, 5, 1, 0 },
@@ -125,7 +85,7 @@ namespace Floyd
 
 namespace Atkinson
 {
-  int matrix[3][5] =
+  float matrix[3][5] =
   {
     { 0, 0, 0, 1, 1 },
     { 0, 1, 1, 1, 0 },
@@ -135,10 +95,10 @@ namespace Atkinson
   const int div = 8;
 }
 
-void Dither::apply(Bitmap *bmp, const int mode, const double limit)
+void Dither::apply(Bitmap *bmp, const int mode, const float limit)
 {
   Palette *pal = Project::palette;
-  int (*matrix)[5] = Threshold::matrix;
+  float (*matrix)[5] = Threshold::matrix;
   int w = 5, h = 3;
   int div = 1;
 
@@ -190,33 +150,32 @@ void Dither::apply(Bitmap *bmp, const int mode, const double limit)
       int c1 = bmp->getpixel(x, y);
       const rgba_type rgba = getRgba(c1);
 
-      const double rr = toLinear(rgba.r) - 0.5;
-      const double gg = toLinear(rgba.g) - 0.5;
-      const double bb = toLinear(rgba.b) - 0.5;
+      const float rr = toLinear(rgba.r) - 0.5f;
+      const float gg = toLinear(rgba.g) - 0.5f;
+      const float bb = toLinear(rgba.b) - 0.5f;
 
-      const double weight_r = 1.0 - limit * (rr * rr);
-      const double weight_g = 1.0 - limit * (gg * gg);
-      const double weight_b = 1.0 - limit * (bb * bb);
+      const float weight_r = 1.0f - limit * (rr * rr);
+      const float weight_g = 1.0f - limit * (gg * gg);
+      const float weight_b = 1.0f - limit * (bb * bb);
 
-      int alpha = rgba.a;
+      const int alpha = rgba.a;
 
-      double old_r = range(err[0][x].r, 0.0, 1.0);
-      double old_g = range(err[0][x].g, 0.0, 1.0);
-      double old_b = range(err[0][x].b, 0.0, 1.0);
+      float old_r = range(err[0][x].r, 0.0f, 1.0f);
+      float old_g = range(err[0][x].g, 0.0f, 1.0f);
+      float old_b = range(err[0][x].b, 0.0f, 1.0f);
 
-      int c2 = makeRgb(toRgb(old_r), toRgb(old_g), toRgb(old_b));
+      const int c2 = makeRgb(toRgb(old_r), toRgb(old_g), toRgb(old_b));
 
-      int pal_index = nearest(pal, c2);
-      int pal_color = pal->data[pal_index];
+      const int pal_color = pal->data[pal->lookup(c2)];
 
       const rgba_type pal_rgba = getRgba(pal_color);
       bmp->setpixel(x, y, makeRgba(pal_rgba.r, pal_rgba.g, pal_rgba.b, alpha));
 
-      double new_r = toLinear(pal_rgba.r);
-      double new_g = toLinear(pal_rgba.g);
-      double new_b = toLinear(pal_rgba.b);
+      float new_r = toLinear(pal_rgba.r);
+      float new_g = toLinear(pal_rgba.g);
+      float new_b = toLinear(pal_rgba.b);
 
-      double er, eg, eb;
+      float er, eg, eb;
 
       er = old_r - new_r;
       eg = old_g - new_g;
@@ -240,16 +199,15 @@ void Dither::apply(Bitmap *bmp, const int mode, const double limit)
             if (x1 < 0 || x1 >= bmp->w || y1 < 0 || y1 >= bmp->h)
               continue;
 
-            double r = err[j][x1].r;
-            double g = err[j][x1].g;
-            double b = err[j][x1].b;
+            float r = err[j][x1].r;
+            float g = err[j][x1].g;
+            float b = err[j][x1].b;
 
-            const double mul_err = (double)matrix[j][i];
-            const double div_err = (double)div;
+            const float mul_err = matrix[j][i];
 
-            r += ((er * mul_err * weight_r) / div_err);
-            g += ((eg * mul_err * weight_g) / div_err);
-            b += ((eb * mul_err * weight_b) / div_err);
+            r += ((er * mul_err * weight_r) / div);
+            g += ((eg * mul_err * weight_g) / div);
+            b += ((eb * mul_err * weight_b) / div);
 
             err[j][x1].r = r;
             err[j][x1].g = g;

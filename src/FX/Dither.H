@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class Dither
 {
 public:
-  static void apply(Bitmap *, const int, const double);
+  static void apply(Bitmap *, const int, const float);
   static void close();
   static void quit();
   static void begin();
@@ -38,7 +38,7 @@ private:
 
   struct err_type
   {
-    double r, g, b;
+    float r, g, b;
   };
 };
 
