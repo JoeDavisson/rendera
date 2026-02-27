@@ -51,24 +51,34 @@ namespace
       return value;
   }
 
+  int nearest(Palette *pal, const int c1)
+  {
+    return pal->lookup(c1);
+  }
+
+/*
   int nearest(const Palette *pal, int c1)
   {
-    int lowest = std::numeric_limits<int>::max();
+    double lowest = std::numeric_limits<double>::max();
     int use = 0;
 
-    const int r1 = getr(c1);
-    const int g1 = getg(c1);
-    const int b1 = getb(c1);
+    const double r1 = getr(c1);
+    const double g1 = getg(c1);
+    const double b1 = getb(c1);
 
     for (int i = 0; i < pal->max; i++)
     {
       const int c2 = pal->data[i];
 
-      const int r = r1 - getr(c2);
-      const int g = g1 - getg(c2);
-      const int b = b1 - getb(c2);
+      const double r = r1 - getr(c2);
+      const double g = g1 - getg(c2);
+      const double b = b1 - getb(c2);
+      const double avg_r = (getr(r1) + getr(c2)) / 2;
 
-      const int d = r * r + g * g + b * b;
+      const double rw = 2.0 + (avg_r / 256.0);
+      const double gw = 2.0 + ((255.0 - avg_r) / 256.0);
+
+      const double d = ((rw * r * r) + (4.0 * g * g) + (gw * b * b));
 
       if (d < lowest)
       {
@@ -79,6 +89,7 @@ namespace
 
     return use;
   }
+*/
 }
 
 enum
@@ -124,13 +135,12 @@ namespace Atkinson
   const int div = 8;
 }
 
-void Dither::apply(Bitmap *bmp, const int mode, const int limit_value)
+void Dither::apply(Bitmap *bmp, const int mode, const double limit)
 {
-  const Palette *pal = Project::palette;
+  Palette *pal = Project::palette;
   int (*matrix)[5] = Threshold::matrix;
   int w = 5, h = 3;
   int div = 1;
-  const double limit = 1.0 - ((double)limit_value / 20);
 
   std::vector<err_type> err_row(bmp->w);
   std::vector<std::vector<err_type>> err(h, err_row);
@@ -184,9 +194,9 @@ void Dither::apply(Bitmap *bmp, const int mode, const int limit_value)
       const double gg = toLinear(rgba.g) - 0.5;
       const double bb = toLinear(rgba.b) - 0.5;
 
-      const double weight_r = -(rr * rr) + 1.0;
-      const double weight_g = -(gg * gg) + 1.0;
-      const double weight_b = -(bb * bb) + 1.0;
+      const double weight_r = 1.0 - limit * (rr * rr);
+      const double weight_g = 1.0 - limit * (gg * gg);
+      const double weight_b = 1.0 - limit * (bb * bb);
 
       int alpha = rgba.a;
 
@@ -234,7 +244,7 @@ void Dither::apply(Bitmap *bmp, const int mode, const int limit_value)
             double g = err[j][x1].g;
             double b = err[j][x1].b;
 
-            const double mul_err = (double)matrix[j][i] * limit;
+            const double mul_err = (double)matrix[j][i];
             const double div_err = (double)div;
 
             r += ((er * mul_err * weight_r) / div_err);
@@ -320,8 +330,8 @@ void Dither::init()
   y1 += 32 + 16;
 
   Items::limit = new InputInt(Items::dialog, 0, y1, 96, 32,
-                              "Limit (0 - 9)", 0, 0, 9);
-  Items::limit->value(5);
+                              "Limit (0 - 4)", 0, 0, 4);
+  Items::limit->value(2);
   Items::limit->center();
 
   y1 += 32 + 16;

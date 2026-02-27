@@ -179,28 +179,12 @@ void Palette::swapColor(int c1, int c2)
   data[c2] = temp;
 }
 
-// generate palette lookup table
+// generate palette lookup table, uses the distance formula described here:
+// https://www.compuphase.com/cmetric.htm
 void Palette::fillTable()
 {
   delete[] table;
   table = new unsigned char[16777216];
-
-  KDtree::node_type test_node;
-  KDtree::node_type *root;
-  std::vector<KDtree::node_type> colors(max);
-
-  int best_dist;
-
-  for (int i = 0; i < max; i++)
-  {
-    const int c = data[i];
-    colors[i].x[0] = getr(c);
-    colors[i].x[1] = getg(c);
-    colors[i].x[2] = getb(c);
-    colors[i].index = i;
-  }
-
-  root = KDtree::build(&colors[0], max, 0);
 
   for (int b = 0; b < 256; b += 4)
   {
@@ -208,12 +192,28 @@ void Palette::fillTable()
     {
       for (int r = 0; r < 256; r += 4)
       {
-        test_node.x[0] = r + 2;
-        test_node.x[1] = g + 2;
-        test_node.x[2] = b + 2;
+        int lowest = std::numeric_limits<int>::max();
+        int use = 0;
 
-        KDtree::node_type *found = 0;
-        KDtree::nearest(root, &test_node, &found, &best_dist, 0);
+        for (int i = 0; i < max; i++)
+        {
+          const int c1 = data[i];
+          const int dr = getr(c1) - (r + 2);
+          const int dg = getg(c1) - (g + 2);
+          const int db = getb(c1) - (b + 2);
+          const int avg_r = (getr(c1) + (r + 2)) / 2;
+
+          const int rw = ((512 + avg_r) * dr * dr) / 256;
+          const int gw = 4 * dg * dg;
+          const int bw = (((512 + 255) - avg_r) * db * db) / 256;
+          const int d = rw + gw + bw;
+
+          if (d < lowest)
+          {
+            lowest = d;
+            use = i;
+          }
+        }
 
         for (int k = 0; k < 4; k++)
         {
@@ -227,7 +227,7 @@ void Palette::fillTable()
             {
               const int ri = r + i;
 
-              table[makeRgb24(ri, gj, bk)] = found->index;
+              table[makeRgb24(ri, gj, bk)] = use;
             }
           }
         }
@@ -236,32 +236,9 @@ void Palette::fillTable()
   }
 
   // put exact matches back in
-  for (int z = 0; z < max; z++)
+  for (int i = 0; i < max; i++)
   {
-     int r = getr(data[z]);
-     int g = getg(data[z]);
-     int b = getb(data[z]);
-
-     r = (r / 4) * 4;
-     g = (g / 4) * 4;
-     b = (b / 4) * 4;
-
-     for (int k = 0; k < 4; k++)
-     {
-       const int bk = b + k;
-
-       for (int j = 0; j < 4; j++)
-       {
-         const int gj = g + j;
-
-         for (int i = 0; i < 4; i++)
-         {
-           const int ri = r + i;
-
-           table[makeRgb24(ri, gj, bk)] = z;
-         }
-       }
-     }
+    table[data[i] & 0xffffff] = i;
   }
 }
 

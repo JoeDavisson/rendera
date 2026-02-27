@@ -80,6 +80,8 @@ void Quantize::makeColor(color_type &c,
   c.freq = freq;
 }
 
+// This uses the color distance approximation described here:
+// https://www.compuphase.com/cmetric.htm
 double Quantize::error(const color_type &c1, const color_type &c2)
 {
   const double r = c1.r - c2.r;
@@ -87,8 +89,12 @@ double Quantize::error(const color_type &c1, const color_type &c2)
   const double b = c1.b - c2.b;
   const double f1 = c1.freq;
   const double f2 = c2.freq;
+  const double avg_r = (c1.r + c2.r) / 2;
+  const double freq = (f1 * f2) / (f1 + f2);
+  const double rw = 2.0 + (avg_r / 256.0);
+  const double bw = 2.0 + ((255.0 - avg_r) / 256.0);
 
-  return ((f1 * f2) / (f1 + f2)) * (r * r + g * g + b * b);
+  return freq * ((rw * r * r) + (4.0 * g * g) + (bw * b * b));
 }
 
 void Quantize::merge(color_type &c1, color_type &c2)
@@ -196,7 +202,7 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
 
   for (int i = 0; i < samples; i++)
   {
-    const double index_lin = (double)i * (double)(color_bin_count - 1) /
+    const double index_lin = ((double)i * (double)(color_bin_count - 1)) /
                              (samples - 1);
     const double index_log = std::pow(r, (double)i) - 1.0;
     int index = index_lin + curve * (index_log - index_lin);
@@ -215,6 +221,7 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
     count++;
   }
 
+  //printf("count = %d\n", count);
   return count;
 }
 
@@ -273,7 +280,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
         const int bs = b >> (8 - bin_shift);
 
         const int index = makeRgbShift(rs, gs, bs, bin_shift);
-        const int freq = color_bin[index].freq;
+        int freq = color_bin[index].freq;
 
         if (freq > 0)
         {
@@ -295,6 +302,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   std::vector<color_type> colors(samples);
 
   // skip if already enough colors
+//FIXME this doesn't work
   if (count <= size)
   {
     count = 0;
