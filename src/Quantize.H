@@ -38,14 +38,14 @@ private:
 
   struct color_type
   {
-    float r, g, b, freq;
+    double r, g, b, freq;
   };
 
   static int makeRgbShift(const int, const int, const int, const int);
   static bool sort_greater_freq(const color_type &, const color_type &);
   static void makeColor(color_type &,
-                        const float, const float, const float, const float);
-  static float error(const color_type &, const color_type &);
+                        const double, const double, const double, const double);
+  static double error(const color_type &, const color_type &);
   static void merge(color_type &, color_type &);
   static int limitColors(std::vector<color_type> &,
                          std::vector<color_type> &,

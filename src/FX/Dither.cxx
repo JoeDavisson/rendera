@@ -31,17 +31,17 @@ namespace
     Fl_Button *cancel;
   }
 
-  float toLinear(const float val)
+  double toLinear(const double val)
   {
-    return std::pow(val / 255.0f, 2.2f);
+    return std::pow(val / 255.0, 2.2);
   }
 
-  float toRgb(const float val)
+  double toRgb(const double val)
   {
-    return std::pow(val, 1.0f / 2.2f) * 255.0f;
+    return std::pow(val, 1.0f / 2.2) * 255.0;
   }
 
-  float range(const float value, const float floor, const float ceiling)
+  double range(const double value, const double floor, const double ceiling)
   {
     if(value < floor)
       return floor;
@@ -61,7 +61,7 @@ enum
  
 namespace Threshold
 {
-  float matrix[3][5] =
+  double matrix[3][5] =
   {
     { 0, 0, 0, 0, 0 },
     { 0, 0, 0, 0, 0 },
@@ -73,7 +73,7 @@ namespace Threshold
 
 namespace Floyd
 {
-  float matrix[3][5] =
+  double matrix[3][5] =
   {
     { 0, 0, 0, 7, 0 },
     { 0, 3, 5, 1, 0 },
@@ -85,7 +85,7 @@ namespace Floyd
 
 namespace Atkinson
 {
-  float matrix[3][5] =
+  double matrix[3][5] =
   {
     { 0, 0, 0, 1, 1 },
     { 0, 1, 1, 1, 0 },
@@ -95,10 +95,10 @@ namespace Atkinson
   const int div = 8;
 }
 
-void Dither::apply(Bitmap *bmp, const int mode, const float limit)
+void Dither::apply(Bitmap *bmp, const int mode, const double limit)
 {
   Palette *pal = Project::palette;
-  float (*matrix)[5] = Threshold::matrix;
+  double (*matrix)[5] = Threshold::matrix;
   int w = 5, h = 3;
   int div = 1;
 
@@ -150,19 +150,19 @@ void Dither::apply(Bitmap *bmp, const int mode, const float limit)
       int c1 = bmp->getpixel(x, y);
       const rgba_type rgba = getRgba(c1);
 
-      const float rr = toLinear(rgba.r) - 0.5f;
-      const float gg = toLinear(rgba.g) - 0.5f;
-      const float bb = toLinear(rgba.b) - 0.5f;
+      const double rr = toLinear(rgba.r) - 0.5;
+      const double gg = toLinear(rgba.g) - 0.5;
+      const double bb = toLinear(rgba.b) - 0.5;
 
-      const float weight_r = 1.0f - limit * (rr * rr);
-      const float weight_g = 1.0f - limit * (gg * gg);
-      const float weight_b = 1.0f - limit * (bb * bb);
+      const double weight_r = 1.0 - limit * (rr * rr);
+      const double weight_g = 1.0 - limit * (gg * gg);
+      const double weight_b = 1.0 - limit * (bb * bb);
 
       const int alpha = rgba.a;
 
-      float old_r = range(err[0][x].r, 0.0f, 1.0f);
-      float old_g = range(err[0][x].g, 0.0f, 1.0f);
-      float old_b = range(err[0][x].b, 0.0f, 1.0f);
+      double old_r = range(err[0][x].r, 0.0, 1.0);
+      double old_g = range(err[0][x].g, 0.0, 1.0);
+      double old_b = range(err[0][x].b, 0.0, 1.0);
 
       const int c2 = makeRgb(toRgb(old_r), toRgb(old_g), toRgb(old_b));
 
@@ -171,11 +171,11 @@ void Dither::apply(Bitmap *bmp, const int mode, const float limit)
       const rgba_type pal_rgba = getRgba(pal_color);
       bmp->setpixel(x, y, makeRgba(pal_rgba.r, pal_rgba.g, pal_rgba.b, alpha));
 
-      float new_r = toLinear(pal_rgba.r);
-      float new_g = toLinear(pal_rgba.g);
-      float new_b = toLinear(pal_rgba.b);
+      double new_r = toLinear(pal_rgba.r);
+      double new_g = toLinear(pal_rgba.g);
+      double new_b = toLinear(pal_rgba.b);
 
-      float er, eg, eb;
+      double er, eg, eb;
 
       er = old_r - new_r;
       eg = old_g - new_g;
@@ -199,11 +199,11 @@ void Dither::apply(Bitmap *bmp, const int mode, const float limit)
             if (x1 < 0 || x1 >= bmp->w || y1 < 0 || y1 >= bmp->h)
               continue;
 
-            float r = err[j][x1].r;
-            float g = err[j][x1].g;
-            float b = err[j][x1].b;
+            double r = err[j][x1].r;
+            double g = err[j][x1].g;
+            double b = err[j][x1].b;
 
-            const float mul_err = matrix[j][i];
+            const double mul_err = matrix[j][i];
 
             r += ((er * mul_err * weight_r) / div);
             g += ((eg * mul_err * weight_g) / div);

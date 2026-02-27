@@ -54,8 +54,8 @@ bool Quantize::sort_greater_freq(const color_type &a, const color_type &b)
 }
 
 void Quantize::makeColor(color_type &c,
-                         const float r, const float g, const float b,
-                         const float freq)
+                         const double r, const double g, const double b,
+                         const double freq)
 {
   c.r = r;
   c.g = g;
@@ -65,26 +65,26 @@ void Quantize::makeColor(color_type &c,
 
 // This uses the color distance approximation described here:
 // https://www.compuphase.com/cmetric.htm
-float Quantize::error(const color_type &c1, const color_type &c2)
+double Quantize::error(const color_type &c1, const color_type &c2)
 {
-  const float r = c1.r - c2.r;
-  const float g = c1.g - c2.g;
-  const float b = c1.b - c2.b;
-  const float f1 = c1.freq;
-  const float f2 = c2.freq;
-  const float avg_r = (c1.r + c2.r) / 2;
-  const float freq = (f1 * f2) / (f1 + f2);
-  const float rw = 2.0f + (avg_r / 256.0f);
-  const float bw = 2.0f + ((255.0f - avg_r) / 256.0f);
+  const double r = c1.r - c2.r;
+  const double g = c1.g - c2.g;
+  const double b = c1.b - c2.b;
+  const double f1 = c1.freq;
+  const double f2 = c2.freq;
+  const double avg_r = (c1.r + c2.r) / 2;
+  const double freq = (f1 * f2) / (f1 + f2);
+  const double rw = 2.0 + (avg_r / 256.0);
+  const double bw = 2.0 + ((255.0 - avg_r) / 256.0);
 
-  return freq * ((rw * r * r) + (4.0f * g * g) + (bw * b * b));
+  return freq * ((rw * r * r) + (4.0 * g * g) + (bw * b * b));
 }
 
 void Quantize::merge(color_type &c1, color_type &c2)
 {
-  const float f1 = c1.freq;
-  const float f2 = c2.freq;
-  const float sum = f1 + f2;
+  const double f1 = c1.freq;
+  const double f2 = c2.freq;
+  const double sum = f1 + f2;
 
   c1.r = (f1 * c1.r + f2 * c2.r) / sum;
   c1.g = (f1 * c1.g + f2 * c2.g) / sum;
@@ -108,9 +108,9 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
     {
       for (int r = 0; r <= bin_size - bin_step; r += bin_step)
       {
-        float r_avg = 0;
-        float g_avg = 0;
-        float b_avg = 0;
+        double r_avg = 0;
+        double g_avg = 0;
+        double b_avg = 0;
         int div = 0;
 
         for (int k = 0; k < bin_step; k++)
@@ -126,13 +126,13 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
               const int ri = r + i;
               const int index = makeRgbShift(ri, gj, bk, bin_shift);
 
-              float freq = color_bin[index].freq;
+              double freq = color_bin[index].freq;
 
               if (freq > 0)
               {
-                float rr = color_bin[index].r;
-                float gg = color_bin[index].g;
-                float bb = color_bin[index].b;
+                double rr = color_bin[index].r;
+                double gg = color_bin[index].g;
+                double bb = color_bin[index].b;
 
                 r_avg += rr * rr;
                 g_avg += gg * gg;
@@ -157,7 +157,7 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
           color_bin[index].r = r_avg;
           color_bin[index].g = g_avg;
           color_bin[index].b = b_avg;
-          color_bin[index].freq = (float)pixel_count / samples;
+          color_bin[index].freq = (double)pixel_count / samples;
         }
       }
     }
@@ -178,15 +178,15 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
   }
 
   // the sampling curve depends on the number of target colors
-  const float r = std::pow(color_bin_count, 1.0f / (samples - 1));
-  const float curve = (float)size / 256;
+  const double r = std::pow(color_bin_count, 1.0 / (samples - 1));
+  const double curve = (double)size / 256;
   int count = 0;
 
   for (int i = 0; i < samples; i++)
   {
-    const float index_lin = ((float)i * (float)(color_bin_count - 1)) /
+    const double index_lin = ((double)i * (double)(color_bin_count - 1)) /
                              (samples - 1);
-    const float index_log = std::pow(r, (float)i) - 1.0f;
+    const double index_log = std::pow(r, (double)i) - 1.0;
     int index = index_lin + curve * (index_log - index_lin);
 
     if (index < 0)
@@ -273,6 +273,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
     color_bin[i].freq = 0;
   }
 
+  const double weight = 1.0;
   int count = 0;
 
   for (int y = 0; y <= src->h; y++)
@@ -290,7 +291,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
       color_bin[index].r += rgba.r * rgba.r;
       color_bin[index].g += rgba.g * rgba.g;
       color_bin[index].b += rgba.b * rgba.b;
-      color_bin[index].freq += 1.0;
+      color_bin[index].freq += weight;
     }
   }
 
@@ -309,9 +310,9 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 
         if (freq > 0)
         {
-          const float r = color_bin[index].r;
-          const float g = color_bin[index].g;
-          const float b = color_bin[index].b;
+          const double r = color_bin[index].r;
+          const double g = color_bin[index].g;
+          const double b = color_bin[index].b;
 
           color_bin[index].r = std::sqrt(r / freq);
           color_bin[index].g = std::sqrt(g / freq);
@@ -333,7 +334,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
     size = max;
 
   // init error matrix
-  std::vector<float> err_data(((max + 1) * max) / 2);
+  std::vector<double> err_data(((max + 1) * max) / 2);
 
   for (int j = 0; j < max; j++)
   {
@@ -351,21 +352,21 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   const int freq_step = &(colors[1].freq) - &(colors[0].freq);
 
   // bailout value
-  const float bailout = 512;
+  const double bailout = 512;
 
   // find minimum quantization error
   while (count > size)
   {
     int ii = 0, jj = 0;
-    float *a = &(colors[0].freq);
-    float least_err = std::numeric_limits<float>::max();
+    double *a = &(colors[0].freq);
+    double least_err = std::numeric_limits<double>::max();
 
     for (int j = 0; j < max; j++)
     {
       if (*a > 0)
       {
-        float *e = &err_data[(j + 1) * j / 2];
-        float *b = &(colors[0].freq);
+        double *e = &err_data[(j + 1) * j / 2];
+        double *b = &(colors[0].freq);
 
         for (int i = 0; i < j; i++)
         {
