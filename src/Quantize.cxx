@@ -231,7 +231,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 
   const int color_count = countColors(src, color_bits);
 
-  // skip quantization if palette is already small enough
+  // skip quantization if palette if image already has enough colors
   if (color_count <= size)
   {
     int index = 0;
