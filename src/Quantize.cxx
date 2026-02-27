@@ -28,6 +28,7 @@ http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 
 #include <vector>
 #include <algorithm>
+#include <bitset>
 
 #include "Blend.H"
 #include "Bitmap.H"
@@ -42,27 +43,9 @@ http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 #include "ImagesOptions.H"
 #include "Undo.H"
 
-namespace
+int Quantize::makeRgbShift(const int r, const int g, const int b, const int shift)
 {
-  int makeRgbShift(const int r, const int g, const int b, const int shift)
-  {
-    return r | g << shift | b << (shift * 2);
-  }
-
-  int getrShift(const int c, const int shift)
-  {
-    return c & ((1 << shift) - 1);
-  }
-
-  int getgShift(const int c, const int shift)
-  {
-    return (c >> shift) & ((1 << shift) - 1);
-  }
-
-  int getbShift(const int c, const int shift)
-  {
-    return (c >> (shift * 2)) & ((1 << shift) - 1);
-  }
+  return r | g << shift | b << (shift * 2);
 }
 
 bool Quantize::sort_greater_freq(const color_type &a, const color_type &b)
@@ -114,8 +97,7 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
                           std::vector<color_type> &colors,
                           int num_bins, int samples, int size, int pixel_count)
 {
-  // reserve up to 512 colors with a higher frequency (based on the image size)
-  // to preserve small areas of color which may otherwise get wiped out
+  // increase the frequency of a selection of colors so they remain "important"
   const int bin_size = std::cbrt(num_bins);
   const int bin_step = bin_size / 8;
   const int bin_shift = std::log2(bin_size);
@@ -225,8 +207,52 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
   return count;
 }
 
+// count colors in image
+int Quantize::countColors(Bitmap *src, std::bitset<16777216> &bits)
+{
+
+  for (int y = 0; y < src->h; y++)
+  {
+    for (int x = 0; x < src->w; x++)
+    {
+      const int c = src->getpixel(x, y) & 0xffffff;
+
+      bits[c] = 1;
+    }
+  }
+
+  return bits.count();
+}
+
 void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 {
+  std::bitset<16777216> color_bits;
+  std::vector<color_type> colors(samples);
+
+  const int color_count = countColors(src, color_bits);
+
+  // skip quantization if palette is already small enough
+  if (color_count <= size)
+  {
+    int index = 0;
+
+    for (int i = 0; i < 16777216; i++)
+    {
+      if (color_bits[i] == 1)
+      {
+        const int r = getr(i);
+        const int g = getg(i);
+        const int b = getb(i);
+
+        pal->data[index] = makeRgb(r, g, b);
+        index++;
+      }
+    }
+
+    pal->max = index;
+    return;
+  }
+
   const int pixel_count = src->w * src->h;
   const int num_bins = size < 64 ? 32768 : 262144;
   const int bin_size = std::cbrt(num_bins);
@@ -250,11 +276,11 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   const double weight = 1.0;
   int count = 0;
 
-  for (int j = src->ct; j <= src->cb; j++)
+  for (int y = 0; y <= src->h; y++)
   {
-    for (int i = src->cl; i <= src->cr; i++)
+    for (int x = 0; x <= src->w; x++)
     {
-      const int c = src->getpixel(i, j);
+      const int c = src->getpixel(x, y);
       rgba_type rgba = getRgba(c);
 
       const int rs = rgba.r >> (8 - bin_shift);
@@ -298,41 +324,10 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
     }
   }
 
-  // reduced color list
-  std::vector<color_type> colors(samples);
+  // reduce color list
+  count = limitColors(color_bin, colors,
+                      num_bins, samples, size, pixel_count);
 
-  // skip if already enough colors
-//FIXME this doesn't work
-  if (count <= size)
-  {
-    count = 0;
-
-    for (int i = 0; i < num_bins; i++)
-    {
-      const int rs = getrShift(i, bin_shift);
-      const int gs = getgShift(i, bin_shift);
-      const int bs = getbShift(i, bin_shift);
-      const int index = makeRgbShift(rs, gs, bs, bin_shift);
-      const double freq = color_bin[index].freq;
-
-      if (freq > 0)
-      {
-        makeColor(colors[count],
-                  color_bin[index].r,
-                  color_bin[index].g,
-                  color_bin[index].b,
-                  freq);
-        count++;
-      }
-    }
-  }
-    else
-  {
-    count = limitColors(color_bin, colors,
-                        num_bins, samples, size, pixel_count);
-  }
-
-  // set max
   int max = count;
 
   if (max < size)
@@ -359,14 +354,13 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   // bailout value
   const double bailout = 512;
 
-  // find minimum quantization error in matrix
+  // find minimum quantization error
   while (count > size)
   {
     int ii = 0, jj = 0;
     double *a = &(colors[0].freq);
     double least_err = std::numeric_limits<double>::max();
 
-    // find lowest value in error matrix
     for (int j = 0; j < max; j++)
     {
       if (*a > 0)
@@ -423,9 +417,10 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   }
 
   Progress::hide();
-  Editor::push();
 
   // build palette
+  Editor::push();
+
   int index = 0;
 
   for (int i = 0; i < max; i++)
