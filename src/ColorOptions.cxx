@@ -46,17 +46,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_colorChange(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->colorChange(); }
+  void cb_colorChange(Fl_Widget *w, void *data) { (void)w; ColorOptions *temp = (ColorOptions *)data; temp->colorChange(); }
 
-  void cb_colorHexInput(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->colorHexInput(); }
+  void cb_colorHexInput(Fl_Widget *w, void *data) { (void)w; ColorOptions *temp = (ColorOptions *)data; temp->colorHexInput(); }
 
-  void cb_colorTrans(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->colorTrans(); }
+  void cb_colorTrans(Fl_Widget *w, void *data) { (void)w; ColorOptions *temp = (ColorOptions *)data; temp->colorTrans(); }
 
-  void cb_colorTransInput(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->colorTransInput(); }
+  void cb_colorTransInput(Fl_Widget *w, void *data) { (void)w; ColorOptions *temp = (ColorOptions *)data; temp->colorTransInput(); }
 
-  void cb_paletteSwatches(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->paletteSwatches(); }
+  void cb_paletteSwatches(Fl_Widget *w, void *data) { (void)w; ColorOptions *temp = (ColorOptions *)data; temp->paletteSwatches(); }
 
-  void cb_paletteInput(Fl_Widget *w, void *data) { ColorOptions *temp = (ColorOptions *)data; temp->paletteInput(); }
+  void cb_paletteInput(Fl_Widget *w, void *data) { (void)w; ColorOptions *temp = (ColorOptions *)data; temp->paletteInput(); }
 }
 
 ColorOptions::ColorOptions(int x, int y, int w, int h, const char *l)
