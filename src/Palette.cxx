@@ -198,14 +198,14 @@ void Palette::fillTable()
         for (int i = 0; i < max; i++)
         {
           const int c1 = data[i];
-          const int dr = getr(c1) - (r + 0);
-          const int dg = getg(c1) - (g + 0);
-          const int db = getb(c1) - (b + 0);
-          const int avg_r = (getr(c1) + (r + 0)) / 2;
+          const int dr = getr(c1) - (r + 2);
+          const int dg = getg(c1) - (g + 2);
+          const int db = getb(c1) - (b + 2);
+          const int avg_r = (getr(c1) + (r + 2)) / 2;
 
           const int rw = ((512 + avg_r) * dr * dr) / 256;
           const int gw = 4 * dg * dg;
-          const int bw = (((512 + 255) - avg_r) * db * db) / 256;
+          const int bw = ((767 - avg_r) * db * db) / 256;
           const int d = rw + gw + bw;
 
           if (d < lowest)
@@ -236,40 +236,10 @@ void Palette::fillTable()
   }
 
   // put exact matches back in
-  for (int z = 0; z < max; z++)
-  {
-    int r = getr(data[z]);
-    int g = getg(data[z]);
-    int b = getb(data[z]);
-
-    r = (r / 4) * 4;
-    g = (g / 4) * 4;
-    b = (b / 4) * 4;
-
-    for (int k = 0; k < 4; k++)
-    {
-      const int bk = b + k;
-
-      for (int j = 0; j < 4; j++)
-      {
-        const int gj = g + j;
-
-        for (int i = 0; i < 4; i++)
-        {
-          const int ri = r + i;
-
-          table[makeRgb24(ri, gj, bk)] = z;
-        }
-      }
-    }
-  }
-
-/*
   for (int i = 0; i < max; i++)
   {
     table[data[i] & 0xffffff] = i;
   }
-*/
 }
 
 // return the nearest palette entry for an RGB color
