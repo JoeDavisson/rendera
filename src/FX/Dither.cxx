@@ -20,28 +20,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Dither.H"
 
+enum
+{
+  THRESHOLD,
+  FLOYD,
+  ATKINSON
+};
+ 
+enum
+{
+  PALETTE_MODE,
+  BW_MODE
+};
+ 
 namespace
 {
   namespace Items
   {
     DialogWindow *dialog;
-    Fl_Choice *mode;
-    InputInt *limit;
+    Fl_Choice *dither_mode;
+    InputFloat *bias;
+    Fl_Choice *color_mode;
     Fl_Button *ok;
     Fl_Button *cancel;
   }
 
-  double toLinear(const double val)
-  {
-    return std::pow(val / 255.0, 2.2);
-  }
-
-  double toRgb(const double val)
-  {
-    return std::pow(val, 1.0f / 2.2) * 255.0;
-  }
-
-  double range(const double value, const double floor, const double ceiling)
+  int range(const int value, const int floor, const int ceiling)
   {
     if(value < floor)
       return floor;
@@ -50,81 +54,89 @@ namespace
     else
       return value;
   }
-}
 
-enum
-{
-  THRESHOLD,
-  FLOYD,
-  ATKINSON
-};
- 
-namespace Threshold
-{
-  double matrix[3][5] =
+  int match(const int color_mode, const int c)
   {
-    { 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0 },
-  };
+    const int l = getl(c);
+    Palette *pal = Project::palette;
 
-  const int div = 1;
+    switch (color_mode)
+    {
+      case PALETTE_MODE:
+        return pal->data[pal->lookup(c)];
+      case BW_MODE:
+        if (l < 128)
+          return makeRgb(0, 0, 0);
+        else
+          return makeRgb(255, 255, 255);
+      default:
+        return makeRgb(0, 0, 0);
+    }
+  }
 }
 
 namespace Floyd
 {
-  double matrix[3][5] =
+  int matrix[3][5] =
   {
     { 0, 0, 0, 7, 0 },
     { 0, 3, 5, 1, 0 },
     { 0, 0, 0, 0, 0 },
   };
 
-  const int div = 16;
+  int div = 16;
 }
 
 namespace Atkinson
 {
-  double matrix[3][5] =
+  int matrix[3][5] =
   {
     { 0, 0, 0, 1, 1 },
     { 0, 1, 1, 1, 0 },
-    { 0, 0, 1, 0, 0 }
+    { 0, 0, 1, 0, 0 },
   };
 
-  const int div = 8;
+  int div = 8;
 }
 
-void Dither::apply(Bitmap *bmp, const int mode, const double limit)
+void Dither::apply(Bitmap *bmp, const int dither_mode,
+                   const int color_mode, const double bias)
 {
-  Palette *pal = Project::palette;
-  double (*matrix)[5] = Threshold::matrix;
-  int w = 5, h = 3;
-  int div = 1;
-
-  std::vector<err_type> err_row(bmp->w);
-  std::vector<std::vector<err_type>> err(h, err_row);
-
-  switch (mode)
+  if (dither_mode == THRESHOLD)
   {
-    case THRESHOLD:
-      matrix = Threshold::matrix;
-      div = Threshold::div;
-      break;
-    case FLOYD:
-      matrix = Floyd::matrix;
-      div = Floyd::div;
-      break;
-    case ATKINSON:
-      matrix = Atkinson::matrix;
-      div = Atkinson::div;
-      break;
-    default:
-      matrix = Threshold::matrix;
-      div = Threshold::div;
-      break;
+    Progress::show(bmp->h);
+
+    for (int y = 0; y < bmp->h; y++)
+    {
+      int *p = bmp->row[y];
+
+      for (int x = 0; x < bmp->w; x++)
+      {
+        bmp->setpixel(x, y, match(color_mode, *p++));
+      }
+
+      if (Progress::update(y) < 0)
+        return;
+    }
+
+    Progress::hide();
+    return;
   }
 
+  int (*matrix)[5] = Floyd::matrix;
+  int div = Floyd::div;
+  int mw = 5, mh = 3;
+
+  std::vector<err_type> err_row(bmp->w);
+  std::vector<std::vector<err_type>> err(mh, err_row);
+
+  if (dither_mode == ATKINSON)
+  {
+    matrix = Atkinson::matrix;
+    div = Atkinson::div;
+  }
+
+  div += bias;
   Progress::show(bmp->h);
 
   int dir = 1;
@@ -137,9 +149,9 @@ void Dither::apply(Bitmap *bmp, const int mode, const double limit)
     {
       rgba_type rgba = getRgba(bmp->getpixel(x, y));
 
-      err[y][x].r = toLinear(rgba.r);
-      err[y][x].g = toLinear(rgba.g);
-      err[y][x].b = toLinear(rgba.b);
+      err[y][x].r = Gamma::fix(rgba.r);
+      err[y][x].g = Gamma::fix(rgba.g);
+      err[y][x].b = Gamma::fix(rgba.b);
     }
   }
 
@@ -149,65 +161,58 @@ void Dither::apply(Bitmap *bmp, const int mode, const double limit)
     {
       int c1 = bmp->getpixel(x, y);
       const rgba_type rgba = getRgba(c1);
-
-      const double rr = toLinear(rgba.r) - 0.5;
-      const double gg = toLinear(rgba.g) - 0.5;
-      const double bb = toLinear(rgba.b) - 0.5;
-
-      const double weight_r = 1.0 - limit * (rr * rr);
-      const double weight_g = 1.0 - limit * (gg * gg);
-      const double weight_b = 1.0 - limit * (bb * bb);
-
       const int alpha = rgba.a;
 
-      double old_r = range(err[0][x].r, 0.0, 1.0);
-      double old_g = range(err[0][x].g, 0.0, 1.0);
-      double old_b = range(err[0][x].b, 0.0, 1.0);
+      int old_r = range(err[0][x].r, 0, 65535);
+      int old_g = range(err[0][x].g, 0, 65535);
+      int old_b = range(err[0][x].b, 0, 65535);
 
-      const int c2 = makeRgb(toRgb(old_r), toRgb(old_g), toRgb(old_b));
+      const int c2 = makeRgb(Gamma::unfix(old_r),
+                             Gamma::unfix(old_g),
+                             Gamma::unfix(old_b));
 
-      const int pal_color = pal->data[pal->lookup(c2)];
+      const int pal_color = match(color_mode, c2);
 
       const rgba_type pal_rgba = getRgba(pal_color);
       bmp->setpixel(x, y, makeRgba(pal_rgba.r, pal_rgba.g, pal_rgba.b, alpha));
 
-      double new_r = toLinear(pal_rgba.r);
-      double new_g = toLinear(pal_rgba.g);
-      double new_b = toLinear(pal_rgba.b);
+      int new_r = Gamma::fix(pal_rgba.r);
+      int new_g = Gamma::fix(pal_rgba.g);
+      int new_b = Gamma::fix(pal_rgba.b);
 
-      double er, eg, eb;
+      int er, eg, eb;
 
       er = old_r - new_r;
       eg = old_g - new_g;
       eb = old_b - new_b;
 
-      for (int j = 0; j < h; j++)
+      for (int j = 0; j < mh; j++)
       {
-        for (int i = 0; i < w; i++)
+        for (int i = 0; i < mw; i++)
         {
           if (matrix[j][i] > 0)
           {
             int x1;
 
             if (dir == 1)
-              x1 = x - w / 2 + i;
+              x1 = x - mw / 2 + i;
             else
-              x1 = x + w / 2 - i;
+              x1 = x + mw / 2 - i;
             
             int y1 = y + j;
 
             if (x1 < 0 || x1 >= bmp->w || y1 < 0 || y1 >= bmp->h)
               continue;
 
-            double r = err[j][x1].r;
-            double g = err[j][x1].g;
-            double b = err[j][x1].b;
+            int r = err[j][x1].r;
+            int g = err[j][x1].g;
+            int b = err[j][x1].b;
 
-            const double mul_err = matrix[j][i];
+            const int mul_err = matrix[j][i];
 
-            r += ((er * mul_err * weight_r) / div);
-            g += ((eg * mul_err * weight_g) / div);
-            b += ((eb * mul_err * weight_b) / div);
+            r += ((er * mul_err) / div);
+            g += ((eg * mul_err) / div);
+            b += ((eb * mul_err) / div);
 
             err[j][x1].r = r;
             err[j][x1].g = g;
@@ -229,9 +234,9 @@ void Dither::apply(Bitmap *bmp, const int mode, const double limit)
 
       rgba_type rgba = getRgba(bmp->getpixel(x, y + 3));
 
-      err[2][x].r = toLinear(rgba.r);
-      err[2][x].g = toLinear(rgba.g);
-      err[2][x].b = toLinear(rgba.b);
+      err[2][x].r = Gamma::fix(rgba.r);
+      err[2][x].g = Gamma::fix(rgba.g);
+      err[2][x].b = Gamma::fix(rgba.b);
     }
 
     dir = -dir;
@@ -249,10 +254,11 @@ void Dither::close()
   Items::dialog->hide();
   Project::undo->push();
 
-  const int mode = Items::mode->value();
-  const int limit = Items::limit->value();
+  const int dither_mode = Items::dither_mode->value();
+  const int color_mode = Items::color_mode->value();
+  const double div = Items::bias->value();
 
-  apply(Project::bmp, mode, limit);
+  apply(Project::bmp, dither_mode, color_mode, div);
 }
 
 void Dither::quit()
@@ -274,24 +280,38 @@ void Dither::init()
 
   Items::dialog = new DialogWindow(400, 0, "Apply Colors");
 
-  Items::mode = new Fl_Choice(0, y1, 192, 32, "Dither:");
-  Items::mode->textsize(16);
-  Items::mode->labelsize(16);
-  Items::mode->add("No Dithering");
-  Items::mode->add("Floyd-Steinberg");
-  Items::mode->add("Atkinson");
-  Items::mode->value(0);
-  Items::mode->measure_label(ww, hh);
-  Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2
-                      - (Items::mode->w() + ww) / 2 + ww,
-                      Items::mode->y(), Items::mode->w(), Items::mode->h());
+  Items::dither_mode = new Fl_Choice(0, y1, 192, 32, "Dither Mode:");
+  Items::dither_mode->textsize(16);
+  Items::dither_mode->labelsize(16);
+  Items::dither_mode->add("No Dithering");
+  Items::dither_mode->add("Floyd-Steinberg");
+  Items::dither_mode->add("Atkinson");
+  Items::dither_mode->value(0);
+  Items::dither_mode->measure_label(ww, hh);
+  Items::dither_mode->resize(Items::dialog->x() + Items::dialog->w() / 2
+                             - (Items::dither_mode->w() + ww) / 2 + ww,
+                             Items::dither_mode->y(),
+                             Items::dither_mode->w(), Items::dither_mode->h());
   y1 += 32 + 16;
 
-  Items::limit = new InputInt(Items::dialog, 0, y1, 96, 32,
-                              "Limit (0 - 4)", 0, 0, 4);
-  Items::limit->value(2);
-  Items::limit->center();
+  Items::bias = new InputFloat(Items::dialog, 0, y1, 128, 32,
+                                "Bias (-2 to 2)", 0, -2, 2);
+  Items::bias->value(0);
+  Items::bias->center();
 
+  y1 += 32 + 16;
+
+  Items::color_mode = new Fl_Choice(0, y1, 192, 32, "Color Mode:");
+  Items::color_mode->textsize(16);
+  Items::color_mode->labelsize(16);
+  Items::color_mode->add("Use Palette");
+  Items::color_mode->add("Black && White");
+  Items::color_mode->value(0);
+  Items::color_mode->measure_label(ww, hh);
+  Items::color_mode->resize(Items::dialog->x() + Items::dialog->w() / 2
+                            - (Items::color_mode->w() + ww) / 2 + ww,
+                            Items::color_mode->y(),
+                            Items::color_mode->w(), Items::color_mode->h());
   y1 += 32 + 16;
 
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
