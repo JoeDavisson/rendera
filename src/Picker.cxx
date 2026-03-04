@@ -82,7 +82,7 @@ void Picker::push(View *view)
       Gui::colors->paletteIndex(use);
     }
 
-    Gui::colors->colorUpdate(color);
+    Gui::colors->colorUpdate(color | 0xff000000);
     Gui::picker->update(color);
   }
 }
