@@ -179,18 +179,18 @@ void Palette::swapColor(int c1, int c2)
   data[c2] = temp;
 }
 
-// generate palette lookup table, uses the distance formula described here:
+// generate palette lookup table, see:
 // https://www.compuphase.com/cmetric.htm
 void Palette::fillTable()
 {
   delete[] table;
   table = new unsigned char[16777216];
 
-  for (int b = 0; b < 256; b += 4)
+  for (int b = 0; b <= 256 - 4; b += 4)
   {
-    for (int g = 0; g < 256; g += 4)
+    for (int g = 0; g <= 256 - 4; g += 4)
     {
-      for (int r = 0; r < 256; r += 4)
+      for (int r = 0; r <= 256 - 4; r += 4)
       {
         int lowest = std::numeric_limits<int>::max();
         int use = 0;
