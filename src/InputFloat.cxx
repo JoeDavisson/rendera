@@ -48,9 +48,9 @@ namespace
       else
     {
       if (w == &i->dec)
-        val -= 0.5;
+        val -= 0.25;
       else if (w == &i->inc)
-        val += 0.5;
+        val += 0.25;
     }
 
     if (val < i->min)
@@ -105,7 +105,7 @@ float InputFloat::value()
 
 void InputFloat::value(const float val)
 {
-  snprintf(str, sizeof(str), "%f", val);
+  snprintf(str, sizeof(str), "%.5f", val);
   input.value(str);
 }
 
