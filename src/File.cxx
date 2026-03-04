@@ -132,11 +132,8 @@ enum
  
 int File::last_type = 0;
 
-// store previous directory paths
-char File::load_dir[256];
-char File::save_dir[256];
-char File::pal_load_dir[256];
-char File::pal_save_dir[256];
+// store previous directory
+char File::last_dir[FILE_PATH_MAX];
 
 const char *File::ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
 
@@ -204,10 +201,7 @@ void File::pngReadFromArray(png_structp png_ptr,
 
 void File::init()
 {
-  snprintf(load_dir, sizeof(load_dir), ".");
-  snprintf(save_dir, sizeof(save_dir), ".");
-  snprintf(pal_load_dir, sizeof(pal_load_dir), ".");
-  snprintf(pal_save_dir, sizeof(pal_save_dir), ".");
+  snprintf(last_dir, sizeof(last_dir), ".");
 }
 
 /*
@@ -231,7 +225,7 @@ void File::load(Fl_Widget *, void *)
 //  fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
   fc.filter_value(last_type);
-  fc.directory(load_dir);
+  fc.directory(last_dir);
 
   switch (fc.show())
   {
@@ -239,7 +233,7 @@ void File::load(Fl_Widget *, void *)
     case 1:
       return;
     default:
-      getDirectory(load_dir, fc.filename());
+      getDirectory(last_dir, fc.filename());
       break;
   }
 
@@ -284,7 +278,7 @@ int File::loadFile(const char *fn)
   }
     else
   {
-    char s[256];
+    char s[FILE_PATH_MAX];
 
     getFilename(s, fn);
     Gui::images->addFile(s);
@@ -932,7 +926,7 @@ void File::save(Fl_Widget *, void *)
 //  fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc.filter_value(last_type);
-  fc.directory(save_dir);
+  fc.directory(last_dir);
 
   switch (fc.show())
   {
@@ -940,11 +934,11 @@ void File::save(Fl_Widget *, void *)
     case 1:
       return;
     default:
-      getDirectory(save_dir, fc.filename());
+      getDirectory(last_dir, fc.filename());
       break;
   }
 
-  char fn[256];
+  char fn[FILE_PATH_MAX];
   snprintf(fn, sizeof(fn), "%s", fc.filename());
 
   int ext_value = fc.filter_value();
@@ -1336,7 +1330,7 @@ void File::loadPalette()
   fc.filter("GIMP Palette\t*.gpl\n");
   fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-  fc.directory(pal_load_dir);
+  fc.directory(last_dir);
 
   switch (fc.show())
   {
@@ -1344,11 +1338,11 @@ void File::loadPalette()
     case 1:
       return;
     default:
-      getDirectory(pal_load_dir, fc.filename());
+      getDirectory(last_dir, fc.filename());
       break;
   }
 
-  char fn[256];
+  char fn[FILE_PATH_MAX];
 
   snprintf(fn, sizeof(fn), "%s", fc.filename());
 
@@ -1384,7 +1378,7 @@ void File::savePalette()
   fc.filter("GIMP Palette\t*.gpl\n");
   fc.options(Fl_Native_File_Chooser::PREVIEW);
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-  fc.directory(pal_save_dir);
+  fc.directory(last_dir);
 
   switch (fc.show())
   {
@@ -1392,11 +1386,11 @@ void File::savePalette()
     case 1:
       return;
     default:
-      getDirectory(pal_save_dir, fc.filename());
+      getDirectory(last_dir, fc.filename());
       break;
   }
 
-  char fn[256];
+  char fn[FILE_PATH_MAX];
 
   snprintf(fn, sizeof(fn), "%s", fc.filename());
   fl_filename_setext(fn, sizeof(fn), ".gpl");
@@ -1424,7 +1418,7 @@ void File::loadSelection()
   fc.filter("PNG \t*.png\n");
   fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
   fc.filter_value(0);
-  fc.directory(load_dir);
+  fc.directory(last_dir);
 
   switch (fc.show())
   {
@@ -1432,7 +1426,7 @@ void File::loadSelection()
     case 1:
       return;
     default:
-      getDirectory(load_dir, fc.filename());
+      getDirectory(last_dir, fc.filename());
       break;
   }
 
@@ -1466,7 +1460,7 @@ void File::saveSelection()
   fc.filter("PNG \t*.png\n");
   fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fc.filter_value(0);
-  fc.directory(save_dir);
+  fc.directory(last_dir);
 
   switch (fc.show())
   {
@@ -1474,11 +1468,11 @@ void File::saveSelection()
     case 1:
       return;
     default:
-      getDirectory(save_dir, fc.filename());
+      getDirectory(last_dir, fc.filename());
       break;
   }
 
-  char fn[256];
+  char fn[FILE_PATH_MAX];
   snprintf(fn, sizeof(fn), "%s", fc.filename());
 
   int ext_value = fc.filter_value();
@@ -1532,14 +1526,14 @@ void File::decodeURI(char *s)
 // extract directory from a path/filename string
 void File::getDirectory(char *dest, const char *src)
 {
-  snprintf(dest, sizeof(*dest), "%s", src);
+  memcpy(dest, src, FILE_PATH_MAX);
 
   int len = strlen(dest);
 
-  if (len < 2)
+  if (len <= 1)
     return;
 
-  for (int i = len - 1; i > 0; i--)
+  for (int i = len - 1; i > 1; i--)
   {
     if (dest[i - 1] == '/')
     {

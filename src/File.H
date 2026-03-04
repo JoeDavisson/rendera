@@ -44,6 +44,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // this must be included after pnglib
 #include <setjmp.h>
 
+#define FILE_PATH_MAX 4096
+
 class Fl_Widget;
 class Fl_Image;
 class Bitmap;
@@ -86,10 +88,7 @@ private:
   ~File() { }
 
   static int last_type;
-  static char load_dir[256];
-  static char save_dir[256];
-  static char pal_load_dir[256];
-  static char pal_save_dir[256];
+  static char last_dir[FILE_PATH_MAX];
   static const char *ext_string[];
 
   static void jpeg_exit(j_common_ptr);
