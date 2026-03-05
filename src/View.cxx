@@ -941,8 +941,10 @@ void View::draw()
     if (dnd)
     {
       fl_push_clip(x(), y(), w(), h());
-      fl_line_style(FL_DASH, 4);
-      fl_rect(x(), y(), w(), h(), fl_rgb_color(192, 192, 192));
+      fl_line_style(FL_SOLID, 10);
+      fl_rect(x(), y(), w(), h(), fl_rgb_color(0, 0, 0));
+      fl_line_style(FL_DASH, 6);
+      fl_rect(x(), y(), w(), h(), fl_rgb_color(255, 255, 255));
       fl_line_style(0);
       fl_pop_clip();
       dnd = false;
