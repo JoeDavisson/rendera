@@ -251,7 +251,7 @@ namespace Scale
 
     bool blur = false;
 
-    if (blur_size > 1.0)
+    if (blur_size > 1.0 && (dw < sw || dh < sh))
       blur = true;
 
     if (Items::mode->value() == 0)
