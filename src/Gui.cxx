@@ -233,6 +233,12 @@ public:
           case 'f':
             FontPreview::toggle();
             return 1;
+          case '[':
+            Editor::pop();
+            return 1;
+          case ']':
+            Editor::popRedo();
+            return 1;
         }
     }
 
@@ -344,11 +350,11 @@ void Gui::init()
     (Fl_Callback *)paletteSortByValue, 0, 0);
   menubar->add("&Palette/&Normalize", 0,
     (Fl_Callback *)paletteNormalize, 0, FL_MENU_DIVIDER);
-  menubar->add("&Palette/&Editor... (E)", 0,
+  menubar->add("&Palette/&Editor...", 'e',
     (Fl_Callback *)Editor::begin, 0, FL_MENU_DIVIDER);
-  menubar->add("&Palette/&Undo", 0,
+  menubar->add("&Palette/&Undo", '[',
     (Fl_Callback *)Editor::pop, 0, 0);
-  menubar->add("&Palette/&Redo", 0,
+  menubar->add("&Palette/&Redo", ']',
     (Fl_Callback *)Editor::popRedo, 0, 0);
 
 //  menubar->add("F&X/Color/Test", 0,
@@ -596,6 +602,8 @@ void Gui::paletteNormalize()
 
 void Gui::paletteSetDefault()
 {
+  Editor::push();
+
   static int hue[] =
   {
     0, 109, 192, 256, 328, 364, 512, 657,
@@ -633,6 +641,8 @@ void Gui::paletteSetDefault()
 
 void Gui::paletteSetBlackAndWhite()
 {
+  Editor::push();
+
   Palette *pal = Project::palette;
 
   pal->data[0] = makeRgb(0, 0, 0);
@@ -645,6 +655,8 @@ void Gui::paletteSetBlackAndWhite()
 
 void Gui::paletteSetGrays()
 {
+  Editor::push();
+
   Palette *pal = Project::palette;
 
   for (int i = 0; i < 16; i++)
@@ -659,6 +671,8 @@ void Gui::paletteSetGrays()
 
 void Gui::paletteSetTwoBits()
 {
+  Editor::push();
+
   Palette *pal = Project::palette;
   pal->data[0] = makeRgb(0x00, 0x00, 0x00);
   pal->data[1] = makeRgb(0x4a, 0x4a, 0x4a);
@@ -673,6 +687,8 @@ void Gui::paletteSetTwoBits()
 // from colodore.com
 void Gui::paletteSetC64()
 {
+  Editor::push();
+
   Palette *pal = Project::palette;
 
   pal->data[0] = makeRgb(0, 0, 0);
@@ -699,6 +715,8 @@ void Gui::paletteSetC64()
 
 void Gui::paletteSetVCS()
 {
+  Editor::push();
+
   Palette *pal = Project::palette;
   int index = 0;
 
@@ -734,6 +752,8 @@ void Gui::paletteSetVCS()
 
 void Gui::paletteSetWebSafe()
 {
+  Editor::push();
+
   Palette *pal = Project::palette;
   int index = 0;
 
@@ -755,6 +775,8 @@ void Gui::paletteSetWebSafe()
 
 void Gui::paletteSet3LevelRGB()
 {
+  Editor::push();
+
   Palette *pal = Project::palette;
   int index = 0;
 
@@ -778,6 +800,8 @@ void Gui::paletteSet3LevelRGB()
 
 void Gui::paletteSet4LevelRGB()
 {
+  Editor::push();
+
   Palette *pal = Project::palette;
   int index = 0;
 
@@ -799,6 +823,8 @@ void Gui::paletteSet4LevelRGB()
 
 void Gui::paletteSet332()
 {
+  Editor::push();
+
   Palette *pal = Project::palette;
   int index = 0;
 

@@ -617,7 +617,8 @@ void Editor::push()
 
 void Editor::pop()
 {
-  if (undo_current >= levels - 1)
+  // ignores last entry (a "dummy" palette created when the program starts)
+  if (undo_current >= levels - 2)
     return;
 
   pushRedo();
@@ -706,23 +707,26 @@ void Editor::init()
 
   Items::replace = new Fl_Button(x1, y1, 128, 42, "Replace");
   Items::replace->callback((Fl_Callback *)replaceColor);
-  Items::insert->labelsize(18);
+  Items::replace->labelsize(18);
   y1 += 42 + 8;
 
   Items::undo = new Fl_Button(x1, y1, 60, 42, "Undo");
   Items::undo->callback((Fl_Callback *)pop);
-//  y1 += 42 + 8;
+  Items::undo->labelsize(18);
     
   Items::redo = new Fl_Button(x1 + 68, y1, 60, 42, "Redo");
   Items::redo->callback((Fl_Callback *)popRedo);
+  Items::redo->labelsize(18);
   y1 += 42 + 8;
     
   Items::rgb_ramp = new Fl_Button(x1, y1, 128, 40, "RGB Ramp");
   Items::rgb_ramp->callback((Fl_Callback *)rgbRamp);
+  Items::rgb_ramp->labelsize(16);
   y1 += 40 + 8;
 
   Items::hsv_ramp = new Fl_Button(x1, y1, 128, 40, "HSV Ramp");
   Items::hsv_ramp->callback((Fl_Callback *)hsvRamp);
+  Items::hsv_ramp->labelsize(16);
 
   x1 += 128 + 8;
   y1 = 8;
@@ -769,6 +773,7 @@ void Editor::init()
 
   Items::done = new Fl_Button(Items::dialog->w() - 96 - 8, y1,
                               96, 40, "Done (E)");
+  Items::done->labelsize(16);
   Items::done->shortcut('e');
   Items::done->callback((Fl_Callback *)close);
 
