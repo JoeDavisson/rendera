@@ -44,7 +44,6 @@ public:
   void normalize();
 
   int *data;
-  unsigned char *table;
   int max;
 };
 

@@ -30,18 +30,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Palette.H"
 #include "Widget.H"
 
-static bool sort_value_cb(const int c1, const int c2)
+namespace
 {
-  return getl(c1) < getl(c2);
+  bool sort_value_cb(const int c1, const int c2)
+  {
+    return getl(c1) < getl(c2);
+  }
+
+  unsigned char *table;
 }
 
 Palette::Palette()
 {
   // palette color data
   data = new int[256];
-
-  // data structure for color lookup
-  table = new unsigned char[16777216];
 
   data[0] = makeRgb(0, 0, 0);
   data[1] = makeRgb(255, 255, 255);
@@ -50,7 +52,6 @@ Palette::Palette()
 
 Palette::~Palette()
 {
-  delete[] table;
   delete[] data;
 }
 
