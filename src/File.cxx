@@ -310,7 +310,6 @@ int File::loadFile(const char *fn)
 
   if (!temp)
   {
-//    errorMessage(ERROR_LOADING);
     return -1;
   }
 
@@ -352,8 +351,8 @@ Bitmap *File::loadJpeg(const char *fn)
 
   if (setjmp(jerr.setjmp_buffer))
   {
-    errorMessage(ERROR_LOADING);
     jpeg_destroy_decompress(&cinfo);
+    errorMessage(ERROR_LOADING);
     return 0;
   }
 
@@ -362,6 +361,12 @@ Bitmap *File::loadJpeg(const char *fn)
   jpeg_read_header(&cinfo, TRUE);
   jpeg_start_decompress(&cinfo);
 
+  if (cinfo.output_width < 1 || cinfo.output_width > 16384)
+  {
+    errorMessage(ERROR_DIMENSIONS);
+    return 0;
+  }
+
   int row_stride = cinfo.output_width * cinfo.output_components;
   JSAMPARRAY linebuf = (*cinfo.mem->alloc_sarray)
               ((j_common_ptr)&cinfo, JPOOL_IMAGE, row_stride, 1);
@@ -369,9 +374,10 @@ Bitmap *File::loadJpeg(const char *fn)
   int w = row_stride / bytes;
   int h = cinfo.output_height;
 
-  if (w > 16384 || h > 16384)
+  if (w < 1 || h < 1 || w > 16384 || h > 16384)
   {
     errorMessage(ERROR_DIMENSIONS);
+    return 0;
   }
 
 // FIXME need to support dpi in load/save, here are the fields:
@@ -473,10 +479,22 @@ Bitmap *File::loadBmp(const char *fn)
   bm.biClrUsed = parseUint32(p);
   bm.biClrImportant = parseUint32(p);
 
+  // skip additional header info if it exists
+  if (bm.biSize > 40)
+  {
+    fseek(in.get(), bm.biSize - 40, SEEK_CUR);
+  }
+
+  //dpix = bm.biXPelsPerMeter / 39.370079 + .5;
+  //dpiy = bm.biYPelsPerMeter / 39.370079 + .5;
+
   int w = bm.biWidth;
   int h = bm.biHeight;
 
-  if (w > 16384 || h > 16384)
+  int ww = std::abs(w);
+  int hh = std::abs(h);
+
+  if (ww < 1 || hh < 1 || ww > 16384 || hh > 16384)
   {
     errorMessage(ERROR_DIMENSIONS);
     return 0;
@@ -490,15 +508,6 @@ Bitmap *File::loadBmp(const char *fn)
     return 0;
   }
 
-  // skip additional header info if it exists
-  if (bm.biSize > 40)
-  {
-    fseek(in.get(), bm.biSize - 40, SEEK_CUR);
-  }
-
-  //dpix = bm.biXPelsPerMeter / 39.370079 + .5;
-  //dpiy = bm.biYPelsPerMeter / 39.370079 + .5;
-
   int mul = 3;
   bool negx = false, negy = false;
   int pad = w % 4;
@@ -509,8 +518,8 @@ Bitmap *File::loadBmp(const char *fn)
   if (h >= 0)
     negy = true;
 
-  w = std::abs(w);
-  h = std::abs(h);
+  w = ww;
+  h = hh;
 
   Bitmap *temp = new Bitmap(w, h);
   std::vector<unsigned char> linebuf(w * mul + pad);
@@ -581,20 +590,6 @@ Bitmap *File::loadTarga(const char *fn)
   header.bpp = parseUint8(p);
   header.descriptor = parseUint8(p);
 
-  if (header.data_type != 2 || (header.bpp != 24 && header.bpp != 32))
-  {
-    errorMessage(ERROR_TGA_BITS);
-    return 0;
-  }
-
-  if (header.w > 16384 || header.h > 16384)
-  {
-    errorMessage(ERROR_DIMENSIONS);
-    return 0;
-  }
-
-  int depth = header.bpp / 8;
-
   // skip additional header info if it exists
   if (header.id_length > 0)
     fseek(in.get(), header.id_length, SEEK_CUR);
@@ -602,8 +597,22 @@ Bitmap *File::loadTarga(const char *fn)
   if (header.color_map_type > 0)
     fseek(in.get(), header.color_map_length, SEEK_CUR);
 
+  if (header.data_type != 2 || (header.bpp != 24 && header.bpp != 32))
+  {
+    errorMessage(ERROR_TGA_BITS);
+    return 0;
+  }
+
   int w = header.w;
   int h = header.h;
+
+  if (w < 1 || h < 1 || w > 16384 || h > 16384)
+  {
+    errorMessage(ERROR_DIMENSIONS);
+    return 0;
+  }
+
+  int depth = header.bpp / 8;
 
   Bitmap *temp = new Bitmap(w, h);
   std::vector<unsigned char> linebuf(w * depth);
@@ -733,7 +742,7 @@ Bitmap *File::loadPng(const char *fn)
   int w = temp_w;
   int h = temp_h;
 
-  if (w > 16384 || h > 16384)
+  if (w < 1 || h < 1 || w > 16384 || h > 16384)
   {
     errorMessage(ERROR_DIMENSIONS);
     return 0;
@@ -907,7 +916,7 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
   int w = temp_w;
   int h = temp_h;
 
-  if (w > 16384 || h > 16384)
+  if (w < 1 || h < 1 || w > 16384 || h > 16384)
   {
     errorMessage(ERROR_DIMENSIONS);
     return 0;
