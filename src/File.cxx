@@ -361,16 +361,23 @@ Bitmap *File::loadJpeg(const char *fn)
   jpeg_read_header(&cinfo, TRUE);
   jpeg_start_decompress(&cinfo);
 
+  int bytes = cinfo.out_color_components;
+
+  if (bytes != 1 && bytes != 3)
+  {
+    errorMessage(ERROR_JPG_BITS);
+    return 0;
+  }
+
   if (cinfo.output_width < 1 || cinfo.output_width > 16384)
   {
     errorMessage(ERROR_DIMENSIONS);
     return 0;
   }
 
-  int row_stride = cinfo.output_width * cinfo.output_components;
+  int row_stride = cinfo.output_width * bytes;
   JSAMPARRAY linebuf = (*cinfo.mem->alloc_sarray)
               ((j_common_ptr)&cinfo, JPOOL_IMAGE, row_stride, 1);
-  int bytes = cinfo.out_color_components;
   int w = row_stride / bytes;
   int h = cinfo.output_height;
 
