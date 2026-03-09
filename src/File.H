@@ -92,7 +92,7 @@ private:
   static const char *ext_string[];
 
   static void jpeg_exit(j_common_ptr);
-  static void errorMessage();
+  static void errorMessage(const int);
   static bool fileExists(const char *);
   static bool isPng(const unsigned char *);
   static bool isJpeg(const unsigned char *);

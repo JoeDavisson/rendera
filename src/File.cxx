@@ -46,6 +46,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
+enum
+{
+  ERROR_FILE_NOT_FOUND,
+  ERROR_LOADING,
+  ERROR_SAVING,
+  ERROR_BMP_BITS,
+  ERROR_TGA_BITS,
+  ERROR_JPG_BITS,
+  ERROR_DIMENSIONS,
+  ERROR_UNKNOWN
+};
+
 #pragma pack(push)
 #pragma pack(1)
 
@@ -126,8 +138,7 @@ enum
   TYPE_PNG,
   TYPE_JPG,
   TYPE_BMP,
-  TYPE_TGA,
-  TYPE_TXT
+  TYPE_TGA
 };
  
 int File::last_type = 0;
@@ -137,10 +148,36 @@ char File::last_dir[FILE_PATH_MAX];
 
 const char *File::ext_string[] = { ".png", ".jpg", ".bmp", ".tga" };
 
-// show error dialog
-void File::errorMessage()
+void File::errorMessage(const int message)
 {
-  Dialog::message("File Error", "An error occured during the operation.");
+  switch (message)
+  {
+    case ERROR_FILE_NOT_FOUND:
+      Dialog::message("File Error", "File not found.");
+      break;
+    case ERROR_LOADING:
+      Dialog::message("File Error", "Could not load image.");
+      break;
+    case ERROR_SAVING:
+      Dialog::message("File Error", "Could not save image.");
+      break;
+    case ERROR_BMP_BITS:
+      Dialog::message("File Error", "Only uncompressed 24-bit BMP\nfiles are supported.");
+      break;
+    case ERROR_TGA_BITS:
+      Dialog::message("File Error", "Only uncompressed 24 or 32-bit TGA\nfiles are supported.");
+      break;
+    case ERROR_JPG_BITS:
+      Dialog::message("File Error", "Only RGB or grayscale JPEG files\nare supported.");
+      break;
+    case ERROR_DIMENSIONS:
+      Dialog::message("File Error", "Dimensions over 16384 are\nnot supported.");
+      break;
+    case ERROR_UNKNOWN:
+    default:
+      Dialog::message("File Error", "Unknown error.");
+      break;
+  }
 }
 
 // check if trying to overwrite existing file
@@ -181,7 +218,7 @@ bool File::isTarga(const char *fn)
   const char *ext;
 
   ext = fl_filename_ext(fn);
-  return (strcmp(ext, ".tga") == 0);
+  return (strcasecmp(ext, ".tga") == 0);
 }
 
 bool File::isGimpPalette(const unsigned char *header)
@@ -246,12 +283,18 @@ int File::loadFile(const char *fn)
   FileSP in(fn, "rb");
 
   if (!in.get())
+  {
+    errorMessage(ERROR_FILE_NOT_FOUND);
     return -1;
+  }
 
   unsigned char header[8];
 
   if (fread(&header, 1, 8, in.get()) != 8)
+  {
+    errorMessage(ERROR_LOADING);
     return -1;
+  }
 
   // load to a temporary bitmap first
   Bitmap *temp = 0;
@@ -267,7 +310,7 @@ int File::loadFile(const char *fn)
 
   if (!temp)
   {
-    errorMessage();
+//    errorMessage(ERROR_LOADING);
     return -1;
   }
 
@@ -299,13 +342,17 @@ Bitmap *File::loadJpeg(const char *fn)
   FileSP in(fn, "rb");
 
   if (!in.get())
+  {
+    errorMessage(ERROR_LOADING);
     return 0;
+  }
 
   cinfo.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = jpg_exit;
 
   if (setjmp(jerr.setjmp_buffer))
   {
+    errorMessage(ERROR_LOADING);
     jpeg_destroy_decompress(&cinfo);
     return 0;
   }
@@ -321,6 +368,11 @@ Bitmap *File::loadJpeg(const char *fn)
   int bytes = cinfo.out_color_components;
   int w = row_stride / bytes;
   int h = cinfo.output_height;
+
+  if (w > 16384 || h > 16384)
+  {
+    errorMessage(ERROR_DIMENSIONS);
+  }
 
 // FIXME need to support dpi in load/save, here are the fields:
 //printf("%d\n", cinfo.density_unit);
@@ -363,6 +415,7 @@ Bitmap *File::loadJpeg(const char *fn)
     jpeg_finish_decompress(&cinfo);
     jpeg_destroy_decompress(&cinfo);
 
+    errorMessage(ERROR_JPG_BITS);
     return 0;
   }
 
@@ -377,7 +430,10 @@ Bitmap *File::loadBmp(const char *fn)
   FileSP in(fn, "rb");
 
   if (!in.get())
+  {
+    errorMessage(ERROR_LOADING);
     return 0;
+  }
 
   bmp_info_header_type bm;
   unsigned char buffer[64];
@@ -385,6 +441,7 @@ Bitmap *File::loadBmp(const char *fn)
   if (fread(buffer, 1, sizeof(bmp_file_header_type), in.get()) !=
      (unsigned)sizeof(bmp_file_header_type))
   {
+    errorMessage(ERROR_LOADING);
     return 0;
   }
 
@@ -399,6 +456,7 @@ Bitmap *File::loadBmp(const char *fn)
   if (fread(buffer, 1, sizeof(bmp_info_header_type), in.get())
      != (unsigned)sizeof(bmp_info_header_type))
   {
+    errorMessage(ERROR_LOADING);
     return 0;
   }
 
@@ -417,14 +475,26 @@ Bitmap *File::loadBmp(const char *fn)
 
   int w = bm.biWidth;
   int h = bm.biHeight;
+
+  if (w > 16384 || h > 16384)
+  {
+    errorMessage(ERROR_DIMENSIONS);
+    return 0;
+  }
+
   int bits = bm.biBitCount;
 
   if (bits != 24)
+  {
+    errorMessage(ERROR_BMP_BITS);
     return 0;
+  }
 
   // skip additional header info if it exists
   if (bm.biSize > 40)
+  {
     fseek(in.get(), bm.biSize - 40, SEEK_CUR);
+  }
 
   //dpix = bm.biXPelsPerMeter / 39.370079 + .5;
   //dpiy = bm.biYPelsPerMeter / 39.370079 + .5;
@@ -452,6 +522,8 @@ Bitmap *File::loadBmp(const char *fn)
     if (fread(&linebuf[0], 1, w * mul + pad, in.get()) !=
        (unsigned)(w * mul + pad))
     {
+      delete temp;
+      errorMessage(ERROR_LOADING);
       return 0;
     }
       else
@@ -478,7 +550,10 @@ Bitmap *File::loadTarga(const char *fn)
   FileSP in(fn, "rb");
 
   if (!in.get())
+  {
+    errorMessage(ERROR_LOADING);
     return 0;
+  }
 
   targa_header_type header;
 
@@ -487,6 +562,7 @@ Bitmap *File::loadTarga(const char *fn)
   if (fread(buffer, 1, sizeof(targa_header_type), in.get()) !=
      (unsigned)sizeof(targa_header_type))
   {
+    errorMessage(ERROR_LOADING);
     return 0;
   }
 
@@ -505,11 +581,17 @@ Bitmap *File::loadTarga(const char *fn)
   header.bpp = parseUint8(p);
   header.descriptor = parseUint8(p);
 
-  if (header.data_type != 2)
+  if (header.data_type != 2 || (header.bpp != 24 && header.bpp != 32))
+  {
+    errorMessage(ERROR_TGA_BITS);
     return 0;
+  }
 
-  if (header.bpp != 24 && header.bpp != 32)
+  if (header.w > 16384 || header.h > 16384)
+  {
+    errorMessage(ERROR_DIMENSIONS);
     return 0;
+  }
 
   int depth = header.bpp / 8;
 
@@ -555,7 +637,11 @@ Bitmap *File::loadTarga(const char *fn)
   for (int y = ystart; y != yend; y += negy ? -1 : 1)
   {
     if (fread(&linebuf[0], 1, w * depth, in.get()) != (unsigned)(w * depth))
+    {
+      delete temp;
+      errorMessage(ERROR_LOADING);
       return 0;
+    }
 
     for (int x = xstart; x != xend; x += negx ? -1 : 1)
     {
@@ -583,15 +669,24 @@ Bitmap *File::loadPng(const char *fn)
   FileSP in(fn, "rb");
 
   if (!in.get())
+  {
+    errorMessage(ERROR_LOADING);
     return 0;
+  }
 
   unsigned char header[64];
 
   if (fread(header, 1, 8, in.get()) != 8)
+  {
+    errorMessage(ERROR_LOADING);
     return 0;
+  }
 
   if (!isPng(header))
+  {
+    errorMessage(ERROR_LOADING);
     return 0;
+  }
 
   png_structp png_ptr;
   png_infop info_ptr;
@@ -599,19 +694,24 @@ Bitmap *File::loadPng(const char *fn)
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
 
   if (!png_ptr)
+  {
+    errorMessage(ERROR_LOADING);
     return 0;
+  }
 
   info_ptr = png_create_info_struct(png_ptr);
 
   if (!info_ptr)
   {
     png_destroy_read_struct(&png_ptr, 0, 0);
+    errorMessage(ERROR_LOADING);
     return 0;
   }
 
   if (setjmp(png_jmpbuf(png_ptr)))
   {
     png_destroy_read_struct(&png_ptr, &info_ptr, 0);
+    errorMessage(ERROR_LOADING);
     return 0;
   }
 
@@ -632,6 +732,12 @@ Bitmap *File::loadPng(const char *fn)
 
   int w = temp_w;
   int h = temp_h;
+
+  if (w > 16384 || h > 16384)
+  {
+    errorMessage(ERROR_DIMENSIONS);
+    return 0;
+  }
 
   // check interlace mode
   bool interlace = png_set_interlace_handling(png_ptr) > 1 ? 1 : 0;
@@ -759,19 +865,24 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
   png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
 
   if (!png_ptr)
+  {
+    errorMessage(ERROR_LOADING);
     return 0;
+  }
 
   info_ptr = png_create_info_struct(png_ptr);
 
   if (!info_ptr)
   {
     png_destroy_read_struct(&png_ptr, 0, 0);
+    errorMessage(ERROR_LOADING);
     return 0;
   }
 
   if (setjmp(png_jmpbuf(png_ptr)))
   {
     png_destroy_read_struct(&png_ptr, &info_ptr, 0);
+    errorMessage(ERROR_LOADING);
     return 0;
   }
 
@@ -795,6 +906,12 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
 
   int w = temp_w;
   int h = temp_h;
+
+  if (w > 16384 || h > 16384)
+  {
+    errorMessage(ERROR_DIMENSIONS);
+    return 0;
+  }
 
   // check interlace mode
   bool interlace = png_set_interlace_handling(png_ptr) > 1 ? 1 : 0;
@@ -950,7 +1067,7 @@ void File::save(Fl_Widget *, void *)
       return;
   }
 
-  int ret = 0;
+  int ret = -1;
   
   switch (ext_value)
   {
@@ -971,8 +1088,10 @@ void File::save(Fl_Widget *, void *)
       ret = -1;
   }
 
-  if (ret < 0)
-    errorMessage();
+  if (ret == -1)
+  {
+    errorMessage(ERROR_SAVING);
+  }
 
   last_type = ext_value;
 }
@@ -983,7 +1102,9 @@ int File::saveBmp(Bitmap *bmp, const char *fn)
   FILE *outp = out.get();
 
   if (!outp)
+  {
     return -1;
+  }
 
   int w = bmp->cw;
   int h = bmp->ch;
@@ -1355,7 +1476,7 @@ void File::loadPalette()
 
   if (fread(&header, 1, 12, in.get()) != 12)
   {
-    errorMessage();
+//    errorMessage();
     return;
   }
 
@@ -1363,9 +1484,10 @@ void File::loadPalette()
   {
     if (Project::palette->load((const char*)fn) < 0)
     {
-      errorMessage();
+//      errorMessage();
       return;
     }
+
     Gui::colors->paletteDraw();
   }
 }
@@ -1406,7 +1528,7 @@ void File::savePalette()
   
   if (Project::palette->save(fn) < 0)
   {
-    errorMessage();
+//    errorMessage();
     return;
   }
 }
@@ -1484,7 +1606,7 @@ void File::saveSelection()
       return;
   }
 
-  int ret = 0;
+  int ret = -1;
 
   switch (ext_value)
   {
@@ -1496,8 +1618,10 @@ void File::saveSelection()
       ret = -1;
   }
 
-  if (ret < 0)
-    errorMessage();
+  if (ret == -1)
+  {
+    errorMessage(ERROR_UNKNOWN);
+  }
 }
 
 // convert special characters from drag n' drop path/filename string
