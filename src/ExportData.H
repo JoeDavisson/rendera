@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cstdio>
 #include <cstdint>
 
+#define FILE_PATH_MAX 4096
+
 class Fl_Widget;
 class Fl_Image;
 class Bitmap;
@@ -52,7 +54,7 @@ private:
   ~ExportData() { }
 
   static int last_type;
-  static char save_dir[256];
+  static char save_dir[FILE_PATH_MAX];
   static const char *ext_string[];
 
   static void errorMessage();

@@ -140,7 +140,7 @@ namespace ExportOptions
 int ExportData::last_type = 0;
 
 // store previous directory paths
-char ExportData::save_dir[256];
+char ExportData::save_dir[FILE_PATH_MAX];
 
 const char *ExportData::ext_string[] = { ".bin", ".asm", ".java" };
 
@@ -195,7 +195,7 @@ void ExportData::save(Fl_Widget *, void *)
       break;
   }
 
-  char fn[256];
+  char fn[FILE_PATH_MAX];
   snprintf(fn, sizeof(fn), "%s", fc.filename());
 
   int ext_value = fc.filter_value();
