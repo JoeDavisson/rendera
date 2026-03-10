@@ -29,8 +29,8 @@ enum
  
 enum
 {
-  PALETTE_MODE,
-  BW_MODE
+  MODE_PALETTE,
+  MODE_BW
 };
  
 namespace
@@ -62,9 +62,9 @@ namespace
 
     switch (color_mode)
     {
-      case PALETTE_MODE:
+      case MODE_PALETTE:
         return pal->data[pal->lookup(c)];
-      case BW_MODE:
+      case MODE_BW:
         if (l < 128)
           return makeRgb(0, 0, 0);
         else
@@ -112,7 +112,10 @@ void Dither::apply(Bitmap *bmp, const int dither_mode,
 
       for (int x = 0; x < bmp->w; x++)
       {
-        bmp->setpixel(x, y, match(color_mode, *p++));
+        const int c = *p++;
+
+        bmp->setpixel(x, y,
+                     (c & 0xff000000) | (match(color_mode, c) & 0xffffff));
       }
 
       if (Progress::update(y) < 0)
