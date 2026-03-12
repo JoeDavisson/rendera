@@ -322,7 +322,7 @@ void Gui::init()
     (Fl_Callback *)File::savePalette, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/&Create...", 0,
     (Fl_Callback *)Dialog::makePalette, 0, 0);
-  menubar->add("&Palette/&Apply...", 0,
+  menubar->add("&Palette/&Apply\\/Dither...", 0,
     (Fl_Callback *)Dither::begin, 0, FL_MENU_DIVIDER);
   menubar->add("&Palette/Presets/Default", 0,
     (Fl_Callback *)paletteSetDefault, 0, 0);
