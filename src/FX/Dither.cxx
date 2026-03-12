@@ -43,6 +43,7 @@ namespace
     Fl_Choice *color_mode;
     Fl_Button *ok;
     Fl_Button *cancel;
+    Fl_Button *reset;
   }
 
   int range(const int value, const int floor, const int ceiling)
@@ -72,6 +73,13 @@ namespace
       default:
         return makeRgb(0, 0, 0);
     }
+  }
+
+  void cb_reset()
+  {
+    Items::dither_mode->value(0);
+    Items::bias->value(0);
+    Items::color_mode->value(0);
   }
 }
 
@@ -316,6 +324,10 @@ void Dither::init()
                             Items::color_mode->y(),
                             Items::color_mode->w(), Items::color_mode->h());
   y1 += 32 + 16;
+
+  Items::reset = new Fl_Button(8, y1 + 12, 96, 40, "Reset");
+  Items::reset->labelsize(18);
+  Items::reset->callback((Fl_Callback *)cb_reset);
 
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
