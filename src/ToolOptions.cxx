@@ -46,13 +46,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_change(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->change(); }
+  void cb_change(Fl_Widget *, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->change(); }
 
-  void cb_cloneEnable(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->cloneEnable(); }
+  void cb_cloneEnable(Fl_Widget *, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->cloneEnable(); }
 
-  void cb_constrainEnable(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->constrainEnable(); }
+  void cb_constrainEnable(Fl_Widget *, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->constrainEnable(); }
 
-  void cb_originEnable(Fl_Widget *w, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->originEnable(); }
+  void cb_originEnable(Fl_Widget *, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->originEnable(); }
 }
 
 ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)

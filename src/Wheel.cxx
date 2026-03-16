@@ -31,9 +31,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_change_with_cb(Fl_Widget *w, void *data) { Wheel *temp = (Wheel *)data; temp->changeWithCB(); }
+  void cb_change_with_cb(Fl_Widget *, void *data) { Wheel *temp = (Wheel *)data; temp->changeWithCB(); }
 
-  void cb_change_hue(Fl_Widget *w, void *data) { Wheel *temp = (Wheel *)data; temp->changeHue(); }
+  void cb_change_hue(Fl_Widget *, void *data) { Wheel *temp = (Wheel *)data; temp->changeHue(); }
 }
 
 Wheel::Wheel(int x, int y, int w, int h, const char *l)

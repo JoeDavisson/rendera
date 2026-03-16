@@ -39,21 +39,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_zoomIn(Fl_Widget *w, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->zoomIn(); }
+  void cb_zoomIn(Fl_Widget *, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->zoomIn(); }
 
-  void cb_zoomOut(Fl_Widget *w, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->zoomOut(); }
+  void cb_zoomOut(Fl_Widget *, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->zoomOut(); }
  
-  void cb_zoomOne(Fl_Widget *w, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->zoomOne(); }
+  void cb_zoomOne(Fl_Widget *, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->zoomOne(); }
 
-  void cb_gridEnable(Fl_Widget *w, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->gridEnable(); }
+  void cb_gridEnable(Fl_Widget *, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->gridEnable(); }
 
-  void cb_gridSnap(Fl_Widget *w, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->gridSnap(); }
+  void cb_gridSnap(Fl_Widget *, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->gridSnap(); }
 
-  void cb_gridX(Fl_Widget *w, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->gridX(); }
+  void cb_gridX(Fl_Widget *, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->gridX(); }
 
-  void cb_gridY(Fl_Widget *w, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->gridY(); }
+  void cb_gridY(Fl_Widget *, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->gridY(); }
 
-  void cb_aspectMode(Fl_Widget *w, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->aspectMode(); }
+  void cb_aspectMode(Fl_Widget *, void *data) { ViewOptions *temp = (ViewOptions *)data; temp->aspectMode(); }
 }
 
 ViewOptions::ViewOptions(int x, int y, int w, int h, const char *l)

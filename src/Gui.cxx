@@ -101,7 +101,7 @@ namespace
   }
 
   // prevent escape from closing main window
-  void closeCallback(Fl_Widget *widget, void *)
+  void closeCallback(Fl_Widget *, void *)
   {
     if ((Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT)
        && Fl::event_key() == FL_Escape)

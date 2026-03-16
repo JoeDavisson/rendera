@@ -38,15 +38,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_browse(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->browse(); }
+  void cb_browse(Fl_Widget *, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->browse(); }
 
-  void cb_closeFile(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->closeFile(); }
+  void cb_closeFile(Fl_Widget *, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->closeFile(); }
 
-  void cb_moveUp(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->moveUp(); }
+  void cb_moveUp(Fl_Widget *, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->moveUp(); }
 
-  void cb_moveDown(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->moveDown(); }
+  void cb_moveDown(Fl_Widget *, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->moveDown(); }
 
-  void cb_rename(Fl_Widget *w, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->rename(); }
+  void cb_rename(Fl_Widget *, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->rename(); }
 }
 
 ImagesOptions::ImagesOptions(int x, int y, int w, int h, const char *l)

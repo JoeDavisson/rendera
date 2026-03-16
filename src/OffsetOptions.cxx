@@ -35,13 +35,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_left(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->left(); }
+  void cb_left(Fl_Widget *, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->left(); }
 
-  void cb_right(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->right(); }
+  void cb_right(Fl_Widget *, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->right(); }
 
-  void cb_up(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->up(); }
+  void cb_up(Fl_Widget *, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->up(); }
 
-  void cb_down(Fl_Widget *w, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->down(); }
+  void cb_down(Fl_Widget *, void *data) { OffsetOptions *temp = (OffsetOptions *)data; temp->down(); }
 }
 
 OffsetOptions::OffsetOptions(int x, int y, int w, int h, const char *l)

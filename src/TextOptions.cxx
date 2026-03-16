@@ -48,7 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_changedSize(Fl_Widget *w, void *data) { TextOptions *temp = (TextOptions *)data; temp->changedSize(); }
+  void cb_changedSize(Fl_Widget *, void *data) { TextOptions *temp = (TextOptions *)data; temp->changedSize(); }
 }
 
 TextOptions::TextOptions(int x, int y, int w, int h, const char *l)

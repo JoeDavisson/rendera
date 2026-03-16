@@ -37,21 +37,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_alpha(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->alpha(); }
+  void cb_alpha(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->alpha(); }
 
-  void cb_copy(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->copy(); }
+  void cb_copy(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->copy(); }
 
-  void cb_paste(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->paste(); }
+  void cb_paste(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->paste(); }
 
-  void cb_crop(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->crop(); }
+  void cb_crop(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->crop(); }
 
-  void cb_flipX(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->flipX(); }
+  void cb_flipX(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->flipX(); }
 
-  void cb_flipY(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->flipY(); }
+  void cb_flipY(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->flipY(); }
 
-  void cb_reset(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->reset(); }
+  void cb_reset(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->reset(); }
 
-  void cb_rotate90(Fl_Widget *w, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->rotate90(); }
+  void cb_rotate90(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->rotate90(); }
 }
 
 SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
