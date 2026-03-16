@@ -22,10 +22,11 @@ SRC_DIR_FX=src/FX
 INCLUDE=-I$(SRC_DIR) -I$(SRC_DIR_FX) -Ifltk
 LIBS=$(shell ./fltk/fltk-config --use-images --ldstaticflags)
 
+
 ifeq ($(PLATFORM),linux)
   HOST=
   CXX=g++
-  CXXFLAGS= -O3 -Wall -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -O3 -Wall -Wunused-parameter -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   EXE=rendera
 endif
 
