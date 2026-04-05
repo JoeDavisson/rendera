@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2025 Joe Davisson.
+Copyright (c) 2026 Joe Davisson.
 
 This file is part of Rendera.
 
@@ -21,8 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef FILE_H
 #define FILE_H
 
+#define STR2(x) #x
+#define STR(x) STR2(x)
+
 #ifdef RENDERA_STATIC_LINK
-  #include "../fltk/png/png.h"
+  #include STR(../FLTK_DIR/png/png.h)
 #else
   #include <png.h>
 #endif
@@ -36,7 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #endif
 
 #ifdef RENDERA_STATIC_LINK
-  #include "../fltk/jpeg/jpeglib.h"
+  #include STR(../FLTK_DIR/jpeg/jpeglib.h)
 #else
   #include <jpeglib.h>
 #endif
