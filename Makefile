@@ -1,39 +1,34 @@
 # Rendera Makefile
-#
-# The official fltk 1.4.3 source tree must be in this directory,
-# renamed to just "fltk".
 
-# Please run "make fltklib" first.
-# Also run "make header" before "make" the first time
-# to build the images header.
+# The official FLTK source tree must be in this directory.
+# run "make fltklib" and "make header" the first time, then "make"
 
 # libxft-dev should be installed before compiling FLTK on linux
 # (otherwise you'll have ugly, non-resizable fonts)
 
+FLTK_DIR=fltk-1.4.4
 PLATFORM=linux
 #PLATFORM=mingw32
 #PLATFORM=mingw64
 
-#VERSION=$(shell git describe --tags --abbrev=0)
-VERSION=0.3.1
+VERSION=0.3.2
 
 SRC_DIR=src
 SRC_DIR_FX=src/FX 
-INCLUDE=-I$(SRC_DIR) -I$(SRC_DIR_FX) -Ifltk
-LIBS=$(shell ./fltk/fltk-config --use-images --ldstaticflags)
-
+INCLUDE=-I$(SRC_DIR) -I$(SRC_DIR_FX) -I$(FLTK_DIR)
+LIBS=$(shell ./$(FLTK_DIR)/fltk-config --use-images --ldstaticflags)
 
 ifeq ($(PLATFORM),linux)
   HOST=
   CXX=g++
-  CXXFLAGS= -O3 -Wall -Wunused-parameter -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -O3 -Wall -Wunused-parameter -DFLTK_DIR=$(FLTK_DIR) -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   EXE=rendera
 endif
 
 ifeq ($(PLATFORM),mingw32)
   HOST=i686-w64-mingw32
   CXX=$(HOST)-g++
-  CXXFLAGS= -O3 -Wall -static-libgcc -static-libstdc++ -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -O3 -Wall -static-libgcc -static-libstdc++ -DFLTK_DIR=$(FLTK_DIR) -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   LIBS+=-lgdi32 -lcomctl32 -static -lpthread
   EXE=rendera.exe
 endif
@@ -41,7 +36,7 @@ endif
 ifeq ($(PLATFORM),mingw64)
   HOST=x86_64-w64-mingw32
   CXX=$(HOST)-g++
-  CXXFLAGS= -O3 -Wall -static-libgcc -static-libstdc++ -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -O3 -Wall -static-libgcc -static-libstdc++ -DFLTK_DIR=$(FLTK_DIR) -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   LIBS+=-lgdi32 -lcomctl32 -static -lpthread
   EXE=rendera.exe
 endif
@@ -137,12 +132,12 @@ OBJ= \
 default: $(OBJ)
 	$(CXX) -o ./$(EXE) $(SRC_DIR)/Main.cxx $(OBJ) $(CXXFLAGS) $(LIBS)
 
-# rebuld fltk
+# build fltk
 fltklib:
-	cd ./fltk; \
+	cd ./$(FLTK_DIR); \
 	make clean; \
 	./configure --host=$(HOST) --enable-xft --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
-	make -j6; \
+	make -j4; \
 	cd ..; \
 	echo "FLTK libs built.";
 
