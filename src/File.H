@@ -82,7 +82,7 @@ public:
   //Fl_Image *previewTarga(const char *, unsigned char *, int);
   //Fl_Image *previewGimpPalette(const char *, unsigned char *, int);
 
-  static void decodeURI(char *);
+  static void decodeURI(char *, const int);
   static void getDirectory(char *, const char *);
   static void getFilename(char *, const char *);
 

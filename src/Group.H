@@ -31,6 +31,9 @@ public:
 
   static const int title_height = 32;
 
+private:
+  int draw_title = false;
+
 protected:
   void draw();
 };

@@ -28,20 +28,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "CheckBox.H"
 
 CheckBox::CheckBox(Fl_Group *g, int x, int y, int w, int h,
-               const char *label, Fl_Callback *cb)
+               const char *l, Fl_Callback *cb)
 : Fl_Check_Button(x, y, w, h, 0)
 {
   group = g;
   clear_visible_focus();
+  copy_label(l);
   labelsize(18);
 
   if (cb)
     callback(cb, &var);
 
-  std::vector<char> label_text(strlen(label) + 1, 0);
-
-  snprintf(label_text.data(), sizeof(label_text), "%s", label);
-  copy_label(label_text.data());
   resize(group->x() + x, group->y() + y, w, h);
 }
 

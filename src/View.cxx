@@ -107,6 +107,15 @@ namespace
   void updateView(int sx, int sy, int dx, int dy, int w, int h)
   {
     #if defined linux
+
+/*
+need this?
+      Window win = fl_xid(Gui::getWindow());
+
+      if (!win)
+        return;
+*/
+
       float scale = getScale();
 
       sx *= scale;
@@ -135,7 +144,7 @@ namespace
       fn.data()[i] = Fl::event_text()[i];
 
     // convert to utf-8 (e.g. %20 becomes space)
-    File::decodeURI(fn.data());
+    File::decodeURI(fn.data(), length);
 
     int index = 0;
 

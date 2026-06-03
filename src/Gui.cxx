@@ -981,7 +981,7 @@ void Gui::statusInfo(const char *str)
 
 void Gui::saveStatusInfo()
 {
-  strncpy(status_text, info->label(), sizeof(status_text) - 1);
+  snprintf(status_text, sizeof(status_text), "%s", info->label());
 }
 
 void Gui::restoreStatusInfo()

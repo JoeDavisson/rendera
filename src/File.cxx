@@ -1641,22 +1641,22 @@ void File::saveSelection()
 }
 
 // convert special characters from drag n' drop path/filename string
-void File::decodeURI(char *s)
+void File::decodeURI(char *str, const int str_size)
 {
   unsigned int c;
-  int len = strlen(s);
+  int len = strnlen(str, str_size);
 
   for (int i = 0; i < len - 2; i++)
   {
-    if (s[i] == '%')
+    if (str[i] == '%')
     {
-      if (sscanf(&s[i + 1], "%2X", &c) != 1)
+      if (sscanf(&str[i + 1], "%2X", &c) != 1)
         break;
 
-      s[i] = c;
+      str[i] = c;
 
       for (int j = 0; j < len - (i + 2); j++)
-        s[i + 1 + j] = s[i + 3 + j];
+        str[i + 1 + j] = str[i + 3 + j];
 
       len -= 2;
     }
@@ -1668,7 +1668,7 @@ void File::getDirectory(char *dest, const char *src)
 {
   memcpy(dest, src, FILE_PATH_MAX);
 
-  int len = strlen(dest);
+  int len = strnlen(dest, FILE_PATH_MAX);
 
   if (len <= 1)
     return;
@@ -1686,7 +1686,7 @@ void File::getDirectory(char *dest, const char *src)
 // extract filename from a path/filename string
 void File::getFilename(char *dest, const char *src)
 {
-  int len = strlen(src);
+  int len = strnlen(src, FILE_PATH_MAX);
 
   if (len < 2)
     return;

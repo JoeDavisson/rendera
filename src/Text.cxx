@@ -78,6 +78,9 @@ void Text::push(View *view)
   int angle = 360 - Gui::text->getAngle();
   const char *s = Gui::text->getInput();
 
+  if (s == 0)
+    return;
+
   if (size < 2)
     size = 2;
 
@@ -388,6 +391,9 @@ void Text::change()
   int size = Gui::text->getSize();
   int angle = 360 - Gui::text->getAngle();
   const char *s = Gui::text->getInput();
+
+  if (s == 0)
+    return;
 
   if (size < 4)
     size = 4;
