@@ -110,9 +110,9 @@ void TextOptions::changedSize()
   Project::text->move(Gui::view);
 }
 
-const char *TextOptions::getInput()
+Fl_Input *TextOptions::getInput()
 {
-  return text_input->value();
+  return text_input;
 }
 
 int TextOptions::getSize()

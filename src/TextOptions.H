@@ -37,7 +37,7 @@ public:
 
   void init();
   void changedSize();
-  const char *getInput();
+  Fl_Input *getInput();
   int getSize();
   int getAngle();
   int getSmooth();

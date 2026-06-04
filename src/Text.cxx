@@ -76,7 +76,9 @@ void Text::push(View *view)
   int face = index - 1;
   int size = Gui::text->getSize();
   int angle = 360 - Gui::text->getAngle();
-  const char *s = Gui::text->getInput();
+  Fl_Input *input = Gui::text->getInput();
+  const char *s = input->value();
+  const int len = input->size();
 
   if (s == 0)
     return;
@@ -97,19 +99,19 @@ void Text::push(View *view)
 
   // add a space before and after string, or some
   // scripty fonts won't render properly on the sides
-  std::vector<char> string((int)strlen(s) + 8, 0);
+  std::vector<char> string(len + 8, 0);
   string[0] = ' ';
 
   int i = 0;
 
-  for (i = 0; i < (int)strlen(s); i++)
+  for (i = 0; i < len; i++)
     string[i + 1] = s[i];
 
   i++;
   string[i] = ' ';
 
   // compensate for odd string length
-  if ((strlen(s) & 1) == 1)
+  if ((len & 1) == 1)
     string[i++] = ' ';
   else
     i++;
@@ -390,7 +392,9 @@ void Text::change()
   int face = index - 1;
   int size = Gui::text->getSize();
   int angle = 360 - Gui::text->getAngle();
-  const char *s = Gui::text->getInput();
+  Fl_Input *input = Gui::text->getInput();
+  const char *s = input->value();
+  const int len = input->size();
 
   if (s == 0)
     return;
@@ -403,19 +407,19 @@ void Text::change()
 
   // add a space before and after string, or some
   // scripty fonts won't render properly on the sides
-  std::vector<char> string((int)strlen(s) + 8, 0);
+  std::vector<char> string(len + 8, 0);
   string[0] = ' ';
 
   int i = 0;
 
-  for (i = 0; i < (int)strlen(s); i++)
+  for (i = 0; i < len; i++)
     string[i + 1] = s[i];
 
   i++;
   string[i] = ' ';
 
   // compensate for odd string length
-  if ((strlen(s) & 1) == 1)
+  if ((len & 1) == 1)
     string[i++] = ' ';
   else
     i++;
