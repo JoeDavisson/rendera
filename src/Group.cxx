@@ -53,7 +53,7 @@ void Group::draw()
   {
     fl_draw_box(FL_UP_BOX, x(), y(), w(), title_height, FL_INACTIVE_COLOR);
     measure_label(lw, lh);
-    draw_label(x() + (w() - lw) / 2, y() + 8, lw, lh);
+    draw_label(x() + (w() - lw) / 2, y() + 5, lw, lh);
     fl_draw_box(FL_UP_FRAME,
                 x(), y() + title_height, w(), h() - title_height,
                 FL_BACKGROUND_COLOR);
