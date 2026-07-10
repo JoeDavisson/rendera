@@ -15,9 +15,7 @@ VERSION=0.3.2
 
 SRC_DIR=src
 SRC_DIR_FX=src/FX 
-INCLUDE=-I$(SRC_DIR) -I$(SRC_DIR_FX) -I$(FLTK_DIR) -I/usr/include/cairo
-#INCLUDE=-I$(SRC_DIR) -I$(SRC_DIR_FX) -I$(FLTK_DIR)
-#LIBS=$(shell ./$(FLTK_DIR)/fltk-config --use-cairo --use-images --ldstaticflags)
+INCLUDE=-I$(SRC_DIR) -I$(SRC_DIR_FX) -I$(FLTK_DIR)
 LIBS=$(shell ./$(FLTK_DIR)/fltk-config --use-images --ldstaticflags)
 
 ifeq ($(PLATFORM),linux)
@@ -138,7 +136,7 @@ default: $(OBJ)
 fltklib:
 	cd ./$(FLTK_DIR); \
 	make clean; \
-	./configure --host=$(HOST) --enable-cairo --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
+	./configure --host=$(HOST) --enable-localjpeg --enable-localzlib --enable-localpng --disable-xdbe; \
 	make -j12; \
 	cd ..; \
 	echo "FLTK libs built.";
