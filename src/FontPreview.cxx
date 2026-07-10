@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gui.H"
 #include "Separator.H"
 #include "TextOptions.H"
+#include "Tool.H"
+#include "ToolOptions.H"
 
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
@@ -147,7 +149,11 @@ void FontPreview::changedFont()
   int font = FontPreview::getFont();
 
   FontPreview::update(font - 1);
-  Gui::text->changedSize();
+
+  if (Gui::tools->getTool() == Tool::TEXT)
+  {
+    Gui::text->changedSize();
+  }
 }
 
 int FontPreview::getFont()
