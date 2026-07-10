@@ -132,7 +132,11 @@ void FontPreview::toggle()
 
 void FontPreview::close()
 {
-  Gui::text->changedSize();
+  if (Gui::tools->getTool() == Tool::TEXT)
+  {
+    Gui::text->changedSize();
+  }
+
   preview_win->hide();
 }
 
