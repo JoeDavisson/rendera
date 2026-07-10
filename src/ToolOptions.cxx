@@ -77,13 +77,13 @@ ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
   pos += 48 + 8;
 
   origin = new ToggleButton(this, 8, pos, 48, 48,
-                            "Start From Center", images_origin_png, 0);
+                            "Start From Center (Alt)", images_origin_png, 0);
   origin->callback(cb_originEnable, (void *)this);
 
   pos += 48 + 8;
 
   constrain = new ToggleButton(this, 8, pos, 48, 48,
-                              "Lock Proportions",
+                              "Lock Proportions (Shift)",
                               images_constrain_png, 0);
   constrain->callback(cb_constrainEnable, (void *)this);
 

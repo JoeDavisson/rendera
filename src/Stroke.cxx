@@ -70,6 +70,22 @@ Stroke::~Stroke()
   delete[] edge_y;
 }
 
+bool Stroke::originEnabled()
+{
+  if (origin || Fl::get_key(FL_Alt_L) || Fl::get_key(FL_Alt_R))
+    return true;
+  else
+    return false;
+}
+
+bool Stroke::constrainEnabled()
+{
+  if (constrain || Fl::get_key(FL_Shift_L) || Fl::get_key(FL_Shift_R))
+    return true; 
+  else
+    return false;
+}
+
 // keeps dimensions equal, for drawing circles/squares
 void Stroke::keepSquare(int x1, int y1, int *x2, int *y2)
 {
@@ -411,7 +427,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
     case LINE:
     {
-      if (origin)
+      if (originEnabled() == true)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
@@ -452,10 +468,10 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
     case RECT:
     {
-      if (constrain)
+      if (constrainEnabled() == true)
         keepSquare(beginx, beginy, &x, &y);
 
-      if (origin)
+      if (originEnabled() == true)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
@@ -484,10 +500,10 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
     case FILLED_RECT:
     {
-      if (constrain)
+      if (constrainEnabled() == true)
         keepSquare(beginx, beginy, &x, &y);
 
-      if (origin)
+      if (originEnabled() == true)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
@@ -516,10 +532,10 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
     case OVAL:
     {
-      if (constrain)
+      if (constrainEnabled() == true)
         keepSquare(beginx, beginy, &x, &y);
 
-      if (origin)
+      if (originEnabled() == true)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
@@ -548,10 +564,10 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
 
     case FILLED_OVAL:
     {
-      if (constrain)
+      if (constrainEnabled() == true)
         keepSquare(beginx, beginy, &x, &y);
 
-      if (origin)
+      if (originEnabled() == true)
       {
         w = (lastx - beginx);
         h = (lasty - beginy);
@@ -645,7 +661,7 @@ void Stroke::end(int x, int y)
         if (brush->size == 1)
           map->thick_aa = 1;
 
-        if (origin)
+        if (originEnabled() == true)
         {
           w = (x - beginx);
           h = (y - beginy);
@@ -679,10 +695,10 @@ void Stroke::end(int x, int y)
         if (brush->size == 1)
           map->thick_aa = 1;
 
-        if (constrain)
+        if (constrainEnabled() == true)
           keepSquare(beginx, beginy, &x, &y);
 
-        if (origin)
+        if (originEnabled() == true)
         {
           w = (x - beginx);
           h = (y - beginy);
@@ -699,10 +715,10 @@ void Stroke::end(int x, int y)
 
       case FILLED_RECT:
       {
-        if (constrain)
+        if (constrainEnabled() == true)
           keepSquare(beginx, beginy, &x, &y);
 
-        if (origin)
+        if (originEnabled() == true)
         {
           w = (x - beginx);
           h = (y - beginy);
@@ -722,10 +738,10 @@ void Stroke::end(int x, int y)
         if (brush->size == 1)
           map->thick_aa = 1;
 
-        if (constrain)
+        if (constrainEnabled() == true)
           keepSquare(beginx, beginy, &x, &y);
 
-        if (origin)
+        if (originEnabled() == true)
         {
           w = (x - beginx);
           h = (y - beginy);
@@ -742,10 +758,10 @@ void Stroke::end(int x, int y)
 
       case FILLED_OVAL:
       {
-        if (constrain)
+        if (constrainEnabled() == true)
           keepSquare(beginx, beginy, &x, &y);
 
-        if (origin)
+        if (originEnabled() == true)
         {
           w = (x - beginx);
           h = (y - beginy);

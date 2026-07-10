@@ -76,6 +76,8 @@ public:
   void previewSelection(View *);
 
 private:
+  bool originEnabled();
+  bool constrainEnabled();
   void keepSquare(int, int, int *, int *);
   bool isEdge(Map *, const int, const int);
 };
