@@ -25,11 +25,10 @@ class FontPreview
 {
 public:
   static void init();
-
   static void toggle();
   static void close();
   static void update(const int);
-  static void changedSize();
+  static void changedFont();
   static int getFont();
 
 private:

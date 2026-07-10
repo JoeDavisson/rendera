@@ -102,9 +102,6 @@ void TextOptions::init()
 
 void TextOptions::changedSize()
 {
-  int font = FontPreview::getFont();
-
-  FontPreview::update(font - 1);
   text_input->redraw();
   Project::text->change();
   Project::text->move(Gui::view);
