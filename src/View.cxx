@@ -22,10 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <FL/fl_draw.H>
 
-#if defined linux
-  #include <FL/x.H>
-#endif
-
 #include "Bitmap.H"
 #include "Blend.H"
 #include "Clone.H"
@@ -49,10 +45,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  #if defined linux
-    XImage *ximage = 0;
-  #endif
-
   Fl_RGB_Image *wimage = 0;
 
   int oldx1 = 0;
@@ -60,8 +52,6 @@ namespace
 
   int restore_x1 = 0;
   int restore_y1 = 0;
-  int restore_x2 = 0;
-  int restore_y2 = 0;
   int restore_w1 = 1;
   int restore_h1 = 1;
 
@@ -106,29 +96,10 @@ namespace
 
   void updateView(int sx, int sy, int dx, int dy, int w, int h)
   {
-    #if defined linux
-
-/*
-need this?
-      Window win = fl_xid(Gui::getWindow());
-
-      if (!win)
-        return;
-*/
-
-      float scale = getScale();
-
-      sx *= scale;
-      sy *= scale;
-
-      XPutImage(fl_display, fl_window, fl_gc, ximage,
-                sx, sy, dx * scale, dy * scale, w * scale, h * scale);
-    #else
-      fl_push_clip(dx, dy, w, h);
-      wimage->draw(dx, dy, w, h, sx, sy);
-      wimage->uncache();
-      fl_pop_clip();
-    #endif
+    fl_push_clip(dx, dy, w, h);
+    wimage->draw(dx, dy, w, h, sx, sy);
+    wimage->uncache();
+    fl_pop_clip();
   }
 
   void dndPasteHandler()
@@ -523,15 +494,6 @@ void View::resize(int x, int y, int w, int h)
                              new_width, new_height, 4, 0);
   wimage->scale(w, h, 0, 1);
 
-  #if defined linux
-    // try to detect pixelformat (almost always RGB or BGR)
-    if(fl_visual->visual->blue_mask == 0xff)
-      bgr_order = true;
-
-    ximage = XCreateImage(fl_display, fl_visual->visual, 24, ZPixmap, 0,
-                          (char *)backbuf->data, backbuf->w, backbuf->h, 32, 0);
-  #endif
-
   drawMain(false);
   Fl_Widget::resize(x, y, w, h);
 
@@ -907,36 +869,25 @@ void View::draw()
 
     const int x1 = blitx * ax;
     const int y1 = blity * ay;
-    const int x2 = x() + x1;
-    const int y2 = y() + y1;
     const int w1 = blitw * ax + 1;
     const int h1 = blith * ay + 1;
 
-    updateView(restore_x1, restore_y1,
-               restore_x2, restore_y2,
-               restore_w1, restore_h1);
+    int min_x = std::min(restore_x1, x1);
+    int min_y = std::min(restore_y1, y1);
+    int max_x = std::max(restore_x1 + restore_w1, x1 + w1);
+    int max_y = std::max(restore_y1 + restore_h1, y1 + h1);
+    int new_w = max_x - min_x;
+    int new_h = max_y - min_y;
 
-    updateView(x1, y1, x2, y2, w1, h1);
-
-
-/*
-    // for testing
-    fl_push_clip(restore_x2, restore_y2, restore_w1, restore_h1);
-    fl_rect(restore_x2, restore_y2, restore_w1, restore_h1, FL_WHITE);
-    fl_pop_clip();
-
-    fl_push_clip(x2, y2, w1, h1);
-    fl_rect(x2, y2, w1, h1, FL_WHITE);
-    fl_pop_clip();
-*/
+    updateView(min_x, min_y,
+               x() + min_x, y() + min_y,
+               new_w, new_h);
 
     if (Clone::active)
       drawCloneCursor();
 
     restore_x1 = x1;
     restore_y1 = y1;
-    restore_x2 = x2;
-    restore_y2 = y2;
     restore_w1 = w1;
     restore_h1 = h1;
   }

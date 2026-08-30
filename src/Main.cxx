@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <getopt.h>
 
-//#include <FL/Fl_Shared_Image.H>
 #include "FL/Fl_File_Icon.H"
 
 #include "Blend.H"
@@ -43,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "Palette.H"
 
-FL_EXPORT bool fl_disable_wayland = true;
+// FL_EXPORT bool fl_disable_wayland = true;
 
 enum
 {
