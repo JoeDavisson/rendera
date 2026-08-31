@@ -228,31 +228,35 @@ namespace Scale
     const float ax = ((float)sw / dw);
     const float ay = ((float)sh / dh);
 
-    float scale_x = 0, scale_y = 0;
-
-    if (dw < sw)
-      scale_x = (float)sw / dw;
-
-    if (dh < sh)
-      scale_y = (float)sh / dh;
-
+    float scale_x = (float)dw / sw;
+    float scale_y = (float)dh / sh;
     float scale = scale_x > scale_y ? scale_x : scale_y;
 
-    float s = 0.5 - std::sqrt(scale);
-    float blur_size = std::sqrt(4.0 * (s * s) + 1);
-    float blur_blend = 0;
+    float base = 0.577 / scale * 0.85;
+    float blur_size = 0;
+    float s = 0;
+    float v = 0;
 
-    if (blur_size < 2)
+    if (base < 3.0)
     {
-      const float frac = blur_size - (int)blur_size;
+      s = 0.5 / scale;
+      v = s * s;
 
-      blur_blend = 255 - frac * 255;
+      if (v > 1.95) { v = 1.95; }
+
+      blur_size = 3.0 / (3.0 - v) - 1.0;
+    }
+      else
+    {
+      blur_size = base - 1.0;
     }
 
+    float blur_blend = 0;
     bool blur = false;
 
-    if (blur_size > 1.0 && (dw < sw || dh < sh))
-      blur = true;
+    if (blur_size < 0) { blur_size = 0; }
+
+    if (blur_size > 0 && (dw < sw || dh < sh)) { blur = true; }
 
     if (Items::mode->value() == 0)
     {
