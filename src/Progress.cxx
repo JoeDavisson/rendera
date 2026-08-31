@@ -52,6 +52,7 @@ void Progress::hide()
   Gui::progress->hide();
   Gui::view->rendering = false;
   Gui::view->drawMain(true);
+  Fl::check();
 }
 
 // use default interval
@@ -75,6 +76,7 @@ void Progress::show(float max)
   Gui::progress->resize(Gui::getStatus()->x() + Gui::getWindow()->w() - 256 - 8,                        Gui::getStatus()->y() + 4, 256, 24);
 
   Gui::progress->show();
+  Fl::check();
 }
 
 // custom interval
@@ -98,6 +100,7 @@ void Progress::show(float max, int new_interval)
                         Gui::getStatus()->y() + 4, 256, 24);
   Gui::progress->show();
   Gui::view->drawMain(true);
+  Fl::check();
 }
 
 int Progress::update(int y)
@@ -122,6 +125,8 @@ int Progress::update(int y)
     value += step;
     Gui::view->drawMain(true);
   }
+
+  Fl::check();
 
   return 0;
 }
