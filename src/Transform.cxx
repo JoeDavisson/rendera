@@ -232,7 +232,7 @@ namespace Scale
     float scale_y = (float)dh / sh;
     float scale = scale_x > scale_y ? scale_x : scale_y;
 
-    float base = 0.577 / scale * 0.85;
+    float base = 0.577 / scale;
     float blur_size = 0;
     float s = 0;
     float v = 0;
@@ -244,11 +244,11 @@ namespace Scale
 
       if (v > 1.95) { v = 1.95; }
 
-      blur_size = 3.0 / (3.0 - v) - 1.0;
+      blur_size = 3.0 / (3.0 - v) - 1.65;
     }
       else
     {
-      blur_size = base - 1.0;
+      blur_size = base - 1.65;
     }
 
     float blur_blend = 0;

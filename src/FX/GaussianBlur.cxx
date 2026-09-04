@@ -34,19 +34,27 @@ namespace
 
     // left
     for (int y = ct; y <= cb; y++)
+    {
       bmp->hline(0, y, cl - 1, bmp->getpixel(cl, y));
+    }
 
     // right
     for (int y = ct; y <= cb; y++)
+    {
       bmp->hline(cr + 1, y, w - 1, bmp->getpixel(cr, y));
+    }
 
     // top
     for (int x = cl; x <= cr; x++)
+    {
       bmp->vline(0, x, ct - 1, bmp->getpixel(x, ct));
+    }
 
     // bottom
     for (int x = cl; x <= cr; x++)
+    {
       bmp->vline(cb + 1, x, h - 1, bmp->getpixel(x, cb));
+    }
 
     // upper-left
     bmp->rectfill(0, 0, cl - 1, ct - 1, bmp->getpixel(cl, ct));
@@ -89,11 +97,9 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
 
   size += 1.0;
 
-  if (size > border / 2 - 2)
-    size = border / 2 - 2;
+  if (size > border / 2 - 2) { size = border / 2 - 2; }
 
   Progress::show(6, 1);
-
   int pass_count = 0;
 
   if (size < 3.0)
@@ -104,8 +110,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
     for (int pass = 0; pass < 3; pass++)
     {
       // x direction
-      if (Progress::update(pass_count++) < 0)
-        break;
+      if (Progress::update(pass_count++) < 0) { break; }
 
       for (int y = src.ct; y <= src.cb; y++)
       {
@@ -140,8 +145,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
       }
 
       // y direction
-      if (Progress::update(pass_count++) < 0)
-        break;
+      if (Progress::update(pass_count++) < 0) { break; }
 
       for (int x = src.cl; x <= src.cr; x++)
       {
@@ -204,8 +208,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
     for (int pass = 0; pass < 3; pass++)
     {
       // x direction
-      if (Progress::update(pass_count++) < 0)
-        break;
+      if (Progress::update(pass_count++) < 0) { break; }
 
       for (int y = src.ct; y <= src.cb; y++)
       {
@@ -243,8 +246,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
 
           div++;
 
-          if (div > size)
-            div = size;
+          if (div > size) { div = size; }
 
           const int c = makeRgba(Gamma::unfix(accum_r / div),
                                  Gamma::unfix(accum_g / div),
@@ -256,8 +258,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
       }
 
       // y direction
-      if (Progress::update(pass_count++) < 0)
-        break;
+      if (Progress::update(pass_count++) < 0) { break; }
 
       for (int x = src.cl; x <= src.cr; x++)
       {
@@ -358,7 +359,7 @@ void GaussianBlur::init()
 
   Items::dialog = new DialogWindow(400, 0, "Gaussian Blur");
 
-  Items::size = new InputFloat(Items::dialog, 0, y1, 128, 32, "Size (0-59)", 0, 0, 59);
+  Items::size = new InputFloat(Items::dialog, 0, y1, 128, 32, "Size (.01-60)", 0, 0.01, 60);
   y1 += 32 + 16;
   Items::size->value(1);
   Items::size->center();
