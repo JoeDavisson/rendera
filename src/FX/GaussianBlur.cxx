@@ -90,7 +90,7 @@ void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
   }
     else
   {
-    applyLarge(bmp, (int)size, blend, mode);
+    applyLarge(bmp, size, blend, mode);
   }
 }
 
@@ -200,7 +200,7 @@ void GaussianBlur::applySmall(Bitmap *bmp, float size, int blend, int mode)
   Progress::hide();
 }
 
-void GaussianBlur::applyLarge(Bitmap *bmp, int size, int blend, int mode)
+void GaussianBlur::applyLarge(Bitmap *bmp, float size, int blend, int mode)
 {
   const int border = 64;
 
@@ -224,7 +224,7 @@ void GaussianBlur::applyLarge(Bitmap *bmp, int size, int blend, int mode)
   std::vector<int> buf_b(larger, 0);
   std::vector<int> buf_a(larger, 0);
 
-  if ((size & 1) == 0) { size += 1.0; }
+  if (((int)size & 1) == 0) { size += 1.0; }
 
   for (int pass = 0; pass < 3; pass++)
   {
@@ -233,9 +233,11 @@ void GaussianBlur::applyLarge(Bitmap *bmp, int size, int blend, int mode)
 
     for (int y = src.ct; y <= src.cb; y++)
     {
+      int *p = src.row[y];
+
       for (int x = 0; x < src.w; x++)
       {
-        rgba_type rgba = getRgba(src.getpixel(x, y));
+        rgba_type rgba = getRgba(*p++);
         buf_r[x] = Gamma::fix(rgba.r);
         buf_g[x] = Gamma::fix(rgba.g);
         buf_b[x] = Gamma::fix(rgba.b);
@@ -264,7 +266,6 @@ void GaussianBlur::applyLarge(Bitmap *bmp, int size, int blend, int mode)
         accum_g += buf_g[x];
         accum_b += buf_b[x];
         accum_a += buf_a[x];
-
         div++;
 
         if (div > size) { div = size; }
@@ -283,9 +284,12 @@ void GaussianBlur::applyLarge(Bitmap *bmp, int size, int blend, int mode)
 
     for (int x = src.cl; x <= src.cr; x++)
     {
+      int *p = temp.row[0] + x;
+
       for (int y = 0; y < src.h; y++)
       {
-        rgba_type rgba = getRgba(temp.getpixel(x, y));
+        rgba_type rgba = getRgba(*p);
+        p += temp.w;
         buf_r[y] = Gamma::fix(rgba.r);
         buf_g[y] = Gamma::fix(rgba.g);
         buf_b[y] = Gamma::fix(rgba.b);
@@ -314,13 +318,11 @@ void GaussianBlur::applyLarge(Bitmap *bmp, int size, int blend, int mode)
         accum_g += buf_g[y];
         accum_b += buf_b[y];
         accum_a += buf_a[y];
-
         div++;
 
         if (div > size) { div = size; }
 
-        int c1 = src.getpixel(x, y);
-
+        const int c1 = *(src.row[y] + x);
         const int c2 = makeRgba(Gamma::unfix(accum_r / div),
                                 Gamma::unfix(accum_g / div),
                                 Gamma::unfix(accum_b / div),
@@ -329,14 +331,15 @@ void GaussianBlur::applyLarge(Bitmap *bmp, int size, int blend, int mode)
         switch (mode)
         {
           case 0:
-            src.setpixel(x, y, Blend::trans(c1, c2, blend));
+            *(src.row[y] + x) = Blend::trans(c1, c2, blend);
             break;
           case 1:
-            src.setpixel(x, y,
-              Blend::trans(c1, Blend::keepLum(c2, getl(c1)), blend));
+              *(src.row[y] + x) = Blend::trans(c1,
+                                               Blend::keepLum(c2, getl(c1)),
+                                               blend);
             break;
           case 2:
-            src.setpixel(x, y, Blend::transAlpha(c1, c2, blend));
+            *(src.row[y] + x) = Blend::transAlpha(c1, c2, blend);
             break;
         }
       }
