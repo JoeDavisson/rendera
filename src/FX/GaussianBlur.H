@@ -28,6 +28,8 @@ class Bitmap;
 class GaussianBlur
 {
 public:
+  static void applySmall(Bitmap *bmp, float, int, int);
+  static void applyLarge(Bitmap *bmp, int, int, int);
   static void apply(Bitmap *bmp, float, int, int);
   static void close();
   static void quit();
