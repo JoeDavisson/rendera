@@ -91,8 +91,7 @@ namespace Resize
     const int w = Items::width->value();
     const int h = Items::height->value();
 
-    if (Project::enoughMemory(w, h) == false)
-      return;
+    if (Project::enoughMemory(w, h) == false) { return; }
 
     Items::dialog->hide();
     Project::undo->push();
@@ -106,9 +105,13 @@ namespace Resize
     const int yy = (temp->h - bmp->h) / 2;
 
     if (Items::center->value() == 1)
+    {
       bmp->blit(temp, 0, 0, xx, yy, bmp->w, bmp->h);
-    else
+    }
+      else
+    {
       bmp->blit(temp, 0, 0, 0, 0, bmp->w, bmp->h);
+    }
 
     Project::replaceImageFromBitmap(temp);
 
@@ -213,15 +216,9 @@ namespace Scale
     const int dx = 0;
     const int dy = 0;
 
-    if (sw < 1 || sh < 1)
-      return;
-
-    if (dw < 1 || dh < 1)
-      return;
-
-    // check memory
-    if (Project::enoughMemory(dw, dh) == false)
-      return;
+    if (sw < 1 || sh < 1) { return; }
+    if (dw < 1 || dh < 1) { return; }
+    if (Project::enoughMemory(dw, dh) == false) { return; }
 
     Bitmap *temp = new Bitmap(dw, dh);
 
@@ -244,18 +241,17 @@ namespace Scale
 
       if (v > 1.95) { v = 1.95; }
 
-      blur_size = 3.0 / (3.0 - v) - 1.65;
+      blur_size = 3.0 / (3.0 - v) - 1.0;
     }
       else
     {
-      blur_size = base - 1.65;
+      blur_size = base - 1.0;
     }
 
     float blur_blend = 0;
     bool blur = false;
 
     if (blur_size < 0) { blur_size = 0; }
-
     if (blur_size > 0 && (dw < sw || dh < sh)) { blur = true; }
 
     if (Items::mode->value() == 0)
@@ -277,8 +273,7 @@ namespace Scale
     else if (Items::mode->value() == 1)
     {
       // bilinear
-      if (blur)
-        do_blur(bmp, blur_size, blur_blend);
+      if (blur) { do_blur(bmp, blur_size, blur_blend); }
 
       Progress::show(dh);
 
@@ -289,17 +284,14 @@ namespace Scale
         const int v1 = vv;
         const float v = vv - v1;
 
-        if (sy + v1 >= bmp->h - 1)
-          break;
+        if (sy + v1 >= bmp->h - 1) { break; }
 
         int v2 = v1 + 1;
 
         if (v2 >= sh)
         {
-          if (wrap_edges)
-            v2 -= sh;
-          else
-            v2--;
+          if (wrap_edges) { v2 -= sh; }
+          else { v2--; }
         }
 
         int *c[4];
@@ -313,17 +305,14 @@ namespace Scale
           const int u1 = uu;
           const float u = uu - u1;
 
-          if (sx + u1 >= bmp->w - 1)
-            break;
+          if (sx + u1 >= bmp->w - 1) { break; }
 
           int u2 = u1 + 1;
 
           if (u2 >= sw)
           {
-            if (wrap_edges)
-              u2 -= sw;
-            else
-              u2--;
+            if (wrap_edges) { u2 -= sw; }
+            else { u2--; }
           }
 
           c[0] += u1;
@@ -361,14 +350,12 @@ namespace Scale
           c[3] -= u2;
         }
 
-        if (Progress::update(y) < 0)
-          break;
+        if (Progress::update(y) < 0) { break; }
       }
     }
     else if (Items::mode->value() == 2)
     {
-      if (blur)
-        do_blur(bmp, blur_size, blur_blend);
+      if (blur) { do_blur(bmp, blur_size, blur_blend); }
 
       // bicubic
       float r[4][4];
@@ -396,27 +383,15 @@ namespace Scale
           {
             int yy = v1 + j - 1;
 
-            if (wrap_edges)
-            {
-              if (yy >= sh)
-                yy -= sh;
-            }
-
-            if (yy > sh - 1)
-              yy = sh - 1;
+            if (wrap_edges && yy >= sh) { yy -= sh; }
+            if (yy > sh - 1) { yy = sh - 1; }
 
             for (int i = 0; i < 4; i++)
             {
               int xx = u1 + i - 1;
 
-              if (wrap_edges)
-              {
-                if (xx >= sw)
-                  xx -= sw;
-              }
-
-              if (xx > sw - 1)
-                xx = sw - 1;
+              if (wrap_edges && xx >= sw) { xx -= sw; }
+              if (xx > sw - 1) { xx = sw - 1; }
 
               rgba_type rgba = getRgba(bmp->getpixel(sx + xx, sy + yy));
 
@@ -527,15 +502,18 @@ namespace Scale
 
     Items::dialog = new DialogWindow(400, 0, "Scale Image");
 
-    Items::width = new InputInt(Items::dialog, 0, y1, 128, 32, "Width", (Fl_Callback *)checkWidth, 1, 32768);
+    Items::width = new InputInt(Items::dialog, 0, y1, 128, 32,
+                                "Width", (Fl_Callback *)checkWidth, 1, 32768);
     Items::width->center();
     y1 += 32 + 16;
 
-    Items::height = new InputInt(Items::dialog, 0, y1, 128, 32, "Height", (Fl_Callback *)checkHeight, 1, 32768);
+    Items::height = new InputInt(Items::dialog, 0, y1, 128, 32,
+                                 "Height", (Fl_Callback *)checkHeight, 1, 32768);
     Items::height->center();
     y1 += 32 + 16;
 
-    Items::percent = new InputInt(Items::dialog, 0, y1, 128, 32, "%", (Fl_Callback *)checkPercent, 1, 1000);
+    Items::percent = new InputInt(Items::dialog, 0, y1, 128, 32,
+                                  "%", (Fl_Callback *)checkPercent, 1, 1000);
     Items::percent->value(100);
     Items::percent->center();
     y1 += 32 + 16;
@@ -544,7 +522,8 @@ namespace Scale
     Items::height->maximum_size(8);
     Items::width->value(640);
     Items::height->value(480);
-    Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
+    Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16,
+                                      "Keep Aspect", 0);
     Items::keep_aspect->value(1);
     Items::keep_aspect->center();
     y1 += 16 + 16;
@@ -558,7 +537,12 @@ namespace Scale
     Items::mode->value(2);
     Items::mode->align(FL_ALIGN_LEFT);
     Items::mode->measure_label(ww, hh);
-    Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
+
+    const int x2 = Items::dialog->x() + Items::dialog->w() / 2
+                   - (Items::mode->w() + ww) / 2 + ww;
+
+    Items::mode->resize(x2, Items::mode->y(),
+                        Items::mode->w(), Items::mode->h());
     y1 += 32 + 16;
 
     Items::wrap = new CheckBox(Items::dialog, 0, y1, 16, 16, "Wrap Edges", 0);
@@ -646,8 +630,7 @@ namespace RotateArbitrary
     int bh = (by2 - by1) + 1;
 
     // check memory
-    if (Project::enoughMemory(bw, bh) == false)
-      return;
+    if (Project::enoughMemory(bw, bh) == false) { return; }
 
     // create image with new size
     Bitmap *temp = new Bitmap(bw, bh);
@@ -682,8 +665,7 @@ namespace RotateArbitrary
 
       const int ty = ((temp->ch) / 2) + y;
 
-      if (ty < temp->ct || ty > temp->cb)
-        continue;
+      if (ty < temp->ct || ty > temp->cb) { continue; }
 
       for (int x = bx1; x <= bx2; x++)
       {
@@ -694,11 +676,12 @@ namespace RotateArbitrary
         v += dv_col;
 
         if (uu < bmp->cl || uu > bmp->cr || vv < bmp->ct || vv > bmp->cb)
+        {
           continue;
+        }
 
         const int tx = ((temp->cw) / 2) + x;
-        if (tx < temp->cl || tx > temp->cr)
-          continue;
+        if (tx < temp->cl || tx > temp->cr) { continue; }
 
         const int c = *(bmp->row[vv] + uu);
         *(temp->row[ty] + tx) = c;
@@ -740,12 +723,14 @@ namespace RotateArbitrary
 
     Items::dialog = new DialogWindow(400, 0, "Arbitrary Rotation");
 
-    Items::angle = new InputFloat(Items::dialog, 0, y1, 128, 32, "Angle", 0, -359.99, 359.99);
+    Items::angle = new InputFloat(Items::dialog, 0, y1, 128, 32,
+                                  "Angle", 0, -359.99, 359.99);
     Items::angle->center();
     Items::angle->value(0);
     y1 += 32 + 16;
 
-    Items::scale = new InputFloat(Items::dialog, 0, y1, 128, 32, "Scale (1-10)", 0, 1, 10);
+    Items::scale = new InputFloat(Items::dialog, 0, y1, 128, 32,
+                                  "Scale (1-10)", 0, 1, 10);
     Items::scale->center();
     Items::scale->value(1.000);
     y1 += 32 + 16;
