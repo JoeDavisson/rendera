@@ -225,29 +225,11 @@ namespace Scale
     const float ax = ((float)sw / dw);
     const float ay = ((float)sh / dh);
 
-    float scale_x = (float)dw / sw;
-    float scale_y = (float)dh / sh;
+    float scale_x = (float)sw / dw;
+    float scale_y = (float)sh / dh;
     float scale = scale_x > scale_y ? scale_x : scale_y;
-
-    float base = 0.577 / scale;
-    float blur_size = 0;
-    float s = 0;
-    float v = 0;
-
-    if (base < 3.0)
-    {
-      s = 0.5 / scale;
-      v = s * s;
-
-      if (v > 1.95) { v = 1.95; }
-
-      blur_size = 3.0 / (3.0 - v) - 1.0;
-    }
-      else
-    {
-      blur_size = base - 1.0;
-    }
-
+    float r = 0.577 * (scale / 2);
+    float blur_size = r * 1.95 - 1.0;
     float blur_blend = 0;
     bool blur = false;
 
