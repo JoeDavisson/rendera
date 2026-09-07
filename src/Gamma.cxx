@@ -23,15 +23,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gamma.H"
 #include "Inline.H"
 
-unsigned short *Gamma::table_fix;
-unsigned char *Gamma::table_unfix;
+unsigned short Gamma::table_fix[256];
+unsigned char Gamma::table_unfix[65536];
 
 void Gamma::init()
 {
-  // OS frees these
-  table_fix = new unsigned short[256];
-  table_unfix = new unsigned char[65536];
-
   for (int i = 0; i < 256; i++)
   {
     table_fix[i] = std::round(std::pow((double)i / 255, 2.2) * 65535);

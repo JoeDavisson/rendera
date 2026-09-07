@@ -38,8 +38,8 @@ public:
     return table_unfix[val];
   }
 
-  static unsigned short *table_fix;
-  static unsigned char *table_unfix;
+  static unsigned short table_fix[256];
+  static unsigned char table_unfix[65536];
 
 private:
   Gamma() { }
