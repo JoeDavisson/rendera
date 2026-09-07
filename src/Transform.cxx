@@ -172,6 +172,7 @@ namespace Scale
     InputInt *height;
     InputInt *percent;
     CheckBox *keep_aspect;
+    CheckBox *smooth;
     Fl_Choice *mode;
     CheckBox *wrap;
     Fl_Button *ok;
@@ -229,7 +230,7 @@ namespace Scale
     float scale_y = (float)sh / dh;
     float scale = scale_x > scale_y ? scale_x : scale_y;
     float r = 0.577 * (scale / 2);
-    float blur_size = r * 1.95 - 1.0;
+    float blur_size = r * 2.0 - 1.0;
     float blur_blend = 0;
     bool blur = false;
 
@@ -238,7 +239,6 @@ namespace Scale
 
     if (Items::mode->value() == 0)
     {
-      // nearest
       for (int y = 0; y < dh; y++) 
       {
         int *d = temp->row[dy + y] + dx;
@@ -255,7 +255,10 @@ namespace Scale
     else if (Items::mode->value() == 1)
     {
       // bilinear
-      if (blur) { do_blur(bmp, blur_size, blur_blend); }
+      if (Items::smooth->active() && Items::smooth->value() && blur)
+      {
+        do_blur(bmp, blur_size, blur_blend);
+      }
 
       Progress::show(dh);
 
@@ -337,9 +340,12 @@ namespace Scale
     }
     else if (Items::mode->value() == 2)
     {
-      if (blur) { do_blur(bmp, blur_size, blur_blend); }
-
       // bicubic
+      if (Items::smooth->active() && Items::smooth->value() && blur)
+      {
+        do_blur(bmp, blur_size, blur_blend);
+      }
+
       float r[4][4];
       float g[4][4];
       float b[4][4];
@@ -457,6 +463,12 @@ namespace Scale
     Items::height->value(h);
   }
 
+  void checkMode()
+  {
+    if (Items::mode->value() == 0) { Items::smooth->deactivate(); }
+    else { Items::smooth->activate(); }
+  }
+
   void close()
   {
     int w = Items::width->value();
@@ -510,7 +522,13 @@ namespace Scale
     Items::keep_aspect->center();
     y1 += 16 + 16;
 
+    Items::smooth = new CheckBox(Items::dialog, 0, y1, 16, 16, "Smoothing", 0);
+    Items::smooth->value(1);
+    Items::smooth->center();
+    y1 += 16 + 16;
+
     Items::mode = new Fl_Choice(0, y1, 128, 32, "Mode:");
+    Items::mode->callback((Fl_Callback *)checkMode);
     Items::mode->labelsize(16);
     Items::mode->textsize(16);
     Items::mode->add("Nearest");

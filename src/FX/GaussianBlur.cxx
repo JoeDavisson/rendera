@@ -22,55 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void extendBorders(Bitmap *bmp, int border)
-  {
-    const int cl = border;
-    const int cr = bmp->w - border - 1;
-    const int ct = border;
-    const int cb = bmp->h - border - 1;
-    const int w = bmp->w;
-    const int h = bmp->h;
-
-    // left
-    for (int y = ct; y <= cb; y++)
-    {
-      bmp->hline(0, y, cl - 1, bmp->getpixel(cl, y));
-    }
-
-    // right
-    for (int y = ct; y <= cb; y++)
-    {
-      bmp->hline(cr + 1, y, w - 1, bmp->getpixel(cr, y));
-    }
-
-    // top
-    for (int x = cl; x <= cr; x++)
-    {
-      bmp->vline(0, x, ct - 1, bmp->getpixel(x, ct));
-    }
-
-    // bottom
-    for (int x = cl; x <= cr; x++)
-    {
-      bmp->vline(cb + 1, x, h - 1, bmp->getpixel(x, cb));
-    }
-
-    // upper-left
-    bmp->rectfill(0, 0, cl - 1, ct - 1, bmp->getpixel(cl, ct));
-
-    // upper-right
-    bmp->rectfill(cr, 0, w - 1, ct - 1, bmp->getpixel(cr, ct));
-
-    // lower-left
-    bmp->rectfill(0, cb + 1, cl - 1, h - 1, bmp->getpixel(cl, cb));
-
-    // lower-right
-    bmp->rectfill(cr + 1, cb + 1, w - 1, h - 1, bmp->getpixel(cr, cb));
-  }
-}
-
-namespace
-{
   namespace Items
   {
     DialogWindow *dialog;
@@ -84,269 +35,253 @@ namespace
 
 void GaussianBlur::apply(Bitmap *bmp, float size, int blend, int mode)
 {
-  if (size < 3.0)
+  if (size < 1.0)
   {
     applySmall(bmp, size, blend, mode);
   }
     else
   {
-    applyLarge(bmp, size, blend, mode);
+    applyLarge(bmp, (size + 1.0) / 2, blend, mode);
   }
 }
 
 void GaussianBlur::applySmall(Bitmap *bmp, float size, int blend, int mode)
 {
-  Bitmap src(bmp->w, bmp->h);
-  bmp->blit(&src, 0, 0, 0, 0, bmp->w, bmp->h);
+  int w = bmp->w;
+  int h = bmp->h;
 
-  Bitmap temp(src.w, src.h);
-  src.blit(&temp, 0, 0, 0, 0, src.w, src.h);
+  Bitmap src(w, h);
+  Bitmap temp(w, h);
+  bmp->blit(&src, 0, 0, 0, 0, w, h);
 
   size += 1.0;
+
+  float alpha = (size - 1) / 2;
+  float div = size;
 
   Progress::show(6, 1);
   int pass_count = 0;
 
-  const float alpha = (size - 1.0) / 2;
-  const float mul = 1.0 / size;
-
   for (int pass = 0; pass < 3; pass++)
   {
-    // x direction
     if (Progress::update(pass_count++) < 0) { break; }
-
-    for (int y = src.ct; y <= src.cb; y++)
+        
+    for (int y = 0; y < h; y++)
     {
-      for (int x = src.cl; x <= src.cr; x++)
+      for (int x = 0; x < w; x++)
       {
-        rgba_type rgba1 = getRgba(src.getpixel(x - 1, y));
-        rgba_type rgba2 = getRgba(src.getpixel(x, y));
-        rgba_type rgba3 = getRgba(src.getpixel(x + 1, y));
+        int left = std::max(0, x - 1);
+        int right = std::min(w - 1, x + 1);
 
-        const float r1 = Gamma::fix(rgba1.r);
-        const float g1 = Gamma::fix(rgba1.g);
-        const float b1 = Gamma::fix(rgba1.b);
-        const float a1 = rgba1.a;
-        const float r2 = Gamma::fix(rgba2.r);
-        const float g2 = Gamma::fix(rgba2.g);
-        const float b2 = Gamma::fix(rgba2.b);
-        const float a2 = rgba2.a;
-        const float r3 = Gamma::fix(rgba3.r);
-        const float g3 = Gamma::fix(rgba3.g);
-        const float b3 = Gamma::fix(rgba3.b);
-        const float a3 = rgba3.a;
+        rgba_type rgba1 = getRgba(*(src.row[y] + left));
+        rgba_type rgba2 = getRgba(*(src.row[y] + x));
+        rgba_type rgba3 = getRgba(*(src.row[y] + right));
 
-        const int r = Gamma::unfix((alpha * r1 + r2 + alpha * r3) * mul);
-        const int g = Gamma::unfix((alpha * g1 + g2 + alpha * g3) * mul);
-        const int b = Gamma::unfix((alpha * b1 + b2 + alpha * b3) * mul);
-        const int a = (alpha * a1 + a2 + alpha * a3) * mul;
+        float acc_r = (alpha * Gamma::fix(rgba1.r) +
+                               Gamma::fix(rgba2.r) +
+                       alpha * Gamma::fix(rgba3.r)) / div;
 
-        const int c = makeRgba(r, g, b, a);
-          
-        temp.setpixel(x - size / 2 + 1, y - size / 2 + 1, c);
+        float acc_g = (alpha * Gamma::fix(rgba1.g) +
+                               Gamma::fix(rgba2.g) +
+                       alpha * Gamma::fix(rgba3.g)) / div;
+
+        float acc_b = (alpha * Gamma::fix(rgba1.b) +
+                               Gamma::fix(rgba2.b) +
+                       alpha * Gamma::fix(rgba3.b)) / div;
+
+        float acc_a = (alpha * rgba1.a + rgba2.a + alpha * rgba3.a) / div;
+
+        *(temp.row[y] + x) = makeRgba(Gamma::unfix(acc_r),
+                                      Gamma::unfix(acc_g),
+                                      Gamma::unfix(acc_b),
+                                      acc_a);
       }
     }
 
-    // y direction
     if (Progress::update(pass_count++) < 0) { break; }
-
-    for (int x = src.cl; x <= src.cr; x++)
+        
+    for (int x = 0; x < w; x++)
     {
-      for (int y = src.ct; y <= src.cb; y++)
+      for (int y = 0; y < h; y++)
       {
-        rgba_type rgba1 = getRgba(temp.getpixel(x, y - 1));
-        rgba_type rgba2 = getRgba(temp.getpixel(x, y));
-        rgba_type rgba3 = getRgba(temp.getpixel(x, y + 1));
+        int up = std::max(0, y - 1);
+        int down = std::min(h - 1, y + 1);
 
-        const float r1 = Gamma::fix(rgba1.r);
-        const float g1 = Gamma::fix(rgba1.g);
-        const float b1 = Gamma::fix(rgba1.b);
-        const float a1 = rgba1.a;
-        const float r2 = Gamma::fix(rgba2.r);
-        const float g2 = Gamma::fix(rgba2.g);
-        const float b2 = Gamma::fix(rgba2.b);
-        const float a2 = rgba2.a;
-        const float r3 = Gamma::fix(rgba3.r);
-        const float g3 = Gamma::fix(rgba3.g);
-        const float b3 = Gamma::fix(rgba3.b);
-        const float a3 = rgba3.a;
+        rgba_type rgba1 = getRgba(*(temp.row[up] + x));
+        rgba_type rgba2 = getRgba(*(temp.row[y] + x));
+        rgba_type rgba3 = getRgba(*(temp.row[down] + x));
 
-        const int r = Gamma::unfix((alpha * r1 + r2 + alpha * r3) * mul);
-        const int g = Gamma::unfix((alpha * g1 + g2 + alpha * g3) * mul);
-        const int b = Gamma::unfix((alpha * b1 + b2 + alpha * b3) * mul);
-        const int a = (alpha * a1 + a2 + alpha * a3) * mul;
+        float acc_r = (alpha * Gamma::fix(rgba1.r) +
+                               Gamma::fix(rgba2.r) +
+                       alpha * Gamma::fix(rgba3.r)) / div;
 
-        int c1 = src.getpixel(x, y);
-        int c2 = makeRgba(r, g, b, a);
+        float acc_g = (alpha * Gamma::fix(rgba1.g) +
+                               Gamma::fix(rgba2.g) +
+                       alpha * Gamma::fix(rgba3.g)) / div;
 
-        switch (mode)
+        float acc_b = (alpha * Gamma::fix(rgba1.b) +
+                               Gamma::fix(rgba2.b) +
+                       alpha * Gamma::fix(rgba3.b)) / div;
+
+        float acc_a = (alpha * rgba1.a + rgba2.a + alpha * rgba3.a) / div;
+
+        int c1 = *(src.row[y] + x);
+        int c2 = makeRgba(Gamma::unfix(acc_r),
+                          Gamma::unfix(acc_g),
+                          Gamma::unfix(acc_b),
+                          acc_a);
+        int c;
+
+        if (mode == 0)
         {
-          case 0:
-            src.setpixel(x, y, Blend::trans(c1, c2, blend));
-            break;
-          case 1:
-            src.setpixel(x, y,
-              Blend::trans(c1, Blend::keepLum(c2, getl(c1)), blend));
-            break;
-          case 2:
-            src.setpixel(x, y, Blend::transAlpha(c1, c2, blend));
-            break;
+          c = Blend::trans(c1, c2, blend);
         }
+        else if (mode == 1)
+        {
+          c = Blend::trans(c1, Blend::keepLum(c2, getl(c1)), blend);
+        }
+          else
+        {
+          c = Blend::transAlpha(c1, c2, blend);
+        }
+
+        *(src.row[y] + x) = c;
       }
     }
   }
 
-  src.blit(bmp, 0, 0, 0, 0, bmp->w, bmp->h);
+  src.blit(bmp, 0, 0, 0, 0, w, h);
   Progress::hide();
 }
 
-void GaussianBlur::applyLarge(Bitmap *bmp, float size, int blend, int mode)
+void GaussianBlur::applyLarge(Bitmap *bmp, float radius, int blend, int mode)
 {
-  const int border = 64;
+  int r = (int)radius;
 
-  Bitmap src(bmp->w + border * 2, bmp->h + border * 2);
-  bmp->blit(&src, 0, 0, border, border, bmp->w, bmp->h);
-  extendBorders(&src, border);
+  if (r < 0.01) r = 0.01;
 
-  Bitmap temp(src.w, src.h);
-  src.blit(&temp, 0, 0, 0, 0, src.w, src.h);
+  float div = 2 * r + 1;
+  int w = bmp->w;
+  int h = bmp->h;
 
-  size += 1.0;
-
-  if (size > border / 2 - 2) { size = border / 2 - 2; }
+  Bitmap src(w, h);
+  Bitmap temp(w, h);
+  bmp->blit(&src, 0, 0, 0, 0, w, h);
 
   Progress::show(6, 1);
   int pass_count = 0;
-  int larger = src.w > src.h ? src.w : src.h;
-
-  std::vector<int> buf_r(larger, 0);
-  std::vector<int> buf_g(larger, 0);
-  std::vector<int> buf_b(larger, 0);
-  std::vector<int> buf_a(larger, 0);
-
-  if (((int)size & 1) == 0) { size += 1.0; }
 
   for (int pass = 0; pass < 3; pass++)
   {
-    // x direction
     if (Progress::update(pass_count++) < 0) { break; }
 
-    for (int y = src.ct; y <= src.cb; y++)
+    for (int y = 0; y < h; y++)
     {
-      int *p = src.row[y];
+      float acc_r = 0, acc_g = 0, acc_b = 0, acc_a = 0;
 
-      for (int x = 0; x < src.w; x++)
+      for (int x = -r; x <= r; x++)
       {
-        rgba_type rgba = getRgba(*p++);
-        buf_r[x] = Gamma::fix(rgba.r);
-        buf_g[x] = Gamma::fix(rgba.g);
-        buf_b[x] = Gamma::fix(rgba.b);
-        buf_a[x] = rgba.a;
+        int offset_x = clamp(x, w - 1);
+
+        rgba_type rgba = getRgba(*(src.row[y] + offset_x));
+
+        acc_r += Gamma::fix(rgba.r);
+        acc_g += Gamma::fix(rgba.g);
+        acc_b += Gamma::fix(rgba.b);
+        acc_a += rgba.a;
       }
 
-      int accum_r = 0;
-      int accum_g = 0;
-      int accum_b = 0;
-      int accum_a = 0;
-      int div = 1;
+      *(temp.row[y]) = makeRgba(Gamma::unfix(acc_r / div),
+                                Gamma::unfix(acc_g / div),
+                                Gamma::unfix(acc_b / div),
+                                acc_a / div);
 
-      for (int x = src.cl; x <= src.cr; x++)
+      for (int x = 1; x < w; x++)
       {
-        const int mx = x - div;
+        int old_edge = clamp(x - r - 1, w - 1);
+        int new_edge = clamp(x + r, w - 1);
 
-        if (mx >= 0)
-        {
-          accum_r -= buf_r[mx];
-          accum_g -= buf_g[mx];
-          accum_b -= buf_b[mx];
-          accum_a -= buf_a[mx];
-        }
+        rgba_type rgba_out = getRgba(*(src.row[y] + old_edge));
+        rgba_type rgba_in = getRgba(*(src.row[y] + new_edge));
 
-        accum_r += buf_r[x];
-        accum_g += buf_g[x];
-        accum_b += buf_b[x];
-        accum_a += buf_a[x];
-        div++;
+        acc_r += Gamma::fix(rgba_in.r) - Gamma::fix(rgba_out.r);
+        acc_g += Gamma::fix(rgba_in.g) - Gamma::fix(rgba_out.g);
+        acc_b += Gamma::fix(rgba_in.b) - Gamma::fix(rgba_out.b);
+        acc_a += rgba_in.a - rgba_out.a;
 
-        if (div > size) { div = size; }
-
-        const int c = makeRgba(Gamma::unfix(accum_r / div),
-                               Gamma::unfix(accum_g / div),
-                               Gamma::unfix(accum_b / div),
-                               accum_a / div);
-
-        temp.setpixel(x - size / 2 + 1, y - size / 2 + 1, c);
+        *(temp.row[y] + x) = makeRgba(Gamma::unfix(acc_r / div),
+                                      Gamma::unfix(acc_g / div),
+                                      Gamma::unfix(acc_b / div),
+                                      acc_a / div);
       }
     }
 
-    // y direction
     if (Progress::update(pass_count++) < 0) { break; }
 
-    for (int x = src.cl; x <= src.cr; x++)
+    for (int x = 0; x < w; x++)
     {
-      int *p = temp.row[0] + x;
+      float acc_r = 0, acc_g = 0, acc_b = 0, acc_a = 0;
 
-      for (int y = 0; y < src.h; y++)
+      for (int y = -r; y <= r; y++)
       {
-        rgba_type rgba = getRgba(*p);
-        p += temp.w;
-        buf_r[y] = Gamma::fix(rgba.r);
-        buf_g[y] = Gamma::fix(rgba.g);
-        buf_b[y] = Gamma::fix(rgba.b);
-        buf_a[y] = rgba.a;
+        int offset_y = clamp(y, h - 1);
+
+        rgba_type rgba = getRgba(*(temp.row[offset_y] + x));
+
+        acc_r += Gamma::fix(rgba.r);
+        acc_g += Gamma::fix(rgba.g);
+        acc_b += Gamma::fix(rgba.b);
+        acc_a += rgba.a;
       }
 
-      int accum_r = 0;
-      int accum_g = 0;
-      int accum_b = 0;
-      int accum_a = 0;
-      int div = 1;
+      int c1 = *(src.row[0] + x);
+      int c2 = makeRgba(Gamma::unfix(acc_r / div),
+                        Gamma::unfix(acc_g / div),
+                        Gamma::unfix(acc_b / div),
+                        acc_a / div);
 
-      for (int y = src.ct; y <= src.cb; y++)
+      *(src.row[0] + x) = Blend::trans(c1, c2, blend);
+
+      for (int y = 1; y < h; y++)
       {
-        const int my = y - div;
+        int old_edge = clamp(y - r - 1, h - 1);
+        int new_edge = clamp(y + r, h - 1);
 
-        if (my >= 0)
+        rgba_type rgba_out = getRgba(*(temp.row[old_edge] + x));
+        rgba_type rgba_in  = getRgba(*(temp.row[new_edge] + x));
+
+        acc_r += Gamma::fix(rgba_in.r) - Gamma::fix(rgba_out.r);
+        acc_g += Gamma::fix(rgba_in.g) - Gamma::fix(rgba_out.g);
+        acc_b += Gamma::fix(rgba_in.b) - Gamma::fix(rgba_out.b);
+        acc_a += rgba_in.a - rgba_out.a;
+
+        int c1 = *(src.row[y] + x);
+        int c2 = makeRgba(Gamma::unfix(acc_r / div),
+                          Gamma::unfix(acc_g / div),
+                          Gamma::unfix(acc_b / div),
+                          acc_a / div);
+
+        int c;
+
+        if (mode == 0)
         {
-          accum_r -= buf_r[my];
-          accum_g -= buf_g[my];
-          accum_b -= buf_b[my];
-          accum_a -= buf_a[my];
+          c = Blend::trans(c1, c2, blend);
+        }
+        else if (mode == 1)
+        {
+          c = Blend::trans(c1, Blend::keepLum(c2, getl(c1)), blend);
+        }
+          else
+        {
+          c = Blend::transAlpha(c1, c2, blend);
         }
 
-        accum_r += buf_r[y];
-        accum_g += buf_g[y];
-        accum_b += buf_b[y];
-        accum_a += buf_a[y];
-        div++;
-
-        if (div > size) { div = size; }
-
-        const int c1 = *(src.row[y] + x);
-        const int c2 = makeRgba(Gamma::unfix(accum_r / div),
-                                Gamma::unfix(accum_g / div),
-                                Gamma::unfix(accum_b / div),
-                                accum_a / div);
-
-        switch (mode)
-        {
-          case 0:
-            *(src.row[y] + x) = Blend::trans(c1, c2, blend);
-            break;
-          case 1:
-              *(src.row[y] + x) = Blend::trans(c1,
-                                               Blend::keepLum(c2, getl(c1)),
-                                               blend);
-            break;
-          case 2:
-            *(src.row[y] + x) = Blend::transAlpha(c1, c2, blend);
-            break;
-        }
+        *(src.row[y] + x) = c;
       }
     }
   }
 
-  src.blit(bmp, border, border, 0, 0, bmp->w, bmp->h);
+  src.blit(bmp, 0, 0, 0, 0, w, h);
   Progress::hide();
 }
 
@@ -381,10 +316,10 @@ void GaussianBlur::init()
 
   Items::dialog = new DialogWindow(400, 0, "Gaussian Blur");
 
-  Items::size = new InputFloat(Items::dialog, 0, y1, 128, 32, "Size (.01-60)", 0, 0.01, 60);
-  y1 += 32 + 16;
+  Items::size = new InputFloat(Items::dialog, 0, y1, 128, 32, "Size (.01-100)", 0, 0.01, 100);
   Items::size->value(1);
   Items::size->center();
+  y1 += 32 + 16;
 
   Items::blend = new InputInt(Items::dialog, 0, y1, 128, 32, "Blend %", 0, 0, 100);
   Items::blend->value(100);
