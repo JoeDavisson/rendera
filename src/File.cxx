@@ -624,11 +624,11 @@ Bitmap *File::loadTarga(const char *fn)
   Bitmap *temp = new Bitmap(w, h);
   std::vector<unsigned char> linebuf(w * depth);
 
-  bool negx = true;
+  bool negx = false;
   bool negy = true;
 
   if (header.descriptor & (1 << 4))
-    negx = false;
+    negx = true;
 
   if (header.descriptor & (1 << 5))
     negy = false;
