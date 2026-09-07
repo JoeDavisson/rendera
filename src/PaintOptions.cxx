@@ -175,15 +175,20 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
 
   paint_size->var = 0;
   paint_size->do_callback();
-  paint_coarse_edge->var = 3;
+  paint_coarse_edge->var = 4;
   paint_coarse_edge->do_callback();
-  paint_fine_edge->var = 3;
+  paint_fine_edge->var = 4;
   paint_fine_edge->do_callback();
-  paint_watercolor_edge->var = 3;
+  paint_blurry_edge->var = 4;
+  paint_blurry_edge->do_callback();
+  paint_watercolor_edge->var = 5;
+  paint_watercolor_edge->var = 5;
   paint_watercolor_edge->do_callback();
-  paint_chalk_edge->var = 2;
+  paint_chalk_edge->var = 4;
   paint_chalk_edge->do_callback();
-  paint_average_edge->var = 2;
+  paint_texture_edge->var = 4;
+  paint_texture_edge->do_callback();
+  paint_average_edge->var = 4;
   paint_average_edge->do_callback();
 }
 
