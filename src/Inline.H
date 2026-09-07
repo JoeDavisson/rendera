@@ -189,12 +189,7 @@ inline int getFltkColor(const int c)
 
 inline int clamp(const int value, const int ceiling)
 {
-  if(value < 0)
-    return 0;
-  else if(value > ceiling)
-    return ceiling;
-  else
-    return value;
+  return std::max(0, std::min(value, ceiling));
 }
 
 // pseudo-random number
