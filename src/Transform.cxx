@@ -724,13 +724,14 @@ namespace RotateArbitrary
     Items::dialog = new DialogWindow(400, 0, "Arbitrary Rotation");
 
     Items::angle = new InputFloat(Items::dialog, 0, y1, 128, 32,
-                                  "Angle", 0, -359.99, 359.99);
+                                  "Angle", 0, -359.99999, 359.99999);
+    Items::angle->maximum_size(16);
     Items::angle->center();
     Items::angle->value(0);
     y1 += 32 + 16;
 
     Items::scale = new InputFloat(Items::dialog, 0, y1, 128, 32,
-                                  "Scale (1-10)", 0, 1, 10);
+                                  "Scale (1-16)", 0, 1, 16);
     Items::scale->center();
     Items::scale->value(1.000);
     y1 += 32 + 16;
