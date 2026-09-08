@@ -157,10 +157,7 @@ void GaussianBlur::applySmall(Bitmap *bmp, float size, int blend, int mode)
 void GaussianBlur::applyLarge(Bitmap *bmp, float radius, int blend, int mode)
 {
   int r = (int)radius;
-
-  if (r < 0.01) r = 0.01;
-
-  float div = 2 * r + 1;
+  int div = 2 * r + 1;
   int w = bmp->w;
   int h = bmp->h;
 
@@ -177,7 +174,7 @@ void GaussianBlur::applyLarge(Bitmap *bmp, float radius, int blend, int mode)
 
     for (int y = 0; y < h; y++)
     {
-      float acc_r = 0, acc_g = 0, acc_b = 0, acc_a = 0;
+      int acc_r = 0, acc_g = 0, acc_b = 0, acc_a = 0;
 
       for (int x = -r; x <= r; x++)
       {
@@ -220,7 +217,7 @@ void GaussianBlur::applyLarge(Bitmap *bmp, float radius, int blend, int mode)
 
     for (int x = 0; x < w; x++)
     {
-      float acc_r = 0, acc_g = 0, acc_b = 0, acc_a = 0;
+      int acc_r = 0, acc_g = 0, acc_b = 0, acc_a = 0;
 
       for (int y = -r; y <= r; y++)
       {
@@ -235,6 +232,7 @@ void GaussianBlur::applyLarge(Bitmap *bmp, float radius, int blend, int mode)
       }
 
       int c1 = *(src.row[0] + x);
+
       int c2 = makeRgba(Gamma::unfix(acc_r / div),
                         Gamma::unfix(acc_g / div),
                         Gamma::unfix(acc_b / div),
@@ -256,6 +254,7 @@ void GaussianBlur::applyLarge(Bitmap *bmp, float radius, int blend, int mode)
         acc_a += rgba_in.a - rgba_out.a;
 
         int c1 = *(src.row[y] + x);
+
         int c2 = makeRgba(Gamma::unfix(acc_r / div),
                           Gamma::unfix(acc_g / div),
                           Gamma::unfix(acc_b / div),
