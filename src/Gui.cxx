@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "FontPreview.H"
 #include "GradientOptions.H"
 #include "Gui.H"
+// #include "Help.H"
 #include "ImagesOptions.H"
 #include "OffsetOptions.H"
 #include "Palette.H"
@@ -416,6 +417,8 @@ void Gui::init()
   menubar->add("F&X/Misc/Cube Plot...", 0,
     (Fl_Callback *)CubePlot::begin, 0, 0);
 
+//  menubar->add("&Help/&Manual...", 0,
+//    (Fl_Callback *)Help::show, 0, 0);
   menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
 
