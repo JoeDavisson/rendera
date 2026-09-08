@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cstdio>
 #include <cstdlib>
 #include <algorithm>
+#include <string>
 
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Float_Input.H>
@@ -36,7 +37,7 @@ namespace
   void change(Fl_Widget *w, InputFloat *i)
   {
     bool shift = Fl::event_shift() ? true : false;
-    double val = std::atof(i->input.value());
+    double val = std::stod(i->input.value());
 
     if (shift == true)
     {
@@ -48,9 +49,9 @@ namespace
       else
     {
       if (w == &i->dec)
-        val -= 0.25;
+        val -= 1;
       else if (w == &i->inc)
-        val += 0.25;
+        val += 1;
     }
 
     if (val < i->min)
@@ -59,7 +60,7 @@ namespace
     if (val > i->max)
       val = i->max;
 
-    snprintf(str, sizeof(str), "%.5f", val);
+    snprintf(str, sizeof(str), "%.8g", val);
     i->input.value(str);
 
     if(i->callback())
@@ -83,7 +84,7 @@ InputFloat::InputFloat(Fl_Group *g, int x, int y, int w, int h,
   input.callback((Fl_Callback *)change, this);
   dec.callback((Fl_Callback *)change, this);
   inc.callback((Fl_Callback *)change, this);
-  input.maximum_size(16);
+  input.maximum_size(13);
   input.textsize(16);
   input.when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
   labelsize(16);
@@ -98,14 +99,14 @@ InputFloat::~InputFloat()
 {
 }
 
-float InputFloat::value()
+double InputFloat::value()
 {
-  return atof(input.value());
+  return std::stod(input.value());
 }
 
-void InputFloat::value(const float val)
+void InputFloat::value(const double val)
 {
-  snprintf(str, sizeof(str), "%.5f", val);
+  snprintf(str, sizeof(str), "%.8g", val);
   input.value(str);
 }
 
