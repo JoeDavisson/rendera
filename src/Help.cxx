@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <algorithm>
 
+#include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Help_View.H>
@@ -36,25 +37,62 @@ namespace
   namespace Items
   {
     DialogWindow *dialog;
+    Fl_Hold_Browser *index;
     Fl_Help_View *help_view;
     Fl_Button *ok;
   }
+
+  const char *introduction =
+    "<html>"
+    "<body>"
+    "Introduction"
+    "<p>This is a work-in-progress.</p>"
+    "</body>"
+    "</html>";
+
+  const char *basic_editing =
+    "<html>"
+    "<body>"
+    "Basic Editing"
+    "<p>Sample text.</p>"
+    "</body>"
+    "</html>";
+
+  void index_cb()
+  {
+    switch (Items::index->value())
+    {
+      case 1:
+        Items::help_view->value(introduction);
+        break;
+      case 2:
+        Items::help_view->value(basic_editing);
+        break;
+    }
+  }
+
 }
 
 void Help::init()
 {
   int y1 = 16;
 
-  Items::dialog = new DialogWindow(784, 0, "Rendera Manual");
+  Items::dialog = new DialogWindow(784 + 192 + 8, 0, "Rendera Manual");
 
-  Items::help_view = new Fl_Help_View(8, 8, 768, 512, "");
-  Items::help_view->color(fl_rgb_color(224, 224, 224));
-  Items::help_view->textcolor(fl_rgb_color(0, 0, 0));
+  Items::index = new Fl_Hold_Browser(8, 8, 192, 512, "");
+  Items::index->align(FL_ALIGN_TOP);
+  Items::index->callback((Fl_Callback *)index_cb);
+  Items::index->add("Introduction");
+  Items::index->add("Basic Editing");
+  Items::index->add("Photo Restoration");
+  Items::index->add("Colorization");
+
+  Items::help_view = new Fl_Help_View(8 + Items::index->w() + 8, 8, Items::dialog->w() - 24 - Items::index->w(), 512, "");
   Items::help_view->textsize(18);
   Items::help_view->textfont(FL_HELVETICA);
-  Items::help_view->load("help_test.html");
+  Items::help_view->value(introduction);
 
-  y1 += 512 + 16;
+  y1 += 512 + 8;
 
   Items::dialog->addOkButton(&Items::ok, &y1);
   Items::ok->callback((Fl_Callback *)hide);
@@ -65,7 +103,6 @@ void Help::init()
 
 void Help::show()
 {
-  Items::help_view->load("help_test.html");
   Items::dialog->show();
 }
 
