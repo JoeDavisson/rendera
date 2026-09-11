@@ -64,7 +64,8 @@ void Marble::apply(Bitmap *dest)
   Fractal::plasma(&plasma, (Items::turb->var + 1) << 10);
   Fractal::plasma(&marbx, (Items::turb->var + 1) << 10);
   Fractal::plasma(&marby, (Items::turb->var + 1) << 10);
-  Fractal::marble(&plasma, &marble, &marbx, &marby, (Items::marb->var + 1) << 2, 50, Items::type->value());
+  Fractal::marble(&plasma, &marble, &marbx, &marby,
+                  (Items::marb->var + 1) << 2, 50, Items::type->value());
 
   int color = Items::wheel->getColor();
   int trans = Items::blend->var * 13.43;
@@ -96,9 +97,13 @@ void Marble::apply(Bitmap *dest)
         mix = 0;
 
       if (Items::type->value() == 1)
+      {
         *p = current_blend(*p, color, (scaleVal(trans, 255 - mix) & 63) * 4);
-      else
+      }
+        else
+      {
         *p = current_blend(*p, color, scaleVal(trans, 255 - mix));
+      }
 
       p++;
     }
@@ -143,20 +148,28 @@ void Marble::init()
   Items::preview = new Widget(Items::dialog, 8, y1, 528, 528, 0, 1, 1, 0);
   y1 += 528 + 24;
 
-  Items::marb = new Widget(Items::dialog, 8, y1, 160, 32, "Marbleize", images_marbleize_png, 16, 32, (Fl_Callback *)setMarb);
+  Items::marb = new Widget(Items::dialog, 8, y1, 160, 32,
+                           "Marbleize", images_marbleize_png,
+                           16, 32, (Fl_Callback *)setMarb);
   Items::marb->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::marb->labelfont(FL_COURIER);
 
-  Items::turb = new Widget(Items::dialog, 8 + 160 + 8, y1, 160, 32, "Turbulence", images_turbulence_png, 16, 32, (Fl_Callback *)setTurb);
+  Items::turb = new Widget(Items::dialog, 8 + 160 + 8, y1, 160, 32,
+                           "Turbulence", images_turbulence_png,
+                           16, 32, (Fl_Callback *)setTurb);
   Items::turb->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::turb->labelfont(FL_COURIER);
   y1 += 64;
 
-  Items::blend = new Widget(Items::dialog, 8, y1, 160, 32, "Blend", images_marble_blend_png, 8, 32, (Fl_Callback *)setBlend);
+  Items::blend = new Widget(Items::dialog, 8, y1, 160, 32,
+                            "Blend", images_marble_blend_png,
+                            8, 32, (Fl_Callback *)setBlend);
   Items::blend->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::blend->labelfont(FL_COURIER);
 
-  Items::threshold = new Widget(Items::dialog, 8 + 160 + 8, y1, 160, 32, "Threshold", images_marble_blend_png, 8, 32, (Fl_Callback *)setThreshold);
+  Items::threshold = new Widget(Items::dialog, 8 + 160 + 8, y1, 160, 32,
+                                "Threshold", images_marble_blend_png,
+                                8, 32, (Fl_Callback *)setThreshold);
   Items::threshold->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::threshold->labelfont(FL_COURIER);
   y1 += 64;
@@ -224,8 +237,7 @@ void Marble::updateMain()
 
 void Marble::setMarb()
 {
-  if (Items::marb->var == Items::old_marb_var)
-    return;
+  if (Items::marb->var == Items::old_marb_var) { return; }
 
   update();
   Items::old_marb_var = Items::marb->var;
@@ -233,8 +245,7 @@ void Marble::setMarb()
 
 void Marble::setTurb()
 {
-  if (Items::turb->var == Items::old_turb_var)
-    return;
+  if (Items::turb->var == Items::old_turb_var) { return; }
 
   update();
   Items::old_turb_var = Items::turb->var;
@@ -242,8 +253,7 @@ void Marble::setTurb()
 
 void Marble::setBlend()
 {
-  if (Items::blend->var == Items::old_blend_var)
-    return;
+  if (Items::blend->var == Items::old_blend_var) { return; }
 
   update();
   Items::old_blend_var = Items::blend->var;
@@ -251,8 +261,7 @@ void Marble::setBlend()
 
 void Marble::setThreshold()
 {
-  if (Items::threshold->var == Items::old_threshold_var)
-    return;
+  if (Items::threshold->var == Items::old_threshold_var) { return; }
 
   update();
   Items::old_threshold_var = Items::threshold->var;
