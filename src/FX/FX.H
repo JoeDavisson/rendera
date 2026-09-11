@@ -90,6 +90,8 @@ class FX
 {
 public:
   static void drawPreview(Bitmap *, Bitmap *);
+  static void readyTimer();
+  static bool ready();
   static void init();
 
 private:

@@ -223,6 +223,8 @@ void Marble::init()
 
 void Marble::update()
 {
+  if (FX::ready() == false) { return; }
+
   Bitmap *bmp = Project::bmp;
   bmp->blit(Items::temp, bmp->cl, bmp->ct, 0, 0, bmp->cw, bmp->ch);
   apply(Items::temp);

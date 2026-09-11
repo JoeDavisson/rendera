@@ -27,6 +27,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 // first to disable the progress bar, then calling apply() with the target
 // bitmap and other parameters
 
+namespace
+{
+  bool is_ready = false;
+}
+
 void FX::drawPreview(Bitmap *src, Bitmap *dest)
 {
   if (src->w >= src->h)
@@ -55,6 +60,25 @@ void FX::drawPreview(Bitmap *src, Bitmap *dest)
   dest->rect(0, 0, dest->w - 1, dest->h - 1, makeRgb(0, 0, 0), 128);
 }
 
+void FX::readyTimer()
+{
+  is_ready = true;
+  Fl::repeat_timeout(1.0 / 15, (Fl_Timeout_Handler)readyTimer);
+}
+
+bool FX::ready()
+{
+  if (is_ready == false)
+  {
+    return false;
+  }
+    else
+  {
+    is_ready = false;
+    return true;
+  }
+}
+
 void FX::init()
 {
   // call init functions for filters with dialogs
@@ -72,5 +96,8 @@ void FX::init()
   Marble::init();
   Dither::init();
   CubePlot::init();
+
+  is_ready = false;
+  Fl::add_timeout(1.0 / 15, (Fl_Timeout_Handler)readyTimer);
 }
 

@@ -147,6 +147,8 @@ void RotateHue::init()
 
 void RotateHue::setHue()
 {
+  if (FX::ready() == false) { return; }
+
   int hx = Items::hue->var % 360;
 
   Items::hue->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
