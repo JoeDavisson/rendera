@@ -98,7 +98,6 @@ OBJ= \
   $(SRC_DIR)/Brush.o \
   $(SRC_DIR)/Clone.o \
   $(SRC_DIR)/Dialog.o \
-  $(SRC_DIR)/Help.o \
   $(SRC_DIR)/Wheel.o \
   $(SRC_DIR)/Editor.o \
   $(SRC_DIR)/FontPreview.o \

@@ -35,7 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "FX/FX.H"
 #include "Gamma.H"
 #include "Gui.H"
-#include "Help.H"
 #include "Inline.H"
 #include "Project.H"
 #include "Transform.H"
@@ -235,7 +234,6 @@ int main(int argc, char *argv[])
   Editor::init();
   Gui::init();
   Dialog::init();
-  Help::init();
 
   //Fl_Shared_Image::add_handler(File::previewJpeg);
   //Fl_Shared_Image::add_handler(File::previewPng);
