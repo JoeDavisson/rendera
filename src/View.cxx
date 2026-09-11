@@ -171,11 +171,11 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   oldimgx = 0;
   oldimgy = 0;
   rendering = false;
+  mouse_timer_ready = false;
   mouse_in_viewport = false;
   bgr_order = false;
   backbuf = 0;
   dnd = false;
-  last_time = Fl::now();
 
   resize(group->x() + x, group->y() + y, w, h);
 }
@@ -189,7 +189,6 @@ int View::handle(int event)
   if (rendering == true)
     return 0;
 
-  double t = 0;
   float scale = getScale();
 
   mousex = (Fl::event_x() - x()) * scale;
@@ -346,9 +345,10 @@ int View::handle(int event)
       // gives viewport focus when clicked on
       if (Fl::focus() != this) { Fl::focus(this); }
 
-      t = Fl::seconds_since(last_time);
-      if (t < 1.0 / 125) { return 1; }
-      last_time = Fl::now();
+      if (mouse_timer_ready == false)
+        return 1; 
+  
+      mouse_timer_ready = false;
 
       switch (button)
       {
@@ -391,9 +391,10 @@ int View::handle(int event)
 
     case FL_MOVE:
     {
-      t = Fl::seconds_since(last_time);
-      if (t < 1.0 / 125) { return 1; }
-      last_time = Fl::now();
+      if (mouse_timer_ready == false)
+        return 1; 
+  
+      mouse_timer_ready = false;
 
       Project::tool->move(this);
 

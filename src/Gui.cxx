@@ -846,6 +846,12 @@ void Gui::paletteSet332()
   colors->changePalette(pal);
 }
 
+void Gui::mouseTimer()
+{
+  view->mouse_timer_ready = true;
+  Fl::repeat_timeout(1.0 / 125, (Fl_Timeout_Handler)Gui::mouseTimer);
+}
+
 void Gui::selectFromImage()
 {
   delete Project::select_bmp;

@@ -91,6 +91,8 @@ public:
   static void paletteSet4LevelRGB();
   static void paletteSet332();
 
+  static void mouseTimer();
+
   static void selectFromImage();
   static void selectToImage();
 
