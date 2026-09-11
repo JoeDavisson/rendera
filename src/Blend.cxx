@@ -262,6 +262,18 @@ int Blend::keepLum(const int c, const int lum)
   return makeRgba(n[1], n[0], n[2], rgba.a);
 }
 
+int Blend::keepLumFast(const int c, const int lum)
+{
+  int r, g, b;
+  float y, cb, cr;
+  const rgba_type rgba = getRgba(c);
+
+  rgbToYcc(rgba.r, rgba.g, rgba.b, &y, &cb, &cr);
+  yccToRgb(lum, cb, cr, &r, &g, &b);
+
+  return makeRgba(r, g, b, rgba.a);
+}
+
 int Blend::alphaAdd(const int c1, const int, const int t)
 {
   const rgba_type rgba = getRgba(c1);

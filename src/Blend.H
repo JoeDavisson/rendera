@@ -54,6 +54,7 @@ public:
   static int colorize(const int, const int, const int);
   static int luminosity(const int, const int, const int);
   static int keepLum(const int, const int);
+  static int keepLumFast(const int, const int);
   static int alphaAdd(const int, const int, const int);
   static int alphaSub(const int, const int, const int);
   static int smooth(const int, const int, const int);
