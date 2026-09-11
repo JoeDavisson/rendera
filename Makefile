@@ -21,7 +21,7 @@ LIBS=$(shell ./$(FLTK_DIR)/fltk-config --use-images --ldstaticflags)
 ifeq ($(PLATFORM),linux)
   HOST=
   CXX=g++
-  CXXFLAGS= -g -O3 -Wall -Wunused-parameter -DFLTK_DIR=$(FLTK_DIR) -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
+  CXXFLAGS= -O3 -Wall -Wunused-parameter -DFLTK_DIR=$(FLTK_DIR) -DRENDERA_STATIC_LINK -DPACKAGE_STRING=\"$(VERSION)\" $(INCLUDE)
   EXE=rendera
 endif
 
