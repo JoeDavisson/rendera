@@ -92,6 +92,9 @@ public:
   static void paletteSet332();
 
   static void mouseTimer();
+  static void widgetTimer();
+  static bool widgetTimerReady();
+  static void widgetTimerReset();
 
   static void selectFromImage();
   static void selectToImage();

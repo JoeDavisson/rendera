@@ -47,7 +47,6 @@ public:
   Bitmap *bitmap, *bitmap2;
   Fl_RGB_Image *image, *image2;
   bool use_highlight;
-  Fl_Timestamp last_time;
 
 protected:
   void draw();

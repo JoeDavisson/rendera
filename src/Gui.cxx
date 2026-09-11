@@ -93,6 +93,9 @@ namespace
   int left_height = 0;
   int right_height = 0;
 
+  // widget timer
+  bool widget_timer_ready = false;
+
   // quit program
   void quit()
   {
@@ -849,7 +852,23 @@ void Gui::paletteSet332()
 void Gui::mouseTimer()
 {
   view->mouse_timer_ready = true;
-  Fl::repeat_timeout(1.0 / 125, (Fl_Timeout_Handler)Gui::mouseTimer);
+  Fl::add_timeout(1.0 / 60, (Fl_Timeout_Handler)Gui::mouseTimer);
+}
+
+void Gui::widgetTimer()
+{
+  widget_timer_ready = true;
+  Fl::add_timeout(1.0 / 15, (Fl_Timeout_Handler)Gui::widgetTimer);
+}
+
+bool Gui::widgetTimerReady()
+{
+  return widget_timer_ready;
+}
+
+void Gui::widgetTimerReset()
+{
+  widget_timer_ready = false;
 }
 
 void Gui::selectFromImage()
@@ -1031,7 +1050,7 @@ void Gui::updateMemInfo()
 
   images->memLabel(s);
 
-  Fl::repeat_timeout(1.0, (Fl_Timeout_Handler)Gui::updateMemInfo);
+  Fl::add_timeout(1.0, (Fl_Timeout_Handler)Gui::updateMemInfo);
 }
 
 void Gui::duplicate()

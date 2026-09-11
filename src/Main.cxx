@@ -277,7 +277,8 @@ int main(int argc, char *argv[])
 */
 
   Fl::add_timeout(1.0 / 10, (Fl_Timeout_Handler)Gui::updateMemInfo);
-  Fl::add_timeout(1.0 / 125, (Fl_Timeout_Handler)Gui::mouseTimer);
+  Fl::add_timeout(1.0 / 60, (Fl_Timeout_Handler)Gui::mouseTimer);
+  Fl::add_timeout(1.0 / 15, (Fl_Timeout_Handler)Gui::widgetTimer);
 
   return Fl::run();
 }

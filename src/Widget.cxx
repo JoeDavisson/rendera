@@ -85,7 +85,6 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   tooltip(label);
   use_highlight = true;
   labelsize(16);
-  last_time = Fl::now();
 }
 
 // load static PNG image from file
@@ -109,7 +108,6 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
 
   resize(group->x() + x, group->y() + y, w, h);
   labelsize(16);
-  last_time = Fl::now();
 }
 
 // use a blank bitmap
@@ -133,7 +131,6 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   tooltip(label);
   use_highlight = false;
   labelsize(16);
-  last_time = Fl::now();
 }
 
 Widget::~Widget()
@@ -154,11 +151,14 @@ int Widget::handle(int event)
     case FL_PUSH:
     case FL_DRAG:
     case FL_RELEASE:
-      Fl::focus(0);
+      if (event == FL_PUSH || event == FL_DRAG)
+      {
+        if (Gui::widgetTimerReady() == false) { return 1; }
+      }
 
-      double t = Fl::seconds_since(last_time);
-      if (t < 1.0 / 30) { return 1; }
-      last_time = Fl::now();
+      Gui::widgetTimerReset();
+
+      Fl::focus(0);
 
       if (stepx <= 0 || stepy <= 0)
         return 0;
