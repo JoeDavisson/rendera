@@ -113,7 +113,8 @@ void Marble::apply(Bitmap *dest)
 void Marble::close()
 {
   Bitmap *bmp = Project::bmp;
-  Items::temp->blit(bmp, 0, 0, bmp->cl, bmp->ct, Items::temp->w, Items::temp->h);
+  Items::temp->blit(bmp, 0, 0, bmp->cl, bmp->ct,
+                    Items::temp->w, Items::temp->h);
   Items::dialog->hide();
   Gui::getView()->drawMain(true);
   delete Items::temp;
