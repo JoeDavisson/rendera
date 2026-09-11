@@ -63,7 +63,7 @@ void FX::drawPreview(Bitmap *src, Bitmap *dest)
 void FX::readyTimer()
 {
   is_ready = true;
-  Fl::repeat_timeout(1.0 / 15, (Fl_Timeout_Handler)readyTimer);
+  Fl::add_timeout(1.0 / 15, (Fl_Timeout_Handler)readyTimer);
 }
 
 bool FX::ready()

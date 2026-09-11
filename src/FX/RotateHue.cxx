@@ -20,13 +20,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "RotateHue.H"
 
+class HueWidget;
+
 namespace
 {
   namespace Items
   {
     DialogWindow *dialog;
     Widget *preview;
-    Widget *hue;
+    HueWidget *hue;
     Fl_Repeat_Button *inc_hue;
     Fl_Repeat_Button *dec_hue;
     CheckBox *preserve_lum;
@@ -36,6 +38,22 @@ namespace
 
   Bitmap *temp_bmp;
 }
+
+class HueWidget : public Widget
+{
+  int handle(int event) override
+  {
+    if (event == FL_MOVE || event == FL_DRAG)
+    {
+      if (FX::ready() == false) { return 1; }
+    }
+
+    return Widget::handle(event);
+  }
+
+  public:
+    using Widget::Widget; 
+};
 
 void RotateHue::apply(Bitmap *dest, bool show_progress)
 {
@@ -93,6 +111,8 @@ void RotateHue::apply(Bitmap *dest, bool show_progress)
 
 void RotateHue::begin()
 {
+  Items::hue->take_focus();
+
   Bitmap *bmp = Project::bmp;
   temp_bmp = new Bitmap(Items::preview->bitmap->w,
                         Items::preview->bitmap->h);
@@ -129,7 +149,7 @@ void RotateHue::init()
   y1 += 512 + 8;
   Items::dec_hue = new Fl_Repeat_Button(x1, y1, 20, 32, "@<");
   Items::dec_hue->callback((Fl_Callback *)decHue);
-  Items::hue = new Widget(Items::dialog, x1 + 28, y1, 360, 32, 0, 1, 32, (Fl_Callback *)setHue);
+  Items::hue = new HueWidget(Items::dialog, x1 + 28, y1, 360, 32, 0, 1, 32, (Fl_Callback *)setHue);
   Items::hue->align(FL_ALIGN_CENTER | FL_ALIGN_BOTTOM);
   Items::hue->labelfont(FL_COURIER);
   Items::inc_hue = new Fl_Repeat_Button(x1 + 28 + 360 + 8, y1, 20, 32, "@>");
@@ -147,8 +167,6 @@ void RotateHue::init()
 
 void RotateHue::setHue()
 {
-  if (FX::ready() == false) { return; }
-
   int hx = Items::hue->var % 360;
 
   Items::hue->bitmap->clear(getFltkColor(FL_BACKGROUND2_COLOR));
