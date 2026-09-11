@@ -32,7 +32,8 @@ namespace
   int level, turb;
 }
 
-void Fractal::marble(Map *src, Map *dest, Map *marbx, Map *marby, float scale, float turbulence, int type)
+void Fractal::marble(Map *src, Map *dest, Map *marbx, Map *marby,
+                     float scale, float turbulence, int type)
 {
   int xval[256];
   int yval[256];
@@ -105,21 +106,17 @@ void Fractal::marble(Map *src, Map *dest, Map *marbx, Map *marby, float scale, f
       xx = x + xval[marbx->getpixel(x, y)];
       yy = y + yval[marby->getpixel(x, y)];
 
-      while (xx < 0)
-        xx += w;
-      while (yy < 0)
-        yy += h;
-      while (xx >= w)
-        xx -= w;
-      while (yy >= h)
-        yy -= h;
+      while (xx < 0) { xx += w; }
+      while (yy < 0) { yy += h; }
+      while (xx >= w) { xx -= w; }
+      while (yy >= h) { yy -= h; }
 
       dest->setpixel(x, y, src->getpixel(xx, yy));
     }
   }
 }
 
-void Fractal::plasma(Map * map, int turbulence)
+void Fractal::plasma(Map *map, int turbulence)
 {
   int w, h;
 
@@ -138,40 +135,32 @@ void Fractal::plasma(Map * map, int turbulence)
   divide(map, 0, 0, w - 1, h - 1);
 }
 
-int Fractal::adjust(Map * map, int xa, int ya, int x, int y, int xb, int yb)
+int Fractal::adjust(Map *map, int xa, int ya, int x, int y, int xb, int yb)
 {
   int r = (rnd() % turb) >> level;
 
-  if ((rnd() % 2) == 0)
-    r = -r;
+  if ((rnd() % 2) == 0) { r = -r; }
 
   r = ((map->getpixel(xa, ya) + map->getpixel(xb, yb) + 1) >> 1) + r;
 
-  if (r < 1)
-    r = 1;
-  if (r > 255)
-    r = 255;
+  if (r < 1) { r = 1; }
+  if (r > 255) { r = 255; }
 
   map->setpixel(x, y, r);
 
-  if (x == 0)
-    map->setpixel(map->w - 1, y, r);
-  if (y == 0)
-    map->setpixel(x, map->h - 1, r);
-  if (x == map->w - 1)
-    map->setpixel(0, y, r);
-  if (y == map->h - 1)
-    map->setpixel(x, 0, r);
+  if (x == 0) { map->setpixel(map->w - 1, y, r); }
+  if (y == 0) { map->setpixel(x, map->h - 1, r); }
+  if (x == map->w - 1) { map->setpixel(0, y, r); }
+  if (y == map->h - 1) { map->setpixel(x, 0, r); }
 
   return r;
 }
 
-void Fractal::divide(Map * map, int x1, int y1, int x2, int y2)
+void Fractal::divide(Map *map, int x1, int y1, int x2, int y2)
 {
   int x, y, i, v;
 
-  if (((x2 - x1) < 2) && ((y2 - y1) < 2))
-    return;
+  if (((x2 - x1) < 2) && ((y2 - y1) < 2)) { return; }
 
   level++;
 
@@ -180,31 +169,26 @@ void Fractal::divide(Map * map, int x1, int y1, int x2, int y2)
 
   v = map->getpixel(x, y1);
 
-  if (!v)
-    v = Fractal::adjust(map, x1, y1, x, y1, x2, y1);
+  if (v == 0) { v = Fractal::adjust(map, x1, y1, x, y1, x2, y1); }
 
   i = v;
   v = map->getpixel(x2, y);
 
-  if (!v)
-    v = Fractal::adjust(map, x2, y1, x2, y, x2, y2);
+  if (v == 0) { v = Fractal::adjust(map, x2, y1, x2, y, x2, y2); }
 
   i += v;
   v = map->getpixel(x, y2);
 
-  if (!v)
-    v = Fractal::adjust(map, x1, y2, x, y2, x2, y2);
+  if (v == 0) { v = Fractal::adjust(map, x1, y2, x, y2, x2, y2); }
 
   i += v;
   v = map->getpixel(x1, y);
 
-  if (!v)
-    v = Fractal::adjust(map, x1, y1, x1, y, x1, y2);
+  if (v == 0) { v = Fractal::adjust(map, x1, y1, x1, y, x1, y2); }
 
   i += v;
 
-  if (!map->getpixel(x, y))
-    map->setpixel(x, y, ((i + 2) >> 2));
+  if (!map->getpixel(x, y)) { map->setpixel(x, y, ((i + 2) >> 2)); }
 
   divide(map, x1, y1, x, y);
   divide(map, x, y1, x2, y);
