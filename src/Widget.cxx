@@ -85,6 +85,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   tooltip(label);
   use_highlight = true;
   labelsize(16);
+  last_time = Fl::now();
 }
 
 // load static PNG image from file
@@ -108,6 +109,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
 
   resize(group->x() + x, group->y() + y, w, h);
   labelsize(16);
+  last_time = Fl::now();
 }
 
 // use a blank bitmap
@@ -131,6 +133,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   tooltip(label);
   use_highlight = false;
   labelsize(16);
+  last_time = Fl::now();
 }
 
 Widget::~Widget()
@@ -150,13 +153,12 @@ int Widget::handle(int event)
       return 1;
     case FL_PUSH:
     case FL_DRAG:
-
-      if (Gui::getView()->mouse_timer_ready == false)
-        return 1;
-
-      Gui::getView()->mouse_timer_ready = false;
-
+    case FL_RELEASE:
       Fl::focus(0);
+
+      double t = Fl::seconds_since(last_time);
+      if (t < 1.0 / 30) { return 1; }
+      last_time = Fl::now();
 
       if (stepx <= 0 || stepy <= 0)
         return 0;
@@ -213,8 +215,6 @@ void Widget::draw()
 
   fl_push_clip(x() + offsetx, y() + offsety, stepx, stepy);
 
-//  if (stepx >= 0 && stepy >= 0)
-//    fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), FL_BACKGROUND2_COLOR);
   if (stepx >= 0 && stepy >= 0)
   {
     fl_draw_box(FL_BORDER_BOX, x() + offsetx, y() + offsety,

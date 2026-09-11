@@ -73,7 +73,6 @@ public:
   int px, py, pw, ph;
   int bx, by, bw, bh;
   bool rendering;
-  bool mouse_timer_ready;
   bool mouse_in_viewport;
   bool bgr_order;
   int button;
@@ -83,6 +82,7 @@ public:
   bool ctrl;
   bool alt;
   bool dnd;
+  Fl_Timestamp last_time;
 
 protected:
   void draw();
