@@ -858,7 +858,7 @@ void Gui::mouseTimer()
 void Gui::widgetTimer()
 {
   widget_timer_ready = true;
-  Fl::add_timeout(1.0 / 15, (Fl_Timeout_Handler)Gui::widgetTimer);
+  Fl::add_timeout(1.0 / 30, (Fl_Timeout_Handler)Gui::widgetTimer);
 }
 
 bool Gui::widgetTimerReady()

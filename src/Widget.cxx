@@ -146,12 +146,15 @@ int Widget::handle(int event)
 
   switch (event)
   {
+    case FL_FOCUS:
+    case FL_UNFOCUS:
     case FL_ENTER:
+    case FL_LEAVE:
       return 1;
     case FL_PUSH:
     case FL_DRAG:
     case FL_RELEASE:
-      if (event == FL_PUSH || event == FL_DRAG)
+      if (event == FL_PUSH || event == FL_DRAG || event == FL_RELEASE)
       {
         if (Gui::widgetTimerReady() == false) { return 1; }
       }
@@ -184,7 +187,6 @@ int Widget::handle(int event)
 
       do_callback();
 
-      redraw();
       return 1;
   }
 

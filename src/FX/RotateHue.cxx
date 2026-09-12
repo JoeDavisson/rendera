@@ -88,7 +88,10 @@ void RotateHue::apply(Bitmap *dest, bool show_progress)
     }
   }
 
-  Progress::hide();
+  if (show_progress)
+  {
+    Progress::hide();
+  }
 }
 
 void RotateHue::begin()
@@ -184,8 +187,9 @@ void RotateHue::setHue()
   snprintf(degree, sizeof(degree), "%d\xB0", (int)(hx - 180));
 
   Items::hue->copy_label(degree);
-  apply(Items::preview->bitmap, false);
   Items::preview->redraw();
+
+  apply(Items::preview->bitmap, false);
 }
 
 void RotateHue::incHue()
