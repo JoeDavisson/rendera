@@ -186,6 +186,7 @@ int Widget::handle(int event)
       y1 *= stepy;
 
       do_callback();
+      redraw();
 
       return 1;
   }
