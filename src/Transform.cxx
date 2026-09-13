@@ -220,16 +220,19 @@ namespace Scale
     float ax = ((float)sw / dw);
     float ay = ((float)sh / dh);
 
-    if (ax >= 2 || ay >= 2)
+    if (Items::smooth->active() && Items::smooth->value())
     {
-      Bitmap *smaller = new Bitmap(sw / ax, sh / ay);
-      bmp->scale(smaller, true);
-      Project::replaceImageFromBitmap(smaller);
-      Gui::getView()->ox = 0;
-      Gui::getView()->oy = 0;
-      Gui::getView()->drawMain(true);
-      Fl::check();
-      return;
+      if (ax >= 2 || ay >= 2)
+      {
+        Bitmap *smaller = new Bitmap(sw / ax, sh / ay);
+        bmp->scale(smaller, true);
+        Project::replaceImageFromBitmap(smaller);
+        Gui::getView()->ox = 0;
+        Gui::getView()->oy = 0;
+        Gui::getView()->drawMain(true);
+        Fl::check();
+       return;
+      }
     }
 
     const int sx = 0;
