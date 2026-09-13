@@ -220,7 +220,7 @@ namespace Scale
     float ax = ((float)sw / dw);
     float ay = ((float)sh / dh);
 
-    if (ax > 2 || ay > 2)
+    if (ax >= 2 || ay >= 2)
     {
       Bitmap *smaller = new Bitmap(sw / ax, sh / ay);
       bmp->scale(smaller, true);
