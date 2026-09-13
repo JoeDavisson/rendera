@@ -210,25 +210,37 @@ namespace Scale
   void apply(const int dw, const int dh, const bool wrap_edges)
   {
     Bitmap *bmp = Project::bmp;
-    const int sx = 0;
-    const int sy = 0;
-    const int sw = bmp->cw;
-    const int sh = bmp->ch;
-    const int dx = 0;
-    const int dy = 0;
+    int sw = bmp->cw;
+    int sh = bmp->ch;
 
     if (sw < 1 || sh < 1) { return; }
     if (dw < 1 || dh < 1) { return; }
     if (Project::enoughMemory(dw, dh) == false) { return; }
 
-    Bitmap *temp = new Bitmap(dw, dh);
+    float ax = ((float)sw / dw);
+    float ay = ((float)sh / dh);
 
-    const float ax = ((float)sw / dw);
-    const float ay = ((float)sh / dh);
+    if (ax > 2 || ay > 2)
+    {
+      Bitmap *smaller = new Bitmap(sw / ax, sh / ay);
+      bmp->scale(smaller, true);
+      Project::replaceImageFromBitmap(smaller);
+      Gui::getView()->ox = 0;
+      Gui::getView()->oy = 0;
+      Gui::getView()->drawMain(true);
+      Fl::check();
+      return;
+    }
+
+    const int sx = 0;
+    const int sy = 0;
+    const int dx = 0;
+    const int dy = 0;
 
     float scale_x = (float)sw / dw;
     float scale_y = (float)sh / dh;
-    float scale = scale_x > scale_y ? scale_x : scale_y;
+
+    float scale = scale_x < scale_y ? scale_x : scale_y;
     float r = 0.577 * (scale / 2);
     float blur_size = r * 2.0 - 1.0;
     float blur_blend = 0;
@@ -236,6 +248,8 @@ namespace Scale
 
     if (blur_size < 0) { blur_size = 0; }
     if (blur_size > 0 && (dw < sw || dh < sh)) { blur = true; }
+
+    Bitmap *temp = new Bitmap(dw, dh);
 
     if (Items::mode->value() == 0)
     {

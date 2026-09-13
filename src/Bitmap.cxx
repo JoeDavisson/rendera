@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Gamma.H"
 #include "Inline.H"
 #include "Palette.H"
+#include "Progress.H"
 #include "Project.H"
 #include "Stroke.H"
 
@@ -938,33 +939,34 @@ void Bitmap::invert()
   }
 }
 
-void Bitmap::scale(Bitmap *dest)
+void Bitmap::scale(Bitmap *dest, bool show_progress)
 {
   int sw = w;
   int sh = h;
   int dw = dest->w;
   int dh = dest->h;
 
-  // scaling ratios
   float ax = ((float)sw / dw);
   float ay = ((float)sh / dh);
-
   int ix = ax > 0 ? (int)(ax + 1) : 1;
   int iy = ay > 0 ? (int)(ay + 1) : 1;
-  float r_div = 1.0 / (ix * iy);
-  int yinc = 0;
+
+  uint64_t div = ix * iy;
+  uint64_t mul = (1.0 / div) * 65536;
+  uint64_t shift = (uint64_t)1 << 15;
+
+  if (show_progress) { Progress::show(dest->h); }
+
+  float yinc = 0;
 
   for (int y = 0; y < dh; y++)
   {
     int *p = dest->row[y];
-    int xinc = 0;
+    float xinc = 0;
 
     for (int x = 0; x < dw; x++)
     {
-      int r = 0;
-      int g = 0;
-      int b = 0;
-      int a = 0;
+      uint64_t r = 0, g = 0, b = 0, a = 0;
 
       for (int j = 0; j < iy; j++)
       {
@@ -972,23 +974,33 @@ void Bitmap::scale(Bitmap *dest)
         {
           const int c = getpixel(xinc + i, yinc + j);
 
-          r += getr(c);
-          g += getg(c);
-          b += getb(c);
+          r += Gamma::fix(getr(c));
+          g += Gamma::fix(getg(c));
+          b += Gamma::fix(getb(c));
           a += geta(c);
         }
       }
 
-      r *= r_div;
-      g *= r_div;
-      b *= r_div;
-      a *= r_div;
+      r = Gamma::unfix((r * mul + shift) >> 16);
+      g = Gamma::unfix((g * mul + shift) >> 16);
+      b = Gamma::unfix((b * mul + shift) >> 16);
+      a = (a * mul + shift) >> 16;
 
       *p++ = makeRgba(r, g, b, a);
       xinc += ax;
     }
 
     yinc += ay;
+
+    if (show_progress)
+    {
+      if (Progress::update(y) < 0) { return; }
+    }
+  }
+
+  if (show_progress)
+  {
+    Progress::hide();
   }
 }
 

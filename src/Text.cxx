@@ -211,7 +211,7 @@ void Text::push(View *view)
     if (weight > 0)
     {
       Bitmap scaled_bmp(w / 2, h / 2);
-      text_final.scale(&scaled_bmp);
+      text_final.scale(&scaled_bmp, false);
 
       for (int y = 0; y < scaled_bmp.h; y++)
       {
