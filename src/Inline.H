@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
 #endif
 
-static int rnd_seed = 12345;
+static unsigned int rnd_seed = 12345;
 
 struct rgba_type
 {
@@ -193,7 +193,7 @@ inline int clamp(const int value, const int ceiling)
 }
 
 // pseudo-random number
-inline int rnd()
+inline unsigned int rnd()
 {
   rnd_seed ^= rnd_seed << 17;
   rnd_seed ^= rnd_seed >> 13;

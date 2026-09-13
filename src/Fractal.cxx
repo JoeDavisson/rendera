@@ -116,10 +116,11 @@ void Fractal::marble(Map *src, Map *dest, Map *marbx, Map *marby,
   }
 }
 
-void Fractal::plasma(Map *map, int turbulence)
+void Fractal::plasma(Map *map, int turbulence, unsigned int seed)
 {
   int w, h;
 
+  rnd_seed = seed;
   map->clear(0);
   turb = turbulence;
   level = 0;

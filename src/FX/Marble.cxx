@@ -39,16 +39,18 @@ namespace
     Fl_Choice *type;
     Fl_Choice *mode;
     Wheel *wheel;
-    Fl_Button *change;
+    Fl_Button *apply_to_image;
+    Fl_Button *randomize;
     Fl_Button *ok;
     Fl_Button *cancel;
-
-    Bitmap *temp;
-    int old_marb_var;
-    int old_turb_var;
-    int old_blend_var;
-    int old_threshold_var;
   }
+
+  Bitmap *temp_bmp;
+  int old_marb_var;
+  int old_turb_var;
+  int old_blend_var;
+  int old_threshold_var;
+  unsigned int current_seed = 12345;
 }
 
 void Marble::apply(Bitmap *dest)
@@ -61,9 +63,9 @@ void Marble::apply(Bitmap *dest)
   Map marbx(w, h);
   Map marby(w, h);
 
-  Fractal::plasma(&plasma, (Items::turb->var + 1) << 10);
-  Fractal::plasma(&marbx, (Items::turb->var + 1) << 10);
-  Fractal::plasma(&marby, (Items::turb->var + 1) << 10);
+  Fractal::plasma(&plasma, (Items::turb->var + 1) << 10, current_seed);
+  Fractal::plasma(&marbx, (Items::turb->var + 1) << 10, current_seed);
+  Fractal::plasma(&marby, (Items::turb->var + 1) << 10, current_seed);
   Fractal::marble(&plasma, &marble, &marbx, &marby,
                   (Items::marb->var + 1) << 2, 50, Items::type->value());
 
@@ -113,18 +115,18 @@ void Marble::apply(Bitmap *dest)
 void Marble::close()
 {
   Bitmap *bmp = Project::bmp;
-  Items::temp->blit(bmp, 0, 0, bmp->cl, bmp->ct,
-                    Items::temp->w, Items::temp->h);
+  temp_bmp->blit(bmp, 0, 0, bmp->cl, bmp->ct,
+                 temp_bmp->w, temp_bmp->h);
   Items::dialog->hide();
   Gui::getView()->drawMain(true);
-  delete Items::temp;
+  delete temp_bmp;
 }
 
 void Marble::quit()
 {
   Progress::hide();
   Items::dialog->hide();
-  delete Items::temp;
+  delete temp_bmp;
 }
 
 void Marble::begin()
@@ -132,10 +134,10 @@ void Marble::begin()
   Items::wheel->update(Project::brush->color);
   Bitmap *bmp = Project::bmp;
   Project::undo->push();
-  Items::temp = new Bitmap(bmp->cw, bmp->ch);
-  bmp->blit(Items::temp, bmp->cl, bmp->ct, 0, 0, bmp->cw, bmp->ch);
-  apply(Items::temp);
-  FX::drawPreview(Items::temp, Items::preview->bitmap);
+  temp_bmp = new Bitmap(bmp->cw, bmp->ch);
+  bmp->blit(temp_bmp, bmp->cl, bmp->ct, 0, 0, bmp->cw, bmp->ch);
+  apply(temp_bmp);
+  FX::drawPreview(temp_bmp, Items::preview->bitmap);
   Items::preview->redraw();
   Items::dialog->show();
 }
@@ -207,11 +209,15 @@ void Marble::init()
   Items::wheel->callback((Fl_Callback *)update);
   y1 = 8 + 528 + 8 + 192 + 8;
 
+  Items::apply_to_image = new Fl_Button(8, y1 + 12, 156, 40, "Apply To Image");
+  Items::apply_to_image->labelsize(16);
+  Items::apply_to_image->tooltip("Apply Changes");
+  Items::apply_to_image->callback((Fl_Callback *)updateMain);
 
-  Items::change = new Fl_Button(8, y1 + 12, 160, 40, "Apply To Image");
-  Items::change->labelsize(16);
-  Items::change->tooltip("Apply Changes");
-  Items::change->callback((Fl_Callback *)updateMain);
+  Items::randomize = new Fl_Button(8 + 156 + 8, y1 + 12, 156, 40, "Randomize");
+  Items::randomize->labelsize(16);
+  Items::randomize->tooltip("Randomize Texture");
+  Items::randomize->callback((Fl_Callback *)updateSeed);
 
   Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
   Items::ok->callback((Fl_Callback *)close);
@@ -224,47 +230,53 @@ void Marble::init()
 void Marble::update()
 {
   Bitmap *bmp = Project::bmp;
-  bmp->blit(Items::temp, bmp->cl, bmp->ct, 0, 0, bmp->cw, bmp->ch);
-  apply(Items::temp);
-  FX::drawPreview(Items::temp, Items::preview->bitmap);
+  bmp->blit(temp_bmp, bmp->cl, bmp->ct, 0, 0, bmp->cw, bmp->ch);
+  apply(temp_bmp);
+  FX::drawPreview(temp_bmp, Items::preview->bitmap);
   Items::preview->redraw();
 }
 
 void Marble::updateMain()
 {
-  Items::temp->blit(Project::bmp, 0, 0, 0, 0, Items::temp->w, Items::temp->h);
+  temp_bmp->blit(Project::bmp, 0, 0, 0, 0, temp_bmp->w, temp_bmp->h);
   Gui::getView()->drawMain(true);
+}
+
+void Marble::updateSeed()
+{
+  current_seed = rnd();
+  update();
 }
 
 void Marble::setMarb()
 {
-  if (Items::marb->var == Items::old_marb_var) { return; }
+  if (Items::marb->var == old_marb_var) { return; }
 
   update();
-  Items::old_marb_var = Items::marb->var;
+  old_marb_var = Items::marb->var;
 }
 
 void Marble::setTurb()
 {
-  if (Items::turb->var == Items::old_turb_var) { return; }
+  if (Items::turb->var == old_turb_var) { return; }
 
   update();
-  Items::old_turb_var = Items::turb->var;
+  old_turb_var = Items::turb->var;
 }
 
 void Marble::setBlend()
 {
-  if (Items::blend->var == Items::old_blend_var) { return; }
+  if (Items::blend->var == old_blend_var) { return; }
 
   update();
-  Items::old_blend_var = Items::blend->var;
+  old_blend_var = Items::blend->var;
 }
 
 void Marble::setThreshold()
 {
-  if (Items::threshold->var == Items::old_threshold_var) { return; }
+  if (Items::threshold->var == old_threshold_var) { return; }
 
   update();
-  Items::old_threshold_var = Items::threshold->var;
+  old_threshold_var = Items::threshold->var;
 }
 

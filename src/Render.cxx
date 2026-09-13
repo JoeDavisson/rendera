@@ -633,6 +633,7 @@ void Render::texture()
   float soft_trans = 255;
   int j = (3 << brush->texture_edge);
   float soft_step = (float)(255 - trans) / ((j >> 1) + 1);
+  unsigned int seed = rnd();
 
   int w = 256;
   int h = 256;
@@ -642,9 +643,9 @@ void Render::texture()
   Map marbx(w, h);
   Map marby(w, h);
 
-  Fractal::plasma(&plasma, (brush->texture_turb + 1) << 10);
-  Fractal::plasma(&marbx, (brush->texture_turb + 1) << 10);
-  Fractal::plasma(&marby, (brush->texture_turb + 1) << 10);
+  Fractal::plasma(&plasma, (brush->texture_turb + 1) << 10, seed);
+  Fractal::plasma(&marbx, (brush->texture_turb + 1) << 10, seed);
+  Fractal::plasma(&marby, (brush->texture_turb + 1) << 10, seed);
   Fractal::marble(&plasma, &marble, &marbx, &marby, brush->texture_marb << 2, 100, 0);
 
   Map *src = &marble;

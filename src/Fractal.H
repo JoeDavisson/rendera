@@ -29,7 +29,7 @@ class Fractal
 {
 public:
   static void marble(Map *, Map *, Map *, Map *, float, float, int);
-  static void plasma(Map *, int);
+  static void plasma(Map *, int, unsigned int);
   static int adjust(Map *, int, int, int, int, int, int);
   static void divide(Map *, int, int, int, int);
 
