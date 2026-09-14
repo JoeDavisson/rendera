@@ -232,16 +232,16 @@ namespace Scale
 
     if (Items::smooth->active() && Items::smooth->value())
     {
-      if (ax >= 2 || ay >= 2)
+      if (ax >= 4.0 || ay >= 4.0)
       {
-        Bitmap *smaller = new Bitmap(sw / ax, sh / ay);
+        Bitmap *smaller = new Bitmap(dw, dh);
         bmp->scale(smaller, true);
         Project::replaceImageFromBitmap(smaller);
         Gui::getView()->ox = 0;
         Gui::getView()->oy = 0;
         Gui::getView()->drawMain(true);
         Fl::check();
-       return;
+        return;
       }
     }
 
@@ -260,7 +260,7 @@ namespace Scale
     bool blur = false;
 
     if (blur_size < 0) { blur_size = 0; }
-    if (blur_size > 0 && (dw < sw || dh < sh)) { blur = true; }
+    if (blur_size > 0) { blur = true; }
 
     Bitmap *temp = new Bitmap(dw, dh);
 
