@@ -131,11 +131,13 @@ namespace Resize
 
     Items::dialog = new DialogWindow(400, 0, "Resize Image");
 
-    Items::width = new InputInt(Items::dialog, 0, y1, 128, 32, "Width", (Fl_Callback *)checkWidth, 1, 32768);
+    Items::width = new InputInt(Items::dialog, 0, y1, 128, 32,
+                                "Width", (Fl_Callback *)checkWidth, 1, 32768);
     Items::width->center();
     y1 += 32 + 16;
 
-    Items::height = new InputInt(Items::dialog, 0, y1, 128, 32, "Height", (Fl_Callback *)checkHeight, 1, 32768);
+    Items::height = new InputInt(Items::dialog, 0, y1, 128, 32,
+                                 "Height", (Fl_Callback *)checkHeight, 1, 32768);
     Items::height->center();
     y1 += 32 + 16;
 
@@ -144,7 +146,8 @@ namespace Resize
     Items::width->value(640);
     Items::height->value(480);
 
-    Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
+    Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16,
+                                      "Keep Aspect", 0);
     Items::keep_aspect->center();
     Items::keep_aspect->value(0);
     y1 += 16 + 16;
@@ -178,6 +181,13 @@ namespace Scale
     Fl_Button *ok;
     Fl_Button *cancel;
   }
+
+  enum
+  {
+    MODE_NEAREST = 0,
+    MODE_BILINEAR = 1,
+    MODE_BICUBIC = 2
+  };
 
   void do_blur(Bitmap *bmp, float blur_size, float blur_blend)
   {
@@ -254,8 +264,10 @@ namespace Scale
 
     Bitmap *temp = new Bitmap(dw, dh);
 
-    if (Items::mode->value() == 0)
+    if (Items::mode->value() == MODE_NEAREST)
     {
+      Progress::show(dh);
+
       for (int y = 0; y < dh; y++) 
       {
         int *d = temp->row[dy + y] + dx;
@@ -267,9 +279,13 @@ namespace Scale
 
           *d++ = *(bmp->row[yy + sy] + xx + sx);
         }
+
+        if (Progress::update(y) < 0) { break; }
       }
+ 
+      Progress::hide();
     }
-    else if (Items::mode->value() == 1)
+    else if (Items::mode->value() == MODE_BILINEAR)
     {
       // bilinear
       if (Items::smooth->active() && Items::smooth->value() && blur)
@@ -354,8 +370,10 @@ namespace Scale
 
         if (Progress::update(y) < 0) { break; }
       }
+ 
+      Progress::hide();
     }
-    else if (Items::mode->value() == 2)
+    else if (Items::mode->value() == MODE_BICUBIC)
     {
       // bicubic
       if (Items::smooth->active() && Items::smooth->value() && blur)
@@ -415,12 +433,12 @@ namespace Scale
           *d++ = makeRgba(rr, gg, bb, aa);
         }
 
-        if (Progress::update(y) < 0)
-          break;
+        if (Progress::update(y) < 0) { break; }
       }
+ 
+      Progress::hide();
     }
 
-    Progress::hide();
     Project::replaceImageFromBitmap(temp);
 
     Gui::getView()->ox = 0;
@@ -470,11 +488,9 @@ namespace Scale
     w = (float)w * ((float)Items::percent->value() / 100) + 0.5;
     h = (float)h * ((float)Items::percent->value() / 100) + 0.5;
 
-    if (w < 1)
-      w = 1;
+    if (w < 1) { w = 1; }
 
-    if (h < 1)
-      h = 1;
+    if (h < 1) { h = 1; }
 
     Items::width->value(w);
     Items::height->value(h);
