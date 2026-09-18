@@ -251,16 +251,19 @@ namespace PngOptions
     Items::dialog = new DialogWindow(400, 0, "PNG Options");
     Items::dialog->callback(closeCallback);
 
-    Items::alpha_levels = new InputInt(Items::dialog, 0, y1, 128, 32, "Alpha Levels:", 0, 2, 16);
+    Items::alpha_levels = new InputInt(Items::dialog, 0, y1, 128, 32,
+                                       "Alpha Levels:", 0, 2, 16);
     Items::alpha_levels->value(2);
     Items::alpha_levels->center();
     y1 += 32 + 16;
 
-    Items::use_palette = new CheckBox(Items::dialog, 0, y1, 16, 16, "Use Current Palette", 0);
+    Items::use_palette = new CheckBox(Items::dialog, 0, y1, 16, 16,
+                                      "Use Current Palette", 0);
     y1 += 16 + 16;
     Items::use_palette->center();
 
-    Items::use_alpha = new CheckBox(Items::dialog, 0, y1, 16, 16, "Save Alpha Channel", 0);
+    Items::use_alpha = new CheckBox(Items::dialog, 0, y1, 16, 16,
+                                    "Save Alpha Channel", 0);
     Items::use_alpha->value(1);
     Items::use_alpha->center();
     y1 += 16 + 16;
@@ -344,17 +347,20 @@ namespace NewImage
 
     Items::dialog = new DialogWindow(400, 0, "New Image");
 
-    Items::width = new InputInt(Items::dialog, 0, y1, 128, 32, "Width", (Fl_Callback *)checkWidth, 1, 10000);
+    Items::width = new InputInt(Items::dialog, 0, y1, 128, 32,
+                                "Width", (Fl_Callback *)checkWidth, 1, 10000);
     Items::width->center();
     Items::width->maximum_size(8);
     y1 += 32 + 16;
 
-    Items::height = new InputInt(Items::dialog, 0, y1, 128, 32, "Height", (Fl_Callback *)checkHeight, 1, 10000);
+    Items::height = new InputInt(Items::dialog, 0, y1, 128, 32,
+                                "Height", (Fl_Callback *)checkHeight, 1, 10000);
     Items::height->center();
     Items::height->maximum_size(8);
     y1 += 32 + 16;
 
-    Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16, "Keep Aspect", 0);
+    Items::keep_aspect = new CheckBox(Items::dialog, 0, y1, 16, 16,
+                                      "Keep Aspect", 0);
     Items::keep_aspect->center();
     y1 += 16 + 16;
 
@@ -409,7 +415,8 @@ namespace MakePalette
 
     Items::dialog = new DialogWindow(400, 0, "Create Palette");
 
-    Items::colors = new InputInt(Items::dialog, 0, y1, 128, 32, "Palette Size:", 0, 1, 256);
+    Items::colors = new InputInt(Items::dialog, 0, y1, 128, 32,
+                                 "Palette Size:", 0, 1, 256);
     Items::colors->center();
     y1 += 32 + 16;
 
@@ -450,10 +457,12 @@ namespace Message
 
     Items::dialog = new DialogWindow(448, 0, "Error");
 
-    Items::box = new Fl_Box(FL_FLAT_BOX, 64 + 8, 8, Items::dialog->w() - 32, 64, "");
+    Items::box = new Fl_Box(FL_FLAT_BOX, 64 + 8, 8,
+                            Items::dialog->w() - 32, 64, "");
     Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
 
-    Items::icon = new Widget(Items::dialog, 8, 8, 64, 64, "", images_dialog_info_png);
+    Items::icon = new Widget(Items::dialog, 8, 8, 64, 64,
+                             "", images_dialog_info_png);
     y1 += 64 + 16;
 
     Items::dialog->addOkButton(&Items::ok, &y1);
@@ -502,9 +511,11 @@ namespace Choice
     int y1 = 8;
 
     Items::dialog = new DialogWindow(448, 0, "Error");
-    Items::box = new Fl_Box(FL_FLAT_BOX, 64 + 8, 8, Items::dialog->w() - 32, 64, "");
+    Items::box = new Fl_Box(FL_FLAT_BOX, 64 + 8, 8,
+                            Items::dialog->w() - 32, 64, "");
     Items::box->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
-    Items::icon = new Widget(Items::dialog, 8, 8, 64, 64, "", images_dialog_question_png);
+    Items::icon = new Widget(Items::dialog, 8, 8, 64, 64,
+                             "", images_dialog_question_png);
     y1 += 64 + 8;
     Items::dialog->addOkCancelButtons(&Items::ok, &Items::cancel, &y1);
 

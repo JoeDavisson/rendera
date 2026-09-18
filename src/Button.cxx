@@ -39,8 +39,7 @@ Button::Button(Fl_Group *g, int x, int y, int w, int h,
 {
   var = 0;
 
-  if (cb)
-    callback(cb, &var);
+  if (cb) { callback(cb, &var); }
 
   group = g;
 
@@ -51,7 +50,8 @@ Button::Button(Fl_Group *g, int x, int y, int w, int h,
     exit(1);
   }
 
-  image = new Fl_RGB_Image((unsigned char *)bitmap->data, bitmap->w, bitmap->h, 4, 0);
+  image = new Fl_RGB_Image((unsigned char *)bitmap->data,
+                           bitmap->w, bitmap->h, 4, 0);
 
   value(0);
   resize(group->x() + x, group->y() + y, w, h);
@@ -66,15 +66,11 @@ void Button::draw()
 {
   fl_draw_box(FL_FLAT_BOX, x(), y(), w(), h(),
               value() ? Project::fltk_theme_highlight_color : 42);
-  //fl_draw_box(FL_FLAT_BOX, x(), y(), w(), h(),
-  //            value() ? Project::fltk_theme_highlight_color : FL_BACKGROUND_COLOR);
 
   fl_push_clip(x(), y(), w(), h());
 
-  if (value())
-    image->draw(x() + 1, y() + 1);
-  else
-    image->draw(x(), y());
+  if (value()) { image->draw(x() + 1, y() + 1); }
+  else { image->draw(x(), y()); }
 
   image->uncache();
   fl_pop_clip();
@@ -86,7 +82,8 @@ void Button::draw()
   int y1 = y();
   int y2 = y() + h() - 1;
 
-  fl_color(value() ? Project::fltk_theme_bevel_down : Project::fltk_theme_bevel_up);
+  fl_color(value() ?
+           Project::fltk_theme_bevel_down : Project::fltk_theme_bevel_up);
   fl_xyline(x1, y1, x2);
   fl_yxline(x1, y1, y2);
 
@@ -96,16 +93,11 @@ void Button::draw()
     fl_yxline(x1 + 1, y1 + 1, y2 - 1);
   }
 
-  fl_color(value() ? Project::fltk_theme_bevel_up : Project::fltk_theme_bevel_down);
+  fl_color(value() ?
+           Project::fltk_theme_bevel_up : Project::fltk_theme_bevel_down);
   fl_xyline(x1, y2, x2);
   fl_yxline(x2, y1 + 1, y2);
 
   fl_color(old);
-
-/*
-  fl_draw_box(value() ? FL_DOWN_FRAME : FL_UP_FRAME,
-              x(), y(), w(), h(),
-              FL_BLACK);
-*/
 }
 

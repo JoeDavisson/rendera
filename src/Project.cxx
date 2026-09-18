@@ -112,7 +112,7 @@ void Project::init(int memory_limit, int undo_limit)
     zoom_list[i] = 1;
   }
 
-  newImage(512, 512);
+  newImage(1024, 1024);
   setTool(Tool::PAINT);
 }
 

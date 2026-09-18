@@ -140,8 +140,7 @@ void ColorOptions::colorHexInput()
 
   sscanf(hexcolor->value(), "%06x", &c);
 
-  if (c > 0xffffff)
-    c = 0xffffff;
+  if (c > 0xffffff) { c = 0xffffff; }
 
   c |= 0xff000000;
 

@@ -172,8 +172,7 @@ void ExportData::init()
 
 void ExportData::save(Fl_Widget *, void *)
 {
-  if (ExportOptions::begin() == -1)
-    return;
+  if (ExportOptions::begin() == -1) { return; }
 
   Fl_Native_File_Chooser fc;
   fc.title("Save Image");
@@ -203,8 +202,7 @@ void ExportData::save(Fl_Widget *, void *)
 
   if (fileExists(fn))
   {
-    if (!Dialog::choice("Replace File?", "Overwrite?"))
-      return;
+    if (!Dialog::choice("Replace File?", "Overwrite?")) { return; }
   }
 
   int ret = -1;
@@ -224,12 +222,14 @@ int ExportData::beginTile(FILE *outp, int ext_value, int index)
     case TYPE_BIN:
       break;
     case TYPE_ASM:
-      if (fprintf(outp, "tile_%d:\n  db ", index) < 0)
-        return -1;
+      if (fprintf(outp, "tile_%d:\n  db ", index) < 0) { return -1; }
       break;
     case TYPE_JAVA:
-      if (fprintf(outp, "  public static byte[] tile_%d =\n  {\n    ", index) < 0)
+      if (fprintf(outp,
+          "  public static byte[] tile_%d =\n  {\n    ", index) < 0)
+      {
         return -1;
+      }
       break;
   }
 
@@ -241,19 +241,15 @@ int ExportData::writeByte(FILE *outp, int ext_value, uint8_t value)
   switch (ext_value)
   {
     case TYPE_BIN:
-      if (fputc(value, outp) != value)
-         return -1;
+      if (fputc(value, outp) != value) { return -1; }
       break;
     case TYPE_ASM:
-      if (fprintf(outp, "0x%02x", value) < 0)
-         return -1;
+      if (fprintf(outp, "0x%02x", value) < 0) { return -1; }
       break;
     case TYPE_JAVA:
-      if (value > 127)
-        value -= 256;
+      if (value > 127) { value -= 256; }
 
-      if (fprintf(outp, "%d", value) < 0)
-         return -1;
+      if (fprintf(outp, "%d", value) < 0) { return -1; }
       break;
     default:
       return -1;
@@ -269,12 +265,10 @@ int ExportData::newLine(FILE *outp, int ext_value)
     case TYPE_BIN:
       break;
     case TYPE_ASM:
-      if (fprintf(outp, "  db ") < 0)
-        return -1;
+      if (fprintf(outp, "  db ") < 0) { return -1; }
       break;
     case TYPE_JAVA:
-      if (fprintf(outp, "    ") < 0)
-        return -1;
+      if (fprintf(outp, "    ") < 0) { return -1; }
       break;
     default:
       return -1;
@@ -290,17 +284,14 @@ int ExportData::endTile(FILE *outp, int ext_value)
     case TYPE_BIN:
       if (ExportOptions::Items::aligned->value())
       {
-        if (fputc(0, outp) != 0)
-           return -1;
+        if (fputc(0, outp) != 0) { return -1; }
       }
       break;
     case TYPE_ASM:
-      if (fprintf(outp, "\n") < 0)
-        return -1;
+      if (fprintf(outp, "\n") < 0) { return -1; }
       break;
     case TYPE_JAVA:
-      if (fprintf(outp, "  };\n\n") < 0)
-        return -1;
+      if (fprintf(outp, "  };\n\n") < 0) { return -1; }
       break;
     default:
       return -1;
@@ -316,8 +307,7 @@ int ExportData::saveText(const char *fn, int ext_value)
   FileSP out(fn, mode_str[ext_value == TYPE_BIN ? 0 : 1]);
 
   FILE *outp = out.get();
-  if (!outp)
-    return -1;
+  if (!outp) { return -1; }
 
   Bitmap *bmp = Project::bmp;
   Palette *pal = Project::palette;
@@ -343,8 +333,7 @@ int ExportData::saveText(const char *fn, int ext_value)
   {
     for (int x = 0; x < bmp->w; x += tilex)
     {
-      if (beginTile(outp, ext_value, tile_count++) < 0)
-        return -1;
+      if (beginTile(outp, ext_value, tile_count++) < 0) { return -1; }
 
       int tile_byte_count = 0;
 
@@ -358,17 +347,14 @@ int ExportData::saveText(const char *fn, int ext_value)
           {
             int c = pal->lookup(bmp->getpixel(x + i + z, y + j));
 
-            if (c >= (1 << shift))
-              c = 0;
+            if (c >= (1 << shift)) { c = 0; }
 
             value |= c;
 
-            if (z < pixels - 1)
-              value <<= shift;
+            if (z < pixels - 1) { value <<= shift; }
           }
 
-          if (writeByte(outp, ext_value, value) < 0)
-            return -1;
+          if (writeByte(outp, ext_value, value) < 0) { return -1; }
 
           count++;
 
@@ -377,26 +363,28 @@ int ExportData::saveText(const char *fn, int ext_value)
             count = 0;
 
             if (ext_value != TYPE_BIN)
-              if (fprintf(outp, "\n") < 0)
-                return -1;
+            {
+              if (fprintf(outp, "\n") < 0) { return -1; }
+            }
 
             if (tile_byte_count < tile_bytes - 1)
-              if (newLine(outp, ext_value) < 0)
-                return -1;
+            {
+              if (newLine(outp, ext_value) < 0) { return -1; }
+            }
           }
             else
           {
             if (ext_value != TYPE_BIN)
-              if (fprintf(outp, ", ") < 0)
-                return -1;
+            {
+              if (fprintf(outp, ", ") < 0) { return -1; }
+            }
           }
 
           tile_byte_count++;
         }
       }
 
-      if (endTile(outp, ext_value) < 0)
-        return -1;
+      if (endTile(outp, ext_value) < 0) { return -1; }
     }
   }
 

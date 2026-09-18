@@ -36,8 +36,7 @@ CheckBox::CheckBox(Fl_Group *g, int x, int y, int w, int h,
   copy_label(l);
   labelsize(18);
 
-  if (cb)
-    callback(cb, &var);
+  if (cb) { callback(cb, &var); }
 
   resize(group->x() + x, group->y() + y, w, h);
 }
@@ -51,7 +50,8 @@ void CheckBox::center()
   int ww = 0, hh = 0;
 
   measure_label(ww, hh);
-  resize((group->x() + group->w() / 2) - (w() + ww) / 2 - 2, y(), w() + ww, h());
+  resize((group->x() + group->w() / 2) - (w() + ww) / 2 - 2, y(),
+         w() + ww, h());
   redraw();
 }
 

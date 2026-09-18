@@ -18,12 +18,6 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef PACKAGE_STRING
-#  include "config.h"
-#endif
-
-#include <algorithm>
-
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Choice.H>
@@ -157,7 +151,8 @@ void Editor::setHsv()
   Items::sat_val->bitmap->rect(svx - 1, 0, svx + 1, 255, makeRgb(0, 0, 0), 0);
   Items::sat_val->bitmap->xorHline(0, svy, 255);
   Items::sat_val->bitmap->xorVline(0, svx, 255);
-  Items::sat_val->bitmap->rect(svx - 9, svy - 9, svx + 9, svy + 9, makeRgb(0, 0, 0), 0);
+  Items::sat_val->bitmap->rect(svx - 9, svy - 9, svx + 9, svy + 9,
+                               makeRgb(0, 0, 0), 0);
   Items::sat_val->bitmap->xorRect(svx - 8, svy - 8, svx + 8, svy + 8);
   Items::sat_val->bitmap->rectfill(svx - 7, svy - 7, svx + 7, svy + 7, c, 0);
   Items::sat_val->bitmap->rect(0, 0, 255, 255, makeRgb(0, 0, 0), 0);
@@ -202,16 +197,16 @@ void Editor::updateHexColor()
 {
   char hex_string[8];
 
-  snprintf(hex_string, sizeof(hex_string),
-     "%06x", (unsigned)convertFormat(Project::brush->color, true) & 0xffffff);
+  snprintf(hex_string, sizeof(hex_string), "%06x",
+           (unsigned)convertFormat(Project::brush->color, true) & 0xffffff);
   Items::hexcolor->value(hex_string);
 
   // shortcut hex
   int c = (unsigned)convertFormat(Project::brush->color, true) & 0xffffff;
   rgba_type rgba = getRgba(c);
 
-  snprintf(hex_string, sizeof(hex_string),
-     "%01x%01x%01x", rgba.b >> 4, rgba.g >> 4, rgba.r >> 4);
+  snprintf(hex_string, sizeof(hex_string), "%01x%01x%01x",
+           rgba.b >> 4, rgba.g >> 4, rgba.r >> 4);
   Items::hexcolor_web->value(hex_string);
 }
 
@@ -221,8 +216,7 @@ void Editor::checkHexColor()
   
   sscanf(Items::hexcolor->value(), "%06x", &c);
   
-  if (c > 0xffffff)
-    c = 0xffffff;
+  if (c > 0xffffff) { c = 0xffffff; }
   
   c |= 0xff000000;
   
@@ -238,8 +232,7 @@ void Editor::checkHexColorWeb()
   
   sscanf(Items::hexcolor_web->value(), "%03x", &c);
   
-  if (c > 0xfff)
-    c = 0xfff;
+  if (c > 0xfff) { c = 0xfff; }
 
   int r = (c & 0xfff) >> 8;
   int g = (c & 0xff) >> 4;
@@ -260,8 +253,7 @@ void Editor::checkHexColorWeb()
 
 void Editor::insertColor()
 {
-  if (Project::palette->max >= 256)
-    return;
+  if (Project::palette->max >= 256) { return; }
 
   push();
   Project::palette->insertColor(Project::brush->color, Items::palette->var);
@@ -272,8 +264,7 @@ void Editor::insertColor()
 
 void Editor::removeColor()
 {
-  if (Project::palette->max <= 1)
-    return;
+  if (Project::palette->max <= 1) { return; }
 
   push();
   Project::palette->deleteColor(Items::palette->var);
@@ -281,7 +272,9 @@ void Editor::removeColor()
   Gui::colors->paletteDraw();
 
   if (Items::palette->var > Project::palette->max - 1)
+  {
     Items::palette->var = Project::palette->max - 1;
+  }
 
   Items::palette->do_callback();
 }
@@ -329,8 +322,7 @@ void Editor::checkRampRgb(int end)
   Palette *pal = Project::palette;
   int begin = ramp_begin;
 
-  if (begin > end)
-    std::swap(begin, end);
+  if (begin > end) { std::swap(begin, end); }
 
   int num = end - begin;
   int c1 = pal->data[begin];
@@ -365,8 +357,7 @@ void Editor::checkRampHsv(int end)
   Palette *pal = Project::palette;
   int begin = ramp_begin;
 
-  if (begin > end)
-    std::swap(begin, end);
+  if (begin > end) { std::swap(begin, end); }
 
   int num = end - begin;
   int c1 = pal->data[begin];
@@ -524,8 +515,7 @@ void Editor::hsvRamp()
 
 void Editor::update()
 {
-  if (initialized == false)
-    return;
+  if (initialized == false) { return; }
 
   Items::palette->var = Gui::colors->paletteGetIndex();
   last_index = Items::palette->var;
@@ -539,10 +529,8 @@ void Editor::begin()
 {
   update();
 
-  if (Items::dialog->shown() == 0)
-    Items::dialog->show();
-  else
-    Items::dialog->hide();
+  if (Items::dialog->shown() == 0) { Items::dialog->show(); }
+  else { Items::dialog->hide(); }
 
   ramp_begin = 0;
   ramp_state = 0;
@@ -618,8 +606,7 @@ void Editor::push()
 void Editor::pop()
 {
   // ignores last entry (a "dummy" palette created when the program starts)
-  if (undo_current >= levels - 2)
-    return;
+  if (undo_current >= levels - 2) { return; }
 
   pushRedo();
 
@@ -646,20 +633,20 @@ void Editor::pushRedo()
     Palette *temp_pal = redo_stack[levels - 1];
 
     for (int i = levels - 1; i > 0; i--)
+    {
       redo_stack[i] = redo_stack[i - 1];
+    }
 
     redo_stack[0] = temp_pal;
   }
 
   Project::palette->copy(redo_stack[redo_current]);
-
   redo_current--;
 }
 
 void Editor::popRedo()
 {
-  if (redo_current >= levels - 1)
-    return;
+  if (redo_current >= levels - 1) { return; }
 
   doPush();
 
@@ -736,7 +723,8 @@ void Editor::init()
 
   y1 += 256 + 8;
 
-  new Separator(Items::dialog, 0, y1, Items::dialog->w(), Separator::HORIZONTAL, "");
+  new Separator(Items::dialog, 0, y1, Items::dialog->w(),
+                Separator::HORIZONTAL, "");
 
   x1 = 8;
   y1 += 12;
@@ -779,12 +767,17 @@ void Editor::init()
 
   x1 = 0;
   y1 += 40 + 16;
-  Items::index = new Group(Items::dialog->w() - 128, y1, 128, STATUS_HEIGHT, "");
-  Items::index_text = new Fl_Box(FL_NO_BOX, Items::index->x(), Items::index->y(), Items::index->w(), Items::index->h(), "");
+  Items::index = new Group(Items::dialog->w() - 128, y1, 128,
+                           STATUS_HEIGHT, "");
+  Items::index_text = new Fl_Box(FL_NO_BOX,
+                                 Items::index->x(), Items::index->y(),
+                                 Items::index->w(), Items::index->h(), "");
   Items::index_text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-  Items::info = new Group(x1, y1, Items::dialog->w() - Items::index->w(), STATUS_HEIGHT, "");
-  Items::info_text = new Fl_Box(FL_NO_BOX, Items::info->x(), Items::info->y(), Items::info->w(), Items::info->h(), "");
+  Items::info = new Group(x1, y1, Items::dialog->w() - Items::index->w(),
+                    STATUS_HEIGHT, "");
+  Items::info_text = new Fl_Box(FL_NO_BOX, Items::info->x(), Items::info->y(),
+                                Items::info->w(), Items::info->h(), "");
   Items::info_text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
   Items::dialog->set_modal();

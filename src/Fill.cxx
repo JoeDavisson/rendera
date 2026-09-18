@@ -56,15 +56,11 @@ Fill::~Fill()
 
 bool Fill::inbox(int x, int y, int x1, int y1, int x2, int y2)
 {
-  if (x1 > x2)
-    std::swap(x1, x2);
-  if (y1 > y2)
-    std::swap(y1, y2);
+  if (x1 > x2) { std::swap(x1, x2); }
+  if (y1 > y2) { std::swap(y1, y2); }
 
-  if (x >= x1 && x <= x2 && y >= y1 && y <= y2)
-    return true;
-  else
-    return false;
+  if (x >= x1 && x <= x2 && y >= y1 && y <= y2) { return true; }
+  else { return false; }
 }
 
 // finds edges
@@ -147,21 +143,18 @@ void Fill::clear()
 
 bool Fill::inRange(const int c1, const int c2, const int range)
 {
-  if ((std::sqrt(diff32(c1, c2)) / 2) <= range)
-    return true;
-  else
-    return false;
+  if ((std::sqrt(diff32(c1, c2)) / 2) <= range) { return true; }
+  else { return false; }
 }
 
-void Fill::fill(int x, int y, int new_color, int old_color, int range, int feather, int color_only)
+void Fill::fill(int x, int y, int new_color, int old_color,
+                int range, int feather, int color_only)
 {
-  if (old_color == new_color)
-    return;
+  if (old_color == new_color) { return; }
 
   clear();
   
-  if (!push(x, y))
-    return;
+  if (!push(x, y)) { return; }
 
   Bitmap *bmp = Project::bmp;
   Bitmap temp(bmp->w, bmp->h);
@@ -179,7 +172,9 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
     int x1 = x;
 
     while (x1 >= cl && inRange(temp.getpixel(x1, y), old_color, range))
+    {
       x1--;
+    }
 
     x1++;
 
@@ -194,8 +189,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
       if ((!span_t && y > ct) && inRange(temp.getpixel(x1, y - 1),
                                         old_color, range))
       {
-        if (!push(x1, y - 1))
-          return;
+        if (!push(x1, y - 1)) { return; }
 
         span_t = true;
       }
@@ -208,8 +202,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
       if ((!span_b && y < cb) && inRange(temp.getpixel(x1, y + 1),
                                         old_color, range))
       {
-        if (!push(x1, y + 1))
-          return;
+        if (!push(x1, y + 1)) { return; }
 
         span_b = true;
       }
@@ -263,17 +256,14 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
         stroke->edge_y[count] = y;
         count++;
 
-        if (count > 0xfffff)
-          break;
+        if (count > 0xfffff) { break; }
       }
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
-  if (count == 0)
-    return;
+  if (count == 0) { return; }
 
   KDtree::node_type test_node;
   KDtree::node_type *root, *found;
@@ -291,17 +281,10 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
     const int ex = stroke->edge_x[i];
     const int ey = stroke->edge_y[i];
 
-    if (ex < tl)
-      tl = ex;
-
-    if (ex > tr)
-      tr = ex;
-
-    if (ey < tt)
-      tt = ey;
-
-    if (ey > tb)
-      tb = ey;
+    if (ex < tl) { tl = ex; }
+    if (ex > tr) { tr = ex; }
+    if (ey < tt) { tt = ey; }
+    if (ey > tb) { tb = ey; }
 
     points[i].x[0] = ex;
     points[i].x[1] = ey;
@@ -313,23 +296,12 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
   tt -= feather;
   tb += feather;
 
-  if (tl < cl)
-    tl = cl; 
-
-  if (tr > cr)
-    tr = cr; 
-
-  if (tt < ct)
-    tt = ct; 
-
-  if (tb > cb)
-    tb = cb; 
-
-  if (tl > tr)
-    std::swap(tl, tr);
-
-  if (tt > tb)
-    std::swap(tt, tb);
+  if (tl < cl) { tl = cl; }
+  if (tr > cr) { tr = cr; }
+  if (tt < ct) { tt = ct; }
+  if (tb > cb) { tb = cb; }
+  if (tl > tr) { std::swap(tl, tr); }
+  if (tt > tb) { std::swap(tt, tb); }
 
   root = KDtree::build(&points[0], count, 0);
   Progress::show((cb - ct) + 1);
@@ -339,8 +311,12 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
     for (x = cl; x <= cr; x++)
     {
       if (x > tl || x < tr || y < tt || y > tb)
+      {
         if (map->getpixel(x - cl, y - ct) == 255)
+        {
           bmp->setpixel(x, y, new_color);
+        }
+      }
     }
   }
 
@@ -348,8 +324,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
   {
     for (x = tl; x <= tr; x++)
     {
-      if (map->getpixel(x - cl, y - ct) == 255)
-        continue;
+      if (map->getpixel(x - cl, y - ct) == 255) { continue; }
 
       test_node.x[0] = x;
       test_node.x[1] = y;
@@ -373,8 +348,7 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
       }
     }
 
-    if (Progress::update(y) < 0)
-      break;
+    if (Progress::update(y) < 0) { break; }
   }
 
   Progress::hide();
@@ -382,8 +356,9 @@ void Fill::fill(int x, int y, int new_color, int old_color, int range, int feath
 
 void Fill::push(View *view)
 {
-  if (inbox(view->imgx, view->imgy, Project::bmp->cl, Project::bmp->ct,
-                                   Project::bmp->cr, Project::bmp->cb))
+  if (inbox(view->imgx, view->imgy,
+            Project::bmp->cl, Project::bmp->ct,
+            Project::bmp->cr, Project::bmp->cb))
   {
     Project::undo->push();
     Blend::set(Blend::TRANS);
