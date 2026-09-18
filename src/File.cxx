@@ -111,8 +111,6 @@ struct my_error_mgr
   jmp_buf setjmp_buffer;
 };
 
-typedef struct my_error_mgr *my_error_ptr;
-
 struct png_state
 {
   png_uint_32 pos;
@@ -122,7 +120,7 @@ struct png_state
 
 void jpg_exit(j_common_ptr cinfo)
 {
-  my_error_ptr myerr = (my_error_ptr)cinfo->err;
+  my_error_mgr *myerr = (my_error_mgr *)cinfo->err;
   (*cinfo->err->output_message)(cinfo);
   longjmp(myerr->setjmp_buffer, 1);
 }
@@ -299,14 +297,10 @@ int File::loadFile(const char *fn)
   // load to a temporary bitmap first
   Bitmap *temp = 0;
 
-  if (isPng(header))
-    temp = File::loadPng((const char *)fn);
-  else if (isJpeg(header))
-    temp = File::loadJpeg((const char *)fn);
-  else if (isBmp(header))
-    temp = File::loadBmp((const char *)fn);
-  else if (isTarga(fn))
-    temp = File::loadTarga((const char *)fn);
+  if (isPng(header)) { temp = File::loadPng((const char *)fn); }
+  else if (isJpeg(header)) { temp = File::loadJpeg((const char *)fn); }
+  else if (isBmp(header)) { temp = File::loadBmp((const char *)fn); }
+  else if (isTarga(fn)) { temp = File::loadTarga((const char *)fn); }
 
   if (!temp)
   {
@@ -519,11 +513,9 @@ Bitmap *File::loadBmp(const char *fn)
   bool negx = false, negy = false;
   int pad = w % 4;
 
-  if (w < 0)
-    negx = true;
+  if (w < 0) { negx = true; }
 
-  if (h >= 0)
-    negy = true;
+  if (h >= 0) { negy = true; }
 
   w = ww;
   h = hh;
@@ -599,10 +591,14 @@ Bitmap *File::loadTarga(const char *fn)
 
   // skip additional header info if it exists
   if (header.id_length > 0)
+  {
     fseek(in.get(), header.id_length, SEEK_CUR);
+  }
 
   if (header.color_map_type > 0)
+  {
     fseek(in.get(), header.color_map_length, SEEK_CUR);
+  }
 
   if (header.data_type != 2 || (header.bpp != 24 && header.bpp != 32))
   {
@@ -627,11 +623,9 @@ Bitmap *File::loadTarga(const char *fn)
   bool negx = false;
   bool negy = true;
 
-  if (header.descriptor & (1 << 4))
-    negx = true;
+  if (header.descriptor & (1 << 4)) { negx = true; }
 
-  if (header.descriptor & (1 << 5))
-    negy = false;
+  if (header.descriptor & (1 << 5)) { negy = false; }
 
   int xstart = 0;
   int xend = w;
@@ -760,30 +754,42 @@ Bitmap *File::loadPng(const char *fn)
 
   // expand paletted images to RGB
   if (color_type == PNG_COLOR_TYPE_PALETTE)
+  {
     png_set_expand(png_ptr);
+  }
 
   // expand low-color images to RGB
   if (color_type == PNG_COLOR_TYPE_GRAY && bits_per_channel < 8)
+  {
     png_set_expand(png_ptr);
+  }
 
   // check for alpha channel
   if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+  {
     png_set_expand(png_ptr);
+  }
 
   // convert 16-bit images to 8
   if (bits_per_channel == 16)
+  {
     png_set_strip_16(png_ptr);
+  }
 
   // expand grayscale images to RGB
   if (color_type == PNG_COLOR_TYPE_GRAY ||
-     color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+      color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+  {
     png_set_gray_to_rgb(png_ptr);
+  }
 
   // perform gamma correction if the file requires it
   double gamma = 0;
 
   if (png_get_gAMA(png_ptr, info_ptr, &gamma))
+  {
     png_set_gamma(png_ptr, 2.2, gamma);
+  }
 
   png_read_update_info(png_ptr, info_ptr);
 
@@ -799,7 +805,9 @@ Bitmap *File::loadPng(const char *fn)
     std::vector<png_bytep> row_pointers(h);
 
     for (int y = 0; y < h; y++)
+    {
       row_pointers[y] = &data[y * rowbytes];
+    }
 
     // read image all at once
     png_read_image(png_ptr, &row_pointers[0]);
@@ -934,30 +942,42 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
 
   // expand paletted images to RGB
   if (color_type == PNG_COLOR_TYPE_PALETTE)
+  {
     png_set_expand(png_ptr);
+  }
 
   // expand low-color images to RGB
   if (color_type == PNG_COLOR_TYPE_GRAY && bits_per_channel < 8)
+  {
     png_set_expand(png_ptr);
+  }
 
   // check for alpha channel
   if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+  {
     png_set_expand(png_ptr);
+  }
 
   // convert 16-bit images to 8
   if (bits_per_channel == 16)
+  {
     png_set_strip_16(png_ptr);
+  }
 
   // expand grayscale images to RGB
   if (color_type == PNG_COLOR_TYPE_GRAY ||
-     color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+      color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+  {
     png_set_gray_to_rgb(png_ptr);
+  }
 
   // perform gamma correction if the file requires it
   double gamma = 0;
 
   if (png_get_gAMA(png_ptr, info_ptr, &gamma))
+  {
     png_set_gamma(png_ptr, 2.2, gamma);
+  }
 
   png_read_update_info(png_ptr, info_ptr);
 
@@ -973,7 +993,9 @@ Bitmap *File::loadPngFromArray(const unsigned char *array)
     std::vector<png_bytep> row_pointers(h);
 
     for (int y = 0; y < h; y++)
+    {
       row_pointers[y] = &data[y * rowbytes];
+    }
 
     // read image all at once
     png_read_image(png_ptr, &row_pointers[0]);
@@ -1079,8 +1101,7 @@ void File::save(Fl_Widget *, void *)
 
   if (fileExists(fn))
   {
-    if (!Dialog::choice("Replace File?", "Overwrite?"))
-      return;
+    if (!Dialog::choice("Replace File?", "Overwrite?")) { return; }
   }
 
   int ret = -1;
@@ -1104,10 +1125,7 @@ void File::save(Fl_Widget *, void *)
       ret = -1;
   }
 
-  if (ret == -1)
-  {
-    errorMessage(ERROR_SAVING);
-  }
+  if (ret == -1) { errorMessage(ERROR_SAVING); }
 
   last_type = ext_value;
 }
@@ -1188,10 +1206,14 @@ int File::saveBmp(Bitmap *bmp, const char *fn)
     }
 
     for (int x = 0; x < pad; x++)
+    {
       linebuf[xx++] = 0;
+    }
 
     if (fwrite(&linebuf[0], 1, w * 3 + pad, outp) != (unsigned)(w * 3 + pad))
+    {
       return -1;
+    }
   }
 
   return 0;
@@ -1202,8 +1224,7 @@ int File::saveTarga(Bitmap *bmp, const char *fn)
   FileSP out(fn, "wb");
   FILE *outp = out.get();
 
-  if (!outp)
-    return -1;
+  if (!outp) { return -1; }
 
   int w = bmp->cw;
   int h = bmp->ch;
@@ -1239,7 +1260,9 @@ int File::saveTarga(Bitmap *bmp, const char *fn)
     }
 
     if (fwrite(&linebuf[0], 1, w * 4, outp) != (unsigned)(w * 4))
+    {
       return -1;
+    }
   }
 
   return 0;
@@ -1267,16 +1290,14 @@ int File::savePng(Bitmap *bmp, const char *fn)
 
   FileSP out(fn, "wb");
 
-  if (!out.get())
-    return -1;
+  if (!out.get()) { return -1; }
 
   png_structp png_ptr;
   png_infop info_ptr;
 
   png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
 
-  if (!png_ptr)
-    return -1;
+  if (!png_ptr) { return -1; }
 
   info_ptr = png_create_info_struct(png_ptr);
 
@@ -1339,7 +1360,9 @@ int File::savePng(Bitmap *bmp, const char *fn)
                  use_alpha ? pal->max * alpha_levels : pal->max);
 
     if (use_palette && use_alpha)
+    {
       png_set_tRNS(png_ptr, info_ptr, &trans[0], pal->max * alpha_levels, 0);
+    }
   }
     else
   {
@@ -1353,11 +1376,8 @@ int File::savePng(Bitmap *bmp, const char *fn)
 
   int bytes = 3;
 
-  if (use_alpha)
-    bytes = 4;
-
-  if (use_palette)
-    bytes = 1;
+  if (use_alpha) { bytes = 4; }
+  if (use_palette) { bytes = 1; }
 
   std::vector<png_byte> linebuf(w * bytes);
 
@@ -1370,10 +1390,14 @@ int File::savePng(Bitmap *bmp, const char *fn)
       if (use_palette)
       {
         if (use_alpha)
+        {
           linebuf[x] = pal->lookup(*p) +
                        (int)(pal->max * ((255 - geta(*p)) / (int)alpha_step));
-        else
+        }
+          else
+        {
           linebuf[x] = pal->lookup(*p);
+        }
       }
         else
       {
@@ -1382,7 +1406,9 @@ int File::savePng(Bitmap *bmp, const char *fn)
         linebuf[x + 2] = getb(*p); 
 
         if (use_alpha)
-          linebuf[x + 3] = geta(*p); 
+        {
+          linebuf[x + 3] = geta(*p);
+        }
       }
 
       p++;
@@ -1404,8 +1430,7 @@ int File::saveJpeg(Bitmap *bmp, const char *fn)
 
   FileSP out(fn, "wb");
 
-  if (!out.get())
-    return -1;
+  if (!out.get()) { return -1; }
 
   cinfo.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = jpg_exit;
@@ -1459,7 +1484,6 @@ int File::saveJpeg(Bitmap *bmp, const char *fn)
   return 0;
 }
 
-// load a palette using the file chooser
 void File::loadPalette()
 {
   Fl_Native_File_Chooser fc;
@@ -1485,14 +1509,13 @@ void File::loadPalette()
 
   FileSP in(fn, "r");
 
-  if (!in.get())
-    return;
+  if (!in.get()) { return; }
 
   unsigned char header[12];
 
   if (fread(&header, 1, 12, in.get()) != 12)
   {
-//    errorMessage();
+    errorMessage(ERROR_LOADING);
     return;
   }
 
@@ -1500,7 +1523,7 @@ void File::loadPalette()
   {
     if (Project::palette->load((const char*)fn) < 0)
     {
-//      errorMessage();
+      errorMessage(ERROR_LOADING);
       return;
     }
 
@@ -1508,7 +1531,6 @@ void File::loadPalette()
   }
 }
 
-// save a palette using the file chooser
 void File::savePalette()
 {
   Fl_Native_File_Chooser fc;
@@ -1536,7 +1558,7 @@ void File::savePalette()
   if (fileExists(fn))
   {
     if (!Dialog::choice("Replace File?",
-                      "Do you want to overwrite this file?"))
+                        "Do you want to overwrite this file?"))
     {
       return;
     }
@@ -1544,7 +1566,7 @@ void File::savePalette()
   
   if (Project::palette->save(fn) < 0)
   {
-//    errorMessage();
+    errorMessage(ERROR_SAVING);
     return;
   }
 }
@@ -1570,21 +1592,17 @@ void File::loadSelection()
 
   FileSP in(fc.filename(), "rb");
 
-  if (!in.get())
-    return;
+  if (!in.get()) { return; }
 
   unsigned char header[8];
 
-  if (fread(&header, 1, 8, in.get()) != 8)
-    return;
+  if (fread(&header, 1, 8, in.get()) != 8) { return; }
 
   // load to a temporary bitmap first
   Bitmap *temp = 0;
 
-  if (isPng(header))
-    temp = File::loadPng((const char *)fc.filename());
-  else
-    return;
+  if (isPng(header)) { temp = File::loadPng((const char *)fc.filename()); }
+  else { return; }
 
   delete Project::select_bmp;
   Project::select_bmp = temp;
@@ -1618,8 +1636,7 @@ void File::saveSelection()
 
   if (fileExists(fn))
   {
-    if (!Dialog::choice("Replace File?", "Overwrite?"))
-      return;
+    if (!Dialog::choice("Replace File?", "Overwrite?")) { return; }
   }
 
   int ret = -1;
@@ -1634,10 +1651,7 @@ void File::saveSelection()
       ret = -1;
   }
 
-  if (ret == -1)
-  {
-    errorMessage(ERROR_UNKNOWN);
-  }
+  if (ret == -1) { errorMessage(ERROR_UNKNOWN); }
 }
 
 // convert special characters from drag n' drop path/filename string
@@ -1649,13 +1663,14 @@ void File::decodeURI(char *str, int len)
   {
     if (str[i] == '%')
     {
-      if (sscanf(&str[i + 1], "%2X", &c) != 1)
-        break;
+      if (sscanf(&str[i + 1], "%2X", &c) != 1) { break; }
 
       str[i] = c;
 
       for (int j = 0; j < len - (i + 2); j++)
+      {
         str[i + 1 + j] = str[i + 3 + j];
+      }
 
       len -= 2;
     }
@@ -1669,8 +1684,7 @@ void File::getDirectory(char *dest, const char *src)
 
   int len = strnlen(dest, FILE_PATH_MAX);
 
-  if (len <= 1)
-    return;
+  if (len <= 1) { return; }
 
   for (int i = len - 1; i > 1; i--)
   {
@@ -1687,8 +1701,7 @@ void File::getFilename(char *dest, const char *src)
 {
   int len = strnlen(src, FILE_PATH_MAX);
 
-  if (len < 2)
-    return;
+  if (len < 2) { return; }
 
   int start = 0;
   int count = 0;
@@ -1705,7 +1718,9 @@ void File::getFilename(char *dest, const char *src)
   }
 
   for (int i = 0; i < count; i++)
+  {
     dest[i] = src[start + i];
+  }
 
   dest[count] = '\0';
 }
