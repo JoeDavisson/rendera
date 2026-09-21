@@ -35,17 +35,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 static inline int xorValue(const int x, const int y)
 {
   static const unsigned int xor_colors[2] = { 0xff000000, 0xffffffff };
-
   return xor_colors[(x & 1) ^ (y & 1)];
 }
 
 // creates bitmap
 Bitmap::Bitmap(int width, int height)
 {
-  if (width < 1)
-    width = 1;
-  if (height < 1)
-    height = 1;
+  if (width < 1) { width = 1; }
+  if (height < 1) { height = 1; }
 
   data = new int [width * height];
   row = new int *[height];
@@ -62,7 +59,9 @@ Bitmap::Bitmap(int width, int height)
   setClip(0, 0, w - 1, h - 1);
 
   for (int i = 0; i < height; i++)
+  {
     row[i] = &data[width * i];
+  }
 
   rectfill(0, 0, w - 1, h - 1, makeRgb(0, 0, 0), 0);
 }
@@ -70,10 +69,8 @@ Bitmap::Bitmap(int width, int height)
 // creates bitmap from existing pixel data
 Bitmap::Bitmap(int width, int height, int *image_data)
 {
-  if (width < 1)
-    width = 1;
-  if (height < 1)
-    height = 1;
+  if (width < 1) { width = 1; }
+  if (height < 1) { height = 1; }
 
   data = image_data;
   row = new int *[height];
@@ -88,7 +85,9 @@ Bitmap::Bitmap(int width, int height, int *image_data)
   undo_mode = 0;
 
   for (int i = 0; i < height; i++)
+  {
     row[i] = &data[width * i];
+  }
 
   setClip(0, 0, w - 1, h - 1);
 }
@@ -101,10 +100,8 @@ Bitmap::~Bitmap()
 
 void Bitmap::resize(int width, int height)
 {
-  if (width < 1)
-    width = 1;
-  if (height < 1)
-    height = 1;
+  if (width < 1) { width = 1; }
+  if (height < 1) { height = 1; }
 
   delete[] row;
   delete[] data;
@@ -121,26 +118,25 @@ void Bitmap::resize(int width, int height)
   setClip(0, 0, w - 1, h - 1);
 
   for (int i = 0; i < height; i++)
+  {
     row[i] = &data[width * i];
+  }
 }
 
 void Bitmap::clear(const int c)
 {
   for (int i = 0; i < w * h; i++)
+  {
     data[i] = c;
+  }
 }
 
 void Bitmap::hline(int x1, int y, int x2, int c, int t)
 {
-  if (x1 > x2)
-    std::swap(x1, x2);
-
-  if (y < ct || y > cb)
-    return;
-  if (x1 > cr)
-    return;
-  if (x2 < cl)
-    return;
+  if (x1 > x2) { std::swap(x1, x2); }
+  if (y < ct || y > cb) { return; }
+  if (x1 > cr) { return; }
+  if (x2 < cl) { return; }
 
   clip(&x1, &y, &x2, &y);
 
@@ -155,15 +151,10 @@ void Bitmap::hline(int x1, int y, int x2, int c, int t)
 
 void Bitmap::vline(int y1, int x, int y2, int c, int t)
 {
-  if (y1 > y2)
-    std::swap(y1, y2);
-
-  if (x < cl || x > cr)
-    return;
-  if (y1 > cb)
-    return;
-  if (y2 < ct)
-    return;
+  if (y1 > y2) { std::swap(y1, y2); }
+  if (x < cl || x > cr) { return; }
+  if (y1 > cb) { return; }
+  if (y2 < ct) { return; }
 
   clip(&x, &y1, &x, &y2);
 
@@ -179,15 +170,10 @@ void Bitmap::vline(int y1, int x, int y2, int c, int t)
 // non-blending version
 void Bitmap::hline(int x1, int y, int x2, int c)
 {
-  if (x1 > x2)
-    std::swap(x1, x2);
-
-  if (y < ct || y > cb)
-    return;
-  if (x1 > cr)
-    return;
-  if (x2 < cl)
-    return;
+  if (x1 > x2) { std::swap(x1, x2); }
+  if (y < ct || y > cb) { return; }
+  if (x1 > cr) { return; }
+  if (x2 < cl) { return; }
 
   clip(&x1, &y, &x2, &y);
 
@@ -203,15 +189,10 @@ void Bitmap::hline(int x1, int y, int x2, int c)
 // non-blending version
 void Bitmap::vline(int y1, int x, int y2, int c)
 {
-  if (y1 > y2)
-    std::swap(y1, y2);
-
-  if (x < cl || x > cr)
-    return;
-  if (y1 > cb)
-    return;
-  if (y2 < ct)
-    return;
+  if (y1 > y2) { std::swap(y1, y2); }
+  if (x < cl || x > cr) { return; }
+  if (y1 > cb) { return; }
+  if (y2 < ct) { return; }
 
   clip(&x, &y1, &x, &y2);
 
@@ -291,27 +272,20 @@ void Bitmap::line(int x1, int y1, int x2, int y2, int c, int t)
 
 void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
 {
-  if (x1 > x2)
-    std::swap(x1, x2);
-  if (y1 > y2)
-    std::swap(y1, y2);
+  if (x1 > x2) { std::swap(x1, x2); }
+  if (y1 > y2) { std::swap(y1, y2); }
 
-  if (x1 > cr)
-    return;
-  if (x2 < cl)
-    return;
-  if (y1 > cb)
-    return;
-  if (y2 < ct)
-    return;
+  if (x1 > cr) { return; }
+  if (x2 < cl) { return; }
+  if (y1 > cb) { return; }
+  if (y2 < ct) { return; }
 
   clip(&x1, &y1, &x2, &y2);
 
   hline(x1, y1, x2, c, t);
   hline(x1, y2, x2, c, t);
 
-  if (y1 == y2)
-    return;
+  if (y1 == y2) { return; }
 
   for (int y = y1 + 1; y < y2; y++)
   {
@@ -322,43 +296,35 @@ void Bitmap::rect(int x1, int y1, int x2, int y2, int c, int t)
 
 void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c, int t)
 {
-  if (x1 > x2)
-    std::swap(x1, x2);
-  if (y1 > y2)
-    std::swap(y1, y2);
+  if (x1 > x2) { std::swap(x1, x2); }
+  if (y1 > y2) { std::swap(y1, y2); }
 
-  if (x1 > cr)
-    return;
-  if (x2 < cl)
-    return;
-  if (y1 > cb)
-    return;
-  if (y2 < ct)
-    return;
+  if (x1 > cr) { return; }
+  if (x2 < cl) { return; }
+  if (y1 > cb) { return; }
+  if (y2 < ct) { return; }
 
   for (; y1 <= y2; y1++)
+  {
     hline(x1, y1, x2, c, t);
+  }
 }
 
 // non-blending version
 void Bitmap::rectfill(int x1, int y1, int x2, int y2, int c)
 {
-  if (x1 > x2)
-    std::swap(x1, x2);
-  if (y1 > y2)
-    std::swap(y1, y2);
+  if (x1 > x2) { std::swap(x1, x2); }
+  if (y1 > y2) { std::swap(y1, y2); }
 
-  if (x1 > cr)
-    return;
-  if (x2 < cl)
-    return;
-  if (y1 > cb)
-    return;
-  if (y2 < ct)
-    return;
+  if (x1 > cr) { return; }
+  if (x2 < cl) { return; }
+  if (y1 > cb) { return; }
+  if (y2 < ct) { return; }
 
   for (; y1 <= y2; y1++)
+  {
     hline(x1, y1, x2, c);
+  }
 }
 
 void Bitmap::xorLine(int x1, int y1, int x2, int y2)
@@ -417,35 +383,27 @@ void Bitmap::xorLine(int x1, int y1, int x2, int y2)
 
 void Bitmap::xorHline(int x1, int y, int x2)
 {
-  if (x1 > x2)
-    std::swap(x1, x2);
-
-  if (y < ct || y > cb)
-    return;
-  if (x1 > cr)
-    return;
-  if (x2 < cl)
-    return;
+  if (x1 > x2) { std::swap(x1, x2); }
+  if (y < ct || y > cb) { return; }
+  if (x1 > cr) { return; }
+  if (x2 < cl) { return; }
 
   clip(&x1, &y, &x2, &y);
 
   int *p = row[y] + x1;
 
   for (; x1 <= x2; x1++)
+  {
     *p++ = xorValue(x1, y);
+  }
 }
 
 void Bitmap::xorVline(int y1, int x, int y2)
 {
-  if (y1 > y2)
-    std::swap(y1, y2);
-
-  if (x < cl || x > cr)
-    return;
-  if (y1 > cb)
-    return;
-  if (y2 < ct)
-    return;
+  if (y1 > y2) { std::swap(y1, y2); }
+  if (x < cl || x > cr) { return; }
+  if (y1 > cb) { return; }
+  if (y2 < ct) { return; }
 
   clip(&x, &y1, &x, &y2);
 
@@ -460,26 +418,20 @@ void Bitmap::xorVline(int y1, int x, int y2)
 
 void Bitmap::xorRect(int x1, int y1, int x2, int y2)
 {
-  if (x1 > x2)
-    std::swap(x1, x2);
-  if (y1 > y2)
-    std::swap(y1, y2);
+  if (x1 > x2) { std::swap(x1, x2); }
+  if (y1 > y2) { std::swap(y1, y2); }
 
-  if (x1 > cr)
-    return;
-  if (x2 < cl)
-    return;
-  if (y1 > cb)
-    return;
-  if (y2 < ct)
-    return;
+  if (x1 > cr) { return; }
+  if (x2 < cl) { return; }
+  if (y1 > cb) { return; }
+  if (y2 < ct) { return; }
 
   clip(&x1, &y1, &x2, &y2);
 
   xorHline(x1, y1, x2);
   xorHline(x1, y2, x2);
-  if (y1 == y2)
-    return;
+
+  if (y1 == y2) { return; }
 
   y1++;
 
@@ -492,31 +444,29 @@ void Bitmap::xorRect(int x1, int y1, int x2, int y2)
 
 void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
 {
-  if (x1 > x2)
-    std::swap(x1, x2);
-  if (y1 > y2)
-    std::swap(y1, y2);
+  if (x1 > x2) { std::swap(x1, x2); }
+  if (y1 > y2) { std::swap(y1, y2); }
 
-  if (x1 > cr)
-    return;
-  if (x2 < cl)
-    return;
-  if (y1 > cb)
-    return;
-  if (y2 < ct)
-    return;
+  if (x1 > cr) { return; }
+  if (x2 < cl) { return; }
+  if (y1 > cb) { return; }
+  if (y2 < ct) { return; }
 
   clip(&x1, &y1, &x2, &y2);
 
   for (; y1 <= y2; y1++)
+  {
     xorHline(x1, y1, x2);
+  }
 }
 
 // non-blending version (this version does not set the blend target)
 void Bitmap::setpixel(const int x, const int y, const int c)
 {
   if (x >= cl && x <= cr && y >= ct && y <= cb)
+  {
     *(row[y] + x) = c;
+  }
 }
 
 void Bitmap::setpixel(const int x, const int y, const int c2, const int t)
@@ -524,9 +474,13 @@ void Bitmap::setpixel(const int x, const int y, const int c2, const int t)
   Blend::target(this, x, y);
 
   if (Clone::active)
+  {
     setpixelClone(x, y, c2, t);
-  else
+  }
+    else
+  {
     setpixelSolid(x, y, c2, t);
+  }
 }
 
 void Bitmap::setpixelSolid(const int x, const int y, const int c2, const int t)
@@ -534,18 +488,15 @@ void Bitmap::setpixelSolid(const int x, const int y, const int c2, const int t)
   if (x >= cl && x <= cr && y >= ct && y <= cb)
   {
     int *c1 = row[y] + x;
-
     *c1 = Blend::current(*c1, c2, t);
   }
 }
 
 void Bitmap::setpixelClone(const int x, const int y, const int, const int t)
 {
-  if (x < cl || x > cr || y < ct || y > cb)
-    return;
+  if (x < cl || x > cr || y < ct || y > cb) { return; }
 
   int *c1 = row[y] + x;
-
   int x1 = x - Clone::dx;
   int y1 = y - Clone::dy;
 
@@ -568,17 +519,10 @@ void Bitmap::setpixelClone(const int x, const int y, const int, const int t)
 
 int Bitmap::getpixel(int x, int y)
 {
-  if (x < cl)
-    x = cl;
-
-  if (x > cr)
-    x = cr;
-
-  if (y < ct)
-    y = ct;
-
-  if (y > cb)
-    y = cb;
+  if (x < cl) { x = cl; }
+  if (x > cr) { x = cr; }
+  if (y < ct) { y = ct; }
+  if (y > cb) { y = cb; }
 
   return *(row[y] + x);
 }
@@ -586,14 +530,10 @@ int Bitmap::getpixel(int x, int y)
 // clips coordinates to the writable image area
 void Bitmap::clip(int *x1, int *y1, int *x2, int *y2)
 {
-  if (*x1 < cl)
-    *x1 = cl;
-  if (*y1 < ct)
-    *y1 = ct;
-  if (*x2 > cr)
-    *x2 = cr;
-  if (*y2 > cb)
-    *y2 = cb;
+  if (*x1 < cl) { *x1 = cl; }
+  if (*y1 < ct) { *y1 = ct; }
+  if (*x2 > cr) { *x2 = cr; }
+  if (*y2 > cb) { *y2 = cb; }
 }
 
 // sets the image's writeable area
@@ -610,7 +550,9 @@ void Bitmap::setClip(int x1, int y1, int x2, int y2)
 void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
 {
   if ((sx >= w) || (sy >= h) || (dx > dest->cr) || (dy > dest->cb))
+  {
     return;
+  }
 
   if (sx < 0)
   {
@@ -627,10 +569,14 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
   }
 
   if ((sx + ww) > w)
+  {
     ww = w - sx;
+  }
 
   if ((sy + hh) > h)
+  {
     hh = h - sy;
+  }
 
   if (dx < dest->cl)
   {
@@ -649,13 +595,19 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
   }
 
   if ((dx + ww - 1) > dest->cr)
+  {
     ww = dest->cr - dx + 1;
+  }
 
   if ((dy + hh - 1) > dest->cb)
+  {
     hh = dest->cb - dy + 1;
+  }
 
   if (ww < 1 || hh < 1)
+  {
     return;
+  }
 
   int sy1 = sy;
   int dy1 = dy;
@@ -666,7 +618,9 @@ void Bitmap::blit(Bitmap *dest, int sx, int sy, int dx, int dy, int ww, int hh)
     int *dx1 = dx + dest->row[dy1];
 
     for (int x = 0; x < ww; x++, sx1++, dx1++)
+    {
       *dx1 = *sx1;
+    }
 
     sy1++;
     dy1++;
@@ -743,28 +697,19 @@ void Bitmap::pointStretch(Bitmap *dest,
   const int checker_offset_y = (sy * ay) >> 16;
 
   // clip negative
-  if (sx < 0)
-    sx = 0;
-
-  if (sy < 0)
-    sy = 0;
+  if (sx < 0) { sx = 0; }
+  if (sy < 0) { sy = 0; }
 
   // recalculate size
   dw = (sw * ax) >> 16;
   dh = (sh * ay) >> 16;
 
-  if (sw < 1 || sh < 1)
-    return;
-
-  if (dw < 1 || dh < 1)
-    return;
+  if (sw < 1 || sh < 1) { return; }
+  if (dw < 1 || dh < 1) { return; }
 
   // add in extra so the right/bottom edges gets filled
-  if (ax > 1)
-    dw += ax;
-
-  if (ay > 1)
-    dh += ay;
+  if (ax > 1) { dw += ax; }
+  if (ay > 1) { dh += ay; }
 
   int xinc = 0;
   int yinc = 0;
@@ -788,8 +733,7 @@ void Bitmap::pointStretch(Bitmap *dest,
   {
     const int y1 = sy + (yinc >> 16);
 
-    if (y1 >= h || dy + y >= dest->h)
-      break;
+    if (y1 >= h || dy + y >= dest->h) { break; }
 
     const int checker_y = ((dy + y + checker_offset_y) >> 3);
     int *d = dest->row[dy + y] + dx;
@@ -837,35 +781,25 @@ void Bitmap::filteredStretch(Bitmap *dest,
   const int checker_offset_y = (sy * ay) >> 16;
 
   // clip negative
-  if (sx < 0)
-    sx = 0;
-
-  if (sy < 0)
-    sy = 0;
+  if (sx < 0) { sx = 0; }
+  if (sy < 0) { sy = 0; }
 
   // recalculate size
   dw = (sw * ax) >> 16;
   dh = (sh * ay) >> 16;
 
-  if (sw < 1 || sh < 1)
-    return;
-
-  if (dw < 1 || dh < 1)
-    return;
+  if (sw < 1 || sh < 1) { return; }
+  if (dw < 1 || dh < 1) { return; }
 
   // add in extra so the right/bottom edge gets filled
-  if (ax > 1)
-    dw += ax;
-
-  if (ay > 1)
-    dh += ay;
+  if (ax > 1) { dw += ax; }
+  if (ay > 1) { dh += ay; }
 
   // figure out a shift amount to avoid division
   int div = bx1 * by1;
   int shift = 0;
 
-  if (div < 1)
-    div = 1;
+  if (div < 1) { div = 1; }
 
   while (div > 1)
   {
@@ -902,8 +836,7 @@ void Bitmap::filteredStretch(Bitmap *dest,
       continue;
     }
 
-    if (y1 + by2 - 1 >= h || dy + y >= dest->h)
-      break;
+    if (y1 + by2 - 1 >= h || dy + y >= dest->h) { break; }
 
     const int checker_y = ((dy + y + checker_offset_y) >> 3);
     int *p = dest->row[dy + y] + dx;
@@ -1031,12 +964,10 @@ void Bitmap::rotate180()
       *(row[h - 1 - y] + w - 1 - x) = temp;
       count++;
 
-      if (count >= size)
-        break; 
+      if (count >= size) { break; }
     }
 
-    if (count >= size)
-      break; 
+    if (count >= size) { break; }
   }
 }
 
@@ -1053,17 +984,10 @@ void Bitmap::offset(int x, int y, const bool reverse)
     y = h - y;
   }
 
-  while (x < 0)
-    x += w;
-
-  while (y < 0)
-    y += h;
-
-  while (x >= w)
-    x -= w;
-
-  while (y >= h)
-    y -= h;
+  while (x < 0) { x += w; }
+  while (y < 0) { y += h; }
+  while (x >= w) { x -= w; }
+  while (y >= h) { y -= h; }
 
   offset_buffer.blit(this, w - x, h - y, 0, 0, x, y);
   offset_buffer.blit(this, 0, h - y, x, 0, w - x, y);
@@ -1133,15 +1057,9 @@ void Bitmap::scale(Bitmap *dest, bool show_progress)
 
     yinc += ay;
 
-    if (show_progress)
-    {
-      if (Progress::update(y) < 0) { return; }
-    }
+    if (show_progress && Progress::update(y) < 0) { return; }
   }
 
-  if (show_progress)
-  {
-    Progress::hide();
-  }
+  if (show_progress) { Progress::hide(); }
 }
 
