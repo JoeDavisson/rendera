@@ -822,8 +822,13 @@ void Bitmap::filteredStretch(Bitmap *dest,
   const int ay = ((float)dh / sh) * 65536;
   const int bx = ((float)sw / dw) * 65536;
   const int by = ((float)sh / dh) * 65536;
-  const int bx2 = ((float)sw / dw) / 2;
-  const int by2 = ((float)sh / dh) / 2;
+  int bx2 = ((float)sw / dw) / 2;
+  int by2 = ((float)sh / dh) / 2;
+
+  // limit kernel size
+  if (bx2 > 4) { bx2 = 4; }
+  if (by2 > 4) { by2 = 4; }
+
   const int bx1 = bx2 * 2;
   const int by1 = by2 * 2;
 
@@ -940,7 +945,6 @@ void Bitmap::filteredStretch(Bitmap *dest,
       *p = 0xff000000 | convertFormat(Blend::trans(checker, c, 255 - a),
                                       bgr_order);
       p++;
-
       xinc += bx;
     }
 
