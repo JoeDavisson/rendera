@@ -30,10 +30,10 @@ InputText::InputText(Fl_Group *g, int x, int y, int w, int h,
                      const char *text, Fl_Callback *cb)
 : Fl_Input(x, y, w, h, 0)
 {
+  if (cb) { callback(cb, &var); }
+
   group = g;
   var = 0;
-  if (cb)
-    callback(cb, &var);
   maximum_size(256);
   labelsize(16);
   textsize(16);
@@ -51,7 +51,6 @@ void InputText::center()
   int ww = 0, hh = 0;
 
   measure_label(ww, hh);
-
   resize(group->x() + group->w() / 2 - (ww + w()) / 2 + ww, y(), w(), h());
 }
 

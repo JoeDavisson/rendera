@@ -82,8 +82,8 @@ void Button::draw()
   int y1 = y();
   int y2 = y() + h() - 1;
 
-  fl_color(value() ?
-           Project::fltk_theme_bevel_down : Project::fltk_theme_bevel_up);
+  fl_color(value() ?  Project::fltk_theme_bevel_down :
+                      Project::fltk_theme_bevel_up);
   fl_xyline(x1, y1, x2);
   fl_yxline(x1, y1, y2);
 
@@ -93,8 +93,8 @@ void Button::draw()
     fl_yxline(x1 + 1, y1 + 1, y2 - 1);
   }
 
-  fl_color(value() ?
-           Project::fltk_theme_bevel_up : Project::fltk_theme_bevel_down);
+  fl_color(value() ?  Project::fltk_theme_bevel_up :
+                      Project::fltk_theme_bevel_down);
   fl_xyline(x1, y2, x2);
   fl_yxline(x2, y1 + 1, y2);
 

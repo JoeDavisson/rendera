@@ -40,24 +40,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 bool Selection::inbox(int x, int y, int x1, int y1, int x2, int y2)
 {
-  if (x1 > x2)
-    std::swap(x1, x2);
-  if (y1 > y2)
-    std::swap(y1, y2);
+  if (x1 > x2) { std::swap(x1, x2); }
+  if (y1 > y2) { std::swap(y1, y2); }
 
-  if (x >= x1 && x <= x2 && y >= y1 && y <= y2)
-    return 1;
-  else
-    return 0;
+  if (x >= x1 && x <= x2 && y >= y1 && y <= y2) { return 1; }
+  else { return 0; }
 }
 
 void Selection::absrect(View *view, int *x1, int *y1, int *x2, int *y2)
 {
-  if (*x1 > *x2)
-    std::swap(*x1, *x2);
-
-  if (*y1 > *y2)
-    std::swap(*y1, *y2);
+  if (*x1 > *x2) { std::swap(*x1, *x2); }
+  if (*y1 > *y2) { std::swap(*y1, *y2); }
 
   const int gridx = view->gridx;
   const int gridy = view->gridy;
@@ -85,7 +78,8 @@ void Selection::absrect(View *view, int *x1, int *y1, int *x2, int *y2)
   }
 }
 
-void Selection::drawHandles(View *view, Stroke *stroke, int x1, int y1, int x2, int y2)
+void Selection::drawHandles(View *view, Stroke *stroke,
+                            int x1, int y1, int x2, int y2)
 {
   int d = 8;
   int s = 16;
@@ -140,8 +134,7 @@ void Selection::drawHandles(View *view, Stroke *stroke, int x1, int y1, int x2, 
 
 void Selection::copy(View *view)
 {
-  if (state == STATE_COPY)
-    return;
+  if (state == STATE_COPY) { return; }
 
   state = STATE_COPY;
   Gui::selection->copyEnable(false);
@@ -150,22 +143,16 @@ void Selection::copy(View *view)
 
   absrect(view, &beginx, &beginy, &lastx, &lasty);
 
-  if (beginx < Project::bmp->cl)
-    beginx = Project::bmp->cl;
-  if (beginy < Project::bmp->ct)
-    beginy = Project::bmp->ct;
-  if (lastx > Project::bmp->cr)
-    lastx = Project::bmp->cr;
-  if (lasty > Project::bmp->cb)
-    lasty = Project::bmp->cb;
+  if (beginx < Project::bmp->cl) { beginx = Project::bmp->cl; }
+  if (beginy < Project::bmp->ct) { beginy = Project::bmp->ct; }
+  if (lastx > Project::bmp->cr) { lastx = Project::bmp->cr; }
+  if (lasty > Project::bmp->cb) { lasty = Project::bmp->cb; }
 
   int w = (lastx - beginx) + 1;
   int h = (lasty - beginy) + 1;
 
-  if (w < 1)
-    w = 1;
-  if (h < 1)
-    h = 1;
+  if (w < 1) { w = 1; }
+  if (h < 1) { h = 1; }
 
   delete(Project::select_bmp);
   Project::select_bmp = new Bitmap(w, h);
@@ -180,25 +167,16 @@ void Selection::crop(View *view)
 
   absrect(view, &beginx, &beginy, &lastx, &lasty);
 
-  if (beginx < Project::bmp->cl)
-    beginx = Project::bmp->cl;
-
-  if (beginy < Project::bmp->ct)
-    beginy = Project::bmp->ct;
-
-  if (lastx > Project::bmp->cr)
-    lastx = Project::bmp->cr;
-
-  if (lasty > Project::bmp->cb)
-    lasty = Project::bmp->cb;
+  if (beginx < Project::bmp->cl) { beginx = Project::bmp->cl; }
+  if (beginy < Project::bmp->ct) { beginy = Project::bmp->ct; }
+  if (lastx > Project::bmp->cr) { lastx = Project::bmp->cr; }
+  if (lasty > Project::bmp->cb) { lasty = Project::bmp->cb; }
 
   int w = (lastx - beginx) + 1;
   int h = (lasty - beginy) + 1;
 
-  if (w < 1)
-    w = 1;
-  if (h < 1)
-    h = 1;
+  if (w < 1) { w = 1; }
+  if (h < 1) { h = 1; }
 
   Bitmap temp(w, h);
   Project::bmp->blit(&temp, beginx, beginy, 0, 0, w, h);
@@ -244,9 +222,13 @@ void Selection::paste(View *view)
       c |= 0xff000000;
 
       if (alpha)
+      {
         Project::bmp->setpixel(x1 + x, y1 + y, c, t);
-      else
+      }
+        else
+      {
         Project::bmp->setpixel(x1 + x, y1 + y, c, trans);
+      }
     }
   }
 
@@ -274,8 +256,7 @@ Selection::~Selection()
 
 void Selection::push(View *view)
 {
-  if (!view->button1)
-    return;
+  if (!view->button1) { return; }
 
   if (state == STATE_INACTIVE)
   {
@@ -474,7 +455,9 @@ void Selection::release(View *view)
   const int h = abs(lasty - beginy) + 1;
 
   if (state != STATE_COPY)
+  {
     Gui::selection->values(x, y, w, h);
+  }
 }
 
 void Selection::move(View *view)
@@ -484,30 +467,52 @@ void Selection::move(View *view)
   if (state == STATE_RESIZE)
   {
     if (view->imgx < stroke->x1 && view->imgy < stroke->y1)
+    {
       view->window()->cursor(FL_CURSOR_NW);
+    }
     else if (view->imgx > stroke->x2 && view->imgy < stroke->y1)
+    {
       view->window()->cursor(FL_CURSOR_NE);
+    }
     else if (view->imgx < stroke->x1 && view->imgy > stroke->y2)
+    {
       view->window()->cursor(FL_CURSOR_SW);
+    }
     else if (view->imgx > stroke->x2 && view->imgy > stroke->y2)
+    {
       view->window()->cursor(FL_CURSOR_SE);
+    }
     else if (view->imgx < stroke->x1)
+    {
       view->window()->cursor(FL_CURSOR_W);
+    }
     else if (view->imgx > stroke->x2)
+    {
       view->window()->cursor(FL_CURSOR_E);
+    }
     else if (view->imgy < stroke->y1)
+    {
       view->window()->cursor(FL_CURSOR_N);
+    }
     else if (view->imgy > stroke->y2)
+    {
       view->window()->cursor(FL_CURSOR_S);
-    else
+    }
+      else
+    {
       view->window()->cursor(FL_CURSOR_HAND);
+    }
   }
   else if (state == STATE_COPY)
   {
     if (inbox(view->imgx, view->imgy, beginx, beginy, lastx, lasty))
+    {
       view->window()->cursor(FL_CURSOR_HAND);
-    else
+    }
+      else
+    {
       view->window()->cursor(FL_CURSOR_DEFAULT);
+    }
   }
     else
   {
@@ -521,8 +526,7 @@ void Selection::key(View *)
 
 void Selection::done(View *view, int mode)
 {
-  if (state == STATE_INACTIVE)
-    return;
+  if (state == STATE_INACTIVE) { return; }
 
   if (mode == MODE_PASTE && state == STATE_COPY)
   {

@@ -40,30 +40,22 @@ namespace
 
     if (shift == true)
     {
-      if (w == &i->dec)
-        val -= 10;
-      else if (w == &i->inc)
-        val += 10;
+      if (w == &i->dec) { val -= 10; }
+      else if (w == &i->inc) { val += 10; }
     }
       else
     {
-      if (w == &i->dec)
-        val -= 1;
-      else if (w == &i->inc)
-        val += 1;
+      if (w == &i->dec) { val -= 1; }
+      else if (w == &i->inc) { val += 1; }
     }
 
-    if (val < i->min)
-      val = i->min;
-
-    if (val > i->max)
-      val = i->max;
+    if (val < i->min) { val = i->min; }
+    if (val > i->max) { val = i->max; }
 
     snprintf(str, sizeof(str), "%d", val);
     i->input.value(str);
 
-    if(i->callback())
-      i->do_callback();
+    if (i->callback()) { i->do_callback(); }
   }
 }
 
