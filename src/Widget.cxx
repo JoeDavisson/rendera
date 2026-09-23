@@ -42,8 +42,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
 {
   var = 0;
 
-  if (cb)
-    callback(cb, &var);
+  if (cb) { callback(cb, &var); }
 
   stepx = sx;
   stepy = sy;
@@ -72,14 +71,17 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
       for (int x1 = 0; x1 < bitmap2->w; x1 += stepx)
       {
         bitmap2->xorRect(x1 + 1, y1 + 1, x1 + stepx - 2, y1 + stepy - 2);
-        bitmap2->rect(x1, y1, x1 + stepx - 1, y1 + stepy - 1, makeRgb(0, 0, 0), 0);
+        bitmap2->rect(x1, y1, x1 + stepx - 1, y1 + stepy - 1,
+                      makeRgb(0, 0, 0), 0);
       }
     }
   }
 
-  image = new Fl_RGB_Image((unsigned char *)bitmap->data, bitmap->w, bitmap->h, 4, 0);
+  image = new Fl_RGB_Image((unsigned char *)bitmap->data,
+                           bitmap->w, bitmap->h, 4, 0);
 
-  image2 = new Fl_RGB_Image((unsigned char *)bitmap2->data, bitmap2->w, bitmap2->h, 4, 0);
+  image2 = new Fl_RGB_Image((unsigned char *)bitmap2->data,
+                            bitmap2->w, bitmap2->h, 4, 0);
 
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
@@ -104,7 +106,8 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   }
 
   bitmap2 = 0;
-  image = new Fl_RGB_Image((unsigned char *)bitmap->data, bitmap->w, bitmap->h, 4, 0);
+  image = new Fl_RGB_Image((unsigned char *)bitmap->data,
+                           bitmap->w, bitmap->h, 4, 0);
 
   resize(group->x() + x, group->y() + y, w, h);
   labelsize(16);
@@ -115,11 +118,9 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
                const char *label, int sx, int sy, Fl_Callback *cb)
 : Fl_Widget(x, y, w, h, label)
 {
+  if (cb) { callback(cb, &var); }
+
   var = 0;
-
-  if (cb)
-    callback(cb, &var);
-
   stepx = sx;
   stepy = sy;
   group = g;
@@ -163,22 +164,17 @@ int Widget::handle(int event)
 
       Fl::focus(0);
 
-      if (stepx <= 0 || stepy <= 0)
-        return 0;
+      if (stepx <= 0 || stepy <= 0) { return 0; }
 
       x1 = (Fl::event_x() - x()) / stepx;
 
-      if (x1 > w() / stepx - 1)
-        x1 = w() / stepx - 1;
-      if (x1 < 0)
-        x1 = 0;
+      if (x1 > w() / stepx - 1) { x1 = w() / stepx - 1; }
+      if (x1 < 0) { x1 = 0; }
 
       y1 = (Fl::event_y() - y()) / stepy;
 
-      if (y1 > h() / stepy - 1)
-        y1 = h() / stepy - 1;
-      if (y1 < 0)
-        y1 = 0;
+      if (y1 > h() / stepy - 1) { y1 = h() / stepy - 1; }
+      if (y1 < 0) { y1 = 0; }
 
       var = x1 + (w() / stepx) * y1;
 
@@ -197,22 +193,23 @@ int Widget::handle(int event)
 void Widget::draw()
 {
   if (stepx > 0 && stepy > 0)
+  {
     fl_draw_box(FL_BORDER_BOX, x(), y(), w(), h(), 42);
+  }
 
   image->draw(x(), y());
   image->uncache();
 
-  if (stepx < 1 || stepy < 1)
-    return;
-
-  if (stepx > w() || stepy > h())
-    return;
+  if (stepx < 1 || stepy < 1) { return; }
+  if (stepx > w() || stepy > h()) { return; }
 
   int offsety = (var / (w() / stepx)) * stepy;
   int offsetx = var;
 
   while (offsetx >= (w() / stepx))
+  {
     offsetx -= (w() / stepx);
+  }
 
   offsetx *= stepx;
 

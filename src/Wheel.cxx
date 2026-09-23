@@ -31,9 +31,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_change_with_cb(Fl_Widget *, void *data) { Wheel *temp = (Wheel *)data; temp->changeWithCB(); }
+  void cb_change_with_cb(Fl_Widget *, void *data)
+  {
+    Wheel *temp = (Wheel *)data; temp->changeWithCB();
+  }
 
-  void cb_change_hue(Fl_Widget *, void *data) { Wheel *temp = (Wheel *)data; temp->changeHue(); }
+  void cb_change_hue(Fl_Widget *, void *data)
+  {
+    Wheel *temp = (Wheel *)data; temp->changeHue();
+  }
 }
 
 Wheel::Wheel(int x, int y, int w, int h, const char *l)
@@ -62,8 +68,6 @@ void Wheel::changeHue()
   
   int dist = 68;
   int inner = dist + 6;
-//  int outer = dist + 25;
-//  int center = inner + (outer - inner) / 2;
 
   const int md = ((mx - 96) * (mx - 96) + (my - 96) * (my - 96));
 
@@ -90,20 +94,6 @@ void Wheel::change()
   int outer = dist + 25;
   int center = inner + (outer - inner) / 2;
 
-/*
-  if (hue->visible_focus())
-  {
-    const int md = ((mx - 96) * (mx - 96) + (my - 96) * (my - 96));
-
-    if (md < ((inner - 32) * (inner - 32)))
-    {
-      hue->redraw();
-      satval->redraw();
-      return;
-    }
-  }
-*/
-
   float mouse_angle = atan2f(my - 96, mx - 96);
   int h = ((int)(mouse_angle * 244.46) + 1536) % 1536;
   int s = (satval->var % 96) * 2.69;
@@ -115,7 +105,10 @@ void Wheel::change()
   color = makeRgb(r, g, b);
 
   // hue circle
-  hue->bitmap->clear(Blend::trans(convertFormat(getFltkColor(FL_BACKGROUND_COLOR), true), makeRgb(0, 0, 0), 192));
+  const int fltk_color = getFltkColor(FL_BACKGROUND_COLOR);
+  const int clear_color = Blend::trans(convertFormat(fltk_color, true),
+                                       makeRgb(0, 0, 0), 192);
+  hue->bitmap->clear(clear_color);
 
   for (int i = 1; i < 1536; i++)
   {
@@ -182,14 +175,10 @@ void Wheel::change()
   int x = (satval->var % 96);
   int y = (satval->var / 96);
 
-  if (x < 9)
-    x = 9;
-  if (y < 9)
-    y = 9;
-  if (x > 86)
-    x = 86;
-  if (y > 86)
-    y = 86;
+  if (x < 9) { x = 9; }
+  if (y < 9) { y = 9; }
+  if (x > 86) { x = 86; }
+  if (y > 86) { y = 86; }
 
   satval->bitmap->rect(x - 10, y - 10, x + 10, y + 10, makeRgb(0, 0, 0), 192);
   satval->bitmap->rect(x - 9, y - 9, x + 9, y + 9, makeRgb(0, 0, 0), 96);
@@ -204,8 +193,7 @@ void Wheel::changeWithCB()
   change();
 
   // run callback for this group set by parent
-  if (callback())
-    do_callback();
+  if (callback()) { do_callback(); }
 }
 
 int Wheel::getColor()
