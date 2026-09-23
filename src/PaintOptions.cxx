@@ -44,33 +44,47 @@ namespace
     1, 2, 3, 4, 6, 8, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
   };
 
-  void cb_sizeValue(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->sizeValue(); }
+  void cb_sizeValue(Fl_Widget *, void *data)
+  { PaintOptions *temp = (PaintOptions *)data; temp->sizeValue(); }
 
-  void cb_size(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->size(); }
+  void cb_size(Fl_Widget *, void *data)
+  { PaintOptions *temp = (PaintOptions *)data; temp->size(); }
 
-  void cb_shape(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->shape(); }
+  void cb_shape(Fl_Widget *, void *data) 
+  { PaintOptions *temp = (PaintOptions *)data; temp->shape(); }
 
-  void cb_stroke(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->stroke(); }
+  void cb_stroke(Fl_Widget *, void *data)
+  { PaintOptions *temp = (PaintOptions *)data; temp->stroke(); }
 
-  void cb_mode(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->mode(); }
+  void cb_mode(Fl_Widget *, void *data)
+  { PaintOptions *temp = (PaintOptions *)data; temp->mode(); }
 
-  void cb_coarseEdge(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->coarseEdge(); }
+  void cb_coarseEdge(Fl_Widget *, void *data)
+  { PaintOptions *temp = (PaintOptions *)data; temp->coarseEdge(); }
 
-  void cb_fineEdge(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->fineEdge(); }
+  void cb_fineEdge(Fl_Widget *, void *data)
+  { PaintOptions *temp = (PaintOptions *)data; temp->fineEdge(); }
 
-  void cb_blurryEdge(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->blurryEdge(); }
+  void cb_blurryEdge(Fl_Widget *, void *data)
+  { PaintOptions *temp = (PaintOptions *)data; temp->blurryEdge(); }
 
-  void cb_watercolorEdge(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->watercolorEdge(); }
+  void cb_watercolorEdge(Fl_Widget *, void *data)
+  { PaintOptions *temp = (PaintOptions *)data; temp->watercolorEdge(); }
 
-  void cb_chalkEdge(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->chalkEdge(); }
+  void cb_chalkEdge(Fl_Widget *, void *data)
+  { PaintOptions *temp = (PaintOptions *)data; temp->chalkEdge(); }
 
-  void cb_textureEdge(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->textureEdge(); }
+  void cb_textureEdge(Fl_Widget *, void *data)
+  { PaintOptions *temp = (PaintOptions *)data; temp->textureEdge(); }
 
-  void cb_textureMarb(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->textureMarb(); }
+  void cb_textureMarb(Fl_Widget *, void *data)
+  { PaintOptions *temp = (PaintOptions *)data; temp->textureMarb(); }
 
-  void cb_textureTurb(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->textureTurb(); }
+  void cb_textureTurb(Fl_Widget *, void *data)
+  { PaintOptions *temp = (PaintOptions *)data; temp->textureTurb(); }
 
-  void cb_averageEdge(Fl_Widget *, void *data) { PaintOptions *temp = (PaintOptions *)data; temp->averageEdge(); }
+  void cb_averageEdge(Fl_Widget *, void *data)
+  { PaintOptions *temp = (PaintOptions *)data; temp->averageEdge(); }
 }
 
 PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
@@ -80,7 +94,9 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
 
   paint_brush_preview = new Widget(this, 8, pos, 160, 160,
                            "Brush Preview", 0, 0, 0);
-  paint_brush_preview->bitmap->clear(convertFormat(getFltkColor(FL_BACKGROUND2_COLOR), true));
+
+  const int fltk_color = getFltkColor(FL_BACKGROUND2_COLOR);
+  paint_brush_preview->bitmap->clear(convertFormat(fltk_color, true));
   pos += 160 + 8;
 
   paint_size_value = new InputInt(this, 8, pos, 160, 32,
@@ -254,7 +270,8 @@ void PaintOptions::changeSize(int new_size)
   float round = (float)(15 - paint_shape->var) / 15;
 
   brush->make(new_size, round);
-  paint_brush_preview->bitmap->clear(convertFormat(getFltkColor(FL_BACKGROUND2_COLOR), true));
+  const int fltk_color = getFltkColor(FL_BACKGROUND2_COLOR);
+  paint_brush_preview->bitmap->clear(convertFormat(fltk_color, true));
   paint_brush_preview->bitmap->rect(0, 0,
                      paint_brush_preview->bitmap->w - 1,
                      paint_brush_preview->bitmap->h - 1,
@@ -294,8 +311,7 @@ void PaintOptions::size()
 {
   int pos = paint_size->var;
 
-  if (pos > 15)
-    pos = 15;
+  if (pos > 15) { pos = 15; }
 
   int new_size = brush_sizes[pos];
   changeSize(new_size);
