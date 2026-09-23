@@ -38,22 +38,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_browse(Fl_Widget *, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->browse(); }
+  void cb_browse(Fl_Widget *, void *data)
+  { ImagesOptions *temp = (ImagesOptions *)data; temp->browse(); }
 
-  void cb_closeFile(Fl_Widget *, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->closeFile(); }
+  void cb_closeFile(Fl_Widget *, void *data)
+  { ImagesOptions *temp = (ImagesOptions *)data; temp->closeFile(); }
 
-  void cb_moveUp(Fl_Widget *, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->moveUp(); }
+  void cb_moveUp(Fl_Widget *, void *data)
+  { ImagesOptions *temp = (ImagesOptions *)data; temp->moveUp(); }
 
-  void cb_moveDown(Fl_Widget *, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->moveDown(); }
+  void cb_moveDown(Fl_Widget *, void *data)
+  { ImagesOptions *temp = (ImagesOptions *)data; temp->moveDown(); }
 
-  void cb_rename(Fl_Widget *, void *data) { ImagesOptions *temp = (ImagesOptions *)data; temp->rename(); }
+  void cb_rename(Fl_Widget *, void *data)
+  { ImagesOptions *temp = (ImagesOptions *)data; temp->rename(); }
 }
 
 ImagesOptions::ImagesOptions(int x, int y, int w, int h, const char *l)
 : Group(x, y, w, h, l)                     
 {
   int pos = Group::title_height + Gui::SPACING;
-
   pos = Group::title_height + Gui::SPACING;
 
   images_browse = new Fl_Hold_Browser(8, pos, 160, 256);
@@ -122,6 +126,7 @@ void ImagesOptions::browse()
   
 void ImagesOptions::rename()
 { 
+
   const int line = images_browse->value();
   
   if (line > 0)
@@ -140,20 +145,27 @@ void ImagesOptions::addFile(const char *name)
 
 void ImagesOptions::closeFile()
 {
-  if (Project::removeImage() == false)
-    return;
+  if (Project::removeImage() == false) { return; }
 
   images_browse->remove(Project::current + 1);
 
   if (Project::current > 0)
+  {
     images_browse->select(Project::current, 1);
-  else
+  }
+    else
+  {
     images_browse->select(Project::current + 1, 1);
+  }
 
   if (Project::current > 0)
+  {
     Project::switchImage(Project::current - 1);
-  else
+  }
+    else
+  {
     Project::switchImage(Project::current);
+  }
 
   images_rename->value(images_browse->text(images_browse->value()));
 
@@ -177,8 +189,7 @@ void ImagesOptions::duplicate()
   Bitmap **bmp_list = Project::bmp_list;
   Bitmap *bmp = Project::bmp_list[current];
 
-  if (Project::enoughMemory(bmp->w, bmp->h) == false)
-    return;
+  if (Project::enoughMemory(bmp->w, bmp->h) == false) { return; }
 
   Project::newImage(bmp->cw, bmp->ch);
   bmp_list[current]->blit(bmp_list[last], 0, 0, 0, 0, bmp->w, bmp->h);

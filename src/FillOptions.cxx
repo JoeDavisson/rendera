@@ -40,7 +40,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_reset(Fl_Widget *, void *data) { FillOptions *temp = (FillOptions *)data; temp->reset(); }
+  void cb_reset(Fl_Widget *, void *data)
+  { FillOptions *temp = (FillOptions *)data; temp->reset(); }
 }
 
 FillOptions::FillOptions(int x, int y, int w, int h, const char *l)
@@ -53,7 +54,8 @@ FillOptions::FillOptions(int x, int y, int w, int h, const char *l)
   fill_range->value(0);
   pos += 32 + 32;
 
-  fill_feather = new InputInt(this, 8, pos, 160, 32, "Feather (0-255)", 0, 0, 255);
+  fill_feather = new InputInt(this, 8, pos, 160, 32,
+                              "Feather (0-255)", 0, 0, 255);
   fill_feather->align(FL_ALIGN_BOTTOM);
   fill_feather->value(0);
   pos += 32 + 32;

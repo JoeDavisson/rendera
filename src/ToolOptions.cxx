@@ -46,13 +46,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_change(Fl_Widget *, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->change(); }
+  void cb_change(Fl_Widget *, void *data)
+  { ToolOptions *temp = (ToolOptions *)data; temp->change(); }
 
-  void cb_cloneEnable(Fl_Widget *, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->cloneEnable(); }
+  void cb_cloneEnable(Fl_Widget *, void *data)
+  { ToolOptions *temp = (ToolOptions *)data; temp->cloneEnable(); }
 
-  void cb_constrainEnable(Fl_Widget *, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->constrainEnable(); }
+  void cb_constrainEnable(Fl_Widget *, void *data)
+  { ToolOptions *temp = (ToolOptions *)data; temp->constrainEnable(); }
 
-  void cb_originEnable(Fl_Widget *, void *data) { ToolOptions *temp = (ToolOptions *)data; temp->originEnable(); }
+  void cb_originEnable(Fl_Widget *, void *data)
+  { ToolOptions *temp = (ToolOptions *)data; temp->originEnable(); }
 }
 
 ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
@@ -110,20 +114,13 @@ void ToolOptions::change()
 {
   const int current_tool = tool->var;
 
-  if (current_tool != Tool::PAINT)
-    Gui::paint->hide();
-  if (current_tool != Tool::PICKER)
-    Gui::picker->hide();
-  if (current_tool != Tool::SELECT)
-    Gui::selection->hide();
-  if (current_tool != Tool::OFFSET)
-    Gui::offset->hide();
-  if (current_tool != Tool::TEXT)
-    Gui::text->hide();
-  if (current_tool != Tool::FILL)
-    Gui::fill->hide();
-  if (current_tool != Tool::GRADIENT)
-    Gui::gradient->hide();
+  if (current_tool != Tool::PAINT) { Gui::paint->hide(); }
+  if (current_tool != Tool::PICKER) { Gui::picker->hide(); }
+  if (current_tool != Tool::SELECT) { Gui::selection->hide(); }
+  if (current_tool != Tool::OFFSET) { Gui::offset->hide(); }
+  if (current_tool != Tool::TEXT) { Gui::text->hide(); }
+  if (current_tool != Tool::FILL) { Gui::fill->hide(); }
+  if (current_tool != Tool::GRADIENT) { Gui::gradient->hide(); }
 
   Project::map->clear(0);
   Gui::view->drawMain(true);
@@ -136,7 +133,6 @@ void ToolOptions::change()
       Gui::paint->updateBrush();
       Gui::paint->show();
       Gui::statusInfo((char *)"Middle-click to navigate. Mouse wheel zooms. Esc to cancel rendering.");
-      
       break;
     case Tool::PICKER:
       Project::setTool(Tool::PICKER);

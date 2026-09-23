@@ -37,21 +37,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 namespace
 {
-  void cb_alpha(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->alpha(); }
+  void cb_alpha(Fl_Widget *, void *data)
+  { SelectionOptions *temp = (SelectionOptions *)data; temp->alpha(); }
 
-  void cb_copy(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->copy(); }
+  void cb_copy(Fl_Widget *, void *data)
+  { SelectionOptions *temp = (SelectionOptions *)data; temp->copy(); }
 
-  void cb_paste(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->paste(); }
+  void cb_paste(Fl_Widget *, void *data)
+  { SelectionOptions *temp = (SelectionOptions *)data; temp->paste(); }
 
-  void cb_crop(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->crop(); }
+  void cb_crop(Fl_Widget *, void *data)
+  { SelectionOptions *temp = (SelectionOptions *)data; temp->crop(); }
 
-  void cb_flipX(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->flipX(); }
+  void cb_flipX(Fl_Widget *, void *data)
+  { SelectionOptions *temp = (SelectionOptions *)data; temp->flipX(); }
 
-  void cb_flipY(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->flipY(); }
+  void cb_flipY(Fl_Widget *, void *data)
+  { SelectionOptions *temp = (SelectionOptions *)data; temp->flipY(); }
 
-  void cb_reset(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->reset(); }
+  void cb_reset(Fl_Widget *, void *data)
+  { SelectionOptions *temp = (SelectionOptions *)data; temp->reset(); }
 
-  void cb_rotate90(Fl_Widget *, void *data) { SelectionOptions *temp = (SelectionOptions *)data; temp->rotate90(); }
+  void cb_rotate90(Fl_Widget *, void *data)
+  { SelectionOptions *temp = (SelectionOptions *)data; temp->rotate90(); }
 }
 
 SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
@@ -78,7 +86,8 @@ SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
   new Separator(this, 0, pos, Gui::OPTIONS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + Gui::SPACING;
 
-  selection_reset = new Fl_Button(this->x() + 8, this->y() + pos, 160, 48, "Reset");
+  selection_reset = new Fl_Button(this->x() + 8, this->y() + pos,
+                                  160, 48, "Reset");
   selection_reset->callback(cb_reset, (void *)this);
   pos += 48 + Gui::SPACING;
 
@@ -109,13 +118,15 @@ SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
   new Separator(this, 0, pos, Gui::OPTIONS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + Gui::SPACING;
 
-  selection_copy = new Fl_Button(this->x() + 8, this->y() + pos, 160, 40, "Copy");
+  selection_copy = new Fl_Button(this->x() + 8, this->y() + pos,
+                                 160, 40, "Copy");
   selection_copy->tooltip("Ctrl-C");
   selection_copy->callback(cb_copy, (void *)this);
   selection_copy->deactivate();
   pos += 40 + Gui::SPACING;
 
-  selection_paste = new Fl_Button(this->x() + 8, this->y() + pos, 160, 40, "Paste");
+  selection_paste = new Fl_Button(this->x() + 8, this->y() + pos,
+                                  160, 40, "Paste");
   selection_paste->tooltip("Ctrl-V");
   selection_paste->callback(cb_paste, (void *)this);
   selection_paste->deactivate();
@@ -124,7 +135,8 @@ SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
   new Separator(this, 0, pos, Gui::OPTIONS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + Gui::SPACING;
 
-  selection_crop = new Fl_Button(this->x() + 8, this->y() + pos, 160, 48, "Crop");
+  selection_crop = new Fl_Button(this->x() + 8, this->y() + pos,
+                                 160, 48, "Crop");
   selection_crop->callback(cb_crop);
   selection_crop->deactivate();
   pos += 48 + Gui::SPACING;
@@ -146,10 +158,8 @@ void SelectionOptions::copy()
 
 void SelectionOptions::copyEnable(bool enable)
 {
-  if (enable == true)
-    selection_copy->activate();
-  else
-    selection_copy->deactivate();
+  if (enable == true) { selection_copy->activate(); }
+  else { selection_copy->deactivate(); }
 
   selection_copy->redraw();
 }
@@ -161,10 +171,8 @@ void SelectionOptions::paste()
 
 void SelectionOptions::pasteEnable(bool enable)
 {
-  if (enable == true)
-    selection_paste->activate();
-  else
-    selection_paste->deactivate();
+  if (enable == true) { selection_paste->activate(); }
+  else { selection_paste->deactivate(); }
 
   selection_paste->redraw();
 }
@@ -181,10 +189,8 @@ void SelectionOptions::crop()
 
 void SelectionOptions::cropEnable(bool enable)
 {
-  if (enable == true)
-    selection_crop->activate();
-  else
-    selection_crop->deactivate();
+  if (enable == true) { selection_crop->activate(); }
+  else { selection_crop->deactivate(); }
 
   selection_crop->redraw();
 }
