@@ -53,15 +53,19 @@ int Render::trans;
 bool Render::isEdge(Map *map, const int x, const int y)
 {
   if (x < 1 || x >= map->w - 2 || y < 1 || y >= map->h - 2)
+  {
     return 0;
+  }
 
-  if ( *(map->row[y - 1] + x) &&
-      *(map->row[y] + x - 1) &&
-      *(map->row[y] + x + 1) &&
-      *(map->row[y + 1] + x) )
+  if ( *(map->row[y - 1] + x) && *(map->row[y] + x - 1) &&
+      *(map->row[y] + x + 1) && *(map->row[y + 1] + x) )
+  {
     return 0;
-  else
+  }
+    else
+  {
     return 1;
+  }
 }
 
 // used by fine airbrush
@@ -77,60 +81,6 @@ int Render::fineEdge(int x1, int y1, const int x2, const int y2,
 
   return temp < trans ? trans : temp;
 }
-
-/*
-// "shrinks" a 2x2 block
-void Render::shrinkBlock(unsigned char *s0, unsigned char *s1,
-                         unsigned char *s2, unsigned char *s3)
-{
-  const int z = (*s0 << 0) | (*s1 << 1) | (*s2 << 2) | (*s3 << 3);
-
-  switch (z)
-  {
-    case 0:
-    case 15:
-      return;
-    case 7:
-    case 14:
-      *s1 = 0;
-      *s2 = 0;
-      return;
-    case 11:
-    case 13:
-      *s0 = 0;
-      *s3 = 0;
-      return;
-  }
-
-  *s0 = *s1 = *s2 = *s3 = 0;
-}
-
-// "grows" a 2x2 block
-void Render::growBlock(unsigned char *s0, unsigned char *s1,
-                       unsigned char *s2, unsigned char *s3)
-{
-  const int z = (*s0 << 0) | (*s1 << 1) | (*s2 << 2) | (*s3 << 3);
-
-  switch (z)
-  {
-    case 0:
-    case 15:
-      return;
-    case 1:
-    case 8:
-      *s1 = 1;
-      *s2 = 1;
-      return;
-    case 2:
-    case 4:
-      *s0 = 1;
-      *s3 = 1;
-      return;
-  }
-
-  *s0 = *s1 = *s2 = *s3 = 1;
-}
-*/
 
 // updates the viewport during rendering
 int Render::update(int pos)
@@ -159,7 +109,9 @@ void Render::solid()
     for (int x = stroke->x1; x <= stroke->x2; x++)
     {
       if (map->getpixel(x, y) > 0)
+      {
         bmp->setpixel(x, y, color, trans);
+      }
     }
   }
 }
@@ -174,7 +126,9 @@ void Render::antialiased()
       const int c = map->getpixel(x, y);
 
       if (c > 0)
+      {
         bmp->setpixel(x, y, color, scaleVal((255 - c), trans));
+      }
     }
   }
 }
@@ -203,8 +157,7 @@ void Render::coarse()
         *s2 &= 1;
         *s3 &= 1;
 
-        if (*s0 | *s1 | *s2 | *s3)
-          found = true;
+        if (*s0 | *s1 | *s2 | *s3) { found = true; }
 
         const unsigned char d0 = *s0;
         const unsigned char d1 = *s1;
@@ -213,19 +166,14 @@ void Render::coarse()
 
         map->shrinkBlock(s0, s1, s2, s3);
 
-        if (!*s0 && d0)
-          bmp->setpixel(x, y, color, soft_trans);
-        if (!*s1 && d1)
-          bmp->setpixel(x + 1, y, color, soft_trans);
-        if (!*s2 && d2)
-          bmp->setpixel(x, y + 1, color, soft_trans);
-        if (!*s3 && d3)
-          bmp->setpixel(x + 1, y + 1, color, soft_trans);
+        if (!*s0 && d0) { bmp->setpixel(x, y, color, soft_trans); }
+        if (!*s1 && d1) { bmp->setpixel(x + 1, y, color, soft_trans); }
+        if (!*s2 && d2) { bmp->setpixel(x, y + 1, color, soft_trans); }
+        if (!*s3 && d3) { bmp->setpixel(x + 1, y + 1, color, soft_trans); }
       }
     }
 
-    if (!found)
-      break;
+    if (!found) { break; }
 
     soft_trans -= soft_step;
 
@@ -238,15 +186,16 @@ void Render::coarse()
         for (int x = stroke->x1; x <= stroke->x2; x++)
         {
           if (map->getpixel(x, y))
+          {
             bmp->setpixel(x, y, color, soft_trans);
+          }
         }
       }
 
       return;
     }
 
-    if (update(i) < 0)
-      break;
+    if (update(i) < 0) { break; }
   }
 }
 
@@ -265,14 +214,12 @@ void Render::fine()
         stroke->edge_y[count] = y;
         count++;
 
-        if (count > 0xfffff)
-          break;
+        if (count > 0xfffff) { break; }
       }
     }
   }
 
-  if (count == 0)
-    return;
+  if (count == 0) { return; }
 
   KDtree::node_type test_node;
   KDtree::node_type *root, *found;
@@ -293,8 +240,7 @@ void Render::fine()
   {
     for (int x = stroke->x1; x <= stroke->x2; x++)
     {
-      if (map->getpixel(x, y) == 0)
-        continue;
+      if (map->getpixel(x, y) == 0) { continue; }
 
       test_node.x[0] = x;
       test_node.x[1] = y;
@@ -309,8 +255,7 @@ void Render::fine()
       bmp->setpixel(x, y, color, t);
     }
 
-    if (update(y) < 0)
-      break;
+    if (update(y) < 0) { break; }
   }
 }
 
@@ -331,7 +276,6 @@ void Render::blur()
   for (int x = 0; x < amount; x++)
   {
     const int xb = x - b;
-
     kernel[x] = 255 * std::exp(-((double)((xb) * (xb)) / ((b * b) / 2)));
   }
 
@@ -357,8 +301,7 @@ void Render::blur()
         xx++;
       }
 
-      if (div > 0)
-        val /= div;
+      if (div > 0) { val /= div; }
 
       temp.setpixel(x, y, val);
     }
@@ -384,8 +327,7 @@ void Render::blur()
         yy++;
       }
 
-      if (div > 0)
-        val /= div;
+      if (div > 0) { val /= div; }
 
       const int x1 = x + stroke->x1;
       const int y1 = y + stroke->y1;
@@ -402,11 +344,12 @@ void Render::blur()
       const int c = map->getpixel(x, y);
 
       if (c > 0)
+      {
         bmp->setpixel(x, y, color, scaleVal((255 - c), trans));
+      }
     }
 
-    if (update(y) < 0)
-      break;
+    if (update(y) < 0) { break; }
   }
 }
 
@@ -424,7 +367,9 @@ void Render::watercolor()
     for (int x = stroke->x1; x <= stroke->x2; x++)
     {
       if (map->getpixel(x, y))
+      {
         bmp->setpixel(x, y, color, trans);
+      }
     }
   }
 
@@ -448,8 +393,7 @@ void Render::watercolor()
         *s2 &= 1;
         *s3 &= 1;
 
-        if (*s0 | *s1 | *s2 | *s3)
-          found = true;
+        if (*s0 | *s1 | *s2 | *s3) { found = true; }
 
         const unsigned char d0 = *s0;
         const unsigned char d1 = *s1;
@@ -468,30 +412,19 @@ void Render::watercolor()
           inc--;
         }
 
-        if (*s0 && !d0)
-          bmp->setpixel(x, yy, color, soft_trans);
-
-        if (*s1 && !d1)
-          bmp->setpixel(x + 1, yy, color, soft_trans);
-
-        if (*s2 && !d2)
-          bmp->setpixel(x, yy + 1, color, soft_trans);
-
-        if (*s3 && !d3)
-          bmp->setpixel(x + 1, yy + 1, color, soft_trans);
+        if (*s0 && !d0) { bmp->setpixel(x, yy, color, soft_trans); }
+        if (*s1 && !d1) { bmp->setpixel(x + 1, yy, color, soft_trans); }
+        if (*s2 && !d2) { bmp->setpixel(x, yy + 1, color, soft_trans); }
+        if (*s3 && !d3) { bmp->setpixel(x + 1, yy + 1, color, soft_trans); }
       }
     }
 
-    if (!found)
-      break;
+    if (!found) { break; }
 
     soft_trans += soft_step;
 
-    if (soft_trans > 255)
-      break;
-
-    if (update(i) < 0)
-      break;
+    if (soft_trans > 255) { break; }
+    if (update(i) < 0) { break; }
   }
 }
 
@@ -525,8 +458,7 @@ void Render::chalk()
         *s2 &= 1;
         *s3 &= 1;
 
-        if (*s0 | *s1 | *s2 | *s3)
-          found = true;
+        if (*s0 | *s1 | *s2 | *s3) { found = true; }
 
         unsigned char d0 = *s0;
         unsigned char d1 = *s1;
@@ -541,11 +473,8 @@ void Render::chalk()
         {
           t = (int)soft_trans + (rnd() & 63) - 32;
 
-          if (t < 0)
-            t = 0;
-
-          if (t > 255)
-            t = 255;
+          if (t < 0) { t = 0; }
+          if (t > 255) { t = 255; }
 
           bmp->setpixel(x, y, color, t);
         }
@@ -554,11 +483,8 @@ void Render::chalk()
         {
           t = (int)soft_trans + (rnd() & 63) - 32;
 
-          if (t < 0)
-            t = 0;
-
-          if (t > 255)
-            t = 255;
+          if (t < 0) { t = 0; }
+          if (t > 255) { t = 255; }
 
           bmp->setpixel(x + 1, y, color, t);
         }
@@ -567,11 +493,8 @@ void Render::chalk()
         {
           t = (int)soft_trans + (rnd() & 63) - 32;
 
-          if (t < 0)
-            t = 0;
-
-          if (t > 255)
-            t = 255;
+          if (t < 0) { t = 0; }
+          if (t > 255) { t = 255; }
 
           bmp->setpixel(x, y + 1, color, t);
         }
@@ -580,19 +503,15 @@ void Render::chalk()
         {
           t = (int)soft_trans + (rnd() & 63) - 32;
 
-          if (t < 0)
-            t = 0;
-
-          if (t > 255)
-            t = 255;
+          if (t < 0) { t = 0; }
+          if (t > 255) { t = 255; }
 
           bmp->setpixel(x + 1, y + 1, color, t);
         }
       }
     }
 
-    if (!found)
-      break;
+    if (!found) { break; }
 
     soft_trans -= soft_step;
 
@@ -608,11 +527,8 @@ void Render::chalk()
           {
             int t = (int)soft_trans + (rnd() & 63) - 32;
 
-            if (t < 0)
-              t = 0;
-
-            if (t > 255)
-              t = 255;
+            if (t < 0) { t = 0; }
+            if (t > 255) { t = 255; }
 
             bmp->setpixel(x, y, color, t);
           }
@@ -622,8 +538,7 @@ void Render::chalk()
       return;
     }
 
-    if (update(i) < 0)
-      break;
+    if (update(i) < 0) { break; }
   }
 }
 
@@ -646,7 +561,8 @@ void Render::texture()
   Fractal::plasma(&plasma, (brush->texture_turb + 1) << 10, seed);
   Fractal::plasma(&marbx, (brush->texture_turb + 1) << 10, seed);
   Fractal::plasma(&marby, (brush->texture_turb + 1) << 10, seed);
-  Fractal::marble(&plasma, &marble, &marbx, &marby, brush->texture_marb << 2, 100, 0);
+  Fractal::marble(&plasma, &marble, &marbx, &marby,
+                  brush->texture_marb << 2, 100, 0);
 
   Map *src = &marble;
 
@@ -687,8 +603,7 @@ void Render::texture()
         s2 = (map->row[y + 1] + x);
         s3 = (map->row[y + 1] + x + 1);
 
-        if (*s0 | *s1 | *s2 | *s3)
-          found = true;
+        if (*s0 | *s1 | *s2 | *s3) { found = true; }
 
         unsigned char d0 = *s0;
         unsigned char d1 = *s1;
@@ -723,11 +638,8 @@ void Render::texture()
       }
     }
 
-    if (!found)
-      return;
-
-    if (update(i) < 0)
-      break;
+    if (!found) { return; }
+    if (update(i) < 0) { break; }
   }
 
   for (int y = stroke->y1; y <= stroke->y2; y++)
@@ -768,8 +680,7 @@ void Render::average()
     }
   }
 
-  if (count == 0)
-    return;
+  if (count == 0) { return; }
 
   r /= count;
   g /= count;
@@ -804,8 +715,7 @@ void Render::average()
         *s2 &= 1;
         *s3 &= 1;
 
-        if (*s0 | *s1 | *s2 | *s3)
-          found = true;
+        if (*s0 | *s1 | *s2 | *s3) { found = true; }
 
         const unsigned char d0 = *s0;
         const unsigned char d1 = *s1;
@@ -814,22 +724,14 @@ void Render::average()
 
         map->shrinkBlock(s0, s1, s2, s3);
 
-        if (!*s0 && d0)
-          bmp->setpixel(x, y, average, soft_trans);
-
-        if (!*s1 && d1)
-          bmp->setpixel(x + 1, y, average, soft_trans);
-
-        if (!*s2 && d2)
-          bmp->setpixel(x, y + 1, average, soft_trans);
-
-        if (!*s3 && d3)
-          bmp->setpixel(x + 1, y + 1, average, soft_trans);
+        if (!*s0 && d0) { bmp->setpixel(x, y, average, soft_trans); }
+        if (!*s1 && d1) { bmp->setpixel(x + 1, y, average, soft_trans); }
+        if (!*s2 && d2) { bmp->setpixel(x, y + 1, average, soft_trans); }
+        if (!*s3 && d3) { bmp->setpixel(x + 1, y + 1, average, soft_trans); }
       }
     }
 
-    if (!found)
-      break;
+    if (!found) { break; }
 
     soft_trans -= soft_step;
 
@@ -849,8 +751,7 @@ void Render::average()
       return;
     }
 
-    if (update(i) < 0)
-      break;
+    if (update(i) < 0) { break; }
   }
 }
 
@@ -868,7 +769,6 @@ void Render::begin()
   int size = 1;
 
   // for tools that grow outward
-//  switch (Gui::getPaintMode())
   switch (Gui::paint->getMode())
   {
     case BLURRY:
@@ -894,8 +794,7 @@ void Render::begin()
   const int w = (stroke->x2 - stroke->x1) + 1;
   const int h = (stroke->y2 - stroke->y1) + 1;
 
-  if (w <= 0 || h <= 0)
-    return; 
+  if (w <= 0 || h <= 0) { return; }
 
   Project::undo->push(x, y, w, h, 0);
 
