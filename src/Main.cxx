@@ -97,13 +97,13 @@ void setDarkTheme()
   Blend::hsvToRgb(h, s, 208, &r, &g, &b);
   Fl::set_color(FL_SELECTION_COLOR, makeFltkColor(r, g, b));
 
-  Blend::hsvToRgb(0, 0, 128, &r, &g, &b);
+  Blend::hsvToRgb(h, s, 85, &r, &g, &b);
   Project::theme_highlight_color = makeRgb(r, g, b);
 
   const int blend = Project::theme_highlight_color;
-  Project::fltk_theme_highlight_color = fl_rgb_color(getr(blend),
-                                                     getg(blend),
-                                                     getb(blend));
+  Project::fltk_theme_highlight_color = makeFltkColor(getr(blend),
+                                                      getg(blend),
+                                                      getb(blend));
   Blend::hsvToRgb(h, s, 128, &r, &g, &b);
   Project::fltk_theme_bevel_up = fl_rgb_color(r, g, b);
   Blend::hsvToRgb(h, s, 16, &r, &g, &b);
