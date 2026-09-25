@@ -172,8 +172,7 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
 
   for (int i = 0; i < num_bins; i++)
   {
-    if (color_bin[i].freq == 0)
-      break;
+    if (color_bin[i].freq == 0) { break; }
 
     color_bin_count++;
   }
@@ -190,11 +189,8 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
     const double index_log = std::pow(r, (double)i) - 1.0;
     int index = index_lin + curve * (index_log - index_lin);
 
-    if (index < 0)
-      index = 0;
-
-    if (index > samples - 1)
-      index = samples - 1;
+    if (index < 0) { index = 0; }
+    if (index > samples - 1) { index = samples - 1; }
 
     colors[count].r = color_bin[index].r;
     colors[count].g = color_bin[index].g;
@@ -331,8 +327,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 
   int max = count;
 
-  if (max < size)
-    size = max;
+  if (max < size) { size = max; }
 
   // init error matrix
   std::vector<double> err_data(((max + 1) * max) / 2);
@@ -379,7 +374,9 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
             jj = j;
 
             if (least_err < bailout && ii != 0 && jj != 0)
+            {
               goto found;
+            }
           }
 
           e++;

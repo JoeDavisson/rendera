@@ -43,8 +43,7 @@ void Progress::enable(bool state)
 
 void Progress::hide()
 {
-  if (active == false)
-    return;
+  if (active == false) { return; }
 
   Gui::progress->value(0);
   Gui::progress->copy_label("");
@@ -58,18 +57,14 @@ void Progress::hide()
 // use default interval
 void Progress::show(float max)
 {
-  if (active == false)
-    return;
-
-  if (max == 0)
-    max = .001;
+  if (active == false) { return; }
+  if (max == 0) { max = .001; }
 
   Gui::view->rendering = true;
   value = 0;
   interval = max / 10;
 
-  if (interval < 1)
-    interval = 1;
+  if (interval < 1) { interval = 1; }
 
   step = 100.0 / (max / interval);
   // keep progress bar on right side in case window was resized
@@ -82,14 +77,9 @@ void Progress::show(float max)
 // custom interval
 void Progress::show(float max, int new_interval)
 {
-  if (active == false)
-    return;
-
-  if (max == 0)
-    max = .001;
-
-  if (new_interval < 1)
-     new_interval = 1;
+  if (active == false) { return; }
+  if (max == 0) { max = .001; }
+  if (new_interval < 1) { new_interval = 1; }
 
   Gui::view->rendering = true;
   value = 0;
@@ -105,8 +95,7 @@ void Progress::show(float max, int new_interval)
 
 int Progress::update(int y)
 {
-  if (active == false)
-    return 0;
+  if (active == false) { return 0; }
 
   // user cancelled operation
   if (Fl::get_key(FL_Escape))
@@ -127,7 +116,6 @@ int Progress::update(int y)
   }
 
   Fl::check();
-
   return 0;
 }
 

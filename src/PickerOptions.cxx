@@ -70,11 +70,10 @@ void PickerOptions::update(int c)
     picker_color->bitmap->clear(c);
   }
 
-  picker_color->bitmap->rect(0,
-                               0,
-                               picker_color->bitmap->w - 1,
-                               picker_color->bitmap->h - 1,
-                               makeRgb(0, 0, 0), 0);
+  picker_color->bitmap->rect(0, 0,
+                             picker_color->bitmap->w - 1,
+                             picker_color->bitmap->h - 1,
+                             makeRgb(0, 0, 0), 0);
 
   picker_color->redraw();
 }

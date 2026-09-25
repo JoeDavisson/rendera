@@ -43,15 +43,11 @@ Picker::~Picker()
 
 bool Picker::inbox(int x, int y, int x1, int y1, int x2, int y2)
 {
-  if (x1 > x2)
-    std::swap(x1, x2);
-  if (y1 > y2)
-    std::swap(y1, y2);
+  if (x1 > x2) { std::swap(x1, x2); }
+  if (y1 > y2) { std::swap(y1, y2); }
 
-  if (x >= x1 && x <= x2 && y >= y1 && y <= y2)
-    return 1;
-  else
-    return 0;
+  if (x >= x1 && x <= x2 && y >= y1 && y <= y2) { return 1; }
+  else { return 0; }
 }
 
 void Picker::push(View *view)

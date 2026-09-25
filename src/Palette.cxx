@@ -58,19 +58,15 @@ Palette::~Palette()
 // draw palette swatches to a widget, and try to fill the space optimally
 void Palette::draw(Widget *widget)
 {
-  if (max > 256)
-    return;
+  if (max > 256) { return; }
 
   int w = widget->w();
   int h = widget->h();
 
   int step = std::sqrt((w * h) / max);
 
-  while ((w % step) != 0)
-    step--;
-
-  while (((w / step) & ((w / step) - 1)) != 0)
-    step--;
+  while ((w % step) != 0) { step--; }
+  while (((w / step) & ((w / step) - 1)) != 0) { step--; }
 
   widget->stepx = step;
   widget->stepy = step;
@@ -95,8 +91,8 @@ void Palette::draw(Widget *widget)
   {
     for (int x = 0; x < w / step; x++)
     {
-      if (i >= max)
-        break;
+      if (i >= max) { break; }
+
       int x1 = x * step;
       int y1 = y * step;
 
@@ -138,28 +134,30 @@ void Palette::draw(Widget *widget)
 void Palette::copy(Palette *dest)
 {
   for (int i = 0; i < 256; i++)
+  {
     dest->data[i] = data[i];
+  }
 
   dest->max = max;
 }
 
 void Palette::insertColor(int color, int index)
 {
-  if (max >= 256)
-    return;
+  if (max >= 256) { return; }
 
   max++;
 
   for (int i = max - 1; i > index; i--)
+  {
     data[i] = data[i - 1];
+  }
 
   data[index] = color;
 }
 
 void Palette::deleteColor(int index)
 {
-  if (max <= 1)
-    return;
+  if (max <= 1) { return; }
 
   for (int i = index; i < max - 1; i++)
     data[i] = data[i + 1];
@@ -253,18 +251,17 @@ int Palette::save(const char *fn)
 {
   FileSP out(fn, "w");
 
-  if (fprintf(out.get(), "GIMP Palette\n") < 0)
-    return -1;
-
-  if (fprintf(out.get(), "#\n") < 0)
-    return -1;
+  if (fprintf(out.get(), "GIMP Palette\n") < 0) { return -1; }
+  if (fprintf(out.get(), "#\n") < 0) { return -1; }
 
   for (int i = 0; i < max; i++)
   {
     int c = data[i];
 
     if (fprintf(out.get(), "%d %d %d\n", getr(c), getg(c), getb(c)) < 0)
+    {
       return -1;
+    }
   }
 
   return 0;
@@ -290,27 +287,25 @@ int Palette::load(const char *fn)
     {
       line[i] = '\0';
       ch = fgetc(in.get());
-      if (ch == '\n' || ch == EOF)
-        break;
+      if (ch == '\n' || ch == EOF) { break; }
       line[i] = ch;
     }
 
-    if (ch == EOF)
-      break;
+    if (ch == EOF) { break; }
 
     // replace tabs with spaces
     for (int i = 0; i < len; i++)
-      if (line[i] == '\t')
-        line[i] = ' ';
+    {
+      if (line[i] == '\t') { line[i] = ' '; }
+    }
 
     // get first three strings
-    if (sscanf(line, "%d %d %d", &r, &g, &b) != 3)
-      continue;
+    if (sscanf(line, "%d %d %d", &r, &g, &b) != 3) { continue; }
 
     // add to palette
     data[index++] = makeRgb(r, g, b);
-    if (index > 256)
-      break;
+
+    if (index > 256) { break; }
   }
 
   max = index;
@@ -408,26 +403,17 @@ void Palette::normalize()
     const int g = rgba.g;
     const int b = rgba.b;
 
-    if (r < r_low)
-      r_low = r;
-    if (r > r_high)
-      r_high = r;
-    if (g < g_low)
-      g_low = g;
-    if (g > g_high)
-      g_high = g;
-    if (b < b_low)
-      b_low = b;
-    if (b > b_high)
-      b_high = b;
+    if (r < r_low) { r_low = r; }
+    if (r > r_high) { r_high = r; }
+    if (g < g_low) { g_low = g; }
+    if (g > g_high) { g_high = g; }
+    if (b < b_low) { b_low = b; }
+    if (b > b_high) { b_high = b; }
   }
 
-  if (!(r_high - r_low))
-    r_high++;
-  if (!(g_high - g_low))
-    g_high++;
-  if (!(b_high - b_low))
-    b_high++;
+  if (!(r_high - r_low)) { r_high++; }
+  if (!(g_high - g_low)) { g_high++; }
+  if (!(b_high - b_low)) { b_high++; }
 
   // scale palette
   double r_scale = 255.0 / (r_high - r_low);

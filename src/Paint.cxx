@@ -108,8 +108,7 @@ void Paint::move(View *view)
   const int brush_size = Project::brush->size;
   int radius = brush_size / 2;
 
-  if (radius < 2)
-    radius = 2;
+  if (radius < 2) { radius = 2; }
 
   view->drawMain(false);
 

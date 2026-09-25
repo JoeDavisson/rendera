@@ -70,14 +70,10 @@ void Offset::drag(View *view)
     y -= y % view->gridy;
   }
 
-  while (x < 0)
-    x += w;
-  while (y < 0)
-    y += h;
-  while (x >= w)
-    x -= w;
-  while (y >= h)
-    y -= h;
+  while (x < 0) { x += w; }
+  while (y < 0) { y += h; }
+  while (x >= w) { x -= w; }
+  while (y >= h) { y -= h; }
 
   offset_buffer->blit(Project::bmp, w - x, h - y, 0, 0, x, y);
   offset_buffer->blit(Project::bmp, 0, h - y, x, 0, w - x, y);
