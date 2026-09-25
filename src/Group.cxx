@@ -29,9 +29,13 @@ Group::Group(int x, int y, int w, int h, const char *l)
 : Fl_Group(x, y, w, h, l)
 {
   if (l[0] != '\0')
+  {
     draw_title = true;
-  else
+  }
+    else
+  {
     draw_title = false;
+  }
 
   labelsize(16);
   labelcolor(FL_FOREGROUND_COLOR);

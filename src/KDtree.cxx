@@ -56,8 +56,7 @@ void KDtree::swapNodes(node_type *a, node_type *b)
 KDtree::node_type *KDtree::median(node_type *left, node_type *right,
                                   const int axis)
 {
-  if (right < left)
-    return 0;
+  if (right < left) { return 0; }
 
   node_type *p; 
   node_type *midpoint = left + (right - left) / 2; 
@@ -81,19 +80,24 @@ KDtree::node_type *KDtree::median(node_type *left, node_type *right,
     swapNodes(temp, right);
 
     if (midpoint->x[axis] == temp->x[axis])
+    {
       return temp;
+    }
     else if (midpoint->x[axis] < temp->x[axis])
+    {
       right = temp - 1;
-    else
+    }
+      else
+    {
       left = temp + 1;
+    }
   }
 }
 
 KDtree::node_type *KDtree::build(node_type *root,
                            const int length, const int axis)
 {
-  if (length == 0)
-    return 0;
+  if (length == 0) { return 0; }
 
   node_type *node = median(root, root + length - 1, axis);
 
@@ -109,8 +113,7 @@ KDtree::node_type *KDtree::build(node_type *root,
 void KDtree::nearest(node_type *root, node_type *test_node,
                      node_type **best_node, int *best_distance, const int axis)
 {
-  if (root == 0)
-    return;
+  if (root == 0) { return; }
 
   const int d = distance(root, test_node);
   const int dx = root->x[axis] - test_node->x[axis];
@@ -121,8 +124,7 @@ void KDtree::nearest(node_type *root, node_type *test_node,
     *best_node = root;
   }
 
-  if (*best_distance == 0)
-    return;
+  if (*best_distance == 0) { return; }
 
   nearest(dx > 0 ? root->left : root->right,
           test_node, best_node, best_distance, (axis + 1) % 3);

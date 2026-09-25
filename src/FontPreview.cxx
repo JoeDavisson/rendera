@@ -62,13 +62,11 @@ public:
       labelsize(size);
       measure_label(ww, hh);
 
-      if (ww < w - 16 && hh < h - 16)
-        break;
+      if (ww < w - 16 && hh < h - 16) { break; }
 
       size *= 0.9;
 
-      if (size < 20)
-        break;
+      if (size < 20) { break; }
     }
   }
 };
@@ -99,7 +97,8 @@ void FontPreview::init()
   font_browse->callback((Fl_Callback *)changedFont);
   pos += 128;
 
-  preview_text = new PreviewBox(8, pos, 612, 320, "The quick brown\nfox jumps over\nthe lazy dog. ");
+  preview_text = new PreviewBox(8, pos, 612, 320,
+                            "The quick brown\nfox jumps over\nthe lazy dog. ");
   preview_text->labelsize(55);
   preview_text->box(FL_DOWN_BOX);
   preview_text->align(FL_ALIGN_CENTER);
@@ -125,9 +124,13 @@ void FontPreview::init()
 void FontPreview::toggle()
 {
   if (preview_win->shown() == 0)
+  {
     preview_win->show();
-  else
+  }
+    else
+  {
     preview_win->hide();
+  }
 }
 
 void FontPreview::close()

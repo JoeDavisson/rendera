@@ -80,16 +80,20 @@ void Brush::make(int s, float round)
   {
     map.setpixel(x1, y1, 1);
   }
-    else if (s == 2)
+  else if (s == 2)
   {
     map.rectfill(x1, y1, x2, y2, 1);
   }
-    else if (s == 3)
+  else if (s == 3)
   {
     if (round > .5)
+    {
       map.ovalfill(x1, y1, x2, y2, 1);
-    else
+    }
+      else
+    {
       map.rectfill(x1, y1, x2, y2, 1);
+    }
   }
     else
   {
@@ -143,4 +147,5 @@ void Brush::make(int s, float round)
     }
   }
 }
+
 

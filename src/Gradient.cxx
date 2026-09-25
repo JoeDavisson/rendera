@@ -35,8 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "View.H"
 
-//FIXME add rectangular gradient
-
 namespace
 {
   int beginx;
@@ -56,8 +54,7 @@ namespace
     const float dy = y2 - y1;
     const float length = dx * dx + dy * dy;
 
-    if (length <= 0)
-      return;
+    if (length <= 0) { return; }
 
     Blend::set(Gui::gradient->blendingMode());
     Progress::show(bmp->h);
@@ -69,14 +66,9 @@ namespace
       {
         float t = (dx * (x - x1) + dy * (y - y1)) / length;
 
-        if (t < 0)
-          t = 0;
-
-        if (t > 1.0)
-          t = 1.0;
-
-        if (inverse == true)
-          t = 1.0 - t;
+        if (t < 0) { t = 0; }
+        if (t > 1.0) { t = 1.0; }
+        if (inverse == true) { t = 1.0 - t; }
 
         const int c = bmp->getpixel(x, y);
 
@@ -96,8 +88,7 @@ namespace
         }
       }
 
-      if (Progress::update(yy++) < 0)
-        break;
+      if (Progress::update(yy++) < 0) { break; }
     }
 
     Progress::hide();
@@ -114,8 +105,7 @@ namespace
     const float dy = std::abs(y2 - y1);
     const float length = (dx * dx + dy * dy);
 
-    if (length <= 0)
-      return;
+    if (length <= 0) { return; }
 
     Blend::set(Gui::gradient->blendingMode());
     Progress::show(bmp->h);
@@ -127,14 +117,9 @@ namespace
       {
         float t = ((x - x1) * (x - x1) + (y - y1) * (y - y1)) / length;
 
-        if (t < 0)
-          t = 0;
-
-        if (t > 1)
-          t = 1;
-
-        if (inverse == true)
-          t = 1.0 - t;
+        if (t < 0) { t = 0; }
+        if (t > 1) { t = 1; }
+        if (inverse == true) { t = 1.0 - t; }
 
         const int c = bmp->getpixel(x, y);
 
@@ -154,8 +139,7 @@ namespace
         }
       }
 
-      if (Progress::update(yy++) < 0)
-        break;
+      if (Progress::update(yy++) < 0) { break; }
     }
 
     Progress::hide();
@@ -168,17 +152,13 @@ namespace
   {
     Bitmap *bmp = Project::bmp;
 
-    if (x1 > x2)
-      std::swap(x1, x2);
-
-    if (y1 > y2)
-      std::swap(y1, y2);
+    if (x1 > x2) { std::swap(x1, x2); }
+    if (y1 > y2) { std::swap(y1, y2); }
 
     const float dx = x2 - x1;
     const float dy = y2 - y1;
 
-    if (dx == 0 || dy == 0)
-      return;
+    if (dx == 0 || dy == 0) { return; }
 
     const float rx = dx / 2;
     const float ry = dy / 2;
@@ -196,14 +176,9 @@ namespace
         float t = ((x - cx) * (x - cx) / (rx * rx)) +
                   ((y - cy) * (y - cy) / (ry * ry));
 
-        if (t < 0)
-          t = 0;
-
-        if (t > 1)
-          t = 1;
-
-        if (inverse == true)
-          t = 1.0 - t;
+        if (t < 0) { t = 0; }
+        if (t > 1) { t = 1; }
+        if (inverse == true) { t = 1.0 - t; }
 
         const int c = bmp->getpixel(x, y);
 
@@ -223,8 +198,7 @@ namespace
         }
       }
 
-      if (Progress::update(yy++) < 0)
-        break;
+      if (Progress::update(yy++) < 0) { break; }
     }
 
     Progress::hide();
@@ -242,8 +216,7 @@ Gradient::~Gradient()
 
 void Gradient::push(View *view)
 {
-  if (!view->button1)
-    return;
+  if (!view->button1) { return; }
 
   beginx = view->imgx;
   beginy = view->imgy;
@@ -276,10 +249,12 @@ void Gradient::drag(View *view)
   if (style < 2)
   {
     backbuf->line(x1, y1, x2, y2, makeRgb(0, 0, 0), 0, 3);
-    backbuf->rectfill(x2 - 8, y2 - 8, x2 + 8, y2 + 8, makeRgb(0, 0, 0), 0);
+    backbuf->rectfill(x2 - 8, y2 - 8, x2 + 8, y2 + 8,
+                      makeRgb(0, 0, 0), 0);
 
     backbuf->line(x1, y1, x2, y2, makeRgb(255, 255, 255), 0, 1);
-    backbuf->rectfill(x2 - 5, y2 - 5, x2 + 5, y2 + 5, makeRgb(255, 255, 255), 0);
+    backbuf->rectfill(x2 - 5, y2 - 5, x2 + 5, y2 + 5,
+                      makeRgb(255, 255, 255), 0);
   }
     else
   {
@@ -293,8 +268,7 @@ void Gradient::drag(View *view)
 
 void Gradient::release(View *view)
 {
-  if (!started)
-    return;
+  if (!started) { return; }
 
   started = false;
 

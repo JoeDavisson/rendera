@@ -31,6 +31,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Group.H>
 
+namespace
+{
+  Fl_Choice *gradient_style;
+  CheckBox *gradient_inverse;
+  Fl_Choice *gradient_blend;
+}
+
 GradientOptions::GradientOptions(int x, int y, int w, int h, const char *l)
 : Group(x, y, w, h, l)                     
 {
@@ -59,15 +66,8 @@ GradientOptions::GradientOptions(int x, int y, int w, int h, const char *l)
   gradient_blend->add("Darken");
   gradient_blend->add("Colorize");
   gradient_blend->value(0);
-//  gradient_blend->callback(cb_colorChange, (void *)this);
   gradient_blend->textsize(16);
   pos += 40 + Gui::SPACING;
-
-//  gradient_use_color = new CheckBox(this, 8, pos, 16, 16,
-//                                          "Use Paint Color", 0);
-//  gradient_use_color->center();
-//  gradient_use_color->value(0);
-//  pos += 32 + Gui::SPACING;
 
   gradient_inverse = new CheckBox(this, 8, pos, 16, 16, "Inverse", 0);
   gradient_inverse->center();
