@@ -31,7 +31,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Bitmap.H"
 #include "Button.H"
 #include "File.H"
+#include "Gui.H"
+#include "Progress.H"
 #include "Project.H"
+
+#include "FX/Colorize.H"
 
 Button::Button(Fl_Group *g, int x, int y, int w, int h,
                const char *label, const unsigned char *array, Fl_Callback *cb)
@@ -60,6 +64,14 @@ Button::Button(Fl_Group *g, int x, int y, int w, int h,
 
 Button::~Button()
 {
+}
+
+
+void Button::colorize(int c)
+{
+  Progress::active = false;
+  if (bitmap) { Colorize::apply(bitmap, c); }
+  Progress::active = true;
 }
 
 void Button::draw()

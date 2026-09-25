@@ -846,7 +846,6 @@ void Stroke::previewPaint(View *view)
   Map *map = Project::map;
 
   const float zoom = view->zoom;
-  const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
   int ox = view->ox;
   int oy = view->oy;
@@ -854,12 +853,12 @@ void Stroke::previewPaint(View *view)
 
   if (Clone::active)
   {
-    color = convertFormat(makeRgb(255, 0, 192), bgr_order);
+    color = makeRgb(255, 0, 192);
     trans = 128;
   }
     else
   {
-    color = convertFormat(Project::brush->color, bgr_order);
+    color = Project::brush->color;
     trans = Project::brush->trans;
   }
 
@@ -916,7 +915,6 @@ void Stroke::previewSelection(View *view)
   Bitmap *select_bmp = Project::select_bmp;
   
   const float zoom = view->zoom;
-  const bool bgr_order = view->bgr_order;
   const int zr = (int)((1.0 / zoom) * 65536);
   const int trans = Project::brush->trans;
   const int use_alpha = Gui::selection->getAlpha();
@@ -968,7 +966,7 @@ void Stroke::previewSelection(View *view)
     for (int x = xx1 - xx3; x <= xx2 - xx3; x++)
     {
       const int xm = xinc >> 16;
-      const int c = convertFormat(select_bmp->getpixel(xm, ym), bgr_order);
+      const int c = select_bmp->getpixel(xm, ym);
 
       if (use_alpha)
       {

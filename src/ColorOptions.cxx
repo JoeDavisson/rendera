@@ -144,7 +144,7 @@ void ColorOptions::colorHexInput()
 
   c |= 0xff000000;
 
-  colorUpdate(convertFormat((int)c, true));
+  colorUpdate((int)c);
   colorHexUpdate();
 //  Editor::update();
 }
@@ -153,7 +153,7 @@ void ColorOptions::colorHexUpdate()
 {
   char hex_string[8];
   snprintf(hex_string, sizeof(hex_string),
-       "%06x", (unsigned)convertFormat(Project::brush->color, true) & 0xffffff);
+           "%06x", (unsigned)Project::brush->color & 0xffffff);
   hexcolor->value(hex_string);
 }
 

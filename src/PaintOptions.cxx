@@ -96,7 +96,7 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
                            "Brush Preview", 0, 0, 0);
 
   const int fltk_color = getFltkColor(FL_BACKGROUND2_COLOR);
-  paint_brush_preview->bitmap->clear(convertFormat(fltk_color, true));
+  paint_brush_preview->bitmap->clear(fltk_color);
   pos += 160 + 8;
 
   paint_size_value = new InputInt(this, 8, pos, 160, 32,
@@ -271,7 +271,7 @@ void PaintOptions::changeSize(int new_size)
 
   brush->make(new_size, round);
   const int fltk_color = getFltkColor(FL_BACKGROUND2_COLOR);
-  paint_brush_preview->bitmap->clear(convertFormat(fltk_color, true));
+  paint_brush_preview->bitmap->clear(fltk_color);
   paint_brush_preview->bitmap->rect(0, 0,
                      paint_brush_preview->bitmap->w - 1,
                      paint_brush_preview->bitmap->h - 1,
@@ -298,7 +298,7 @@ void PaintOptions::changeSize(int new_size)
     temp_y += paint_brush_preview->h() / 2;
 
     paint_brush_preview->bitmap->setpixelSolid(temp_x, temp_y,
-                     convertFormat(getFltkColor(FL_FOREGROUND_COLOR), true), 0);
+                                         getFltkColor(FL_FOREGROUND_COLOR), 0);
   }
 
   paint_brush_preview->redraw();

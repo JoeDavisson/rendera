@@ -173,7 +173,6 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   rendering = false;
   mouse_timer_ready = false;
   mouse_in_viewport = false;
-  bgr_order = false;
   backbuf = 0;
   dnd = false;
 
@@ -518,29 +517,7 @@ void View::drawMain(bool refresh)
                     ox, oy,
                     sw - offx, sh - offy,
                     offx * zoom, offy * zoom,
-                    dw - offx * zoom, dh - offy * zoom,
-                    bgr_order);
-
-/*
-  if (zoom >= 1.0)
-  {
-    bmp->pointStretch(backbuf,
-                      ox, oy,
-                      sw - offx, sh - offy,
-                      offx * zoom, offy * zoom,
-                      dw - offx * zoom, dh - offy * zoom,
-                      bgr_order);
-  }
-    else
-  {
-    bmp->filteredStretch(backbuf,
-                         ox, oy,
-                         sw - offx, sh - offy,
-                         offx * zoom, offy * zoom,
-                         dw - offx * zoom, dh - offy * zoom,
-                         bgr_order);
-  }
-*/
+                    dw - offx * zoom, dh - offy * zoom);
 
   if (grid) { drawGrid(); }
 
@@ -671,10 +648,8 @@ void View::drawCloneCursor()
   backbuf->rect(x1 - 1, y1 - 8, x1 + 1, y1 + 8, makeRgb(0, 0, 0), 0);
   backbuf->xorRectfill(x1 - 7, y1, x1 + 7, y1);
   backbuf->xorRectfill(x1, y1 - 7, x1, y1 + 7);
-  backbuf->rectfill(x1 - 7, y1, x1 + 7, y1,
-                    convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
-  backbuf->rectfill(x1, y1 - 7, x1, y1 + 7,
-                    convertFormat(makeRgb(255, 0, 192), bgr_order), 128);
+  backbuf->rectfill(x1 - 7, y1, x1 + 7, y1, makeRgb(255, 0, 192), 128);
+  backbuf->rectfill(x1, y1 - 7, x1, y1 + 7, makeRgb(255, 0, 192), 128);
 
   updateView(oldx1 / scale - 12, oldy1 / scale - 12,
              this->x() + oldx1 / scale - 12, this->y() + oldy1 / scale - 12, 26, 26);

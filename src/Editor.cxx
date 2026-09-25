@@ -198,11 +198,11 @@ void Editor::updateHexColor()
   char hex_string[8];
 
   snprintf(hex_string, sizeof(hex_string), "%06x",
-           (unsigned)convertFormat(Project::brush->color, true) & 0xffffff);
+           (unsigned)Project::brush->color & 0xffffff);
   Items::hexcolor->value(hex_string);
 
   // shortcut hex
-  int c = (unsigned)convertFormat(Project::brush->color, true) & 0xffffff;
+  int c = (unsigned)Project::brush->color & 0xffffff;
   rgba_type rgba = getRgba(c);
 
   snprintf(hex_string, sizeof(hex_string), "%01x%01x%01x",
@@ -220,7 +220,7 @@ void Editor::checkHexColor()
   
   c |= 0xff000000;
   
-  Gui::colors->colorUpdate(convertFormat((int)c, true));
+  Gui::colors->colorUpdate((int)c);
   setHsvSliders();
   setHsv();
   updateHexColor();

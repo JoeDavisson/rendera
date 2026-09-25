@@ -30,11 +30,12 @@ public:
   static void show(float, int);
   static int update(int);
 
+  static bool active;
+
 private:
   Progress() { }
   ~Progress() { }
 
-  static bool active;
   static float value;
   static float step;
   static int interval;

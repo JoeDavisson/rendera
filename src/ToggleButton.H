@@ -35,6 +35,7 @@ public:
   ~ToggleButton();
 
   int handle(int);
+  void colorize(int);
 
   int var;
   Fl_Group *group;

@@ -35,6 +35,8 @@ public:
          const char *, const unsigned char *, Fl_Callback *);
   ~Button();
 
+  void colorize(int);
+
   int var;
   Fl_Group *group;
   Bitmap *bitmap;

@@ -28,8 +28,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "Bitmap.H"
 #include "File.H"
+#include "Gui.H"
+#include "Progress.H"
 #include "Project.H"
 #include "ToggleButton.H"
+
+#include "FX/Colorize.H"
 
 ToggleButton::ToggleButton(Fl_Group *g, int x, int y, int w, int h,
                            const char *label, const unsigned char *array,
@@ -78,6 +82,14 @@ int ToggleButton::handle(int event)
   }
 
   return 0;
+}
+
+
+void ToggleButton::colorize(int c)
+{
+  Progress::active = false;
+  if (bitmap) { Colorize::apply(bitmap, c); }
+  Progress::active = true;
 }
 
 void ToggleButton::draw()

@@ -61,8 +61,8 @@ public:
   void fillAlpha(const int);
   void doubleHorizontal();
   void doubleVertical();
-  void pointStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);
-  void filteredStretch(Bitmap *, int, int, int, int, int, int, int, int, bool);
+  void pointStretch(Bitmap *, int, int, int, int, int, int, int, int);
+  void filteredStretch(Bitmap *, int, int, int, int, int, int, int, int);
   void flipHorizontal();
   void flipVertical();
   void rotate90(bool);

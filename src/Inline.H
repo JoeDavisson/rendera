@@ -160,16 +160,6 @@ inline int diff32(const int c1, const int c2)
   return r * r + g * g + b * b + a * a;
 }
 
-// convert internal RGB format to whatever the graphics card needs
-// currently only supporting RGB/BGR
-inline int convertFormat(const int c, const bool bgr_order)
-{
-  const int ga = c & 0xff00ff00;
-  const int rb = c & 0x00ff00ff;
-
-  return bgr_order ? ((rb << 16) | (rb >> 16)) | ga : c;
-}
-
 // inline blending (for brushstroke preview, etc)
 inline int blendFast(const int c1, const int c2, const int t)
 {

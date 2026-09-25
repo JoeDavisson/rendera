@@ -102,8 +102,7 @@ void Wheel::change()
 
   // hue circle
   const int fltk_color = getFltkColor(FL_BACKGROUND_COLOR);
-  const int clear_color = Blend::trans(convertFormat(fltk_color, true),
-                                       makeRgb(0, 0, 0), 192);
+  const int clear_color = Blend::trans(fltk_color, makeRgb(0, 0, 0), 192);
   hue->bitmap->clear(clear_color);
 
   for (int i = 1; i < 1536; i++)

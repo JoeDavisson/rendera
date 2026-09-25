@@ -29,10 +29,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "File.H"
 #include "Gui.H"
-#include "Inline.H"
+#include "Progress.H"
 #include "Project.H"
 #include "View.H"
 #include "Widget.H"
+
+#include "FX/Colorize.H"
 
 // load a PNG image from a file
 Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
@@ -188,6 +190,14 @@ int Widget::handle(int event)
   }
 
   return 0;
+}
+
+void Widget::colorize(int c)
+{
+  Progress::active = false;
+  if (bitmap) { Colorize::apply(bitmap, c); }
+  if (bitmap2) { Colorize::apply(bitmap2, c); }
+  Progress::active = true;
 }
 
 void Widget::draw()

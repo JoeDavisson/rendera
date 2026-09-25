@@ -39,6 +39,7 @@ public:
   ~Widget();
 
   int handle(int);
+  void colorize(int);
 
   int var;
   int stepx;

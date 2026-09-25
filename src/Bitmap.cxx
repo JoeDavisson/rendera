@@ -683,8 +683,7 @@ void Bitmap::doubleVertical()
 // render viewport (zoom >= 1.0)
 void Bitmap::pointStretch(Bitmap *dest,
                           int sx, int sy, int sw, int sh,
-                          int dx, int dy, int dw, int dh,
-                          bool bgr_order)
+                          int dx, int dy, int dw, int dh)
 {
   // scaling ratios
   const int ax = ((float)dw / sw) * 65536;
@@ -747,7 +746,7 @@ void Bitmap::pointStretch(Bitmap *dest,
       const int checker_x = ((dx + x + checker_offset_x) >> 3);
       const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
 
-      *d++ = convertFormat(blendFast(checker, c, 255 - geta(c)), bgr_order);
+      *d++ = blendFast(checker, c, 255 - geta(c));
       xinc += bx;
     }
 
@@ -758,8 +757,7 @@ void Bitmap::pointStretch(Bitmap *dest,
 // render viewport (zoom < 1.0)
 void Bitmap::filteredStretch(Bitmap *dest,
                              int sx, int sy, int sw, int sh,
-                             int dx, int dy, int dw, int dh,
-                             bool bgr_order)
+                             int dx, int dy, int dw, int dh)
 {
   // scaling ratios
   const int ax = ((float)dw / sw) * 65536;
@@ -875,8 +873,7 @@ void Bitmap::filteredStretch(Bitmap *dest,
       const int checker_x = ((dx + x + checker_offset_x) >> 3);
       const int checker = (checker_x ^ checker_y) & 1 ? 0x989898 : 0x686868;
 
-      *p = 0xff000000 | convertFormat(Blend::trans(checker, c, 255 - a),
-                                      bgr_order);
+      *p = 0xff000000 | Blend::trans(checker, c, 255 - a);
       p++;
       xinc += bx;
     }
