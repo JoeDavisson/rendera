@@ -172,12 +172,24 @@ inline int blendFast(const int c1, const int c2, const int t)
 }
 
 // get an FLTK color
-inline int getFltkColor(const int c)
+inline int getFltkColor(const Fl_Color c)
 {
-  return (Fl::get_color(c) >> 8) | 0xff000000;
+  unsigned char r, g, b;
+
+  if (c < 256)
+  {
+    Fl::get_color(c, r, g, b);
+  }
+    else
+  {
+    r = (c >> 24) & 0xff;
+    g = (c >> 16) & 0xff;
+    b = (c >> 8)  & 0xff;
+  }
+    
+  return (b << 16) | (g << 8) | r | 0xff000000;
 }
 
-//
 inline unsigned int makeFltkColor(const int r, const int g, const int b)
 {
   return (r << 24) | (g << 16) | (b << 8);

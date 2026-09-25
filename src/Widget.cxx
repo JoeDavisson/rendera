@@ -29,12 +29,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Blend.H"
 #include "File.H"
 #include "Gui.H"
-#include "Progress.H"
+#include "Inline.H"
 #include "Project.H"
 #include "View.H"
 #include "Widget.H"
-
-#include "FX/Colorize.H"
 
 // load a PNG image from a file
 Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
@@ -194,10 +192,45 @@ int Widget::handle(int event)
 
 void Widget::colorize(int c)
 {
-  Progress::active = false;
-  if (bitmap) { Colorize::apply(bitmap, c); }
-  if (bitmap2) { Colorize::apply(bitmap2, c); }
-  Progress::active = true;
+  Blend::set(Blend::COLORIZE);
+  bitmap->rectfill(0, 0, bitmap->w, bitmap->h, c, 0);
+  bitmap2->rectfill(0, 0, bitmap2->w, bitmap2->h, c, 0);
+  Blend::set(Blend::TRANS);
+}
+
+void Widget::colorize(int c, int incr)
+{
+  int r = getr(c);
+  int g = getg(c);
+  int b = getb(c);
+  int h, s, v;
+
+  Blend::rgbToHsv(r, g, b, &h, &s, &v);
+  Blend::set(Blend::COLORIZE);
+
+  for (int y = 0; y < bitmap->h; y += stepy)
+  {
+    for (int x = 0; x < bitmap->w; x += stepx)
+    {
+      Blend::hsvToRgb(h, s, v, &r, &g, &b);
+      c = makeRgb(r, g, b);
+
+      if (bitmap)
+      {
+        bitmap->rectfill(x, y, x + stepx - 1, y + stepy - 1, c, 0);
+      }
+
+      if (bitmap2)
+      {
+        bitmap2->rectfill(x, y, x + stepx - 1, y + stepy - 1, c, 0);
+      }
+
+      h += incr;
+      h %= 1536;
+    }
+  }
+
+  Blend::set(Blend::TRANS);
 }
 
 void Widget::draw()

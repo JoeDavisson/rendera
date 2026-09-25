@@ -40,6 +40,7 @@ public:
 
   int handle(int);
   void colorize(int);
+  void colorize(int, int);
 
   int var;
   int stepx;

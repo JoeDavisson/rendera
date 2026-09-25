@@ -67,7 +67,7 @@ ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
   tool = new Widget(this, 8, pos, 48, 7 * 48,
                     "Tools", images_tools_png, 48, 48, 0);
   tool->callback(cb_change, (void *)this);
-  tool->colorize(0x005555);
+  tool->colorize(0x000033, 1200);
 
   pos += 7 * 48 + Gui::SPACING;
 
@@ -78,14 +78,14 @@ ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
                            "Clone (Ctrl+Click to set target)",
                            images_clone_png, 0);
   clone->callback(cb_cloneEnable, (void *)this);
-  clone->colorize(0x550055);
+  clone->colorize(0x003333);
 
   pos += 48 + 8;
 
   origin = new ToggleButton(this, 8, pos, 48, 48,
                             "Start From Center (Alt)", images_origin_png, 0);
   origin->callback(cb_originEnable, (void *)this);
-  origin->colorize(0x000055);
+  origin->colorize(0x003333);
 
   pos += 48 + 8;
 
@@ -93,7 +93,7 @@ ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
                               "Lock Proportions (Shift)",
                               images_constrain_png, 0);
   constrain->callback(cb_constrainEnable, (void *)this);
-  constrain->colorize(0x002255);
+  constrain->colorize(0x003333);
 
   resizable(0);
   end();

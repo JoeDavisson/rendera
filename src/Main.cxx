@@ -66,8 +66,8 @@ struct option long_options[] =
 void setDarkTheme()
 {
   int r, g, b;
-  int h = 1000;
-  int s = 16;
+  int h = 960;
+  int s = 96;
 
   Project::theme = Project::THEME_DARK;
 
@@ -86,13 +86,13 @@ void setDarkTheme()
   Blend::hsvToRgb(h, s, 48, &r, &g, &b);
   Fl::set_color(FL_BACKGROUND2_COLOR, makeFltkColor(r, g, b));
 
-  s /= 2;
-
-  Blend::hsvToRgb(h, s, 208, &r, &g, &b);
-  Fl::set_color(FL_FOREGROUND_COLOR, makeFltkColor(r, g, b));
-
   Blend::hsvToRgb(h, s, 56, &r, &g, &b);
   Fl::set_color(FL_INACTIVE_COLOR, makeFltkColor(r, g, b));
+
+  s /= 2;
+
+  Blend::hsvToRgb(h, 0, 208, &r, &g, &b);
+  Fl::set_color(FL_FOREGROUND_COLOR, makeFltkColor(r, g, b));
 
   Blend::hsvToRgb(h, s, 208, &r, &g, &b);
   Fl::set_color(FL_SELECTION_COLOR, makeFltkColor(r, g, b));

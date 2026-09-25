@@ -109,13 +109,14 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
                           "Brush Size", images_size_png, 10, 32,
                           0);
   paint_size->callback(cb_size, (void *)this);
-  paint_size->colorize(0x007700);
+  paint_size->colorize(0x000033);
   pos += 32 + 8;
 
   paint_shape = new Widget(this, 8, pos, 160, 40,
                            "Shape Adjust", images_shape_png, 10, 40,
                            0);
   paint_shape->callback(cb_shape, (void *)this);
+  paint_shape->colorize(0x000033);
   pos += 40 + Gui::SPACING;
 
   new Separator(this, 0, pos, Gui::OPTIONS_WIDTH, Separator::HORIZONTAL, "");
@@ -125,6 +126,7 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
                             "Brushstroke Type", images_stroke_png, 40, 40,
                             0);
   paint_stroke->callback(cb_stroke, (void *)this);
+  paint_stroke->colorize(0x330000);
 
   pos += 80 + Gui::SPACING;
 
