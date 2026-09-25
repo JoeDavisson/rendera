@@ -58,8 +58,7 @@ namespace
   inline void gridSetpixel(const Bitmap *bmp, const int x, const int y,
                            const int c, const int t)
   {
-    if (x < 0 || y < 0 || x >= bmp->w || y >= bmp->h)
-      return;
+    if (x < 0 || y < 0 || x >= bmp->w || y >= bmp->h) { return; }
 
     int *p = bmp->row[y] + x;
     *p = Blend::trans(*p, c, t);
@@ -71,14 +70,10 @@ namespace
     if (y < 0 || y >= bmp->h)
       return;
 
-    if (x1 < 0)
-      x1 = 0;
-    if (x1 > bmp->w - 1)
-      x1 = bmp->w - 1;
-    if (x2 < 0)
-      x2 = 0;
-    if (x2 > bmp->w - 1)
-      x2 = bmp->w - 1;
+    if (x1 < 0) { x1 = 0; }
+    if (x1 > bmp->w - 1) { x1 = bmp->w - 1; }
+    if (x2 < 0) { x2 = 0; }
+    if (x2 > bmp->w - 1) { x2 = bmp->w - 1; }
 
     int *p = bmp->row[y] + x1;
 
@@ -112,7 +107,9 @@ namespace
     std::vector<char> fn(length + 1, 0);
 
     for (int i = 0; i < length + 1; i++)
+    {
       fn.data()[i] = Fl::event_text()[i];
+    }
 
     // convert to utf-8 (e.g. %20 becomes space)
     File::decodeURI(fn.data(), length);
@@ -121,8 +118,9 @@ namespace
 
     // separate individual file paths in the list
     for (int i = 0; i < length; i++)
-      if (fn[i] == '\n')
-        fn[i] = '\0';
+    {
+      if (fn[i] == '\n') { fn[i] = '\0'; }
+    }
 
     // try to load all the files in list
     for (int i = 0; i < length; )
@@ -131,7 +129,9 @@ namespace
       {
         // some systems use the "file://" resource identifier
         if (strncasecmp(fn.data() + index, "file://", 7) == 0)
+        {
           index += 7;
+        }
         
         File::loadFile(fn.data() + index);
 
@@ -186,8 +186,7 @@ View::~View()
 
 int View::handle(int event)
 {
-  if (rendering == true)
-    return 0;
+  if (rendering == true) { return 0; }
 
   float scale = getScale();
 
@@ -222,26 +221,19 @@ int View::handle(int event)
         if ((Project::stroke->type != Stroke::FREEHAND)
           && (Project::stroke->type != Stroke::REGION))
         {
-          if (imgx % gridx < gridx / 2)
-            imgx -= imgx % gridx;
-          else
-            imgx += gridx - imgx % gridx - 1;
+          if (imgx % gridx < gridx / 2) { imgx -= imgx % gridx; }
+          else { imgx += gridx - imgx % gridx - 1; }
 
-          if (imgy % gridy < gridy / 2)
-            imgy -= imgy % gridy;
-          else
-            imgy += gridy - imgy % gridy - 1;
+          if (imgy % gridy < gridy / 2) { imgy -= imgy % gridy; }
+          else { imgy += gridy - imgy % gridy - 1; }
         }
       }
       break;
     case Tool::SELECT:
       if (gridsnap)
       {
-        if (imgx % gridx < gridx / 2)
-          imgx -= imgx % gridx;
-
-        if (imgy % gridy < gridy / 2)
-          imgy -= imgy % gridy;
+        if (imgx % gridx < gridx / 2) { imgx -= imgx % gridx; }
+        if (imgy % gridy < gridy / 2) { imgy -= imgy % gridy; }
       }
       break;
     default:
@@ -294,8 +286,7 @@ int View::handle(int event)
     case FL_PUSH:
     {
       // gives viewport focus when clicked on
-      if (Fl::focus() != this)
-        Fl::focus(this);
+      if (Fl::focus() != this) { Fl::focus(this); }
 
       switch (button)
       {
@@ -344,9 +335,7 @@ int View::handle(int event)
     {
       // gives viewport focus when clicked on
       if (Fl::focus() != this) { Fl::focus(this); }
-
-      if (mouse_timer_ready == false)
-        return 1; 
+      if (mouse_timer_ready == false) { return 1; }
   
       mouse_timer_ready = false;
 
@@ -380,22 +369,17 @@ int View::handle(int event)
     case FL_RELEASE:
     {
       Project::tool->release(this);
-
       panning = false;
 
-      if (Project::tool->isActive())
-        Project::tool->redraw(this);
-
+      if (Project::tool->isActive()) { Project::tool->redraw(this); }
       return 1;
     }
 
     case FL_MOVE:
     {
-      if (mouse_timer_ready == false)
-        return 1; 
-  
-      mouse_timer_ready = false;
+      if (mouse_timer_ready == false) { return 1; }
 
+      mouse_timer_ready = false;
       Project::tool->move(this);
 
       // update coordinates display
@@ -418,12 +402,10 @@ int View::handle(int event)
 
     case FL_MOUSEWHEEL:
     {
-      if (mouse_in_viewport == false)
-        return 1;
+      if (mouse_in_viewport == false) { return 1; }
 
       // ignore wheel during image navigation
-      if (panning)
-        break;
+      if (panning) { break; }
 
       if (Fl::event_dy() >= 0)
       {
@@ -527,14 +509,19 @@ void View::drawMain(bool refresh)
   int offx = 0;
   int offy = 0;
 
-  if (ox < 0)
-    offx = -ox;
-
-  if (oy < 0)
-    offy = -oy;
+  if (ox < 0) { offx = -ox; }
+  if (oy < 0) { offy = -oy; }
 
   Bitmap *bmp = Project::bmp;
 
+  bmp->pointStretch(backbuf,
+                    ox, oy,
+                    sw - offx, sh - offy,
+                    offx * zoom, offy * zoom,
+                    dw - offx * zoom, dh - offy * zoom,
+                    bgr_order);
+
+/*
   if (zoom >= 1.0)
   {
     bmp->pointStretch(backbuf,
@@ -553,9 +540,9 @@ void View::drawMain(bool refresh)
                          dw - offx * zoom, dh - offy * zoom,
                          bgr_order);
   }
+*/
 
-  if (grid)
-    drawGrid();
+  if (grid) { drawGrid(); }
 
   if (refresh)
   {
@@ -569,11 +556,8 @@ void View::drawGrid()
   int x1, y1, x2, y2, t, i;
   int offx = 0, offy = 0;
 
-  if (zoom < 1)
-    return;
-
-  if (zoom < 2 && (gridx == 1 || gridy == 1))
-    return;
+  if (zoom < 1) { return; }
+  if (zoom < 2 && (gridx == 1 || gridy == 1)) { return; }
 
   float scale = getScale();
 
@@ -582,8 +566,7 @@ void View::drawGrid()
 
   t = 216 - zoom;
 
-  if (t < 96)
-    t = 96;
+  if (t < 96) { t = 96; }
 
   int zx = zoom * gridx;
   int zy = zoom * gridy;
@@ -766,46 +749,36 @@ void View::scroll(int dir, int amount)
     {
       x = Project::bmp->w - w() / zoom;
 
-      if (x < 0)
-        return;
+      if (x < 0) { return; }
 
       ox += amount / zoom;
 
-      if (ox > x)
-        ox = x;
-
+      if (ox > x) { ox = x; }
       break;
     }
     case 1:
     {
       ox -= amount / zoom;
 
-      if (ox < 0)
-        ox = 0;
-
+      if (ox < 0) { ox = 0; }
       break;
     }
     case 2:
     {
       y = Project::bmp->h - h() / zoom;
 
-      if (y < 0)
-        return;
+      if (y < 0) { return; }
 
       oy += amount / zoom;
 
-      if (oy > y)
-        oy = y;
-
+      if (oy > y) { oy = y; }
       break;
     }
     case 3:
     {
       oy -= amount / zoom;
 
-      if (oy < 0)
-        oy = 0;
-
+      if (oy < 0) { oy = 0; }
       break;
     }
   }
@@ -817,13 +790,24 @@ void View::scroll(int dir, int amount)
 void View::clipOrigin()
 {
   if (ox < (Project::bmp->cl + 1) - w() / zoom)
+  {
     ox = (Project::bmp->cl + 1) - w() / zoom;
+  }
+
   if (oy < (Project::bmp->ct + 1) - h() / zoom)
+  {
     oy = (Project::bmp->ct + 1) - h() / zoom;
+  }
+
   if (ox > Project::bmp->cr)
+  {
     ox = Project::bmp->cr;
+  }
+
   if (oy > Project::bmp->cb)
+  {
     oy = Project::bmp->cb;
+  }
 }
 
 void View::saveCoords()
@@ -863,20 +847,11 @@ void View::draw()
     int blitw = Project::stroke->blitw / scale;
     int blith = Project::stroke->blith / scale;
 
-    if (blitx < 0)
-      blitx = 0;
-
-    if (blity < 0)
-      blity = 0;
-
-    if (blitx + blitw > w() - 1)
-      blitw = w() - 1 - blitx;
-
-    if (blity + blith > h() - 1)
-      blith = h() - 1 - blity;
-
-    if (blitw < 1 || blith < 1)
-      return;
+    if (blitx < 0) { blitx = 0; }
+    if (blity < 0) { blity = 0; }
+    if (blitx + blitw > w() - 1) { blitw = w() - 1 - blitx; }
+    if (blity + blith > h() - 1) { blith = h() - 1 - blity; }
+    if (blitw < 1 || blith < 1) { return; }
 
     const int x1 = blitx * ax;
     const int y1 = blity * ay;
@@ -894,8 +869,7 @@ void View::draw()
                x() + min_x, y() + min_y,
                new_w, new_h);
 
-    if (Clone::active)
-      drawCloneCursor();
+    if (Clone::active) { drawCloneCursor(); }
 
     restore_x1 = x1;
     restore_y1 = y1;
@@ -906,8 +880,7 @@ void View::draw()
   {
     updateView(0, 0, x(), y(), w(), h());
 
-    if (Clone::active)
-      drawCloneCursor();
+    if (Clone::active) { drawCloneCursor(); }
 
     if (dnd)
     {
