@@ -66,32 +66,36 @@ struct option long_options[] =
 void setDarkTheme()
 {
   int r, g, b;
-  int h = 0;
-  int s = 0;
+  int h = 1000;
+  int s = 16;
+
+  Project::theme = Project::THEME_DARK;
 
   // greyscale ramps (colors 32 - 55) used in the GUI
   for (int i = 0; i < 24; i++)
   {
     int v = i * 6;
-    Fl::set_color(32 + i, fl_rgb_color(v, v, v));
+
+    Blend::hsvToRgb(h, s, v, &r, &g, &b);
+    Fl::set_color(32 + i, makeFltkColor(r, g, b));
   }
 
-  Project::theme = Project::THEME_DARK;
-
   Blend::hsvToRgb(h, s, 64, &r, &g, &b);
-  Fl::set_color(FL_BACKGROUND_COLOR, fl_rgb_color(r, g, b));
+  Fl::set_color(FL_BACKGROUND_COLOR, makeFltkColor(r, g, b));
 
   Blend::hsvToRgb(h, s, 48, &r, &g, &b);
-  Fl::set_color(FL_BACKGROUND2_COLOR, fl_rgb_color(r, g, b));
+  Fl::set_color(FL_BACKGROUND2_COLOR, makeFltkColor(r, g, b));
+
+  s /= 2;
 
   Blend::hsvToRgb(h, s, 208, &r, &g, &b);
-  Fl::set_color(FL_FOREGROUND_COLOR, fl_rgb_color(r, g, b));
+  Fl::set_color(FL_FOREGROUND_COLOR, makeFltkColor(r, g, b));
 
   Blend::hsvToRgb(h, s, 56, &r, &g, &b);
-  Fl::set_color(FL_INACTIVE_COLOR, fl_rgb_color(r, g, b));
+  Fl::set_color(FL_INACTIVE_COLOR, makeFltkColor(r, g, b));
 
   Blend::hsvToRgb(h, s, 208, &r, &g, &b);
-  Fl::set_color(FL_SELECTION_COLOR, fl_rgb_color(r, g, b));
+  Fl::set_color(FL_SELECTION_COLOR, makeFltkColor(r, g, b));
 
   Blend::hsvToRgb(0, 0, 128, &r, &g, &b);
   Project::theme_highlight_color = makeRgb(r, g, b);

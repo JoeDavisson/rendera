@@ -67,7 +67,7 @@ ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
   tool = new Widget(this, 8, pos, 48, 7 * 48,
                     "Tools", images_tools_png, 48, 48, 0);
   tool->callback(cb_change, (void *)this);
-  tool->colorize(0x000077);
+  tool->colorize(0x0000aa);
 
   pos += 7 * 48 + Gui::SPACING;
 

@@ -109,6 +109,7 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
                           "Brush Size", images_size_png, 10, 32,
                           0);
   paint_size->callback(cb_size, (void *)this);
+  paint_size->colorize(0x007700);
   pos += 32 + 8;
 
   paint_shape = new Widget(this, 8, pos, 160, 40,

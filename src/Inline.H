@@ -177,6 +177,12 @@ inline int getFltkColor(const int c)
   return (Fl::get_color(c) >> 8) | 0xff000000;
 }
 
+//
+inline unsigned int makeFltkColor(const int r, const int g, const int b)
+{
+  return (r << 24) | (g << 16) | (b << 8);
+}
+
 inline int clamp(const int value, const int ceiling)
 {
   return std::max(0, std::min(value, ceiling));
