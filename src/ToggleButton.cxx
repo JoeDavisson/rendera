@@ -38,8 +38,7 @@ ToggleButton::ToggleButton(Fl_Group *g, int x, int y, int w, int h,
 {
   var = 0;
 
-  if (cb)
-    callback(cb, &var);
+  if (cb) { callback(cb, &var); }
 
   group = g;
 
@@ -50,7 +49,8 @@ ToggleButton::ToggleButton(Fl_Group *g, int x, int y, int w, int h,
     exit(1);
   }
 
-  image = new Fl_RGB_Image((unsigned char *)bitmap->data, bitmap->w, bitmap->h, 4, 0);
+  image = new Fl_RGB_Image((unsigned char *)bitmap->data,
+                           bitmap->w, bitmap->h, 4, 0);
 
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);
@@ -87,10 +87,8 @@ void ToggleButton::draw()
 
   fl_push_clip(x(), y(), w(), h());
 
-  if (var)
-    image->draw(x() + 1, y() + 1);
-  else
-    image->draw(x(), y());
+  if (var) { image->draw(x() + 1, y() + 1); }
+  else { image->draw(x(), y()); }
 
   image->uncache();
   fl_pop_clip();

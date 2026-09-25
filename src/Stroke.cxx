@@ -73,17 +73,25 @@ Stroke::~Stroke()
 bool Stroke::originEnabled()
 {
   if (origin || Fl::get_key(FL_Alt_L) || Fl::get_key(FL_Alt_R))
+  {
     return true;
-  else
+  }
+    else
+  {
     return false;
+  }
 }
 
 bool Stroke::constrainEnabled()
 {
   if (constrain || Fl::get_key(FL_Shift_L) || Fl::get_key(FL_Shift_R))
+  {
     return true; 
-  else
+  }
+    else
+  {
     return false;
+  }
 }
 
 // keeps dimensions equal, for drawing circles/squares
@@ -135,17 +143,10 @@ void Stroke::keepSquare(int x1, int y1, int *x2, int *y2)
 
 void Stroke::clip()
 {
-  if (x1 < 0)
-    x1 = 0;
-
-  if (y1 < 0)
-    y1 = 0;
-
-  if (x2 > Project::bmp->w - 1)
-    x2 = Project::bmp->w - 1;
-
-  if (y2 > Project::bmp->h - 1)
-    y2 = Project::bmp->h - 1;
+  if (x1 < 0) { x1 = 0; }
+  if (y1 < 0) { y1 = 0; }
+  if (x2 > Project::bmp->w - 1) { x2 = Project::bmp->w - 1; }
+  if (y2 > Project::bmp->h - 1) { y2 = Project::bmp->h - 1; }
 }
 
 void Stroke::sizeLinear(int bx, int by, int x, int y)
@@ -192,11 +193,8 @@ void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
   x2 *= zoom;
   y2 *= zoom;
 
-  if (x2 < x1)
-    std::swap(x1, x2);
-
-  if (y2 < y1)
-    std::swap(y1, y2);
+  if (x2 < x1) { std::swap(x1, x2); }
+  if (y2 < y1) { std::swap(y1, y2); }
 
   x1 -= r;
   y1 -= r;
@@ -208,20 +206,14 @@ void Stroke::makeBlitRect(int x1, int y1, int x2, int y2,
   blitw = x2 - x1;
   blith = y2 - y1;
 
-  if (blitw < 1)
-    blitw = 1;
-
-  if (blith < 1)
-    blith = 1;
+  if (blitw < 1) { blitw = 1; }
+  if (blith < 1) { blith = 1; }
 }
 
 void Stroke::size(int x1, int y1, int x2, int y2)
 {
-  if (x1 > x2)
-    std::swap(x1, x2);
-
-  if (y1 > y2)
-    std::swap(y1, y2);
+  if (x1 > x2) { std::swap(x1, x2); }
+  if (y1 > y2) { std::swap(y1, y2); }
 
   this->x1 = x1;
   this->y1 = y1;
@@ -235,7 +227,9 @@ void Stroke::drawBrush(int x, int y, int c)
   Map *map = Project::map;
 
   for (int i = 0; i < brush->solid_count; i++)
+  {
     map->setpixel(x + brush->solidx[i], y + brush->solidy[i], c);
+  }
 }
 
 void Stroke::drawBrushLine(int x1, int y1, int x2, int y2, int c)
@@ -375,17 +369,10 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
   int r = brush->size / 2;
   int w = 0, h = 0;
 
-  if (x - r - 1 < x1)
-    x1 = x - r - 1;
-
-  if (y - r - 1 < y1)
-    y1 = y - r - 1;
-
-  if (x + r + 1 > x2)
-    x2 = x + r + 1;
-
-  if (y + r + 1 > y2)
-    y2 = y + r + 1;
+  if (x - r - 1 < x1) { x1 = x - r - 1; }
+  if (y - r - 1 < y1) { y1 = y - r - 1; }
+  if (x + r + 1 > x2) { x2 = x + r + 1; }
+  if (y + r + 1 > y2) { y2 = y + r + 1; }
 
   switch (type)
   {
@@ -395,14 +382,12 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       makeBlitRect(x, y, lastx, lasty, ox, oy, brush->size, zoom);
 
       // without this slowly-drawn strokes don't look as nice
-      if (brush->aa && ((x == lastx) ^ (y == lasty)))
-        return;
+      if (brush->aa && ((x == lastx) ^ (y == lasty))) { return; }
 
       poly_x[poly_count] = x;
       poly_y[poly_count] = y;
       poly_count++;
       poly_count &= 0xffff;
-
       break;
     }
 
@@ -412,8 +397,7 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       makeBlitRect(x, y, lastx, lasty, ox, oy, 1, zoom);
 
       // without this slowly-drawn strokes don't look as nice
-      if (brush->aa && ((x == lastx) ^ (y == lasty)))
-        return;
+      if (brush->aa && ((x == lastx) ^ (y == lasty))) { return; }
 
       poly_x[poly_count] = x;
       poly_y[poly_count] = y;
@@ -421,7 +405,6 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       poly_count &= 0xffff;
       oldx = x;
       oldy = y;
-
       break;
     }
 
@@ -438,7 +421,6 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         h = (y - beginy);
 
         drawBrushLine(beginx - w, beginy - h, beginx + w, beginy + h, 255);
-
         sizeLinear(beginx - w, beginy - h, x + w, y + h);
       }
         else
@@ -448,7 +430,6 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       }
 
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
-
       break;
     }
 
@@ -462,14 +443,15 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       poly_count &= 0xffff;
       oldx = x;
       oldy = y;
-
       break;
     }
 
     case RECT:
     {
       if (constrainEnabled() == true)
+      {
         keepSquare(beginx, beginy, &x, &y);
+      }
 
       if (originEnabled() == true)
       {
@@ -482,7 +464,6 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
         h = (y - beginy);
 
         drawBrushRect(beginx - w, beginy - h, beginx + w, beginy + h, 255);
-
         sizeLinear(beginx - w, beginy - h, x + w, y + h);
       }
         else
@@ -494,14 +475,15 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       }
 
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
-
       break;
     }
 
     case FILLED_RECT:
     {
       if (constrainEnabled() == true)
+      {
         keepSquare(beginx, beginy, &x, &y);
+      }
 
       if (originEnabled() == true)
       {
@@ -526,14 +508,15 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       }
 
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
-
       break;
     }
 
     case OVAL:
     {
       if (constrainEnabled() == true)
+      {
         keepSquare(beginx, beginy, &x, &y);
+      }
 
       if (originEnabled() == true)
       {
@@ -558,14 +541,15 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       }
 
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
-
       break;
     }
 
     case FILLED_OVAL:
     {
       if (constrainEnabled() == true)
+      {
         keepSquare(beginx, beginy, &x, &y);
+      }
 
       if (originEnabled() == true)
       {
@@ -590,7 +574,6 @@ void Stroke::draw(int x, int y, int ox, int oy, float zoom)
       }
 
       makeBlitRect(x1, y1, x2, y2, ox, oy, brush->size, zoom);
-
       break;
     }
 
@@ -628,7 +611,9 @@ void Stroke::end(int x, int y)
         if (poly_count > 2)
         {
           if (brush->size < 5)
+          {
             map->thick_aa = 1;
+          }
 
           for (int i = 1; i < poly_count; i++)
           {
@@ -659,7 +644,9 @@ void Stroke::end(int x, int y)
       case LINE:
       {
         if (brush->size == 1)
+        {
           map->thick_aa = 1;
+        }
 
         if (originEnabled() == true)
         {
@@ -685,7 +672,9 @@ void Stroke::end(int x, int y)
         poly_count &= 0xffff;
 
         if (poly_count > 3)
+        {
           map->polyfillAA(poly_x, poly_y, poly_count, y1, y2, 255);
+        }
 
         break;
       }
@@ -693,10 +682,14 @@ void Stroke::end(int x, int y)
       case RECT:
       {
         if (brush->size == 1)
+        {
           map->thick_aa = 1;
+        }
 
         if (constrainEnabled() == true)
+        {
           keepSquare(beginx, beginy, &x, &y);
+        }
 
         if (originEnabled() == true)
         {
@@ -716,7 +709,9 @@ void Stroke::end(int x, int y)
       case FILLED_RECT:
       {
         if (constrainEnabled() == true)
+        {
           keepSquare(beginx, beginy, &x, &y);
+        }
 
         if (originEnabled() == true)
         {
@@ -736,10 +731,14 @@ void Stroke::end(int x, int y)
       case OVAL:
       {
         if (brush->size == 1)
+        {
           map->thick_aa = 1;
+        }
 
         if (constrainEnabled() == true)
+        {
           keepSquare(beginx, beginy, &x, &y);
+        }
 
         if (originEnabled() == true)
         {
@@ -759,7 +758,9 @@ void Stroke::end(int x, int y)
       case FILLED_OVAL:
       {
         if (constrainEnabled() == true)
+        {
           keepSquare(beginx, beginy, &x, &y);
+        }
 
         if (originEnabled() == true)
         {
@@ -819,17 +820,10 @@ void Stroke::polyLine(int x, int y, int ox, int oy, float zoom)
 {
   Map *map = Project::map;
 
-  if (x - 1 < x1)
-    x1 = x - 1;
-
-  if (y - 1 < y1)
-    y1 = y - 1;
-
-  if (x + 1 > x2)
-    x2 = x + 1;
-
-  if (y + 1 > y2)
-    y2 = y + 1;
+  if (x - 1 < x1) { x1 = x - 1; }
+  if (y - 1 < y1) { y1 = y - 1; }
+  if (x + 1 > x2) { x2 = x + 1; }
+  if (y + 1 > y2) { y2 = y + 1; }
 
   map->line(oldx, oldy, lastx, lasty, 0);
   map->line(oldx, oldy, x, y, 255);
@@ -880,29 +874,15 @@ void Stroke::previewPaint(View *view)
   // clipping
   clip();
 
-  if (xx1 < 0)
-    xx1 = 0;
+  if (xx1 < 0) { xx1 = 0; }
+  if (yy1 < 0) { yy1 = 0; }
+  if (xx1 >= backbuf->w - 1) { xx1 = backbuf->w - 1; }
+  if (yy1 >= backbuf->h - 1) { yy1 = backbuf->h - 1; }
 
-  if (yy1 < 0)
-    yy1 = 0;
-
-  if (xx1 >= backbuf->w - 1)
-    xx1 = backbuf->w - 1;
-
-  if (yy1 >= backbuf->h - 1)
-    yy1 = backbuf->h - 1;
-
-  if (xx2 < 0)
-    xx2 = 0;
-
-  if (yy2 < 0)
-    yy2 = 0;
-
-  if (xx2 >= backbuf->w - 1)
-    xx2 = backbuf->w - 1;
-
-  if (yy2 >= backbuf->h - 1)
-    yy2 = backbuf->h - 1;
+  if (xx2 < 0) { xx2 = 0; }
+  if (yy2 < 0) { yy2 = 0; }
+  if (xx2 >= backbuf->w - 1) { xx2 = backbuf->w - 1; }
+  if (yy2 >= backbuf->h - 1) { yy2 = backbuf->h - 1; }
 
   int yinc = (yy1 + oy) * zr;
 
@@ -918,7 +898,9 @@ void Stroke::previewPaint(View *view)
       const int xm = xinc >> 16;
 
       if (map->getpixel(xm, ym))
+      {
         *p = blendFast(*p, color, trans);
+      }
 
       p++;
       xinc += zr;
@@ -956,34 +938,24 @@ void Stroke::previewSelection(View *view)
 
   clip();
 
-  if (xx1 < 0)
-    xx1 = 0;
+  if (xx1 < 0) { xx1 = 0; }
+  if (yy1 < 0) { yy1 = 0; }
+  if (xx1 >= backbuf->w - 1) { xx1 = backbuf->w - 1; }
+  if (yy1 >= backbuf->h - 1) { yy1 = backbuf->h - 1; }
 
-  if (yy1 < 0)
-    yy1 = 0;
-
-  if (xx1 >= backbuf->w - 1)
-    xx1 = backbuf->w - 1;
-
-  if (yy1 >= backbuf->h - 1)
-    yy1 = backbuf->h - 1;
-
-  if (xx2 < 0)
-    xx2 = 0;
-
-  if (yy2 < 0)
-    yy2 = 0;
-
-  if (xx2 >= backbuf->w - 1)
-    xx2 = backbuf->w - 1;
-
-  if (yy2 >= backbuf->h - 1)
-    yy2 = backbuf->h - 1;
+  if (xx2 < 0) { xx2 = 0; }
+  if (yy2 < 0) { yy2 = 0; }
+  if (xx2 >= backbuf->w - 1) { xx2 = backbuf->w - 1; }
+  if (yy2 >= backbuf->h - 1) { yy2 = backbuf->h - 1; }
 
   if (Project::brush->blend != Blend::SMOOTH)
+  {
     Blend::set(Project::brush->blend);
-  else
+  }
+    else
+  {
     Blend::set(Blend::TRANS);
+  }
 
   int yinc = (yy1 - yy3) * zr;
  
@@ -999,9 +971,13 @@ void Stroke::previewSelection(View *view)
       const int c = convertFormat(select_bmp->getpixel(xm, ym), bgr_order);
 
       if (use_alpha)
+      {
         *p = Blend::current(*p, c, scaleVal(255 - geta(c), trans));
-      else
+      }
+        else
+      {
         *p = Blend::current(*p, c, trans);
+      }
 
       p++;
       xinc += zr;

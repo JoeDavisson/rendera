@@ -39,8 +39,7 @@ void Undo::printStacks()
 
     printf("%d: x2 = %d, y2 = %d, w2 = %d, h2 = %d ", i, x2, y2, w2, h2);
 
-    if (i == undo_current)
-      printf("<");
+    if (i == undo_current) { printf("<"); }
 
     printf("\n");
   }
@@ -57,8 +56,7 @@ void Undo::printStacks()
 
     printf("%d: x2 = %d, y2 = %d, w2 = %d, h2 = %d ", i, x2, y2, w2, h2);
 
-    if (i == redo_current)
-      printf("<");
+    if (i == redo_current) { printf("<"); }
 
     printf("\n");
   }
@@ -112,11 +110,12 @@ void Undo::doPush(const int x, const int y, const int w, const int h,
   if (undo_current < 0)
   {
     undo_current = 0;
-
     Bitmap *temp_bmp = undo_stack[levels - 1];
 
     for (int i = levels - 1; i > 0; i--)
+    {
       undo_stack[i] = undo_stack[i - 1];
+    }
 
     undo_stack[0] = temp_bmp;
   }
@@ -128,10 +127,9 @@ void Undo::doPush(const int x, const int y, const int w, const int h,
     delete undo_stack[undo_current];
     undo_stack[undo_current] = new Bitmap(8, 8);
   }
-   else
+    else
   {
-    if (Project::enoughMemory(w, h) == false)
-      return;
+    if (Project::enoughMemory(w, h) == false) { return; }
 
     delete undo_stack[undo_current];
     undo_stack[undo_current] = new Bitmap(w, h);
@@ -185,8 +183,7 @@ void Undo::push(const int x, const int y, const int w, const int h,
 
 void Undo::pop()
 {
-  if (undo_current >= levels - 1)
-    return;
+  if (undo_current >= levels - 1) { return; }
 
   int x = undo_stack[undo_current + 1]->x;
   int y = undo_stack[undo_current + 1]->y;
@@ -259,7 +256,9 @@ void Undo::pop()
   undo_mode = undo_stack[undo_current]->undo_mode;
 
   if(undo_mode == Undo::FULL)
+  {
     Project::replaceImage(w, h);
+  }
 
   undo_stack[undo_current]->blit(Project::bmp, 0, 0, x, y, w, h);
   Gui::getView()->drawMain(true);
@@ -273,11 +272,12 @@ void Undo::pushRedo(const int x, const int y, const int w, const int h,
   if (redo_current < 0)
   {
     redo_current = 0;
-
     Bitmap *temp_bmp = redo_stack[levels - 1];
 
     for (int i = levels - 1; i > 0; i--)
+    {
       redo_stack[i] = redo_stack[i - 1];
+    }
 
     redo_stack[0] = temp_bmp;
   }
@@ -289,10 +289,9 @@ void Undo::pushRedo(const int x, const int y, const int w, const int h,
     delete redo_stack[redo_current];
     redo_stack[redo_current] = new Bitmap(8, 8);
   }
-   else
+    else
   {
-    if (Project::enoughMemory(w, h) == false)
-      return;
+    if (Project::enoughMemory(w, h) == false) { return; }
 
     delete redo_stack[redo_current];
     redo_stack[redo_current] = new Bitmap(w, h);
@@ -308,8 +307,7 @@ void Undo::pushRedo(const int x, const int y, const int w, const int h,
 
 void Undo::popRedo()
 {
-  if (redo_current >= levels - 1)
-    return;
+  if (redo_current >= levels - 1) { return; }
 
   int x = redo_stack[redo_current + 1]->x;
   int y = redo_stack[redo_current + 1]->y;
@@ -362,7 +360,7 @@ void Undo::popRedo()
   {
     doPush(0, 0, Project::bmp->w, Project::bmp->h, 1);
   }
-   else
+    else
   {
     doPush(x, y, w, h, undo_mode);
   }
@@ -379,13 +377,15 @@ void Undo::popRedo()
   y = redo_stack[redo_current]->y;
   w = redo_stack[redo_current]->w;
   h = redo_stack[redo_current]->h;
+
   undo_mode = redo_stack[redo_current]->undo_mode;
 
   if (undo_mode == Undo::FULL)
+  {
     Project::replaceImage(w, h);
+  }
 
   redo_stack[redo_current]->blit(Project::bmp, 0, 0, x, y, w, h);
-
   Gui::getView()->drawMain(true);
 
   // printStacks();
