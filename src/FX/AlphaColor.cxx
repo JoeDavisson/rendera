@@ -38,8 +38,7 @@ void AlphaColor::apply(Bitmap *bmp, int color)
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   Progress::hide();

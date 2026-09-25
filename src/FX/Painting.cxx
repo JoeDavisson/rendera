@@ -82,8 +82,7 @@ void Painting::apply()
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   Progress::hide();
@@ -113,7 +112,8 @@ void Painting::init()
 
   Items::dialog = new DialogWindow(400, 0, "Painting");
 
-  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32, "Amount (1-10)", 0, 1, 10);
+  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32,
+                               "Amount (1-10)", 0, 1, 10);
   y1 += 32 + 16;
   Items::amount->value(3);
   Items::amount->center();

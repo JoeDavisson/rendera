@@ -48,12 +48,9 @@ namespace
 
   int range(const int value, const int floor, const int ceiling)
   {
-    if(value < floor)
-      return floor;
-    else if(value > ceiling)
-      return ceiling;
-    else
-      return value;
+    if(value < floor) { return floor; }
+    else if(value > ceiling) { return ceiling; }
+    else { return value; }
   }
 
   int match(const int color_mode, const int c)
@@ -66,10 +63,8 @@ namespace
       case MODE_PALETTE:
         return pal->data[pal->lookup(c)];
       case MODE_BW:
-        if (l < 128)
-          return makeRgb(0, 0, 0);
-        else
-          return makeRgb(255, 255, 255);
+        if (l < 128) { return makeRgb(0, 0, 0); }
+        else { return makeRgb(255, 255, 255); }
       default:
         return makeRgb(0, 0, 0);
     }
@@ -126,8 +121,7 @@ void Dither::apply(Bitmap *bmp, const int dither_mode,
                      (c & 0xff000000) | (match(color_mode, c) & 0xffffff));
       }
 
-      if (Progress::update(y) < 0)
-        return;
+      if (Progress::update(y) < 0) { return; }
     }
 
     Progress::hide();
@@ -205,15 +199,12 @@ void Dither::apply(Bitmap *bmp, const int dither_mode,
           {
             int x1;
 
-            if (dir == 1)
-              x1 = x - mw / 2 + i;
-            else
-              x1 = x + mw / 2 - i;
+            if (dir == 1) { x1 = x - mw / 2 + i; }
+            else { x1 = x + mw / 2 - i; }
             
             int y1 = y + j;
 
-            if (x1 < 0 || x1 >= bmp->w || y1 < 0 || y1 >= bmp->h)
-              continue;
+            if (x1 < 0 || x1 >= bmp->w || y1 < 0 || y1 >= bmp->h) { continue; }
 
             int r = err[j][x1].r;
             int g = err[j][x1].g;
@@ -253,8 +244,7 @@ void Dither::apply(Bitmap *bmp, const int dither_mode,
     dir = -dir;
     std::swap(x_start, x_end);
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   Progress::hide();

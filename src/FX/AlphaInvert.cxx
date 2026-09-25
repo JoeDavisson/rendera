@@ -35,8 +35,7 @@ void AlphaInvert::apply(Bitmap *bmp)
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   Progress::hide();

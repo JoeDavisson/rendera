@@ -43,8 +43,7 @@ void Colorize::apply(Bitmap *bmp, int color)
 
       int sat = s;
 
-      if (sat < 64)
-        sat = 64;
+      if (sat < 64) { sat = 64; }
 
       r = rgba_color.r;
       g = rgba_color.g;
@@ -56,8 +55,7 @@ void Colorize::apply(Bitmap *bmp, int color)
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   Progress::hide();

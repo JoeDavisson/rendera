@@ -39,10 +39,8 @@ namespace
     const int c2 = b->getpixel(x, y + 1);
     const int c3 = b->getpixel(x + 1, y + 1);
 
-    if ((c0 == c1) && (c0 == c2) && (c0 == c3))
-      return 0;
-    else
-      return 1;
+    if ((c0 == c1) && (c0 == c2) && (c0 == c3)) { return 0; }
+    else { return 1; }
   }
 }
 
@@ -103,8 +101,7 @@ void StainedGlass::apply()
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   // draw edges
@@ -118,7 +115,9 @@ void StainedGlass::apply()
       for (int x = bmp->cl; x <= bmp->cr; x++)
       {
         if (isSegmentEdge(bmp, x, y))
+        {
           map->setpixel(x, y, 1);
+        }
       }
     }
 
@@ -130,8 +129,7 @@ void StainedGlass::apply()
       {
         const int c = map->getpixel(x, y);
 
-        if (c)
-          *p = makeRgb(0, 0, 0);
+        if (c) { *p = makeRgb(0, 0, 0); }
 
         p++;
       }
@@ -165,16 +163,19 @@ void StainedGlass::init()
 
   Items::dialog = new DialogWindow(400, 0, "Stained Glass");
 
-  Items::detail = new InputInt(Items::dialog, 0, y1, 128, 32, "Detail (1-100)", 0, 1, 100);
+  Items::detail = new InputInt(Items::dialog, 0, y1, 128, 32,
+                               "Detail (1-100)", 0, 1, 100);
   Items::detail->value(25);
   Items::detail->center();
   y1 += 32 + 16;
 
-  Items::sat_alpha = new CheckBox(Items::dialog, 0, y1, 16, 16, "Saturation to Alpha", 0);
+  Items::sat_alpha = new CheckBox(Items::dialog, 0, y1, 16, 16,
+                                  "Saturation to Alpha", 0);
   Items::sat_alpha->center();
   y1 += 16 + 16;
 
-  Items::draw_edges = new CheckBox(Items::dialog, 0, y1, 16, 16, "Draw Edges", 0);
+  Items::draw_edges = new CheckBox(Items::dialog, 0, y1, 16, 16,
+                                   "Draw Edges", 0);
   Items::draw_edges->center();
   y1 += 16 + 16;
 

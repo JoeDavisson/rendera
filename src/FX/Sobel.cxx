@@ -84,8 +84,7 @@ void Sobel::apply(Bitmap *bmp, int amount)
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   temp.blit(bmp, 0, 0, bmp->cl, bmp->ct, temp.w, temp.h);

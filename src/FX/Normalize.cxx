@@ -42,29 +42,20 @@ void Normalize::apply(Bitmap *bmp)
       const int g = rgba.g;
       const int b = rgba.b;
 
-      if (r < r_low)
-        r_low = r;
-      if (r > r_high)
-        r_high = r;
-      if (g < g_low)
-        g_low = g;
-      if (g > g_high)
-        g_high = g;
-      if (b < b_low)
-        b_low = b;
-      if (b > b_high)
-        b_high = b;
+      if (r < r_low) { r_low = r; }
+      if (r > r_high) { r_high = r; }
+      if (g < g_low) { g_low = g; }
+      if (g > g_high) { g_high = g; }
+      if (b < b_low) { b_low = b; }
+      if (b > b_high) { b_high = b; }
 
       p++;
     }
   }
 
-  if (!(r_high - r_low))
-    r_high++;
-  if (!(g_high - g_low))
-    g_high++;
-  if (!(b_high - b_low))
-    b_high++;
+  if (!(r_high - r_low)) { r_high++; }
+  if (!(g_high - g_low)) { g_high++; }
+  if (!(b_high - b_low)) { b_high++; }
 
   // scale image
   double r_scale = 255.0 / (r_high - r_low);
@@ -89,8 +80,7 @@ void Normalize::apply(Bitmap *bmp)
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   Progress::hide();

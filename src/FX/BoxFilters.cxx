@@ -125,8 +125,7 @@ void BoxFilters::apply(Bitmap *bmp, int amount, int mode)
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   temp.blit(bmp, 0, 0, bmp->cl, bmp->ct, temp.w, temp.h);
@@ -176,10 +175,16 @@ void BoxFilters::init()
   Items::mode->add("Emboss (Inverse)");
   Items::mode->value(0);
   Items::mode->measure_label(ww, hh);
-  Items::mode->resize(Items::dialog->x() + Items::dialog->w() / 2 - (Items::mode->w() + ww) / 2 + ww, Items::mode->y(), Items::mode->w(), Items::mode->h());
+
+  const int temp_x = Items::dialog->x() + Items::dialog->w() / 2
+                     - (Items::mode->w() + ww) / 2 + ww;
+
+  Items::mode->resize(temp_x, Items::mode->y(), Items::mode->w(), Items::mode->h());
+
   y1 += 32 + 16;
 
-  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32, "Amount %", 0, 0, 100);
+  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32,
+                               "Amount %", 0, 0, 100);
   Items::amount->value(50);
   Items::amount->center();
   y1 += 32 + 16;

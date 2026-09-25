@@ -61,8 +61,7 @@ void Sharpen::apply(Bitmap *bmp, int amount)
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   temp.blit(bmp, 0, 0, bmp->cl, bmp->ct, temp.w, temp.h);
@@ -95,7 +94,8 @@ void Sharpen::init()
   int y1 = 16;
 
   Items::dialog = new DialogWindow(400, 0, "Sharpen");
-  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32, "Amount %", 0, 0, 100);
+  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32,
+                               "Amount %", 0, 0, 100);
   y1 += 32 + 16;
   Items::amount->value(10);
   Items::amount->center();

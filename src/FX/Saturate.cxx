@@ -29,6 +29,7 @@ void Saturate::apply(Bitmap *bmp)
   for (int y = bmp->ct; y <= bmp->cb; y++)
   {
     int *p = bmp->row[y] + bmp->cl;
+
     for (int x = bmp->cl; x <= bmp->cr; x++)
     {
       rgba_type rgba = getRgba(*p);
@@ -46,8 +47,12 @@ void Saturate::apply(Bitmap *bmp)
   }
 
   for (int j = 255; j >= 0; j--)
+  {
     for (int i = 0; i < j; i++)
+    {
       list_s[j] += list_s[i];
+    }
+  }
 
   const double scale = 255.0 / size;
 
@@ -80,18 +85,18 @@ void Saturate::apply(Bitmap *bmp)
       const int temp = s;
       s = list_s[s] * scale;
 
-      if (s < temp)
-        s = temp;
+      if (s < temp) { s = temp; }
 
       Blend::hsvToRgb(h, s, v, &r, &g, &b);
 
       const int c1 = *p;
-      *p = Blend::colorize(c1, Blend::keepLum(makeRgba(r, g, b, rgba.a), l), 255 - s);
+      *p = Blend::colorize(c1,
+                           Blend::keepLum(makeRgba(r, g, b, rgba.a), l),
+                           255 - s);
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   Progress::hide();

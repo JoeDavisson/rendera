@@ -86,8 +86,7 @@ void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   Bitmap temp2(bmp->cw, bmp->ch);
@@ -130,8 +129,7 @@ void UnsharpMask::apply(Bitmap *bmp, int radius, double amount, int threshold)
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   // blend
@@ -190,17 +188,20 @@ void UnsharpMask::init()
 
   Items::dialog = new DialogWindow(400, 0, "Unsharp Mask");
 
-  Items::radius = new InputInt(Items::dialog, 0, y1, 128, 32, "Radius (1-100)", 0, 1, 100);
+  Items::radius = new InputInt(Items::dialog, 0, y1, 128, 32,
+                               "Radius (1-100)", 0, 1, 100);
   y1 += 32 + 16;
   Items::radius->value(1);
   Items::radius->center();
 
-  Items::amount = new InputFloat(Items::dialog, 0, y1, 128, 32, "Amount (0-10)", 0, 0, 10);
+  Items::amount = new InputFloat(Items::dialog, 0, y1, 128, 32,
+                                 "Amount (0-10)", 0, 0, 10);
   y1 += 32 + 16;
   Items::amount->value(1.5);
   Items::amount->center();
 
-  Items::threshold = new InputInt(Items::dialog, 0, y1, 128, 32, "Threshold (0-255)", 0, 0, 255);
+  Items::threshold = new InputInt(Items::dialog, 0, y1, 128, 32,
+                                  "Threshold (0-255)", 0, 0, 255);
   y1 += 32 + 16;
   Items::threshold->value(0);
   Items::threshold->center();

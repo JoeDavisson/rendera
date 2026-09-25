@@ -28,7 +28,9 @@ void PaletteColors::apply(Bitmap *bmp, Palette *pal)
   float freq[256];
 
   for (int i = 0; i < pal->max; i++)
+  {
     freq[i] = 0;
+  }
 
   for (int y = bmp->ct; y <= bmp->cb; y++)
   {
@@ -78,8 +80,7 @@ void PaletteColors::apply(Bitmap *bmp, Palette *pal)
 
       for (int i = 0; i < pal->max; i++)
       {
-        if (i == use1)
-          continue;
+        if (i == use1) { continue; }
 
         int d = diff24(*p, pal->data[i]);
 
@@ -108,8 +109,7 @@ void PaletteColors::apply(Bitmap *bmp, Palette *pal)
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   Progress::hide();

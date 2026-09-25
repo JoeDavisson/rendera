@@ -68,14 +68,12 @@ void RemoveDust::apply(Bitmap *bmp, int amount)
 
       const int avg = makeRgba(r / 8, g / 8, b / 8, geta(test));
 
-      if ((getl(avg) - getl(test)) > amount)
-        *p = avg;
+      if ((getl(avg) - getl(test)) > amount) { *p = avg; }
 
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   Progress::hide();
@@ -86,13 +84,11 @@ void RemoveDust::close()
   Items::dialog->hide();
   Project::undo->push();
 
-  if (Items::invert->value())
-    Invert::apply(Project::bmp);
+  if (Items::invert->value()) { Invert::apply(Project::bmp); }
 
   apply(Project::bmp, Items::amount->value());
 
-  if (Items::invert->value())
-    Invert::apply(Project::bmp);
+  if (Items::invert->value()) { Invert::apply(Project::bmp); }
 }
 
 void RemoveDust::quit()
@@ -112,12 +108,14 @@ void RemoveDust::init()
 
   Items::dialog = new DialogWindow(400, 0, "Remove Dust");
 
-  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32, "Amount (1-10)", 0, 1, 10);
+  Items::amount = new InputInt(Items::dialog, 0, y1, 128, 32,
+                               "Amount (1-10)", 0, 1, 10);
   y1 += 32 + 16;
   Items::amount->value(4);
   Items::amount->center();
 
-  Items::invert = new CheckBox(Items::dialog, 0, y1, 16, 16, "Invert First", 0);
+  Items::invert = new CheckBox(Items::dialog, 0, y1, 16, 16,
+                               "Invert First", 0);
   y1 += 16 + 16;
   Items::invert->center();
 

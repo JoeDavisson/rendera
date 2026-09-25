@@ -33,8 +33,7 @@ void AlphaClear::apply(Bitmap *bmp)
       *p++ |= 0xff000000;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   Progress::hide();

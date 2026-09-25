@@ -33,14 +33,14 @@ namespace
 
 void CubePlot::apply(const bool use_palette)
 {
+  std::vector<char> histogram(16777216, 0);
   Palette *pal = Project::palette;
   Bitmap *src = Project::bmp;
-  Project::newImage(512, 512);
   Bitmap *dest = Project::bmp;
+  Project::newImage(512, 512);
   Gui::images->addFile("cube_plot");
   Project::undo->reset();
   Progress::show(256);
-  std::vector<char> histogram(16777216, 0);
 
   for (int j = src->ct; j <= src->cb; j++)
   {
@@ -109,10 +109,8 @@ void CubePlot::close()
 {
   Items::dialog->hide();
 
-  if (Items::pal_colors->value())
-    apply(true);
-  else
-    apply(false);
+  if (Items::pal_colors->value()) { apply(true); }
+  else { apply(false); }
 }
 
 void CubePlot::quit()

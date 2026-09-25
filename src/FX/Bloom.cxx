@@ -88,8 +88,7 @@ void Bloom::apply(Bitmap *bmp, int radius, int threshold, int blend)
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   Progress::show(bmp->h);
@@ -129,8 +128,7 @@ void Bloom::apply(Bitmap *bmp, int radius, int threshold, int blend)
       p++;
     }
 
-    if (Progress::update(y) < 0)
-      return;
+    if (Progress::update(y) < 0) { return; }
   }
 
   Progress::hide();
@@ -165,17 +163,20 @@ void Bloom::init()
 
   Items::dialog = new DialogWindow(400, 0, "Bloom");
 
-  Items::radius = new InputInt(Items::dialog, 0, y1, 128, 32, "Radius (0-100)", 0, 1, 100);
+  Items::radius = new InputInt(Items::dialog, 0, y1, 128, 32,
+                               "Radius (0-100)", 0, 1, 100);
   Items::radius->value(16);
   Items::radius->center();
   y1 += 32 + 16;
 
-  Items::threshold = new InputInt(Items::dialog, 0, y1, 128, 32, "Threshold (0-255)", 0, 0, 255);
+  Items::threshold = new InputInt(Items::dialog, 0, y1, 128, 32,
+                                  "Threshold (0-255)", 0, 0, 255);
   Items::threshold->value(128);
   Items::threshold->center();
   y1 += 32 + 16;
 
-  Items::blend = new InputInt(Items::dialog, 0, y1, 128, 32, "Blend %", 0, 0, 100);
+  Items::blend = new InputInt(Items::dialog, 0, y1, 128, 32,
+                              "Blend %", 0, 0, 100);
   Items::blend->value(25);
   Items::blend->center();
   y1 += 32 + 16;
