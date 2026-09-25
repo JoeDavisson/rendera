@@ -67,18 +67,22 @@ OffsetOptions::OffsetOptions(int x, int y, int w, int h, const char *l)
   offset_left = new RepeatButton(this, 16, pos + 26, 40, 40, "",
                                  images_left_png, 0);
   offset_left->callback(cb_left, (void *)this);
+  offset_left->colorize(0x001100);
 
   offset_up = new RepeatButton(this, 68, pos, 40, 40, "",
                                images_up_png, 0);
   offset_up->callback(cb_up, (void *)this);
+  offset_up->colorize(0x001100);
 
   offset_right = new RepeatButton(this, 120, pos + 26, 40, 40, "",
                                   images_right_png, 0);
   offset_right->callback(cb_right, (void *)this);
+  offset_right->colorize(0x001100);
 
   offset_down = new RepeatButton(this, 68, pos + 52, 40, 40, "",
                                  images_down_png, 0);
   offset_down->callback(cb_down, (void *)this);
+  offset_down->colorize(0x001100);
 
   pos += 92;
 

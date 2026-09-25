@@ -109,14 +109,14 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
                           "Brush Size", images_size_png, 10, 32,
                           0);
   paint_size->callback(cb_size, (void *)this);
-  paint_size->colorize(0x000033);
+  paint_size->colorize(0x000011);
   pos += 32 + 8;
 
   paint_shape = new Widget(this, 8, pos, 160, 40,
                            "Shape Adjust", images_shape_png, 10, 40,
                            0);
   paint_shape->callback(cb_shape, (void *)this);
-  paint_shape->colorize(0x000033);
+  paint_shape->colorize(0x000011);
   pos += 40 + Gui::SPACING;
 
   new Separator(this, 0, pos, Gui::OPTIONS_WIDTH, Separator::HORIZONTAL, "");
@@ -126,7 +126,7 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
                             "Brushstroke Type", images_stroke_png, 40, 40,
                             0);
   paint_stroke->callback(cb_stroke, (void *)this);
-  paint_stroke->colorize(0x330000);
+  paint_stroke->colorize(0x000011);
 
   pos += 80 + Gui::SPACING;
 
@@ -154,38 +154,47 @@ PaintOptions::PaintOptions(int x, int y, int w, int h, const char *l)
   paint_coarse_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_edge_png, 20, 32, 0);
   paint_coarse_edge->callback(cb_coarseEdge, (void *)this);
+  paint_coarse_edge->colorize(0x000011);
 
   paint_fine_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_edge_png, 20, 32, 0);
   paint_fine_edge->callback(cb_fineEdge, (void *)this);
+  paint_fine_edge->colorize(0x000011);
 
   paint_blurry_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_edge_png, 20, 32, 0);
   paint_blurry_edge->callback(cb_blurryEdge, (void *)this);
+  paint_blurry_edge->colorize(0x000011);
 
   paint_watercolor_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_watercolor_edge_png, 20, 32, 0);
   paint_watercolor_edge->callback(cb_watercolorEdge, (void *)this);
+  paint_watercolor_edge->colorize(0x000011);
 
   paint_chalk_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_chalk_edge_png, 20, 32, 0);
   paint_chalk_edge->callback(cb_chalkEdge, (void *)this);
+  paint_chalk_edge->colorize(0x000011);
 
   paint_texture_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_edge_png, 20, 32, 0);
   paint_texture_edge->callback(cb_textureEdge, (void *)this);
+  paint_texture_edge->colorize(0x000011);
 
   paint_texture_marb = new Widget(this, 8, pos + 40, 160, 32,
                           "Marbleize", images_marbleize_png, 20, 32, 0);
   paint_texture_marb->callback(cb_textureMarb, (void *)this);
+  paint_texture_marb->colorize(0x000011);
 
   paint_texture_turb = new Widget(this, 8, pos + 80, 160, 32,
                           "Turbulence", images_turbulence_png, 20, 32, 0);
   paint_texture_turb->callback(cb_textureTurb, (void *)this);
+  paint_texture_turb->colorize(0x000011);
 
   paint_average_edge = new Widget(this, 8, pos, 160, 32,
                           "Edge", images_edge_png, 20, 32, 0);
   paint_average_edge->callback(cb_averageEdge, (void *)this);
+  paint_average_edge->colorize(0x000011);
 
   resizable(0);
   end();

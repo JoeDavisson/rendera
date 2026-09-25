@@ -67,7 +67,7 @@ void setDarkTheme()
 {
   int r, g, b;
   int h = 960;
-  int s = 96;
+  int s = 48;
 
   Project::theme = Project::THEME_DARK;
 

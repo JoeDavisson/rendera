@@ -62,6 +62,18 @@ RepeatButton::~RepeatButton()
 {
 }
 
+void RepeatButton::colorize(int c)
+{
+  Blend::set(Blend::COLORIZE);
+
+  if (bitmap)
+  { 
+    bitmap->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1, c, 0);
+  }
+
+  Blend::set(Blend::TRANS);
+}
+
 void RepeatButton::draw()
 {
   fl_draw_box(FL_FLAT_BOX, x(), y(), w(), h(),

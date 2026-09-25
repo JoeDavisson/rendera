@@ -70,15 +70,18 @@ ImagesOptions::ImagesOptions(int x, int y, int w, int h, const char *l)
   images_close = new Button(this, 8, pos, 48, 48,
                           "Close File (Delete)", images_close_png, 0);
   images_close->callback(cb_closeFile, (void *)this);
+  images_close->colorize(0x000011);
 
   images_move_up = new Button(this, 8 + 48 + 8, pos, 48, 48,
                             "Move Up", images_up_large_png, 0);
   images_move_up->callback(cb_moveUp, (void *)this);
+  images_move_up->colorize(0x001111);
 
   images_move_down = new Button(this, 8 + 48 + 8 + 48 + 8, pos,
                               48, 48,
                               "Move Down", images_down_large_png, 0);
   images_move_down->callback(cb_moveDown, (void *)this);
+  images_move_down->colorize(0x001111);
 
   pos += 48 + Gui::SPACING;
 

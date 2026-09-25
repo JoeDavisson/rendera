@@ -73,6 +73,7 @@ void Button::colorize(int c)
     bitmap->rectfill(0, 0, bitmap->w - 1, bitmap->h - 1, c, 0);
   }
 
+  Blend::set(Blend::TRANS);
 }
 
 void Button::draw()

@@ -72,18 +72,21 @@ ViewOptions::ViewOptions(int x, int y, int w, int h, const char *l)
   zoom_one = new Button(this, pos, 8, 40, 40,
                         "Actual Size (1)", images_zoom_one_png, 0);
   zoom_one->callback(cb_zoomOne, (void *)this);
+  zoom_one->colorize(0x111100);
 
   pos += 40 + Gui::SPACING;
 
   zoom_in = new Button(this, pos, 8, 40, 40,
                        "Zoom In (+)", images_zoom_in_png, 0);
   zoom_in->callback(cb_zoomIn, (void *)this);
+  zoom_in->colorize(0x111100);
 
   pos += 40 + Gui::SPACING;
 
   zoom_out = new Button(this, pos, 8, 40, 40,
                         "Zoom Out (-)", images_zoom_out_png, 0);
   zoom_out->callback(cb_zoomOut, (void *)this);
+  zoom_out->colorize(0x111100);
 
   pos += 40 + Gui::SPACING;
 
@@ -97,12 +100,14 @@ ViewOptions::ViewOptions(int x, int y, int w, int h, const char *l)
   grid = new ToggleButton(this, pos, 8, 40, 40,
                           "Show Grid", images_grid_png, 0);
   grid->callback(cb_gridEnable, (void *)this);
+  grid->colorize(0x110011);
 
   pos += 40 + Gui::SPACING;
 
   gridsnap = new ToggleButton(this, pos, 8, 40, 40,
                           "Snap to Grid", images_gridsnap_png, 0);
   gridsnap->callback(cb_gridSnap, (void *)this);
+  gridsnap->colorize(0x110011);
 
   pos += 96; 
 

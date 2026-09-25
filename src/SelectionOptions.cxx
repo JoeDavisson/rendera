@@ -104,14 +104,17 @@ SelectionOptions::SelectionOptions(int x, int y, int w, int h, const char *l)
   selection_mirror = new Button(this, 8, pos, 48, 48, "Mirror",
                                 images_select_mirror_png, 0);
   selection_mirror->callback(cb_flipX, (void *)this);
+  selection_mirror->colorize(0x111100);
 
   selection_flip = new Button(this, 8 + 48 + 8, pos, 48, 48, "Flip",
                               images_select_flip_png, 0);
   selection_flip->callback(cb_flipY, (void *)this);
+  selection_flip->colorize(0x111100);
 
   selection_rotate = new Button(this, 8 + 48 + 8 + 48 + 8, pos, 48, 48,
                                 "Rotate", images_select_rotate_png, 0);
   selection_rotate->callback(cb_rotate90, (void *)this);
+  selection_rotate->colorize(0x111100);
 
   pos += 48 + Gui::SPACING;
 
