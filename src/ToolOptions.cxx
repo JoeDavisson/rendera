@@ -18,6 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <vector>
+
 #include "Button.H"
 #include "Bitmap.H"
 #include "Clone.H"
@@ -67,7 +69,19 @@ ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
   tool = new Widget(this, 8, pos, 48, 7 * 48,
                     "Tools", images_tools_png, 48, 48, 0);
   tool->callback(cb_change, (void *)this);
-  tool->colorize(0x000011, 1200);
+
+  std::vector<int> tool_colors =
+  {
+    0x000022,  // paint
+    0x002200,  // get color
+    0x222200,  // selection
+    0x002222,  // offset
+    0x220011,  // text
+    0x001122,  // fill
+    0x220000   // gradient
+  };
+
+  tool->colorize(tool_colors);
 
   pos += 7 * 48 + Gui::SPACING;
 
@@ -78,14 +92,14 @@ ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
                            "Clone (Ctrl+Click to set target)",
                            images_clone_png, 0);
   clone->callback(cb_cloneEnable, (void *)this);
-  clone->colorize(0x110000);
+  clone->colorize(0x220022);
 
   pos += 48 + 8;
 
   origin = new ToggleButton(this, 8, pos, 48, 48,
                             "Start From Center (Alt)", images_origin_png, 0);
   origin->callback(cb_originEnable, (void *)this);
-  origin->colorize(0x111100);
+  origin->colorize(0x222200);
 
   pos += 48 + 8;
 
@@ -93,7 +107,7 @@ ToolOptions::ToolOptions(int x, int y, int w, int h, const char *l)
                               "Lock Proportions (Shift)",
                               images_constrain_png, 0);
   constrain->callback(cb_constrainEnable, (void *)this);
-  constrain->colorize(0x111100);
+  constrain->colorize(0x222200);
 
   resizable(0);
   end();

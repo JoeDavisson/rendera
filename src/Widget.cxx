@@ -198,22 +198,18 @@ void Widget::colorize(int c)
   Blend::set(Blend::TRANS);
 }
 
-void Widget::colorize(int c, int incr)
+void Widget::colorize(std::vector<int> &color_list)
 {
-  int r = getr(c);
-  int g = getg(c);
-  int b = getb(c);
-  int h, s, v;
+  size_t size = color_list.size();
+  size_t index = 0;
 
-  Blend::rgbToHsv(r, g, b, &h, &s, &v);
   Blend::set(Blend::COLORIZE);
 
   for (int y = 0; y < bitmap->h; y += stepy)
   {
     for (int x = 0; x < bitmap->w; x += stepx)
     {
-      Blend::hsvToRgb(h, s, v, &r, &g, &b);
-      c = makeRgb(r, g, b);
+      const int c = color_list[index];
 
       if (bitmap)
       {
@@ -225,8 +221,9 @@ void Widget::colorize(int c, int incr)
         bitmap2->rectfill(x, y, x + stepx - 1, y + stepy - 1, c, 0);
       }
 
-      h += incr;
-      h %= 1536;
+      index++;
+
+      if (index >= size) { break; }
     }
   }
 

@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef WIDGET_H
 #define WIDGET_H
 
+#include <vector>
+
 #include <FL/Fl_Widget.H>
 
 class Bitmap;
@@ -40,7 +42,7 @@ public:
 
   int handle(int);
   void colorize(int);
-  void colorize(int, int);
+  void colorize(std::vector<int> &);
 
   int var;
   int stepx;
