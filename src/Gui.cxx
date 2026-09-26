@@ -100,7 +100,9 @@ namespace
   void quit()
   {
     if (Dialog::choice("Exit", "Exit Program?"))
+    {
       exit(0);
+    }
   }
 
   // prevent escape from closing main window
@@ -116,7 +118,7 @@ namespace
       // hide any open windows so FLTK ends the program
       if (Dialog::choice("Exit", "Are You Sure?"))
       {
-         Fl::hide_all_windows();
+        Fl::hide_all_windows();
       }
     }
   }
@@ -167,8 +169,7 @@ public:
         }
 
         // inhibit use of keys while rendering
-        if (view->rendering)
-          return 0;
+        if (view->rendering) { return 0; }
 
         // misc keys
         switch (Fl::event_key())
@@ -213,22 +214,17 @@ public:
               return Fl_Double_Window::handle(event);
             }
           case 'y':
-            if (ctrl)
-              Project::undo->popRedo();
+            if (ctrl) { Project::undo->popRedo(); }
             return 1;
           case 'z':
-            if (ctrl && shift)
-              Project::undo->popRedo();
-            else if (ctrl)
-              Project::undo->pop();
+            if (ctrl && shift) { Project::undo->popRedo(); }
+            else if (ctrl) { Project::undo->pop(); }
             return 1;
           case 'c':
-            if (ctrl)
-              Gui::selection->copy();
+            if (ctrl) { Gui::selection->copy(); }
             return 1;
           case 'v':
-            if (ctrl)
-              Gui::selection->paste();
+            if (ctrl) { Gui::selection->paste(); }
             return 1;
           case 'e':
             Editor::begin();
@@ -423,7 +419,8 @@ void Gui::init()
     (Fl_Callback *)Dialog::about, 0, 0);
 
   // status
-  status = new Group(0, window->h() - STATUS_HEIGHT, window->w(), STATUS_HEIGHT, "");
+  status = new Group(0, window->h() - STATUS_HEIGHT,
+                     window->w(), STATUS_HEIGHT, "");
   pos = 8;
 
   coords = new Fl_Box(FL_FLAT_BOX, pos, 4, 96, 24, "");
@@ -443,7 +440,8 @@ void Gui::init()
   saveStatusInfo();
 
   progress = new Fl_Progress(window->w() - 256 - 8, pos, 256, 24);
-  progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4, 256, 24);
+  progress->resize(status->x() + window->w() - 256 - 8, status->y() + 4,
+                   256, 24);
   progress->minimum(0);
   progress->maximum(100);
   progress->color(0x44444400);
@@ -567,8 +565,7 @@ void Gui::menuCheckItem(const char *s)
   Fl_Menu_Item *m;
   m = (Fl_Menu_Item *)menubar->find_item(s);
 
-  if (m)
-    m->set();
+  if (m) { m->set(); }
 }
 
 // remove checkmark from menu item
@@ -577,8 +574,7 @@ void Gui::menuClearItem(const char *s)
   Fl_Menu_Item *m;
   m = (Fl_Menu_Item *)menubar->find_item(s);
 
-  if (m)
-    m->clear();
+  if (m) { m->clear(); }
 }
 
 // callback functions
@@ -738,9 +734,13 @@ void Gui::paletteSetVCS()
       int r = 0, g = 0, b = 0;
 
       if (y == 0)
+      {
         Blend::yccToRgb(x == 0 ? 0 : luma, c_blue, c_red, &r, &g, &b);
-      else
+      }
+        else
+      {
         Blend::yccToRgb(luma, c_blue, c_red, &r, &g, &b);
+      }
 
       const int c = makeRgb(r, g, b);
 
@@ -894,7 +894,9 @@ void Gui::selectToImage()
   select_bmp->blit(temp, 0, 0, 0, 0, temp->w, temp->h);
 
   if (Project::newImageFromBitmap(temp) != -1)
+  {
     images->addFile("new_from_selection");
+  }
 }
 
 void Gui::clearToBlack()
@@ -930,8 +932,12 @@ void Gui::clearToGray()
   Bitmap *bmp = Project::bmp;
 
   for (int y = bmp->ct; y <= bmp->cb; y++)
+  {
     for (int x = bmp->cl; x <= bmp->cr; x++)
+    {
       *(bmp->row[y] + x) = 0xff808080;
+    }
+  }
 
   view->drawMain(true);
 }
@@ -943,8 +949,12 @@ void Gui::clearToTrans()
   Bitmap *bmp = Project::bmp;
 
   for (int y = bmp->ct; y <= bmp->cb; y++)
+  {
     for (int x = bmp->cl; x <= bmp->cr; x++)
+    {
       *(bmp->row[y] + x) = 0x00808080;
+    }
+  }
 
   view->drawMain(true);
 }
@@ -1016,8 +1026,7 @@ void Gui::toggleTextPreview()
 
 void Gui::updateMemInfo()
 {
-  if (Project::last < 1)
-    return;
+  if (Project::last < 1) { return; }
 
   char s[256];
 
