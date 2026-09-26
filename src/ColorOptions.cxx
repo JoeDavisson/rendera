@@ -140,7 +140,9 @@ void ColorOptions::colorHexInput()
 
   sscanf(hexcolor->value(), "%06x", &c);
 
-  if (c > 0xffffff) { c = 0xffffff; }
+  c = reverseHexColor(c);
+
+//  if (c > 0xffffff) { c = 0xffffff; }
 
   c |= 0xff000000;
 
@@ -153,7 +155,7 @@ void ColorOptions::colorHexUpdate()
 {
   char hex_string[8];
   snprintf(hex_string, sizeof(hex_string),
-           "%06x", (unsigned)Project::brush->color & 0xffffff);
+           "%06x", (unsigned)reverseHexColor(Project::brush->color) & 0xffffff);
   hexcolor->value(hex_string);
 }
 

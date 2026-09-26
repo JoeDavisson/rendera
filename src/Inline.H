@@ -195,6 +195,15 @@ inline unsigned int makeFltkColor(const int r, const int g, const int b)
   return (r << 24) | (g << 16) | (b << 8);
 }
 
+inline unsigned int reverseHexColor(const unsigned int c)
+{
+  const int r = (c >> 16) & 0xff;
+  const int g = (c >> 8) & 0xff;
+  const int b = c & 0xff;
+
+  return makeRgb(r, g, b);
+}
+
 inline int clamp(const int value, const int ceiling)
 {
   return std::max(0, std::min(value, ceiling));

@@ -198,11 +198,11 @@ void Editor::updateHexColor()
   char hex_string[8];
 
   snprintf(hex_string, sizeof(hex_string), "%06x",
-           (unsigned)Project::brush->color & 0xffffff);
+           (unsigned)reverseHexColor(Project::brush->color) & 0xffffff);
   Items::hexcolor->value(hex_string);
 
   // shortcut hex
-  int c = (unsigned)Project::brush->color & 0xffffff;
+  int c = (unsigned)reverseHexColor(Project::brush->color) & 0xffffff;
   rgba_type rgba = getRgba(c);
 
   snprintf(hex_string, sizeof(hex_string), "%01x%01x%01x",
@@ -215,8 +215,10 @@ void Editor::checkHexColor()
   unsigned int c;
   
   sscanf(Items::hexcolor->value(), "%06x", &c);
+
+  c = reverseHexColor(c);
   
-  if (c > 0xffffff) { c = 0xffffff; }
+//  if (c > 0xffffff) { c = 0xffffff; }
   
   c |= 0xff000000;
   
