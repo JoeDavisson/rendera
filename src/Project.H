@@ -79,6 +79,7 @@ public:
   static Tool *tool;
 
   static int theme;
+  static int theme_foreground;
   static int theme_highlight_color;
   static Fl_Color fltk_theme_highlight_color;
   static Fl_Color fltk_theme_bevel_up;

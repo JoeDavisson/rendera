@@ -89,6 +89,7 @@ namespace About
     Items::logo = new Widget(Items::dialog, 400 / 2 - 320 / 2, y1, 320, 96,
                              credits, images_logo_dark_png, -1, -1, 0);
 
+    Items::logo->colorize(Project::theme_foreground);
     Items::logo->align(FL_ALIGN_BOTTOM);
     Items::logo->tooltip(0);
     Items::logo->measure_label(ww, hh);

@@ -70,6 +70,7 @@ Gradient *Project::gradient;
 Tool *Project::tool;
 
 int Project::theme;
+int Project::theme_foreground;
 int Project::theme_highlight_color;
 Fl_Color Project::fltk_theme_highlight_color;
 Fl_Color Project::fltk_theme_bevel_up;

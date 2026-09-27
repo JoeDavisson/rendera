@@ -66,10 +66,12 @@ struct option long_options[] =
 void setDarkTheme()
 {
   int r, g, b;
-  int h = 960;
-  int s = 48;
+//  int h = 930;
+  int h = 888;
+  int s = 64;
 
   Project::theme = Project::THEME_DARK;
+  Project::theme_foreground = 0xd3dfe6;
 
   // greyscale ramps (colors 32 - 55) used in the GUI
   for (int i = 0; i < 24; i++)
@@ -89,12 +91,10 @@ void setDarkTheme()
   Blend::hsvToRgb(h, s, 56, &r, &g, &b);
   Fl::set_color(FL_INACTIVE_COLOR, makeFltkColor(r, g, b));
 
-  s /= 2;
-
-  Blend::hsvToRgb(h, 0, 208, &r, &g, &b);
+  Blend::hsvToRgb(196, 16, 208, &r, &g, &b);
   Fl::set_color(FL_FOREGROUND_COLOR, makeFltkColor(r, g, b));
 
-  Blend::hsvToRgb(h, s, 208, &r, &g, &b);
+  Blend::hsvToRgb(196, 16, 208, &r, &g, &b);
   Fl::set_color(FL_SELECTION_COLOR, makeFltkColor(r, g, b));
 
   Blend::hsvToRgb(h, s, 85, &r, &g, &b);
