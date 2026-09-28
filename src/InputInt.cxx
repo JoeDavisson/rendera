@@ -93,6 +93,19 @@ InputInt::~InputInt()
 {
 }
 
+int InputInt::handle(int event)
+{
+  if (event == FL_KEYDOWN)
+  {
+     if (Fl::event_key() == FL_Enter || Fl::event_key() == FL_KP_Enter)
+     {
+       return 0;
+     }
+  }
+
+  return Fl_Group::handle(event);
+}
+
 int InputInt::value()
 {
   return atoi(input.value());

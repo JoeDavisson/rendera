@@ -40,6 +40,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
                int sx, int sy, Fl_Callback *cb)
 : Fl_Widget(x, y, w, h, label)
 {
+  released = false;
   var = 0;
 
   if (cb) { callback(cb, &var); }
@@ -94,6 +95,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
                const char *label, const unsigned char *array)
 : Fl_Widget(x, y, w, h, label)
 {
+  released = false;
   stepx = 0;
   stepy = 0;
   group = g;
@@ -118,9 +120,11 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
                const char *label, int sx, int sy, Fl_Callback *cb)
 : Fl_Widget(x, y, w, h, label)
 {
+  released = false;
+  var = 0;
+
   if (cb) { callback(cb, &var); }
 
-  var = 0;
   stepx = sx;
   stepy = sy;
   group = g;
@@ -153,8 +157,11 @@ int Widget::handle(int event)
     case FL_LEAVE:
       return 1;
     case FL_PUSH:
+      released = false;
     case FL_DRAG:
+      released = false;
     case FL_RELEASE:
+
       if (event == FL_PUSH || event == FL_DRAG || event == FL_RELEASE)
       {
         if (Gui::widgetTimerReady() == false) { return 1; }
@@ -181,9 +188,10 @@ int Widget::handle(int event)
       x1 *= stepx;
       y1 *= stepy;
 
+      if (event == FL_RELEASE) { released = true; }
       do_callback();
-      redraw();
 
+      redraw();
       return 1;
   }
 

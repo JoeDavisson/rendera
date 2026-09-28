@@ -128,8 +128,11 @@ void ToolOptions::change()
   if (current_tool != Tool::FILL) { Gui::fill->hide(); }
   if (current_tool != Tool::GRADIENT) { Gui::gradient->hide(); }
 
-  Project::map->clear(0);
-  Gui::view->drawMain(true);
+  if (tool->released == true)
+  {
+    Project::map->clear(0);
+    Gui::view->drawMain(true);
+  }
 
   switch (current_tool)
   {

@@ -44,6 +44,7 @@ public:
   void colorize(int);
   void colorize(std::vector<int> &);
 
+  bool released;
   int var;
   int stepx;
   int stepy;

@@ -36,6 +36,7 @@ public:
            Fl_Callback *, int, int);
   ~InputInt();
 
+  int handle(int);
   int value();
   void value(const int);
   void maximum_size(const int);

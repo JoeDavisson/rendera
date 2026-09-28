@@ -48,6 +48,7 @@ void DialogWindow::addOkButton(Fl_Button **ok, int *y1)
   *ok = new Fl_Button(w() - BUTTON_WIDTH - 8, *y1,
                       BUTTON_WIDTH, BUTTON_HEIGHT, "OK");
   (*ok)->labelsize(18);
+  (*ok)->shortcut(FL_Enter);
   add(*ok);
   *y1 += BUTTON_HEIGHT + 8;
 
@@ -66,6 +67,7 @@ void DialogWindow::addOkCancelButtons(Fl_Button **ok, Fl_Button **cancel, int *y
   *y1 += BUTTON_HEIGHT + 8;
   (*cancel)->labelsize(18);
   (*ok)->labelsize(18);
+  (*ok)->shortcut(FL_Enter);
   add(*ok);
   resize(x(), y(), w(), *y1);
 }
