@@ -84,8 +84,8 @@ namespace Keys
 
     Items::dialog = new DialogWindow(528, 0, "Keyboard Commands");
 
-    Items::keys = new Fl_Multiline_Output(8, y1, 512, 384, ""); 
-    Items::keys->textsize(20);
+    Items::keys = new Fl_Multiline_Output(8, y1, 512, 352, ""); 
+    Items::keys->textsize(18);
     Items::keys->clear_visible_focus();
     Items::keys->value(
       "pan: cursor keys\n"
@@ -103,7 +103,7 @@ namespace Keys
       "dpi scaling: [ctrl +/-/0]\n"
     );
 
-    y1 += 384 + 8;
+    y1 += 352 + 8;
     Items::dialog->addOkButton(&Items::ok, &y1);
     Items::ok->callback((Fl_Callback *)close);
 
