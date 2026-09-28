@@ -25,6 +25,7 @@ class Dialog
 {
 public:
   static void init();
+  static void keys();
   static void about();
   static void jpegQuality();
   static int jpegQualityValue();

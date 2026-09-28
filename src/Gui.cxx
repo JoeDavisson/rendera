@@ -415,6 +415,8 @@ void Gui::init()
   menubar->add("F&X/Misc/Cube Plot...", 0,
     (Fl_Callback *)CubePlot::begin, 0, 0);
 
+  menubar->add("&Help/&Keyboard...", 0,
+    (Fl_Callback *)Dialog::keys, 0, 0);
   menubar->add("&Help/&About...", 0,
     (Fl_Callback *)Dialog::about, 0, 0);
 

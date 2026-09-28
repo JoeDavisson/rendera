@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Int_Input.H>
+#include <FL/Fl_Multiline_Output.H>
 #include <FL/Fl_Progress.H>
 #include <FL/Fl_Repeat_Button.H>
 #include <FL/Fl_Widget.H>
@@ -57,6 +58,59 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Undo.H"
 #include "View.H"
 #include "Widget.H"
+
+namespace Keys
+{
+  namespace Items
+  {
+    DialogWindow *dialog;
+    Fl_Multiline_Output *keys;
+    Fl_Button *ok;
+  }
+
+  void begin()
+  {
+    Items::dialog->show();
+  }
+
+  void close()
+  {
+    Items::dialog->hide();
+  }
+
+  void init()
+  {
+    int y1 = 8;
+
+    Items::dialog = new DialogWindow(528, 0, "Keyboard Commands");
+
+    Items::keys = new Fl_Multiline_Output(8, y1, 512, 384, ""); 
+    Items::keys->textsize(20);
+    Items::keys->clear_visible_focus();
+    Items::keys->value(
+      "pan: cursor keys\n"
+      "zoom: [+], [-], or [1]\n"
+      "undo: [ctrl-z]\n"
+      "redo: [ctrl-shift-z] or [ctrl-y]\n"
+      "input field buttons: hold [shift] to adjust value by 10\n"
+      "copy/paste selection: [ctrl-c] and [ctrl-v]\n"
+      "palette editor: [e]\n"
+      "font preview: [f]\n"
+      "close image: [delete]\n"
+      "cancel rendering: [escape]\n"
+      "close dialog: [escape]\n"
+      "set clone target: [ctrl+click]\n"
+      "dpi scaling: [ctrl +/-/0]\n"
+    );
+
+    y1 += 384 + 8;
+    Items::dialog->addOkButton(&Items::ok, &y1);
+    Items::ok->callback((Fl_Callback *)close);
+
+    Items::dialog->set_modal();
+    Items::dialog->end(); 
+  }
+}
 
 namespace About
 {
@@ -534,6 +588,7 @@ namespace Choice
 
 void Dialog::init()
 {
+  Keys::init();
   About::init();
   JpegQuality::init();
   JavaExport::init();
@@ -542,6 +597,11 @@ void Dialog::init()
   MakePalette::init();
   Message::init();
   Choice::init();
+}
+
+void Dialog::keys()
+{
+  Keys::begin();
 }
 
 void Dialog::about()
