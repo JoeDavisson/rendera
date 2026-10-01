@@ -317,12 +317,14 @@ void GaussianBlur::init()
 
   Items::dialog = new DialogWindow(400, 0, "Gaussian Blur");
 
-  Items::size = new InputFloat(Items::dialog, 0, y1, 128, 32, "Size (.01-100)", 0, 0.01, 100);
+  Items::size = new InputFloat(Items::dialog, 0, y1, 128, 32,
+                               "Size (.01-100)", 0, 0.01, 100);
   Items::size->value(1);
   Items::size->center();
   y1 += 32 + 16;
 
-  Items::blend = new InputInt(Items::dialog, 0, y1, 128, 32, "Blend %", 0, 0, 100);
+  Items::blend = new InputInt(Items::dialog, 0, y1, 128, 32,
+                              "Blend %", 0, 0, 100);
   Items::blend->value(100);
   Items::blend->center();
   y1 += 32 + 16;
