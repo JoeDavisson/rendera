@@ -190,6 +190,16 @@ public:
           case FL_Delete:
             Gui::closeFile();
             return 1;
+          case FL_F + 11:
+            if (fullscreen_active())
+            {
+              fullscreen_off();
+            }
+              else
+            {
+              fullscreen();
+            }
+            return 1;
           case '1':
             view->zoomOne();
             return 1;
