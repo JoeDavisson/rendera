@@ -71,9 +71,9 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
     {
       for (int x1 = 0; x1 < bitmap2->w; x1 += stepx)
       {
-        bitmap2->xorRect(x1 + 1, y1 + 1, x1 + stepx - 2, y1 + stepy - 2);
-        bitmap2->rect(x1, y1, x1 + stepx - 1, y1 + stepy - 1,
+        bitmap2->rect(x1 + 1, y1 + 1, x1 + stepx - 1, y1 + stepy - 1,
                       makeRgb(0, 0, 0), 0);
+        bitmap2->xorRect(x1 + 2, y1 + 2, x1 + stepx - 2, y1 + stepy - 2);
       }
     }
   }
@@ -112,6 +112,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
                            bitmap->w, bitmap->h, 4, 0);
 
   resize(group->x() + x, group->y() + y, w, h);
+  use_highlight = false;
   labelsize(16);
 }
 
@@ -261,6 +262,8 @@ void Widget::draw()
 
   offsetx *= stepx;
 
+  fl_rect(x(), y(), w(), h(), 36);
+
   fl_push_clip(x() + offsetx, y() + offsety, stepx, stepy);
 
   if (stepx >= 0 && stepy >= 0)
@@ -281,6 +284,5 @@ void Widget::draw()
   }
 
   fl_pop_clip();
-  fl_rect(x(), y(), w(), h(), 36);
 }
 
