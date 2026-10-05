@@ -140,7 +140,7 @@ public:
   {
     View *view = Gui::getView();
 
-    bool shift, ctrl;
+    bool shift, ctrl, alt;
 
     switch (event)
     {
@@ -149,15 +149,30 @@ public:
       case FL_UNFOCUS:
         return 1;
       case FL_KEYBOARD:
-        // give focus to the main menu
-        if (Fl::event_alt() > 0)
-        {
-          Gui::getMenuBar()->take_focus();
-          return 0;
-        }
-
         shift = Fl::event_shift() ? true : false;
         ctrl = Fl::event_ctrl() ? true : false;
+        alt = Fl::event_alt() ? true : false;
+
+        if (alt == true)
+        {
+          if (Fl::event_key() == FL_Enter)
+          {
+            if (fullscreen_active())
+            {
+              fullscreen_off();
+            }
+              else
+            {
+               fullscreen();
+            }
+            return 1;
+          }
+            else
+          {
+            Gui::getMenuBar()->take_focus();
+            return 0;
+          }
+        }
 
         // cancel current rendering operation
         if (Fl::event_key() == FL_Escape)
