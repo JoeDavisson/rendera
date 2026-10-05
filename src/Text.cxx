@@ -70,8 +70,7 @@ void Text::push(View *view)
   // write text string to FLTK's offscreen image
   int index = FontPreview::getFont();
 
-  if (index < 1)
-    index = 1;
+  if (index < 1) { index = 1; }
 
   int face = index - 1;
   int size = Gui::text->getSize();
@@ -80,22 +79,14 @@ void Text::push(View *view)
   const char *s = input->value();
   const int len = input->size();
 
-  if (s == 0)
-    return;
-
-  if (size < 2)
-    size = 2;
-
-  if (size > 256)
-    size = 256;
+  if (s == 0) { return; }
+  if (size < 2) { size = 2; }
+  if (size > 256) { size = 256; }
 
   int smooth = Gui::text->getSmooth();
   int weight = Gui::text->getWeight();
 
-  if (smooth > 0 && weight > 0)
-  {
-    size *= 2;
-  }
+  if (smooth > 0 && weight > 0) { size *= 2; }
 
   // add a space before and after string, or some
   // scripty fonts won't render properly on the sides
@@ -105,16 +96,22 @@ void Text::push(View *view)
   int i = 0;
 
   for (i = 0; i < len; i++)
+  {
     string[i + 1] = s[i];
+  }
 
   i++;
   string[i] = ' ';
 
   // compensate for odd string length
   if ((len & 1) == 1)
+  {
     string[i++] = ' ';
-  else
+  }
+    else
+  {
     i++;
+  }
 
   string[i] = '\0';
 
@@ -156,7 +153,9 @@ void Text::push(View *view)
     yy += h;
 
     if (smooth > 0)
+    {
       yy -= h / 2;
+    }
   }
 
   Progress::show(yy);
@@ -173,14 +172,15 @@ void Text::push(View *view)
 
       for (int x = 0; x < w; x++)
       {
-         if (getv(*tb++) < 192)
+        if (getv(*tb++) < 192)
+        {
           *m = 1;
+        }
 
         m++;
       }
 
-      if (Progress::update(yy++) < 0)
-        break;
+      if (Progress::update(yy++) < 0) { break; }
     }
 
     map.dilate(smooth > 0 ? weight * 2 : weight);
@@ -194,14 +194,15 @@ void Text::push(View *view)
     for (int x = 0; x < w; x++)
     {
       if (*m == 1)
+      {
         *tb = makeRgb(0, 0, 0);
+      }
 
       m++;
       tb++;
     }
 
-    if (Progress::update(yy++) < 0)
-      break;
+    if (Progress::update(yy++) < 0) { break; }
   }
 
   Blend::set(Project::brush->blend);
@@ -232,8 +233,7 @@ void Text::push(View *view)
           tb++;
         }
 
-        if (Progress::update(yy++) < 0)
-          break;
+        if (Progress::update(yy++) < 0) { break; }
       }
     }
       else
@@ -257,8 +257,7 @@ void Text::push(View *view)
           tb++;
         }
 
-        if (Progress::update(yy++) < 0)
-          break;
+        if (Progress::update(yy++) < 0) { break; }
       }
     }
   }
@@ -283,8 +282,7 @@ void Text::push(View *view)
         tb++;
       }
 
-      if (Progress::update(yy++) < 0)
-        break;
+      if (Progress::update(yy++) < 0) { break; }
     }
   }
 
@@ -322,17 +320,10 @@ void Text::move(View *view)
   const int left = imgx - w / 2;
   const int top = imgy - h / 2;
 
-  if (left < 0)
-    x1 = -left;
-
-  if (left + w >= map->w)
-    x2 = map->w - left;
-
-  if (top < 0)
-    y1 = -top;
-
-  if (top + h >= map->h)
-    y2 = map->h - top;
+  if (left < 0) { x1 = -left; }
+  if (left + w >= map->w) { x2 = map->w - left; }
+  if (top < 0) { y1 = -top; }
+  if (top + h >= map->h) { y2 = map->h - top; }
 
   // draw
   for (int y = y1; y < y2; y++)
@@ -349,7 +340,9 @@ void Text::move(View *view)
   int weight = Gui::text->getWeight();
 
   if (weight > 0)
+  {
     map->dilate(weight);
+  }
 
   stroke->size(imgx - w / 2, imgy - h / 2, imgx + w / 2, imgy + h / 2);
   redraw(view);
@@ -386,8 +379,7 @@ void Text::change()
   // write text string to FLTK's offscreen image
   int index = FontPreview::getFont();
 
-  if (index < 1)
-    index = 1;
+  if (index < 1) { index = 1; }
 
   int face = index - 1;
   int size = Gui::text->getSize();
@@ -396,14 +388,9 @@ void Text::change()
   const char *s = input->value();
   const int len = input->size();
 
-  if (s == 0)
-    return;
-
-  if (size < 4)
-    size = 4;
-
-  if (size > 256)
-    size = 256;
+  if (s == 0) { return; }
+  if (size < 4) { size = 4; }
+  if (size > 256) { size = 256; }
 
   // add a space before and after string, or some
   // scripty fonts won't render properly on the sides
@@ -413,16 +400,22 @@ void Text::change()
   int i = 0;
 
   for (i = 0; i < len; i++)
+  {
     string[i + 1] = s[i];
+  }
 
   i++;
   string[i] = ' ';
 
   // compensate for odd string length
   if ((len & 1) == 1)
+  {
     string[i++] = ' ';
-  else
+  }
+    else
+  {
     i++;
+  }
 
   string[i] = '\0';
 

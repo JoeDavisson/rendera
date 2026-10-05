@@ -489,7 +489,6 @@ namespace Scale
     h = (float)h * ((float)Items::percent->value() / 100) + 0.5;
 
     if (w < 1) { w = 1; }
-
     if (h < 1) { h = 1; }
 
     Items::width->value(w);
@@ -535,7 +534,7 @@ namespace Scale
     y1 += 32 + 16;
 
     Items::height = new InputInt(Items::dialog, 0, y1, 128, 32,
-                                 "Height", (Fl_Callback *)checkHeight, 1, 32768);
+                                "Height", (Fl_Callback *)checkHeight, 1, 32768);
     Items::height->center();
     y1 += 32 + 16;
 

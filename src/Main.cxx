@@ -66,7 +66,6 @@ struct option long_options[] =
 void setDarkTheme()
 {
   int r, g, b;
-//  int h = 930;
   int h = 888;
   int s = 64;
 
@@ -113,7 +112,7 @@ void setDarkTheme()
 void printHelp()
 {
   printf("Usage: rendera [OPTIONS] filename\n\n");
-  printf("--mem=<value>\t\t memory limit (in megabytes)\n");
+  printf("--mem=<value>\t\t memory limit (in megabytes, default 4000)\n");
   printf("--undos=<value>\t\t undo limit (1-100)\n");
   printf("--version\t\t version information\n\n");
 }
@@ -134,8 +133,8 @@ int main(int argc, char *argv[])
   while (true)
   {
     const int c = getopt_long(argc, argv, "", long_options, &option_index);
-    if (c < 0)
-      break;
+
+    if (c < 0) { break; }
 
     switch (c)
     {
@@ -159,8 +158,7 @@ int main(int argc, char *argv[])
             {
               memory_max = atoi(optarg);
 
-              if (memory_max < 16)
-                memory_max = 16;
+              if (memory_max < 1000) { memory_max = 1000; }
 
               printf("Image memory limit set to: %d MB\n", memory_max);
               custom_settings = true;
@@ -179,11 +177,8 @@ int main(int argc, char *argv[])
             {
               undo_max = atoi(optarg);
 
-              if (undo_max < 1)
-                undo_max = 1;
-
-              if (undo_max > 100)
-                undo_max = 100;
+              if (undo_max < 1) { undo_max = 1; }
+              if (undo_max > 100) { undo_max = 100; }
 
               printf("Undo levels set to: %d\n", undo_max);
               custom_settings = true;
@@ -257,17 +252,16 @@ int main(int argc, char *argv[])
 
   // delay showing main gui until after all arguments are checked
   Gui::show();
-//  Gui::imagesAddFile("new");
 
-    if (custom_settings == true)
-    {
-      #ifdef WIN32
-      char s[256];
-      snprintf(s, sizeof(s), "Rendera %s\nImage memory limit set to: %d MB\nUndo levels set to: %d", PACKAGE_STRING, memory_max, undo_max);
+  if (custom_settings == true)
+  {
+    #ifdef WIN32
+    char s[256];
+    snprintf(s, sizeof(s), "Rendera %s\nImage memory limit set to: %d MB\nUndo levels set to: %d", PACKAGE_STRING, memory_max, undo_max);
 
-      Dialog::message("Custom Settings", s);
-      #endif
-    }
+    Dialog::message("Custom Settings", s);
+    #endif
+  }
 
 /*
   // view FLTK theme palette (for testing)

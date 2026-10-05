@@ -108,8 +108,6 @@ namespace
   // prevent escape from closing main window
   void closeCallback(Fl_Widget *, void *)
   {
-//    if ((Fl::event() == FL_KEYDOWN || Fl::event() == FL_SHORTCUT)
-//       && Fl::event_key() == FL_Escape)
     if (Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape)
     {
       return;
@@ -448,7 +446,6 @@ void Gui::init()
   info = new Fl_Box(FL_FLAT_BOX, pos, 4, window->w() - pos, 24, "");
   info->resize(status->x() + pos, status->y() + 4, window->w() - pos, 24);
   info->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
-//  info->copy_label("Welcome to Rendera!");
   statusInfo("Welcome to Rendera!");
   saveStatusInfo();
 
