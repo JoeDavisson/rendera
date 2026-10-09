@@ -47,7 +47,7 @@ class Gui
 public:
   enum
   {
-    SPACING = 15,
+    SPACING = 9,
     TOP_HEIGHT = 56,
     TOOLS_WIDTH = 64,
     OPTIONS_WIDTH = 176,

@@ -142,8 +142,8 @@ ViewOptions::ViewOptions(int x, int y, int w, int h, const char *l)
   aspect->textsize(16);
   pos += 160 + Gui::SPACING;
 
-  new Separator(this, pos, 0, Gui::TOP_HEIGHT, Separator::VERTICAL, "");
-  pos += 4 + Gui::SPACING;
+//  new Separator(this, pos, 0, Gui::TOP_HEIGHT, Separator::VERTICAL, "");
+//  pos += 4 + Gui::SPACING;
 
   resizable(0);
   end();

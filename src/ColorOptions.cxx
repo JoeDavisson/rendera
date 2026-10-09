@@ -85,10 +85,10 @@ ColorOptions::ColorOptions(int x, int y, int w, int h, const char *l)
   trans_input->value(0);
   pos += 32 + 8;
 
-  trans = new Widget(this, 8, pos, 192, 42, "Transparency", 6, 42, 0);
+  trans = new Widget(this, 8, pos, 192, 32, "Transparency", 6, 32, 0);
   trans->callback(cb_colorTrans, (void *)this);
 
-  pos += 42 + Gui::SPACING;
+  pos += 32 + Gui::SPACING;
 
   new Separator(this, 0, pos, Gui::COLORS_WIDTH, Separator::HORIZONTAL, "");
   pos += 4 + Gui::SPACING;
@@ -121,6 +121,8 @@ ColorOptions::ColorOptions(int x, int y, int w, int h, const char *l)
   palette_input = new InputInt(this, 8, pos, 96, 32, "Index:", 0, 0, 255);
   palette_input->callback(cb_paletteInput, (void *)this);
   palette_input->value(0);
+  palette_input->textsize(14);
+  palette_input->labelsize(14);
   palette_input->center();
   pos += 32 + Gui::SPACING;
 
@@ -141,14 +143,10 @@ void ColorOptions::colorHexInput()
   sscanf(hexcolor->value(), "%06x", &c);
 
   c = reverseHexColor(c);
-
-//  if (c > 0xffffff) { c = 0xffffff; }
-
   c |= 0xff000000;
 
   colorUpdate((int)c);
   colorHexUpdate();
-//  Editor::update();
 }
 
 void ColorOptions::colorHexUpdate()
@@ -200,7 +198,7 @@ void ColorOptions::colorTransDraw(int temp_trans)
   {
     for (int x = 0; x < trans->bitmap->w; x++)
     {
-      const int checker = ((x / 16) & 1) ^ (((y + 3) / 16) & 1)
+      const int checker = ((x / 16) & 1) ^ ((y / 16) & 1)
                           ? 0xff989898 : 0xff686868;
 
       trans->bitmap->setpixel(x, y, checker);
