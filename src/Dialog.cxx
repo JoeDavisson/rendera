@@ -84,7 +84,7 @@ namespace Keys
 
     Items::dialog = new DialogWindow(528, 0, "Keyboard Commands");
 
-    Items::keys = new Fl_Multiline_Output(8, y1, 512, 352, ""); 
+    Items::keys = new Fl_Multiline_Output(8, y1, 512, 364, ""); 
     Items::keys->textsize(18);
     Items::keys->clear_visible_focus();
     Items::keys->value(
@@ -101,9 +101,10 @@ namespace Keys
       "close dialog: [escape]\n"
       "set clone target: [ctrl+click]\n"
       "dpi scaling: [ctrl +/-/0]\n"
+      "toggle fullscren: [f11] or [alt+enter]\n"
     );
 
-    y1 += 352 + 8;
+    y1 += 364 + 8;
     Items::dialog->addOkButton(&Items::ok, &y1);
     Items::ok->callback((Fl_Callback *)close);
 
