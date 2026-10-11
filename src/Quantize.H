@@ -50,7 +50,7 @@ private:
   static int limitColors(std::vector<color_type> &,
                          std::vector<color_type> &,
                          int, int, int, int);
-  static int countColors(Bitmap *, std::bitset<16777216> &);
+  static int countColors(Bitmap *, std::vector<bool> &);
 };
 
 #endif

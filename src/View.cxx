@@ -119,7 +119,7 @@ namespace
     // separate individual file paths in the list
     for (int i = 0; i < length; i++)
     {
-      if (fn[i] == '\n') { fn[i] = '\0'; }
+      if (fn[i] == '\n' || fn[i] == '\r') { fn[i] = '\0'; }
     }
 
     // try to load all the files in list

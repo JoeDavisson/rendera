@@ -205,7 +205,7 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
 }
 
 // count colors in image
-int Quantize::countColors(Bitmap *src, std::bitset<16777216> &bits)
+int Quantize::countColors(Bitmap *src, std::vector<bool> &bits)
 {
 
   for (int y = 0; y < src->h; y++)
@@ -218,12 +218,12 @@ int Quantize::countColors(Bitmap *src, std::bitset<16777216> &bits)
     }
   }
 
-  return bits.count();
+  return std::count(bits.begin(), bits.end(), true);
 }
 
 void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 {
-  std::bitset<16777216> color_bits;
+  std::vector<bool> color_bits(16777216);
   std::vector<color_type> colors(samples);
 
   const int color_count = countColors(src, color_bits);
