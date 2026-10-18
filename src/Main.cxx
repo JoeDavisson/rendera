@@ -24,6 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <getopt.h>
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 #include "FL/Fl_File_Icon.H"
 
 #include "Blend.H"
@@ -62,6 +66,24 @@ struct option long_options[] =
   { "help",    no_argument,       &verbose_flag, OPTION_HELP    },
   { 0, 0, 0, 0 }
 };
+
+/*
+#ifdef WIN32
+void init_console()
+{
+  if (AllocConsole())
+  {
+    FILE *dummy;
+
+    freopen_s(&dummy, "CONOUT$", "w", stdout);
+    freopen_s(&dummy, "CONOUT$", "w", stderr);
+
+    fflush(stdout);
+    fflush(stderr);
+  }
+}
+#endif
+*/
 
 void setDarkTheme()
 {
@@ -119,6 +141,12 @@ void printHelp()
 
 int main(int argc, char *argv[])
 {
+/*
+#ifdef WIN32
+  init_console();
+#endif
+*/
+
   //Fl::keyboard_screen_scaling(0);
   Fl_File_Icon::load_system_icons();
   setDarkTheme();
