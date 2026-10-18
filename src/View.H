@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef VIEW_H
 #define VIEW_H
 
+#include <vector>
+
 #include <FL/Fl_Widget.H>
 
 class Bitmap;
@@ -55,6 +57,7 @@ public:
   void scroll(int, int);
   void clipOrigin();
   void saveCoords();
+  void dndPasteHandler();
 
   Fl_Group *group;
   Bitmap *backbuf;
@@ -82,6 +85,10 @@ public:
   bool ctrl;
   bool alt;
   bool dnd;
+
+private:
+  char *dnd_string;
+  int dnd_length;
 
 protected:
   void draw();

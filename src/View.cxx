@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <algorithm>
 
 #include <FL/fl_draw.H>
+#include <FL/filename.H>
 
 #include "Bitmap.H"
 #include "Blend.H"
@@ -97,55 +98,9 @@ namespace
     fl_pop_clip();
   }
 
-  void dndPasteHandler()
-  {
-    Gui::view->changeCursor();
-
-    const int length = Fl::event_length();
-
-    // length includes '\0' character
-    std::vector<char> fn(length + 1, 0);
-
-    for (int i = 0; i < length + 1; i++)
-    {
-      fn.data()[i] = Fl::event_text()[i];
-    }
-
-    // convert to utf-8 (e.g. %20 becomes space)
-    File::decodeURI(fn.data(), length);
-
-    int index = 0;
-
-    // separate individual file paths in the list
-    for (int i = 0; i < length; i++)
-    {
-      if (fn[i] == '\n' || fn[i] == '\r') { fn[i] = '\0'; }
-    }
-
-    // try to load all the files in list
-    for (int i = 0; i < length; )
-    {
-      if (i == length - 1 || fn[i] == '\0')
-      {
-        // some systems use the "file://" resource identifier
-        if (strncasecmp(fn.data() + index, "file://", 7) == 0)
-        {
-          index += 7;
-        }
-        
-        File::loadFile(fn.data() + index);
-
-        i++;
-        index = i;
-      }
-        else
-      {
-        i++;
-      }
-    }
-
-    Gui::view->resized = true;
-  }
+//  void cb_paste(Fl_Widget *, void *data)
+  void cb_paste(void *data)
+  { View *temp = (View *)data; temp->dndPasteHandler(); }
 }
 
 View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
@@ -175,6 +130,8 @@ View::View(Fl_Group *g, int x, int y, int w, int h, const char *label)
   mouse_in_viewport = false;
   backbuf = 0;
   dnd = false;
+  dnd_length = 0;
+  dnd_string = nullptr;
 
   resize(group->x() + x, group->y() + y, w, h);
 }
@@ -248,6 +205,11 @@ int View::handle(int event)
   shift = Fl::event_shift() ? true : false;
   ctrl = Fl::event_ctrl() ? true : false;
   alt = Fl::event_alt() ? true : false;
+
+  // for dnd
+  int index = 0;
+  int length = 0;
+  int c = 0;
 
   switch (event)
   {
@@ -429,7 +391,6 @@ int View::handle(int event)
       dnd = false;
       resized = true;
       redraw();
-      return 1;
     }
 
     case FL_DND_DRAG:
@@ -447,7 +408,23 @@ int View::handle(int event)
 
     case FL_PASTE:
     {
-      Fl::add_timeout(0, (Fl_Timeout_Handler)dndPasteHandler);
+      delete[] dnd_string;
+      dnd_string = nullptr;
+      length = Fl::event_length();
+      if (length == 0 || Fl::event_text() == nullptr) { return 1; }
+      dnd_length = length;
+      dnd_string = new char[length + 1];
+      index = 0;
+
+      for (int i = 0; i < length; i++)
+      {
+        c = Fl::event_text()[i];
+        if (c == '\0') { break; }
+        if (c != '\r') { dnd_string[index++] = c; }
+      }
+
+      dnd_string[index] = '\0';
+      Fl::add_timeout(0.01, (Fl_Timeout_Handler)cb_paste, this);
       return 1;
     }
 
@@ -791,6 +768,53 @@ void View::saveCoords()
   Project::ox_list[Project::current] = ox;
   Project::oy_list[Project::current] = oy;
   Project::zoom_list[Project::current] = zoom;
+}
+
+void View::dndPasteHandler()
+{
+  if (dnd_string == nullptr) { return; };
+
+  changeCursor();
+  fl_decode_uri(dnd_string);
+
+  int length = (int)strlen(dnd_string);
+
+  // separate individual file paths in the list
+  for (int i = 0; i < length; i++)
+  {
+    if (dnd_string[i] == '\n') { dnd_string[i] = '\0'; }
+  }
+
+  // try to load all the files in list
+  char *current = dnd_string;
+  char *end = dnd_string + length;
+
+  while (current < end && *current != '\0')
+  {
+    char *next = current + strlen(current) + 1;
+    char *fp = current;
+
+    // some systems use the "file://" resource identifier
+    if (strncasecmp(fp, "file:///", 8) == 0)
+    {
+      fp += 8;
+    }
+    else if (strncasecmp(fp, "file://", 7) == 0)
+    {
+      fp += 7;
+    }
+
+    if (strlen(fp) > 0)
+    {
+      File::loadFile(fp);
+    }
+
+    current = next;
+  }
+
+  delete[] dnd_string;
+  dnd_string = nullptr;
+  resized = true;
 }
 
 // do not call directly, call redraw() instead
