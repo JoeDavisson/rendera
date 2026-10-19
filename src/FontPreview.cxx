@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Hold_Browser.H>
+#include <FL/Fl_Input.H>
 #include <FL/Fl_Tile.H>
 
 class PreviewBox;
@@ -41,6 +42,7 @@ namespace
   PreviewBox *preview_text;
   Fl_Button *preview_done;
   Fl_Hold_Browser *font_browse;
+  Fl_Input *preview_search;
 }
 
 class PreviewBox : public Fl_Box
@@ -112,6 +114,13 @@ void FontPreview::init()
   new Separator(preview_win, 0, pos, 628, Separator::HORIZONTAL, "");
   pos += 12;
 
+  preview_search = new Fl_Input(72, pos + 4, 192, 32, "Search:");
+  preview_search->textsize(18);
+  preview_search->labelsize(16);
+  preview_search->align(FL_ALIGN_LEFT);
+  preview_search->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);
+  preview_search->callback((Fl_Callback *)FontPreview::search);
+
   preview_done = new Fl_Button(628 - 96 - 8, pos, 96, 40, "Done (F)");
   preview_done->labelsize(16);
   preview_done->shortcut('f');
@@ -126,6 +135,7 @@ void FontPreview::toggle()
   if (preview_win->shown() == 0)
   {
     preview_win->show();
+    preview_search->take_focus();
   }
     else
   {
@@ -168,3 +178,47 @@ int FontPreview::getFont()
   return font_browse->value();
 }
 
+void FontPreview::search()
+{
+  int current_line = font_browse->value() + 1;
+  int size = font_browse->size();
+
+  if (current_line > size)
+  {
+    current_line = 1;
+  }
+
+  bool found = false;
+
+  // search from current position
+  for (int line = current_line; line <= size; line++)
+  {
+    const char *match_string = preview_search->value();
+    const char *line_string = font_browse->text(line);
+
+    if (strcasestr(line_string, match_string) != nullptr)
+    {
+      font_browse->value(line);
+      font_browse->middleline(line);
+      found = true;
+      break;
+    }
+  }
+
+  if (found == false)
+  {
+    // try again from the top
+    for (int line = 1; line <= size; line++)
+    {
+      const char *match_string = preview_search->value();
+      const char *line_string = font_browse->text(line);
+
+      if (strcasestr(line_string, match_string) != nullptr)
+      {
+        font_browse->value(line);
+        font_browse->middleline(line);
+        break;
+      }
+    }
+  }
+}

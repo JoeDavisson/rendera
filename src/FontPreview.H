@@ -30,6 +30,7 @@ public:
   static void update(const int);
   static void changedFont();
   static int getFont();
+  static void search();
 
 private:
   FontPreview() { }
