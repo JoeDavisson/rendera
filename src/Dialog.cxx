@@ -42,6 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "ColorOptions.H"
 #include "Dialog.H"
 #include "DialogWindow.H"
+#include "Editor.H"
 #include "File.H"
 #include "Group.H"
 #include "Gui.H"
@@ -455,6 +456,7 @@ namespace MakePalette
 
     const int samples = 3000;
 
+    Editor::push();
     Quantize::pca(Project::bmp, Project::palette,
                   Items::colors->value(), samples);
     Gui::colors->paletteDraw();
