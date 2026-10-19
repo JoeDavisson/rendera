@@ -200,6 +200,7 @@ void FontPreview::search()
     {
       font_browse->value(line);
       font_browse->middleline(line);
+      changedFont();
       found = true;
       break;
     }
@@ -217,6 +218,7 @@ void FontPreview::search()
       {
         font_browse->value(line);
         font_browse->middleline(line);
+        changedFont();
         break;
       }
     }
