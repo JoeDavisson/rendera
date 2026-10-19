@@ -71,7 +71,6 @@ namespace Keys
   void begin()
   {
     Items::dialog->show();
-    Items::ok->take_focus();
   }
 
   void close()
@@ -127,7 +126,6 @@ namespace About
   void begin()
   {
     Items::dialog->show();
-    Items::ok->take_focus();
   }
 
   void close()
@@ -180,7 +178,6 @@ namespace JpegQuality
   void begin()
   {
     Items::dialog->show();
-    Items::ok->take_focus();
 
     while (true)
     {
@@ -232,7 +229,6 @@ namespace JavaExport
   void begin()
   {
     Items::dialog->show();
-    Items::ok->take_focus();
 
     while (true)
     {
@@ -288,7 +284,6 @@ namespace PngOptions
   void begin()
   {
     Items::dialog->show();
-    Items::ok->take_focus();
 
     while (true)
     {
@@ -353,7 +348,6 @@ namespace NewImage
     Items::width->value(Project::bmp->cw);
     Items::height->value(Project::bmp->ch);
     Items::dialog->show();
-    Items::ok->take_focus();
   }
 
   void checkWidth()
@@ -453,7 +447,6 @@ namespace MakePalette
   {
     Items::colors->value(Project::palette->max);
     Items::dialog->show();
-    Items::ok->take_focus();
   }
 
   void close()
@@ -508,7 +501,6 @@ namespace Message
     Items::dialog->copy_label(title);
     Items::box->copy_label(message);
     Items::dialog->show();
-    Items::ok->take_focus();
   }
 
   void quit()
@@ -557,7 +549,6 @@ namespace Choice
     Items::dialog->copy_label(title);
     Items::box->copy_label(message);
     Items::dialog->show();
-    Items::ok->take_focus();
   }
 
   void close()

@@ -140,7 +140,6 @@ void Marble::begin()
   FX::drawPreview(temp_bmp, Items::preview->bitmap);
   Items::preview->redraw();
   Items::dialog->show();
-  Items::ok->take_focus();
 }
 
 void Marble::init()

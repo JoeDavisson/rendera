@@ -307,7 +307,6 @@ void GaussianBlur::quit()
 void GaussianBlur::begin()
 {
   Items::dialog->show();
-  Items::ok->take_focus();
 }
 
 void GaussianBlur::init()

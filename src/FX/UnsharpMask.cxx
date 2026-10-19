@@ -180,7 +180,6 @@ void UnsharpMask::quit()
 void UnsharpMask::begin()
 {
   Items::dialog->show();
-  Items::ok->take_focus();
 }
 
 void UnsharpMask::init()

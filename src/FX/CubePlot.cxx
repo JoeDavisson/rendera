@@ -122,7 +122,6 @@ void CubePlot::quit()
 void CubePlot::begin()
 {
   Items::dialog->show();
-  Items::ok->take_focus();
 }
 
 void CubePlot::init()

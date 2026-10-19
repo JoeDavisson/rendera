@@ -35,6 +35,7 @@ DialogWindow::DialogWindow(int w, int h, const char *l)
 : Fl_Double_Window(w, h, l)
 {
   first_show = true;
+  enter_key = false;
 }
 
 DialogWindow::~DialogWindow()
@@ -49,6 +50,7 @@ void DialogWindow::addOkButton(Fl_Button **ok, int *y1)
                       BUTTON_WIDTH, BUTTON_HEIGHT, "OK");
   (*ok)->labelsize(18);
   (*ok)->shortcut(FL_Enter);
+  ok_ptr = *ok;
   add(*ok);
   *y1 += BUTTON_HEIGHT + 8;
 
@@ -68,6 +70,7 @@ void DialogWindow::addOkCancelButtons(Fl_Button **ok, Fl_Button **cancel, int *y
   (*cancel)->labelsize(18);
   (*ok)->labelsize(18);
   (*ok)->shortcut(FL_Enter);
+  ok_ptr = *ok;
   add(*ok);
   resize(x(), y(), w(), *y1);
 }
@@ -76,8 +79,29 @@ int DialogWindow::handle(int event)
 {
   switch (event)
   {
-    case FL_PUSH:
-    case FL_MOVE:
+    case FL_SHORTCUT:
+    case FL_KEYDOWN:
+      if (Fl::event_key() == FL_Enter)
+      {
+        if (enter_key == true) { return 1; }
+        enter_key = true;
+
+        if (ok_ptr)
+        {
+          ok_ptr->do_callback();
+        }
+        return 1;
+      }
+      break;
+
+    case FL_KEYUP:
+      if (Fl::event_key() == FL_Enter)
+      {
+        enter_key = false;
+      }
+      break;
+
+    case FL_DRAG:
       xpos = x();
       ypos = y();
       break;
@@ -97,6 +121,8 @@ void DialogWindow::show()
 
   resize(xpos, ypos, w(), h());
   Fl_Double_Window::show();
+
+  if (ok_ptr) { ok_ptr->take_focus(); }
 }
 
 void DialogWindow::hide()

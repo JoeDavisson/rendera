@@ -41,6 +41,8 @@ public:
 
 private:
   bool first_show;
+  bool enter_key;
+  Fl_Button *ok_ptr = nullptr;
 };
 
 #endif

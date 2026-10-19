@@ -108,7 +108,6 @@ void Sobel::quit()
 void Sobel::begin()
 {
   Items::dialog->show();
-  Items::ok->take_focus();
 }
 
 void Sobel::init()

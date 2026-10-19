@@ -155,7 +155,6 @@ void Bloom::quit()
 void Bloom::begin()
 {
   Items::dialog->show();
-  Items::ok->take_focus();
 }
 
 void Bloom::init()
