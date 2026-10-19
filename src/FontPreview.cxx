@@ -180,6 +180,8 @@ int FontPreview::getFont()
 
 void FontPreview::search()
 {
+  if (strlen(preview_search->value()) < 1) { return; }
+
   int current_line = font_browse->value() + 1;
   int size = font_browse->size();
 
