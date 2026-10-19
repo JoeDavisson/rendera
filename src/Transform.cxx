@@ -58,6 +58,7 @@ namespace Resize
     Items::width->value(Project::bmp->cw);
     Items::height->value(Project::bmp->ch);
     Items::dialog->show();
+    Items::ok->take_focus();
   }
 
   void checkWidth()
@@ -452,6 +453,7 @@ namespace Scale
     Items::height->value(Project::bmp->ch);
     Items::percent->value(100);
     Items::dialog->show();
+    Items::ok->take_focus();
   }
 
   void checkWidth()
@@ -734,6 +736,7 @@ namespace RotateArbitrary
   {
     Items::scale->value(1.000);
     Items::dialog->show();
+    Items::ok->take_focus();
   }
 
   void close()

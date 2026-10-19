@@ -271,6 +271,7 @@ void Dither::quit()
 void Dither::begin()
 {
   Items::dialog->show();
+  Items::ok->take_focus();
 }
 
 void Dither::init()

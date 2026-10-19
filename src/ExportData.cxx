@@ -61,6 +61,7 @@ namespace ExportOptions
   int begin()
   {
     Items::dialog->show();
+    Items::ok->take_focus();
 
     while (true)
     {

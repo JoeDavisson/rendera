@@ -154,6 +154,7 @@ void BoxFilters::quit()
 void BoxFilters::begin()
 {
   Items::dialog->show();
+  Items::ok->take_focus();
 }
 
 void BoxFilters::init()

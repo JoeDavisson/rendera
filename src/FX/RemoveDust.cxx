@@ -100,6 +100,7 @@ void RemoveDust::quit()
 void RemoveDust::begin()
 {
   Items::dialog->show();
+  Items::ok->take_focus();
 }
 
 void RemoveDust::init()

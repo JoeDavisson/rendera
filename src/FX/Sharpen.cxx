@@ -87,6 +87,7 @@ void Sharpen::quit()
 void Sharpen::begin()
 {
   Items::dialog->show();
+  Items::ok->take_focus();
 }
  
 void Sharpen::init()

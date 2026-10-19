@@ -531,8 +531,15 @@ void Editor::begin()
 {
   update();
 
-  if (Items::dialog->shown() == 0) { Items::dialog->show(); }
-  else { Items::dialog->hide(); }
+  if (Items::dialog->shown() == 0)
+  {
+    Items::dialog->show();
+    Items::done->take_focus();
+  }
+    else
+  {
+    Items::dialog->hide();
+  }
 
   ramp_begin = 0;
   ramp_state = 0;

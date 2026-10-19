@@ -155,6 +155,7 @@ void StainedGlass::quit()
 void StainedGlass::begin()
 {
   Items::dialog->show();
+  Items::ok->take_focus();
 }
 
 void StainedGlass::init()

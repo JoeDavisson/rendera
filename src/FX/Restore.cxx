@@ -140,6 +140,7 @@ void Restore::quit()
 void Restore::begin()
 {
   Items::dialog->show();
+  Items::ok->take_focus();
 }
 
 void Restore::init()

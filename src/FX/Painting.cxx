@@ -104,6 +104,7 @@ void Painting::quit()
 void Painting::begin()
 {
   Items::dialog->show();
+  Items::ok->take_focus();
 }
 
 void Painting::init()
