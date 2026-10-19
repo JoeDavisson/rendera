@@ -48,8 +48,8 @@ namespace
 
   int range(const int value, const int floor, const int ceiling)
   {
-    if(value < floor) { return floor; }
-    else if(value > ceiling) { return ceiling; }
+    if (value < floor) { return floor; }
+    else if (value > ceiling) { return ceiling; }
     else { return value; }
   }
 

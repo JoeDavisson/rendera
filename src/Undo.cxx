@@ -255,7 +255,7 @@ void Undo::pop()
   h = undo_stack[undo_current]->h;
   undo_mode = undo_stack[undo_current]->undo_mode;
 
-  if(undo_mode == Undo::FULL)
+  if (undo_mode == Undo::FULL)
   {
     Project::replaceImage(w, h);
   }
