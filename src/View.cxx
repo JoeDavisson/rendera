@@ -451,10 +451,8 @@ void View::resize(int x, int y, int w, int h)
                              new_width, new_height, 4, 0);
   wimage->scale(w, h, 0, 1);
 
-  drawMain(false);
   Fl_Widget::resize(x, y, w, h);
-
-  resized = true;
+  drawMain(true);
 }
 
 void View::redraw()
