@@ -60,10 +60,10 @@ static int verbose_flag;
 
 struct option long_options[] =
 {
-  { "mem", optional_argument,       &verbose_flag, OPTION_MEM },
-  { "undos", optional_argument,       &verbose_flag, OPTION_UNDOS },
-  { "version", no_argument,       &verbose_flag, OPTION_VERSION },
-  { "help",    no_argument,       &verbose_flag, OPTION_HELP    },
+  { "mem", optional_argument, &verbose_flag, OPTION_MEM },
+  { "undos", optional_argument, &verbose_flag, OPTION_UNDOS },
+  { "version", no_argument, &verbose_flag, OPTION_VERSION },
+  { "help",    no_argument, &verbose_flag, OPTION_HELP },
   { 0, 0, 0, 0 }
 };
 
@@ -137,6 +137,7 @@ void printHelp()
   printf("--mem=<value>\t\t memory limit (in megabytes, default 4000)\n");
   printf("--undos=<value>\t\t undo limit (1-100)\n");
   printf("--version\t\t version information\n\n");
+  printf("Enable X11 backend: FLTK_BACKEND=x11 ./rendera\n\n");
 }
 
 int main(int argc, char *argv[])
@@ -171,17 +172,22 @@ int main(int argc, char *argv[])
         switch (option_index)
         {
           case OPTION_HELP:
+          {
             printHelp();
             exit = true;
             break;
+          }
 
           case OPTION_VERSION:
+          {
             printf("Rendera %s\n\n", PACKAGE_STRING);
             printf("This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n");
             exit = true;
             break;
+          }
 
           case OPTION_MEM:
+          {
             if (optarg)
             {
               memory_max = atoi(optarg);
@@ -199,8 +205,10 @@ int main(int argc, char *argv[])
             }
             
             break;
+          }
 
           case OPTION_UNDOS:
+          {
             if (optarg)
             {
               undo_max = atoi(optarg);
@@ -216,15 +224,17 @@ int main(int argc, char *argv[])
             {
               printHelp();
               exit = true;
-              break;
             }
             
             break;
+          }
 
           default:
+          {
             printHelp();
             exit = true;
             break;
+          }
         }
 
         break;
@@ -246,7 +256,6 @@ int main(int argc, char *argv[])
     #endif
   }
 
-  // fltk related inits
   Fl::visual(FL_DOUBLE | FL_RGB);
   Fl::scheme("gtk+");
 
