@@ -33,6 +33,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Tile.H>
 
+#ifdef WIN32
+#include <shlwapi.h>
+#endif
+
 class PreviewBox;
 
 namespace
@@ -198,7 +202,11 @@ void FontPreview::search()
     const char *match_string = preview_search->value();
     const char *line_string = font_browse->text(line);
 
+    #ifdef WIN32
+    if (StrStrI(line_string, match_string) != nullptr)
+    #else
     if (strcasestr(line_string, match_string) != nullptr)
+    #endif
     {
       font_browse->value(line);
       font_browse->middleline(line);
@@ -216,7 +224,11 @@ void FontPreview::search()
       const char *match_string = preview_search->value();
       const char *line_string = font_browse->text(line);
 
+      #ifdef WIN32
+      if (StrStrI(line_string, match_string) != nullptr)
+      #else
       if (strcasestr(line_string, match_string) != nullptr)
+      #endif
       {
         font_browse->value(line);
         font_browse->middleline(line);
