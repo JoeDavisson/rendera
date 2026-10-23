@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #  include "config.h"
 #endif
 
+#include <cstdlib>
 #include <getopt.h>
 
 #ifdef WIN32
@@ -262,7 +263,22 @@ int main(int argc, char *argv[])
   // program initalization
   Gamma::init();
   Project::init(memory_max, undo_max);
-  File::init();
+
+  #ifdef WIN32
+    const char *home_dir = std::getenv("USERPROFILE");
+  #else
+    const char *home_dir = std::getenv("HOME");
+  #endif
+
+  if (home_dir != nullptr)
+  {
+    File::init(home_dir, strlen(home_dir));
+  }
+    else
+  {
+    File::init();
+  }
+
   ExportData::init();
   FX::init();
   Transform::init();

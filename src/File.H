@@ -57,6 +57,7 @@ class File
 {
 public:
   static void init();
+  static void init(const char *, size_t);
   static void load(Fl_Widget *, void *);
   static int loadFile(const char *);
   static Bitmap *loadJpeg(const char *);

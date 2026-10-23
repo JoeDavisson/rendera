@@ -239,6 +239,11 @@ void File::init()
   snprintf(last_dir, sizeof(last_dir), ".");
 }
 
+void File::init(const char *home_dir, size_t len)
+{
+  snprintf(last_dir, len + 1, "%s/", home_dir);
+}
+
 /*
 void createPalettePreview()
 {
