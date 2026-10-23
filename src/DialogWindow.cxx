@@ -81,30 +81,41 @@ int DialogWindow::handle(int event)
   {
     case FL_SHORTCUT:
     case FL_KEYDOWN:
-      if (Fl::event_key() == FL_Enter)
+    {
+      if (Fl::event_key() == FL_Enter || Fl::event_key() == FL_KP_Enter)
       {
         if (enter_key == true) { return 1; }
+
         enter_key = true;
 
         if (ok_ptr)
         {
           ok_ptr->do_callback();
         }
+
         return 1;
       }
+
       break;
+    }
 
     case FL_KEYUP:
-      if (Fl::event_key() == FL_Enter)
+    {
+      if (Fl::event_key() == FL_Enter || Fl::event_key() == FL_KP_Enter)
       {
         enter_key = false;
       }
-      break;
 
+      break;
+    }
+
+    case FL_PUSH:
     case FL_DRAG:
+    {
       xpos = x();
       ypos = y();
       break;
+    }
   }
 
   return Fl_Double_Window::handle(event);
@@ -127,6 +138,7 @@ void DialogWindow::show()
 
 void DialogWindow::hide()
 {
+  // attempt to remember the dialog position (doesn't work on Wayland)
   xpos = x();
   ypos = y();
 
