@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include <cstdio>
 #include <cstdlib>
 #include <algorithm>
+#include <stdexcept>
 #include <string>
 
 #include <FL/Fl_Group.H>
@@ -33,11 +34,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 namespace
 {
   char str[256];
+  double val = 0;
 
   void change(Fl_Widget *w, InputFloat *i)
   {
     bool shift = Fl::event_shift() ? true : false;
-    double val = std::stod(i->input.value());
+
+    try
+    {
+      val = std::stod(i->input.value());
+    }
+    catch (const std::invalid_argument &e)
+    {
+      val = i->min;
+    }
+    catch (const std::out_of_range &e)
+    {
+      val = i->min;
+    }
 
     if (shift == true)
     {
