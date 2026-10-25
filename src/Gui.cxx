@@ -301,16 +301,16 @@ void Gui::init()
   menubar->add("&Edit/Undo (Ctrl+Z)", 0,
     (Fl_Callback *)Project::pop, 0, 0);
   menubar->add("&Edit/Redo (Shift+Ctrl+Z)", 0,
-    (Fl_Callback *)Project::popRedo, 0);
-  menubar->add("&Clear/&Black", 0,
+    (Fl_Callback *)Project::popRedo, 0, FL_MENU_DIVIDER);
+  menubar->add("&Edit/&Clear/&Black", 0,
     (Fl_Callback *)clearToBlack, 0, 0);
-  menubar->add("&Clear/&White", 0,
+  menubar->add("&Edit/&Clear/&White", 0,
     (Fl_Callback *)clearToWhite, 0, 0);
-  menubar->add("&Clear/&Gray", 0,
+  menubar->add("&Edit/&Clear/&Gray", 0,
     (Fl_Callback *)clearToGray, 0, 0);
-  menubar->add("&Clear/&Paint Color", 0,
+  menubar->add("&Edit/&Clear/&Paint Color", 0,
     (Fl_Callback *)clearToColor, 0, 0);
-  menubar->add("&Clear/&Transparent", 0,
+  menubar->add("&Edit/&Clear/&Transparent", 0,
     (Fl_Callback *)clearToTrans, 0, 0);
 
   menubar->add("&Image/&Resize...", 0,
