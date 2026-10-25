@@ -451,8 +451,8 @@ void View::resize(int x, int y, int w, int h)
                              new_width, new_height, 4, 0);
   wimage->scale(w, h, 0, 1);
 
+  drawMain(false);
   Fl_Widget::resize(x, y, w, h);
-  drawMain(true);
 }
 
 void View::redraw()
@@ -466,7 +466,6 @@ void View::changeAspect(int new_aspect)
   aspect = new_aspect;
   ox = 0;
   oy = 0;
-  resized = true;
   drawMain(true);
 }
 
