@@ -172,6 +172,7 @@ void ColorOptions::colorChange()
 
   colorTrans();
   colorHexUpdate();
+  Editor::update();
 }
 
 void ColorOptions::colorTransInput()
@@ -304,6 +305,7 @@ void ColorOptions::paletteSwatches()
   pal->draw(palette_swatches);
   colorUpdate(c);
   palette_input->value(palette_swatches->var);
+  Editor::update();
 }
 
 int ColorOptions::paletteSwatchesIndex()
