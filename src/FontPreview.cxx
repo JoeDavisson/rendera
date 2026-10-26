@@ -127,9 +127,8 @@ void FontPreview::init()
   preview_search->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);
   preview_search->callback((Fl_Callback *)FontPreview::search);
 
-  preview_done = new Fl_Button(628 - 96 - 8, pos, 96, 40, "Done (F)");
+  preview_done = new Fl_Button(628 - 96 - 8, pos, 96, 40, "Done");
   preview_done->labelsize(16);
-  preview_done->shortcut('f');
   preview_done->callback((Fl_Callback *)FontPreview::close);
 
   preview_win->set_non_modal();
