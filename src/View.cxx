@@ -445,8 +445,8 @@ void View::resize(int x, int y, int w, int h)
   int new_width = w * scale;
   int new_height = h * scale;
 
-  delete backbuf;
   delete wimage;
+  delete backbuf;
   backbuf = new Bitmap(new_width, new_height);
   wimage = new Fl_RGB_Image((unsigned char *)backbuf->data,
                              new_width, new_height, 4, 0);
