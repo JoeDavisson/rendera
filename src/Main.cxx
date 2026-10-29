@@ -138,7 +138,8 @@ void printHelp()
   printf("--mem=<value>\t\t memory limit (in megabytes, default 4000)\n");
   printf("--undos=<value>\t\t undo limit (1-100)\n");
   printf("--version\t\t version information\n\n");
-  printf("Enable X11 backend: FLTK_BACKEND=x11 ./rendera\n\n");
+  printf("Enable X11 backend: FLTK_BACKEND=x11 ./rendera\n");
+  printf("Set scaling factor: FLTK_SCALING_FACTOR=<value> ./rendera\n\n");
 }
 
 int main(int argc, char *argv[])
