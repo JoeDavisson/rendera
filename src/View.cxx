@@ -524,9 +524,6 @@ void View::drawGrid()
     }
   }
 
-  if (temp_gridx < 4) { temp_gridx = 4; }
-  if (temp_gridy < 4) { temp_gridy = 4; }
-
   float scale = getScale();
 
   x2 = w() * scale - 1;
