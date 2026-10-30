@@ -508,14 +508,24 @@ void View::drawGrid()
   int x1, y1, x2, y2, t, i;
   int offx = 0, offy = 0;
 
-  if (zoom < 1)
-  {
-    int smaller = gridx < gridy ? gridx : gridy;
-
-    if (smaller < 4.0 / zoom) { return; }
-  }
+  int temp_gridx = gridx;
+  int temp_gridy = gridy;
+  int smaller = temp_gridx < temp_gridy ? temp_gridx : temp_gridy;
 
   if (zoom < 2 && (gridx == 1 || gridy == 1)) { return; }
+
+  if (zoom < 1)
+  {
+    while (smaller < 4.0 / zoom)
+    {
+      temp_gridx *= 2;
+      temp_gridy *= 2;
+      smaller = temp_gridx < temp_gridy ? temp_gridx : temp_gridy;
+    }
+  }
+
+  if (temp_gridx < 4) { temp_gridx = 4; }
+  if (temp_gridy < 4) { temp_gridy = 4; }
 
   float scale = getScale();
 
@@ -526,8 +536,10 @@ void View::drawGrid()
 
   if (t < 96) { t = 96; }
 
-  int zx = zoom * gridx;
-  int zy = zoom * gridy;
+  int zx = zoom * temp_gridx;
+  int zy = zoom * temp_gridy;
+//  int zx = zoom * gridx;
+//  int zy = zoom * gridy;
   int qx = 0;
   int qy = 0;
 
