@@ -561,7 +561,7 @@ void Gui::init()
   images->resize(images->x(), images->y(), images->w(), right_height);
   right->end();
 
-  window->size_range(900, 808, 0, 0, 0, 0, 0);
+  window->size_range(640, 480, 0, 0, 0, 0, 0);
   window->resizable(view);
   window->end();
 

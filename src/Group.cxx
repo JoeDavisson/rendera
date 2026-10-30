@@ -40,6 +40,7 @@ Group::Group(int x, int y, int w, int h, const char *l)
   labelsize(16);
   labelcolor(FL_FOREGROUND_COLOR);
   align(FL_ALIGN_INSIDE | FL_ALIGN_CENTER | FL_ALIGN_TOP);
+  clip_children(1);
 
   resize(x, y, w, h);
 }
