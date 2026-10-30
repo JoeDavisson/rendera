@@ -535,8 +535,6 @@ void View::drawGrid()
 
   int zx = zoom * temp_gridx;
   int zy = zoom * temp_gridy;
-//  int zx = zoom * gridx;
-//  int zy = zoom * gridy;
   int qx = 0;
   int qy = 0;
 
