@@ -452,8 +452,8 @@ void View::resize(int x, int y, int w, int h)
                              new_width, new_height, 4, 0);
   wimage->scale(w, h, 0, 1);
 
-  drawMain(false);
   Fl_Widget::resize(x, y, w, h);
+  drawMain(true);
 }
 
 void View::redraw()
@@ -508,7 +508,13 @@ void View::drawGrid()
   int x1, y1, x2, y2, t, i;
   int offx = 0, offy = 0;
 
-  if (zoom < 1) { return; }
+  if (zoom < 1)
+  {
+    int smaller = gridx < gridy ? gridx : gridy;
+
+    if (smaller < 4.0 / zoom) { return; }
+  }
+
   if (zoom < 2 && (gridx == 1 || gridy == 1)) { return; }
 
   float scale = getScale();
