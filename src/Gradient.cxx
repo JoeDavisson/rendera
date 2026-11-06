@@ -74,8 +74,9 @@ namespace
 
         if (use_color == true)
         {
-          bmp->setpixel(x, y,
-                        Blend::current(c, color, scaleVal(trans, t * 255)));
+          const int c2 = Blend::current(c, color, scaleVal(trans, t * 255));
+
+          bmp->setpixel(x, y, c2);
         }
           else
         {
@@ -125,8 +126,69 @@ namespace
 
         if (use_color == true)
         {
-          bmp->setpixel(x, y,
-                        Blend::current(c, color, scaleVal(trans, t * 255)));
+          const int c2 = Blend::current(c, color, scaleVal(trans, t * 255));
+
+          bmp->setpixel(x, y, c2);
+        }
+          else
+        {
+          const int r = getr(c);
+          const int g = getg(c);
+          const int b = getb(c);
+          const int a = geta(c) - geta(c) * t;
+
+          bmp->setpixel(x, y, makeRgba(r, g, b, a));
+        }
+      }
+
+      if (Progress::update(yy++) < 0) { break; }
+    }
+
+    Progress::hide();
+    Blend::set(Blend::TRANS);
+  }
+
+  void gradientRectangular(int x1, int y1, int x2, int y2,
+                           int color, int trans,
+                           bool use_color, bool inverse)
+  {
+    Bitmap *bmp = Project::bmp;
+
+    if (x1 > x2) { std::swap(x1, x2); }
+    if (y1 > y2) { std::swap(y1, y2); }
+
+    const float dx = x2 - x1;
+    const float dy = y2 - y1;
+
+    if (dx == 0 || dy == 0) { return; }
+
+    const float rx = dx / 2;
+    const float ry = dy / 2;
+    const float cx = x1 + rx;
+    const float cy = y1 + ry;
+
+    Blend::set(Gui::gradient->blendingMode());
+    Progress::show(bmp->h);
+    int yy = 0;
+
+    for (int y = 0; y < bmp->h; y++)
+    {
+      for (int x = 0; x < bmp->w; x++)
+      {
+        float t = std::max((x - cx) * (x - cx) / (rx * rx),
+                           (y - cy) * (y - cy) / (ry * ry));
+
+        if (t < 0) { t = 0; }
+        if (t > 1) { t = 1; }
+        if (inverse == true) { t = 1.0 - t; }
+
+        const int c = bmp->getpixel(x, y);
+
+        if (use_color == true)
+        {
+          const int c2 = Blend::current(c, color, scaleVal(trans, t * 255));
+
+          bmp->setpixel(x, y, c2);
         }
           else
         {
@@ -147,8 +209,8 @@ namespace
   }
 
   void gradientElliptical(int x1, int y1, int x2, int y2,
-                                  int color, int trans,
-                                  bool use_color, bool inverse)
+                          int color, int trans,
+                          bool use_color, bool inverse)
   {
     Bitmap *bmp = Project::bmp;
 
@@ -184,8 +246,9 @@ namespace
 
         if (use_color == true)
         {
-          bmp->setpixel(x, y,
-                        Blend::current(c, color, scaleVal(trans, t * 255)));
+          const int c2 = Blend::current(c, color, scaleVal(trans, t * 255));
+
+          bmp->setpixel(x, y, c2);
         }
           else
         {
@@ -291,8 +354,8 @@ void Gradient::release(View *view)
                      color, trans, use_color, inverse);
       break;
     case 2:
-//    gradientRectangular(beginx, beginy, endx, endy,
-//                        color, trans, use_color, inverse);
+      gradientRectangular(beginx, beginy, endx, endy,
+                          color, trans, use_color, inverse);
       break;
     case 3:
       gradientElliptical(beginx, beginy, endx, endy,
