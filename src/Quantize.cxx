@@ -28,7 +28,6 @@ http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 
 #include <vector>
 #include <algorithm>
-#include <bitset>
 
 #include "Blend.H"
 #include "Bitmap.H"
@@ -207,7 +206,6 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
 // count colors in image
 int Quantize::countColors(Bitmap *src, std::vector<bool> &bits)
 {
-
   for (int y = 0; y < src->h; y++)
   {
     for (int x = 0; x < src->w; x++)
@@ -273,9 +271,9 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   const double weight = 1.0;
   int count = 0;
 
-  for (int y = 0; y <= src->h; y++)
+  for (int y = 0; y < src->h; y++)
   {
-    for (int x = 0; x <= src->w; x++)
+    for (int x = 0; x < src->w; x++)
     {
       const int c = src->getpixel(x, y);
       rgba_type rgba = getRgba(c);
@@ -330,13 +328,13 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   if (max < size) { size = max; }
 
   // init error matrix
-  std::vector<double> err_data(((max + 1) * max) / 2);
+  std::vector<double> err_data((max * (max - 1)) / 2);
 
   for (int j = 0; j < max; j++)
   {
     for (int i = 0; i < j; i++)
     {
-      err_data[i + (j + 1) * j / 2] = error(colors[i], colors[j]);
+      err_data[i + j * (j - 1) / 2] = error(colors[i], colors[j]);
     }
   }
 
@@ -354,28 +352,32 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   while (count > size)
   {
     int ii = 0, jj = 0;
-    double *a = &(colors[0].freq);
+    double *a = &colors[0].freq;
     double least_err = std::numeric_limits<double>::max();
+    double *err_start = &err_data[0];
 
     for (int j = 0; j < max; j++)
     {
       if (*a > 0)
       {
-        double *e = &err_data[(j + 1) * j / 2];
-        double *b = &(colors[0].freq);
+        double *e = err_start;
+        double *b = &colors[0].freq;
 
         for (int i = 0; i < j; i++)
         {
-          if (*e < least_err && *b > 0)
+          if (*e < least_err)
           {
-            least_err = *e;
-
-            ii = i;
-            jj = j;
-
-            if (least_err < bailout && ii != 0 && jj != 0)
+            if (*b > 0)
             {
-              goto found;
+              least_err = *e;
+
+              ii = i;
+              jj = j;
+
+              if (least_err < bailout && ii != 0 && jj != 0)
+              {
+                goto found;
+              }
             }
           }
 
@@ -384,6 +386,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
         }
       }
 
+      err_start += j;
       a += freq_step;
     }
 
@@ -399,7 +402,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
     {
       if (colors[j].freq > 0)
       {
-        err_data[ii + (j + 1) * j / 2] = error(colors[ii], colors[j]);
+        err_data[ii + j * (j - 1) / 2] = error(colors[ii], colors[j]);
       }
     }
 
