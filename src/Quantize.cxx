@@ -102,6 +102,8 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
   const int bin_step = bin_size / 8;
   const int bin_shift = std::log2(bin_size);
 
+  std::vector<color_type> temp_colors(samples);
+
   for (int b = 0; b <= bin_size - bin_step; b += bin_step)
   {
     for (int g = 0; g <= bin_size - bin_step; g += bin_step)
@@ -191,12 +193,46 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
     if (index < 0) { index = 0; }
     if (index > samples - 1) { index = samples - 1; }
 
-    colors[count].r = color_bin[index].r;
-    colors[count].g = color_bin[index].g;
-    colors[count].b = color_bin[index].b;
-    colors[count].freq = color_bin[index].freq;
+    temp_colors[count].r = color_bin[index].r;
+    temp_colors[count].g = color_bin[index].g;
+    temp_colors[count].b = color_bin[index].b;
+    temp_colors[count].freq = color_bin[index].freq;
 
     count++;
+  }
+
+  // single merge pass to reduce color count
+  const int orig_count = count;
+
+  for (int j = 0; j < orig_count; j++)
+  {
+    for (int i = 0; i < j; i++)
+    {
+      if (i == j) { continue; }
+
+      if (temp_colors[i].freq > 0 && temp_colors[j].freq > 0)
+      {
+        if (error(temp_colors[i], temp_colors[j]) < size)
+        {
+          merge(temp_colors[i], temp_colors[j]);
+          temp_colors[j].freq = 0;
+        }
+      }
+    }
+  }
+
+  count = 0;
+
+  for (int i = 0; i < orig_count; i++)
+  {
+    if (temp_colors[i].freq > 0)
+    {
+      colors[count].r = temp_colors[i].r;
+      colors[count].g = temp_colors[i].g;
+      colors[count].b = temp_colors[i].b;
+      colors[count].freq = temp_colors[i].freq;
+      count++;
+    }
   }
 
   //printf("count = %d\n", count);
@@ -345,8 +381,9 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   // measure offset between array elements
   const int freq_step = &(colors[1].freq) - &(colors[0].freq);
 
-  // bailout value
-  const double bailout = 512;
+  // bailout value depends on palette size
+  const double bailout = 2150.4 - 6.4 * size;
+  //printf("bailout = %lf\n", bailout);
 
   // find minimum quantization error
   while (count > size)
