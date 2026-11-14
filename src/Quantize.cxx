@@ -382,7 +382,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   const int freq_step = &(colors[1].freq) - &(colors[0].freq);
 
   // bailout value depends on palette size
-  const double bailout = 2150.4 - 6.4 * size;
+  const double bailout = 512.0 - (1.6 * (size - 16));
   //printf("bailout = %lf\n", bailout);
 
   // find minimum quantization error
