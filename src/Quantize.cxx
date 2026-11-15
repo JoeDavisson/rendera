@@ -85,11 +85,11 @@ void Quantize::merge(color_type &c1, color_type &c2)
   const double f1 = c1.freq;
   const double f2 = c2.freq;
   const double sum = f1 + f2;
+  const double inv_sum = 1.0 / sum;
 
-  c1.r = (f1 * c1.r + f2 * c2.r) / sum;
-  c1.g = (f1 * c1.g + f2 * c2.g) / sum;
-  c1.b = (f1 * c1.b + f2 * c2.b) / sum;
-
+  c1.r = (f1 * c1.r + f2 * c2.r) * inv_sum;
+  c1.g = (f1 * c1.g + f2 * c2.g) * inv_sum;
+  c1.b = (f1 * c1.b + f2 * c2.b) * inv_sum;
   c1.freq = sum;
 }
 
@@ -221,6 +221,7 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
     }
   }
 
+  // build final color list
   count = 0;
 
   for (int i = 0; i < orig_count; i++)
@@ -382,6 +383,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   const int freq_step = &(colors[1].freq) - &(colors[0].freq);
 
   // bailout value depends on palette size
+  // 16 colors = 512, 256 colors = 128
   const double bailout = 512.0 - (1.6 * (size - 16));
   //printf("bailout = %lf\n", bailout);
 
