@@ -378,7 +378,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   Gui::statusInfo("Merging...");
 
   // measure offset between array elements
-  const int freq_step = &(colors[1].freq) - &(colors[0].freq);
+ // const int freq_step = &(colors[1].freq) - &(colors[0].freq);
 
   // bailout value depends on palette size
   // 16 colors = 512, 256 colors = 128
@@ -388,24 +388,21 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   while (count > size)
   {
     int ii = 0, jj = 0;
-    double *a = &colors[0].freq;
     double least_err = std::numeric_limits<double>::max();
     double *err_start = &err_data[0];
+    color_type *colors_start = &colors[0];
 
     for (int j = 0; j < max; j++)
     {
-      if (*a > 0)
+      if (colors[j].freq > 0)
       {
-        double *e = err_start;
-        double *b = &colors[0].freq;
-
         for (int i = 0; i < j; i++)
         {
-          if (*e < least_err)
+          if (err_start[i] < least_err)
           {
-            if (*b > 0)
+            if (colors_start[i].freq > 0)
             {
-              least_err = *e;
+              least_err = err_start[i];
 
               ii = i;
               jj = j;
@@ -416,14 +413,10 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
               }
             }
           }
-
-          e++;
-          b += freq_step;
         }
       }
 
       err_start += j;
-      a += freq_step;
     }
 
     found:
