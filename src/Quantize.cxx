@@ -377,9 +377,6 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   Progress::show(max - size);
   Gui::statusInfo("Merging...");
 
-  // measure offset between array elements
- // const int freq_step = &(colors[1].freq) - &(colors[0].freq);
-
   // bailout value depends on palette size
   // 16 colors = 512, 256 colors = 128
   const double bailout = 512.0 - (1.6 * (size - 16));
