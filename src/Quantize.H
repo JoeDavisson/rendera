@@ -51,6 +51,8 @@ private:
                          std::vector<color_type> &,
                          int, int, int, int);
   static int countColors(Bitmap *, std::vector<bool> &);
+  static int createColorList(Bitmap *, std::vector<color_type> &,
+                             const int, const int);
 };
 
 #endif

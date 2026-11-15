@@ -110,24 +110,18 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
     {
       for (int r = 0; r <= bin_size - bin_step; r += bin_step)
       {
-        double r_avg = 0;
-        double g_avg = 0;
-        double b_avg = 0;
+        double r_sum = 0;
+        double g_sum = 0;
+        double b_sum = 0;
         int div = 0;
 
         for (int k = 0; k < bin_step; k++)
         {
-          const int bk = b + k;
-
           for (int j = 0; j < bin_step; j++)
           {
-            const int gj = g + j;
-
             for (int i = 0; i < bin_step; i++)
             {
-              const int ri = r + i;
-              const int index = makeRgbShift(ri, gj, bk, bin_shift);
-
+              const int index = makeRgbShift(r + i, g + j, b + k, bin_shift);
               double freq = color_bin[index].freq;
 
               if (freq > 0)
@@ -136,9 +130,9 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
                 double gg = color_bin[index].g;
                 double bb = color_bin[index].b;
 
-                r_avg += rr * rr;
-                g_avg += gg * gg;
-                b_avg += bb * bb;
+                r_sum += rr * rr;
+                g_sum += gg * gg;
+                b_sum += bb * bb;
                 div++;
               }
             }
@@ -147,9 +141,9 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
 
         if (div > 0)
         {
-          r_avg = std::sqrt(r_avg / div);
-          g_avg = std::sqrt(g_avg / div);
-          b_avg = std::sqrt(b_avg / div);
+          double r_avg = std::sqrt(r_sum / div);
+          double g_avg = std::sqrt(g_sum / div);
+          double b_avg = std::sqrt(b_sum / div);
 
           const int index = makeRgbShift((int)r_avg >> (8 - bin_shift),
                                          (int)g_avg >> (8 - bin_shift),
@@ -256,35 +250,9 @@ int Quantize::countColors(Bitmap *src, std::vector<bool> &bits)
   return std::count(bits.begin(), bits.end(), true);
 }
 
-void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
+int Quantize::createColorList(Bitmap *src, std::vector<color_type> &colors,
+                              const int size, const int samples)
 {
-  std::vector<bool> color_bits(16777216);
-  std::vector<color_type> colors(samples);
-
-  const int color_count = countColors(src, color_bits);
-
-  // skip quantization if palette if image already has enough colors
-  if (color_count <= size)
-  {
-    int index = 0;
-
-    for (int i = 0; i < 16777216; i++)
-    {
-      if (color_bits[i] == 1)
-      {
-        const int r = getr(i);
-        const int g = getg(i);
-        const int b = getb(i);
-
-        pal->data[index] = makeRgb(r, g, b);
-        index++;
-      }
-    }
-
-    pal->max = index;
-    return;
-  }
-
   const int pixel_count = src->w * src->h;
   const int num_bins = size < 64 ? 32768 : 262144;
   const int bin_size = std::cbrt(num_bins);
@@ -306,7 +274,6 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   }
 
   const double weight = 1.0;
-  int count = 0;
 
   for (int y = 0; y < src->h; y++)
   {
@@ -349,17 +316,48 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
           color_bin[index].r = std::sqrt(r / freq);
           color_bin[index].g = std::sqrt(g / freq);
           color_bin[index].b = std::sqrt(b / freq);
-
-          count++;
         }
       }
     }
   }
 
   // reduce color list
-  count = limitColors(color_bin, colors,
-                      num_bins, samples, size, pixel_count);
+  int count = limitColors(color_bin, colors,
+                          num_bins, samples, size, pixel_count);
 
+  return count;
+}
+
+void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
+{
+  std::vector<bool> color_bits(16777216);
+  std::vector<color_type> colors(samples);
+
+  const int color_count = countColors(src, color_bits);
+
+  // skip quantization if palette if image already has enough colors
+  if (color_count <= size)
+  {
+    int index = 0;
+
+    for (int i = 0; i < 16777216; i++)
+    {
+      if (color_bits[i] == 1)
+      {
+        const int r = getr(i);
+        const int g = getg(i);
+        const int b = getb(i);
+
+        pal->data[index] = makeRgb(r, g, b);
+        index++;
+      }
+    }
+
+    pal->max = index;
+    return;
+  }
+
+  int count = createColorList(src, colors, size, samples);
   int max = count;
 
   if (max < size) { size = max; }
@@ -385,7 +383,6 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   // bailout value depends on palette size
   // 16 colors = 512, 256 colors = 128
   const double bailout = 512.0 - (1.6 * (size - 16));
-  //printf("bailout = %lf\n", bailout);
 
   // find minimum quantization error
   while (count > size)
