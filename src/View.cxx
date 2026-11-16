@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <FL/fl_draw.H>
 #include <FL/filename.H>
+#include <FL/Fl_Double_Window.H>
 
 #include "Bitmap.H"
 #include "Blend.H"
@@ -42,11 +43,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "ViewOptions.H"
 #include "Widget.H"
 
-#include "FX/GaussianBlur.H"
-
 namespace
 {
-  Fl_RGB_Image *wimage = 0;
+  Fl_RGB_Image *wimage = nullptr;
 
   int oldx1 = 0;
   int oldy1 = 0;
@@ -447,6 +446,9 @@ void View::resize(int x, int y, int w, int h)
 
   delete wimage;
   delete backbuf;
+  wimage = nullptr;
+  backbuf = nullptr;
+
   backbuf = new Bitmap(new_width, new_height);
   wimage = new Fl_RGB_Image((unsigned char *)backbuf->data,
                              new_width, new_height, 4, 0);

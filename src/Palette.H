@@ -45,6 +45,7 @@ public:
 
   int *data;
   int max;
+  unsigned char *table;
 };
 
 #endif

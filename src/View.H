@@ -59,8 +59,8 @@ public:
   void saveCoords();
   void dndPasteHandler();
 
-  Fl_Group *group;
-  Bitmap *backbuf;
+  Fl_Group *group = nullptr;
+  Bitmap *backbuf = nullptr;
   int mousex, mousey;
   int last_mousex, last_mousey;
   int imgx, imgy;
@@ -87,7 +87,7 @@ public:
   bool dnd;
 
 private:
-  char *dnd_string;
+  char *dnd_string = nullptr;
   int dnd_length;
 
 protected:

@@ -48,9 +48,10 @@ public:
   int var;
   int stepx;
   int stepy;
-  Fl_Group *group;
-  Bitmap *bitmap, *bitmap2;
-  Fl_RGB_Image *image, *image2;
+  Fl_Group *group = nullptr;
+  Bitmap *bitmap, *bitmap2 = nullptr;
+  Fl_RGB_Image *image = nullptr;
+  Fl_RGB_Image *image2 = nullptr;
   bool use_highlight;
 
 protected:

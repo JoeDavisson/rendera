@@ -47,8 +47,8 @@ public:
   void change();
 
 private:
-  Bitmap *preview_text;
-  Fl_Image_Surface *preview_surf;
+  Bitmap *preview_text = nullptr;
+  Fl_Image_Surface *preview_surf = nullptr;
 };
 
 #endif

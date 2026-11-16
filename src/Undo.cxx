@@ -86,6 +86,8 @@ Undo::~Undo()
   {
     delete undo_stack[i];
     delete redo_stack[i];
+    undo_stack[i] = nullptr;
+    redo_stack[i] = nullptr;
   }
 }
 
@@ -95,6 +97,8 @@ void Undo::reset()
   {
     delete undo_stack[i];
     delete redo_stack[i];
+    undo_stack[i] = nullptr;
+    redo_stack[i] = nullptr;
 
     undo_stack[i] = new Bitmap(8, 8);
     redo_stack[i] = new Bitmap(8, 8);
@@ -125,6 +129,7 @@ void Undo::doPush(const int x, const int y, const int w, const int h,
       undo_mode == Undo::ROTATE_90 || undo_mode == Undo::ROTATE_180)
   {
     delete undo_stack[undo_current];
+    undo_stack[undo_current] = nullptr;
     undo_stack[undo_current] = new Bitmap(8, 8);
   }
     else
@@ -132,6 +137,7 @@ void Undo::doPush(const int x, const int y, const int w, const int h,
     if (Project::enoughMemory(w, h) == false) { return; }
 
     delete undo_stack[undo_current];
+    undo_stack[undo_current] = nullptr;
     undo_stack[undo_current] = new Bitmap(w, h);
 
     Project::bmp->blit(undo_stack[undo_current], x, y, 0, 0, w, h);
@@ -173,6 +179,7 @@ void Undo::push(const int x, const int y, const int w, const int h,
   for (int i = 0; i < levels; i++)
   {
     delete redo_stack[i];
+    redo_stack[i] = nullptr;
     redo_stack[i] = new Bitmap(8, 8);
   }
 
@@ -244,6 +251,7 @@ void Undo::pop()
   if (undo_current >= 0)
   {
     delete undo_stack[undo_current];
+    undo_stack[undo_current] = nullptr;
     undo_stack[undo_current] = new Bitmap(8, 8);
   }
 
@@ -287,6 +295,7 @@ void Undo::pushRedo(const int x, const int y, const int w, const int h,
       undo_mode == Undo::ROTATE_90 || undo_mode == Undo::ROTATE_180)
   {
     delete redo_stack[redo_current];
+    redo_stack[redo_current] = nullptr;
     redo_stack[redo_current] = new Bitmap(8, 8);
   }
     else
@@ -294,6 +303,7 @@ void Undo::pushRedo(const int x, const int y, const int w, const int h,
     if (Project::enoughMemory(w, h) == false) { return; }
 
     delete redo_stack[redo_current];
+    redo_stack[redo_current] = nullptr;
     redo_stack[redo_current] = new Bitmap(w, h);
 
     Project::bmp->blit(redo_stack[redo_current], x, y, 0, 0, w, h);
@@ -368,6 +378,7 @@ void Undo::popRedo()
   if (redo_current >= 0)
   {
     delete redo_stack[redo_current];
+    redo_stack[redo_current] = nullptr;
     redo_stack[redo_current] = new Bitmap(8, 8);
   }
 

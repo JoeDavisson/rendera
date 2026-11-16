@@ -435,9 +435,11 @@ void Text::change()
   float dy = std::sin(d) * ((float)tw / 2);
 
   delete preview_text;
+  preview_text = nullptr;
   preview_text = new Bitmap(tsize, tsize);
 
   delete preview_surf;
+  preview_surf = nullptr;
   preview_surf = new Fl_Image_Surface(tsize, tsize, 0);
   Fl_Surface_Device::push_current(preview_surf);
   fl_font(face, size);

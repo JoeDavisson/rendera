@@ -36,8 +36,6 @@ namespace
   {
     return getl(c1) < getl(c2);
   }
-
-  unsigned char *table;
 }
 
 Palette::Palette()
@@ -48,11 +46,16 @@ Palette::Palette()
   data[0] = makeRgb(0, 0, 0);
   data[1] = makeRgb(255, 255, 255);
   max = 2;
+  table = nullptr;
 }
 
 Palette::~Palette()
 {
+  delete[] table;
   delete[] data;
+
+  table = nullptr;
+  data = nullptr;
 }
 
 // draw palette swatches to a widget, and try to fill the space optimally
@@ -183,6 +186,7 @@ void Palette::swapColor(int c1, int c2)
 void Palette::fillTable()
 {
   delete[] table;
+  table = nullptr;
   table = new unsigned char[16777216];
 
   for (int b = 0; b <= 256 - 4; b += 4)

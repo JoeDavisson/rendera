@@ -144,6 +144,10 @@ Widget::~Widget()
   delete image;
   delete bitmap;
   delete bitmap2;
+
+  image = nullptr;
+  bitmap = nullptr;
+  bitmap2 = nullptr;
 }
 
 int Widget::handle(int event)

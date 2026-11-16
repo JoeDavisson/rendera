@@ -68,6 +68,11 @@ Stroke::~Stroke()
   delete[] poly_y;
   delete[] edge_x;
   delete[] edge_y;
+
+  poly_x = nullptr;
+  poly_y = nullptr;
+  edge_x = nullptr;
+  edge_y = nullptr;
 }
 
 bool Stroke::originEnabled()

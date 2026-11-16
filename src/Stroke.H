@@ -47,10 +47,10 @@ public:
   int lastx, lasty;
   int oldx, oldy;
   int type;
-  int *poly_x;
-  int *poly_y;
-  int *edge_x;
-  int *edge_y;
+  int *poly_x = nullptr;
+  int *poly_y = nullptr;
+  int *edge_x = nullptr;
+  int *edge_y = nullptr;
   int poly_count;
 
   Stroke();

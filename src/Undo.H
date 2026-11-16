@@ -55,8 +55,8 @@ public:
   int undo_current = levels - 1;
   int redo_current = levels - 1;
 
-  Bitmap **undo_stack;
-  Bitmap **redo_stack;
+  Bitmap **undo_stack = nullptr;
+  Bitmap **redo_stack = nullptr;
 
 private:
   void printStacks();
