@@ -38,9 +38,9 @@ public:
   void colorize(int);
 
   int var;
-  Fl_Group *group;
-  Bitmap *bitmap;
-  Fl_RGB_Image *image;
+  Fl_Group *group = nullptr;
+  Bitmap *bitmap = nullptr;
+  Fl_RGB_Image *image = nullptr;
 
 protected:
   void draw();

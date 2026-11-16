@@ -52,41 +52,41 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 class MainWin;
 
 // view
-View *Gui::view = 0;
-Fl_Box *Gui::coords = 0;
-Fl_Box *Gui::info = 0;
+View *Gui::view = nullptr;
+Fl_Box *Gui::coords = nullptr;
+Fl_Box *Gui::info = nullptr;
 
 // progress
-Fl_Progress *Gui::progress = 0;
+Fl_Progress *Gui::progress = nullptr;
 
 // groups
-ViewOptions *Gui::top = 0;
-PaintOptions *Gui::paint = 0;
-PickerOptions *Gui::picker = 0;
-ImagesOptions *Gui::images = 0;
-OffsetOptions *Gui::offset = 0;
-SelectionOptions *Gui::selection = 0;
-TextOptions *Gui::text = 0;
-FillOptions *Gui::fill = 0;
-GradientOptions *Gui::gradient = 0;
-ToolOptions *Gui::tools = 0;
-ColorOptions *Gui::colors = 0;
+ViewOptions *Gui::top = nullptr;
+PaintOptions *Gui::paint = nullptr;
+PickerOptions *Gui::picker = nullptr;
+ImagesOptions *Gui::images = nullptr;
+OffsetOptions *Gui::offset = nullptr;
+SelectionOptions *Gui::selection = nullptr;
+TextOptions *Gui::text = nullptr;
+FillOptions *Gui::fill = nullptr;
+GradientOptions *Gui::gradient = nullptr;
+ToolOptions *Gui::tools = nullptr;
+ColorOptions *Gui::colors = nullptr;
 
 namespace
 {
   // window
-  MainWin *window = 0;
+  MainWin *window = nullptr;
 
   // main menu
-  Fl_Menu_Bar *menubar = 0;
+  Fl_Menu_Bar *menubar = nullptr;
 
   // containers
-  Fl_Group *left = 0;
-  Fl_Group *middle = 0;
-  Fl_Group *right = 0;
+  Fl_Group *left = nullptr;
+  Fl_Group *middle = nullptr;
+  Fl_Group *right = nullptr;
 
   // status
-  Group *status;
+  Group *status = nullptr;
   char status_text[256];
 
   // height of rightmost panels
@@ -899,6 +899,7 @@ void Gui::widgetTimerReset()
 void Gui::selectFromImage()
 {
   delete Project::select_bmp;
+  Project::select_bmp = nullptr;
 
   Bitmap *bmp = Project::bmp;
   Bitmap *temp = new Bitmap(bmp->cw, bmp->ch);

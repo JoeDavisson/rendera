@@ -43,9 +43,9 @@ public:
   void sortByValue();
   void normalize();
 
-  int *data;
   int max;
-  unsigned char *table;
+  int *data = nullptr;
+  unsigned char *table = nullptr;
 };
 
 #endif

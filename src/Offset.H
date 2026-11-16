@@ -47,7 +47,8 @@ private:
   int beginy;
   int temp_x;
   int temp_y;
-  Bitmap *offset_buffer;
+
+  Bitmap *offset_buffer = nullptr;
 };
 
 #endif

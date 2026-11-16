@@ -86,9 +86,16 @@ Undo::~Undo()
   {
     delete undo_stack[i];
     delete redo_stack[i];
+
     undo_stack[i] = nullptr;
     redo_stack[i] = nullptr;
   }
+
+  delete[] undo_stack;
+  delete[] redo_stack;
+
+  undo_stack = nullptr;
+  redo_stack = nullptr;
 }
 
 void Undo::reset()
@@ -97,6 +104,7 @@ void Undo::reset()
   {
     delete undo_stack[i];
     delete redo_stack[i];
+
     undo_stack[i] = nullptr;
     redo_stack[i] = nullptr;
 

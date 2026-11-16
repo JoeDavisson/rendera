@@ -1,0 +1,17 @@
+Keyboard Shortcuts
+
+ctrl +, -, or 0              scale interface
+cursor keys                  move around image
+escape                       cancel rendering
+ctrl-z                       undo
+ctrl-shift_z or ctrl-y       redo
++ or -                       zoom in/out
+1                            100% zoom
+shift+inc/dec buttons        increase/decrease input field value by 10
+ctrl-c                       copy selection
+ctrl-v                       paste selection
+e                            palette editor
+f                            font preview
+delete                       close current image
+
+

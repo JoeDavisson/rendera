@@ -45,8 +45,8 @@ public:
   void reset();
 
 private:
-  int *stack_x;
-  int *stack_y;
+  int *stack_x = nullptr;
+  int *stack_y = nullptr;
   int stack_size;
   int sp;
 

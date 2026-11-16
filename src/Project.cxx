@@ -39,18 +39,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Tool.H"
 #include "Undo.H"
 
-Bitmap *Project::bmp;
-Bitmap *Project::select_bmp;
-Map *Project::map;
+Bitmap *Project::bmp = nullptr;
+Bitmap *Project::select_bmp = nullptr;
+Map *Project::map = nullptr;
 
-Brush *Project::brush;
-Palette *Project::palette;
-Stroke *Project::stroke;
-Undo *Project::undo;
+Brush *Project::brush = nullptr;
+Palette *Project::palette = nullptr;
+Stroke *Project::stroke = nullptr;
+Undo *Project::undo = nullptr;
 
 int Project::max_images;
-Bitmap **Project::bmp_list;
-Undo **Project::undo_list;
+Bitmap **Project::bmp_list = nullptr;
+Undo **Project::undo_list = nullptr;
 int Project::ox_list[256];
 int Project::oy_list[256];
 float Project::zoom_list[256];
@@ -59,15 +59,15 @@ int Project::last;
 int Project::mem_max;
 int Project::undo_max;
   
-Paint *Project::paint;
-Picker *Project::picker;
-Selection *Project::selection;
-Offset *Project::offset;
-Text *Project::text;
-Fill *Project::fill;
-Gradient *Project::gradient;
+Paint *Project::paint = nullptr;
+Picker *Project::picker = nullptr;
+Selection *Project::selection = nullptr;
+Offset *Project::offset = nullptr;
+Text *Project::text = nullptr;
+Fill *Project::fill = nullptr;
+Gradient *Project::gradient = nullptr;
 
-Tool *Project::tool;
+Tool *Project::tool = nullptr;
 
 int Project::theme;
 int Project::theme_foreground;
@@ -79,14 +79,14 @@ Fl_Color Project::fltk_theme_bevel_down;
 // called when the program starts
 void Project::init(int memory_limit, int undo_limit)
 {
-  bmp = 0;
-  map = 0;
+  bmp = nullptr;
+  map = nullptr;
   select_bmp = new Bitmap(8, 8);
 
   brush = new Brush();
   palette = new Palette();
   stroke = new Stroke();
-  undo = 0;
+  undo = nullptr;
   last = 0;
 
   paint = new Paint();

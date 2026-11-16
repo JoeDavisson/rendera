@@ -28,8 +28,8 @@ public:
   ~Map();
 
   int w, h;
-  unsigned char *data;
-  unsigned char **row;
+  unsigned char *data = nullptr;
+  unsigned char **row = nullptr;
 
   // make single-pixel antialised lines appear thicker
   int thick_aa;

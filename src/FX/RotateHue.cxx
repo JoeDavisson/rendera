@@ -34,7 +34,7 @@ namespace
     Fl_Button *cancel;
   }
 
-  Bitmap *temp_bmp;
+  Bitmap *temp_bmp = nullptr;
 }
 
 void RotateHue::apply(Bitmap *dest, bool show_progress)
@@ -120,6 +120,7 @@ void RotateHue::close()
 void RotateHue::quit()
 {
   delete temp_bmp;
+  temp_bmp = nullptr;
   Progress::hide();
   Items::dialog->hide();
 }

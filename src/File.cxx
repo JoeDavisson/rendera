@@ -126,10 +126,10 @@ void jpg_exit(j_common_ptr cinfo)
 }
 
 // bitmap pointer used for FLTK's file preview
-//Bitmap *preview_bmp = 0;
+//Bitmap *preview_bmp = nullptr;
 
 // palette preview widget
-//Widget *pal_preview;
+//Widget *pal_preview = nullptr;
 
 enum
 {
@@ -300,7 +300,7 @@ int File::loadFile(const char *fn)
   }
 
   // load to a temporary bitmap first
-  Bitmap *temp = 0;
+  Bitmap *temp = nullptr;
 
   if (isPng(header)) { temp = File::loadPng((const char *)fn); }
   else if (isJpeg(header)) { temp = File::loadJpeg((const char *)fn); }
@@ -315,6 +315,7 @@ int File::loadFile(const char *fn)
   if (Project::newImageFromBitmap(temp) == -1)
   {
     delete temp;
+    temp = nullptr;
     return -1;
   }
     else
@@ -536,6 +537,7 @@ Bitmap *File::loadBmp(const char *fn)
        (unsigned)(w * mul + pad))
     {
       delete temp;
+      temp = nullptr;
       errorMessage(ERROR_LOADING);
       return 0;
     }
@@ -654,6 +656,7 @@ Bitmap *File::loadTarga(const char *fn)
     if (fread(&linebuf[0], 1, w * depth, in.get()) != (unsigned)(w * depth))
     {
       delete temp;
+      temp = nullptr;
       errorMessage(ERROR_LOADING);
       return 0;
     }
@@ -1604,7 +1607,7 @@ void File::loadSelection()
   if (fread(&header, 1, 8, in.get()) != 8) { return; }
 
   // load to a temporary bitmap first
-  Bitmap *temp = 0;
+  Bitmap *temp = nullptr;
 
   if (isPng(header)) { temp = File::loadPng((const char *)fc.filename()); }
   else { return; }

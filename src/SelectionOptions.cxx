@@ -221,6 +221,7 @@ void SelectionOptions::rotate90()
 
   // create rotated image
   delete Project::select_bmp;
+  Project::select_bmp = nullptr;
   Project::select_bmp = new Bitmap(h, w);
 
   int *p = &temp.data[0];

@@ -50,7 +50,7 @@ void Offset::push(View *view)
   temp_y = 0;
 
   delete offset_buffer;
-
+  offset_buffer = nullptr;
   offset_buffer = new Bitmap(w, h);
   Project::bmp->blit(offset_buffer, 0, 0, 0, 0, w, h);
 }
@@ -90,8 +90,7 @@ void Offset::drag(View *view)
 void Offset::release(View *)
 {
   delete offset_buffer;
-
-  offset_buffer = 0;
+  offset_buffer = nullptr;
 
   Project::undo->push(temp_x, temp_y, Project::bmp->w, Project::bmp->h,
                       Undo::OFFSET);

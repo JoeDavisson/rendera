@@ -55,6 +55,11 @@ Brush::~Brush()
   delete[] solidy;
   delete[] hollowx;
   delete[] hollowy;
+
+  solidx = nullptr;
+  solidy = nullptr;
+  hollowx = nullptr;
+  hollowy = nullptr;
 }
 
 void Brush::make(int s, float round)

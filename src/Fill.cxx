@@ -52,6 +52,9 @@ Fill::~Fill()
 {
   delete[] stack_x;
   delete[] stack_y;
+
+  stack_x = nullptr;
+  stack_y = nullptr;
 }
 
 bool Fill::inbox(int x, int y, int x1, int y1, int x2, int y2)

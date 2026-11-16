@@ -571,6 +571,9 @@ void Editor::resetUndo()
     delete undo_stack[i];
     delete redo_stack[i];
 
+    undo_stack[i] = nullptr;
+    redo_stack[i] = nullptr;
+
     undo_stack[i] = new Palette();
     redo_stack[i] = new Palette();
   }
@@ -588,12 +591,15 @@ void Editor::doPush()
     Palette *temp_pal = undo_stack[levels - 1];
 
     for (int i = levels - 1; i > 0; i--)
+    {
       undo_stack[i] = undo_stack[i - 1];
+    }
 
     undo_stack[0] = temp_pal;
   }
 
   delete undo_stack[undo_current];
+  undo_stack[undo_current] = nullptr;
   undo_stack[undo_current] = new Palette();
   Project::palette->copy(undo_stack[undo_current]);
   undo_current--;
@@ -606,6 +612,7 @@ void Editor::push()
   for (int i = 0; i < levels; i++)
   {
     delete redo_stack[i];
+    redo_stack[i] = nullptr;
     redo_stack[i] = new Palette();
   }
 
@@ -622,6 +629,7 @@ void Editor::pop()
   if (undo_current >= 0)
   {
     delete undo_stack[undo_current];
+    undo_stack[undo_current] = nullptr;
     undo_stack[undo_current] = new Palette();
   }
 
@@ -662,6 +670,7 @@ void Editor::popRedo()
   if (redo_current >= 0)
   {
     delete redo_stack[redo_current];
+    redo_stack[redo_current] = nullptr;
     redo_stack[redo_current] = new Palette();
   }
 

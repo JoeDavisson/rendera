@@ -64,6 +64,8 @@ Map::~Map()
 {
   delete[] row;
   delete[] data;
+  row = nullptr;
+  data = nullptr;
 }
 
 bool Map::isEdge(const int x, const int y)
@@ -87,6 +89,8 @@ void Map::resize(int width, int height)
 
   delete[] row;
   delete[] data;
+  row = nullptr;
+  data = nullptr;
 
   data = new unsigned char [width * height];
   row = new unsigned char *[height];

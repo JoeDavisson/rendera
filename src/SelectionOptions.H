@@ -50,18 +50,18 @@ public:
   int getAlpha();
 
 private:
-  StaticText *selection_x;
-  StaticText *selection_y;
-  StaticText *selection_w;
-  StaticText *selection_h;
-  Fl_Button *selection_reset;
-  Fl_Button *selection_copy;
-  CheckBox *selection_alpha;
-  Button *selection_flip;
-  Button *selection_mirror;
-  Button *selection_rotate;
-  Fl_Button *selection_paste;
-  Fl_Button *selection_crop;
+  StaticText *selection_x = nullptr;
+  StaticText *selection_y = nullptr;
+  StaticText *selection_w = nullptr;
+  StaticText *selection_h = nullptr;
+  Fl_Button *selection_reset = nullptr;
+  Fl_Button *selection_copy = nullptr;
+  CheckBox *selection_alpha = nullptr;
+  Button *selection_flip = nullptr;
+  Button *selection_mirror = nullptr;
+  Button *selection_rotate = nullptr;
+  Fl_Button *selection_paste = nullptr;
+  Fl_Button *selection_crop = nullptr;
 };
 
 #endif

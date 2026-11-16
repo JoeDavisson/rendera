@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "Palette.H"
 
 int (*Blend::current_blend)(const int, const int, const int) = &Blend::trans;
-Bitmap *Blend::bmp;
+Bitmap *Blend::bmp = nullptr;
 int Blend::xpos;
 int Blend::ypos;
 

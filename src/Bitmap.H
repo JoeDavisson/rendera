@@ -31,8 +31,8 @@ public:
   int x, y, w, h;
   int cl, cr, ct, cb, cw, ch;
   int undo_mode;
-  int *data;
-  int **row;
+  int *data = nullptr;
+  int **row = nullptr;
 
   void resize(int, int);
   void clear(const int);

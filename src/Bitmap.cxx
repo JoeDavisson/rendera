@@ -96,6 +96,9 @@ Bitmap::~Bitmap()
 {
   delete[] row;
   delete[] data;
+
+  row = nullptr;
+  data = nullptr;
 }
 
 void Bitmap::resize(int width, int height)
@@ -105,6 +108,9 @@ void Bitmap::resize(int width, int height)
 
   delete[] row;
   delete[] data;
+
+  row = nullptr;
+  data = nullptr;
 
   data = new int [width * height];
   row = new int *[height];

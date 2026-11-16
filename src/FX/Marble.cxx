@@ -45,7 +45,7 @@ namespace
     Fl_Button *cancel;
   }
 
-  Bitmap *temp_bmp;
+  Bitmap *temp_bmp = nullptr;
   int old_marb_var;
   int old_turb_var;
   int old_blend_var;
@@ -120,6 +120,7 @@ void Marble::close()
   Items::dialog->hide();
   Gui::getView()->drawMain(true);
   delete temp_bmp;
+  temp_bmp = nullptr;
 }
 
 void Marble::quit()
@@ -127,6 +128,7 @@ void Marble::quit()
   Progress::hide();
   Items::dialog->hide();
   delete temp_bmp;
+  temp_bmp = nullptr;
 }
 
 void Marble::begin()

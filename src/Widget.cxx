@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #include "View.H"
 #include "Widget.H"
 
-// load a PNG image from a file
+// load a PNG image from static array
 Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
                const char *label, const unsigned char *array,
                int sx, int sy, Fl_Callback *cb)
@@ -49,7 +49,9 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   stepy = sy;
   group = g;
 
-  if (!(bitmap = File::loadPngFromArray(array)))
+  bitmap = File::loadPngFromArray(array);
+
+  if (bitmap == nullptr)
   {
     fl_message_title("Error");
     fl_message("Could not load image.");
@@ -90,7 +92,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   labelsize(16);
 }
 
-// load static PNG image from file
+// load a PNG image from static array (no callback)
 Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
                const char *label, const unsigned char *array)
 : Fl_Widget(x, y, w, h, label)
@@ -100,14 +102,16 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   stepy = 0;
   group = g;
 
-  if (!(bitmap = File::loadPngFromArray(array)))
+  bitmap = File::loadPngFromArray(array);
+
+  if (bitmap == nullptr)
   {
     fl_message_title("Error");
     fl_message("Could not load image.");
     exit(1);
   }
 
-  bitmap2 = 0;
+  bitmap2 = nullptr;
   image = new Fl_RGB_Image((unsigned char *)bitmap->data,
                            bitmap->w, bitmap->h, 4, 0);
 
@@ -131,7 +135,7 @@ Widget::Widget(Fl_Group *g, int x, int y, int w, int h,
   group = g;
   bitmap = new Bitmap(w, h);
   bitmap->clear(makeRgb(0, 0, 0));
-  bitmap2 = 0;
+  bitmap2 = nullptr;
   image = new Fl_RGB_Image((unsigned char *)bitmap->data, w, h, 4, 0);
   resize(group->x() + x, group->y() + y, w, h);
   tooltip(label);

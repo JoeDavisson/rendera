@@ -37,7 +37,7 @@ int Clone::dy = 0;
 int Clone::state = 0;
 bool Clone::active = false;
 bool Clone::moved = false;
-Bitmap *Clone::buffer_bmp = 0;
+Bitmap *Clone::buffer_bmp = nullptr;
 
 // change the clone target
 void Clone::move(int xx, int yy)
@@ -57,6 +57,7 @@ void Clone::refresh(int x1, int y1, int x2, int y2)
   const int h = y2 - y1;
 
   delete buffer_bmp;
+  buffer_bmp = nullptr;
   buffer_bmp = new Bitmap(w, h);
   Project::bmp->blit(buffer_bmp, x1, y1, 0, 0, w, h);
 }

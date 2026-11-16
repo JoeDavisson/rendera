@@ -155,6 +155,7 @@ void Selection::copy(View *view)
   if (h < 1) { h = 1; }
 
   delete(Project::select_bmp);
+  Project::select_bmp = nullptr;
   Project::select_bmp = new Bitmap(w, h);
   Project::bmp->blit(Project::select_bmp, beginx, beginy, 0, 0, w, h);
 

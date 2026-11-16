@@ -32,8 +32,10 @@ public:
 
   void make(int, float);
 
-  int *solidx, *solidy;
-  int *hollowx, *hollowy;
+  int *solidx = nullptr;
+  int *solidy = nullptr;
+  int *hollowx = nullptr;
+  int *hollowy = nullptr;
   int solid_count;
   int hollow_count;
   int size;

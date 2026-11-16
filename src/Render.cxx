@@ -41,11 +41,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include "FL/Fl_Choice.H"
 
-Bitmap *Render::bmp;
-Map *Render::map;
-Brush *Render::brush;
-Stroke *Render::stroke;
-View *Render::view;
+Bitmap *Render::bmp = nullptr;
+Map *Render::map = nullptr;
+Brush *Render::brush = nullptr;
+Stroke *Render::stroke = nullptr;
+View *Render::view = nullptr;
 int Render::color;
 int Render::trans;
 
