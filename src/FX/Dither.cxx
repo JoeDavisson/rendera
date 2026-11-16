@@ -18,6 +18,8 @@ along with Rendera; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#include <cmath>
+
 #include "Dither.H"
 
 enum
@@ -190,6 +192,14 @@ void Dither::apply(Bitmap *bmp, const int dither_mode,
       er = old_r - new_r;
       eg = old_g - new_g;
       eb = old_b - new_b;
+
+      double lum = (0.299 * old_r + 0.587 * old_g + 0.114 * old_b) / 65535;
+      double weight = 1.0 - (std::abs(0.5 - lum) * 2);
+
+      if (weight < 0.1) { weight = 0.1; }
+
+      er *= weight;
+      eb *= weight;
 
       for (int j = 0; j < mh; j++)
       {
