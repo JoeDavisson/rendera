@@ -53,6 +53,7 @@ private:
   static int countColors(Bitmap *, std::vector<bool> &);
   static int createColorList(Bitmap *, std::vector<color_type> &,
                              const int, const int);
+  static void refine(Bitmap *, Palette *);
 };
 
 #endif

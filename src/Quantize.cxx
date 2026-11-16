@@ -330,10 +330,56 @@ int Quantize::createColorList(Bitmap *src, std::vector<color_type> &colors,
   return count;
 }
 
+void Quantize::refine(Bitmap *src, Palette *pal)
+{
+
+  std::vector<double> r_sum(256, 0);
+  std::vector<double> g_sum(256, 0);
+  std::vector<double> b_sum(256, 0);
+  std::vector<double> freq(256, 0);
+
+  Palette temp_pal;
+  pal->copy(&temp_pal);
+  temp_pal.fillTable();
+
+  for (int y = 0; y < src->h; y++)
+  {
+    for (int x = 0; x < src->w; x++)
+    {
+      const int c = src->getpixel(x, y);
+      const int pal_index = temp_pal.lookup(c);
+
+      double r = getr(c);
+      double g = getg(c);
+      double b = getb(c);
+
+      r_sum[pal_index] += r;
+      g_sum[pal_index] += g;
+      b_sum[pal_index] += b;
+
+      freq[pal_index] += 1.0;
+    }
+  }
+
+  for (int i = 0; i < pal->max; i++)
+  {
+    double div = freq[i];
+
+    if (div > 0)
+    {
+      int r = r_sum[i] / div;
+      int g = g_sum[i] / div;
+      int b = b_sum[i] / div;
+
+      pal->data[i] = makeRgb(r, g, b);
+    }
+  }
+}
+
 void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 {
-  std::vector<bool> color_bits(16777216);
   std::vector<color_type> colors(samples);
+  std::vector<bool> color_bits(16777216);
 
   const int color_count = countColors(src, color_bits);
 
@@ -466,6 +512,10 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   }
 
   pal->max = index;
+
+  // final refinement step
+  refine(src, pal);
+  
   Gui::restoreStatusInfo();
 }
 
