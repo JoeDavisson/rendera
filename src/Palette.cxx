@@ -197,15 +197,17 @@ void Palette::fillTable()
         for (int i = 0; i < max; i++)
         {
           const int c1 = data[i];
-          const int dr = getr(c1) - (r + 2);
-          const int dg = getg(c1) - (g + 2);
-          const int db = getb(c1) - (b + 2);
-          const int avg_r = (getr(c1) + (r + 2)) / 2;
 
-          const int rw = ((512 + avg_r) * dr * dr) / 256;
-          const int gw = 4 * dg * dg;
-          const int bw = ((767 - avg_r) * db * db) / 256;
-          const int d = rw + gw + bw;
+          const double dr = getr(c1) - r;
+          const double dg = getg(c1) - g;
+          const double db = getb(c1) - b;
+
+          const double avg_r = (double)(getr(c1) + (r + 2)) / 2;
+
+          const double rw = ((512.0 + avg_r) * dr * dr) / 256.0;
+          const double gw = 4.0 * dg * dg;
+          const double bw = ((767.0 - avg_r) * db * db) / 256.0;
+          const double d = rw + gw + bw;
 
           if (d < lowest)
           {
@@ -216,17 +218,11 @@ void Palette::fillTable()
 
         for (int k = 0; k < 4; k++)
         {
-          const int bk = b + k;
-
           for (int j = 0; j < 4; j++)
           {
-            const int gj = g + j;
-
             for (int i = 0; i < 4; i++)
             {
-              const int ri = r + i;
-
-              table[makeRgb24(ri, gj, bk)] = use;
+              table[makeRgb24(r + i, g + j, b + k)] = use;
             }
           }
         }
