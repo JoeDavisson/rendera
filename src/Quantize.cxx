@@ -333,10 +333,10 @@ int Quantize::createColorList(Bitmap *src, std::vector<color_type> &colors,
 void Quantize::refine(Bitmap *src, Palette *pal)
 {
 
-  std::vector<double> r_sum(256, 0);
-  std::vector<double> g_sum(256, 0);
-  std::vector<double> b_sum(256, 0);
-  std::vector<double> freq(256, 0);
+  std::vector<double> r_sum(pal->max, 0);
+  std::vector<double> g_sum(pal->max, 0);
+  std::vector<double> b_sum(pal->max, 0);
+  std::vector<double> freq(pal->max, 0);
 
   Palette temp_pal;
   pal->copy(&temp_pal);
@@ -344,9 +344,11 @@ void Quantize::refine(Bitmap *src, Palette *pal)
 
   for (int y = 0; y < src->h; y++)
   {
+    int *p = src->row[y];
+
     for (int x = 0; x < src->w; x++)
     {
-      const int c = src->getpixel(x, y);
+      const int c = *p;
       const int pal_index = temp_pal.lookup(c);
 
       double r = getr(c);
@@ -358,6 +360,7 @@ void Quantize::refine(Bitmap *src, Palette *pal)
       b_sum[pal_index] += b;
 
       freq[pal_index] += 1.0;
+      p++;
     }
   }
 
@@ -514,8 +517,16 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   pal->max = index;
 
   // final refinement step
-  refine(src, pal);
+  Progress::show(3);
+
+  Gui::statusInfo("Refinement...");
+  for (int i = 0; i < 3; i++)
+  {
+    refine(src, pal);
+    Progress::update(i);
+  }
   
+  Progress::hide();
   Gui::restoreStatusInfo();
 }
 
