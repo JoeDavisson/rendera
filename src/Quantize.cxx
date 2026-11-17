@@ -27,7 +27,6 @@ http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 */
 
 #include <algorithm>
-#include <numeric>
 #include <vector>
 
 #include "Blend.H"
