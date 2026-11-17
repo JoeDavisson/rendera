@@ -26,8 +26,9 @@ http://www.visgraf.impa.br/Projects/quantization/quant.html
 http://www.visgraf.impa.br/sibgrapi97/anais/pdf/art61.pdf
 */
 
-#include <vector>
 #include <algorithm>
+#include <numeric>
+#include <vector>
 
 #include "Blend.H"
 #include "Bitmap.H"
@@ -239,17 +240,23 @@ int Quantize::limitColors(std::vector<color_type> &color_bin,
 // count colors in image
 int Quantize::countColors(Bitmap *src, std::vector<bool> &bits)
 {
+  int count = 0;
+
   for (int y = 0; y < src->h; y++)
   {
     for (int x = 0; x < src->w; x++)
     {
       const int c = src->getpixel(x, y) & 0xffffff;
 
-      bits[c] = 1;
+      if (bits[c] == false)
+      {
+        bits[c] = true;
+        count++;
+      }
     }
   }
 
-  return std::count(bits.begin(), bits.end(), true);
+  return count;
 }
 
 int Quantize::createColorList(Bitmap *src, std::vector<color_type> &colors,
@@ -382,7 +389,7 @@ void Quantize::refine(Bitmap *src, Palette *pal)
 void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
 {
   std::vector<color_type> colors(samples);
-  std::vector<bool> color_bits(16777216);
+  std::vector<bool> color_bits(16777216, false);
 
   const int color_count = countColors(src, color_bits);
 
@@ -525,7 +532,7 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
     refine(src, pal);
     Progress::update(i);
   }
-  
+
   Progress::hide();
   Gui::restoreStatusInfo();
 }
