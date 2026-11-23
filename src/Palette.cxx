@@ -193,29 +193,51 @@ void Palette::fillTable()
   const int step_g = 4;
   const int step_b = 4;
 
+  int pal_r[256];
+  int pal_g[256];
+  int pal_b[256];
+
+  for (int i = 0; i < max; i++)
+  {
+    const int c = data[i];
+
+    pal_r[i] = getr(c);
+    pal_g[i] = getg(c);
+    pal_b[i] = getb(c);
+  }
+
+  int wd[256];
+  int wg[256];
+
   for (int b = 0; b <= 256 - step_b; b += step_b)
   {
+    for (int i = 0; i < max; i++)
+    {
+      const int db = pal_b[i] - (b + 2);
+
+      wd[i] = db * db;
+    }
+
     for (int g = 0; g <= 256 - step_g; g += step_g)
     {
+      for (int i = 0; i < max; i++)
+      {
+        const int dg = pal_g[i] - (g + 2);
+
+        wg[i] = 2048.0 * dg * dg + 1534 * wd[i];
+      }
+
       for (int r = 0; r <= 256 - step_r; r += step_r)
       {
-        double lowest = std::numeric_limits<int>::max();
+        int lowest = std::numeric_limits<int>::max();
         int use = 0;
 
         for (int i = 0; i < max; i++)
         {
-          const int c1 = data[i];
-
-          const double dr = getr(c1) - r;
-          const double dg = getg(c1) - g;
-          const double db = getb(c1) - b;
-
-          const double avg_r = (double)(getr(c1) + (r + 2)) / 2;
-
-          const double rw = ((512.0 + avg_r) * dr * dr) / 256.0;
-          const double gw = 4.0 * dg * dg;
-          const double bw = ((767.0 - avg_r) * db * db) / 256.0;
-          const double d = rw + gw + bw;
+          const int dr = pal_r[i] - (r + 2);
+          const int r_sum = pal_r[i] + (r + 2);
+          const int wr = ((1024 + r_sum) * dr * dr);
+          const int d = wr + wg[i] - r_sum * wd[i];
 
           if (d < lowest)
           {
