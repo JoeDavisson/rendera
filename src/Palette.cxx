@@ -189,13 +189,17 @@ void Palette::fillTable()
   table = nullptr;
   table = new unsigned char[16777216];
 
-  for (int b = 0; b <= 256 - 4; b += 4)
+  const int step_r = 4;
+  const int step_g = 4;
+  const int step_b = 4;
+
+  for (int b = 0; b <= 256 - step_b; b += step_b)
   {
-    for (int g = 0; g <= 256 - 4; g += 4)
+    for (int g = 0; g <= 256 - step_g; g += step_g)
     {
-      for (int r = 0; r <= 256 - 4; r += 4)
+      for (int r = 0; r <= 256 - step_r; r += step_r)
       {
-        int lowest = std::numeric_limits<int>::max();
+        double lowest = std::numeric_limits<int>::max();
         int use = 0;
 
         for (int i = 0; i < max; i++)
@@ -220,11 +224,11 @@ void Palette::fillTable()
           }
         }
 
-        for (int k = 0; k < 4; k++)
+        for (int k = 0; k < step_b; k++)
         {
-          for (int j = 0; j < 4; j++)
+          for (int j = 0; j < step_g; j++)
           {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < step_r; i++)
             {
               table[makeRgb24(r + i, g + j, b + k)] = use;
             }
