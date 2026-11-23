@@ -475,10 +475,20 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
     colors[jj].freq = 0;
     count--;
 
-    // recompute error matrix
-    for (int j = ii; j < max; j++)
+    // recompute part of error matrix
+    const int row = ii * (ii - 1) / 2;
+
+    for (int i = 0; i < ii; i++)
     {
-      if (colors[j].freq > 0)
+      if (colors[i].freq > 0 && colors[ii].freq > 0)
+      {
+        err_data[row + i] = error(colors[i], colors[ii]);
+      }
+    }
+
+    for (int j = ii + 1; j < jj; j++)
+    {
+      if (colors[ii].freq > 0 && colors[j].freq > 0)
       {
         err_data[ii + j * (j - 1) / 2] = error(colors[ii], colors[j]);
       }
