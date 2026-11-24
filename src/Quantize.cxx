@@ -62,22 +62,23 @@ void Quantize::makeColor(color_type &c,
   c.freq = freq;
 }
 
-// This uses the color distance approximation described here:
-// https://www.compuphase.com/cmetric.htm
+// see https://www.compuphase.com/cmetric.htm
 double Quantize::error(const color_type &c1, const color_type &c2)
 {
-  const double dr = c1.r - c2.r;
-  const double dg = c1.g - c2.g;
-  const double db = c1.b - c2.b;
-  const double avg_r = (double)(c1.r + c2.r) / 2;
   const double f1 = c1.freq;
   const double f2 = c2.freq;
   const double freq = (f1 * f2) / (f1 + f2);
 
-  const double rw = ((512.0 + avg_r) * dr * dr) / 256.0;
-  const double gw = 4 * dg * dg;
-  const double bw = ((767.0 - avg_r) * db * db) / 256.0;
-  const double d = rw + gw + bw;
+  const double dr = c1.r - c2.r;
+  const double dg = c1.g - c2.g;
+  const double db = c1.b - c2.b;
+
+  const double r_sum = c1.r + c2.r;
+  const double wb = db * db;
+  const double wg = 2048.0 * dg * dg + 1534.0 * wb;
+  const double wr = ((1024.0 + r_sum) * dr * dr);
+
+  const double d = wr + wg - r_sum * wb;
 
   return freq * d;
 }
