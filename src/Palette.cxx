@@ -181,17 +181,17 @@ void Palette::swapColor(int c1, int c2)
   data[c2] = temp;
 }
 
-// generate palette lookup table, see:
-// https://www.compuphase.com/cmetric.htm
+// generate palette lookup table
+// see https://www.compuphase.com/cmetric.htm
 void Palette::fillTable()
 {
   delete[] table;
   table = nullptr;
   table = new unsigned char[16777216];
 
-  const int step_r = 4;
-  const int step_g = 4;
-  const int step_b = 4;
+  const int r_step = 4;
+  const int g_step = 4;
+  const int b_step = 4;
 
   int pal_r[256];
   int pal_g[256];
@@ -206,38 +206,38 @@ void Palette::fillTable()
     pal_b[i] = getb(c);
   }
 
-  int wd[256];
+  int wb[256];
   int wg[256];
 
-  for (int b = 0; b <= 256 - step_b; b += step_b)
+  for (int b = 0; b <= 256 - b_step; b += b_step)
   {
     for (int i = 0; i < max; i++)
     {
-      const int db = pal_b[i] - (b + 2);
+      const int db = pal_b[i] - (b + b_step / 2);
 
-      wd[i] = db * db;
+      wb[i] = db * db;
     }
 
-    for (int g = 0; g <= 256 - step_g; g += step_g)
+    for (int g = 0; g <= 256 - g_step; g += g_step)
     {
       for (int i = 0; i < max; i++)
       {
-        const int dg = pal_g[i] - (g + 2);
+        const int dg = pal_g[i] - (g + g_step / 2);
 
-        wg[i] = 2048.0 * dg * dg + 1534 * wd[i];
+        wg[i] = 2048 * dg * dg + 1534 * wb[i];
       }
 
-      for (int r = 0; r <= 256 - step_r; r += step_r)
+      for (int r = 0; r <= 256 - r_step; r += r_step)
       {
         int lowest = std::numeric_limits<int>::max();
         int use = 0;
 
         for (int i = 0; i < max; i++)
         {
-          const int dr = pal_r[i] - (r + 2);
-          const int r_sum = pal_r[i] + (r + 2);
+          const int dr = pal_r[i] - (r + r_step / 2);
+          const int r_sum = pal_r[i] + (r + r_step / 2);
           const int wr = ((1024 + r_sum) * dr * dr);
-          const int d = wr + wg[i] - r_sum * wd[i];
+          const int d = wr + wg[i] - r_sum * wb[i];
 
           if (d < lowest)
           {
@@ -246,11 +246,11 @@ void Palette::fillTable()
           }
         }
 
-        for (int k = 0; k < step_b; k++)
+        for (int k = 0; k < b_step; k++)
         {
-          for (int j = 0; j < step_g; j++)
+          for (int j = 0; j < g_step; j++)
           {
-            for (int i = 0; i < step_r; i++)
+            for (int i = 0; i < r_step; i++)
             {
               table[makeRgb24(r + i, g + j, b + k)] = use;
             }
