@@ -531,8 +531,8 @@ void Quantize::pca(Bitmap *src, Palette *pal, int size, int samples)
   // final refinement step
   const int refine_steps = 3;
   Progress::show(refine_steps);
-
   Gui::statusInfo("Refinement...");
+
   for (int pass = 0; pass < refine_steps; pass++)
   {
     refine(src, pal);
