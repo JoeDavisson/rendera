@@ -466,9 +466,11 @@ void Bitmap::xorRectfill(int x1, int y1, int x2, int y2)
   }
 }
 
-// non-blending version (this version does not set the blend target)
+// non-blending version
 void Bitmap::setpixel(const int x, const int y, const int c)
 {
+  Blend::target(this, x, y);
+
   if (x >= cl && x <= cr && y >= ct && y <= cb)
   {
     *(row[y] + x) = c;
