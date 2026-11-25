@@ -46,11 +46,7 @@ int KDtree::distance(const node_type *a, const node_type *b)
 
 void KDtree::swapNodes(node_type *a, node_type *b)
 {
-  node_type temp;
-
-  temp = *a;
-  *a = *b;
-  *b = temp;
+  std::swap(*a, *b);
 }
 
 KDtree::node_type *KDtree::median(node_type *left, node_type *right,
