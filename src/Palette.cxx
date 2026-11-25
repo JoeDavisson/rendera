@@ -182,77 +182,49 @@ void Palette::swapColor(int c1, int c2)
 }
 
 // generate palette lookup table
-// see https://www.compuphase.com/cmetric.htm
 void Palette::fillTable()
 {
   delete[] table;
-  table = nullptr;
   table = new unsigned char[16777216];
 
-  const int r_step = 4;
-  const int g_step = 4;
-  const int b_step = 4;
+  KDtree::node_type test_node;
+  KDtree::node_type *root, *found;
+  std::vector<KDtree::node_type> colors(max);
 
-  int pal_r[256];
-  int pal_g[256];
-  int pal_b[256];
+  int best_dist;
+  const int step = 4;
 
   for (int i = 0; i < max; i++)
   {
     const int c = data[i];
-
-    pal_r[i] = getr(c);
-    pal_g[i] = getg(c);
-    pal_b[i] = getb(c);
+    colors[i].x[0] = getr(c);
+    colors[i].x[1] = getg(c);
+    colors[i].x[2] = getb(c);
+    colors[i].index = i;
   }
 
-  int wb[256];
-  int wg[256];
+  root = KDtree::build(&colors[0], max, 0);
 
-  for (int b = 0; b <= 256 - b_step; b += b_step)
+  for (int b = 0; b <= 256 - step; b += step)
   {
-    for (int i = 0; i < max; i++)
+    for (int g = 0; g <= 256 - step; g += step)
     {
-      const int db = pal_b[i] - (b + b_step / 2);
-
-      wb[i] = db * db;
-    }
-
-    for (int g = 0; g <= 256 - g_step; g += g_step)
-    {
-      for (int i = 0; i < max; i++)
+      for (int r = 0; r <= 256 - step; r += step)
       {
-        const int dg = pal_g[i] - (g + g_step / 2);
+        test_node.x[0] = r + step / 2;
+        test_node.x[1] = g + step / 2;
+        test_node.x[2] = b + step / 2;
 
-        wg[i] = 2048 * dg * dg + 1534 * wb[i];
-      }
+        found = 0;
+        KDtree::nearest(root, &test_node, &found, &best_dist, 0);
 
-      for (int r = 0; r <= 256 - r_step; r += r_step)
-      {
-        int lowest = std::numeric_limits<int>::max();
-        int use = 0;
-
-        for (int i = 0; i < max; i++)
+        for (int k = 0; k < step; k++)
         {
-          const int dr = pal_r[i] - (r + r_step / 2);
-          const int r_sum = pal_r[i] + (r + r_step / 2);
-          const int wr = ((1024 + r_sum) * dr * dr);
-          const int d = wr + wg[i] - r_sum * wb[i];
-
-          if (d < lowest)
+          for (int j = 0; j < step; j++)
           {
-            lowest = d;
-            use = i;
-          }
-        }
-
-        for (int k = 0; k < b_step; k++)
-        {
-          for (int j = 0; j < g_step; j++)
-          {
-            for (int i = 0; i < r_step; i++)
+            for (int i = 0; i < step; i++)
             {
-              table[makeRgb24(r + i, g + j, b + k)] = use;
+              table[makeRgb24(r + i, g + j, b + k)] = found->index;
             }
           }
         }
@@ -260,7 +232,6 @@ void Palette::fillTable()
     }
   }
 
-  // put exact matches back in
   for (int i = 0; i < max; i++)
   {
     table[data[i] & 0xffffff] = i;
