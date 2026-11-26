@@ -198,6 +198,7 @@ void Palette::fillTable()
   for (int i = 0; i < max; i++)
   {
     const int c = data[i];
+
     colors[i].x[0] = getr(c);
     colors[i].x[1] = getg(c);
     colors[i].x[2] = getb(c);
@@ -215,7 +216,7 @@ void Palette::fillTable()
     {
       for (int r = 0; r <= 256 - step; r += step)
       {
-        for (int corner = 1; corner < 8; corner++)
+        for (int corner = 0; corner < 8; corner++)
         {
           int rc = corner & 1 ? s1 : 0;
           int gc = corner & 2 ? s1 : 0;
