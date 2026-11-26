@@ -19,9 +19,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
 #include <algorithm>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 
 #include "KDtree.H"
 
@@ -97,7 +94,7 @@ KDtree::node_type *KDtree::build(node_type *root,
 
   node_type *node = median(root, root + length - 1, axis);
 
-  if (node != 0)
+  if (node != nullptr)
   {
     node->left = build(root, node - root, (axis + 1) % 3);
     node->right = build(node + 1, root + length - (node + 1), (axis + 1) % 3);
@@ -122,13 +119,14 @@ void KDtree::nearest(node_type *root, node_type *test_node,
 
   if (*best_distance == 0) { return; }
 
-  nearest(dx > 0 ? root->left : root->right,
-          test_node, best_node, best_distance, (axis + 1) % 3);
+  node_type *a = test_node->x[axis] < root->x[axis] ? root->left : root->right;
+  node_type *b = test_node->x[axis] < root->x[axis] ? root->right : root->left;
 
-  if (*best_distance > dx * dx)
+  nearest(a, test_node, best_node, best_distance, (axis + 1) % 3);
+
+  if (dx * dx < *best_distance)
   {
-    nearest(dx <= 0 ? root->left : root->right,
-            test_node, best_node, best_distance, (axis + 1) % 3);
+    nearest(b, test_node, best_node, best_distance, (axis + 1) % 3);
   }
 }
 
