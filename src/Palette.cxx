@@ -190,11 +190,10 @@ void Palette::fillTable()
   }
 
   KDtree::node_type test_node;
-  KDtree::node_type *root, *found;
+  KDtree::node_type *root = nullptr, *found = nullptr;
   std::vector<KDtree::node_type> colors(max);
 
   int best_dist;
-  const int step = 4;
 
   for (int i = 0; i < max; i++)
   {
@@ -207,36 +206,96 @@ void Palette::fillTable()
 
   root = KDtree::build(&colors[0], max, 0);
 
+  int step = 64;
+  int s1 = step - 1;
+
   for (int b = 0; b <= 256 - step; b += step)
   {
     for (int g = 0; g <= 256 - step; g += step)
     {
       for (int r = 0; r <= 256 - step; r += step)
       {
-        test_node.x[0] = r + step / 2;
-        test_node.x[1] = g + step / 2;
-        test_node.x[2] = b + step / 2;
-
-        found = 0;
-        KDtree::nearest(root, &test_node, &found, &best_dist, 0);
-
-        for (int k = 0; k < step; k++)
+        for (int corner = 1; corner < 8; corner++)
         {
-          for (int j = 0; j < step; j++)
-          {
-            for (int i = 0; i < step; i++)
-            {
-              table[makeRgb24(r + i, g + j, b + k)] = found->index;
-            }
-          }
+          int rc = corner & 1 ? s1 : 0;
+          int gc = corner & 2 ? s1 : 0;
+          int bc = corner & 4 ? s1 : 0;
+
+          test_node.x[0] = r + rc;
+          test_node.x[1] = g + gc;
+          test_node.x[2] = b + bc;
+
+          found = nullptr;
+          KDtree::nearest(root, &test_node, &found, &best_dist, 0);
+
+          table[makeRgb24(r + rc, g + gc, b + bc)] = found->index;
         }
       }
     }
   }
 
-  for (int i = 0; i < max; i++)
+  for (step = 64; step > 0; step /= 2)
   {
-    table[data[i] & 0xffffff] = i;
+    s1 = step - 1;
+
+    for (int b = 0; b <= 256 - step; b += step)
+    {
+      for (int g = 0; g <= 256 - step; g += step)
+      {
+        for (int r = 0; r <= 256 - step; r += step)
+        {
+          bool fill = true;
+          int last_c = table[makeRgb24(r, g, b)];
+ 
+          for (int corner = 1; corner < 8; corner++)
+          {
+            int rc = corner & 1 ? s1 : 0;
+            int gc = corner & 2 ? s1 : 0;
+            int bc = corner & 4 ? s1 : 0;
+
+            int current_c = table[makeRgb24(r + rc, g + gc, b + bc)];
+
+            if (current_c != last_c)
+            {
+              fill = false;
+              break;
+            }
+          }
+
+          if (fill == true)
+          {
+            for (int k = 0; k < step; k++)
+            {
+              for (int j = 0; j < step; j++)
+              {
+                for (int i = 0; i < step; i++)
+                {
+                  table[makeRgb24(r + i, g + j, b + k)] = last_c;
+                }
+              }
+            }
+          }
+            else
+          {
+            test_node.x[0] = r + step / 2;
+            test_node.x[1] = g + step / 2;
+            test_node.x[2] = b + step / 2;
+
+            found = nullptr;
+            KDtree::nearest(root, &test_node, &found, &best_dist, 0);
+
+            table[makeRgb24(r, g, b)] = found->index;
+            table[makeRgb24(r + s1, g, b)] = found->index;
+            table[makeRgb24(r, g + s1, b)] = found->index;
+            table[makeRgb24(r + s1, g + s1, b)] = found->index;
+            table[makeRgb24(r, g, b + s1)] = found->index;
+            table[makeRgb24(r + s1, g, b + s1)] = found->index;
+            table[makeRgb24(r, g + s1, b + s1)] = found->index;
+            table[makeRgb24(r + s1, g + s1, b + s1)] = found->index;
+          }
+        }
+      }
+    }
   }
 }
 
