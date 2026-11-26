@@ -184,8 +184,10 @@ void Palette::swapColor(int c1, int c2)
 // generate palette lookup table
 void Palette::fillTable()
 {
-  delete[] table;
-  table = new unsigned char[16777216];
+  if (table == nullptr)
+  {
+    table = new unsigned char[16777216];
+  }
 
   KDtree::node_type test_node;
   KDtree::node_type *root, *found;
