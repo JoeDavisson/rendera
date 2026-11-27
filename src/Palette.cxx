@@ -184,17 +184,25 @@ void Palette::swapColor(int c1, int c2)
 // generate palette lookup table
 void Palette::fillTable()
 {
-  if (table == nullptr)
-  {
-    table = new unsigned char[16777216];
-  }
-
   KDtree::node_type test_node;
   KDtree::node_type *root = nullptr;
   KDtree::node_type *found = nullptr;
   std::vector<KDtree::node_type> colors(max);
   int best_dist;
 
+  // allocate memory on the first call
+  if (table == nullptr)
+  {
+    table = new unsigned char[16777216];
+  }
+
+  // clear with "garbage" to avoid false matches from leftover data
+  for (int i = 0; i < 16777216; i++)
+  {
+    table[i] = i & 255;
+  }
+
+  // build tree containing palette colors
   for (int i = 0; i < max; i++)
   {
     const int c = data[i];
@@ -207,6 +215,7 @@ void Palette::fillTable()
 
   root = KDtree::build(&colors[0], max, 0);
 
+  // initialization pass, set block corners to exact matches
   int step = 64;
   int s1 = step - 1;
 
@@ -235,6 +244,8 @@ void Palette::fillTable()
     }
   }
 
+  // fill blocks if all corners are identical, otherwise recalculate
+  // corners to represent the centroid
   for (step = 64; step > 0; step /= 2)
   {
     s1 = step - 1;
