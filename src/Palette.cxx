@@ -190,9 +190,9 @@ void Palette::fillTable()
   }
 
   KDtree::node_type test_node;
-  KDtree::node_type *root = nullptr, *found = nullptr;
+  KDtree::node_type *root = nullptr;
+  KDtree::node_type *found = nullptr;
   std::vector<KDtree::node_type> colors(max);
-
   int best_dist;
 
   for (int i = 0; i < max; i++)
@@ -218,9 +218,9 @@ void Palette::fillTable()
       {
         for (int corner = 0; corner < 8; corner++)
         {
-          int rc = corner & 1 ? s1 : 0;
-          int gc = corner & 2 ? s1 : 0;
-          int bc = corner & 4 ? s1 : 0;
+          const int rc = corner & 1 ? s1 : 0;
+          const int gc = corner & 2 ? s1 : 0;
+          const int bc = corner & 4 ? s1 : 0;
 
           test_node.x[0] = r + rc;
           test_node.x[1] = g + gc;
@@ -246,15 +246,15 @@ void Palette::fillTable()
         for (int r = 0; r <= 256 - step; r += step)
         {
           bool fill = true;
-          int last_c = table[makeRgb24(r, g, b)];
+          const int last_c = table[makeRgb24(r, g, b)];
  
           for (int corner = 1; corner < 8; corner++)
           {
-            int rc = corner & 1 ? s1 : 0;
-            int gc = corner & 2 ? s1 : 0;
-            int bc = corner & 4 ? s1 : 0;
+            const int rc = corner & 1 ? s1 : 0;
+            const int gc = corner & 2 ? s1 : 0;
+            const int bc = corner & 4 ? s1 : 0;
 
-            int current_c = table[makeRgb24(r + rc, g + gc, b + bc)];
+            const int current_c = table[makeRgb24(r + rc, g + gc, b + bc)];
 
             if (current_c != last_c)
             {
@@ -285,14 +285,14 @@ void Palette::fillTable()
             found = nullptr;
             KDtree::nearest(root, &test_node, &found, &best_dist, 0);
 
-            table[makeRgb24(r, g, b)] = found->index;
-            table[makeRgb24(r + s1, g, b)] = found->index;
-            table[makeRgb24(r, g + s1, b)] = found->index;
-            table[makeRgb24(r + s1, g + s1, b)] = found->index;
-            table[makeRgb24(r, g, b + s1)] = found->index;
-            table[makeRgb24(r + s1, g, b + s1)] = found->index;
-            table[makeRgb24(r, g + s1, b + s1)] = found->index;
-            table[makeRgb24(r + s1, g + s1, b + s1)] = found->index;
+            for (int corner = 0; corner < 8; corner++)
+            {
+              const int rc = corner & 1 ? s1 : 0;
+              const int gc = corner & 2 ? s1 : 0;
+              const int bc = corner & 4 ? s1 : 0;
+
+              table[makeRgb24(r + rc, g + gc, b + bc)] = found->index;
+            }
           }
         }
       }
