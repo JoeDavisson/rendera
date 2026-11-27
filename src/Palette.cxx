@@ -246,7 +246,7 @@ void Palette::fillTable()
 
   // fill blocks if all corners are identical, otherwise recalculate
   // corners to represent the centroid
-  for (step = 64; step > 0; step /= 2)
+  for (step = 64; step > 1; step /= 2)
   {
     s1 = step - 1;
 
